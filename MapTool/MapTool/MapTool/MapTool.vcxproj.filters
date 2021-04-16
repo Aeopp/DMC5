@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{d1f8fce5-4c6e-4b43-8181-83f5b2543a3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default\00.Resource">
+      <UniqueIdentifier>{337e4803-a7f9-4547-9d97-7caaa569d476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default\01.Source">
+      <UniqueIdentifier>{db88b4e5-2494-4271-99b9-976ae8646a82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default\02.Header">
+      <UniqueIdentifier>{77abac4c-d720-4f1e-b818-ba7db040d81c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.WinMain">
+      <UniqueIdentifier>{229226d0-5ed4-4762-8e0e-be3201d33ac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Graphic">
+      <UniqueIdentifier>{489aa00b-dfca-4aa6-a179-77ee9bf53e46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.ImGUI">
+      <UniqueIdentifier>{f839980a-2b1a-4b2f-8d60-c027024f3c5c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MapTool.h">
+      <Filter>00.WinMain</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default\02.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default\02.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>01.Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Extern.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>99.Default\02.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imconfig.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imgui.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imgui_impl_dx9.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imgui_impl_win32.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imgui_internal.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imstb_rectpack.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imstb_textedit.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Header\imgui\imstb_truetype.h">
+      <Filter>98.ImGUI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>99.Default\00.Resource</Filter>
+    </Image>
+    <Image Include="MapTool.ico">
+      <Filter>99.Default\00.Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MapTool.rc">
+      <Filter>99.Default\00.Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MapTool.cpp">
+      <Filter>00.WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic.cpp">
+      <Filter>01.Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Engine\Source\imgui\imgui.cpp">
+      <Filter>98.ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Engine\Source\imgui\imgui_demo.cpp">
+      <Filter>98.ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Engine\Source\imgui\imgui_draw.cpp">
+      <Filter>98.ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Engine\Source\imgui\imgui_impl_dx9.cpp">
+      <Filter>98.ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Engine\Source\imgui\imgui_impl_win32.cpp">
+      <Filter>98.ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Engine\Source\imgui\imgui_tables.cpp">
+      <Filter>98.ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Engine\Source\imgui\imgui_widgets.cpp">
+      <Filter>98.ImGUI</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,83 @@
+[33mc95146a[m[33m ([m[1;36mHEAD -> [m[1;32mhojun[m[33m)[m 애니메이션 인덱스 지원 준비 TransitionTime 0.001 ~~~
+[33mb00eefb[m Merge remote-tracking branch 'origin/main' into HoJun
+[33mca168da[m 병합전 커밋
+[33m1e77281[m[33m ([m[1;31morigin/Hoon[m[33m)[m 4/6 태훈 병합
+[33m9c1f695[m 무기 추가
+[33meade4c9[m Eff_OvertureHand
+[33ma293656[m 4/6
+[33m97cd264[m 정점 최적화
+[33mfb5b6d1[m 애니메이션 저장 기능 구현
+[33mec0b801[m 카메라 위치 수정
+[33me52cce6[m 병합
+[33m5642924[m primitive mesh 추가
+[33ma9e55ef[m 4/5 16:11
+[33mc56ea28[m 카메라 추가
+[33m115d7ea[m 버텍스버퍼 최적화 하기전 커밋
+[33maff2576[m tesat
+[33m5523995[m dsaf
+[33m715a048[m testste
+[33m93554b4[m 받아옴 4/5 16 : 07
+[33m1964c67[m test
+[33m10cc56b[m Static SkeletonMesh 쉐이더 분리
+[33md3e204a[m test
+[33mdfbe434[m Update ignore
+[33m0ba722b[m Apply git ignore update
+[33ma8ab4ed[m ignore update
+[33mf7e3371[m Apply gitignore
+[33m7b5c610[m Apply
+[33mf2d150a[m Apply git ignore
+[33me134cac[m Renderer 병합
+[33md4ab0bb[m Deferred Pass Impl....
+[33m4d54a5a[m ...
+[33m9e90a4a[m 테스트
+[33mb50c7c0[m 클론들 노드구조 딥카피 애니메이션 독립적으로
+[33m11a014d[m 마감
+[33m73865c8[m 지원하는 본 최대개수 늘리기전 커밋
+[33m2e36cd7[m Apply pch add ignore
+[33mbcd3658[m Animation Implementation
+[33m64bf3e2[m 애니메이션 짜는중
+[33m6c7564c[m 텍스쳐 없을때 예외 처리
+[33mdac9e9e[m Static Mesh 구현
+[33md75c8b6[m HDR... Impl...
+[33me86c288[m 작성중
+[33m00ef82b[m HDR 렌더링 시도중
+[33mce97b23[m no message
+[33m116b0ed[m Merge remote-tracking branch 'origin/KHJ' into HoJun
+[33mb837773[m rapid json 연동
+[33m8f2c708[m Merge branch 'HoJun' into KHJ
+[33me76044e[m Render......
+[33m3c169d4[m Transform 진행중................
+[33m40de046[m TestObject Init.....
+[33m41f1ec5[m pch ignore apply
+[33meea22a7[m Device 안티엘리어싱 지원
+[33m6752581[m ImGui
+[33m94c3812[m ZeroMemory 시부레
+[33mc67b347[m imgui 준비
+[33mac50020[m ImGui 연동
+[33m2917bc0[m Merge remote-tracking branch 'origin/main' into KHJ
+[33mec17467[m no message
+[33m33ae128[m render 작성중
+[33m072b870[m 아무렇게나
+[33mddd2214[m Engine 프로젝트 로딩 해결
+[33m435220d[m Merge branch 'main' of https://github.com/Aeopp/DevilMayCry-
+[33m00ae5e5[m static mesh render 로직 빼고 마무리
+[33m58e19ec[m 트랜스폼 어찌하나...
+[33mbbe9ab6[m  머테리얼
+[33m66c7529[m 머테리얼 파싱만 하면 어느정도 마무리
+[33ma980907[m Static Mesh Fbx 파싱 종료 버텍스 구조체 정의할 필요없음
+[33maca749b[m gitignore
+[33m56eb6b5[m Merge remote-tracking branch 'origin/KHJ' into HoJun
+[33me105cb4[m no message
+[33mb8261b3[m 외부 라이브러리 준비
+[33mb451800[m 외부 라이브러리 연동 준비...
+[33mdd0db48[m git ignore Add Obj ext
+[33md679b84[m Merge branch 'KHJ'
+[33m5831478[m no message
+[33mb9fb80c[m StaticMesh 진행중
+[33mcabe654[m Bin Test
+[33m13fbeb2[m Apply .gitignore
+[33m3afa2ad[m Apply ignore
+[33m4187645[m Apply
+[33m5d817cd[m  Init
+[33mc38f142[m Project Initialize
+[33m1d79eee[m Initial commit

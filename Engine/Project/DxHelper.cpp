@@ -1,0 +1,38 @@
+#include "DxHelper.h"
+USING(ENGINE)
+
+HRESULT DxHelper::DXGenTangentFrame(LPDIRECT3DDEVICE9 device, LPD3DXMESH mesh, LPD3DXMESH* newmesh)
+{
+	HRESULT hr;
+	LPD3DXMESH clonedmesh = NULL;
+
+	D3DVERTEXELEMENT9 decl[] = {
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 32, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
+		{ 0, 44, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL, 0 },
+		D3DDECL_END()
+	};
+
+	// it is safer to clone
+	hr = mesh->CloneMesh(D3DXMESH_MANAGED, decl, device, &clonedmesh);
+
+	if (FAILED(hr))
+		return hr;
+
+	if (*newmesh == mesh) {
+		mesh->Release();
+		*newmesh = NULL;
+	}
+
+	hr = D3DXComputeTangentFrameEx(clonedmesh,
+		D3DDECLUSAGE_TEXCOORD, 0,
+		D3DDECLUSAGE_TANGENT, 0,
+		D3DDECLUSAGE_BINORMAL, 0,
+		D3DDECLUSAGE_NORMAL, 0,
+		0, NULL, 0.01f, 0.25f, 0.01f, newmesh, NULL);
+
+	clonedmesh->Release();
+	return hr;
+}

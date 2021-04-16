@@ -1,0 +1,25 @@
+{
+    "AnimationData": {
+        "RootMotion_DeltaFactor": 1.0,
+        "Offset Euler Yaw": 0.0,
+        "Offset Euler Pitch": 0.0,
+        "Offset Euler Roll": 0.0,
+        "AnimInfoTable": [
+            {
+                "Name": "Wire_Arm_End_Long",
+                "Acceleration": 0.4259999990463257,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Wire_Arm_End_Short",
+                "Acceleration": 0.10000000149011612,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Wire_Arm_Start31",
+                "Acceleration": 0.7239999938011169,
+                "TransitionTime": 0.009999999776482582
+            }
+        ]
+    }
+}

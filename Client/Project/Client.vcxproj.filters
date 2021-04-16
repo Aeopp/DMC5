@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{c53dfd41-c3c6-496d-a413-f7a579b75683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default\00.Resource">
+      <UniqueIdentifier>{bebf0d98-e4da-42ab-845a-b5c8f40aaa52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default\01.Source">
+      <UniqueIdentifier>{584d9d6c-dc92-40fb-b437-99be66f74e1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.WinMain">
+      <UniqueIdentifier>{7080caee-35cd-432d-a6e0-82637e8a40a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Application">
+      <UniqueIdentifier>{d8a72ce6-d198-451b-b4b8-c84e13142e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Scene">
+      <UniqueIdentifier>{88dce967-1ec2-4dbf-9a3b-49a11a074ded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject">
+      <UniqueIdentifier>{cfc05c54-1939-4717-855b-7d2228958651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Scene\99.TestScene">
+      <UniqueIdentifier>{d07990b6-de7f-4e8a-8a87-c4a89767acfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default\02.Header">
+      <UniqueIdentifier>{c0f00759-e8c5-4e2a-86ff-caad12de51fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Test">
+      <UniqueIdentifier>{1b9a4088-9bc4-4aa4-858f-9454e3cda42e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\00.Camera">
+      <UniqueIdentifier>{513c2145-8637-4661-bc26-c9f4620c842e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect">
+      <UniqueIdentifier>{8e0c6ea8-0509-4c04-b553-c46c6c7ecfa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI">
+      <UniqueIdentifier>{86694f81-3549-4ffa-aa75-f5f0df8b391e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\Font">
+      <UniqueIdentifier>{34d058e5-58fd-45cc-ab01-30d5378d4b93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\BtlPanel">
+      <UniqueIdentifier>{3f0a56b6-7842-4276-ab21-323f42bd0c53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Weapon">
+      <UniqueIdentifier>{991dfce5-4d09-4c4f-a8fb-51ee90e5e080}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Common">
+      <UniqueIdentifier>{9d62ca16-6527-44a0-a433-1dd09ed55225}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player">
+      <UniqueIdentifier>{b7363eb4-1fc1-4324-a86f-e497255c94b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\DashImpact">
+      <UniqueIdentifier>{b7667868-436c-417f-b44f-5022f169be9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02. Monster">
+      <UniqueIdentifier>{a3517ad2-d76e-4542-8f79-0e908dd136ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02. Monster\00.Em100">
+      <UniqueIdentifier>{37362b12-a76f-4d83-be8b-b416dcef8771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02. Monster\01.Em101">
+      <UniqueIdentifier>{7bc9598d-78ac-4f39-b931-83b51179adf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02. Monster\02.Em0000">
+      <UniqueIdentifier>{713e754a-60d1-45f6-8821-e4e8ea31c584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02. Monster\02.Em0000\Weapon">
+      <UniqueIdentifier>{c02369c1-af29-46dd-852c-dedcb84e3a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02. Monster\03.Em5000">
+      <UniqueIdentifier>{a76a460f-8b96-4594-aebb-ce10380608c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02. Monster\03.Em5000\Car">
+      <UniqueIdentifier>{f7e815fa-94c1-43a1-8a89-e80638e252dc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>99.Default\02.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default\02.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default\02.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>00.WinMain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Application.h">
+      <Filter>01.Application</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>99.Default\02.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\TestScene.h">
+      <Filter>03.Scene\99.TestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\TestAnimationObject.h">
+      <Filter>02.GameObject\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Camera.h">
+      <Filter>02.GameObject\00.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\OvertureHand.h">
+      <Filter>02.GameObject\Effect\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Glint.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\BtlPanel.h">
+      <Filter>02.GameObject\UI\BtlPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Effect.h">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\DashImpact.h">
+      <Filter>02.GameObject\Effect\DashImpact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Monster.h">
+      <Filter>02.GameObject\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em100.h">
+      <Filter>02.GameObject\02. Monster\00.Em100</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em101.h">
+      <Filter>02.GameObject\02. Monster\01.Em101</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em0000.h">
+      <Filter>02.GameObject\02. Monster\02.Em0000</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em0000_Weapon.h">
+      <Filter>02.GameObject\02. Monster\02.Em0000\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5000.h">
+      <Filter>02.GameObject\02. Monster\03.Em5000</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Car.h">
+      <Filter>02.GameObject\02. Monster\03.Em5000\Car</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\RedQueen.h" />
+    <ClInclude Include="..\Header\Blood.h" />
+    <ClInclude Include="..\Header\DashImpact.h" />
+    <ClInclude Include="..\Header\Nero_LWing.h" />
+    <ClInclude Include="..\Header\Nero_RWing.h" />
+    <ClInclude Include="..\Header\Wire_Arm.h" />
+    <ClInclude Include="..\Header\Buster_Arm.h" />
+    <ClInclude Include="..\Header\Blood.h" />
+    <ClInclude Include="..\Header\FSMBase.h" />
+    <ClInclude Include="..\Header\FSMState.h" />
+    <ClInclude Include="..\Header\NeroFSM.h" />
+    <ClInclude Include="..\Header\Nero.h" />
+    <ClInclude Include="..\Header\NeroState.h" />
+    <ClInclude Include="..\Header\TestObject.h">
+      <Filter>02.GameObject\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\TempMap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>99.Default\00.Resource</Filter>
+    </Image>
+    <Image Include="Client.ico">
+      <Filter>99.Default\00.Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>99.Default\00.Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>00.WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Application.cpp">
+      <Filter>01.Application</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default\01.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TestScene.cpp">
+      <Filter>03.Scene\99.TestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TestAnimationObject.cpp">
+      <Filter>02.GameObject\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TestObject.cpp">
+      <Filter>02.GameObject\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Camera.cpp">
+      <Filter>02.GameObject\00.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\OvertureHand.cpp">
+      <Filter>02.GameObject\Effect\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\BtlPanel.cpp">
+      <Filter>02.GameObject\UI\BtlPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Glint.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Effect.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DashImpact.cpp">
+      <Filter>02.GameObject\Effect\DashImpact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em100.cpp">
+      <Filter>02.GameObject\02. Monster\00.Em100</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Monster.cpp">
+      <Filter>02.GameObject\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em101.cpp">
+      <Filter>02.GameObject\02. Monster\01.Em101</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em0000.cpp">
+      <Filter>02.GameObject\02. Monster\02.Em0000</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em0000_Weapon.cpp">
+      <Filter>02.GameObject\02. Monster\02.Em0000\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5000.cpp">
+      <Filter>02.GameObject\02. Monster\03.Em5000</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Car.cpp">
+      <Filter>02.GameObject\02. Monster\03.Em5000\Car</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RedQueen.cpp" />
+    <ClCompile Include="..\Source\Nero_LWing.cpp" />
+    <ClCompile Include="..\Source\Nero_RWing.cpp" />
+    <ClCompile Include="..\Source\Wire_Arm.cpp" />
+    <ClCompile Include="..\Source\Buster_Arm.cpp" />
+    <ClCompile Include="..\Source\Blood.cpp" />
+    <ClCompile Include="..\Source\FSMBase.cpp" />
+    <ClCompile Include="..\Source\FSMState.cpp" />
+    <ClCompile Include="..\Source\NeroFSM.cpp" />
+    <ClCompile Include="..\Source\Nero.cpp" />
+    <ClCompile Include="..\Source\NeroState.cpp" />
+    <ClCompile Include="..\Source\TempMap.cpp" />
+  </ItemGroup>
+</Project>

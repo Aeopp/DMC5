@@ -1,0 +1,192 @@
+{
+    "AnimationData": {
+        "RootMotion_DeltaFactor": 1.0,
+        "Offset Euler Yaw": 0.0,
+        "Offset Euler Pitch": -90.0,
+        "Offset Euler Roll": 0.0,
+        "RootMotion_RotationName": "root",
+        "RootMotion_TransitionName": "root",
+        "AnimInfoTable": [
+            {
+                "Name": "Attack_Back_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Back_R",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Grap_Car",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Hack",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Jump_Attack",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Punch_Twice",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Rush_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Rush_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Rush_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Side_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Side_R",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Throw_Car",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Back_Jump",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Dead",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Groggy_Dead",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Groggy_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Groggy_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Groggy_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Buster_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Buster_Swing_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Buster_Swing_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Buster_Swing_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Buster_Swing_Throw",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Howling",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Idle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Trun_L_180",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Turn_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Turn_L_90",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Turn_R",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Turn_R_180",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Turn_R_90",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Tornado_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Tornado_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            }
+        ]
+    }
+}

@@ -1,0 +1,130 @@
+{
+    "AnimationData": {
+        "RootMotion_DeltaFactor": 1.0,
+        "RootMotion_ScaleName": "NULL_SCALING",
+        "RootMotion_RotationName": "NULL_ROTATION",
+        "RootMotion_TransitionName": "root_$AssimpFbx$_Translation",
+        "AnimInfoTable": [
+            {
+                "Name": "Air_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Air_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Air_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_A",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_D",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Hard",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Dead",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_Front",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hit_R",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Front_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Front_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Front_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Left_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Left_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Left_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Right_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Right_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Walk_Right_Stop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "idle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            }
+        ]
+    }
+}

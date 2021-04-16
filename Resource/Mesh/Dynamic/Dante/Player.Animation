@@ -1,0 +1,876 @@
+{
+    "AnimationData": {
+        "RootMotion_DeltaFactor": 1.0,
+        "Offset Euler Yaw": 0.0,
+        "Offset Euler Pitch": 0.0,
+        "Offset Euler Roll": 0.0,
+        "RootMotion_TransitionName": "root",
+        "AnimInfoTable": [
+            {
+                "Name": "Air_Dive_Slash_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Air_Dive_Slash_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Air_Dive_Slash_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Buster_Start",
+                "Acceleration": 1.190000057220459,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Caliber_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Caliber_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_ComboA1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_ComboA2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_ComboA3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_ComboA4",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_ComboA5",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_DashStop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Cbs_Idle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_Idle_to_Idle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_RunStop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Cbs_SKill_Crystal",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_SKill_IceAge_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_SKill_IceAge_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_SKill_IceAge_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_SKill_Revolver_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_SKill_Revolver_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_SKill_Revolver_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Cbs_SKill_Swing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA1_Dash",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA4",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA_Air1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA_Air2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboA_Air3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboB",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboB_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboC1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboC2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboC3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboC4",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboC_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboC_R",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboD1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboD2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "ComboD3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.2150000035762787
+            },
+            {
+                "Name": "ComboD4",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.2150000035762787
+            },
+            {
+                "Name": "DashLoop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "DashLoop2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "DashStop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "DashTurn",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Dive_Slash_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Dive_Slash_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Dive_Slash_Move",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Dive_Slash_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "EarthQuakeEnd",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "EarthQuakeLoop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "EarthQuakeStart",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Evade_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Evade_R",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Air_Crash_Just",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Air_Crash_Reload",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Bomb",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Crash_Just",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Crash_Reload",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_PickUp",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Reload",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Reload_Stylish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "GT_Repelled",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "HitAway_GetUp",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "HitFront",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "HitFront_Big",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hit_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hit_Air_Away",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hit_Ground_Away",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_Air_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_Air_Roll_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_Air_Roll_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_Air_Roll_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ex_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Hr_Ground",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_Battle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_From_ComboA1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_From_ComboA1_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_From_ComboA1_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_From_ComboA2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_From_ComboA2_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_From_ComboA2_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Idle_Normal",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.33000001311302187
+            },
+            {
+                "Name": "Jump",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Back_Twice",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Front",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Front_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Front_Twice",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Landing_High",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Jump_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Jump_Twice",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_BiAttack",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_BlitzAttack",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Satellite",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Satellite_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Strike",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Strike_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Strike_Air_Down",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Strike_Air_Up",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Strike_Down",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_Strike_Up",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Middle_Cbs_ThunderBullet",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Overture_Idle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Overture_Shoot",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Overture_Shoot_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Overture_Shoot_Air_Down",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Overture_Shoot_Air_Up",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Overture_Shoot_Down",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Overture_Shoot_Up",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Parrying",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Parrying_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_ComboA1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Pole_ComboA2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_ComboA3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_ComboB1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_ComboB2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_ComboB3",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_ComboB4",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_WhirlWind_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_WhirlWind_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Pole_WhirlWind_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunLoop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunLoop_From_ComboA1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunStart0",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunStart180",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunStart270",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunStart90",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunStart_From_ComboA1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunStart_From_ComboA2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunStop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunTurn",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "RunTurn_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Shuffle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Shuffle_Ex",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "SplitEx_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "SplitEx_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "SplitEx_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Split_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Split_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Split_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_Ex_Roll_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_Ex_Roll_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_Ex_Rush",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_Ex_Rush_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_Ex_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Streak_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Stun_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Stun_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Stun_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "To_Majin",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "To_Majin2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Wire_HellHound_Air_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Wire_HellHound_Air_F",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Wire_HellHound_Air_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Wire_HellHound_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Wire_HellHound_F",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Wire_HellHound_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Wire_Snatch_Pull",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.008999999612569809
+            },
+            {
+                "Name": "Wire_Snatch_Pull_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Wire_Snatch_Pull_Air_D",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Wire_Snatch_Pull_Air_U",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "Wire_Snatch_Pull_D",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.008999999612569809
+            },
+            {
+                "Name": "Wire_Snatch_Pull_U",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.008999999612569809
+            }
+        ]
+    }
+}

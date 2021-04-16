@@ -1,2 +1,3 @@
-# DMC5
-팀프로젝트
+# DevilMayCry-
+3D Team
+.
