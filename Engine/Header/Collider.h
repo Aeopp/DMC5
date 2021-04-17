@@ -27,8 +27,9 @@ protected:
 	// Component을(를) 통해 상속됨
 	virtual void Free() PURE;
 protected:
-	virtual HRESULT ReadyCollider() PURE;
+	virtual HRESULT ReadyCollider()						PURE;
 	virtual	HRESULT DrawCollider(LPD3DXEFFECT _pEffect)	PURE;
+	virtual void	Editor()							override;
 public:
 	void ReadySimulate();
 private:

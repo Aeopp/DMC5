@@ -97,6 +97,11 @@ HRESULT BoxCollider::DrawCollider(LPD3DXEFFECT _pEffect)
 	return S_OK;
 }
 
+void BoxCollider::Editor()
+{
+	Collider::Editor();
+}
+
 D3DXVECTOR3 BoxCollider::GetSize()
 {
 	return m_vSize;

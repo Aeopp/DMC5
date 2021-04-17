@@ -80,6 +80,30 @@ HRESULT CapsuleCollider::DrawCollider(LPD3DXEFFECT _pEffect)
 	return S_OK;
 }
 
+void CapsuleCollider::Editor()
+{
+	Collider::Editor();
+
+	if (false == bEdit)
+		return;
+
+	ImGui::BeginChild("CapsuleCollider##");
+
+	D3DXVECTOR3 vCenter = m_vCenter;
+	if (ImGui::InputFloat3("Center", vCenter))
+		SetCenter(vCenter);
+
+	float fRadius = m_fRadius;
+	if (ImGui::InputFloat("Radius", &fRadius))
+		SetRadius(fRadius);
+
+	float fHeight = m_fHeight;
+	if (ImGui::InputFloat("Height", &fHeight))
+		SetHeight(fHeight);
+
+	ImGui::EndChild();
+}
+
 float CapsuleCollider::GetRadius()
 {
 	return m_fRadius;

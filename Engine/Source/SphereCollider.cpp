@@ -91,6 +91,11 @@ HRESULT SphereCollider::DrawCollider(LPD3DXEFFECT _pEffect)
 	return S_OK;
 }
 
+void SphereCollider::Editor()
+{
+	Collider::Editor();
+}
+
 float SphereCollider::GetRadius()
 {
 	return m_fRadius;

@@ -17,8 +17,9 @@ private:
 public:
 	static CapsuleCollider* Create(std::weak_ptr<GameObject> const _pGameObject);
 public:
-	virtual HRESULT ReadyCollider() override;
+	virtual HRESULT ReadyCollider()						override;
 	virtual	HRESULT DrawCollider(LPD3DXEFFECT _pEffect)	override;
+	virtual void	Editor()							override;
 public:
 	float	GetRadius();
 	void	SetRadius(const float _fRadius);

@@ -216,6 +216,12 @@ UINT TempMap::LateUpdate(const float _fDeltaTime)
 void TempMap::Editor()
 {
 	GameObject::Editor();
+	
+	if (nullptr == m_pCollider.lock())
+		return;
+
+	m_pCollider.lock()->Editor();
+
 }
 
 

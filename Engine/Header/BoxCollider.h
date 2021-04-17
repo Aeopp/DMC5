@@ -15,8 +15,9 @@ private:
 public:
 	static BoxCollider* Create(std::weak_ptr<GameObject> const _pGameObject);
 public:
-	virtual HRESULT ReadyCollider()	override;
+	virtual HRESULT ReadyCollider()						override;
 	virtual	HRESULT DrawCollider(LPD3DXEFFECT _pEffect)	override;
+	virtual void	Editor()							override;
 public:
 	D3DXVECTOR3	GetSize();
 	void		SetSize(const D3DXVECTOR3 _vSize);

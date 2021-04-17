@@ -43,6 +43,11 @@ HRESULT Collider::DrawCollider(LPD3DXEFFECT _pEffect)
 	return S_OK;
 }
 
+void Collider::Editor()
+{
+	Component::Editor();
+}
+
 void Collider::ReadySimulate()
 {
 	std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
