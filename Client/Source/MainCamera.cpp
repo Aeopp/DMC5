@@ -42,7 +42,7 @@ HRESULT MainCamera::Ready()
 
 
 	m_fCameraAngle = 35.f;
-	m_fDistanceToTarget = 600.f;
+	m_fDistanceToTarget = 5.4f;
 
 	return S_OK;
 }
