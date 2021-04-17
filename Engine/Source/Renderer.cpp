@@ -1255,9 +1255,8 @@ HRESULT Renderer::RendererCollider()&
 		_DrawInfo.Fx = Fx;
 		Vector4 DebugColor{ 255.f/255.f,240.f /255.f,140.f/255.f,0.5f };
 		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
-		const Matrix ViewProjection = _RenderInfo.ViewProjection;
 		Fx->SetVector("DebugColor", &DebugColor);
-		Fx->SetMatrix("ViewProjection", &ViewProjection);
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		UINT Passes = 0u;
 		Fx->Begin(&Passes, NULL);
 		for (int32 i = 0; i < Passes; ++i)
