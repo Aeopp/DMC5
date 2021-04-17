@@ -1,6 +1,10 @@
+
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
+
 #include "Renderer.h"
+#include "FileHelper.h"
+
 #include "GraphicSystem.h"
 #include <ostream>
 #include <fstream>
@@ -301,6 +305,16 @@ void Renderer::Editor()&
 {
 	ImGui::Begin("Render Editor");
 	{
+		if (ImGui::Button("LightSave"))
+		{
+			LightSave(FileHelper::OpenDialogBox());
+		}
+
+		if (ImGui::Button("LightLoad"))
+		{
+			LightLoad(FileHelper::OpenDialogBox());
+		}
+
 		ImGui::Checkbox("LightRender", &bLightRender);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 
@@ -1157,7 +1171,7 @@ HRESULT Renderer::LightFrustumRender()&
 		Fx->Begin(nullptr, NULL);
 		Fx->BeginPass(0);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
-		static const Vector4 DebugColor{ 1.f,1.f,1.f,0.05f };
+		static const Vector4 DebugColor{ 1.f,1.f,1.f,0.025f };
 		Fx->SetVector("DebugColor", &DebugColor);
 		for (auto& _Light : DirLights)
 		{
@@ -1173,7 +1187,7 @@ HRESULT Renderer::LightFrustumRender()&
 		Fx->Begin(nullptr, NULL);
 		Fx->BeginPass(0);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
-		static const Vector4 DebugColor{ 1.f,1.f,1.f,0.05f };
+		static const Vector4 DebugColor{ 1.f,1.f,1.f,0.025f };
 		Fx->SetVector("DebugColor", &DebugColor);
 		for (auto& _Light : PointLights)
 		{
@@ -1202,18 +1216,21 @@ void Renderer::LightSave(std::filesystem::path path)
 	{
 		_Lights.push_back(_Light.get());
 	}
+	using namespace rapidjson;
+
+	StringBuffer StrBuf{};
+	PrettyWriter<StringBuffer> Writer(StrBuf);
+	Writer.StartObject();
+	Writer.Key("LightDataArray");
+	Writer.StartArray();
 
 	for (auto& _Light : _Lights)
 	{
-		using namespace rapidjson;
-
-		StringBuffer StrBuf{};
-		PrettyWriter<StringBuffer> Writer(StrBuf);
-		Writer.StartObject();
-
-		Writer.Key("LightData");
+		// Writer.Key("LightData");
 		Writer.StartObject();
 		{
+			
+
 			Writer.Key("sinAngularRadius");
 			Writer.Double(_Light->sinAngularRadius);
 			
@@ -1241,43 +1258,59 @@ void Renderer::LightSave(std::filesystem::path path)
 			Writer.Key("Near");
 			Writer.Double(_Light->GetNearPlane());
 
-			Writer.Key("GetFarPlane");
-			_Light->GetFarPlane();
+			Writer.Key("Far");
+			Writer.Double(_Light->GetFarPlane());
 
-			Writer.Key("sinAngularRadius");
-			_Light->Projparams;
+			Writer.Key("Projparams");
+			Writer.StartArray();
+			Writer.Double(_Light->Projparams.x);
+			Writer.Double(_Light->Projparams.y);
+			Writer.Double(_Light->Projparams.z);
+			Writer.Double(_Light->Projparams.w);
+			Writer.EndArray();
 
-			Writer.Key("sinAngularRadius");
-			_Light->GetPointRadius();
+			Writer.Key("PointRadius");
+			Writer.Double(_Light->GetPointRadius());
 
-			Writer.Key("sinAngularRadius");
-			_Light->Direction;
+			Writer.Key("Direction");
+			Writer.StartArray();
+			Writer.Double(_Light->Direction.x);
+			Writer.Double(_Light->Direction.y);
+			Writer.Double(_Light->Direction.z);
+			Writer.EndArray();
 
-			Writer.Key("sinAngularRadius");
-			_Light->GetPosition();
+			Writer.Key("Position");
+			Writer.StartArray();
+			Writer.Double(_Light->GetPosition().x);
+			Writer.Double(_Light->GetPosition().y);
+			Writer.Double(_Light->GetPosition().z);
+			Writer.Double(_Light->GetPosition().w);
+			Writer.EndArray();
 
-			Writer.Key("sinAngularRadius");
-			_Light->shadowmin;
+			Writer.Key("shadowmin");
+			Writer.Double(_Light->shadowmin);
 
-			Writer.Key("sinAngularRadius");
-			_Light->shadowdepthbias;
+			Writer.Key("shadowdepthbias");
+			Writer.Double(_Light->shadowdepthbias);
 
-			Writer.Key("sinAngularRadius");
-			_Light->GetShadowMapSize();
+			Writer.Key("ShadowMapSize");
+			Writer.Double(_Light->GetShadowMapSize());
 
-			Writer.Key("sinAngularRadius");
-			_Light->_Type;
+			Writer.Key("Type");
+			std::string TypeStr = _Light->_Type == FLight::Type::Directional ? "Directional" : "Point";
+			Writer.String(TypeStr.c_str());
 		}
 		Writer.EndObject();
-
-		Writer.EndObject();
-
-		path.replace_extension("Light");
-		std::ofstream Of{ path };
-		Of << StrBuf.GetString();
-
 	}
+
+	Writer.EndArray();
+	Writer.EndObject();
+
+	// path.replace_extension("Light");
+	std::ofstream Of{ path };
+	Of << StrBuf.GetString();
 };
+
 
 void Renderer::LightLoad(const std::filesystem::path& path)
 {
@@ -1297,13 +1330,73 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 		PRINT_LOG(L"Warning!", L"Animation Parse Error!");
 		return;
 	}
-
-	const Value& AnimJsonTable = _Document["LightData"];
-	if (AnimJsonTable.IsObject())
+	
+	const Value& LightData = _Document["LightDataArray"];
+	// if (LightData.IsArray())
 	{
-		if (AnimJsonTable.HasMember("AnimInfoTable"))
+		// auto LightArray=LightData.GetArray();
+		for (auto iter = LightData.Begin();
+			iter != LightData.End(); ++iter)
 		{
-		};
+			auto _Light = std::make_shared<FLight>();
+
+			/*auto LightObject = iter->FindMember("LightData")->value.Get<Value::Object>();*/
+
+			_Light->sinAngularRadius = iter->FindMember("sinAngularRadius")->value.GetDouble();
+			_Light->cosAngularRadius = iter->FindMember("cosAngularRadius")->value.GetDouble();
+			_Light->specularPower = iter->FindMember("specularPower")->value.GetDouble();
+			_Light->lightIlluminance = iter->FindMember("lightIlluminance")->value.GetDouble();
+			_Light->lightFlux = iter->FindMember("lightFlux")->value.GetDouble();
+
+			auto ColorArr = iter->FindMember("Color")->value.GetArray();
+			_Light->GetColor().r = ColorArr[0].GetDouble();
+			_Light->GetColor().g = ColorArr[1].GetDouble();
+			_Light->GetColor().b = ColorArr[2].GetDouble();
+			_Light->GetColor().a = ColorArr[3].GetDouble();
+
+			_Light->Projparams.z = iter->FindMember("Near")->value.GetDouble();
+			_Light->Projparams.w = iter->FindMember("Far")->value.GetDouble();
+
+			auto Projparams = iter->FindMember("Projparams")->value.GetArray();
+			_Light->Projparams.x = Projparams[0].GetDouble();
+			_Light->Projparams.y = Projparams[1].GetDouble();
+			_Light->Projparams.z = Projparams[2].GetDouble();
+			_Light->Projparams.w = Projparams[3].GetDouble();
+
+			_Light->PointRadius = iter->FindMember("PointRadius")->value.GetDouble();
+
+			auto Direction = iter->FindMember("Direction")->value.GetArray();
+			_Light->Direction.x = Direction[0].GetDouble();
+			_Light->Direction.y = Direction[1].GetDouble();
+			_Light->Direction.z = Direction[2].GetDouble();
+
+			auto Position = iter->FindMember("Position")->value.GetArray();
+			_Light->Position.x = Position[0].GetDouble();
+			_Light->Position.y = Position[1].GetDouble();
+			_Light->Position.z = Position[2].GetDouble();
+			_Light->Position.w = Position[3].GetDouble();
+
+			_Light->shadowmin = iter->FindMember("shadowmin")->value.GetDouble();
+			_Light->shadowdepthbias = iter->FindMember("shadowdepthbias")->value.GetDouble();
+
+			_Light->ShadowMapSize = iter->FindMember("ShadowMapSize")->value.GetDouble();
+
+			auto TypeStr = iter->FindMember("Type")->value.GetString();
+			if (std::string(TypeStr) == "Directional")
+			{
+				_Light->_Type = FLight::Type::Directional;
+				DirLights.push_back(_Light);
+			}
+			else
+			{
+				_Light->_Type = FLight::Type::Point;
+				PointLights.push_back(_Light);
+			}
+
+			_Light->CreateShadowMap(Device, _Light->ShadowMapSize);
+			_Light->InitRender();
+
+		}
 	};
 
 };

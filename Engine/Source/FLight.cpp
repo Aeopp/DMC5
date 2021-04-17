@@ -29,6 +29,23 @@ D3DXVECTOR3 DXCubeUp[6] = {
 
 
 
+FLight::FLight()
+{
+	Projparams = D3DXVECTOR4(0, 0, 0, 0);
+	Spotdirection = D3DXVECTOR3(0, 0, 0);
+	Spotparams = D3DXVECTOR2(0, 0);
+
+	BlurIntencity = 4.f;
+	Cubeshadowmap = nullptr;
+	Blurredcubeshadowmap = nullptr;
+	Shadowmap = nullptr;
+	Blurredshadowmap = nullptr;
+	Currentface = 0;
+	ShadowMapSize = 0;
+	Blurred = false;
+	PointRadius = 7.1f;
+}
+
 FLight::FLight(
 	const FLight::Type type, 
 	const D3DXVECTOR4& position, 
