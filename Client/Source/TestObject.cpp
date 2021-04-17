@@ -159,6 +159,7 @@ void TestObject::RenderDebug(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
+
 };
 
 

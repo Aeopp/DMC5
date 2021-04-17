@@ -159,6 +159,8 @@ void TempMap::RenderDebug(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
+	
+	m_pCollider.lock()->DrawCollider(_Info.Fx);
 };
 
 
@@ -166,8 +168,8 @@ HRESULT TempMap::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
+	//InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
+	//InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
 
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
@@ -177,7 +179,8 @@ HRESULT TempMap::Ready()
 
 HRESULT TempMap::Awake()
 {
-	
+	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider.lock()->ReadyCollider();
 	return S_OK;
 }
 

@@ -42,11 +42,11 @@ HRESULT TestScene::LoadScene()
 	Scene::LoadScene();
 	
 	AddGameObject<Camera>();
-	AddGameObject<Nero>();
+	//AddGameObject<Nero>();
 	AddGameObject<TempMap>();
 	
-	AddGameObject<Em5000>();
-	AddGameObject<Car>();
+	//AddGameObject<Em5000>();
+	//AddGameObject<Car>();
 
 
 	//AddGameObject<ShaderTester>();
@@ -72,7 +72,7 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Em5000>();
 
-	AddGameObject<BtlPanel>();
+	//AddGameObject<BtlPanel>();
 	
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
