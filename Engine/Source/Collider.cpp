@@ -38,14 +38,14 @@ HRESULT Collider::ReadyCollider()
 	return S_OK;
 }
 
-HRESULT Collider::DrawCollider(LPD3DXEFFECT _pEffect)
+HRESULT Collider::DrawCollider(const DrawInfo& _Info)
 {
 	return S_OK;
 }
 
 void Collider::Editor()
 {
-	Component::Editor();
+
 }
 
 void Collider::ReadySimulate()

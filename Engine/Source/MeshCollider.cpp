@@ -26,7 +26,7 @@ HRESULT MeshCollider::ReadyCollider()
 	return S_OK;
 }
 
-HRESULT MeshCollider::DrawCollider(LPD3DXEFFECT _pEffect)
+HRESULT MeshCollider::DrawCollider(const DrawInfo& _Info)
 {
 	return S_OK;
 }

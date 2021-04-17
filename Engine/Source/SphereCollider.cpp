@@ -49,7 +49,7 @@ HRESULT SphereCollider::ReadyCollider()
 	return S_OK;
 }
 
-HRESULT SphereCollider::DrawCollider(LPD3DXEFFECT _pEffect)
+HRESULT SphereCollider::DrawCollider(const DrawInfo& _Info)
 {
 	if (nullptr == m_pMesh)
 		return S_OK;
@@ -81,10 +81,7 @@ HRESULT SphereCollider::DrawCollider(LPD3DXEFFECT _pEffect)
 
 	matWorld = matScale * matRot * matTrans * matInvScale * m_pGameObject.lock()->GetComponent<Transform>().lock()->GetRenderMatrix();
 
-	if (nullptr == _pEffect)
-		Graphic::GetDevice()->SetTransform(D3DTS_WORLD, &matWorld);
-	else
-		_pEffect->SetMatrix("World", &matWorld);
+	_Info.Fx->SetMatrix("World", &matWorld);
 
 	m_pMesh->DrawSubset(0);
 

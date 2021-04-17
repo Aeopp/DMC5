@@ -5,8 +5,11 @@ BEGIN(ENGINE)
 class ENGINE_DLL CapsuleCollider final: public Collider
 {
 private:
-	static	LPD3DXMESH m_pCylinder;
-	static	LPD3DXMESH m_pSphere;
+	static	LPD3DXMESH		m_pMesh;
+	static	LPD3DXBUFFER	m_pAdjacency;
+	static	LPD3DXBUFFER	m_pSubset;
+	static	DWORD			m_nNumSubset;
+
 	float		m_fRadius;
 	float		m_fHeight;
 private:
@@ -18,7 +21,7 @@ public:
 	static CapsuleCollider* Create(std::weak_ptr<GameObject> const _pGameObject);
 public:
 	virtual HRESULT ReadyCollider()						override;
-	virtual	HRESULT DrawCollider(LPD3DXEFFECT _pEffect)	override;
+	virtual	HRESULT DrawCollider(const DrawInfo & _Info)	override;
 	virtual void	Editor()							override;
 public:
 	float	GetRadius();
@@ -26,9 +29,6 @@ public:
 
 	float	GetHeight();
 	void	SetHeight(const float _fHeight);
-private:
-	HRESULT DrawSphere(LPD3DXEFFECT _pEffect, const bool _bUp = true);
-	HRESULT DrawCylinder(LPD3DXEFFECT _pEffect);
 };
 END
 #endif // !__CAPSULE_COLLIDER_H__

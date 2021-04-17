@@ -87,6 +87,16 @@ void TempMap::RenderInit()
 		}
 	} };
 
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Debug" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 
@@ -159,8 +169,6 @@ void TempMap::RenderDebug(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
-	
-	m_pCollider.lock()->DrawCollider(_Info.Fx);
 };
 
 
@@ -181,6 +189,8 @@ HRESULT TempMap::Awake()
 {
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
+	PushEditEntity(m_pCollider.lock().get());
+
 	return S_OK;
 }
 
@@ -191,6 +201,7 @@ HRESULT TempMap::Start()
 
 UINT TempMap::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	/*Vector3 vDir = m_pTransform.lock()->GetLook();
 
 	D3DXVec3Normalize(&vDir, &vDir);*/
@@ -216,12 +227,6 @@ UINT TempMap::LateUpdate(const float _fDeltaTime)
 void TempMap::Editor()
 {
 	GameObject::Editor();
-	
-	if (nullptr == m_pCollider.lock())
-		return;
-
-	m_pCollider.lock()->Editor();
-
 }
 
 

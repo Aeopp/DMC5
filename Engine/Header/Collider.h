@@ -2,6 +2,7 @@
 #define __COLLIDER_H__
 #include "Component.h"
 #include "PxPhysicsAPI.h"
+#include "RenderProperty.h"
 BEGIN(ENGINE)
 USING(physx)
 class ENGINE_DLL Collider abstract : public Component
@@ -27,9 +28,10 @@ protected:
 	// Component을(를) 통해 상속됨
 	virtual void Free() PURE;
 protected:
-	virtual HRESULT ReadyCollider()						PURE;
-	virtual	HRESULT DrawCollider(LPD3DXEFFECT _pEffect)	PURE;
-	virtual void	Editor()							override;
+	virtual HRESULT ReadyCollider()							PURE;
+public:
+	virtual	HRESULT DrawCollider(const DrawInfo & _Info)	PURE;
+	virtual void	Editor()								override;
 public:
 	void ReadySimulate();
 private:

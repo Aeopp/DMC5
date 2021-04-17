@@ -15,7 +15,7 @@ public:
 	static MeshCollider* Create(std::weak_ptr<GameObject> const _pGameObject);
 public:
 	virtual HRESULT ReadyCollider() override;
-	virtual	HRESULT DrawCollider(LPD3DXEFFECT _pEffect)	override;
+	virtual	HRESULT DrawCollider(const DrawInfo & _Info)	override;
 public:
 	void ReadyMeshCollider(D3DXVECTOR3 * _pPoints, UINT _nNumPoint, UINT * _pIndices, UINT _nNumFace);
 public:
