@@ -604,5 +604,8 @@
     <None Include="..\..\Resource\Shader\ToneMap.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\Collider.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
   </ItemGroup>
 </Project>
