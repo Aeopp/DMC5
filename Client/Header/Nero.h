@@ -11,6 +11,8 @@ class Nero_LWing;
 class Nero_RWing;
 class Buster_Arm;
 class Wire_Arm;
+class WIngArm_Left;
+class WingArm_Right;
 class Nero :   public GameObject ,
 	public ENGINE::RenderInterface
 
@@ -224,9 +226,6 @@ public:
 	static Nero* Create();
 public:
 	virtual void RenderReady() override;
-	/*virtual void RenderDebugImplementation(const ImplementationInfo& _ImplInfo)override;
-	virtual void RenderForwardAlphaBlendImplementation(const ImplementationInfo& _ImplInfo)override;
-	virtual void RenderDebugBoneImplementation(const ImplementationInfo& _ImplInfo)override;*/
 	virtual void Editor()override;
 public:
 /// <For RedQueen>
@@ -291,6 +290,9 @@ private:
 	std::weak_ptr<Nero_RWing>	m_pRWing;
 	std::weak_ptr<Buster_Arm>	m_pBusterArm;
 	std::weak_ptr<Wire_Arm>	m_pWireArm;
+	std::weak_ptr<WIngArm_Left> m_pWingArm_Left;
+	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
+
 
 
 	UINT	m_iCurAnimationIndex;

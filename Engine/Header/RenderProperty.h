@@ -33,7 +33,7 @@ public :
 		UI,
 
 		Debug,
-
+		Collider,
 		DebugBone,
 	};
 	bool bRender = true;

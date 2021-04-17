@@ -186,6 +186,8 @@
     <ClInclude Include="..\Header\OvertureHand.h" />
     <ClInclude Include="..\Header\TestObject.h" />
     <ClInclude Include="..\Header\TestScene.h" />
+    <ClInclude Include="..\Header\WIngArm_Left.h" />
+    <ClInclude Include="..\Header\WingArm_Right.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -222,6 +224,8 @@
     <ClCompile Include="..\Source\OvertureHand.cpp" />
     <ClCompile Include="..\Source\TestObject.cpp" />
     <ClCompile Include="..\Source\TestScene.cpp" />
+    <ClCompile Include="..\Source\WIngArm_Left.cpp" />
+    <ClCompile Include="..\Source\WingArm_Right.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
