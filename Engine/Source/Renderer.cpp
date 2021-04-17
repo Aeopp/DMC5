@@ -68,11 +68,12 @@ void Renderer::ReadyLights()
 	DirLights[0]->Direction.x = 71.f;
 	DirLights[0]->Direction.y = -2.f;
 	DirLights[0]->Direction.z = -83.f;
-	
-	DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
-	DirLights[0]->lightFlux = 25.f;
-	DirLights[0]->lightIlluminance = 6.f;
 
+	DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
+	DirLights[0]->lightFlux = 10.0f;
+	DirLights[0]->lightIlluminance = 1.5f;
+	DirLights[0]->specularPower = 80.0f;
+	DirLights[0]->SetPointRadius (5.0f); // meter
 
 	// PointLights.resize(1u);
 
@@ -280,6 +281,7 @@ HRESULT Renderer::Render()&
 	ResetState();
 	RenderTargetDebugRender();
 	RenderDebug();
+	RendererCollider();
 	RenderDebugBone();
 	ImguiRender();
 	GraphicSystem::GetInstance()->End();
@@ -294,6 +296,9 @@ void Renderer::Editor()&
 {
 	ImGui::Begin("Render Editor");
 	{
+
+		ImGui::SliderFloat("ShadowMin", &ShadowMin, 0.0f, 1.0f);
+
 		if (ImGui::CollapsingHeader("Add Light"))
 		{
 			static int32 ShadowMapSize = 0.0f;
@@ -557,15 +562,17 @@ void Renderer::RenderGBuffer()
 	device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 	device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
 
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 8);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, 8);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
@@ -629,12 +636,18 @@ void Renderer::DeferredShading()
 	device->SetRenderTarget(0, scenesurface);
 	device->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0f, 0);
 
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
 	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
+	for (int32 i = 0; i < 3; ++i)
+	{
+		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+		device->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, 8);
+		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	}
+
 
 	for (int i = 1; i < 5; ++i) {
 		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -682,6 +695,7 @@ void Renderer::DeferredShading()
 				deferred->SetFloat("lightIlluminance", DirLight->lightIlluminance);
 				deferred->SetFloat("lightRadius", DirLight->GetPointRadius());
 				deferred->SetFloat("specularPower", DirLight->specularPower);
+				deferred->SetFloat("shadowmin", ShadowMin);
 
 				deferred->SetFloat("sinAngularRadius", DirLight->sinAngularRadius);
 				deferred->SetFloat("cosAngularRadius", DirLight->cosAngularRadius);
@@ -721,6 +735,7 @@ void Renderer::DeferredShading()
 			deferred->SetFloat("specularPower", PointLight->specularPower);
 			deferred->SetFloat("sinAngularRadius", PointLight->sinAngularRadius);
 			deferred->SetFloat("cosAngularRadius", PointLight->cosAngularRadius);
+			deferred->SetFloat("shadowmin", ShadowMin);
 
 			deferred->SetVector("clipPlanes", &clipplanes);
 			deferred->SetVector("lightColor", (D3DXVECTOR4*)&PointLight->GetColor());
@@ -1225,7 +1240,40 @@ HRESULT Renderer::UIRender()&
 
 	return S_OK;
 }
-;
+HRESULT Renderer::RendererCollider()&
+{
+	if (g_bRenderCollider)return S_OK;
+
+	auto& _Order = RenderEntitys[RenderProperty::Order::Collider];
+	DrawInfo _DrawInfo{};
+	_DrawInfo._Device = Device;
+	_DrawInfo.BySituation.reset();
+	_DrawInfo._Frustum = CameraFrustum.get();
+	for (auto& [ShaderKey, _EntityArr] : _Order)
+	{
+		auto Fx = Shaders[ShaderKey]->GetEffect();
+		_DrawInfo.Fx = Fx;
+		Vector4 DebugColor{ 255.f/255.f,240.f /255.f,140.f/255.f,0.5f };
+		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
+		Fx->SetVector("DebugColor", &DebugColor);
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		UINT Passes = 0u;
+		Fx->Begin(&Passes, NULL);
+		for (int32 i = 0; i < Passes; ++i)
+		{
+			Fx->BeginPass(i);
+			_DrawInfo.PassIndex = i;
+			for (auto& [Entity, Call] : _EntityArr)
+			{
+				Call(_DrawInfo);
+			}
+			Fx->EndPass();
+		}
+		Fx->End();
+	}
+
+	return S_OK;
+};
 
 
 bool Renderer::TestShaderInit()

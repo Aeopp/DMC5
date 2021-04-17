@@ -58,7 +58,9 @@ private:
 	HRESULT Tonemapping()&;
 	HRESULT AlphaBlendEffectRender()&;
 	HRESULT UIRender()&;
+	HRESULT RendererCollider()&;
 public:
+	float ShadowMin = 0.0f;
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};

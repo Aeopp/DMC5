@@ -79,7 +79,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
-	// ¼öÁ¤ ÇÊ¿ä
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
 

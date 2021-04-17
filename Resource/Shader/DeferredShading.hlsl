@@ -24,6 +24,9 @@ uniform float2 clipPlanes;
 uniform float sinAngularRadius = 0.0046251;
 uniform float cosAngularRadius = 0.9999893;
 
+float shadowmin = 0.0f;
+
+
 void vs_main(
 	in out float4 pos : POSITION,
 	in out float2 tex : TEXCOORD0)
@@ -47,13 +50,10 @@ float ShadowVariance(float2 moments, float d)
 float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,float roughness)
 {
 	// the sun has an angular diameter between [0.526, 0.545] degrees
-    
-    //uniform float sinAngularRadius = 0.0046251;
-    //uniform float cosAngularRadius = 0.9999893;
-  
+
     float3 v = normalize(eyePos.xyz - wpos);
     float3 n = normalize(wnorm);
-    
+
 	// closest point to disk (approximation)
     float3 D = normalize(lightPos.xyz);
     float3 R = reflect(-v, n);
@@ -72,8 +72,8 @@ float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,flo
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float f_specular = pow(ndoth, specularPower);
-
+   float f_specular = pow(ndoth, specularPower) * (1.0f - roughness);
+    
     float costheta = saturate(dot(n, D));
     float illuminance = lightIlluminance * costheta;
 
@@ -84,11 +84,9 @@ float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,flo
 
     float2 ptex = (lspos.xy / lspos.w) * float2(0.5f, -0.5f) + 0.5f;
     float2 moments = tex2D(shadowMap, ptex).rg;
-    float shadow = ShadowVariance(moments, d);
-    // 러프니스 
-    f_specular *= (1.0f - roughness);
-    
-    return (f_diffuse + f_specular) * lightColor * illuminance * saturate(shadow + 0.25);
+    float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+
+    return (f_diffuse + f_specular) * lightColor * illuminance * shadow;
 }
 
 float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float roughness)
@@ -105,21 +103,22 @@ float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float rou
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float f_specular = pow(ndoth, specularPower);
+    float f_specular = pow(ndoth, specularPower)  * (1.0f - roughness);
+   
+    
 
 	// calculate shadow
     float2 moments = texCUBE(cubeShadowMap, -l).xy;
 
     float z = length(ldir);
     float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-    float shadow = ShadowVariance(moments, d);
+    float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+    
 
     float illuminance = (lightFlux / (QUAD_PI * dist2)) * ndotl;
     float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);
 
-    // 러프니스 
-    f_specular *= (1.0f - roughness);
-    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * saturate(shadow + 0.33);
+    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * shadow;
 }
 
 void ps_deferred(
@@ -127,7 +126,8 @@ void ps_deferred(
 	out float4 color : COLOR0)
 {
     float4 base = tex2D(albedo, tex);
-    float4 nrmr = tex2D(normals, tex) * 2.0f - 1.0f;
+    float4 nrmr = tex2D(normals, tex).rgba; 
+    float3 wnorm = nrmr.xyz * 2.0f - 1.0f;
     float d = tex2D(depth, tex).r;
     float4 wpos = float4(tex.x * 2 - 1, 1 - 2 * tex.y, d, 1);
 
@@ -139,12 +139,12 @@ void ps_deferred(
         if (lightPos.w < 0.5f)
         {
 			// directional light
-            color.rgb = Luminance_Blinn_Directional(base.rgb, wpos.xyz, nrmr.xyz, nrmr.w);
+            color.rgb = Luminance_Blinn_Directional(base.rgb, wpos.xyz, wnorm,nrmr.a);
         }
         else
         {
 			// point light
-            color.rgb = Luminance_Blinn_Point(base.rgb, wpos.xyz, nrmr.xyz, nrmr.w);
+            color.rgb = Luminance_Blinn_Point(base.rgb, wpos.xyz, wnorm ,nrmr.a);
         }
 
         color.a = 1;
