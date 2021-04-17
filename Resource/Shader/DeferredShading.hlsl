@@ -24,6 +24,12 @@ uniform float2 clipPlanes;
 uniform float sinAngularRadius = 0.0046251;
 uniform float cosAngularRadius = 0.9999893;
 
+#define PCFCount 3
+
+float ShadowDepthMapHeight;
+float ShadowDepthMapWidth;
+float ShadowDepthBias;
+
 float shadowmin = 0.0f;
 
 
@@ -84,9 +90,47 @@ float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,flo
 
     float2 ptex = (lspos.xy / lspos.w) * float2(0.5f, -0.5f) + 0.5f;
     float2 moments = tex2D(shadowMap, ptex).rg;
-    float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+    
+    
+    // ½¦µµ¿ì ½ÃÀÛ
+    float4 LightClipPosition = mul(float4(wpos.xyz, 1.f), lightViewProj);
+    LightClipPosition.xyz = LightClipPosition.xyz / LightClipPosition.w;
+    LightClipPosition.y *= -1.f;
+    LightClipPosition.xy *= 0.5f;
+    LightClipPosition.xy += 0.5f;
+    
+    float ShadowFactor = 1.0f + shadowmin;
+    
+    if (saturate(LightClipPosition.z) == LightClipPosition.z)
+    {
+        float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
+        
+        float Shadow = 0.0;
+        float TexelSizeU = 1.0 / ShadowDepthMapWidth;
+        float TexelSizeV = 1.0 / ShadowDepthMapHeight;
+        for (int x = -PCFCount; x <= PCFCount; ++x)
+        {
+            for (int y = -PCFCount; y <= PCFCount; ++y)
+            {
+                float2 UVOffset = float2(x * TexelSizeU, y * TexelSizeV);
+                
+                float pcfDepth = tex2D(shadowMap, LightClipPosition.xy + UVOffset).x;
+                if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
+                {
+                    Shadow += 1.0f;
+                }
+            }
+        }
+        Shadow /= LookUpCount;
+        ShadowFactor -= Shadow;
+    }
+    ShadowFactor = saturate(ShadowFactor);
+    // ½¦µµ¿ì ³¡ 
+    
+    
+  //   float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
 
-    return (f_diffuse + f_specular) * lightColor * illuminance * shadow;
+    return (f_diffuse + f_specular) * lightColor * illuminance * ShadowFactor;
 }
 
 float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float roughness)
@@ -106,19 +150,52 @@ float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float rou
     float f_specular = pow(ndoth, specularPower)  * (1.0f - roughness);
    
     
-
-	// calculate shadow
-    float2 moments = texCUBE(cubeShadowMap, -l).xy;
-
-    float z = length(ldir);
-    float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-    float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
     
+    // ½¦µµ¿ì ½ÃÀÛ
+    float4 LightClipPosition = mul(float4(wpos.xyz, 1.f), lightViewProj);
+    LightClipPosition.xyz = LightClipPosition.xyz / LightClipPosition.w;
+    LightClipPosition.y *= -1.f;
+    LightClipPosition.xy *= 0.5f;
+    LightClipPosition.xy += 0.5f;
+    
+    float ShadowFactor = 1.0f + shadowmin;
+    
+    if (saturate(LightClipPosition.z) == LightClipPosition.z)
+    {
+        float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
+        
+        float Shadow = 0.0;
+        float TexelSizeU = 1.0 / ShadowDepthMapWidth;
+        float TexelSizeV = 1.0 / ShadowDepthMapHeight;
+        for (int x = -PCFCount; x <= PCFCount; ++x)
+        {
+            for (int y = -PCFCount; y <= PCFCount; ++y)
+            {
+                float3 UVOffset = float3(x * TexelSizeU, y * TexelSizeV, x * TexelSizeU);
+                float pcfDepth = texCUBE(cubeShadowMap, float3(-l.x + UVOffset)).x;
+                if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
+                {
+                    Shadow += 1.0f;
+                }
+            }
+        }
+        Shadow /= LookUpCount;
+        ShadowFactor -= Shadow;
+    }
+    ShadowFactor = saturate(ShadowFactor);
+    // ½¦µµ¿ì ³¡ 
+    
+	// calculate shadow
+   // float2 moments = texCUBE(cubeShadowMap, -l).xy;
+
+    //float z = length(ldir);
+    //float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
+    // float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
 
     float illuminance = (lightFlux / (QUAD_PI * dist2)) * ndotl;
     float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);
 
-    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * shadow;
+    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * ShadowFactor;
 }
 
 void ps_deferred(

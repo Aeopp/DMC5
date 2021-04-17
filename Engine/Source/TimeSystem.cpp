@@ -49,19 +49,24 @@ void TimeSystem::UpdateDeltaTime()
 	/*QueryPerformanceFrequency(&m_tCPUTick);
 	QueryPerformanceCounter(&m_tEndFrame);*/
 
+	static constexpr float TargetFrame = 1.0f / 60.f;
+
 	auto CurTime = std::chrono::high_resolution_clock::now();
 
 	std::chrono::duration<float,std::ratio<1,1000>> Delta = CurTime - m_PrevTime;
 
-	m_PrevTime = CurTime;
+	
 	m_fDeltaTime = (Delta.count() * 0.001f);
 
 	//m_fDeltaTime = (m_tEndFrame.QuadPart - m_tStartFrame.QuadPart)
 	//	/			m_tCPUTick.QuadPart;
 
-
+	m_PrevTime = CurTime;
 	m_fAccDeltaTime += m_fDeltaTime;
 	m_fAccTime += m_fDeltaTime;
+
+
+
 	++m_uiUpdateCount;
 	if (m_fAccDeltaTime > 1.0)
 	{

@@ -87,6 +87,8 @@ void TempMap::RenderInit()
 		}
 	} };
 
+	
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 
@@ -142,7 +144,7 @@ void TempMap::RenderShadow(const DrawInfo& _Info)
 
 void TempMap::RenderDebug(const DrawInfo& _Info)
 {
-	const Matrix World = _RenderUpdateInfo.World;
+	 const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)

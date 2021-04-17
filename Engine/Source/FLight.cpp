@@ -1,6 +1,9 @@
 #include "FLight.h"
 #include "imgui.h"
 #include "FMath.hpp"
+#include "Resources.h"
+#include "Subset.h"
+
 
 
 USING(ENGINE)
@@ -120,6 +123,11 @@ void FLight::EditImplementation(const uint32 Idx)
 	default:
 		break;
 	}
+
+	if (ImGui::SmallButton("Remove"))
+	{
+		bRemove = true;
+	}
 	ImGui::BulletText(TypeString.c_str());
 	ImGui::Text("ShadowMapSize %d", ShadowMapSize);
 
@@ -135,8 +143,19 @@ void FLight::EditImplementation(const uint32 Idx)
 		}
 		BlurIntencity += AddBlurIntencity;
 		ImGui::Separator();
+	}
 
+	{
+		ImGui::Text("shadowdepthbias : %4.8f", shadowdepthbias);
+		ImGui::InputFloat("In shadowdepthbias", &shadowdepthbias);
+		ImGui::SliderFloat("slider shadowdepthbias", &shadowdepthbias, 0.0f, 1.f);
+		ImGui::Separator();
+	}
 
+	{
+		ImGui::InputFloat("shadowmin", &shadowmin);
+		ImGui::Text("shadowmin %1.6f", shadowmin);
+		ImGui::Separator();
 	}
 
 	{
@@ -149,6 +168,7 @@ void FLight::EditImplementation(const uint32 Idx)
 		{
 			AddPosition *= PositionSliderPower;
 		}
+
 		Position.x += AddPosition.x;
 		Position.y += AddPosition.y;
 		Position.z += AddPosition.z;
@@ -255,6 +275,10 @@ void FLight::EditImplementation(const uint32 Idx)
 	{
 		ImGui::ColorEdit4("Light Color", Color);
 		ImGui::Separator();
+	}
+
+	{
+		
 	}
 
 	{
@@ -493,6 +517,41 @@ void FLight::CalculateScissorRect(RECT& out, const D3DXMATRIX& view, const D3DXM
 	//		}
 	//	}
 	//}
+};
+
+void FLight::InitRender()
+{
+	Mesh::InitializeInfo _InitInfo{};
+	_InitInfo.bLocalVertexLocationsStorage = false;
+
+	if (_Type ==Type::Directional)
+	{
+		_Texture = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sun\\Sun.jpg");
+	}
+	else if ( _Type==Type::Point)
+	{
+		_Texture = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Moon\\Moon.jpg");
+	}
+
+	_Mesh = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Sphere.fbx" , _InitInfo);
+}
+
+void FLight::Render(const DrawInfo& _Info)
+{
+	static const Vector3 AllScale = { 0.01f,0.01f,0.01f };
+	const Matrix World = FMath::Scale(AllScale) * FMath::Translation((Vector3&)GetPosition());
+	_Info.Fx->SetMatrix("matWorld", &World);
+	const uint32 Numsubset = _Mesh->GetNumSubset();
+	for (uint32 i = 0; i < Numsubset; ++i)
+	{
+		if (auto SpSubset = _Mesh->GetSubset(i).lock();
+			SpSubset)
+		{
+			_Info._Device->SetTexture(0, _Texture->GetTexture());
+// 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
+			SpSubset->Render(_Info.Fx);
+		};
+	};
 }
 
 void FLight::CreateShadowMap(LPDIRECT3DDEVICE9 device, uint16_t size)
@@ -508,6 +567,8 @@ void FLight::CreateShadowMap(LPDIRECT3DDEVICE9 device, uint16_t size)
 		device->CreateCubeTexture(size, 1, D3DUSAGE_RENDERTARGET, D3DFMT_G32R32F, D3DPOOL_DEFAULT, &Blurredcubeshadowmap, NULL);
 	}
 
+	
+
 	D3DVIEWPORT9 viewport; 
 	device->GetViewport(&viewport);
 	if (size > viewport.Y)
@@ -519,7 +580,7 @@ void FLight::CreateShadowMap(LPDIRECT3DDEVICE9 device, uint16_t size)
 }
 
 void FLight::RenderShadowMap(
-	LPDIRECT3DDEVICE9 _Device, 
+	LPDIRECT3DDEVICE9 _Device,
 	std::function<void(FLight*)> CallBack)
 {
 	D3DVIEWPORT9 OldViewPort;
@@ -560,7 +621,7 @@ void FLight::RenderShadowMap(
 		}
 	}
 	else if (_Type == Point) {
-		for (Currentface= 0; Currentface < 6; ++Currentface) {
+		for (Currentface = 0; Currentface < 6; ++Currentface) {
 
 			Cubeshadowmap->GetCubeMapSurface(
 				(D3DCUBEMAP_FACES)Currentface, 0, &Surface);
@@ -595,9 +656,15 @@ void FLight::RenderShadowMap(
 	_Device->SetRenderTarget(0, OldSurface);
 	_Device->SetViewport(&OldViewPort);
 	OldSurface->Release();
-}
+};
 
-void FLight::BlurShadowMap(LPDIRECT3DDEVICE9 device, std::function<void(FLight*)> callback)
+Matrix FLight::GetWorld()
+{
+	return FMath::Inverse(proj) * viewinv;
+};
+
+void FLight::BlurShadowMap(LPDIRECT3DDEVICE9 device, 
+							std::function<void(FLight*)> callback)
 {
 	D3DVIEWPORT9 oldviewport;
 	D3DVIEWPORT9 viewport;
@@ -680,6 +747,40 @@ void FLight::SetSpotParameters(const D3DXVECTOR3& dir, float inner, float outer)
 	Spotdirection = dir;
 	Spotparams.x = cosf(inner);
 	Spotparams.y = cosf(outer);
+}
+
+void FLight::Save()
+{
+	D3DXVECTOR4				Position;	// or direction
+	D3DXVECTOR4				Projparams;
+	D3DXVECTOR3				Spotdirection;
+	D3DXVECTOR2				Spotparams;	// cos(inner), cos(outer)
+	float				    PointRadius;
+	D3DXCOLOR				Color;
+	LPDIRECT3DCUBETEXTURE9	Cubeshadowmap;
+	LPDIRECT3DCUBETEXTURE9	Blurredcubeshadowmap;
+	LPDIRECT3DTEXTURE9		Shadowmap;
+	LPDIRECT3DTEXTURE9		Blurredshadowmap;
+	LPDIRECT3DSURFACE9      DepthStencil{};
+
+	Type				    _Type;
+	uint16_t				ShadowMapSize;
+
+	D3DXVECTOR3             Direction{ 0,0,0 };
+	float                   BlurIntencity;
+	float   lightFlux = 10.f;
+	float  lightIlluminance = 1.5f;
+	float  specularPower = 80.f;
+	float  cosAngularRadius = 0.9999893;
+	float  sinAngularRadius = 0.0046251;
+	float  shadowdepthbias = 0.0f;
+
+	Matrix viewinv;
+	Matrix proj;
+}
+
+void FLight::Load()
+{
 }
 
 

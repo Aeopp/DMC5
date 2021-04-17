@@ -41,6 +41,7 @@ public :
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;
 	const Frustum * GetCameraFrustum()const& { return CameraFrustum.get();  };
+	bool bLightRender = false;
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -59,8 +60,8 @@ private:
 	HRESULT AlphaBlendEffectRender()&;
 	HRESULT UIRender()&;
 	HRESULT RendererCollider()&;
+	HRESULT LightFrustumRender()&;
 public:
-	float ShadowMin = 0.0f;
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
