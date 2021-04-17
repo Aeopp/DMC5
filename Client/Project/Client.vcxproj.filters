@@ -79,6 +79,45 @@
     <Filter Include="02.GameObject\02. Monster\03.Em5000\Car">
       <UniqueIdentifier>{f7e815fa-94c1-43a1-8a89-e80638e252dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Player\99.FSM">
+      <UniqueIdentifier>{852ebfda-e0e0-4346-9151-dd211ef8a27d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\00.Nero">
+      <UniqueIdentifier>{c9f06450-8f17-4944-8440-e6af2781e577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\01.Wings">
+      <UniqueIdentifier>{e0ef4e9f-5990-48ae-92cc-5e0953b76892}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\02.WingArms">
+      <UniqueIdentifier>{ee8617a9-b168-4263-9481-aa9849176e05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\03.WireArm">
+      <UniqueIdentifier>{4336ce13-5bfc-4fd1-9380-472fb3dc6101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\04.BusterArm">
+      <UniqueIdentifier>{f6655978-2cba-41eb-9056-4c6723a822f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\05.RedQueen">
+      <UniqueIdentifier>{5767b3ff-9fa6-489b-8220-382182d063be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\06.Cerberos">
+      <UniqueIdentifier>{70a95da0-60ff-4e24-9225-dea25a40b51e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\99.FSM\Base">
+      <UniqueIdentifier>{15f8b3f9-2765-4b63-b72a-869738b4b02a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\01.Wings\Left">
+      <UniqueIdentifier>{59681111-42d2-474e-8887-3c67eb6f729f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\01.Wings\Right">
+      <UniqueIdentifier>{a33dc892-996d-4c2a-b6f6-c09f788f47d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\02.WingArms\Left">
+      <UniqueIdentifier>{988bd98c-488a-4bd6-a532-180cd4f1a240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Player\02.WingArms\Right">
+      <UniqueIdentifier>{5ec004df-6b43-41d1-bdb4-19e78e140b4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -120,9 +159,6 @@
     <ClInclude Include="..\Header\Effect.h">
       <Filter>02.GameObject\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\DashImpact.h">
-      <Filter>02.GameObject\Effect\DashImpact</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Monster.h">
       <Filter>02.GameObject\02. Monster</Filter>
     </ClInclude>
@@ -144,23 +180,50 @@
     <ClInclude Include="..\Header\Car.h">
       <Filter>02.GameObject\02. Monster\03.Em5000\Car</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\RedQueen.h" />
     <ClInclude Include="..\Header\Blood.h" />
     <ClInclude Include="..\Header\DashImpact.h" />
-    <ClInclude Include="..\Header\Nero_LWing.h" />
-    <ClInclude Include="..\Header\Nero_RWing.h" />
-    <ClInclude Include="..\Header\Wire_Arm.h" />
-    <ClInclude Include="..\Header\Buster_Arm.h" />
     <ClInclude Include="..\Header\Blood.h" />
-    <ClInclude Include="..\Header\FSMBase.h" />
-    <ClInclude Include="..\Header\FSMState.h" />
-    <ClInclude Include="..\Header\NeroFSM.h" />
-    <ClInclude Include="..\Header\Nero.h" />
-    <ClInclude Include="..\Header\NeroState.h" />
     <ClInclude Include="..\Header\TestObject.h">
       <Filter>02.GameObject\Test</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\TempMap.h" />
+    <ClInclude Include="..\Header\DashImpact.h" />
+    <ClInclude Include="..\Header\Buster_Arm.h">
+      <Filter>02.GameObject\01.Player\04.BusterArm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\FSMBase.h">
+      <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\FSMState.h">
+      <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Nero.h">
+      <Filter>02.GameObject\01.Player\00.Nero</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\NeroFSM.h">
+      <Filter>02.GameObject\01.Player\99.FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\NeroState.h">
+      <Filter>02.GameObject\01.Player\99.FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\RedQueen.h">
+      <Filter>02.GameObject\01.Player\05.RedQueen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Wire_Arm.h">
+      <Filter>02.GameObject\01.Player\03.WireArm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Nero_LWing.h">
+      <Filter>02.GameObject\01.Player\01.Wings\Left</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Nero_RWing.h">
+      <Filter>02.GameObject\01.Player\01.Wings\Right</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\WIngArm_Left.h">
+      <Filter>02.GameObject\01.Player\02.WingArms\Left</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\WingArm_Right.h">
+      <Filter>02.GameObject\01.Player\02.WingArms\Right</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -233,17 +296,43 @@
     <ClCompile Include="..\Source\Car.cpp">
       <Filter>02.GameObject\02. Monster\03.Em5000\Car</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\RedQueen.cpp" />
-    <ClCompile Include="..\Source\Nero_LWing.cpp" />
-    <ClCompile Include="..\Source\Nero_RWing.cpp" />
-    <ClCompile Include="..\Source\Wire_Arm.cpp" />
-    <ClCompile Include="..\Source\Buster_Arm.cpp" />
     <ClCompile Include="..\Source\Blood.cpp" />
-    <ClCompile Include="..\Source\FSMBase.cpp" />
-    <ClCompile Include="..\Source\FSMState.cpp" />
-    <ClCompile Include="..\Source\NeroFSM.cpp" />
-    <ClCompile Include="..\Source\Nero.cpp" />
-    <ClCompile Include="..\Source\NeroState.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
+    <ClCompile Include="..\Source\Buster_Arm.cpp">
+      <Filter>02.GameObject\01.Player\04.BusterArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FSMBase.cpp">
+      <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FSMState.cpp">
+      <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Nero.cpp">
+      <Filter>02.GameObject\01.Player\00.Nero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroFSM.cpp">
+      <Filter>02.GameObject\01.Player\99.FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroState.cpp">
+      <Filter>02.GameObject\01.Player\99.FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RedQueen.cpp">
+      <Filter>02.GameObject\01.Player\05.RedQueen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Wire_Arm.cpp">
+      <Filter>02.GameObject\01.Player\03.WireArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Nero_LWing.cpp">
+      <Filter>02.GameObject\01.Player\01.Wings\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Nero_RWing.cpp">
+      <Filter>02.GameObject\01.Player\01.Wings\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\WIngArm_Left.cpp">
+      <Filter>02.GameObject\01.Player\02.WingArms\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\WingArm_Right.cpp">
+      <Filter>02.GameObject\01.Player\02.WingArms\Right</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

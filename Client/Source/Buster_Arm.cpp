@@ -78,7 +78,7 @@ void Buster_Arm::OnEnable()
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
-
+	_RenderProperty.bRender = m_bIsRender;
 
 }
 
@@ -86,6 +86,8 @@ void Buster_Arm::OnDisable()
 {
 	m_bIsRender = false;
 	m_pMesh->SetPlayingTime(0);
+
+	_RenderProperty.bRender = m_bIsRender;
 }
 
 void Buster_Arm::RenderInit()
@@ -94,7 +96,7 @@ void Buster_Arm::RenderInit()
 
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = m_bIsRender;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
 		{"gbuffer_dsSK",
@@ -248,7 +250,6 @@ void Buster_Arm::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
 		if (m_pMesh)
 		{

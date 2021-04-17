@@ -72,11 +72,13 @@ UINT Nero_LWing::LateUpdate(const float _fDeltaTime)
 void Nero_LWing::OnEnable()
 {
 	m_bIsRender = true;
+	_RenderProperty.bRender = m_bIsRender;
 }
 
 void Nero_LWing::OnDisable()
 {
 	m_bIsRender = false;
+	_RenderProperty.bRender = m_bIsRender;
 }
 
 void Nero_LWing::RenderInit()
@@ -86,7 +88,7 @@ void Nero_LWing::RenderInit()
 	// 렌더 속성 전체 초기화 
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = m_bIsRender;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
 		{"gbuffer_dsSK",
@@ -220,7 +222,6 @@ void Nero_LWing::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
 		if (m_pMesh)
 		{

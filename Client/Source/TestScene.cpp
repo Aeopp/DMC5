@@ -43,10 +43,10 @@ HRESULT TestScene::LoadScene()
 	
 	AddGameObject<Camera>();
 	AddGameObject<Nero>();
-	AddGameObject<TempMap>();
-	
-	AddGameObject<Em5000>();
-	AddGameObject<Car>();
+	//AddGameObject<TempMap>();
+	//
+	//AddGameObject<Em5000>();
+	//AddGameObject<Car>();
 
 
 	//AddGameObject<ShaderTester>();
