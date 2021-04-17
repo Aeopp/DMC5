@@ -14,11 +14,11 @@
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
 #include "Car.h"
-#include <iostream>
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "BtlPanel.h"
 
+#include <iostream>
 using namespace std;
 
 TestScene::TestScene()
@@ -42,11 +42,11 @@ HRESULT TestScene::LoadScene()
 	Scene::LoadScene();
 	
 	AddGameObject<Camera>();
-	AddGameObject<Nero>();
+	//AddGameObject<Nero>();
 	AddGameObject<TempMap>();
 	
-	AddGameObject<Em5000>();
-	AddGameObject<Car>();
+	//AddGameObject<Em5000>();
+	//AddGameObject<Car>();
 
 
 	//AddGameObject<ShaderTester>();
@@ -68,9 +68,6 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();*/
 
-	//AddGameObject<Nero>();
-
-	//AddGameObject<Em5000>();
 
 	AddGameObject<BtlPanel>();
 	
