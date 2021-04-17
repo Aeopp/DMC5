@@ -63,6 +63,9 @@ private:
 	std::shared_ptr<ENGINE::Texture> _ExNRMR0Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExALBM1Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExNRMR1Tex{};
+	std::shared_ptr<ENGINE::Texture> _ExEmissive0Tex{};
+	std::shared_ptr<ENGINE::Texture> _ExEmissive1Tex{};
+	std::shared_ptr<ENGINE::Texture> _ExFireTex{};
 
 	std::shared_ptr<ENGINE::Texture> _HPGaugeBaseALBMTex{};
 	std::shared_ptr<ENGINE::Texture> _HPGaugeBaseATOSTex{};
@@ -137,6 +140,10 @@ private:
 	float _RankLetter_GlintAccumulateTime = 0.f;
 	float _RankDissolveAmount = 0.f;
 
+	/* 0 ~ 3 */
+	float _ExGauge = 0.f;
+	float _ExGauge_EmissivePower = 0.f;
+
 	enum KEY_INPUT_ID
 	{
 		Q = 0, W, E, R, A, S, D, F, Z, X, C, V,
@@ -149,9 +156,10 @@ private:
 
 	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
 
-	Vector3 _Rot = Vector3(0.f, 0.f, 0.f);	// 디버그용 회전벡터(Degree). 회전값이 들어간게 예외케이스라 생각해서 UI_DESC에 없음
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
+
+	Vector3 _Rot = Vector3(0.f, 0.f, 0.f);	// 디버그용 회전벡터(Degree). 회전값이 들어간게 예외케이스라 생각해서 UI_DESC에 없음
 
 private:
 	explicit BtlPanel() = default;

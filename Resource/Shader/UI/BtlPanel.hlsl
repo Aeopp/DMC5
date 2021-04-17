@@ -24,6 +24,9 @@ float _HPGlassDirt = 0.f;
 float2 _MinTexUV = float2(0.f, 0.f);
 float2 _MaxTexUV = float2(1.f, 1.f);
 
+float _EmissivePower = 0.f;
+
+
 texture NoiseMap;
 sampler Noise = sampler_state
 {
@@ -31,7 +34,7 @@ sampler Noise = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = false;
+    sRGBTexture = true;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -78,10 +81,22 @@ texture ATOS0Map;
 sampler ATOS0 = sampler_state
 {
     texture = ATOS0Map;
-    minfilter = point;
-    magfilter = point;
-    mipfilter = point;
-    sRGBTexture = false;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    sRGBTexture = true;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+texture Emissive0Map;
+sampler Emissive0 = sampler_state
+{
+    texture = Emissive0Map;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    sRGBTexture = true;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -392,7 +407,7 @@ PsOut PsMain_TargetHP(PsIn_NoiseClip In)
 {
     PsOut Out = (PsOut) 0;
     
-    clip(In.UV.y - 0.8f);
+    clip(In.UV.y - 0.75f);
     clip(In.Clip);
     
     float4 Noise0 = tex2D(Noise, In.NoiseCoord0).rrrr;
@@ -637,6 +652,32 @@ PsOut PsMain_TDTGauge1(PsIn_Clip In)
     Out.Color.rgb = Shade * (float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa);
     Out.Color.a = ATOSSample.b;
     
+    return Out;
+};
+
+PsOut PsMain_ExGauge(PsIn In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    float4 ALB0Sample = tex2D(ALB0, In.UV);
+    float4 NRMRSample = tex2D(NRMR0, In.UV);
+    float4 EmissiveSample = tex2D(Emissive0, In.UV);
+    
+    float2 NormalXY = NRMRSample.xy * 2.f - 1.f;
+    float NormalZ = sqrt(1 - dot(NormalXY, NormalXY));
+   
+    float3x3 TBN = float3x3(normalize(In.Tangent),
+                            normalize(In.BiNormal),
+                            normalize(In.Normal));
+    
+    float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
+    
+    float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
+    float Emissive = saturate(_EmissivePower * (EmissiveSample.r + EmissiveSample.g + 0.35f * EmissiveSample.b + 0.44f * EmissiveSample.a));
+
+    Out.Color = Diffuse * ALB0Sample + Emissive * tex2D(ALB1, In.UV);
+    Out.Color.a = 1.f;
+
     return Out;
 };
 
@@ -930,5 +971,17 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain_GUI();
         pixelshader = compile ps_3_0 PsMain_GUI_Dissolve();
+    }
+    pass p17
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = true;
+
+        vertexshader = compile vs_3_0 VsMain_Perspective();
+        pixelshader = compile ps_3_0 PsMain_ExGauge();
     }
 };
