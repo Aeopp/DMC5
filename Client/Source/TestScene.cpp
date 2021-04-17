@@ -40,10 +40,10 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
-	
+
 	AddGameObject<Camera>();
-	AddGameObject<Nero>();
-	//AddGameObject<TempMap>();
+	// AddGameObject<Nero>();
+	AddGameObject<TempMap>();
 	//
 	//AddGameObject<Em5000>();
 	//AddGameObject<Car>();
