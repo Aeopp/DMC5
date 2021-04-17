@@ -9,6 +9,7 @@ class NeroState :    public FSMState
 {
 protected:
 	weak_ptr<Nero>	m_pNero;
+
 	//weak_ptr<Animator>	m_pAnimator;
 public:
 	explicit NeroState(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);

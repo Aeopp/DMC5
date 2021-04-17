@@ -18,6 +18,7 @@
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "BtlPanel.h"
+#include "MainCamera.h"
 
 using namespace std;
 
@@ -41,9 +42,10 @@ HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
 	
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
-	//AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 	//
 	//AddGameObject<Em5000>();
 	//AddGameObject<Car>();

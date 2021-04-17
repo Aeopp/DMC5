@@ -212,7 +212,7 @@ HRESULT Car::Ready()
 
 HRESULT Car::Awake()
 {
-	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(100).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
 	m_pMonster= std::static_pointer_cast<Em5000>(FindGameObjectWithTag(Monster5000).lock());

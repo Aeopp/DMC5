@@ -32,7 +32,7 @@ HRESULT Buster_Arm::Ready()
 
 HRESULT Buster_Arm::Awake()
 {
-	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(100).lock());
+	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	
 
 	return S_OK;

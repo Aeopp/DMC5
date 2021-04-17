@@ -631,7 +631,7 @@ HRESULT Em5000::Ready()
 
 HRESULT Em5000::Awake()
 {
-	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(100).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
 	m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
