@@ -31,27 +31,6 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir, 3u);
 
 	//
-	CurID = EX_GAUGE_BACK;
-	if (_UIDescs[CurID].Using)
-	{
-		auto WeakSubset = _PlaneMesh->GetSubset(0u);
-		if (auto SharedSubset = WeakSubset.lock();
-			SharedSubset)
-		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _ExBackALBMTex->GetTexture());
-			_ImplInfo.Fx->SetTexture("ATOS0Map", _ExBackATOSTex->GetTexture());
-			_ImplInfo.Fx->SetTexture("NRMR0Map", _ExBackNRMRTex->GetTexture());
-
-			Create_ScreenMat(CurID, ScreenMat);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
-			_ImplInfo.Fx->BeginPass(0);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-	}
-
-	//
 	CurID = TARGET_HP;
 	if (_UIDescs[CurID].Using)
 	{
@@ -77,6 +56,27 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 	}
 
 	//
+	CurID = EX_GAUGE_BACK;
+	if (_UIDescs[CurID].Using)
+	{
+		auto WeakSubset = _PlaneMesh->GetSubset(0u);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
+		{
+			_ImplInfo.Fx->SetTexture("ALB0Map", _ExBackALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ATOS0Map", _ExBackATOSTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("NRMR0Map", _ExBackNRMRTex->GetTexture());
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(0);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+	}
+
+	//
 	CurID = HP_GLASS;
 	if (_UIDescs[CurID].Using)
 	{
@@ -94,6 +94,85 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
 			_ImplInfo.Fx->BeginPass(7);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+	}
+
+	//
+	CurID = EX_GAUGE;
+	if (_UIDescs[CurID].Using)
+	{
+		_ImplInfo.Fx->SetTexture("ALB0Map", _ExALBM1Tex->GetTexture());
+		_ImplInfo.Fx->SetTexture("ALB1Map", _ExFireTex->GetTexture());
+		_ImplInfo.Fx->SetTexture("NRMR0Map", _ExNRMR1Tex->GetTexture());
+		_ImplInfo.Fx->SetTexture("Emissive0Map", _ExEmissive1Tex->GetTexture());
+		_ImplInfo.Fx->SetFloat("_EmissivePower", _ExGauge_EmissivePower);
+
+		auto WeakSubset0 = _Ex0Mesh->GetSubset(1u);
+		auto WeakSubset1 = _Ex1Mesh->GetSubset(1u);
+		auto WeakSubset2 = _Ex2Mesh->GetSubset(1u);
+
+		if (auto SharedSubset = WeakSubset2.lock();
+			SharedSubset)
+		{
+			Create_ScreenMat(CurID, ScreenMat, 2);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->BeginPass(17);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+		if (auto SharedSubset = WeakSubset1.lock();
+			SharedSubset)
+		{
+			Create_ScreenMat(CurID, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->BeginPass(17);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+		if (auto SharedSubset = WeakSubset0.lock();
+			SharedSubset)
+		{
+			Create_ScreenMat(CurID, ScreenMat, 0);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->BeginPass(17);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+
+		_ImplInfo.Fx->SetTexture("ALB0Map", _ExALBM0Tex->GetTexture());
+		_ImplInfo.Fx->SetTexture("NRMR0Map", _ExNRMR0Tex->GetTexture());
+		_ImplInfo.Fx->SetTexture("Emissive0Map", _ExEmissive0Tex->GetTexture());
+
+		WeakSubset0 = _Ex0Mesh->GetSubset(0u);
+		WeakSubset1 = _Ex1Mesh->GetSubset(0u);
+		WeakSubset2 = _Ex2Mesh->GetSubset(0u);
+
+		if (auto SharedSubset = WeakSubset2.lock();
+			SharedSubset)
+		{
+			Create_ScreenMat(CurID, ScreenMat, 2);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->BeginPass(17);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+		if (auto SharedSubset = WeakSubset1.lock();
+			SharedSubset)
+		{
+			Create_ScreenMat(CurID, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->BeginPass(17);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+		if (auto SharedSubset = WeakSubset0.lock();
+			SharedSubset)
+		{
+			Create_ScreenMat(CurID, ScreenMat, 0);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->BeginPass(17);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 		}
@@ -365,85 +444,6 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 	}
 
 	//
-	CurID = EX_GAUGE;
-	if (_UIDescs[CurID].Using)
-	{
-		_ImplInfo.Fx->SetTexture("ALB0Map", _ExALBM1Tex->GetTexture());
-		_ImplInfo.Fx->SetTexture("ALB1Map", _ExFireTex->GetTexture());
-		_ImplInfo.Fx->SetTexture("NRMR0Map", _ExNRMR1Tex->GetTexture());
-		_ImplInfo.Fx->SetTexture("Emissive0Map", _ExEmissive1Tex->GetTexture());
-		_ImplInfo.Fx->SetFloat("_EmissivePower", _ExGauge_EmissivePower);
-
-		auto WeakSubset0 = _Ex0Mesh->GetSubset(1u);
-		auto WeakSubset1 = _Ex1Mesh->GetSubset(1u);
-		auto WeakSubset2 = _Ex2Mesh->GetSubset(1u);
-
-		if (auto SharedSubset = WeakSubset2.lock();
-			SharedSubset)
-		{
-			Create_ScreenMat(CurID, ScreenMat, 2);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->BeginPass(17);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-		if (auto SharedSubset = WeakSubset1.lock();
-			SharedSubset)
-		{
-			Create_ScreenMat(CurID, ScreenMat, 1);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->BeginPass(17);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-		if (auto SharedSubset = WeakSubset0.lock();
-			SharedSubset)
-		{
-			Create_ScreenMat(CurID, ScreenMat, 0);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->BeginPass(17);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-
-		_ImplInfo.Fx->SetTexture("ALB0Map", _ExALBM0Tex->GetTexture());
-		_ImplInfo.Fx->SetTexture("NRMR0Map", _ExNRMR0Tex->GetTexture());
-		_ImplInfo.Fx->SetTexture("Emissive0Map", _ExEmissive0Tex->GetTexture());
-
-		WeakSubset0 = _Ex0Mesh->GetSubset(0u);
-		WeakSubset1 = _Ex1Mesh->GetSubset(0u);
-		WeakSubset2 = _Ex2Mesh->GetSubset(0u);
-
-		if (auto SharedSubset = WeakSubset2.lock();
-			SharedSubset)
-		{
-			Create_ScreenMat(CurID, ScreenMat, 2);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->BeginPass(17);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-		if (auto SharedSubset = WeakSubset1.lock();
-			SharedSubset)
-		{
-			Create_ScreenMat(CurID, ScreenMat, 1);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->BeginPass(17);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-		if (auto SharedSubset = WeakSubset0.lock();
-			SharedSubset)
-		{
-			Create_ScreenMat(CurID, ScreenMat, 0);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->BeginPass(17);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-	}
-
-	//
 	CurID = RANK;
 	if (_UIDescs[CurID].Using)
 	{
@@ -636,10 +636,10 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 	Update_TargetInfo();
 	Update_Rank(_fDeltaTime);
 	Update_GaugeOrthoPos();
-	Check_KeyInput();
+	Check_KeyInput(_fDeltaTime);
 
 	//
-	Imgui_ModifyUI(EX_GAUGE);
+	Imgui_ModifyUI(EX_GAUGE_BACK);
 
 	//POINT pt{};
 	//GetCursorPos(&pt);
@@ -704,10 +704,10 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[TARGET_HP] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.46f, 0.46f, 1.f) };
 	_UIDescs[BOSS_GUAGE] = { true, Vector3(640.f, 670.f, 0.5f), Vector3(4.7f, 5.f, 1.f) };
 	_UIDescs[HP_GLASS] = { true, Vector3(240.f, 155.f, 0.4f), Vector3(0.5f, 0.5f, 1.f) };
-	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(95.f, 95.f, 0.5f), Vector3(2.f, 2.f, 1.f) };
+	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(102.f, 90.f, 0.5f), Vector3(2.3f, 2.3f, 1.f) };
 	_UIDescs[EX_GAUGE] = { true, Vector3(-7.55f, 3.15f, 15.f), Vector3(0.01f, 0.01f, 0.01f) };
-	_UIDescs[HP_GAUGE] = { true, Vector3(210.f, 50.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
-	_UIDescs[TDT_GAUGE] = { true, Vector3(305.f, 75.f, 0.5f), Vector3(3.5f, 3.5f, 1.f) };
+	_UIDescs[HP_GAUGE] = { true, Vector3(218.f, 50.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
+	_UIDescs[TDT_GAUGE] = { true, Vector3(315.f, 75.f, 0.5f), Vector3(3.5f, 3.5f, 1.f) };
 	_UIDescs[KEYBOARD] = { true, Vector3(270.f, 570.f, 0.02f), Vector3(5.f, 1.5f, 1.f) };
 	_UIDescs[RANK_BACK] = { false, Vector3(1120.f, 270.f, 0.8f), Vector3(_RankBackMaxScale, _RankBackMaxScale, 1.f) };
 	_UIDescs[RANK] = { false, Vector3(6.5f, 1.3f, 15.f), Vector3(0.08f, 0.08f, 0.08f) };
@@ -1363,9 +1363,15 @@ void BtlPanel::Update_GaugeOrthoPos()
 	_HPGauge_CurXPosOrtho = HPGaugeOrthoStartX + (360.f - _TargetHP_Degree) / 360.f * HPGaugeOrthoWidth * static_cast<float>(_HPGaugeCount);
 
 	//
-	float TDTGaugeOrthoCenterX = -0.523437f;
-	float TDTGagueOrthoOffsetToCenter = 0.18125f;
-	_TDTGauge_CurXPosOrtho = (TDTGaugeOrthoCenterX - TDTGagueOrthoOffsetToCenter) + (360.f - _TargetHP_Degree) / 360.f * 2.f * TDTGagueOrthoOffsetToCenter;
+	float TDTGaugeOrthoStartX = -0.685938f;
+	float TDTGaugeOrthoEndX = -0.33125f;
+	_TDTGauge_CurXPosOrtho = TDTGaugeOrthoStartX + (360.f - _TargetHP_Degree) / 360.f * (TDTGaugeOrthoEndX - TDTGaugeOrthoStartX);
+
+	POINT pt{};
+	GetCursorPos(&pt);
+	ScreenToClient(g_hWnd, &pt);
+	Vector2 TargetPos = Vector2(static_cast<float>(pt.x), static_cast<float>(pt.y));
+	std::cout << ScreenPosToOrtho(TargetPos.x, TargetPos.y).x << std::endl;
 }
 
 Vector2 BtlPanel::WorldPosToScreenPos(const Vector3& WorldPos)
@@ -1389,22 +1395,22 @@ Vector2 BtlPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 	return Ret;
 }
 
-void BtlPanel::Check_KeyInput()
+void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 {
 	////////////////////////////
 	// юс╫ц
-	//if (Input::GetKey(DIK_LEFTARROW))
-	//{
-	//	_TargetHP_Degree += 150.f * _fDeltaTime;
-	//	if (360.f < _TargetHP_Degree)
-	//		_TargetHP_Degree = 360.f;
-	//}
-	//if (Input::GetKey(DIK_RIGHTARROW))
-	//{
-	//	_TargetHP_Degree -= 150.f * _fDeltaTime;
-	//	if (0.f > _TargetHP_Degree)
-	//		_TargetHP_Degree = 0.f;
-	//}
+	if (Input::GetKey(DIK_LEFTARROW))
+	{
+		_TargetHP_Degree += 150.f * _fDeltaTime;
+		if (360.f < _TargetHP_Degree)
+			_TargetHP_Degree = 360.f;
+	}
+	if (Input::GetKey(DIK_RIGHTARROW))
+	{
+		_TargetHP_Degree -= 150.f * _fDeltaTime;
+		if (0.f > _TargetHP_Degree)
+			_TargetHP_Degree = 0.f;
+	}
 	if (Input::GetKeyDown(DIK_F1))
 	{
 		static bool bActive = _UIDescs[TARGET_CURSOR].Using;

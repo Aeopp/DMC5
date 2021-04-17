@@ -177,7 +177,7 @@ private:
 	void	Update_GaugeOrthoPos();
 	Vector2	WorldPosToScreenPos(const Vector3& WorldPos);
 	Vector2	ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY);
-	void	Check_KeyInput();
+	void	Check_KeyInput(const float _fDeltaTime);
 	void	Imgui_ModifyUI(UI_DESC_ID _ID);
 public:
 	static BtlPanel* Create();
