@@ -26,6 +26,8 @@ uniform float cosAngularRadius = 0.9999893;
 
 #define PCFCount 3
 
+bool IsPoint;
+
 float ShadowDepthMapHeight;
 float ShadowDepthMapWidth;
 float ShadowDepthBias;
@@ -53,7 +55,8 @@ float ShadowVariance(float2 moments, float d)
     return max(((d <= mean) ? 1.0f : 0.0f), chebychev);
 }
 
-float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,float roughness)
+float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,float roughness,
+float metalness)
 {
 	// the sun has an angular diameter between [0.526, 0.545] degrees
 
@@ -74,7 +77,7 @@ float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,flo
 	// BRDF (NOTE: should match values and exposure)
     float3 h = normalize(L + v);
 
-    float ndotl = saturate(dot(n, L));
+    // float ndotl = saturate(dot(n, L));
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
@@ -84,12 +87,12 @@ float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,flo
     float illuminance = lightIlluminance * costheta;
 
 	// calculate shadow (assumes ortho projection)
-    float4 lspos = mul(float4(wpos, 1), lightViewProj);
+    // float4 lspos = mul(float4(wpos, 1), lightViewProj);
 	
-    d = lspos.z;
+    // d = lspos.z;
 
-    float2 ptex = (lspos.xy / lspos.w) * float2(0.5f, -0.5f) + 0.5f;
-    float2 moments = tex2D(shadowMap, ptex).rg;
+    // float2 ptex = (lspos.xy / lspos.w) * float2(0.5f, -0.5f) + 0.5f;
+    // float2 moments = tex2D(shadowMap, ptex).rg;
     
     
     // ½¦µµ¿ì ½ÃÀÛ
@@ -133,7 +136,8 @@ float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,flo
     return (f_diffuse + f_specular) * lightColor * illuminance * ShadowFactor;
 }
 
-float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float roughness)
+float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float roughness,
+float metalness)
 {
     float3 ldir = lightPos.xyz - wpos;
 
@@ -151,51 +155,59 @@ float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float rou
    
     
     
-    // ½¦µµ¿ì ½ÃÀÛ
-    float4 LightClipPosition = mul(float4(wpos.xyz, 1.f), lightViewProj);
-    LightClipPosition.xyz = LightClipPosition.xyz / LightClipPosition.w;
-    LightClipPosition.y *= -1.f;
-    LightClipPosition.xy *= 0.5f;
-    LightClipPosition.xy += 0.5f;
+    //// ½¦µµ¿ì ½ÃÀÛ
+    //float4 LightClipPosition = mul(float4(wpos.xyz, 1.f), lightViewProj);
+    //LightClipPosition.xyz = LightClipPosition.xyz / LightClipPosition.w;
+    //LightClipPosition.y *= -1.f;
+    //LightClipPosition.xy *= 0.5f;
+    //LightClipPosition.xy += 0.5f;
     
-    float ShadowFactor = 1.0f + shadowmin;
+    //float ShadowFactor = 1.0f + shadowmin;
     
-    if (saturate(LightClipPosition.z) == LightClipPosition.z)
-    {
-        float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
+    ////if (saturate(LightClipPosition.z) == LightClipPosition.z)
+    ////{
+    ////    float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
         
-        float Shadow = 0.0;
-        float TexelSizeU = 1.0 / ShadowDepthMapWidth;
-        float TexelSizeV = 1.0 / ShadowDepthMapHeight;
-        for (int x = -PCFCount; x <= PCFCount; ++x)
-        {
-            for (int y = -PCFCount; y <= PCFCount; ++y)
-            {
-                float3 UVOffset = float3(x * TexelSizeU, y * TexelSizeV, x * TexelSizeU);
-                float pcfDepth = texCUBE(cubeShadowMap, float3(-l.x + UVOffset)).x;
-                if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
-                {
-                    Shadow += 1.0f;
-                }
-            }
-        }
-        Shadow /= LookUpCount;
-        ShadowFactor -= Shadow;
-    }
-    ShadowFactor = saturate(ShadowFactor);
+    ////    float Shadow = 0.0;
+    ////    float TexelSizeU = 1.0 / ShadowDepthMapWidth;
+    ////    float TexelSizeV = 1.0 / ShadowDepthMapHeight;
+    ////    for (int x = -PCFCount; x <= PCFCount; ++x)
+    ////    {
+    ////        for (int y = -PCFCount; y <= PCFCount; ++y)
+    ////        {
+    ////            float3 UVOffset = float3(x * TexelSizeU, 0.0f, y * TexelSizeV);
+    ////            float pcfDepth = texCUBE(cubeShadowMap, float3(-l.x + UVOffset)).x;
+    ////            if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
+    ////            {
+    ////                Shadow += 1.0f;
+    ////            }
+    ////        }
+    ////    }
+    ////    Shadow /= LookUpCount;
+    ////    ShadowFactor -= Shadow;
+    ////}
+    //float pcfDepth = texCUBE(cubeShadowMap, (-l.x )).x;
+    //if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
+    //{
+    //    ShadowFactor -= 1.0f;
+    //}
+       
+    //ShadowFactor = saturate(ShadowFactor);
     // ½¦µµ¿ì ³¡ 
     
 	// calculate shadow
-   // float2 moments = texCUBE(cubeShadowMap, -l).xy;
+    float2 moments = texCUBE(cubeShadowMap, -l).xy;
 
-    //float z = length(ldir);
-    //float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-    // float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+    float z = length(ldir);
+    float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
+    float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
 
     float illuminance = (lightFlux / (QUAD_PI * dist2)) * ndotl;
     float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);
 
-    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * ShadowFactor;
+    // return ShadowFactor;
+    
+    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * (shadow);
 }
 
 void ps_deferred(
@@ -213,15 +225,17 @@ void ps_deferred(
         wpos = mul(wpos, matViewProjInv);
         wpos /= wpos.w;
 
-        if (lightPos.w < 0.5f)
+        if (IsPoint==false)
         {
 			// directional light
-            color.rgb = Luminance_Blinn_Directional(base.rgb, wpos.xyz, wnorm,nrmr.a);
+            color.rgb = Luminance_Blinn_Directional(base.rgb, wpos.xyz, wnorm,nrmr.a ,
+            base.a);
         }
-        else
+        else 
         {
 			// point light
-            color.rgb = Luminance_Blinn_Point(base.rgb, wpos.xyz, wnorm ,nrmr.a);
+            color.rgb = Luminance_Blinn_Point(base.rgb, wpos.xyz, wnorm ,nrmr.a ,
+            base.a);
         }
 
         color.a = 1;

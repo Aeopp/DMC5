@@ -36,6 +36,7 @@ private:
 	void    ReadyFrustum();
 	void    ReadyQuad();	
 public : 
+	
 	HRESULT Render()&;
 	void    Editor()&;
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
@@ -61,11 +62,15 @@ private:
 	HRESULT UIRender()&;
 	HRESULT RendererCollider()&;
 	HRESULT LightFrustumRender()&;
+private:
+	void LightSave(std::filesystem::path path);
+	void LightLoad(const std::filesystem::path& path);
 public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	float exposure = 1.f;
 	IDirect3DSurface9* BackBuffer{ nullptr };
 	std::shared_ptr<Frustum> CameraFrustum{};
 	std::shared_ptr<Frustum> CurShadowFrustum{};

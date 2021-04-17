@@ -2,6 +2,10 @@
 #include "imgui_impl_dx9.h"
 #include "Renderer.h"
 #include "GraphicSystem.h"
+#include <ostream>
+#include <fstream>
+#include <istream>
+
 #include "FMath.hpp"
 #include "Color.h"
 #include "DxHelper.h"
@@ -298,6 +302,7 @@ void Renderer::Editor()&
 	ImGui::Begin("Render Editor");
 	{
 		ImGui::Checkbox("LightRender", &bLightRender);
+		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 
 		// ImGui::SliderFloat("ShadowMin", &ShadowMin, 0.0f, 1.0f);
 
@@ -502,7 +507,8 @@ void Renderer::RenderShadowMaps()
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX viewproj;
-			D3DXVECTOR4 clipplanes(light->GetNearPlane(), light->GetFarPlane(), 0, 0);
+			D3DXVECTOR4 clipplanes(
+				light->GetNearPlane(), light->GetFarPlane(), 0, 0);
 
 			light->CalculateViewProjection(viewproj);
 
@@ -556,14 +562,14 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 8);
+	 device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 16);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, 8);
+	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	// device->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, 16);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
@@ -643,23 +649,26 @@ void Renderer::DeferredShading()
 
 
 	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
+	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 16);
 
-	for (int32 i = 0; i < 3; ++i)
+	for (int32 i = 1; i < 3; ++i)
 	{
-		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-		device->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, 8);
+		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		device->SetSamplerState(i, D3DSAMP_SRGBTEXTURE, FALSE);
 	};
 
 	for (int i = 3; i < 5; ++i) {
-		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
-		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
 		device->SetSamplerState(i, D3DSAMP_BORDERCOLOR, 0xffffffff);
 		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
 		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+		device->SetSamplerState(i, D3DSAMP_SRGBTEXTURE, FALSE);
 	};
 
 	device->SetTexture(0, albedo);
@@ -691,6 +700,7 @@ void Renderer::DeferredShading()
 				deferred->SetMatrix("lightViewProj", &lightviewproj);
 				deferred->SetVector("lightColor", (D3DXVECTOR4*)&DirLight->GetColor());
 				deferred->SetVector("lightPos", &DirLight->GetPosition());
+				deferred->SetBool("IsPoint", false);
 				deferred->SetFloat("lightFlux", DirLight->lightFlux);
 				deferred->SetFloat("lightIlluminance", DirLight->lightIlluminance);
 				deferred->SetFloat("lightRadius", DirLight->GetPointRadius());
@@ -742,7 +752,7 @@ void Renderer::DeferredShading()
 			deferred->SetFloat("ShadowDepthBias", PointLight->shadowdepthbias);
 			deferred->SetFloat("ShadowDepthMapHeight",PointLight->GetShadowMapSize());
 			deferred->SetFloat("ShadowDepthMapWidth",PointLight->GetShadowMapSize());
-			
+			deferred->SetBool("IsPoint", true);
 			deferred->SetVector("clipPlanes", &clipplanes);
 			deferred->SetVector("lightColor", (D3DXVECTOR4*)&PointLight->GetColor());
 			deferred->SetVector("lightPos", &PointLight->GetPosition());
@@ -1040,7 +1050,7 @@ HRESULT Renderer::Tonemapping()&
 	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
 	tonemap->SetTechnique("tonemap");
 	tonemap->SetVector("pixelSize", &pixelsize);
-
+	tonemap->SetFloat("exposure", exposure);
 	tonemap->Begin(NULL, 0);
 	tonemap->BeginPass(0);
 	Device->SetTexture(0, scenetarget);
@@ -1179,6 +1189,123 @@ HRESULT Renderer::LightFrustumRender()&
 	}
 
 	return S_OK;
+};
+
+void Renderer::LightSave(std::filesystem::path path)
+{
+	std::vector<FLight*> _Lights{};
+	for (auto& _Light : DirLights)
+	{
+		_Lights.push_back(_Light.get());
+	}
+	for (auto& _Light : PointLights)
+	{
+		_Lights.push_back(_Light.get());
+	}
+
+	for (auto& _Light : _Lights)
+	{
+		using namespace rapidjson;
+
+		StringBuffer StrBuf{};
+		PrettyWriter<StringBuffer> Writer(StrBuf);
+		Writer.StartObject();
+
+		Writer.Key("LightData");
+		Writer.StartObject();
+		{
+			Writer.Key("sinAngularRadius");
+			Writer.Double(_Light->sinAngularRadius);
+			
+			Writer.Key("cosAngularRadius");
+			Writer.Double(_Light->cosAngularRadius);
+
+			Writer.Key("specularPower");
+			Writer.Double(_Light->specularPower);
+
+			Writer.Key("lightIlluminance");
+			Writer.Double(_Light->lightIlluminance);
+
+			Writer.Key("lightFlux");
+			Writer.Double(_Light->lightFlux);
+
+			Writer.Key("Color");
+			Writer.StartArray();
+			auto _Color = _Light->GetColor();
+			Writer.Double(_Color.r);
+			Writer.Double(_Color.g);
+			Writer.Double(_Color.b);
+			Writer.Double(_Color.a);
+			Writer.EndArray();
+
+			Writer.Key("Near");
+			Writer.Double(_Light->GetNearPlane());
+
+			Writer.Key("GetFarPlane");
+			_Light->GetFarPlane();
+
+			Writer.Key("sinAngularRadius");
+			_Light->Projparams;
+
+			Writer.Key("sinAngularRadius");
+			_Light->GetPointRadius();
+
+			Writer.Key("sinAngularRadius");
+			_Light->Direction;
+
+			Writer.Key("sinAngularRadius");
+			_Light->GetPosition();
+
+			Writer.Key("sinAngularRadius");
+			_Light->shadowmin;
+
+			Writer.Key("sinAngularRadius");
+			_Light->shadowdepthbias;
+
+			Writer.Key("sinAngularRadius");
+			_Light->GetShadowMapSize();
+
+			Writer.Key("sinAngularRadius");
+			_Light->_Type;
+		}
+		Writer.EndObject();
+
+		Writer.EndObject();
+
+		path.replace_extension("Light");
+		std::ofstream Of{ path };
+		Of << StrBuf.GetString();
+
+	}
+};
+
+void Renderer::LightLoad(const std::filesystem::path& path)
+{
+	using namespace rapidjson;
+
+	std::ifstream Is{ path };
+
+	if (!Is.is_open())
+		return;
+
+	IStreamWrapper Isw(Is);
+	Document _Document{};
+	_Document.ParseStream(Isw);
+
+	if (_Document.HasParseError())
+	{
+		PRINT_LOG(L"Warning!", L"Animation Parse Error!");
+		return;
+	}
+
+	const Value& AnimJsonTable = _Document["LightData"];
+	if (AnimJsonTable.IsObject())
+	{
+		if (AnimJsonTable.HasMember("AnimInfoTable"))
+		{
+		};
+	};
+
 };
 
 

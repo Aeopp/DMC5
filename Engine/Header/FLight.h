@@ -73,7 +73,7 @@ public:
 	RECT LastScissorRect{ 0,0,0,0 };
 private:
 	D3DXVECTOR4				Position;	// or direction
-	D3DXVECTOR4				Projparams;
+	
 	D3DXVECTOR3				Spotdirection;
 	D3DXVECTOR2				Spotparams;	// cos(inner), cos(outer)
 	float				    PointRadius;
@@ -84,15 +84,16 @@ private:
 	LPDIRECT3DTEXTURE9		Blurredshadowmap;
 	LPDIRECT3DSURFACE9      DepthStencil{};
 
-	Type				    _Type;
+	
 
 	uint16_t				ShadowMapSize;
 	bool					Blurred;
 
 public:
+	Type				    _Type;
 	bool bRemove = false;
 	float shadowmin = 0.0f;
-
+	D3DXVECTOR4				Projparams;
 	int						Currentface;
 	D3DXVECTOR3             Direction{ 0,0,0 };
 	float                   BlurIntencity;
