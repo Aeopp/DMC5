@@ -10,7 +10,7 @@ class TimeSystem final : public Object
 private:
 	float           m_fAccTime;
 	float			m_fDeltaTime;
-	double          m_fAccDeltaTime;
+	float           m_fAccDeltaTime;
 	LARGE_INTEGER	m_tCPUTick;
 	LARGE_INTEGER	m_tStartFrame;
 	LARGE_INTEGER	m_tEndFrame;
@@ -25,10 +25,10 @@ private:
 	virtual void Free() override;
 public:
 	HRESULT ReadyTimeSystem();
-	HRESULT UpdateTimeSystem();
+	HRESULT UpdateTimeSystem(const float Delta);
 	void	Editor();
 private:
-	void	UpdateDeltaTime();
+	void	UpdateDeltaTime(const float Delta);
 public:
 	float   AccTime();
 	float	DeltaTime();

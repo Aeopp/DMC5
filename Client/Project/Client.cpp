@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Client.h"
 #include "Application.h"
+#include <chrono>
 
 #define MAX_LOADSTRING 128
 
@@ -54,6 +55,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 	Application* pApplication = new Application;
 	pApplication->ReadyApplication(true,false);
 
+	static constexpr float TargetDelta = 1.0f / 60.f;
+	std::chrono::time_point<std::chrono::high_resolution_clock> PrevTime;
+	PrevTime = std::chrono::high_resolution_clock::now();
+
 	while (true)
 	{
 		if (PeekMessage(&tMessage, nullptr, 0, 0, PM_REMOVE))
@@ -69,7 +74,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 		}
 		else
 		{
-			pApplication->UpdateApplication();
+			auto CurTime = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<float, std::ratio<1, 1000>> Delta = CurTime - PrevTime;
+			const float CurDt = (Delta.count() * 0.001f);
+			if (CurDt >=  TargetDelta)
+			{
+				PrevTime = CurTime;
+				pApplication->UpdateApplication(CurDt);
+			      // 프레임 고정 .... 
+			}
+			else
+			{
+				
+			}
 		}
 	}
 

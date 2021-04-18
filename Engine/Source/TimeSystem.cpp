@@ -21,17 +21,14 @@ void TimeSystem::Free()
 
 HRESULT TimeSystem::ReadyTimeSystem()
 {
-	/*QueryPerformanceCounter(&m_tStartFrame);
-	QueryPerformanceCounter(&m_tEndFrame);
-	QueryPerformanceFrequency(&m_tCPUTick);*/
 	m_PrevTime= std::chrono::high_resolution_clock::now();
 
 	return S_OK;
 }
 
-HRESULT TimeSystem::UpdateTimeSystem()
+HRESULT TimeSystem::UpdateTimeSystem(const float Delta)
 {
-	UpdateDeltaTime();
+	UpdateDeltaTime(Delta);
 	return S_OK;
 }
 
@@ -44,31 +41,16 @@ void TimeSystem::Editor()
 	ImGui::End();
 }
 
-void TimeSystem::UpdateDeltaTime()
+void TimeSystem::UpdateDeltaTime(const float Delta)
 {
-	/*QueryPerformanceFrequency(&m_tCPUTick);
-	QueryPerformanceCounter(&m_tEndFrame);*/
-
-	static constexpr float TargetFrame = 1.0f / 60.f;
-
-	auto CurTime = std::chrono::high_resolution_clock::now();
-
-	std::chrono::duration<float,std::ratio<1,1000>> Delta = CurTime - m_PrevTime;
-
-	
-	m_fDeltaTime = (Delta.count() * 0.001f);
-
-	//m_fDeltaTime = (m_tEndFrame.QuadPart - m_tStartFrame.QuadPart)
-	//	/			m_tCPUTick.QuadPart;
-
-	m_PrevTime = CurTime;
-	m_fAccDeltaTime += m_fDeltaTime;
-	m_fAccTime += m_fDeltaTime;
+	m_fDeltaTime = Delta;
+	m_fAccDeltaTime += Delta;
+	m_fAccTime += Delta;
 
 	++m_uiUpdateCount;
-	if (m_fAccDeltaTime > 1.0)
+	if (m_fAccDeltaTime > 1.0f)
 	{
-		m_fAccDeltaTime -= 1.0;
+		m_fAccDeltaTime -= 1.0f;
 		m_uiFrameRate = m_uiUpdateCount;
 		m_uiUpdateCount = 0u;
 	}

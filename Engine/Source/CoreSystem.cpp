@@ -165,13 +165,14 @@ static void ImGuiSetUp()
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 10);
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 14);
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 18);
-}
+};
 
 HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 								const bool bMultiSample)
 {
 	m_pGraphicSystem = GraphicSystem::GetInstance();
-	if (nullptr == m_pGraphicSystem.lock() || FAILED(m_pGraphicSystem.lock()->ReadyGraphicSystem(
+	if (nullptr == m_pGraphicSystem.lock() || 
+		FAILED(m_pGraphicSystem.lock()->ReadyGraphicSystem(
 		bWindowed,
 		bMultiSample)))
 	{
@@ -247,23 +248,24 @@ static void GlobalVariableEditor()
 	ImGui::End();
 }
 
-HRESULT CoreSystem::UpdateEngine()
+HRESULT CoreSystem::UpdateEngine(const float Delta)
 {
-	ImGui_ImplDX9_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	GlobalVariableEditor();
-
 	if (FAILED(m_pInputSystem.lock()->UpdateInputSystem()))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateInputSystem."));
 		return E_FAIL;
 	}
-	if (FAILED(m_pTimeSystem.lock()->UpdateTimeSystem()))
+
+	if (FAILED(m_pTimeSystem.lock()->UpdateTimeSystem(Delta)))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateTimeSystem."));
 		return E_FAIL;
 	}
+
+	ImGui_ImplDX9_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	GlobalVariableEditor();
 
 	//m_pPhysicsSystem.lock()->FetchResults();
 

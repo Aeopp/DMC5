@@ -45,11 +45,11 @@ HRESULT Engine::ReadyEngine(const bool bWindowed,
 	return m_pCoreSystem.lock()->ReadyEngine(bWindowed, bMultiSample);
 }
 
-HRESULT Engine::UpdateEngine()
+HRESULT Engine::UpdateEngine(const float Delta)
 {
 	if (nullptr == m_pCoreSystem.lock() || m_pCoreSystem.expired())
 		return E_FAIL;
-	return m_pCoreSystem.lock()->UpdateEngine();
+	return m_pCoreSystem.lock()->UpdateEngine(Delta);
 }
 
 HRESULT Engine::ReleaseEngine()
