@@ -18,6 +18,7 @@
 #include "Glint.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
+#include "Renderer.h"
 
 #include <iostream>
 using namespace std;
@@ -42,25 +43,23 @@ HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
 	
-	//AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
-
 	AddGameObject<Nero>();
-	AddGameObject<TempMap>();
+	AddGameObject<Em5000>();
+	AddGameObject<Car>();
+	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	// AddGameObject<TempMap>();
 	
-	//AddGameObject<Em5000>();
-	//AddGameObject<Car>();
 
+	
+	
 
 	//AddGameObject<ShaderTester>();
 	/*
 	AddGameObject<TestAnimationObject>();*/
 
-	//AddGameObject<ShaderTester>();
-
 	//AddGameObject<TestObject>();
-
-	//AddGameObject<TestAnimationObject>();
 
 	/*AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();
@@ -74,7 +73,7 @@ HRESULT TestScene::LoadScene()
 
 
 	AddGameObject<BtlPanel>();
-	
+
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
@@ -100,7 +99,6 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
 	//cout << "SceneUpdate" << endl;
 
 	return S_OK;

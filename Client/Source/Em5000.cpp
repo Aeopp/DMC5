@@ -46,7 +46,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 	//거리가 멀때만 이동 or 회전을 함.
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
-	if (fDir >= 10.f)
+	if (fDir >= 12.f)
 	{
 		if (m_bThrow && m_bIng == false)
 		{
@@ -60,7 +60,6 @@ void Em5000::Fight(const float _fDeltaTime)
 			Turn();
 			return;
 		}
-
 		if (m_bMove && m_bIng == false)
 		{
 			m_bIng = true;
@@ -73,10 +72,13 @@ void Em5000::Fight(const float _fDeltaTime)
 
 			return;
 		}
-		if (m_bJumpAttack && fDir >= 15.f && fDir <= 20.f && m_bIng == false)
+		if (m_bJumpAttack && fDir >= 20.f && fDir <=25.f)
 		{
-			m_eState = Attack_Jump_Attack;
-			return;
+			if (m_eState == Move_Start || m_eState == Move_Loop)
+			{
+				m_eState = Attack_Jump_Attack;
+				return;
+			}
 		}
 	}
 	else
@@ -128,15 +130,6 @@ void Em5000::Fight(const float _fDeltaTime)
 				return;
 			}
 		}
-		int iRandom = FMath::Random<int>(1, 3);
-		if (iRandom == 1)
-		{
-			if (m_bBackJump && m_bIng == false)
-			{
-				m_eState = Back_Jump;
-				m_bIng = true;
-			}
-		}
 	}
 
 
@@ -158,7 +151,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Back_L:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Back_L", false, {}, 1.5f, 20.f);
+			m_pMesh->PlayAnimation("Attack_Back_L", false, {}, 1.5f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingTime() >= 0.95f)
 			{
@@ -171,7 +164,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Back_R:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Back_R", false, {}, 1.5f, 20.f);
+			m_pMesh->PlayAnimation("Attack_Back_R", false, {}, 1.5f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->PlayingTime() >= 0.95f)
 			{
@@ -186,7 +179,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Grap_Car:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Grap_Car", false, {}, 1.f, 10.f);
+			m_pMesh->PlayAnimation("Attack_Grap_Car", false, {}, 1.f, 10.f, true);
 
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Grap_Car" && m_pMesh->PlayingTime() >= 0.65f
@@ -203,7 +196,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Hack:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Hack", false, {}, 1.5f, 50.f);
+			m_pMesh->PlayAnimation("Attack_Hack", false, {}, 1.5f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.95f)
 			{
@@ -216,7 +209,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Jump_Attack:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Jump_Attack", false, {}, 1.5f, 10.f);
+			m_pMesh->PlayAnimation("Attack_Jump_Attack", false, {}, 1.5f, 10.f, true);
 
 			if (m_pMesh->PlayingTime() >= 0.1f && m_pMesh->PlayingTime() <= 0.4f)
 			{
@@ -235,7 +228,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Punch_Twice:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Punch_Twice", false, {}, 1.5f, 50.f);
+			m_pMesh->PlayAnimation("Attack_Punch_Twice", false, {}, 1.5f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.95f)
 			{
@@ -250,7 +243,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			Update_Angle();
 			m_bInteraction = true;
-			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f, true);
 			
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && fDir <= 25.f)
 				m_eState = Attack_Rush_End;
@@ -265,7 +258,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			Update_Angle();
 			m_bInteraction = true;
-			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f);
+			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 25.f)
 				m_eState = Attack_Rush_End;
@@ -274,7 +267,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Rush_End:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Rush_End", false, {}, 1.f, 10.f);
+			m_pMesh->PlayAnimation("Attack_Rush_End", false, {}, 1.f, 10.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime()>= 0.95f)
 			{
@@ -288,7 +281,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Side_L:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Side_L", false, {}, 1.f, 20.f);
+			m_pMesh->PlayAnimation("Attack_Side_L", false, {}, 1.f, 20.f, true);
 			if (m_pMesh->IsAnimationEnd() && m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_L")
 			{
 				m_bIng = false;
@@ -300,7 +293,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Side_R:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Side_R", false, {}, 1.f, 20.f);
+			m_pMesh->PlayAnimation("Attack_Side_R", false, {}, 1.f, 20.f, true);
 			if (m_pMesh->IsAnimationEnd() && m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_R")
 			{
 				m_bIng = false;
@@ -314,7 +307,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			Update_Angle();
 			m_bInteraction = true;
-			m_pMesh->PlayAnimation("Attack_Throw_Car", false, {}, 1.f, 10.f);
+			m_pMesh->PlayAnimation("Attack_Throw_Car", false, {}, 1.f, 10.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Throw_Car" && m_pMesh->PlayingTime() >= 0.95f)
 			{
@@ -327,7 +320,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Back_Jump:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Back_Jump", false, {}, 1.f, 10.f);
+			m_pMesh->PlayAnimation("Back_Jump", false, {}, 1.f, 10.f, true);
 
 			if (m_pMesh->PlayingTime()>=0.9f && m_pMesh->CurPlayAnimInfo.Name == "Back_Jump")
 			{
@@ -381,12 +374,12 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Howling:
 		break;
 	case Em5000::Idle:
-		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f);
+		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
 		break;
 	case Em5000::Move_Loop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Loop", true, {}, 1.3f, 50.f);
+			m_pMesh->PlayAnimation("Move_Loop", true, {}, 1.3f, 50.f, true);
 			m_bInteraction = true;
 			Update_Angle();
 
@@ -397,7 +390,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_bMove = false;
 				return;
 			}
-			if (fDir <= 10.f)
+			if (fDir <= 12.f)
 			{
 				m_bIng = false;
 				m_bMove = false;
@@ -407,7 +400,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Move_Start:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Start", false, {}, 1.3f, 30.f);
+			m_pMesh->PlayAnimation("Move_Start", false, {}, 1.3f, 30.f, true);
 			if(m_pMesh->CurPlayAnimInfo.Name == "Move_Start" && m_pMesh->PlayingTime()>= 0.2f)
 			{
 				Update_Angle();
@@ -434,7 +427,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Move_Turn_L:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Turn_L", false, {}, 1.2f, 20.f);
+			m_pMesh->PlayAnimation("Move_Turn_L", false, {}, 1.2f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Turn_L" && m_pMesh->PlayingTime() >= 0.2f && m_pMesh->PlayingTime() <= 0.6f)
 			{
@@ -452,7 +445,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Move_Turn_R:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Turn_R", false, {}, 1.2f, 20.f);
+			m_pMesh->PlayAnimation("Move_Turn_R", false, {}, 1.2f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Turn_R" && m_pMesh->PlayingTime() >= 0.2f && m_pMesh->PlayingTime() <= 0.6f)
 			{
 				m_bInteraction = true;
@@ -469,7 +462,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Car_Turn_L:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Turn_L", false, {}, 1.2f, 20.f);
+			m_pMesh->PlayAnimation("Move_Turn_L", false, {}, 1.2f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Turn_L" && m_pMesh->PlayingTime() >= 0.2f && m_pMesh->PlayingTime() <= 0.6f)
 			{
 				m_bInteraction = true;
@@ -482,7 +475,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Car_Turn_R:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Turn_R", false, {}, 1.2f, 20.f);
+			m_pMesh->PlayAnimation("Move_Turn_R", false, {}, 1.2f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Turn_R" && m_pMesh->PlayingTime() >= 0.2f && m_pMesh->PlayingTime() <= 0.6f)
 			{
 				m_bInteraction = true;
@@ -498,7 +491,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			Update_Angle_ToCar();
 			m_bInteraction = true;
 
-			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f, true);
 				
 			if (fCarDir <= 8.5f)
 			{
@@ -512,7 +505,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Car_Rush_Loop:
 		if(m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Rush_Loop", true, {}, 1.f, 10.f);
+			m_pMesh->PlayAnimation("Attack_Rush_Loop", true, {}, 1.f, 10.f, true);
 			Update_Angle_ToCar();
 			m_bInteraction = true;
 
