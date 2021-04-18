@@ -56,6 +56,8 @@ private:
     float   m_fAngle = 0.f;
     float   m_fSensitive = 10.f;
     bool	m_bFix = false;
+    float   m_fRotX = 0.f;
+    float   m_fFloatingAmount = 0.f;
     //////////////////////////////////////////
 
 

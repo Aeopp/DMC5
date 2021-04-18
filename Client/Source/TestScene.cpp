@@ -74,7 +74,7 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Em5000>();
 
-	AddGameObject<BtlPanel>();
+	//AddGameObject<BtlPanel>();
 	
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();

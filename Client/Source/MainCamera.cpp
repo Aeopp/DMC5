@@ -42,7 +42,10 @@ HRESULT MainCamera::Ready()
 
 
 	m_fCameraAngle = 35.f;
-	m_fDistanceToTarget = 5.4f;
+	m_fDistanceToTarget = 3.1f;
+
+	m_fRotX = -17.1f;
+	m_fFloatingAmount = 1.6f;
 
 	return S_OK;
 }
@@ -122,6 +125,8 @@ void MainCamera::Editor()
 	{
 		ImGui::InputScalar("Distance", ImGuiDataType_Float, &m_fDistanceToTarget, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("Sensitive", ImGuiDataType_Float, &m_fSensitive, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("RotX", ImGuiDataType_Float, &m_fRotX, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("FloatingAmount", ImGuiDataType_Float, &m_fFloatingAmount, MyButton ? &ZeroDotOne : NULL);
 	}
 }
 
@@ -150,35 +155,40 @@ void MainCamera::MoveMent_Player(float _fDeltaTime)
 void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 {
 	m_vAt = m_pAtTranform.lock()->GetPosition();
-	//m_vAt.y += 2.3f;
-	Vector3 vLook;
-	memcpy(&vLook, m_pAtTranform.lock()->GetWorldMatrix().m[2], sizeof(Vector3));
-	vLook = { 0.f,0.4f,1.f };
-	Matrix  matCameraWorld;
-	D3DXMatrixInverse(&matCameraWorld, NULL, &m_matView);
+	m_vAt.y += m_fFloatingAmount;
 
 	long    dwMouseMove = 0;
 
 	if (dwMouseMove = Input::GetMouseMove(DIM_Y))
 	{
-
+		m_fRotX -= dwMouseMove / m_fSensitive;
 	}
 
 	if (dwMouseMove = Input::GetMouseMove(DIM_X))
 	{
-		m_fAngle -= dwMouseMove / m_fSensitive;
+		m_fAngle += dwMouseMove / m_fSensitive;
 	}
+
+	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
+	{
+		//m_fDistanceToTarget -= dwMouseMove / 100.f;
+	}
+	if (m_fRotX <= -33.f)
+		m_fRotX = -33.f;
+	if (m_fRotX >= 10.f)
+		m_fRotX = 10.f;
+
+
+	Vector3 vLook = { 0.f, 0.f ,1.f };
 	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
+	Matrix matRot, matTest;
 
+	vLook *= m_fDistanceToTarget;
 
-
-	Matrix matRot;
+	D3DXMatrixRotationX(&matTest, D3DXToRadian(m_fRotX));
 	D3DXMatrixRotationAxis(&matRot, &vUp, D3DXToRadian(m_fAngle));
+	D3DXVec3TransformNormal(&vLook, &vLook, &matTest);
 	D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
-	m_vEye = m_vAt + vLook * m_fDistanceToTarget;
-	//Mouse_Move(_fDeltaTime);
 
-
-
-
+	m_vEye = m_vAt + vLook;
 }

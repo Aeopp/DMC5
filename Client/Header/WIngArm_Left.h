@@ -43,7 +43,8 @@ public:
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;
-
+	
+	Matrix*								m_pParentBoneMat;
 	bool								m_bIsRender;
 };
 

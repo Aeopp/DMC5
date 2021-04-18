@@ -783,7 +783,7 @@
             },
             {
                 "Name": "Streak_Start",
-                "Acceleration": 1.0,
+                "Acceleration": 0.75,
                 "TransitionTime": 0.10000000149011612
             },
             {

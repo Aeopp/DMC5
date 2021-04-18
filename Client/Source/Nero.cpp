@@ -53,21 +53,6 @@ HRESULT Nero::Ready()
 	m_pTransform.lock()->SetPosition(Vector3{- 4.45653f,32.14068f,9.48852f});
 	PushEditEntity(m_pTransform.lock().get());
 
-	//ENGINE::AnimNotify _Notify{};
-	//
-	////몇초에 이벤트를 발생 시킬지
-
-	//_Notify.Event[0.5] = [this]() {  Log("0.5 Sec Call");  return true; };
-	//_Notify.Event[0.9] = [this]() {  Log("0.9 Sec Call");  return false; };
-
-	//내 클라에서의 SetAnimation
-	//세팅할 애니메이션 이름 넘겨주고 나중에는 인덱스도 오버로딩
-	//두번째인자 루프 할지 말지
-	//세번째인자 _Notify 넘겨줌
-	//m_pMesh->PlayAnimation("RunLoop", true , _Notify);
-	//m_pMesh->PlayAnimation(IDLE, true, _Notify);
-	//FSM 준비
-
 	m_pRedQueen = AddGameObject<RedQueen>();
 	m_pLWing = AddGameObject<Nero_LWing>();
 	m_pRWing = AddGameObject<Nero_RWing>();
@@ -80,8 +65,6 @@ HRESULT Nero::Ready()
 
 	m_iCurAnimationIndex = ANI_END;
 	m_iPreAnimationIndex = ANI_END;
-
-	
 
 	return S_OK;
 }
@@ -114,6 +97,7 @@ UINT Nero::Update(const float _fDeltaTime)
 	D3DXVec3TransformCoord(&Pos, &Pos, &RotY);
 
 	m_pTransform.lock()->SetPosition(m_pTransform.lock()->GetPosition() + Pos * m_pTransform.lock()->GetScale().x);
+	
 
 	return 0;
 }
@@ -273,9 +257,12 @@ void Nero::RenderReady()
 void Nero::Editor()
 {
 	GameObject::Editor();
+	bool MyButton = true;
+	float ZeroDotOne = 0.1f;
 	if (bEdit)
 	{
 		// 에디터 .... 
+		ImGui::InputScalar("RotY", ImGuiDataType_Float, &m_fRotationAngle, MyButton ? &ZeroDotOne : NULL);
 	}
 
 }
@@ -316,9 +303,22 @@ void Nero::SetActive_Wire_Arm(bool ActiveOrNot)
 	m_pWireArm.lock()->SetActive(ActiveOrNot);
 }
 
+void Nero::SetActive_WingArm_Right(bool ActiveOrNot)
+{
+	m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
+}
+
+void Nero::SetActive_WingArm_Left(bool ActiveOrNot)
+{
+	m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
+}
+
 void Nero::SetAngleFromCamera()
 {
+	if (m_pCamera.expired())
+		return;
 	m_fAngle = m_pCamera.lock()->Get_Angle();
+	m_fAngle += m_fRotationAngle;
 	m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
 }
 
@@ -361,6 +361,14 @@ void Nero::Change_BusterArm_Animation(const std::string& InitAnimName, const boo
 void Nero::Change_WireArm_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
 	m_pWireArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+}
+void Nero::Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+{
+	m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+}
+void Nero::Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+{
+	m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }
 //if (Input::GetKeyDown(DIK_LCONTROL))
 //	m_iCurWeaponIndex = m_iCurWeaponIndex == RQ ? Cbs : RQ;

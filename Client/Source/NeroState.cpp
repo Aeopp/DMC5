@@ -21,6 +21,9 @@ HRESULT NeroState::StateEnter()
 {
 	FSMState::StateEnter();
 
+	//if (m_pNero.expired())
+	//	return S_OK;
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -231,7 +234,6 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 		}
 		else
 		{
-			m_pNero.lock()->SetAngleFromCamera();
 			m_pFSM->ChangeState(NeroFSM::RUNSTART);
 		}
 	}
@@ -243,7 +245,12 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 	else if (Input::GetKey(DIK_A))
 	{
 		//왼쪽으로 90도 회전
-		m_pFSM->ChangeState(NeroFSM::RUNSTART_L);
+		if ((NeroFSM::ATT1 <= _nIndex && _nIndex <= NeroFSM::ATT4))
+		{
+
+		}
+		else
+			m_pFSM->ChangeState(NeroFSM::RUNSTART_L);
 	}
 	else if (Input::GetKey(DIK_D))
 	{
@@ -1202,7 +1209,73 @@ RunStartLeft* RunStartLeft::Create(FSMBase* const _pFSM, const UINT _nIndex, wea
 HRESULT RunStartLeft::StateEnter()
 {
 	NeroState::StateEnter();
-	m_pNero.lock()->ChangeAnimation("RunStart270", false,Nero::ANI_RUNSTART270);
+	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
+
+
+	switch (CurAnimationIndex)
+	{
+	case Nero::ANI_IDLE_NORMAL:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_IDLE_BATTLE:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_IDLE_FROM_COMBOA1:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		break;
+	case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		break;
+	case Nero::ANI_IDLE_FROM_COMBOA1_END:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_IDLE_FROM_COMBOA2:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		break;
+	case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		break;
+	case Nero::ANI_IDLE_FROM_COMBOA2_END:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		break;
+	case Nero::ANI_SHUFFLE:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		break;
+	case Nero::ANI_RUNSTOP:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_OVERTURE_IDLE:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_OVERTURE_SHOOT:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_OVERTURE_SHOOT_UP:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_OVERTURE_SHOOT_DOWN:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	case Nero::ANI_WIRE_SNATCH_PULL:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	default:
+		m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+		//m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
+	}
+
+
+	m_pNero.lock()->SetAngleFromCamera();
 
 	return S_OK;
 }
@@ -1250,8 +1323,8 @@ HRESULT RunStartRight::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-
-
+	//m_pNero.lock()->SetRotationAngle(90.f);
+	m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -1300,7 +1373,8 @@ HRESULT RunStart180::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("RunStart180", false,Nero::ANI_RUNSTART180);
-
+	//m_pNero.lock()->SetRotationAngle(180.f);
+	m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -1370,12 +1444,14 @@ HRESULT RunLoop::StateEnter()
 HRESULT RunLoop::StateExit()
 {
 	NeroState::StateExit();
+	//m_pNero.lock()->SetRotationAngle(0.f);
 
 	return S_OK;
 }
 
 HRESULT RunLoop::StateUpdate(const float _fDeltaTime)
 {
+	m_pNero.lock()->SetAngleFromCamera();
 	if (Input::GetKey(DIK_W) || Input::GetKey(DIK_S) || Input::GetKey(DIK_A) || Input::GetKey(DIK_D))
 	{
 		//키입력이 특정 시간이 넘었다
@@ -1413,6 +1489,8 @@ HRESULT RunStartFront::StateEnter()
 	//앞으로 달리는 애니메이션으로 세팅
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT PreAnimationIndex = m_pNero.lock()->Get_PreAnimationIndex();
+	m_pNero.lock()->Reset_RotationAngle();
+	m_pNero.lock()->SetAngleFromCamera();
 
 	switch (CurAnimationIndex)
 	{
@@ -1481,6 +1559,7 @@ HRESULT RunStartFront::StateUpdate(const float _fDeltaTime)
 {
 	// 시작하는 애니메니메이션이 끝났으면 Loop로 변환
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+	m_pNero.lock()->SetAngleFromCamera();
 	if (Input::GetKey(DIK_W))
 	{
 		if (0.98 <= fCurrAnimationTime)
@@ -2807,7 +2886,9 @@ HRESULT BT_Att1::StateEnter()
 	//달리고있었으면 대쉬 ComboA로 가야됨
 	m_pNero.lock()->ChangeAnimation("ComboA1", false,Nero::ANI_COMBOA1);
 	m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
-
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -2895,6 +2976,10 @@ HRESULT BT_Att3::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA3", false, Nero::ANI_COMBOA3);
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -2943,6 +3028,9 @@ HRESULT BT_Att4::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA4", false, Nero::ANI_COMBOA4);
 
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("ComboA4", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3110,6 +3198,10 @@ HRESULT BT_Att_ComboC_1::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboC1", false, Nero::ANI_COMBOC1);
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("ComboC1", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3156,6 +3248,9 @@ HRESULT BT_Att_ComboC_2::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboC2", false, Nero::ANI_COMBOC2);
 
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3245,6 +3340,10 @@ HRESULT BT_Att_ComboC_4::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboC4", false, Nero::ANI_COMBOC4);
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3288,6 +3387,10 @@ HRESULT BT_Att_ComboD_1::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboD1", false, Nero::ANI_COMBOD1);
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("ComboD1", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3714,6 +3817,9 @@ HRESULT Skill_Split::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Split_Start", false, Nero::ANI_SPLIT_START);
 
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("Split_Start", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3751,6 +3857,10 @@ HRESULT Skill_Split_Loop::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->StopAnimation();
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("Split_Loop", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3789,6 +3899,10 @@ HRESULT Skill_Split_Landing::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Split_Landing", false, Nero::ANI_SPLIT_LANDING);
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("Split_Landing", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -3976,6 +4090,9 @@ HRESULT Skill_Streak::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Streak_Start", false, Nero::ANI_STREAK_START);
 
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -4054,6 +4171,10 @@ HRESULT Skill_Streak_Loop::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Streak_Loop", true, Nero::ANI_STREAK_LOOP);
 	m_fLoopTime = 1.f;
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Loop", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -4089,6 +4210,10 @@ HRESULT Skill_Streak_End::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Streak_End", false, Nero::ANI_STREAK_END);
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -6174,7 +6299,7 @@ HRESULT ComboA_Dash::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA1_Dash", false, Nero::ANI_COMBOA1_DASH);
-
+	m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -6851,6 +6976,10 @@ HRESULT Skill_Shuffle_Ex::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Shuffle_Ex", false, Nero::ANI_SHUFFLE_EX);
 	m_pNero.lock()->DecreaseRQ_Gage();
+
+	//m_pNero.lock()->SetActive_WingArm_Left(true);
+	//m_pNero.lock()->Change_WingArm_Left_Animation("Shuffle_Ex", true);
+	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
