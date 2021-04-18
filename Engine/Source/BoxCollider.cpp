@@ -53,7 +53,7 @@ HRESULT BoxCollider::ReadyCollider()
 	//Create BoxShape
 	m_pShape = Physics::GetPxPhysics()->createShape(physx::PxBoxGeometry(vHalfExtent), *m_pMaterial, true);
 	//
-	ReadyCollider();
+	Collider::ReadyCollider();
 	return S_OK;
 }
 

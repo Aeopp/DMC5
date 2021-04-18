@@ -101,9 +101,10 @@ void TempMap::RenderInit()
 
 	// 
 	// 스태틱 메쉬 로딩
-
+	Mesh::InitializeInfo _InitInfo{};
+	_InitInfo.bLocalVertexLocationsStorage = true;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Static\\Temp\\1357_theatrefloor_01.fbx");
+		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Arcade.fbx", _InitInfo);
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -176,7 +177,7 @@ HRESULT TempMap::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	//InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
+	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
 	//InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
 
 	PushEditEntity(InitTransform.lock().get());
@@ -187,10 +188,15 @@ HRESULT TempMap::Ready()
 
 HRESULT TempMap::Awake()
 {
-	m_pCollider = AddComponent<CapsuleCollider>();
-	m_pCollider.lock()->ReadyCollider();
+	m_pCollider = AddComponent<MeshCollider>();
+	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
+	//m_pCollider.lock()->SetRigid(true);
+	//m_pCollider.lock()->SetGravity(false);
 	PushEditEntity(m_pCollider.lock().get());
 
+	//auto pCollider = AddComponent<CapsuleCollider>();
+	//pCollider.lock()->ReadyCollider();
+	//PushEditEntity(pCollider.lock().get());
 	return S_OK;
 }
 

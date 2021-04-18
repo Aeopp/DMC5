@@ -4,6 +4,7 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include <iostream>
 
 void TestObject::Free()
 {
@@ -28,7 +29,7 @@ void TestObject::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_StaticMesh)
 		{
 			const uint32  Numsubset = _StaticMesh->GetNumSubset();  
@@ -87,13 +88,25 @@ void TestObject::RenderInit()
 		}
 	} };
 
+	/// <summary>
+	/// DrawCollider
+	/// </summary>
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Debug" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 
 	// 스태틱 메쉬 로딩
 
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Static\\Temp\\1357_theatrefloor_01.fbx");
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx");
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -168,7 +181,7 @@ HRESULT TestObject::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
+	InitTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,10.f,0.f });
 
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
@@ -178,7 +191,18 @@ HRESULT TestObject::Ready()
 
 HRESULT TestObject::Awake()
 {
-	
+	auto pCollider = AddComponent<CapsuleCollider>();
+	pCollider.lock()->ReadyCollider();
+	pCollider.lock()->SetRigid(true);
+	pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+
+	//pCollider.lock()->SetRadius(100.f);
+	//pCollider.lock()->SetHeight(200.f);
+	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/2.f,100.f,0.f });
+
+	PushEditEntity(pCollider.lock().get());
 	return S_OK;
 }
 
@@ -189,19 +213,20 @@ HRESULT TestObject::Start()
 
 UINT TestObject::Update(const float _fDeltaTime)
 {
-	/*Vector3 vDir = m_pTransform.lock()->GetLook();
+	GameObject::Update(_fDeltaTime);
+	Vector3 vDir = m_pTransform.lock()->GetLook();
 
-	D3DXVec3Normalize(&vDir, &vDir);*/
-	/*if (Input::GetKey(DIK_UP))
+	D3DXVec3Normalize(&vDir, &vDir);
+	if (Input::GetKey(DIK_W))
 		m_pTransform.lock()->Translate(vDir * _fDeltaTime * 10.f);
-	if (Input::GetKey(DIK_DOWN))
+	if (Input::GetKey(DIK_S))
 		m_pTransform.lock()->Translate(-vDir * _fDeltaTime * 10.f);
-	if (Input::GetKey(DIK_LEFT))
+	if (Input::GetKey(DIK_A))
 		m_pTransform.lock()->Rotate({ 0.f, D3DXToRadian(180 * -_fDeltaTime * 50.f), 0.f });
-	if (Input::GetKey(DIK_RIGHT))
-		m_pTransform.lock()->Rotate({ 0.f, D3DXToRadian(180 * _fDeltaTime * 50.f), 0.f });*/
+	if (Input::GetKey(DIK_D))
+		m_pTransform.lock()->Rotate({ 0.f, D3DXToRadian(180 * _fDeltaTime * 50.f), 0.f });
 		
-
+	std::cout << m_pTransform.lock()->GetPosition().y << std::endl;
 	
 	return 0;
 }

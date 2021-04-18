@@ -14,6 +14,7 @@ Mesh::Mesh(const Mesh& _rOther)
 	: Resource(_rOther)
 	, m_vecSubset(_rOther.m_vecSubset)
 	, m_spVertexLocations(_rOther.m_spVertexLocations)
+	, m_vecIndices(_rOther.m_vecIndices)
 {
 
 }
@@ -128,4 +129,24 @@ const MATERIAL& Mesh::GetMaterial(const UINT _nSubsetIdx)
 		return MATERIAL();
 
 	return m_vecSubset[_nSubsetIdx]->GetMaterial();
+}
+
+D3DXVECTOR3* Mesh::GetVerticesPointer()
+{
+	return m_spVertexLocations->data();
+}
+
+UINT Mesh::GetNumVertices()
+{
+	return m_spVertexLocations->size();
+}
+
+UINT* Mesh::GetIndicesPointer()
+{
+	return m_vecIndices->data();
+}
+
+UINT Mesh::GetNumIndices()
+{
+	return m_vecIndices->size();
 }

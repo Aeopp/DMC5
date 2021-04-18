@@ -108,7 +108,7 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 
 	//Scene Description
 	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.f, /*-9.81f * 5.f*/0.f, 0.f);
+	sceneDesc.gravity = physx::PxVec3(0.f, -9.81f, 0.f);
 	m_pDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = m_pDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;

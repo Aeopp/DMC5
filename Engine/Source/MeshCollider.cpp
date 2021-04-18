@@ -38,7 +38,7 @@ void MeshCollider::ReadyMeshCollider(D3DXVECTOR3* _pPoints, UINT _nNumPoint, UIN
 	PxTriangleMeshGeometry geometry;
 
 	geometry.triangleMesh = m_pTriangleMesh;
-	geometry.scale = PxVec3(1.f, 1.f, 1.f);
+	geometry.scale = PxVec3(0.01f, 0.01f, 0.01f);
 
 	m_pShape = PhysicsSystem::GetInstance()->GetPxPhysics()->createShape(geometry, *PhysicsSystem::GetInstance()->GetDefaultMaterial(), true);
 
@@ -53,7 +53,7 @@ void MeshCollider::CookTriangleMesh(D3DXVECTOR3* _pPoints, UINT _nNumPoint, UINT
 	triangleMeshDesc.points.stride = sizeof(PxVec3);
 	triangleMeshDesc.points.data = _pPoints;
 
-	triangleMeshDesc.triangles.count = _nNumFace;
+	triangleMeshDesc.triangles.count = _nNumFace / 3;
 	triangleMeshDesc.triangles.stride = 3 * sizeof(UINT);
 	triangleMeshDesc.triangles.data = _pIndices;
 

@@ -52,10 +52,13 @@ void Collider::ReadySimulate()
 {
 	std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
 	//Transform에 변화가 있었는지 확인
-	if (true == pTransform.expired() || false == pTransform.lock()->IsUpdated())
+	if (true == pTransform.expired())
+		return;
+	if (false == pTransform.lock()->IsUpdated())
 		return;
 	if (nullptr == m_pRigidActor)
 		return;
+
 
 	D3DXVECTOR3		vPosition = pTransform.lock()->GetPosition();
 	D3DXQUATERNION	tQuaternion = pTransform.lock()->GetQuaternion();
@@ -65,6 +68,9 @@ void Collider::ReadySimulate()
 
 	memcpy_s(&pxPos, sizeof(D3DXVECTOR3), &vPosition, sizeof(D3DXVECTOR3));
 	memcpy_s(&pxQuat, sizeof(D3DXQUATERNION), &tQuaternion, sizeof(D3DXQUATERNION));
+
+
+	//m_pRigidActor->is<PxRigidDynamic>()->setLinearVelocity(pxPos);
 
 	m_pRigidActor->setGlobalPose(physx::PxTransform(pxPos, pxQuat));
 }

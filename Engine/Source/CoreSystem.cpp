@@ -276,7 +276,6 @@ HRESULT CoreSystem::UpdateEngine()
 	Editor();
 
 	m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
-
 	if (FAILED(m_pRenderer.lock()->Render()))
 	{
 		PRINT_LOG(TEXT("Error"),TEXT("Failed to Renderer Render."));
