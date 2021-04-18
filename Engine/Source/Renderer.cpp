@@ -1140,25 +1140,21 @@ HRESULT Renderer::RendererCollider()&
 	for (auto& [ShaderKey, _EntityArr] : _Order)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
-		for (auto& [Entity, Call] : _EntityArr)
+		_DrawInfo.Fx = Fx;
+		Vector4 DebugColor{ 255.f/255.f,240.f /255.f,140.f/255.f,0.5f };
+		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
+		Fx->SetVector("DebugColor", &DebugColor);
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		UINT Passes = 0u;
+		Fx->Begin(&Passes, NULL);
+		for (int32 i = 0; i < Passes; ++i)
 		{
-			Call(_DrawInfo);
-		}
-		//_DrawInfo.Fx = Fx;
-		//Vector4 DebugColor{ 255.f/255.f,240.f /255.f,140.f/255.f,0.5f };
-		//const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
-		//Fx->SetVector("DebugColor", &DebugColor);
-		//Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
-		//UINT Passes = 0u;
-		//Fx->Begin(&Passes, NULL);
-		//for (int32 i = 0; i < Passes; ++i)
-		//{
-		//	Fx->BeginPass(i);
-		//	_DrawInfo.PassIndex = i;
+			Fx->BeginPass(i);
+			_DrawInfo.PassIndex = i;
 
-		//	Fx->EndPass();
-		//}
-		//Fx->End();
+			Fx->EndPass();
+		}
+		Fx->End();
 	}
 
 	return S_OK;

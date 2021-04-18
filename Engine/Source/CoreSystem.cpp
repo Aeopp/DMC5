@@ -247,7 +247,7 @@ static void GlobalVariableEditor()
 	ImGui::End();
 }
 
-HRESULT CoreSystem::UpdateEngine()
+HRESULT CoreSystem::UpdateEngine(const float Delta)
 {
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -259,7 +259,7 @@ HRESULT CoreSystem::UpdateEngine()
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateInputSystem."));
 		return E_FAIL;
 	}
-	if (FAILED(m_pTimeSystem.lock()->UpdateTimeSystem()))
+	if (FAILED(m_pTimeSystem.lock()->UpdateTimeSystem(Delta)))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateTimeSystem."));
 		return E_FAIL;
