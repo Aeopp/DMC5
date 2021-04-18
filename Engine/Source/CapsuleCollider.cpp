@@ -126,11 +126,6 @@ void CapsuleCollider::Editor()
 
 	Collider::Editor();
 
-
-	D3DXVECTOR3 vCenter = m_vCenter;
-	if (ImGui::InputFloat3("Center", vCenter))
-		SetCenter(vCenter);
-
 	float fRadius = m_fRadius;
 	if (ImGui::InputFloat("Radius", &fRadius))
 		SetRadius(fRadius);

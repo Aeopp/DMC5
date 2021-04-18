@@ -55,7 +55,52 @@ HRESULT Collider::DrawCollider(const DrawInfo& _Info)
 
 void Collider::Editor()
 {
+	bool bRigid = m_bRigid;
+	if (ImGui::Checkbox("Rigid", &bRigid))
+		SetRigid(bRigid);
 
+	bool bGravity = m_bGravity;
+	if (ImGui::Checkbox("Gravity", &bGravity))
+		SetGravity(bGravity);
+
+	ImGui::Text("Freeze");
+	ImGui::Text("Position");
+	ImGui::SameLine();
+
+	bool bFreezeX = IsLock(PxRigidDynamicLockFlag::eLOCK_LINEAR_X);
+	if (ImGui::Checkbox("X##PosX", &bFreezeX))
+		SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, bFreezeX);
+	
+	ImGui::SameLine();
+	bool bFreezeY = IsLock(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y);
+	if (ImGui::Checkbox("Y##PosX", &bFreezeY))
+		SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, bFreezeY);
+
+	ImGui::SameLine();
+	bool bFreezeZ = IsLock(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z);
+	if (ImGui::Checkbox("Z##PosX", &bFreezeZ))
+		SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, bFreezeZ);
+
+	ImGui::Text("Rotation");
+	ImGui::SameLine();
+
+	bool bFreezeRotX = IsLock(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X);
+	if (ImGui::Checkbox("X##RotX", &bFreezeRotX))
+		SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, bFreezeRotX);
+
+	ImGui::SameLine();
+	bool bFreezeRotY = IsLock(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y);
+	if (ImGui::Checkbox("Y##RotY", &bFreezeRotY))
+		SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, bFreezeRotY);
+
+	ImGui::SameLine();
+	bool bFreezeRotZ = IsLock(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z);
+	if (ImGui::Checkbox("Z##RotZ", &bFreezeRotZ))
+		SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, bFreezeRotZ);
+
+	D3DXVECTOR3 vCenter = m_vCenter;
+	if (ImGui::InputFloat3("Center", vCenter))
+		SetCenter(vCenter);
 }
 
 void Collider::ReadySimulate()
