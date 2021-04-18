@@ -44,8 +44,8 @@ HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
 	
-	AddGameObject<Camera>();
-	// AddGameObject<MainCamera>();
+	// AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<TempMap>();
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");

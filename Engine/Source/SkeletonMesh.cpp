@@ -138,7 +138,7 @@ void SkeletonMesh::AnimationEditor()&
 
 			if (ImGui::TreeNode(AnimInfo.Name.c_str()))
 			{
-				ImGui::BulletText("Duration : %2.3f", AnimInfo.Duration);
+				ImGui::BulletText("Duration : %6.3f", AnimInfo.Duration);
 				ImGui::BulletText("TickPerSecond : %3.3f", AnimInfo.TickPerSecond);
 				ImGui::SliderFloat("Acceleration", &AnimInfo.RefOriginAcceleration(), 0.1f, 10.f);
 				ImGui::SliderFloat("TransitionTime", &AnimInfo.TransitionTime, 0.009f, 5.f);
@@ -159,6 +159,13 @@ void SkeletonMesh::AnimationEditor()&
 					{
 						SetPlayingTime(PlayTime);
 					}
+					float PlayOriginTime = PlayingOriginTime();
+					if(ImGui::SliderFloat("PlayingOrigin Time",&PlayOriginTime,0.0f,
+						CurPlayAnimInfo.Duration))
+					{
+						SetPlayingTime(PlayOriginTime/CurPlayAnimInfo.Duration);
+					}
+
 					CurPlayAnimInfo = AnimInfo;
 				}
 
