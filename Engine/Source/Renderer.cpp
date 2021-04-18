@@ -307,7 +307,7 @@ void Renderer::ReadyRenderTargets()
 			blurtargets->DebugBufferInitialize
 			(
 				{ InitX + (XOffset * 3.f) + Interval,
-				InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+				  InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
 				RenderTargetDebugRenderSize);
 		}
 	}
@@ -317,18 +317,79 @@ void Renderer::ReadyRenderTargets()
 		{
 			for (int j = 0; j < 2; ++j)
 			{
-				const std::string key = "startargets" + 
+				const std::string key = "startargets" +
 					std::to_string(i) + std::to_string(j);
-				
-				// auto& star
+
+				auto& startargets = RenderTargets[key] =
+					std::make_shared<RenderTarget>();
+
+				RenderTarget::Info InitInfo{};
+				InitInfo.Width = g_nWndCX / 4;
+				InitInfo.Height = g_nWndCY / 4;
+				InitInfo.Levels = 1;
+				InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+				InitInfo.Format = D3DFMT_A16B16G16R16F;
+				InitInfo._D3DPool = D3DPOOL_DEFAULT;
+				startargets->Initialize(InitInfo);
+				startargets->DebugBufferInitialize(
+					{ InitX + (XOffset * (4 + j)) + Interval,
+					InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+					RenderTargetDebugRenderSize);
 			}
 		}
+	};
+
+	for (int i = 0; i < 2; ++i)
+	{
+		{
+			const std::string key = "lensflaretargets" + std::to_string(i);
+
+			auto& lensflaretargets = RenderTargets[key] = std::make_shared<RenderTarget>();
+
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / 2;
+			InitInfo.Height = g_nWndCY / 2;
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			lensflaretargets->Initialize(InitInfo);
+			lensflaretargets->DebugBufferInitialize
+			(
+				{ InitX + (XOffset * 6) + Interval,
+				  InitY + (YOffset * i) + ( i > 0 ? Interval : 0 ) },
+				RenderTargetDebugRenderSize
+			);
+		}
+
+		{
+			const std::string key = "afterimagetargets" + std::to_string(i);
+
+			auto& afterimagetargets = RenderTargets[key] = 
+				std::make_shared<RenderTarget>();
+
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / 2;
+			InitInfo.Height = g_nWndCY / 2;
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			afterimagetargets->Initialize(InitInfo);
+			afterimagetargets->DebugBufferInitialize
+			(
+				{     InitX + (XOffset * 6) + Interval,
+					  InitY + (YOffset * (i+2)) + (i > 0 ? Interval : 0) },
+						RenderTargetDebugRenderSize
+			);
+		}
 	}
-}
+};
 
 void Renderer::ReadyRenderInfo()
 {
 	Matrix CameraView, CameraProjection, Ortho;
+
 	Device->GetTransform(D3DTS_VIEW, &CameraView);
 	Device->GetTransform(D3DTS_PROJECTION, &CameraProjection);
 
@@ -425,12 +486,24 @@ HRESULT Renderer::Render()&
 	BackBuffer->Release();
 
 	return S_OK;
-}
+};
 
 void Renderer::Editor()&
 {
 	ImGui::Begin("Render Editor");
 	{
+		if (ImGui::TreeNode("RenderTarget"))
+		{
+			for (auto& _RT : RenderTargets)
+			{
+				ImGui::Text(_RT.first.c_str());
+				ImGui::Image(reinterpret_cast<void**>
+					(_RT.second->GetTexture()), { 128,128 });
+				ImGui::Separator();
+			}
+
+			ImGui::TreePop();
+		}
 		if (ImGui::Button("LightSave"))
 		{
 			LightSave(FileHelper::OpenDialogBox());
@@ -696,7 +769,7 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState (0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 16);
+	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 8);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
