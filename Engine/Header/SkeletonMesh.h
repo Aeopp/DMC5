@@ -71,6 +71,7 @@ public:
 		const AnimNotify & _Notify = {} ,
 		const float _CurrentAccelerationFactor = 1.0f,
 		const float _CurrentTransitionTimeFactor = 1.0f);
+
 	void   PlayAnimation(
 		const uint32 AnimationIndex,
 		const bool  bLoop,

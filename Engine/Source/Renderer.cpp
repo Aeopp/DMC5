@@ -317,7 +317,10 @@ void Renderer::ReadyRenderTargets()
 		{
 			for (int j = 0; j < 2; ++j)
 			{
-				const std::string key = "startargets" + std::to_string(i) + std::to_string(j);
+				const std::string key = "startargets" + 
+					std::to_string(i) + std::to_string(j);
+				
+				// auto& star
 			}
 		}
 	}
