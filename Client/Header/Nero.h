@@ -307,6 +307,8 @@ private:
 
 	float	m_fRedQueenGage = 0.f;
 	float	m_fAngle = 0.f;
+
+	std::weak_ptr<CapsuleCollider> m_pCollider;
 };
 
 

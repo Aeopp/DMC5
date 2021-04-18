@@ -34,6 +34,7 @@ physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes a
 		| physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 		| physx::PxPairFlag::eNOTIFY_TOUCH_LOST
 		| physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+
 	return physx::PxFilterFlag::eDEFAULT;
 }
 
@@ -122,7 +123,6 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 	}
 	m_pCollisionCallback = new CollisionCallback;
 	m_pScene->setSimulationEventCallback(m_pCollisionCallback);
-
 	//Default Material
 	m_pDefaultMaterial = m_pPhysics->createMaterial(1.f, 1.f, 0.f);
 

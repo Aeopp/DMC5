@@ -18,7 +18,7 @@
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "BtlPanel.h"
-
+#include "MainCamera.h"
 using namespace std;
 
 TestScene::TestScene()
@@ -41,8 +41,9 @@ HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
 	
-	AddGameObject<Camera>();
-	//AddGameObject<Nero>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	AddGameObject<Nero>();
 	AddGameObject<TempMap>();
 	
 	//AddGameObject<Em5000>();
@@ -55,7 +56,7 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<ShaderTester>();
 
-	AddGameObject<TestObject>();
+	//AddGameObject<TestObject>();
 
 	//AddGameObject<TestAnimationObject>();
 
