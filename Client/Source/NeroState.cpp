@@ -3,7 +3,6 @@
 #include "Nero.h"
 #include "NeroFSM.h"
 
-
 #pragma region PARENT // ºÎ¸ð
 
 
@@ -232,6 +231,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 		}
 		else
 		{
+			m_pNero.lock()->SetAngleFromCamera();
 			m_pFSM->ChangeState(NeroFSM::RUNSTART);
 		}
 	}
@@ -381,7 +381,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 
 	else if (Input::GetKey(DIK_W))
 	{
-
+		m_pNero.lock()->SetAngleFromCamera();
 	}
 	else if (Input::GetKey(DIK_S))
 	{

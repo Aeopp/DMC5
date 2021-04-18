@@ -36,5 +36,6 @@ enum GAMEOBJECTTAG
 	Eff_Glint,
 	Eff_OvertureHand,
 	ThrowCar,
+	TAG_Camera,
 	Tag_END
 };

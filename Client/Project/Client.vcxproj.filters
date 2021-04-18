@@ -224,6 +224,7 @@
     <ClInclude Include="..\Header\WingArm_Right.h">
       <Filter>02.GameObject\01.Player\02.WingArms\Right</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\MainCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -334,5 +335,6 @@
     <ClCompile Include="..\Source\WingArm_Right.cpp">
       <Filter>02.GameObject\01.Player\02.WingArms\Right</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\MainCamera.cpp" />
   </ItemGroup>
 </Project>

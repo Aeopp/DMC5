@@ -13,6 +13,7 @@ class Buster_Arm;
 class Wire_Arm;
 class WIngArm_Left;
 class WingArm_Right;
+class MainCamera;
 class Nero :   public GameObject ,
 	public ENGINE::RenderInterface
 
@@ -250,6 +251,7 @@ public:
 	void SetActive_Wings(bool ActiveOrNot);
 	void SetActive_Buster_Arm(bool ActiveOrNot);
 	void SetActive_Wire_Arm(bool ActiveOrNot);
+	void SetAngleFromCamera();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	void DecreaseRQ_Gage() { m_fRedQueenGage -= 1; }
@@ -292,7 +294,7 @@ private:
 	std::weak_ptr<Wire_Arm>	m_pWireArm;
 	std::weak_ptr<WIngArm_Left> m_pWingArm_Left;
 	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
-
+	std::weak_ptr<MainCamera> m_pCamera;
 
 
 	UINT	m_iCurAnimationIndex;
@@ -304,6 +306,7 @@ private:
 	UINT	m_iJumpCount = 0;
 
 	float	m_fRedQueenGage = 0.f;
+	float	m_fAngle = 0.f;
 };
 
 

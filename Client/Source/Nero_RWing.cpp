@@ -31,7 +31,7 @@ HRESULT Nero_RWing::Ready()
 
 HRESULT Nero_RWing::Awake()
 {
-	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(100).lock());
+	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Shoulder");
 	return S_OK;
 }
