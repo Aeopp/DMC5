@@ -160,6 +160,18 @@
     <ClCompile Include="..\Source\Quad.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CapsuleCollider.cpp">
+      <Filter>03.Utility\00.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\MeshCollider.cpp">
+      <Filter>03.Utility\00.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\SphereCollider.cpp">
+      <Filter>03.Utility\00.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\BoxCollider.cpp">
+      <Filter>03.Utility\00.Component</Filter>
+    </ClCompile>
     <ClCompile Include="..\Source\FileHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -402,6 +414,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Resource\Shader\ScreenQuad.hlsl">
       <Filter>04.HLSL\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\SphereCollider.h">
+      <Filter>03.Utility\00.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CapsuleCollider.h">
+      <Filter>03.Utility\00.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\MeshCollider.h">
+      <Filter>03.Utility\00.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\BoxCollider.h">
+      <Filter>03.Utility\00.Component</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\FileHelper.h" />
   </ItemGroup>

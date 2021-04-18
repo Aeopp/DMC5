@@ -91,6 +91,10 @@ HRESULT SphereCollider::DrawCollider(const DrawInfo& _Info)
 void SphereCollider::Editor()
 {
 	Collider::Editor();
+
+	float fRadius = m_fRadius;
+	if (ImGui::InputFloat("Radius##SphereCollider", &fRadius))
+		SetRadius(fRadius);
 }
 
 float SphereCollider::GetRadius()

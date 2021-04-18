@@ -50,7 +50,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.01f,0.01f,0.01f });
-	//m_pTransform.lock()->SetPosition(Vector3{- 4.45653f,32.14068f,9.48852f});
+	//m_pTransform.lock()->SetPosition(Vector3{- 0.,32.14068f,9.48852f});
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -76,12 +76,11 @@ HRESULT Nero::Awake()
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
-
 	m_pCollider.lock()->SetRigid(true);
-
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+
 
 	PushEditEntity(m_pCollider.lock().get());
 	return S_OK;
@@ -95,7 +94,7 @@ HRESULT Nero::Start()
 
 UINT Nero::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	//GameObject::Update(_fDeltaTime);
 	if (Input::GetKeyDown(DIK_0))
 		m_bDebugButton = !m_bDebugButton;
 	
@@ -238,6 +237,7 @@ void Nero::RenderInit()
 			RenderDebugSK(_Info);
 		}
 	} };
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
@@ -269,7 +269,7 @@ void Nero::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
 	}
 }
 
