@@ -60,7 +60,6 @@ void Em5000::Fight(const float _fDeltaTime)
 			Turn();
 			return;
 		}
-
 		if (m_bMove && m_bIng == false)
 		{
 			m_bIng = true;
@@ -73,10 +72,13 @@ void Em5000::Fight(const float _fDeltaTime)
 
 			return;
 		}
-		if (m_bJumpAttack && fDir >= 15.f && fDir <= 20.f && m_bIng == false)
+		if (m_bJumpAttack && fDir >= 20.f && fDir <=25.f)
 		{
-			m_eState = Attack_Jump_Attack;
-			return;
+			if (m_eState == Move_Start || m_eState == Move_Loop)
+			{
+				m_eState = Attack_Jump_Attack;
+				return;
+			}
 		}
 	}
 	else
@@ -126,15 +128,6 @@ void Em5000::Fight(const float _fDeltaTime)
 			{
 				m_eState = Attack_Hack;
 				return;
-			}
-		}
-		int iRandom = FMath::Random<int>(1, 3);
-		if (iRandom == 1)
-		{
-			if (m_bBackJump && m_bIng == false)
-			{
-				m_eState = Back_Jump;
-				m_bIng = true;
 			}
 		}
 	}
