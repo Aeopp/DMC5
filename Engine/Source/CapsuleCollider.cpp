@@ -107,7 +107,7 @@ HRESULT CapsuleCollider::DrawCollider(const DrawInfo& _Info)
 	D3DXMatrixScaling(&matInvScale, vObjectScale.x, vObjectScale.y, vObjectScale.z);
 	D3DXMatrixInverse(&matInvScale, nullptr, &matInvScale);
 
-	matWorld = matScale * matRot * matTrans * matInvScale * m_pGameObject.lock()->GetComponent<Transform>().lock()->GetRenderMatrix();
+	matWorld = matScale * matRot * matTrans * matInvScale * matGameObject;
 
 	_Info.Fx->SetMatrix("World", &matWorld);
 

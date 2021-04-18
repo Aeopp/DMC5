@@ -48,7 +48,7 @@ HRESULT RedQueen::Start()
 
 UINT RedQueen::Update(const float _fDeltaTime)
 {
-	//GameObject::Update(_fDeltaTime);
+	GameObject::Update(_fDeltaTime);
 	Quaternion QuatIdentity{0.f,0.f,0.f,1.f};
 	m_pMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {} , QuatIdentity);
 	m_pMesh->UpdateToRootMatricies();
@@ -99,7 +99,7 @@ void RedQueen::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 	}
 }
 

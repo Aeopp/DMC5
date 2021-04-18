@@ -97,6 +97,8 @@ HRESULT BoxCollider::DrawCollider(const DrawInfo& _Info)
 
 void BoxCollider::Editor()
 {
+	Component::Editor();
+
 	Collider::Editor();
 
 	D3DXVECTOR3 vSize = m_vSize;

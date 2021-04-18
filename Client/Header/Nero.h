@@ -316,7 +316,6 @@ private:
 	float	m_fAngle = 0.f;
 	float	m_fRotationAngle = 0.f;
 
-	std::weak_ptr<CapsuleCollider> m_pCollider;
 };
 
 
