@@ -301,6 +301,7 @@ private:
 	std::weak_ptr<WIngArm_Left> m_pWingArm_Left;
 	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
 	std::weak_ptr<MainCamera> m_pCamera;
+	std::weak_ptr<CapsuleCollider> m_pCollider;
 
 
 	UINT	m_iCurAnimationIndex;
