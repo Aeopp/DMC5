@@ -18,6 +18,7 @@
 #include "Glint.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
+#include "Renderer.h"
 
 #include <iostream>
 using namespace std;
@@ -50,19 +51,12 @@ HRESULT TestScene::LoadScene()
 	//
 	AddGameObject<Em5000>();
 	AddGameObject<Car>();
-	
-	//AddGameObject<Em5000>();
-	//AddGameObject<Car>();
-
 
 	//AddGameObject<ShaderTester>();
 	/*
 	AddGameObject<TestAnimationObject>();*/
 
-	//AddGameObject<ShaderTester>();
-
 	//AddGameObject<TestObject>();
-	//AddGameObject<TestAnimationObject>();
 
 	/*AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();
