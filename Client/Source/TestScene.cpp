@@ -44,6 +44,7 @@ HRESULT TestScene::LoadScene()
 	
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
+
 	AddGameObject<Nero>();
 	AddGameObject<TempMap>();
 	
@@ -72,7 +73,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();*/
 
 
-	//AddGameObject<BtlPanel>();
+	AddGameObject<BtlPanel>();
 	
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
