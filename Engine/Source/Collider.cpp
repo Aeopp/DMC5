@@ -32,6 +32,16 @@ void Collider::Free()
 HRESULT Collider::ReadyCollider()
 {
 	CreateRigidActor();
+	std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
+
+	D3DXVECTOR3		vPosition = pTransform.lock()->GetPosition();
+	D3DXQUATERNION	tQuaternion = pTransform.lock()->GetQuaternion();
+
+	PxVec3 pxPos;
+	PxQuat pxQuat;
+
+	memcpy_s(&pxPos, sizeof(D3DXVECTOR3), &vPosition, sizeof(D3DXVECTOR3));
+	memcpy_s(&pxQuat, sizeof(D3DXQUATERNION), &tQuaternion, sizeof(D3DXQUATERNION));
 
 	//Scene¿¡ Actor Ãß°¡.
 	Physics::AddActor(*m_pRigidActor);
