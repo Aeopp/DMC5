@@ -160,18 +160,7 @@
     <ClCompile Include="..\Source\Quad.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\BoxCollider.cpp">
-      <Filter>03.Utility\00.Component\02.Collider\01.BoxCollider</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\SphereCollider.cpp">
-      <Filter>03.Utility\00.Component\02.Collider\02.SphereCollider</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\CapsuleCollider.cpp">
-      <Filter>03.Utility\00.Component\02.Collider\03.CapsuleCollider</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\MeshCollider.cpp">
-      <Filter>03.Utility\00.Component\02.Collider\04.MeshCollider</Filter>
-    </ClCompile>
+    <ClCompile Include="..\Source\FileHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
@@ -414,18 +403,7 @@
     <ClInclude Include="..\..\Resource\Shader\ScreenQuad.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\BoxCollider.h">
-      <Filter>03.Utility\00.Component\02.Collider\01.BoxCollider</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\SphereCollider.h">
-      <Filter>03.Utility\00.Component\02.Collider\02.SphereCollider</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\CapsuleCollider.h">
-      <Filter>03.Utility\00.Component\02.Collider\03.CapsuleCollider</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\MeshCollider.h">
-      <Filter>03.Utility\00.Component\02.Collider\04.MeshCollider</Filter>
-    </ClInclude>
+    <ClInclude Include="..\Header\FileHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">
@@ -587,18 +565,6 @@
     <Filter Include="04.HLSL\Common">
       <UniqueIdentifier>{df583113-5bdd-4bdb-840d-ad47ba152e9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Utility\00.Component\02.Collider\01.BoxCollider">
-      <UniqueIdentifier>{034b1a07-382b-4295-81bd-b4c0f7211293}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Utility\00.Component\02.Collider\02.SphereCollider">
-      <UniqueIdentifier>{bff8c1ea-09ec-445c-b8bd-0aae0504f264}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Utility\00.Component\02.Collider\03.CapsuleCollider">
-      <UniqueIdentifier>{56025275-3848-4215-b223-cf7f8e812e9a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Utility\00.Component\02.Collider\04.MeshCollider">
-      <UniqueIdentifier>{860ba3aa-fb75-4222-944d-d9aceea61347}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
@@ -641,6 +607,9 @@
       <Filter>04.HLSL\Common</Filter>
     </None>
     <None Include="..\..\Resource\Shader\Collider.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Frustum.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
   </ItemGroup>

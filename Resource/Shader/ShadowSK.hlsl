@@ -107,14 +107,18 @@ void ps_variance(
 	in float4 wpos : TEXCOORD1,
 	out float4 color : COLOR0)
 {
-    float d = zw.x;
+    float d = 1.f;
 
     if (isPerspective)
     {
         float z = length(lightPos.xyz - wpos.xyz);
         d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
     }
-
+    else
+    {
+        d = zw.x / zw.y;
+    }
+    
     color = float4(d, d * d, 0, 1);
 }
 

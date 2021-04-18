@@ -22,6 +22,7 @@ ENGINE_DLL bool		            g_bDebugBoneToRoot;
 ENGINE_DLL bool		            g_bRenderCollider;
 ENGINE_DLL bool                 g_bRenderEdit;
 ENGINE_DLL bool                 g_bRenderPtLightScissorTest;
+
 ENGINE_DLL ID3DXMesh*		    g_pSphereMesh;
 
 ENGINE_DLL std::vector<std::string> g_Logs;
@@ -44,11 +45,11 @@ HRESULT Engine::ReadyEngine(const bool bWindowed,
 	return m_pCoreSystem.lock()->ReadyEngine(bWindowed, bMultiSample);
 }
 
-HRESULT Engine::UpdateEngine()
+HRESULT Engine::UpdateEngine(const float Delta)
 {
 	if (nullptr == m_pCoreSystem.lock() || m_pCoreSystem.expired())
 		return E_FAIL;
-	return m_pCoreSystem.lock()->UpdateEngine();
+	return m_pCoreSystem.lock()->UpdateEngine(Delta);
 }
 
 HRESULT Engine::ReleaseEngine()

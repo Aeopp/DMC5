@@ -191,6 +191,7 @@ call Engine.bat</Command>
     <ClInclude Include="..\Header\CollisionCallback.h" />
     <ClInclude Include="..\Header\Color.h" />
     <ClInclude Include="..\Header\DxHelper.h" />
+    <ClInclude Include="..\Header\FileHelper.h" />
     <ClInclude Include="..\Header\FLight.h" />
     <ClInclude Include="..\Header\IconsFontAwesome5.h" />
     <ClInclude Include="..\Header\MeshCollider.h" />
@@ -260,6 +261,7 @@ call Engine.bat</Command>
     <ClCompile Include="..\Source\Collider.cpp" />
     <ClCompile Include="..\Source\CollisionCallback.cpp" />
     <ClCompile Include="..\Source\Color.cpp" />
+    <ClCompile Include="..\Source\FileHelper.cpp" />
     <ClCompile Include="..\Source\FLight.cpp" />
     <ClCompile Include="..\Source\MeshCollider.cpp" />
     <ClCompile Include="..\Source\Node.cpp" />
@@ -414,6 +416,11 @@ call Engine.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Collider.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Frustum.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

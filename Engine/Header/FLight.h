@@ -6,6 +6,9 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <functional>
+#include "StaticMesh.h"
+#include "Texture.h"
+
 
 BEGIN(ENGINE)
 
@@ -21,6 +24,7 @@ public:
 private:
 
 public:
+	FLight();
 	FLight(Type _Type, 
 		const D3DXVECTOR4& position, const D3DXCOLOR& color,
 		const float blurintercity=4.f);
@@ -29,9 +33,14 @@ public:
 	void CalculateViewProjection(D3DXMATRIX& Out);
 	void CalculateScissorRect(RECT& Out, const D3DXMATRIX& View, const D3DXMATRIX& Projection, float Radius, int32_t Width, int32_t Height);
 
+
+	void InitRender();
+	void Render(const DrawInfo& _Info);
+
 	void CreateShadowMap(LPDIRECT3DDEVICE9 _Device, const uint16_t Size);
 	void RenderShadowMap(LPDIRECT3DDEVICE9 _Device, std::function<void(FLight*)> CallBack);
 
+	Matrix GetWorld();
 	// 다른 라이팅ㅇ으로부터 쉐오둥 블러 . 
 	void BlurShadowMap(LPDIRECT3DDEVICE9 _Device, std::function<void(FLight*)> CallBack);
 
@@ -55,10 +64,18 @@ public:
 	inline bool IsPerspective()const& {return _Type!=Directional;};
 	inline LPDIRECT3DTEXTURE9 GetShadowMap() { return (Blurred ? Blurredshadowmap : Shadowmap); }
 	inline LPDIRECT3DCUBETEXTURE9 GetCubeShadowMap() { return (Blurred ? Blurredcubeshadowmap : Cubeshadowmap); }
+
+	void Save();
+	void Load();
+
+	std::shared_ptr<StaticMesh> _Mesh{};
+	std::shared_ptr<Texture> _Texture{};
+
 	RECT LastScissorRect{ 0,0,0,0 };
-private:
+
+public:
 	D3DXVECTOR4				Position;	// or direction
-	D3DXVECTOR4				Projparams;
+
 	D3DXVECTOR3				Spotdirection;
 	D3DXVECTOR2				Spotparams;	// cos(inner), cos(outer)
 	float				    PointRadius;
@@ -70,18 +87,24 @@ private:
 	LPDIRECT3DSURFACE9      DepthStencil{};
 
 
-	Type				    _Type;
-	int						Currentface;
+
 	uint16_t				ShadowMapSize;
 	bool					Blurred;
-public:
+
+
+	Type				    _Type;
+	bool bRemove = false;
+	float shadowmin = 0.0f;
+	D3DXVECTOR4				Projparams;
+	int						Currentface;
 	D3DXVECTOR3             Direction{ 0,0,0 };
 	float                   BlurIntencity;
 	float  lightFlux = 10.f;
 	float  lightIlluminance = 1.5f;
 	float  specularPower = 80.f;
-	float  cosAngularRadius = 0.9999893; 
-	float  sinAngularRadius = 0.0046251;
+	float  cosAngularRadius = 0.999989f; 
+	float  sinAngularRadius = 0.004625f;
+	float  shadowdepthbias =0.0f;
 
 	Matrix viewinv;
 	Matrix proj;

@@ -71,8 +71,6 @@ void Frustum::Release()&
 		VertexBuffer->Release();
 	if (IndexBuffer)
 		IndexBuffer->Release();
-
-	
 }
 
 void Frustum::Make(const Matrix& CameraWorld, const Matrix& Projection)&
@@ -144,6 +142,24 @@ bool Frustum::IsIn(const Sphere& _Sphere)&
 		});
 };
 
+void Frustum::Render(IDirect3DDevice9* const Device, 
+					 ID3DXEffect* const Fx, 
+					 const Matrix& World)
+{
+	/*Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);*/
+
+	Fx->SetMatrix("World", &World);
+	Device->SetStreamSource(0, VertexBuffer, 0, sizeof(Vector3));
+	Device->SetIndices(IndexBuffer);
+	Device->SetFVF(D3DFVF_XYZ);
+
+	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	//Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	//Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+}
 void Frustum::DebugRender(IDirect3DDevice9* const Device)&
 {
 	Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);

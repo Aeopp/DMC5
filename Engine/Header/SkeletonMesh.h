@@ -83,6 +83,8 @@ public:
 	void	AnimationEnd()&;
 	// 0 ~ 1 정규화 
 	float   PlayingTime();
+	// 0 ~ 1 정규화 되지 않은 시간 ( 원본 애니메이션 길이 )  
+	float   PlayingOriginTime();
 	float   PlayingAccTime();
 	//  정규화된 시간으로 넘겨주세요 범위를 벗어나면 Clamp
 	void    SetPlayingTime(float NewTime);
