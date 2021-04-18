@@ -852,6 +852,14 @@ float SkeletonMesh::PlayingTime()
 	return CurrentAnimMotionTime / CurPlayAnimInfo.Duration;
 }
 
+float SkeletonMesh::PlayingOriginTime()
+{
+	if (bAnimationEnd)
+		return 0.0f;
+
+	return CurrentAnimMotionTime;
+}
+
 float SkeletonMesh::PlayingAccTime()
 {
 	return CurAccMotionTime / CurPlayAnimInfo.Duration;

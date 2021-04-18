@@ -15,7 +15,6 @@
 #include "Quad.h"
 #include "basiccamera.h"
 
-
 // TODO :: 절두체 컬링 (포인트 라이트도 ) 
 // TODO :: 시저렉트 계산 
 BEGIN(ENGINE)
@@ -36,13 +35,15 @@ private:
 	void    ReadyFrustum();
 	void    ReadyQuad();	
 public : 
-	
 	HRESULT Render()&;
 	void    Editor()&;
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;
 	const Frustum * GetCameraFrustum()const& { return CameraFrustum.get();  };
 	bool bLightRender = false;
+
+	void LightSave(std::filesystem::path path);
+	void LightLoad(const std::filesystem::path& path);
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -63,8 +64,7 @@ private:
 	HRESULT RendererCollider()&;
 	HRESULT LightFrustumRender()&;
 private:
-	void LightSave(std::filesystem::path path);
-	void LightLoad(const std::filesystem::path& path);
+
 public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};

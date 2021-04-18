@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "TestObject.h"
 #include "ShaderTester.h"
+#include "Renderer.h"
+
 #include "TempMap.h"
 #include "TestAnimationObject.h"
 #include "Camera.h"
@@ -42,10 +44,11 @@ HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
 	
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
+	// AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<TempMap>();
+	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	//
 	//AddGameObject<Em5000>();
 	//AddGameObject<Car>();

@@ -65,8 +65,6 @@ void TimeSystem::UpdateDeltaTime()
 	m_fAccDeltaTime += m_fDeltaTime;
 	m_fAccTime += m_fDeltaTime;
 
-
-
 	++m_uiUpdateCount;
 	if (m_fAccDeltaTime > 1.0)
 	{

@@ -65,24 +65,24 @@ void Renderer::ReadyShader(const std::filesystem::path& TargetPath)
 void Renderer::ReadyLights()
 {
 	// 달빛
-	DirLights.resize(1u);
-	DirLights[0] = std::make_shared<FLight>
-		(FLight(FLight::Type::Directional,
-		{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250)));
-	DirLights[0]->InitRender();
-	DirLights[0]->CreateShadowMap(Device, 2048);
-	DirLights[0]->GetPosition().x = -9.f;
-	DirLights[0]->GetPosition().y = 105.f;
-	DirLights[0]->GetPosition().z = -22.f;
-	DirLights[0]->Direction.x = 71.f;
-	DirLights[0]->Direction.y = -2.f;
-	DirLights[0]->Direction.z = -83.f;
+	//DirLights.resize(1u);
+	//DirLights[0] = std::make_shared<FLight>
+	//	(FLight(FLight::Type::Directional,
+	//	{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250)));
+	//DirLights[0]->InitRender();
+	//DirLights[0]->CreateShadowMap(Device, 2048);
+	//DirLights[0]->GetPosition().x = -9.f;
+	//DirLights[0]->GetPosition().y = 105.f;
+	//DirLights[0]->GetPosition().z = -22.f;
+	//DirLights[0]->Direction.x = 71.f;
+	//DirLights[0]->Direction.y = -2.f;
+	//DirLights[0]->Direction.z = -83.f;
 
-	DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
-	DirLights[0]->lightFlux = 10.0f;
-	DirLights[0]->lightIlluminance = 1.5f;
-	DirLights[0]->specularPower = 80.0f;
-	DirLights[0]->SetPointRadius (5.0f); // meter
+	//DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
+	//DirLights[0]->lightFlux = 10.0f;
+	//DirLights[0]->lightIlluminance = 1.5f;
+	//DirLights[0]->specularPower = 80.0f;
+	//DirLights[0]->SetPointRadius (5.0f); // meter
 
 	// PointLights.resize(1u);
 
@@ -739,7 +739,7 @@ void Renderer::DeferredShading()
 
 		// 여기서부터 ..
 		// point lights
-		device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		// device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
 
 		for (auto& PointLight : PointLights)
 		{
