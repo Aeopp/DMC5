@@ -26,13 +26,15 @@ HRESULT RedQueen::Ready()
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_vecParentMat.reserve(2);
+
+	_RenderProperty.bRender = true;
 	
 	return S_OK;
 }
 
 HRESULT RedQueen::Awake()
 {
-	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(100).lock());
+	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("WeaponConst"));
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("L_WeaponHand"));
 	return S_OK;
@@ -75,10 +77,12 @@ UINT RedQueen::LateUpdate(const float _fDeltaTime)
 
 void RedQueen::OnEnable()
 {
+	_RenderProperty.bRender = true;
 }
 
 void RedQueen::OnDisable()
 {
+	_RenderProperty.bRender = false;
 }
 
 std::string RedQueen::GetName()
@@ -89,7 +93,7 @@ std::string RedQueen::GetName()
 void RedQueen::RenderReady()
 {
 	// bRender ≤Ù∏È ∑ª¥ı »£√‚ æ»µ  .
-	_RenderProperty.bRender = true;
+
 
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
 	if (auto _SpTransform = _WeakTransform.lock();

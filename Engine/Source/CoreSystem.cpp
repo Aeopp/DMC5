@@ -214,12 +214,12 @@ HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 		return E_FAIL;
 	}
 
-	//m_pPhysicsSystem = PhysicsSystem::GetInstance();
-	//if (nullptr == m_pRenderer.lock() || FAILED(m_pPhysicsSystem.lock()->ReadyPhysicsSystem()))
-	//{
-	//	PRINT_LOG(TEXT("Error"), TEXT("Failed to ReadyEngine."));
-	//	return E_FAIL;
-	//}
+	m_pPhysicsSystem = PhysicsSystem::GetInstance();
+	if (nullptr == m_pRenderer.lock() || FAILED(m_pPhysicsSystem.lock()->ReadyPhysicsSystem()))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to ReadyEngine."));
+		return E_FAIL;
+	}
 
 	GlobalVariableSetup();
 	ImGuiSetUp();
@@ -238,6 +238,7 @@ static void GlobalVariableEditor()
 			ImGui::Checkbox("CollisionVisible", &g_bCollisionVisible);
 			ImGui::Checkbox("Render", &g_bDebugRender);
 			ImGui::Checkbox("RenderBoneToRoot", &g_bDebugBoneToRoot);
+			ImGui::Checkbox("RenderCollider", &g_bRenderCollider);
 			ImGui::Checkbox("RenderTargetVisible", &g_bRenderTargetVisible);
 			ImGui::Checkbox("RenderEdit",&g_bRenderEdit);
 			ImGui::Checkbox("RenderPointLightScissorTest",&g_bRenderPtLightScissorTest);
@@ -246,7 +247,7 @@ static void GlobalVariableEditor()
 	ImGui::End();
 }
 
-HRESULT CoreSystem::UpdateEngine()
+HRESULT CoreSystem::UpdateEngine(const float Delta)
 {
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -258,13 +259,13 @@ HRESULT CoreSystem::UpdateEngine()
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateInputSystem."));
 		return E_FAIL;
 	}
-	if (FAILED(m_pTimeSystem.lock()->UpdateTimeSystem()))
+	if (FAILED(m_pTimeSystem.lock()->UpdateTimeSystem(Delta)))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateTimeSystem."));
 		return E_FAIL;
 	}
 
-	//m_pPhysicsSystem.lock()->FetchResults();
+	m_pPhysicsSystem.lock()->FetchResults();
 
 	if (FAILED(m_pSceneSystem.lock()->UpdateSceneSystem(m_pTimeSystem.lock()->DeltaTime())))
 	{
@@ -274,8 +275,7 @@ HRESULT CoreSystem::UpdateEngine()
 
 	Editor();
 
-	//m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
-
+	m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
 	if (FAILED(m_pRenderer.lock()->Render()))
 	{
 		PRINT_LOG(TEXT("Error"),TEXT("Failed to Renderer Render."));

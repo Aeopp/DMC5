@@ -11,6 +11,9 @@ class Nero_LWing;
 class Nero_RWing;
 class Buster_Arm;
 class Wire_Arm;
+class WIngArm_Left;
+class WingArm_Right;
+class MainCamera;
 class Nero :   public GameObject ,
 	public ENGINE::RenderInterface
 
@@ -224,9 +227,6 @@ public:
 	static Nero* Create();
 public:
 	virtual void RenderReady() override;
-	/*virtual void RenderDebugImplementation(const ImplementationInfo& _ImplInfo)override;
-	virtual void RenderForwardAlphaBlendImplementation(const ImplementationInfo& _ImplInfo)override;
-	virtual void RenderDebugBoneImplementation(const ImplementationInfo& _ImplInfo)override;*/
 	virtual void Editor()override;
 public:
 /// <For RedQueen>
@@ -247,10 +247,15 @@ public:
 	UINT Get_RQ_Gage() { return (UINT)m_fRedQueenGage; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
+	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_Wings(bool ActiveOrNot);
 	void SetActive_Buster_Arm(bool ActiveOrNot);
 	void SetActive_Wire_Arm(bool ActiveOrNot);
+	void SetActive_WingArm_Right(bool ActiveOrNot);
+	void SetActive_WingArm_Left(bool ActiveOrNot);
+	void SetAngleFromCamera();
+	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	void DecreaseRQ_Gage() { m_fRedQueenGage -= 1; }
@@ -267,6 +272,8 @@ public:
 	void ChangeWeapon(UINT _iWeaponIndex);
 	void Change_BusterArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -291,6 +298,9 @@ private:
 	std::weak_ptr<Nero_RWing>	m_pRWing;
 	std::weak_ptr<Buster_Arm>	m_pBusterArm;
 	std::weak_ptr<Wire_Arm>	m_pWireArm;
+	std::weak_ptr<WIngArm_Left> m_pWingArm_Left;
+	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
+	std::weak_ptr<MainCamera> m_pCamera;
 
 
 	UINT	m_iCurAnimationIndex;
@@ -302,6 +312,8 @@ private:
 	UINT	m_iJumpCount = 0;
 
 	float	m_fRedQueenGage = 0.f;
+	float	m_fAngle = 0.f;
+	float	m_fRotationAngle = 0.f;
 };
 
 

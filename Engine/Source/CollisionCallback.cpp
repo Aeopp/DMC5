@@ -41,7 +41,7 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		if (physx::PxPairFlag::eNOTIFY_TOUCH_FOUND == pairs[i].events)
 		{
 #ifdef _DEBUG
-			cout << "OnCollisionEnter" << endl;
+			//cout << "OnCollisionEnter" << endl;
 #endif // _DEBUG
 			if(false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnCollisionEnter(pCollider[1].lock()->GetGameObject());
@@ -51,7 +51,7 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS == pairs[i].events)
 		{
 #ifdef _DEBUG
-			cout << "OnCollisionStay" << endl;
+			//cout << "OnCollisionStay" << endl;
 #endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnCollisionStay(pCollider[1].lock()->GetGameObject());
@@ -61,7 +61,7 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_LOST == pairs[i].events)
 		{
 #ifdef _DEBUG
-			cout << "OnCollisionExit" << endl;
+			//cout << "OnCollisionExit" << endl;
 #endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnCollisionExit(pCollider[1].lock()->GetGameObject());
@@ -87,7 +87,7 @@ void CollisionCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 coun
 		if (physx::PxPairFlag::eNOTIFY_TOUCH_FOUND == pairs[i].status)
 		{
 #ifdef _DEBUG
-			cout << "OnTriggerEnter" << endl;
+			//cout << "OnTriggerEnter" << endl;
 #endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnTriggerEnter(pCollider[1].lock()->GetGameObject());
@@ -97,7 +97,7 @@ void CollisionCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 coun
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_LOST == pairs[i].status)
 		{
 #ifdef _DEBUG
-			cout << "OnTriggerExit" << endl;
+			//cout << "OnTriggerExit" << endl;
 #endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnTriggerExit(pCollider[1].lock()->GetGameObject());

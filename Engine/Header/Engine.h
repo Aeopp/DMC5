@@ -22,6 +22,11 @@
 #include "Component.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
+#include "Collider.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
+#include "CapsuleCollider.h"
+#include "MeshCollider.h"
 #pragma endregion
 
 

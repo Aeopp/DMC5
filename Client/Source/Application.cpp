@@ -17,9 +17,9 @@ HRESULT Application::ReadyApplication(const bool bWindowed,
 	return S_OK;
 }
 
-HRESULT Application::UpdateApplication()
+HRESULT Application::UpdateApplication(const float Delta)
 {
-	if (FAILED(Engine::UpdateEngine()))
+	if (FAILED(Engine::UpdateEngine(Delta)))
 		return E_FAIL;
 	return S_OK;
 }

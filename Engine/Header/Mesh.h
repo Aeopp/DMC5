@@ -17,6 +17,9 @@ public:
 protected:
 	std::vector<std::shared_ptr<Subset>>  m_vecSubset;
 	std::shared_ptr<std::vector<Vector3>> m_spVertexLocations;
+
+	//Triangle Mesh Cooking에 필요한 인덱스 정보 저장용 -- 2021/04/12 권현재
+	std::shared_ptr<std::vector<UINT>> m_vecIndices;
 protected:
 	// 로딩이 끝난 이후 호출해주세요 . 서브셋 정점 정보들로부터 전체 메쉬의 정점 위치를 구합니다.
 	void MakeVertexLocationsFromSubset()&;
@@ -43,6 +46,13 @@ public:
 	std::weak_ptr<Subset>	GetSubset(const UINT _nIndex);
 	const VERTEXBUFFERDESC& GetVertexBufferDesc(const UINT _nSubsetIdx);
 	const MATERIAL&			GetMaterial(const UINT _nSubsetIdx);
+
+	//Triangle Mesh Cooking에 필요한 인덱스 정보 저장용 -- 2021/04/12 권현재
+	D3DXVECTOR3*	GetVerticesPointer();
+	UINT			GetNumVertices();
+	//Triangle Mesh Cooking에 필요한 인덱스 정보 저장용 -- 2021/04/12 권현재
+	UINT*			GetIndicesPointer();
+	UINT			GetNumIndices();
 };
 
 END

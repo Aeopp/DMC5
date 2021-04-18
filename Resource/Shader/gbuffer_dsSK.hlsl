@@ -28,15 +28,16 @@ void vs_gbuffer_tbn(
 	in float3 BiNormal : BINORMAL,
 
 	in out float2 tex : TEXCOORD0, 
+    in out float2 tex2 : TEXCOORD1 , 
     in float4 BoneIds0 : BLENDINDICES0,
     in float4 BoneIds1 : BLENDINDICES1,
     in float4 Weights0 : BLENDWEIGHT0,
     in float4 Weights1 : BLENDWEIGHT1,
 
-	out float2 zw : TEXCOORD1,
-    out float3 WNormal : TEXCOORD2 ,
-    out float3 WTangent : TEXCOORD3  ,
-    out float3 WBiNormal : TEXCOORD4         )
+	out float2 zw : TEXCOORD2,
+    out float3 WNormal : TEXCOORD3 ,
+    out float3 WTangent : TEXCOORD4  ,
+    out float3 WBiNormal : TEXCOORD5         )
 {
     float4 AnimPos = float4(0, 0, 0, 1);
     
@@ -119,16 +120,17 @@ void vs_gbuffer_tbn(
     
     pos = mul(pos, matViewProj);
     zw = pos.zw;
-
+    tex2 = tex2;
     tex *= uv;
 }
 
 void ps_gbuffer_tbn(
 	in float2 tex : TEXCOORD0,
-	in float2 zw : TEXCOORD1,
-    in float3 WNormal : TEXCOORD2,
-    in float3 WTangent : TEXCOORD3,
-    in float3 WBiNormal : TEXCOORD4 ,
+    in float2 tex2 : TEXCOORD1 , 
+	in float2 zw : TEXCOORD2 , 
+    in float3 WNormal : TEXCOORD3,
+    in float3 WTangent : TEXCOORD4,
+    in float3 WBiNormal : TEXCOORD5 ,
 	
 	out float4 color0 : COLOR0, // albedo
 	out float4 color1 : COLOR1, // normals

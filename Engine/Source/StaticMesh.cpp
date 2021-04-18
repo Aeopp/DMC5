@@ -115,6 +115,16 @@ HRESULT StaticMesh::LoadMeshImplementation(const aiScene* AiScene,
 
 		_CurrentSubset->Initialize(pVB, pIB, tVBDesc, tMaterial);
 		m_vecSubset[MeshIdx] = _CurrentSubset;
+
+		//Triangle Mesh Cooking에 필요한 인덱스 정보 저장용 -- 2021/04/12 권현재
+		m_vecIndices.reset(new std::vector<UINT>());
+		UINT* pIndices = nullptr;
+		pIB->Lock(0, 0, (void**)&pIndices, 0);
+		m_vecIndices->resize(tVBDesc.nNumFaces * 3);
+		for (UINT i = 0; i < (tVBDesc.nNumFaces * 3); ++i)
+		{
+			(*m_vecIndices)[i] = pIndices[i];
+		}
 	};
 
 	if (_InitInfo.bLocalVertexLocationsStorage)

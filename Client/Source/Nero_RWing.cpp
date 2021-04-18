@@ -19,6 +19,7 @@ Nero_RWing* Nero_RWing::Create()
 
 HRESULT Nero_RWing::Ready()
 {
+	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
 	PushEditEntity(m_pTransform.lock().get());
@@ -30,7 +31,7 @@ HRESULT Nero_RWing::Ready()
 
 HRESULT Nero_RWing::Awake()
 {
-	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(100).lock());
+	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Shoulder");
 	return S_OK;
 }
@@ -68,11 +69,13 @@ UINT Nero_RWing::LateUpdate(const float _fDeltaTime)
 void Nero_RWing::OnEnable()
 {
 	m_bIsRender = true;
+	_RenderProperty.bRender = m_bIsRender;
 }
 
 void Nero_RWing::OnDisable()
 {
 	m_bIsRender = false;
+	_RenderProperty.bRender = m_bIsRender;
 }
 
 void Nero_RWing::RenderInit()
@@ -82,7 +85,7 @@ void Nero_RWing::RenderInit()
 	// 렌더 속성 전체 초기화 
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = m_bIsRender;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
 		{"gbuffer_dsSK",
@@ -217,7 +220,6 @@ void Nero_RWing::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
 		if (m_pMesh)
 		{

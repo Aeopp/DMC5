@@ -31,7 +31,7 @@ private:
 public:
 	HRESULT ReadyEngine(
 		const bool bWindowed,const bool bMultiSample);
-	HRESULT UpdateEngine();
+	HRESULT UpdateEngine(const float Delta);
 private:
 	void Editor();
 

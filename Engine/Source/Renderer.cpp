@@ -1,7 +1,15 @@
+
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
+
 #include "Renderer.h"
+#include "FileHelper.h"
+
 #include "GraphicSystem.h"
+#include <ostream>
+#include <fstream>
+#include <istream>
+
 #include "FMath.hpp"
 #include "Color.h"
 #include "DxHelper.h"
@@ -57,22 +65,24 @@ void Renderer::ReadyShader(const std::filesystem::path& TargetPath)
 void Renderer::ReadyLights()
 {
 	// 달빛
-	DirLights.resize(1u);
-	DirLights[0] = std::make_shared<FLight>
-		(FLight(FLight::Type::Directional,
-		{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250)));
-	DirLights[0]->CreateShadowMap(Device, 2048);
-	DirLights[0]->GetPosition().x = -9.f;
-	DirLights[0]->GetPosition().y = 105.f;
-	DirLights[0]->GetPosition().z = -22.f;
-	DirLights[0]->Direction.x = 71.f;
-	DirLights[0]->Direction.y = -2.f;
-	DirLights[0]->Direction.z = -83.f;
-	
-	DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
-	DirLights[0]->lightFlux = 25.f;
-	DirLights[0]->lightIlluminance = 6.f;
+	//DirLights.resize(1u);
+	//DirLights[0] = std::make_shared<FLight>
+	//	(FLight(FLight::Type::Directional,
+	//	{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250)));
+	//DirLights[0]->InitRender();
+	//DirLights[0]->CreateShadowMap(Device, 2048);
+	//DirLights[0]->GetPosition().x = -9.f;
+	//DirLights[0]->GetPosition().y = 105.f;
+	//DirLights[0]->GetPosition().z = -22.f;
+	//DirLights[0]->Direction.x = 71.f;
+	//DirLights[0]->Direction.y = -2.f;
+	//DirLights[0]->Direction.z = -83.f;
 
+	//DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
+	//DirLights[0]->lightFlux = 10.0f;
+	//DirLights[0]->lightIlluminance = 1.5f;
+	//DirLights[0]->specularPower = 80.0f;
+	//DirLights[0]->SetPointRadius (5.0f); // meter
 
 	// PointLights.resize(1u);
 
@@ -276,10 +286,11 @@ HRESULT Renderer::Render()&
 	AlphaBlendEffectRender();
 	UIRender();
 
-
 	ResetState();
 	RenderTargetDebugRender();
 	RenderDebug();
+	LightFrustumRender();
+	RendererCollider();
 	RenderDebugBone();
 	ImguiRender();
 	GraphicSystem::GetInstance()->End();
@@ -294,6 +305,21 @@ void Renderer::Editor()&
 {
 	ImGui::Begin("Render Editor");
 	{
+		if (ImGui::Button("LightSave"))
+		{
+			LightSave(FileHelper::OpenDialogBox());
+		}
+
+		if (ImGui::Button("LightLoad"))
+		{
+			LightLoad(FileHelper::OpenDialogBox());
+		}
+
+		ImGui::Checkbox("LightRender", &bLightRender);
+		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
+
+		// ImGui::SliderFloat("ShadowMin", &ShadowMin, 0.0f, 1.0f);
+
 		if (ImGui::CollapsingHeader("Add Light"))
 		{
 			static int32 ShadowMapSize = 0.0f;
@@ -311,6 +337,7 @@ void Renderer::Editor()&
 				DirLights.push_back(_Insert);
 				_Insert->CreateShadowMap(Device, ShadowMapSize);
 				_Insert->SetProjectionParameters(7.1f, 7.1f, -20.f, +20.f);
+				_Insert->InitRender();
 			}
 
 			if (ImGui::Button("Point"))
@@ -323,37 +350,9 @@ void Renderer::Editor()&
 				PointLights.push_back(_Insert);
 				_Insert->CreateShadowMap(Device, ShadowMapSize);
 				_Insert->SetProjectionParameters(0, 0, 0.1f, 10.0f);
+				_Insert->InitRender();
 			};
 		};
-
-		if (ImGui::CollapsingHeader("Remove"))
-		{
-			static int32 RemoveIndex = 0u;
-			if (ImGui::InputInt("Index : %d", &RemoveIndex))
-			{
-				if (DirLights.empty() == false)
-				{
-					auto iter = DirLights.begin();
-					std::advance(iter, RemoveIndex);
-					if (iter != DirLights.end())
-					{
-						DirLights.erase(iter);
-					}
-				}
-
-				if (PointLights.empty() == false)
-				{
-					auto iter = PointLights.begin();
-					std::advance(iter, RemoveIndex);
-					if (iter != PointLights.end())
-					{
-						PointLights.erase(iter);
-					}
-				}
-			}
-		}
-		
-
 		if (ImGui::CollapsingHeader("Lights"))
 		{
 			uint32 Idx = 0u;
@@ -412,6 +411,21 @@ void Renderer::RenderEnd()&
 {
 	_PrevRenderInfo = _RenderInfo;
 	RenderEntityClear();
+
+	for (auto iter = DirLights.begin(); iter != DirLights.end(); )
+	{
+		if(iter->get()->bRemove)
+			iter = DirLights.erase(iter);
+		else 
+			++iter; 
+	}
+	for (auto iter = PointLights.begin(); iter != PointLights.end(); )
+	{
+		if (iter->get()->bRemove)
+			iter = PointLights.erase(iter);
+		else
+			++iter;
+	}
 }
 
 void Renderer::RenderEntityClear()&
@@ -470,29 +484,29 @@ void Renderer::RenderShadowMaps()
 			});
 	};
 
-	for (auto& DirLight : DirLights)
-	{
-		DirLight->BlurShadowMap(Device, [&](FLight* light) {
-			D3DXVECTOR4 pixelsize(1.0f / light->GetShadowMapSize(),
-				1.0f / light->GetShadowMapSize(), 0, 0);
-			D3DXVECTOR4 TexelSize = DirLight->BlurIntencity * pixelsize;
-			// make it more blurry
-			Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-			Blur->SetTechnique("boxblur3x3");
-			Blur->SetVector("pixelSize", &pixelsize);
-			Blur->SetVector("texelSize", &TexelSize);
+	//for (auto& DirLight : DirLights)
+	//{
+	//	DirLight->BlurShadowMap(Device, [&](FLight* light) {
+	//		D3DXVECTOR4 pixelsize(1.0f / light->GetShadowMapSize(),
+	//			1.0f / light->GetShadowMapSize(), 0, 0);
+	//		D3DXVECTOR4 TexelSize = DirLight->BlurIntencity * pixelsize;
+	//		// make it more blurry
+	//		Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	//		Blur->SetTechnique("boxblur3x3");
+	//		Blur->SetVector("pixelSize", &pixelsize);
+	//		Blur->SetVector("texelSize", &TexelSize);
 
-			Blur->Begin(NULL, 0);
-			Blur->BeginPass(0);
-			{
-				_Quad->Render(Device);
-			}
-			Blur->EndPass();
-			Blur->End();
+	//		Blur->Begin(NULL, 0);
+	//		Blur->BeginPass(0);
+	//		{
+	//			_Quad->Render(Device);
+	//		}
+	//		Blur->EndPass();
+	//		Blur->End();
 
-			Device->SetRenderState(D3DRS_ZENABLE, TRUE);
-		});
-	}
+	//		Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	//	});
+	//}
 
 	// point lights
 	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -504,10 +518,12 @@ void Renderer::RenderShadowMaps()
 		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
 		PtlightSphere.Radius = PointLight->GetFarPlane();
 		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
+		if (PointLight->GetShadowMapSize() <= 0) continue;
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX viewproj;
-			D3DXVECTOR4 clipplanes(light->GetNearPlane(), light->GetFarPlane(), 0, 0);
+			D3DXVECTOR4 clipplanes(
+				light->GetNearPlane(), light->GetFarPlane(), 0, 0);
 
 			light->CalculateViewProjection(viewproj);
 
@@ -524,7 +540,8 @@ void Renderer::RenderShadowMaps()
 			_DrawInfo._Device = Device;
 			_DrawInfo._Frustum = CurShadowFrustum.get();
 			// 여기까지 했음 . 내일 화이팅
-			for (auto& [ShaderKey, EntityArr] : RenderEntitys[RenderProperty::Order::Shadow])
+			for (auto& [ShaderKey, EntityArr] : 
+				RenderEntitys[RenderProperty::Order::Shadow])
 			{
 				auto Fx = Shaders[ShaderKey]->GetEffect();
 				_DrawInfo.Fx = Fx;
@@ -557,15 +574,17 @@ void Renderer::RenderGBuffer()
 	device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 	device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
 
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	 device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 16);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	// device->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, 16);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
@@ -591,6 +610,19 @@ void Renderer::RenderGBuffer()
 				Fx->BeginPass(i);
 				{
 					Call(_DrawInfo);
+
+					if (bLightRender)
+					{
+						for (auto& _Light : DirLights)
+						{
+							_Light->Render(_DrawInfo);
+						}
+						for (auto& _Light : PointLights)
+						{
+							_Light->Render(_DrawInfo);
+						}
+					}
+
 				}
 				Fx->EndPass();
 			}
@@ -599,6 +631,7 @@ void Renderer::RenderGBuffer()
 	}
 
 	RenderScene(Shaders["gbuffer_ds"]->GetEffect() , _RenderInfo.ViewProjection);
+
 
 	device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
@@ -629,26 +662,29 @@ void Renderer::DeferredShading()
 	device->SetRenderTarget(0, scenesurface);
 	device->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0f, 0);
 
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
 
-	for (int i = 1; i < 5; ++i) {
-		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
+	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 16);
+
+	for (int32 i = 1; i < 3; ++i)
+	{
+		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		device->SetSamplerState(i, D3DSAMP_SRGBTEXTURE, FALSE);
+	};
 
-	}
-
-	for (int i = 3; i < 5; ++i)
-	{
+	for (int i = 3; i < 5; ++i) {
 		device->SetSamplerState(i, D3DSAMP_BORDERCOLOR, 0xffffffff);
-	}
+		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+		device->SetSamplerState(i, D3DSAMP_SRGBTEXTURE, FALSE);
+	};
 
 	device->SetTexture(0, albedo);
 	device->SetTexture(1, normals);
@@ -666,6 +702,7 @@ void Renderer::DeferredShading()
 
 	deferred->Begin(NULL, 0);
 	deferred->BeginPass(0);
+
 	{
 		D3DXMATRIX lightviewproj;
 		D3DXVECTOR4 clipplanes(0, 0, 0, 0);
@@ -678,11 +715,16 @@ void Renderer::DeferredShading()
 				deferred->SetMatrix("lightViewProj", &lightviewproj);
 				deferred->SetVector("lightColor", (D3DXVECTOR4*)&DirLight->GetColor());
 				deferred->SetVector("lightPos", &DirLight->GetPosition());
+				deferred->SetBool("IsPoint", false);
 				deferred->SetFloat("lightFlux", DirLight->lightFlux);
 				deferred->SetFloat("lightIlluminance", DirLight->lightIlluminance);
 				deferred->SetFloat("lightRadius", DirLight->GetPointRadius());
 				deferred->SetFloat("specularPower", DirLight->specularPower);
-
+				deferred->SetFloat("shadowmin", DirLight->shadowmin);
+				deferred->SetFloat("ShadowDepthBias",DirLight->shadowdepthbias);
+				deferred->SetFloat("ShadowDepthMapHeight", DirLight->GetShadowMapSize());
+				deferred->SetFloat("ShadowDepthMapWidth", DirLight->GetShadowMapSize());
+				
 				deferred->SetFloat("sinAngularRadius", DirLight->sinAngularRadius);
 				deferred->SetFloat("cosAngularRadius", DirLight->cosAngularRadius);
 
@@ -697,7 +739,7 @@ void Renderer::DeferredShading()
 
 		// 여기서부터 ..
 		// point lights
-		device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		// device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
 
 		for (auto& PointLight : PointLights)
 		{
@@ -721,7 +763,11 @@ void Renderer::DeferredShading()
 			deferred->SetFloat("specularPower", PointLight->specularPower);
 			deferred->SetFloat("sinAngularRadius", PointLight->sinAngularRadius);
 			deferred->SetFloat("cosAngularRadius", PointLight->cosAngularRadius);
-
+			deferred->SetFloat("shadowmin", PointLight->shadowmin);
+			deferred->SetFloat("ShadowDepthBias", PointLight->shadowdepthbias);
+			deferred->SetFloat("ShadowDepthMapHeight",PointLight->GetShadowMapSize());
+			deferred->SetFloat("ShadowDepthMapWidth",PointLight->GetShadowMapSize());
+			deferred->SetBool("IsPoint", true);
 			deferred->SetVector("clipPlanes", &clipplanes);
 			deferred->SetVector("lightColor", (D3DXVECTOR4*)&PointLight->GetColor());
 			deferred->SetVector("lightPos", &PointLight->GetPosition());
@@ -881,150 +927,7 @@ void Renderer::RenderScene(LPD3DXEFFECT effect, const D3DXMATRIX& viewproj)
 		effect->SetTechnique(oldtech);
 };
 
-//
-//
-//HRESULT Renderer::RenderDeferredShading()&
-//{
-//	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-//	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-//
-//	Vector4 pixelsize{};
-//	pixelsize.x = 1.0f / static_cast<float> (_RenderInfo.Viewport.Width);
-//	pixelsize.y = -1.0f / static_cast<float> (_RenderInfo.Viewport.Height);
-//
-//	Device->SetFVF(D3DFVF_XYZW |D3DFVF_TEX1);
-//	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-//
-//	Device->SetRenderTarget(0u, RenderTargets["SceneTarget"]->GetSurface());
-//	Device->Clear(0,NULL,D3DCLEAR_TARGET, 0, 1.0f, 0);
-//
-//	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-//	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-//	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-//	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-//	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-//	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
-//
-//	for (int i = 1; i < 5; ++i) {
-//		Device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-//		Device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-//		Device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-//		Device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-//		Device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-//	}
-//
-//	Device->SetTexture(0, RenderTargets["ALBM"]->GetTexture());
-//	Device->SetTexture(1, RenderTargets["NRMR"]->GetTexture());
-//	Device->SetTexture(2, RenderTargets["Depth"]->GetTexture());
-//
-//	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-//
-//	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
-//	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-//
-//	auto* const Fx = Shaders["DeferredShading"]->GetEffect();
-//	Fx->SetTechnique("deferred");
-//	Fx->SetMatrix("matViewProjInv", (D3DXMATRIX*)&_RenderInfo.ViewProjectionInverse);
-//	Fx->SetVector("pixelSize", &pixelsize);
-//	Fx->SetVector("eyePos", (D3DXVECTOR4*)&_RenderInfo.Eye);
-//
-//
-//	Fx->Begin(NULL, 0);
-//	Fx->BeginPass(0);
-//
-//	Matrix  lightviewproj;
-//	Vector4 clipplanes(0, 0, 0, 0);
-//
-//	Moonlight->CalculateViewProjection(lightviewproj);
-//
-//	{
-//		// directional light
-//		Fx->SetMatrix("lightViewProj", &lightviewproj);
-//		Fx->SetVector("lightColor", (D3DXVECTOR4*)&Moonlight->GetColor());
-//		Fx->SetVector("lightPos", &Moonlight->GetPosition());
-//		Fx->SetFloat("specularPower", 200.0f);
-//		Fx->SetFloat("lightFlux", Moonlight->lightFlux);
-//		Fx->SetFloat("lightIlluminance", Moonlight->lightIlluminance);
-//		Fx->SetFloat("specularPower",Moonlight->specularPower);
-//		Fx->SetFloat("sinAngularRadius",Moonlight->sinAngularRadius);
-//		Fx->SetFloat("cosAngularRadius", Moonlight->cosAngularRadius);
-//		
-//		Device->SetTexture(3, Moonlight->GetShadowMap());
-//		Fx->CommitChanges();
-//
-//
-//		_Quad->Render(Device, 1.f, 1.f, Fx);
-//	}
-//
-//	Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-//	RECT scissorrect;
-//	
-//	for (int i = 0; i < 3; ++i)
-//	{
-//		clipplanes.x = PointLights[i]->GetNearPlane();
-//		clipplanes.y = PointLights[i]->GetFarPlane();
-//
-//		PointLights[i]->CalculateScissorRect
-//		(
-//			scissorrect, (const D3DXMATRIX&)_RenderInfo.View,
-//			(const D3DXMATRIX&)_RenderInfo.Projection,
-//			PointLights[i]->GetPointRadius(), g_nWndCX, g_nWndCY);
-//
-//		Device->SetScissorRect(&scissorrect);
-//
-//		Fx->SetVector("clipPlanes", &clipplanes);
-//		Fx->SetVector("lightColor", (D3DXVECTOR4*)&PointLights[i]->GetColor());
-//		Fx->SetVector("lightPos", &PointLights[i]->GetPosition());
-//		Fx->SetFloat("specularPower", PointLights[0]->specularPower);
-//		Fx->SetFloat("lightRadius", PointLights[i]->GetPointRadius());
-//		Fx->SetFloat("lightFlux",PointLights[0]->lightFlux);
-//		Fx->SetFloat("lightIlluminance", PointLights[0]->lightIlluminance);
-//		Fx->SetFloat("sinAngularRadius", PointLights[0]->sinAngularRadius);
-//		Fx->SetFloat("cosAngularRadius", PointLights[0]->cosAngularRadius);
-//		
-//		Device->SetTexture(4, PointLights[i]->GetCubeShadowMap());
-//		Fx->CommitChanges();
-//		_Quad->Render(Device, 1.f, 1.f, Fx);
-//	}
-//
-//	Device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-//
-//	Fx->EndPass();
-//	Fx->End();
-//
-//	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-//	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
-//
-//	// draw some outline around scissor rect
-//	float rectvertices[24];
-//	uint16_t rectindices[5] = { 0, 1, 2, 3, 0 };
-//
-//	memcpy(rectvertices, DXScreenQuadVerticesFFP, 24 * sizeof(float));
-//
-//	rectvertices[0] += scissorrect.left;
-//	rectvertices[1] += scissorrect.top;
-//	rectvertices[6] += scissorrect.left;
-//	rectvertices[7] += scissorrect.bottom;
-//	rectvertices[12] += scissorrect.right;
-//	rectvertices[13] += scissorrect.bottom;
-//	rectvertices[18] += scissorrect.right;
-//	rectvertices[19] += scissorrect.top;
-//
-//	Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
-//	auto*const screenquad = Shaders["ScreenQuad"]->GetEffect();
-//	screenquad->SetTechnique("rect");
-//	screenquad->Begin(NULL, 0);
-//	screenquad->BeginPass(0);
-//	{
-//		Device->DrawIndexedPrimitiveUP(D3DPT_LINESTRIP, 0, 4, 4, rectindices, D3DFMT_INDEX16, rectvertices, 6 * sizeof(float));
-//	}
-//	screenquad->EndPass();
-//	screenquad->End();
-//
-//	Device->SetFVF(D3DFVF_XYZW | D3DFVF_TEX1);
-//
-//	return S_OK;
-//};
+
 
 HRESULT Renderer::RenderDebug()&
 {
@@ -1061,7 +964,7 @@ HRESULT Renderer::RenderDebug()&
 
 HRESULT Renderer::RenderDebugBone()&
 {
-	if (g_bDebugBoneToRoot)return S_OK;
+	if (g_bDebugBoneToRoot ==false)return S_OK;
 
 	auto& _Order = RenderEntitys[RenderProperty::Order::DebugBone];
 	DrawInfo _DrawInfo{};
@@ -1162,7 +1065,7 @@ HRESULT Renderer::Tonemapping()&
 	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
 	tonemap->SetTechnique("tonemap");
 	tonemap->SetVector("pixelSize", &pixelsize);
-
+	tonemap->SetFloat("exposure", exposure);
 	tonemap->Begin(NULL, 0);
 	tonemap->BeginPass(0);
 	Device->SetTexture(0, scenetarget);
@@ -1225,7 +1128,275 @@ HRESULT Renderer::UIRender()&
 
 	return S_OK;
 }
-;
+HRESULT Renderer::RendererCollider()&
+{
+	if (g_bRenderCollider == false)return S_OK;
+
+	auto& _Order = RenderEntitys[RenderProperty::Order::Collider];
+	DrawInfo _DrawInfo{};
+	_DrawInfo._Device = Device;
+	_DrawInfo.BySituation.reset();
+	_DrawInfo._Frustum = CameraFrustum.get();
+	for (auto& [ShaderKey, _EntityArr] : _Order)
+	{
+		auto Fx = Shaders[ShaderKey]->GetEffect();
+		_DrawInfo.Fx = Fx;
+		Vector4 DebugColor{ 255.f/255.f,240.f /255.f,140.f/255.f,0.5f };
+		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
+		Fx->SetVector("DebugColor", &DebugColor);
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		UINT Passes = 0u;
+		Fx->Begin(&Passes, NULL);
+		for (int32 i = 0; i < Passes; ++i)
+		{
+			Fx->BeginPass(i);
+			_DrawInfo.PassIndex = i;
+
+			Fx->EndPass();
+		}
+		Fx->End();
+	}
+
+	return S_OK;
+};
+
+HRESULT Renderer::LightFrustumRender()&
+{
+	if (bLightRender)
+	{
+		auto Fx = Shaders["Frustum"]->GetEffect();
+		Fx->Begin(nullptr, NULL);
+		Fx->BeginPass(0);
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		static const Vector4 DebugColor{ 1.f,1.f,1.f,0.025f };
+		Fx->SetVector("DebugColor", &DebugColor);
+		for (auto& _Light : DirLights)
+		{
+			CurShadowFrustum->Render(Device, Fx, _Light->GetWorld());
+		}
+		Fx->EndPass();
+		Fx->End();
+	}
+
+	if (bLightRender)
+	{
+		auto Fx = Shaders["Frustum"]->GetEffect();
+		Fx->Begin(nullptr, NULL);
+		Fx->BeginPass(0);
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		static const Vector4 DebugColor{ 1.f,1.f,1.f,0.025f };
+		Fx->SetVector("DebugColor", &DebugColor);
+		for (auto& _Light : PointLights)
+		{
+			for (_Light->Currentface = 0; _Light->Currentface < 6; ++_Light->Currentface)
+			{
+				Matrix viewproj{};
+				_Light->CalculateViewProjection(viewproj);
+				CurShadowFrustum->Render(Device, Fx, _Light->GetWorld());
+			};
+		}
+		Fx->EndPass();
+		Fx->End();
+	}
+
+	return S_OK;
+};
+
+void Renderer::LightSave(std::filesystem::path path)
+{
+	std::vector<FLight*> _Lights{};
+	for (auto& _Light : DirLights)
+	{
+		_Lights.push_back(_Light.get());
+	}
+	for (auto& _Light : PointLights)
+	{
+		_Lights.push_back(_Light.get());
+	}
+	using namespace rapidjson;
+
+	StringBuffer StrBuf{};
+	PrettyWriter<StringBuffer> Writer(StrBuf);
+	Writer.StartObject();
+	Writer.Key("LightDataArray");
+	Writer.StartArray();
+
+	for (auto& _Light : _Lights)
+	{
+		// Writer.Key("LightData");
+		Writer.StartObject();
+		{
+			
+
+			Writer.Key("sinAngularRadius");
+			Writer.Double(_Light->sinAngularRadius);
+			
+			Writer.Key("cosAngularRadius");
+			Writer.Double(_Light->cosAngularRadius);
+
+			Writer.Key("specularPower");
+			Writer.Double(_Light->specularPower);
+
+			Writer.Key("lightIlluminance");
+			Writer.Double(_Light->lightIlluminance);
+
+			Writer.Key("lightFlux");
+			Writer.Double(_Light->lightFlux);
+
+			Writer.Key("Color");
+			Writer.StartArray();
+			auto _Color = _Light->GetColor();
+			Writer.Double(_Color.r);
+			Writer.Double(_Color.g);
+			Writer.Double(_Color.b);
+			Writer.Double(_Color.a);
+			Writer.EndArray();
+
+			Writer.Key("Near");
+			Writer.Double(_Light->GetNearPlane());
+
+			Writer.Key("Far");
+			Writer.Double(_Light->GetFarPlane());
+
+			Writer.Key("Projparams");
+			Writer.StartArray();
+			Writer.Double(_Light->Projparams.x);
+			Writer.Double(_Light->Projparams.y);
+			Writer.Double(_Light->Projparams.z);
+			Writer.Double(_Light->Projparams.w);
+			Writer.EndArray();
+
+			Writer.Key("PointRadius");
+			Writer.Double(_Light->GetPointRadius());
+
+			Writer.Key("Direction");
+			Writer.StartArray();
+			Writer.Double(_Light->Direction.x);
+			Writer.Double(_Light->Direction.y);
+			Writer.Double(_Light->Direction.z);
+			Writer.EndArray();
+
+			Writer.Key("Position");
+			Writer.StartArray();
+			Writer.Double(_Light->GetPosition().x);
+			Writer.Double(_Light->GetPosition().y);
+			Writer.Double(_Light->GetPosition().z);
+			Writer.Double(_Light->GetPosition().w);
+			Writer.EndArray();
+
+			Writer.Key("shadowmin");
+			Writer.Double(_Light->shadowmin);
+
+			Writer.Key("shadowdepthbias");
+			Writer.Double(_Light->shadowdepthbias);
+
+			Writer.Key("ShadowMapSize");
+			Writer.Double(_Light->GetShadowMapSize());
+
+			Writer.Key("Type");
+			std::string TypeStr = _Light->_Type == FLight::Type::Directional ? "Directional" : "Point";
+			Writer.String(TypeStr.c_str());
+		}
+		Writer.EndObject();
+	}
+
+	Writer.EndArray();
+	Writer.EndObject();
+
+	// path.replace_extension("Light");
+	std::ofstream Of{ path };
+	Of << StrBuf.GetString();
+};
+
+
+void Renderer::LightLoad(const std::filesystem::path& path)
+{
+	using namespace rapidjson;
+
+	std::ifstream Is{ path };
+
+	if (!Is.is_open())
+		return;
+
+	IStreamWrapper Isw(Is);
+	Document _Document{};
+	_Document.ParseStream(Isw);
+
+	if (_Document.HasParseError())
+	{
+		PRINT_LOG(L"Warning!", L"Animation Parse Error!");
+		return;
+	}
+	
+	const Value& LightData = _Document["LightDataArray"];
+	// if (LightData.IsArray())
+	{
+		// auto LightArray=LightData.GetArray();
+		for (auto iter = LightData.Begin();
+			iter != LightData.End(); ++iter)
+		{
+			auto _Light = std::make_shared<FLight>();
+
+			/*auto LightObject = iter->FindMember("LightData")->value.Get<Value::Object>();*/
+
+			_Light->sinAngularRadius = iter->FindMember("sinAngularRadius")->value.GetDouble();
+			_Light->cosAngularRadius = iter->FindMember("cosAngularRadius")->value.GetDouble();
+			_Light->specularPower = iter->FindMember("specularPower")->value.GetDouble();
+			_Light->lightIlluminance = iter->FindMember("lightIlluminance")->value.GetDouble();
+			_Light->lightFlux = iter->FindMember("lightFlux")->value.GetDouble();
+
+			auto ColorArr = iter->FindMember("Color")->value.GetArray();
+			_Light->GetColor().r = ColorArr[0].GetDouble();
+			_Light->GetColor().g = ColorArr[1].GetDouble();
+			_Light->GetColor().b = ColorArr[2].GetDouble();
+			_Light->GetColor().a = ColorArr[3].GetDouble();
+
+			_Light->Projparams.z = iter->FindMember("Near")->value.GetDouble();
+			_Light->Projparams.w = iter->FindMember("Far")->value.GetDouble();
+
+			auto Projparams = iter->FindMember("Projparams")->value.GetArray();
+			_Light->Projparams.x = Projparams[0].GetDouble();
+			_Light->Projparams.y = Projparams[1].GetDouble();
+			_Light->Projparams.z = Projparams[2].GetDouble();
+			_Light->Projparams.w = Projparams[3].GetDouble();
+
+			_Light->PointRadius = iter->FindMember("PointRadius")->value.GetDouble();
+
+			auto Direction = iter->FindMember("Direction")->value.GetArray();
+			_Light->Direction.x = Direction[0].GetDouble();
+			_Light->Direction.y = Direction[1].GetDouble();
+			_Light->Direction.z = Direction[2].GetDouble();
+
+			auto Position = iter->FindMember("Position")->value.GetArray();
+			_Light->Position.x = Position[0].GetDouble();
+			_Light->Position.y = Position[1].GetDouble();
+			_Light->Position.z = Position[2].GetDouble();
+			_Light->Position.w = Position[3].GetDouble();
+
+			_Light->shadowmin = iter->FindMember("shadowmin")->value.GetDouble();
+			_Light->shadowdepthbias = iter->FindMember("shadowdepthbias")->value.GetDouble();
+
+			_Light->ShadowMapSize = iter->FindMember("ShadowMapSize")->value.GetDouble();
+
+			auto TypeStr = iter->FindMember("Type")->value.GetString();
+			if (std::string(TypeStr) == "Directional")
+			{
+				_Light->_Type = FLight::Type::Directional;
+				DirLights.push_back(_Light);
+			}
+			else
+			{
+				_Light->_Type = FLight::Type::Point;
+				PointLights.push_back(_Light);
+			}
+
+			_Light->CreateShadowMap(Device, _Light->ShadowMapSize);
+			_Light->InitRender();
+
+		}
+	};
+
+};
 
 
 bool Renderer::TestShaderInit()

@@ -160,6 +160,7 @@
     <ClCompile Include="..\Source\Quad.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FileHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
@@ -402,6 +403,7 @@
     <ClInclude Include="..\..\Resource\Shader\ScreenQuad.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\FileHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">
@@ -602,6 +604,12 @@
       <Filter>04.HLSL\Common</Filter>
     </None>
     <None Include="..\..\Resource\Shader\ToneMap.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Collider.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Frustum.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
   </ItemGroup>
