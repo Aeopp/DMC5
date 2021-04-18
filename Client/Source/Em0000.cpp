@@ -96,7 +96,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Attack_1:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_1", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Attack_1", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -109,7 +109,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Attack_2:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_2", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Attack_2", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -125,7 +125,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			//이건 마지막 피니시 모션까지 계속 플레이어를 향해서 뜀.
 			m_bInteraction = true;
 			Update_Angle();
-			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.95f)
 			{
@@ -162,7 +162,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Move_Front_End:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Front_End", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Move_Front_End", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Front_End" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -174,12 +174,12 @@ void Em0000::State_Change(const float _fDeltaTime)
 		break;
 	case Em0000::Move_Front_Loop:
 		if (m_bIng == true)
-			m_pMesh->PlayAnimation("Move_Front_Loop", true, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Move_Front_Loop", true, {}, 1.f, 50.f, true);
 		break;
 	case Em0000::Move_Front_Start:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Move_Front_Start", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Move_Front_Start", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Front_Start" && m_pMesh->PlayingTime() >= 0.9f)
 				m_eState = Move_Front_Loop;
@@ -188,7 +188,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Step_Back:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Step_Back", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Step_Back", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Step_Back" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -203,7 +203,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Stun_Start:
 		break;
 	case Em0000::idle:
-		m_pMesh->PlayAnimation("idle", true, {}, 1.f, 50.f);
+		m_pMesh->PlayAnimation("idle", true, {}, 1.f, 50.f, true);
 		break;
 	case Em0000::Snatch_Start:
 		break;

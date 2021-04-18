@@ -68,15 +68,17 @@ public:
 	void   PlayAnimation(
 		const std::string & InitAnimName,
 		const bool  bLoop,
-		const AnimNotify & _Notify = {} ,
+		const AnimNotify & _Notify = {},
 		const float _CurrentAccelerationFactor = 1.0f,
-		const float _CurrentTransitionTimeFactor = 1.0f);
+		const float _CurrentTransitionTimeFactor = 1.0f,
+		bool _overlap = false);
 	void   PlayAnimation(
 		const uint32 AnimationIndex,
 		const bool  bLoop,
 		const AnimNotify & _Notify = {} ,
 		const float _CurrentAccelerationFactor = 1.0f,
 		const float _CurrentTransitionTimeFactor = 1.0f);
+
 
 	void    ContinueAnimation()&;
 	void    StopAnimation();
