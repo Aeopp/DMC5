@@ -61,8 +61,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _ExBackNRMRTex{};
 	std::shared_ptr<ENGINE::Texture> _ExALBM0Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExNRMR0Tex{};
-	std::shared_ptr<ENGINE::Texture> _ExALBM1Tex{};
-	std::shared_ptr<ENGINE::Texture> _ExNRMR1Tex{};
+	std::shared_ptr<ENGINE::Texture> _ExEmissive0Tex{};
+	std::shared_ptr<ENGINE::Texture> _ExFireTex{};
 
 	std::shared_ptr<ENGINE::Texture> _HPGaugeBaseALBMTex{};
 	std::shared_ptr<ENGINE::Texture> _HPGaugeBaseATOSTex{};
@@ -137,6 +137,13 @@ private:
 	float _RankLetter_GlintAccumulateTime = 0.f;
 	float _RankDissolveAmount = 0.f;
 
+	/* 0 ~ 3 */
+	float _ExGauge = 0.f;
+	float _ExGauge_EmissivePower[3] = { 0.f, };
+	Vector4 _ExGauge_FireFrame = Vector4();
+	float _ExGauge_FireAccumulateTime = 999.f;
+	float _ExGauge_FullFireAccumulateTime = 0.f;
+
 	enum KEY_INPUT_ID
 	{
 		Q = 0, W, E, R, A, S, D, F, Z, X, C, V,
@@ -149,9 +156,10 @@ private:
 
 	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
 
-	Vector3 _Rot = Vector3(0.f, 0.f, 0.f);	// 디버그용 회전벡터(Degree). 회전값이 들어간게 예외케이스라 생각해서 UI_DESC에 없음
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
+
+	Vector3 _Rot = Vector3(0.f, 0.f, 0.f);	// 디버그용 회전벡터(Degree). 회전값이 들어간게 예외케이스라 생각해서 UI_DESC에 없음
 
 private:
 	explicit BtlPanel() = default;
@@ -166,10 +174,11 @@ private:
 	void	Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt = 0);
 	void	Update_TargetInfo();
 	void	Update_Rank(const float _fDeltaTime);
+	void	Update_ExGauge(const float _fDeltaTime);
 	void	Update_GaugeOrthoPos();
 	Vector2	WorldPosToScreenPos(const Vector3& WorldPos);
 	Vector2	ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY);
-	void	Check_KeyInput();
+	void	Check_KeyInput(const float _fDeltaTime);
 	void	Imgui_ModifyUI(UI_DESC_ID _ID);
 public:
 	static BtlPanel* Create();
@@ -189,5 +198,8 @@ public:
 	void SetTargetPos(const Vector3& Pos) { _TargetPos = Pos; }
 	void SetKeyInputActive(bool IsActive);
 	void AddRankScore(float Score);
+	float GetExGauge() const { return _ExGauge; }
+	void AddExGauge(float ExGauge);
+	void UseExGauge(const uint32 Count);
 };
 #endif // !__UI_BTL_PANEL__

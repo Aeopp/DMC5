@@ -15,7 +15,7 @@ protected:
 	virtual ~Component() = default;
 	// Object을(를) 통해 상속됨
 	virtual void Free() PURE;
-	virtual void Editor()override;
+	virtual void Editor()	override;
 public:
 	std::weak_ptr<GameObject>	GetGameObject();
 	bool						IsActive();

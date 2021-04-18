@@ -3,8 +3,6 @@
 #include "Scene.h"
 #include "TestObject.h"
 #include "ShaderTester.h"
-#include "Renderer.h"
-
 #include "TempMap.h"
 #include "TestAnimationObject.h"
 #include "Camera.h"
@@ -16,12 +14,12 @@
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
 #include "Car.h"
-#include <iostream>
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 
+#include <iostream>
 using namespace std;
 
 TestScene::TestScene()
@@ -43,8 +41,8 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
-
-	// AddGameObject<Camera>();
+	
+	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	//AddGameObject<TempMap>();
@@ -52,6 +50,9 @@ HRESULT TestScene::LoadScene()
 	//
 	AddGameObject<Em5000>();
 	AddGameObject<Car>();
+	
+	//AddGameObject<Em5000>();
+	//AddGameObject<Car>();
 
 
 	//AddGameObject<ShaderTester>();
@@ -73,16 +74,13 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();*/
 
-	//AddGameObject<Nero>();
-
-	//AddGameObject<Em5000>();
 
 	AddGameObject<BtlPanel>();
 	
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
+	// ¼öÁ¤ ÇÊ¿ä
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
 

@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Renderer.h"
 #include "Transform.h"
+#include "Collider.h"
 
 USING(ENGINE)
 
@@ -106,6 +107,18 @@ UINT GameObject::GetLoopIdx()
 void GameObject::SetLoopIdx(const UINT _nLoopIdx)
 {
 	m_nLoopIdx = _nLoopIdx;
+}
+
+void GameObject::DrawCollider(const DrawInfo& _Info)
+{
+	for (auto& rPair : m_Components)
+	{
+		if (nullptr != std::dynamic_pointer_cast<Collider>(rPair.second))
+		{
+			std::static_pointer_cast<Collider>(rPair.second)->DrawCollider(_Info);
+			return;
+		}
+	}
 }
 
 UINT GameObject::Update(const float _fDeltaTime)

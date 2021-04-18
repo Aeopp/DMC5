@@ -87,15 +87,24 @@ void TempMap::RenderInit()
 		}
 	} };
 
-	
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Debug" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
 
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 
 	// 스태틱 메쉬 로딩
-
+	Mesh::InitializeInfo _InitInfo{};
+	_InitInfo.bLocalVertexLocationsStorage = true;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Static\\Temp\\1357_theatrefloor_01.fbx");
+		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Arcade.fbx", _InitInfo);
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -144,7 +153,7 @@ void TempMap::RenderShadow(const DrawInfo& _Info)
 
 void TempMap::RenderDebug(const DrawInfo& _Info)
 {
-	 const Matrix World = _RenderUpdateInfo.World;
+	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
@@ -169,7 +178,7 @@ HRESULT TempMap::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
+	//InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
 
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
@@ -179,7 +188,15 @@ HRESULT TempMap::Ready()
 
 HRESULT TempMap::Awake()
 {
-	
+	m_pCollider = AddComponent<MeshCollider>();
+	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
+	//m_pCollider.lock()->SetRigid(true);
+	//m_pCollider.lock()->SetGravity(false);
+	PushEditEntity(m_pCollider.lock().get());
+
+	//auto pCollider = AddComponent<CapsuleCollider>();
+	//pCollider.lock()->ReadyCollider();
+	//PushEditEntity(pCollider.lock().get());
 	return S_OK;
 }
 
@@ -190,6 +207,7 @@ HRESULT TempMap::Start()
 
 UINT TempMap::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	/*Vector3 vDir = m_pTransform.lock()->GetLook();
 
 	D3DXVec3Normalize(&vDir, &vDir);*/

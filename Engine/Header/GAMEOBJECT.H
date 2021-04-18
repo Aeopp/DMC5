@@ -78,6 +78,8 @@ private:
 	void	SetGameObject(std::weak_ptr<GameObject> _pGameObject);
 	UINT	GetLoopIdx();
 	void	SetLoopIdx(const UINT _nLoopIdx);
+public:
+	void	DrawCollider(const DrawInfo & _Info);
 };
 END
 #include "GameObject.hpp"

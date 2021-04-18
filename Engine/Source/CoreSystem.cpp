@@ -165,14 +165,13 @@ static void ImGuiSetUp()
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 10);
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 14);
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 18);
-};
+}
 
 HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 								const bool bMultiSample)
 {
 	m_pGraphicSystem = GraphicSystem::GetInstance();
-	if (nullptr == m_pGraphicSystem.lock() || 
-		FAILED(m_pGraphicSystem.lock()->ReadyGraphicSystem(
+	if (nullptr == m_pGraphicSystem.lock() || FAILED(m_pGraphicSystem.lock()->ReadyGraphicSystem(
 		bWindowed,
 		bMultiSample)))
 	{
@@ -215,12 +214,12 @@ HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 		return E_FAIL;
 	}
 
-	//m_pPhysicsSystem = PhysicsSystem::GetInstance();
-	//if (nullptr == m_pRenderer.lock() || FAILED(m_pPhysicsSystem.lock()->ReadyPhysicsSystem()))
-	//{
-	//	PRINT_LOG(TEXT("Error"), TEXT("Failed to ReadyEngine."));
-	//	return E_FAIL;
-	//}
+	m_pPhysicsSystem = PhysicsSystem::GetInstance();
+	if (nullptr == m_pRenderer.lock() || FAILED(m_pPhysicsSystem.lock()->ReadyPhysicsSystem()))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to ReadyEngine."));
+		return E_FAIL;
+	}
 
 	GlobalVariableSetup();
 	ImGuiSetUp();
@@ -250,24 +249,23 @@ static void GlobalVariableEditor()
 
 HRESULT CoreSystem::UpdateEngine(const float Delta)
 {
+	ImGui_ImplDX9_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	GlobalVariableEditor();
+
 	if (FAILED(m_pInputSystem.lock()->UpdateInputSystem()))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateInputSystem."));
 		return E_FAIL;
 	}
-
 	if (FAILED(m_pTimeSystem.lock()->UpdateTimeSystem(Delta)))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateTimeSystem."));
 		return E_FAIL;
 	}
 
-	ImGui_ImplDX9_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	GlobalVariableEditor();
-
-	//m_pPhysicsSystem.lock()->FetchResults();
+	m_pPhysicsSystem.lock()->FetchResults();
 
 	if (FAILED(m_pSceneSystem.lock()->UpdateSceneSystem(m_pTimeSystem.lock()->DeltaTime())))
 	{
@@ -277,8 +275,7 @@ HRESULT CoreSystem::UpdateEngine(const float Delta)
 
 	Editor();
 
-	//m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
-
+	m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
 	if (FAILED(m_pRenderer.lock()->Render()))
 	{
 		PRINT_LOG(TEXT("Error"),TEXT("Failed to Renderer Render."));
