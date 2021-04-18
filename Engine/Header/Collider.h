@@ -8,9 +8,9 @@ USING(physx)
 class ENGINE_DLL Collider abstract : public Component
 {
 protected:
-	PxShape * m_pShape;
-	PxMaterial* m_pMaterial;
-	PxRigidActor* m_pRigidActor;
+	PxShape *		m_pShape;
+	PxMaterial*		m_pMaterial;
+	PxRigidActor*	m_pRigidActor;
 
 	PXUSERDATA		m_UserData;
 

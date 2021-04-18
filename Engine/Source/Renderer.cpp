@@ -1147,11 +1147,10 @@ HRESULT Renderer::RendererCollider()&
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		UINT Passes = 0u;
 		Fx->Begin(&Passes, NULL);
-		for (int32 i = 0; i < Passes; ++i)
+		for (auto& [Entity, Call] : _EntityArr)
 		{
-			Fx->BeginPass(i);
-			_DrawInfo.PassIndex = i;
-
+			Fx->BeginPass(0);
+			Call(_DrawInfo);
 			Fx->EndPass();
 		}
 		Fx->End();

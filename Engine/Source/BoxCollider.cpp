@@ -98,6 +98,11 @@ HRESULT BoxCollider::DrawCollider(const DrawInfo& _Info)
 void BoxCollider::Editor()
 {
 	Collider::Editor();
+
+	D3DXVECTOR3 vSize = m_vSize;
+
+	if (ImGui::InputFloat3("Size##BoxCollider", vSize))
+		SetSize(vSize);
 }
 
 D3DXVECTOR3 BoxCollider::GetSize()
