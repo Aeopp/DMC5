@@ -43,16 +43,16 @@ HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
 	
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
+	// AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
 
-	//AddGameObject<Nero>();
+	AddGameObject<Nero>();
 
-	AddGameObject<TempMap>();
+	AddGameObject<Em5000>();
+	AddGameObject<Car>();
+
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-
-	//AddGameObject<Em5000>();
-	//AddGameObject<Car>();
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<ShaderTester>();
 	/*
@@ -71,7 +71,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();*/
 
 	AddGameObject<BtlPanel>();
-	
+
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
@@ -97,7 +97,6 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
 	//cout << "SceneUpdate" << endl;
 
 	return S_OK;
