@@ -196,11 +196,15 @@ float metalness)
     // ½¦µµ¿ì ³¡ 
     
 	// calculate shadow
-    float2 moments = texCUBE(cubeShadowMap, -l).xy;
+    float shadow = 1.f;
+    if (ShadowDepthMapHeight > 0)
+    {
+        float2 moments = texCUBE(cubeShadowMap, -l).xy;
 
-    float z = length(ldir);
-    float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-    float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+        float z = length(ldir);
+        float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
+        shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+    }
 
     float illuminance = (lightFlux / (QUAD_PI * dist2)) * ndotl;
     float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);

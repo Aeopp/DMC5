@@ -1,0 +1,78 @@
+{
+    "LightDataArray": [
+        {
+            "sinAngularRadius": 0.004625000059604645,
+            "cosAngularRadius": 0.9999889731407166,
+            "specularPower": 80.0,
+            "lightIlluminance": 1.5,
+            "lightFlux": 10.0,
+            "Color": [
+                0.9559735059738159,
+                0.9559735059738159,
+                0.9559735059738159,
+                1.0
+            ],
+            "Near": -1.0,
+            "Far": 300.0,
+            "Projparams": [
+                60.0,
+                60.0,
+                -1.0,
+                300.0
+            ],
+            "PointRadius": 5.0,
+            "Direction": [
+                71.0,
+                -2.0,
+                -83.0
+            ],
+            "Position": [
+                -9.0,
+                105.0,
+                -22.0,
+                0.0
+            ],
+            "shadowmin": 0.0,
+            "shadowdepthbias": 0.0,
+            "ShadowMapSize": 2048.0,
+            "Type": "Directional"
+        },
+        {
+            "sinAngularRadius": 0.004625000059604645,
+            "cosAngularRadius": 1.7184758186340333,
+            "specularPower": 80.0,
+            "lightIlluminance": 1.531309962272644,
+            "lightFlux": 106.6457748413086,
+            "Color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Near": 0.10000000149011612,
+            "Far": 35.60517120361328,
+            "Projparams": [
+                0.0,
+                0.0,
+                0.10000000149011612,
+                35.60517120361328
+            ],
+            "PointRadius": 80.77942657470703,
+            "Direction": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Position": [
+                -4.43806791305542,
+                34.66765213012695,
+                3.8305256366729738,
+                1.0
+            ],
+            "shadowmin": 0.0,
+            "shadowdepthbias": 0.0,
+            "ShadowMapSize": 512.0,
+            "Type": "Point"
+        }
+    ]
+}

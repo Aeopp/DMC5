@@ -518,6 +518,7 @@ void Renderer::RenderShadowMaps()
 		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
 		PtlightSphere.Radius = PointLight->GetFarPlane();
 		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
+		if (PointLight->GetShadowMapSize() <= 0) continue;
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX viewproj;
