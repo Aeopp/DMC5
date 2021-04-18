@@ -19,7 +19,6 @@
 #include "Glint.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
-
 using namespace std;
 
 TestScene::TestScene()
@@ -46,7 +45,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<TempMap>();
-	//
+	
 	//AddGameObject<Em5000>();
 	//AddGameObject<Car>();
 
@@ -58,6 +57,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<ShaderTester>();
 
 	//AddGameObject<TestObject>();
+
 	//AddGameObject<TestAnimationObject>();
 
 	/*AddGameObject<TestAnimationObject>();
@@ -79,7 +79,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
-	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
+	// ¼öÁ¤ ÇÊ¿ä
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
 

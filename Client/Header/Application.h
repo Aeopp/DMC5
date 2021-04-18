@@ -8,7 +8,7 @@ public:
 public:
 	HRESULT ReadyApplication(const bool bWindowed,
 						const bool bMultiSample);
-	HRESULT UpdateApplication();
+	HRESULT UpdateApplication(const float Delta);
 	HRESULT ReleaseApplication();
 };
 #endif // !__APPLICATION_H__

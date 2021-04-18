@@ -10,7 +10,7 @@ private:
 public:
 	static HRESULT ReadyEngine(
 		const bool bWindowed,const bool bMultiSample);
-	static HRESULT UpdateEngine();
+	static HRESULT UpdateEngine(const float Delta);
 	static HRESULT ReleaseEngine();
 };
 END

@@ -87,6 +87,7 @@ HRESULT GraphicSystem::ReadyGraphicSystem(
 	tD3DPP.EnableAutoDepthStencil = TRUE;
 	tD3DPP.AutoDepthStencilFormat = D3DFMT_D24S8;
 	tD3DPP.Flags = 0;
+
 	tD3DPP.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	tD3DPP.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 

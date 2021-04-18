@@ -7,7 +7,10 @@ class TempMap : public ENGINE::GameObject ,
 				   public ENGINE::RenderInterface				
 {
 private:
-	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh;
+
+	//2021.04.17 권현재 Collider 테스트
+	std::weak_ptr<MeshCollider> m_pCollider;
 private:
 	explicit TempMap() = default;
 	virtual ~TempMap() = default;

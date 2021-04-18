@@ -18,6 +18,7 @@ BEGIN(ENGINE)
 		bool IsIn(const Vector3& Point)&;
 		bool IsIn(const Sphere& _Sphere)&;
 		void DebugRender(IDirect3DDevice9* const Device)&;
+		void Render(IDirect3DDevice9*const Device,ID3DXEffect*const Fx,const Matrix& World);
 	private:
 		Matrix World{};
 		IDirect3DVertexBuffer9* VertexBuffer{ nullptr };

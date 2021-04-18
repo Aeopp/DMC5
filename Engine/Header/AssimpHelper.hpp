@@ -317,13 +317,19 @@ static inline HRESULT LoadMesh(
 	std::vector<float>	vecVertices;
 	const uint32 RefBoneMaxIdx = MaxBonesRefPerVtx4Over ? 8u : 4u;
 
-	std::optional< std::vector<Vector3>> VertexLocations{};
+	//std::optional< std::vector<Vector3>> VertexLocations{};
+	//if (bLoadMeshStorageVertexLocations)
+	//{
+	//	VertexLocations = std::vector<Vector3>();
+	//	VertexLocations->resize(_pVBDesc->nNumVertices);
+	//}
+
+
 	if (bLoadMeshStorageVertexLocations)
 	{
-		VertexLocations = std::vector<Vector3>();
-		VertexLocations->resize(_pVBDesc->nNumVertices);
+		_pVBDesc->LocalVertexLocation = std::make_shared <std::vector<Vector3>>();
+		_pVBDesc->LocalVertexLocation->resize(uint64(_pVBDesc->nNumVertices));
 	}
-
 	for (UINT nVertexIdx = 0; nVertexIdx < _pVBDesc->nNumVertices; ++nVertexIdx)
 	{
 		if (_pVBDesc->bHasPosition)
@@ -331,9 +337,9 @@ static inline HRESULT LoadMesh(
 			vecVertices.push_back(_pAiMesh->mVertices[nVertexIdx].x);
 			vecVertices.push_back(_pAiMesh->mVertices[nVertexIdx].y);
 			vecVertices.push_back(_pAiMesh->mVertices[nVertexIdx].z);
-			if (VertexLocations)
+			if (bLoadMeshStorageVertexLocations)
 			{
-				(*VertexLocations)[nVertexIdx] = AssimpHelper::ConvertVec3(_pAiMesh->mVertices[nVertexIdx]);
+				(*_pVBDesc->LocalVertexLocation)[nVertexIdx] = AssimpHelper::ConvertVec3(_pAiMesh->mVertices[nVertexIdx]);
 			}
 			
 		}
@@ -412,12 +418,6 @@ static inline HRESULT LoadMesh(
 	//_pAiMesh로 부터 메쉬를 이루는 면의 정점 인덱스 정보 로딩.
 	std::vector<uint32> vecIndices;
 
-	if (VertexLocations)
-	{
-		_pVBDesc->LocalVertexLocation = std::make_shared <std::vector<Vector3>>();
-		_pVBDesc->LocalVertexLocation->resize(uint64(_pVBDesc->nNumFaces * 3u));
-	}
-
 	for (uint32 nFaceIdx = 0; nFaceIdx < _pVBDesc->nNumFaces; ++nFaceIdx)
 	{
 		const aiFace CurrFace = _pAiMesh->mFaces[nFaceIdx];
@@ -425,10 +425,6 @@ static inline HRESULT LoadMesh(
 		{
 			const uint32 VertexIndex = CurrFace.mIndices[nIdx]; 
 			vecIndices.push_back(VertexIndex);
-			if (VertexLocations)
-			{
-				_pVBDesc->LocalVertexLocation->push_back( (*VertexLocations)[VertexIndex]);
-			}
 		}
 	}
 	//인덱스 버퍼 생성
