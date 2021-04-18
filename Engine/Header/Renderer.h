@@ -86,6 +86,7 @@ private:
 	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
+	std::shared_ptr<Texture> sky{};
 
 	// 쉐이더 테스트 시작 ....
 	bool TestShaderInit();
@@ -94,17 +95,21 @@ private:
 	void RenderShadowMaps();
 	void RenderGBuffer();
 	void DeferredShading();
-	void RenderScene(LPD3DXEFFECT effect, const D3DXMATRIX & viewproj);
-	
-	LPDIRECT3DTEXTURE9	marble = nullptr;
-	LPDIRECT3DTEXTURE9	wood = nullptr;
-	LPDIRECT3DTEXTURE9	wood_normal = nullptr;
-	LPDIRECT3DTEXTURE9	sky = nullptr;
-	LPD3DXMESH			skull = nullptr;
-	LPD3DXMESH			box = nullptr;
+
+	//LPD3DXEFFECT			skyeffect = nullptr;
+	//LPD3DXEFFECT			metaleffect = nullptr;
+	//LPD3DXEFFECT			insulatoreffect = nullptr;
+	//LPD3DXEFFECT			measureeffect = nullptr;
+	//LPD3DXEFFECT			hdreffects = nullptr;
+	//LPD3DXEFFECT			effect = nullptr;
+
+	LPDIRECT3DCUBETEXTURE9	environment = nullptr;		// HDR environment
+	LPDIRECT3DCUBETEXTURE9	irradiance1 = nullptr;		// preintegrated diffuse irradiance
+	LPDIRECT3DCUBETEXTURE9	irradiance2 = nullptr;		// preintegrated specular irradiance
+	LPDIRECT3DTEXTURE9		brdfLUT     = nullptr;		// preintegrated BRDF lookup texture
 
 	Vector4 MoonLightTarget{0,0,0,1};
-	Vector4 CurstomEye= { 0,0,0,1 };
+	
 	float DXScreenQuadVerticesFFP[24] = {
 		// NOTE: viewport must be added
 		-0.5f, -0.5f, 0, 1,		0, 1,
