@@ -70,7 +70,7 @@ HRESULT TestScene::LoadScene()
 
 
 	AddGameObject<BtlPanel>();
-	
+
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
@@ -96,7 +96,6 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
 	//cout << "SceneUpdate" << endl;
 
 	return S_OK;
