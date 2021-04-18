@@ -208,7 +208,7 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		avgluminance->Initialize(InitInfo);
 		avgluminance->DebugBufferInitialize(
-			{ InitX,InitY + (YOffset * 4.f) + Interval },
+			{ InitX + (XOffset* 1.f ) + Interval ,InitY  + Interval },
 			RenderTargetDebugRenderSize);
 
 		for (int32 i = 1; i < 4; ++i)
@@ -230,8 +230,96 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_SYSTEMMEM;
 		avglumsystemmem->Initialize(InitInfo);
 		avglumsystemmem->DebugBufferInitialize(
-			{ InitX,InitY + (XOffset * 1.f) + Interval },
+			{ InitX + (XOffset * 1.f) + Interval,InitY + (YOffset * 1.f) + Interval },
 			RenderTargetDebugRenderSize);
+	}
+
+	{
+		auto& bloomresult = RenderTargets["bloomresult"] =
+			std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX / 2;
+		InitInfo.Height = g_nWndCY / 2;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A16B16G16R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+		bloomresult->Initialize(InitInfo);
+		bloomresult->DebugBufferInitialize(
+			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 2.f) + Interval },
+			RenderTargetDebugRenderSize);
+	};
+
+	{
+		auto& starresult = RenderTargets["starresult"] =
+			std::make_shared<RenderTarget >(); 
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX / 4;
+		InitInfo.Height = g_nWndCY / 4;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A16B16G16R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+		starresult->Initialize(InitInfo);
+		starresult->DebugBufferInitialize(
+			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 3.f) + Interval } ,
+			RenderTargetDebugRenderSize);
+	}
+
+	for (int i = 0; i < 5; ++i)
+	{
+		{
+			const std::string key = "dsampletargets" + std::to_string(i);
+
+			auto& dsampletargets = RenderTargets[key] =
+				std::make_shared<RenderTarget>();
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / (2 << i);
+			InitInfo.Height = g_nWndCY / (2 << i);
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			dsampletargets->Initialize(InitInfo);
+
+			dsampletargets->DebugBufferInitialize
+			(
+				{ InitX + (XOffset * 2.f) + Interval,
+				InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+				RenderTargetDebugRenderSize);
+		}
+
+		{
+			const std::string key = "blurtargets" + std::to_string(i);
+
+			auto& blurtargets = RenderTargets[key] =
+				std::make_shared<RenderTarget>();
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / (2 << i);
+			InitInfo.Height = g_nWndCY / (2 << i);
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			blurtargets->Initialize(InitInfo);
+
+			blurtargets->DebugBufferInitialize
+			(
+				{ InitX + (XOffset * 3.f) + Interval,
+				InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+				RenderTargetDebugRenderSize);
+		}
+	}
+
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 2; ++j)
+			{
+				const std::string key = "startargets" + std::to_string(i) + std::to_string(j);
+			}
+		}
 	}
 }
 
