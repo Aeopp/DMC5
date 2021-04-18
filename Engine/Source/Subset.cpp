@@ -73,10 +73,11 @@ void Subset::Render(ID3DXEffect*const Fx)
 			Fx->SetInt("nMaxBonesRefPerVtx", m_tVertexBufferDesc.nMaxBonesRefPerVtx);
 		}
 	}
-	Fx->CommitChanges();
+	
 	m_pDevice->SetStreamSource(0, m_pVertexBuffer, 0, m_tVertexBufferDesc.nStride);
 	m_pDevice->SetVertexDeclaration(m_tVertexBufferDesc.pVertexDecl);
 	m_pDevice->SetIndices(m_pIndexBuffer);
+	Fx->CommitChanges();
 	m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_tVertexBufferDesc.nNumVertices, 0, m_tVertexBufferDesc.nNumFaces);
 }
 

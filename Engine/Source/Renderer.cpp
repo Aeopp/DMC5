@@ -384,6 +384,8 @@ void Renderer::ReadyRenderTargets()
 			);
 		}
 	}
+
+
 };
 
 void Renderer::ReadyRenderInfo()
@@ -998,7 +1000,7 @@ void Renderer::DeferredShading()
 				rectvertices[13] += PtLt->LastScissorRect.bottom;
 				rectvertices[18] += PtLt->LastScissorRect.right;
 				rectvertices[19] += PtLt->LastScissorRect.top;
-
+				screenquad->CommitChanges();
 				device->DrawIndexedPrimitiveUP(
 					D3DPT_LINESTRIP, 0, 4, 4, rectindices, D3DFMT_INDEX16, rectvertices, 6 * sizeof(float));
 			}
@@ -1128,7 +1130,7 @@ HRESULT Renderer::RenderSky()&
 	Device->SetTexture(0, sky->GetTexture());
 	_Quad->Render(Device);
 	screenquad->EndPass();
-	screenquad->End();
+	screenquad->End(); 
 
 	return S_OK;
 }
