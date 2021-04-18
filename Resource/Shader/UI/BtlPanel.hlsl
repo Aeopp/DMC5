@@ -366,7 +366,6 @@ PsOut PsMain_Mesh_Dissolve(PsIn In)
     NoiseSample.rgb -= _SliceAmount;
     clip(NoiseSample);
     
-    
     float4 ALB0Sample = tex2D(ALB0, In.UV);
     //float4 ATOSSample = tex2D(ATOS0, In.UV);
     float4 NRMRSample = tex2D(NRMR0, In.UV);
@@ -564,7 +563,7 @@ PsOut PsMain_Glass(PsIn In)
 
     float Dirt = ATOSSample.g * _HPGlassDirt;
 
-    Out.Color = float4(Shade * ALB0Sample.rgb, saturate(0.1f + ATOSSample.b));
+    Out.Color = float4(Shade * ALB0Sample.rgb, saturate(0.05f + ATOSSample.b));
 
     if (0.f < Dirt)
         Out.Color = (Out.Color * (1.f - Dirt)) + float4(Shade * ALB1Sample.rgb, Dirt);
@@ -660,6 +659,7 @@ PsOut PsMain_ExGauge(PsIn In)
     PsOut Out = (PsOut) 0;
     
     float4 ALB0Sample = tex2D(ALB0, In.UV);
+    float4 ALB1Sample = tex2D(ALB1, In.UV);
     float4 NRMRSample = tex2D(NRMR0, In.UV);
     float4 EmissiveSample = tex2D(Emissive0, In.UV);
     
@@ -673,9 +673,12 @@ PsOut PsMain_ExGauge(PsIn In)
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
-    float Emissive = saturate(_EmissivePower * (EmissiveSample.r + EmissiveSample.g + 0.35f * EmissiveSample.b + 0.44f * EmissiveSample.a));
+    float Emissive = saturate(_EmissivePower * (EmissiveSample.r + EmissiveSample.g + 0.7f * EmissiveSample.b + 1.8f * EmissiveSample.a));
 
-    Out.Color = Diffuse * ALB0Sample + Emissive * tex2D(ALB1, In.UV);
+    if (ALB0Sample.r < 0.001f)
+        ALB0Sample.rgb = saturate((1.8f - _EmissivePower) * ALB0Sample.rgb) + saturate((_EmissivePower - 0.8f) * ALB1Sample.rgb);
+    
+    Out.Color = Diffuse * ALB0Sample + Emissive * ALB1Sample;
     Out.Color.a = 1.f;
 
     return Out;
@@ -686,7 +689,7 @@ PsOut PsMain_GUI(PsIn_GUI In)
     PsOut Out = (PsOut) 0;
     
     Out.Color = tex2D(ALB0, In.UV);
-
+ 
     return Out;
 };
 
@@ -757,7 +760,7 @@ PsOut PsMain_Rank(PsIn_Clip In)
 
     float3 Albedo = ALB0Sample.rgb;
     if (In.Clip.y < _RankGaugeCurYPosOrtho)
-        Albedo = tex2D(ALB1, tex2D(Noise, (In.UV - float2(_AccumulationTexU, 0.f))).xy).rgb * 1.2f;
+        Albedo = tex2D(ALB1, tex2D(Noise, (In.UV - float2(_AccumulationTexU, 0.f))).xy).rgb * 1.5f;
     
     Out.Color = Diffuse * float4(Albedo, 1.f);
     Out.Color.a = 1.f;
@@ -861,7 +864,7 @@ technique Default
         zwriteenable = false;
         sRGBWRITEENABLE = true;
 
-        vertexshader = compile vs_3_0 VsMain();
+        vertexshader = compile vs_3_0 VsMain_Perspective();
         pixelshader = compile ps_3_0 PsMain_Glass();
     }
     pass p8

@@ -61,10 +61,7 @@ private:
 	std::shared_ptr<ENGINE::Texture> _ExBackNRMRTex{};
 	std::shared_ptr<ENGINE::Texture> _ExALBM0Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExNRMR0Tex{};
-	std::shared_ptr<ENGINE::Texture> _ExALBM1Tex{};
-	std::shared_ptr<ENGINE::Texture> _ExNRMR1Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExEmissive0Tex{};
-	std::shared_ptr<ENGINE::Texture> _ExEmissive1Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExFireTex{};
 
 	std::shared_ptr<ENGINE::Texture> _HPGaugeBaseALBMTex{};
@@ -142,7 +139,10 @@ private:
 
 	/* 0 ~ 3 */
 	float _ExGauge = 0.f;
-	float _ExGauge_EmissivePower = 0.f;
+	float _ExGauge_EmissivePower[3] = { 0.f, };
+	Vector4 _ExGauge_FireFrame = Vector4();
+	float _ExGauge_FireAccumulateTime = 999.f;
+	float _ExGauge_FullFireAccumulateTime = 0.f;
 
 	enum KEY_INPUT_ID
 	{
@@ -174,6 +174,7 @@ private:
 	void	Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt = 0);
 	void	Update_TargetInfo();
 	void	Update_Rank(const float _fDeltaTime);
+	void	Update_ExGauge(const float _fDeltaTime);
 	void	Update_GaugeOrthoPos();
 	Vector2	WorldPosToScreenPos(const Vector3& WorldPos);
 	Vector2	ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY);
@@ -197,5 +198,8 @@ public:
 	void SetTargetPos(const Vector3& Pos) { _TargetPos = Pos; }
 	void SetKeyInputActive(bool IsActive);
 	void AddRankScore(float Score);
+	float GetExGauge() const { return _ExGauge; }
+	void AddExGauge(float ExGauge);
+	void UseExGauge(const uint32 Count);
 };
 #endif // !__UI_BTL_PANEL__
