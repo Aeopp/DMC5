@@ -28,8 +28,9 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	_ImplInfo.Fx->SetMatrix("Perspective", &_PerspectiveProjMatrix);
 	_ImplInfo.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
-	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir, 3u);
 
+
+	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir_ExGauge, 3u);
 
 	//
 	CurID = HP_GLASS;
@@ -119,6 +120,9 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->EndPass();
 		}
 	}
+
+	// LightDirection 재지정
+	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir, 3u);
 
 	// 그리는 순서에 따라서 Clip하는 다른 애들때문에 지글지글 거림 ㅠ
 	CurID = TARGET_HP;
@@ -729,7 +733,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[TARGET_HP] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.46f, 0.46f, 1.f) };
 	_UIDescs[BOSS_GUAGE] = { false, Vector3(640.f, 670.f, 0.5f), Vector3(4.7f, 5.f, 1.f) };
 	_UIDescs[HP_GLASS] = { true, Vector3(-30.f, 14.f, 30.f), Vector3(0.01f, 0.01f, 0.01f) };
-	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(60.f, 85.f, 0.5f), Vector3(1.5f, 1.5f, 1.f) };
+	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(60.f, 95.f, 0.5f), Vector3(1.5f, 1.5f, 1.f) };
 	_UIDescs[EX_GAUGE] = { true, Vector3(-7.55f, 3.15f, 15.f), Vector3(0.01f, 0.01f, 0.01f) };
 	_UIDescs[HP_GAUGE] = { true, Vector3(218.f, 50.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
 	_UIDescs[TDT_GAUGE] = { true, Vector3(315.f, 75.f, 0.5f), Vector3(3.5f, 3.5f, 1.f) };
@@ -808,7 +812,7 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		_Out._11 = _UIDescs[_ID].Scale.x;
 		_Out._22 = _UIDescs[_ID].Scale.y;
 		_Out._33 = _UIDescs[_ID].Scale.z;
-		D3DXMatrixRotationZ(&RotMat, D3DXToRadian(20.f));
+		D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-154.f));
 		_Out *= RotMat;
 		_Out._41 = _UIDescs[_ID].Pos.x - (g_nWndCX >> 1);
 		_Out._42 = -(_UIDescs[_ID].Pos.y - (g_nWndCY >> 1));
@@ -843,8 +847,8 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out *= RotMat;
 			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-4.f));
 			_Out *= RotMat;
-			_Out._41 = -7.63f; //_UIDescs[_ID].Pos.x;
-			_Out._42 = 3.53f; //_UIDescs[_ID].Pos.y;
+			_Out._41 = -7.69f; //_UIDescs[_ID].Pos.x;
+			_Out._42 = 3.49f; //_UIDescs[_ID].Pos.y;
 			_Out._43 = 15.f; //_UIDescs[_ID].Pos.z;
 			break;
 		case 2:
@@ -878,7 +882,7 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._33 = 1.f;
 			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-60.f));
 			_Out *= RotMat;
-			_Out._41 = 160.f - (g_nWndCX >> 1);
+			_Out._41 = 165.f - (g_nWndCX >> 1);
 			_Out._42 = -(56.f - (g_nWndCY >> 1));
 			_Out._43 = 0.2f;
 			break;
@@ -886,7 +890,7 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 0.75f;
 			_Out._22 = 1.f;
 			_Out._33 = 1.f;
-			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-57.f));
+			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-56.f));
 			_Out *= RotMat;
 			_Out._41 = 138.f - (g_nWndCX >> 1);
 			_Out._42 = -(22.f - (g_nWndCY >> 1));
@@ -1433,26 +1437,33 @@ void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 		_ExGauge_EmissivePower[2] = 1.f;
 		_ExGauge_EmissivePower[1] = 1.f;
 		_ExGauge_EmissivePower[0] = 1.f;
+		_LightDir_ExGauge.z = 1.f;
 		break;
 
 	case 2:
 		_ExGauge_EmissivePower[2] = Remainder;
 		_ExGauge_EmissivePower[1] = 1.f;
 		_ExGauge_EmissivePower[0] = 1.f;
+		_LightDir_ExGauge.z = 0.5f;
 		break;
 
 	case 1:		
 		_ExGauge_EmissivePower[2] = 0.f;
 		_ExGauge_EmissivePower[1] = Remainder;
 		_ExGauge_EmissivePower[0] = 1.f;
+		_LightDir_ExGauge.z = 0.f;
 		break;
 
 	case 0: default:
 		_ExGauge_EmissivePower[2] = 0.f;
 		_ExGauge_EmissivePower[1] = 0.f;
 		_ExGauge_EmissivePower[0] = Remainder;
+		_LightDir_ExGauge.z = -0.5f;
 		break;
 	}
+
+	if (16.f > _ExGauge_FireAccumulateTime && 3.f > _ExGauge)
+		_LightDir_ExGauge.z += 0.5f;
 
 	//
 	float cx = 16.f;// 가로 갯수

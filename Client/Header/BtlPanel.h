@@ -155,6 +155,7 @@ private:
 	Matrix _PerspectiveProjMatrix = Matrix();
 
 	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
+	Vector3 _LightDir_ExGauge = Vector3(-1.f, 1.f, -1.f);
 
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
@@ -199,6 +200,7 @@ public:
 	void SetKeyInputActive(bool IsActive);
 	void AddRankScore(float Score);
 	float GetExGauge() const { return _ExGauge; }
+	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count);
 };
