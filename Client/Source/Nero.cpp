@@ -10,6 +10,7 @@
 #include "Wire_Arm.h"
 #include "WIngArm_Left.h"
 #include "WingArm_Right.h"
+#include "MainCamera.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -17,6 +18,7 @@ Nero::Nero()
 	, m_iJumpDirIndex(Basic)
 	, m_fRedQueenGage(0.f)
 {
+	m_nTag = Player;
 }
 void Nero::Free()
 {
@@ -79,7 +81,7 @@ HRESULT Nero::Ready()
 	m_iCurAnimationIndex = ANI_END;
 	m_iPreAnimationIndex = ANI_END;
 
-	m_nTag = 100;
+	
 
 	return S_OK;
 }
@@ -93,6 +95,7 @@ HRESULT Nero::Awake()
 
 HRESULT Nero::Start()
 {
+	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
 	return S_OK;
 }
 
@@ -106,6 +109,9 @@ UINT Nero::Update(const float _fDeltaTime)
 		m_pFSM->UpdateFSM(_fDeltaTime);
 
 	auto [Scale,Rot,Pos] =m_pMesh->Update(_fDeltaTime);
+	Matrix RotY;
+	D3DXMatrixRotationY(&RotY, D3DXToRadian(m_fAngle));
+	D3DXVec3TransformCoord(&Pos, &Pos, &RotY);
 
 	m_pTransform.lock()->SetPosition(m_pTransform.lock()->GetPosition() + Pos * m_pTransform.lock()->GetScale().x);
 
@@ -308,6 +314,12 @@ void Nero::SetActive_Buster_Arm(bool ActiveOrNot)
 void Nero::SetActive_Wire_Arm(bool ActiveOrNot)
 {
 	m_pWireArm.lock()->SetActive(ActiveOrNot);
+}
+
+void Nero::SetAngleFromCamera()
+{
+	m_fAngle = m_pCamera.lock()->Get_Angle();
+	m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
 }
 
 void Nero::StopAnimation()

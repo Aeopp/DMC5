@@ -18,6 +18,7 @@
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "BtlPanel.h"
+#include "MainCamera.h"
 
 using namespace std;
 
@@ -40,9 +41,10 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
-
-	AddGameObject<Camera>();
-	// AddGameObject<Nero>();
+	
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	AddGameObject<Nero>();
 	AddGameObject<TempMap>();
 	//
 	//AddGameObject<Em5000>();
@@ -77,7 +79,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
-	// ¼öÁ¤ ÇÊ¿ä
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
 
