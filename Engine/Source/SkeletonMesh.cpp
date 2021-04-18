@@ -772,11 +772,12 @@ void SkeletonMesh::PlayAnimation(
 	const bool  bLoop,
 	const AnimNotify& _Notify,
 	const float _CurrentAccelerationFactor,
-	const float _CurrentTransitionTimeFactor)
+	const float _CurrentTransitionTimeFactor,
+	bool _Overlap)
 {
 	if (!AnimInfoTable)return;
 	//    같은 모션 일경우 빠른 리턴.
-	if (InitAnimName == CurPlayAnimInfo.Name) return;
+	if (_Overlap == true && InitAnimName == CurPlayAnimInfo.Name) return;
 
 	auto iter = AnimInfoTable->find(InitAnimName);
 	if (iter == std::end(*AnimInfoTable))

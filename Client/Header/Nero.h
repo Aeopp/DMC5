@@ -247,11 +247,15 @@ public:
 	UINT Get_RQ_Gage() { return (UINT)m_fRedQueenGage; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
+	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_Wings(bool ActiveOrNot);
 	void SetActive_Buster_Arm(bool ActiveOrNot);
 	void SetActive_Wire_Arm(bool ActiveOrNot);
+	void SetActive_WingArm_Right(bool ActiveOrNot);
+	void SetActive_WingArm_Left(bool ActiveOrNot);
 	void SetAngleFromCamera();
+	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	void DecreaseRQ_Gage() { m_fRedQueenGage -= 1; }
@@ -268,6 +272,8 @@ public:
 	void ChangeWeapon(UINT _iWeaponIndex);
 	void Change_BusterArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -307,6 +313,7 @@ private:
 
 	float	m_fRedQueenGage = 0.f;
 	float	m_fAngle = 0.f;
+	float	m_fRotationAngle = 0.f;
 };
 
 

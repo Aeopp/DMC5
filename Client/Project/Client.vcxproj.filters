@@ -55,30 +55,6 @@
     <Filter Include="02.GameObject\01.Player">
       <UniqueIdentifier>{b7363eb4-1fc1-4324-a86f-e497255c94b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Effect\DashImpact">
-      <UniqueIdentifier>{b7667868-436c-417f-b44f-5022f169be9a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\02. Monster">
-      <UniqueIdentifier>{a3517ad2-d76e-4542-8f79-0e908dd136ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\02. Monster\00.Em100">
-      <UniqueIdentifier>{37362b12-a76f-4d83-be8b-b416dcef8771}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\02. Monster\01.Em101">
-      <UniqueIdentifier>{7bc9598d-78ac-4f39-b931-83b51179adf3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\02. Monster\02.Em0000">
-      <UniqueIdentifier>{713e754a-60d1-45f6-8821-e4e8ea31c584}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\02. Monster\02.Em0000\Weapon">
-      <UniqueIdentifier>{c02369c1-af29-46dd-852c-dedcb84e3a5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\02. Monster\03.Em5000">
-      <UniqueIdentifier>{a76a460f-8b96-4594-aebb-ce10380608c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\02. Monster\03.Em5000\Car">
-      <UniqueIdentifier>{f7e815fa-94c1-43a1-8a89-e80638e252dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\01.Player\99.FSM">
       <UniqueIdentifier>{852ebfda-e0e0-4346-9151-dd211ef8a27d}</UniqueIdentifier>
     </Filter>
@@ -117,6 +93,30 @@
     </Filter>
     <Filter Include="02.GameObject\01.Player\02.WingArms\Right">
       <UniqueIdentifier>{5ec004df-6b43-41d1-bdb4-19e78e140b4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Blood">
+      <UniqueIdentifier>{b7667868-436c-417f-b44f-5022f169be9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster">
+      <UniqueIdentifier>{a3517ad2-d76e-4542-8f79-0e908dd136ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\00.Em100">
+      <UniqueIdentifier>{37362b12-a76f-4d83-be8b-b416dcef8771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\01.Em101">
+      <UniqueIdentifier>{7bc9598d-78ac-4f39-b931-83b51179adf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\02.Em0000">
+      <UniqueIdentifier>{713e754a-60d1-45f6-8821-e4e8ea31c584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\02.Em0000\Weapon">
+      <UniqueIdentifier>{c02369c1-af29-46dd-852c-dedcb84e3a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\03.Em5000">
+      <UniqueIdentifier>{a76a460f-8b96-4594-aebb-ce10380608c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\03.Em5000\Car">
+      <UniqueIdentifier>{f7e815fa-94c1-43a1-8a89-e80638e252dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,25 +160,25 @@
       <Filter>02.GameObject\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Monster.h">
-      <Filter>02.GameObject\02. Monster</Filter>
+      <Filter>02.GameObject\02.Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em100.h">
-      <Filter>02.GameObject\02. Monster\00.Em100</Filter>
+      <Filter>02.GameObject\02.Monster\00.Em100</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em101.h">
-      <Filter>02.GameObject\02. Monster\01.Em101</Filter>
+      <Filter>02.GameObject\02.Monster\01.Em101</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em0000.h">
-      <Filter>02.GameObject\02. Monster\02.Em0000</Filter>
+      <Filter>02.GameObject\02.Monster\02.Em0000</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em0000_Weapon.h">
-      <Filter>02.GameObject\02. Monster\02.Em0000\Weapon</Filter>
+      <Filter>02.GameObject\02.Monster\02.Em0000\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em5000.h">
-      <Filter>02.GameObject\02. Monster\03.Em5000</Filter>
+      <Filter>02.GameObject\02.Monster\03.Em5000</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Car.h">
-      <Filter>02.GameObject\02. Monster\03.Em5000\Car</Filter>
+      <Filter>02.GameObject\02.Monster\03.Em5000\Car</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Blood.h" />
     <ClInclude Include="..\Header\DashImpact.h" />
@@ -223,6 +223,12 @@
     </ClInclude>
     <ClInclude Include="..\Header\WingArm_Right.h">
       <Filter>02.GameObject\01.Player\02.WingArms\Right</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Blood.h">
+      <Filter>02.GameObject\Effect\Blood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\DashImpact.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\MainCamera.h" />
   </ItemGroup>
@@ -273,31 +279,37 @@
     <ClCompile Include="..\Source\Effect.cpp">
       <Filter>02.GameObject\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\DashImpact.cpp">
-      <Filter>02.GameObject\Effect\DashImpact</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Em100.cpp">
-      <Filter>02.GameObject\02. Monster\00.Em100</Filter>
+      <Filter>02.GameObject\02.Monster\00.Em100</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Monster.cpp">
-      <Filter>02.GameObject\02. Monster</Filter>
+      <Filter>02.GameObject\02.Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em101.cpp">
-      <Filter>02.GameObject\02. Monster\01.Em101</Filter>
+      <Filter>02.GameObject\02.Monster\01.Em101</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em0000.cpp">
-      <Filter>02.GameObject\02. Monster\02.Em0000</Filter>
+      <Filter>02.GameObject\02.Monster\02.Em0000</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em0000_Weapon.cpp">
-      <Filter>02.GameObject\02. Monster\02.Em0000\Weapon</Filter>
+      <Filter>02.GameObject\02.Monster\02.Em0000\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em5000.cpp">
-      <Filter>02.GameObject\02. Monster\03.Em5000</Filter>
+      <Filter>02.GameObject\02.Monster\03.Em5000</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Car.cpp">
-      <Filter>02.GameObject\02. Monster\03.Em5000\Car</Filter>
+      <Filter>02.GameObject\02.Monster\03.Em5000\Car</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Blood.cpp" />
+    <ClCompile Include="..\Source\RedQueen.cpp" />
+    <ClCompile Include="..\Source\Nero_LWing.cpp" />
+    <ClCompile Include="..\Source\Nero_RWing.cpp" />
+    <ClCompile Include="..\Source\Wire_Arm.cpp" />
+    <ClCompile Include="..\Source\Buster_Arm.cpp" />
+    <ClCompile Include="..\Source\FSMBase.cpp" />
+    <ClCompile Include="..\Source\FSMState.cpp" />
+    <ClCompile Include="..\Source\NeroFSM.cpp" />
+    <ClCompile Include="..\Source\Nero.cpp" />
+    <ClCompile Include="..\Source\NeroState.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
     <ClCompile Include="..\Source\Buster_Arm.cpp">
       <Filter>02.GameObject\01.Player\04.BusterArm</Filter>
@@ -334,6 +346,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\WingArm_Right.cpp">
       <Filter>02.GameObject\01.Player\02.WingArms\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Blood.cpp">
+      <Filter>02.GameObject\Effect\Blood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DashImpact.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\MainCamera.cpp" />
   </ItemGroup>

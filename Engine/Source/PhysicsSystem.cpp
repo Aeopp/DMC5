@@ -34,6 +34,7 @@ physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes a
 		| physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS
 		| physx::PxPairFlag::eNOTIFY_TOUCH_LOST
 		| physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+
 	return physx::PxFilterFlag::eDEFAULT;
 }
 
@@ -46,17 +47,23 @@ PhysicsSystem::PhysicsSystem()
 	, m_pScene(nullptr)
 	, m_pCollisionCallback(nullptr)
 	, m_bSimulate(false)
+	, m_pCooking(nullptr)
 {
 }
 
 void PhysicsSystem::Free()
 {
 	Object::Free();
+
+	if (m_bSimulate)
+		while (false == (m_pScene->fetchResults(false)));
+
 	PX_RELEASE(m_pScene);
 
 	SafeDelete(m_pCollisionCallback);
 
 	PX_RELEASE(m_pDispatcher);
+	PX_RELEASE(m_pCooking);
 	PX_RELEASE(m_pPhysics);
 
 	if (m_pPVD)
@@ -102,7 +109,7 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 
 	//Scene Description
 	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.f, 0.f, 0.f);
+	sceneDesc.gravity = physx::PxVec3(0.f, -9.81f, 0.f);
 	m_pDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = m_pDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
@@ -116,9 +123,11 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 	}
 	m_pCollisionCallback = new CollisionCallback;
 	m_pScene->setSimulationEventCallback(m_pCollisionCallback);
-
 	//Default Material
-	m_pDefaultMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.5f);
+	m_pDefaultMaterial = m_pPhysics->createMaterial(1.f, 1.f, 0.f);
+
+	//Cooking
+	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, m_pPhysics->getTolerancesScale());
 
 	return S_OK;
 }
@@ -131,7 +140,7 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 
 	//Simulation 시작 전 변경된 Transform을 Actor에 적용
 	PxU32		nNumActors = 0;
-	PxActor**	ppActors = nullptr;
+	PxActor** ppActors = nullptr;
 
 	//Scene에 있는 RigidDynamicActor의 숫자
 	nNumActors = m_pScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
@@ -140,7 +149,7 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 	//Scene에서 RigidDynamicActor들을 가져옴.
 	m_pScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, ppActors, nNumActors);
 	//
-	for(UINT i = 0; i < nNumActors; ++i)
+	for (UINT i = 0; i < nNumActors; ++i)
 		((LPPXUSERDATA)(ppActors[i]->userData))->pCollider.lock()->ReadySimulate();
 	//생성한 동적 배열 삭제
 	delete[] ppActors;
@@ -158,7 +167,7 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 	delete[] ppActors;
 
 	//Simulation 시작
-	m_pScene->simulate(_fDeltaTime);
+	m_pScene->simulate(1.f/60.f);
 
 	m_bSimulate = true;
 
@@ -173,7 +182,7 @@ void PhysicsSystem::FetchResults(const bool _bBlock)
 
 	//Simulation 결과로 Actor에 설정된 globalPose를 Transform에 적용.
 	PxU32		nNumActors = 0;
-	PxActor**	ppActors = nullptr;
+	PxActor** ppActors = nullptr;
 
 	nNumActors = m_pScene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC);
 
@@ -193,7 +202,10 @@ void PhysicsSystem::FetchResults(const bool _bBlock)
 		pCollider.lock()->GetGameObject().lock()->GetComponent<Transform>().lock()->SetSimulationResult(D3DXQUATERNION(globalPose.q.x, globalPose.q.y, globalPose.q.z, globalPose.q.w), D3DXVECTOR3(globalPose.p.x, globalPose.p.y, globalPose.p.z));
 	}
 
+	delete[] ppActors;
+
 	m_bSimulate = false;
+
 }
 
 physx::PxPhysics* PhysicsSystem::GetPxPhysics()
@@ -204,6 +216,11 @@ physx::PxPhysics* PhysicsSystem::GetPxPhysics()
 physx::PxMaterial* PhysicsSystem::GetDefaultMaterial()
 {
 	return m_pDefaultMaterial;
+}
+
+PxCooking* PhysicsSystem::GetCooking()
+{
+	return m_pCooking;
 }
 
 void PhysicsSystem::AddActor(physx::PxActor& _rActor)
@@ -220,7 +237,9 @@ void PhysicsSystem::RemoveActor(physx::PxActor& _rActor)
 	m_pScene->removeActor(_rActor);
 }
 
-bool PhysicsSystem::IsSimulate()
+void PhysicsSystem::ReleaseActor(physx::PxActor& _rActor)
 {
-	return m_bSimulate;
+	if (nullptr == m_pScene)
+		return;
+	m_vecRelease.push_back(&_rActor);
 }

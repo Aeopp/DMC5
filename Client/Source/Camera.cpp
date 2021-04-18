@@ -200,7 +200,7 @@ void Camera::Move(const float& _fTimeDelta)
 		m_vAt += vLength;
 	}
 
-    if (Input::GetKeyDown(DIK_RCONTROL))
+    if (Input::GetKeyDown(DIK_LCONTROL))
     {
         if (true == m_bClick)
             return;

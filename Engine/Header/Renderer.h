@@ -81,6 +81,7 @@ private:
 	std::map<RenderProperty::Order, 
 		std::unordered_map<std::string,std::vector<RenderEntityType>>>
 		RenderEntitys{};
+	std::set<RenderInterface* > RenderEntitySet{};
 	std::shared_ptr<Quad> _Quad;
 	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
 	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};

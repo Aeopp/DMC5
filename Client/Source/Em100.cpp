@@ -106,7 +106,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Attack_A:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->PlayingTime() >= 0.9f)
 				{
@@ -120,7 +120,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Attack_D:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_D", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Attack_D", false, {}, 1.f, 50.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
@@ -150,7 +150,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Front_End:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Front_End", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Front_End", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Front_End" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -162,13 +162,13 @@ void Em100::State_Change(const float _fDeltaTime)
 		break;
 	case Em100::Walk_Front_Loop:
 		if (m_bIng == true)
-			m_pMesh->PlayAnimation("Walk_Front_Loop", true, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Front_Loop", true, {}, 1.f, 50.f, true);
 		break;
 	case Em100::Walk_Front_Start:
 		//m_bIng == 행동중이다. m_bInteraction == false면 다 돌았다. 다돌고 움직이자.
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Front_Start", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Front_Start", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Front_Start" && m_pMesh->PlayingTime() >= 0.9f)
 				m_eState = Walk_Front_Loop;
@@ -177,7 +177,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Left_End:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Left_End", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Left_End", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Left_End" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -190,7 +190,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Left_Loop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Left_Loop", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Left_Loop", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Left_Loop" && m_pMesh->PlayingTime() >= 0.9f)
 				m_eState = Walk_Left_End;
@@ -199,7 +199,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Left_Start:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Left_Start", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Left_Start", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Left_Start" && m_pMesh->PlayingTime() >= 0.9f)
 				m_eState = Walk_Left_Loop;
@@ -208,7 +208,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Right_Stop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Right_Stop", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Right_Stop", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Right_Stop" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -221,7 +221,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Right_Loop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Right_Loop", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Right_Loop", false, {}, 1.f, 50.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Right_Loop" && m_pMesh->PlayingTime() >= 0.9f)
 				m_eState = Walk_Right_Stop;
 		}
@@ -229,14 +229,14 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Right_Start:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Right_Start", false, {}, 1.f, 50.f);
+			m_pMesh->PlayAnimation("Walk_Right_Start", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Right_Start" && m_pMesh->PlayingTime() >= 0.9f)
 				m_eState = Walk_Right_Loop;
 		}
 		break;
 	case Em100::idle:
-		m_pMesh->PlayAnimation("idle", true, {}, 1.f, 50.f);
+		m_pMesh->PlayAnimation("idle", true, {}, 1.f, 50.f, true);
 		break;
 	default:
 		break;
