@@ -776,7 +776,7 @@ void SkeletonMesh::PlayAnimation(
 {
 	if (!AnimInfoTable)return;
 	//    같은 모션 일경우 빠른 리턴.
-	if (InitAnimName == CurPlayAnimInfo.Name) return;
+	//if (InitAnimName == CurPlayAnimInfo.Name) return;
 
 	auto iter = AnimInfoTable->find(InitAnimName);
 	if (iter == std::end(*AnimInfoTable))

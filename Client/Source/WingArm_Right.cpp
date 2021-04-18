@@ -22,12 +22,11 @@ HRESULT WingArm_Right::Ready()
 {
 	RenderInit();
 
-	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
+	m_pTransform.lock()->SetScale({ 0.025f,0.025f,0.025f });
 
 	PushEditEntity(m_pTransform.lock().get());
 
-	m_bIsRender = true;
-	//SetActive(false);
+	SetActive(false);
 
 	return S_OK;
 }
@@ -35,8 +34,7 @@ HRESULT WingArm_Right::Ready()
 HRESULT WingArm_Right::Awake()
 {
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-
-
+	m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Shoulder");
 	return S_OK;
 }
 
@@ -49,44 +47,53 @@ UINT WingArm_Right::Update(const float _fDeltaTime)
 {
 	m_pMesh->Update(_fDeltaTime);
 
-	//float fCurAnimationTime = m_pMesh->PlayingTime();
+	float fCurAnimationTime = m_pMesh->PlayingTime();
 
-	//if (0.95 <= fCurAnimationTime)
-	//{
-	//	SetActive(false);
-	//}
+	if (0.95 <= fCurAnimationTime)
+	{
+		SetActive(false);
+	}
 
 	return 0;
 }
 
 UINT WingArm_Right::LateUpdate(const float _fDeltaTime)
 {
+	Matrix								ParentWorldMatrix, FinalWorld;
+	Matrix								Scale, Trans;
+	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
+	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
+	
+
+	if (nullptr != m_pParentBoneMat)
+	{
+		D3DXMatrixScaling(&Scale, 0.01f, 0.01f, 0.01f);
+		D3DXMatrixTranslation(&Trans, m_pParentBoneMat->_41, m_pParentBoneMat->_42, m_pParentBoneMat->_43);
+
+		FinalWorld = Trans * ParentWorldMatrix;
+		FinalWorld._41 += PlayerLook.x * 0.3;
+		FinalWorld._42 += 0.05f;
+		FinalWorld._43 += PlayerLook.z * 0.2;
+		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+	}
+
+
 	return 0;
 }
 
 void WingArm_Right::OnEnable()
 {
 	m_bIsRender = true;
-
-	//Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
-	//std::optional<Matrix> R_HandLocal = m_pNero.lock()->Get_BoneMatrix_ByName("root");
-	//Matrix R_HandWorld = *R_HandLocal * NeroWorld;
-
-	//memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
-
-	//Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
-	//NeroWorld._41 += PlayerLook.x * -1.7;
-	//NeroWorld._43 += PlayerLook.z * -1.7;
-
-	//m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 	_RenderProperty.bRender = m_bIsRender;
+
+	
 }
 
 void WingArm_Right::OnDisable()
 {
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
-	//m_pMesh->SetPlayingTime(0);
+	m_pMesh->SetPlayingTime(0);
 }
 
 void WingArm_Right::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
@@ -276,5 +283,11 @@ void WingArm_Right::Editor()
 	if (bEdit)
 	{
 		// ¿¡µðÅÍ .... 
+		//char BoneName[MAX_PATH] = "";
+		//ImGui::InputText("BoneName", BoneName, MAX_PATH);
+		//if (ImGui::Button("ChangeBone"))
+		//{
+		//	m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr(BoneName);
+		//}
 	}
 }
