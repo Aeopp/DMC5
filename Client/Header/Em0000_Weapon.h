@@ -37,9 +37,9 @@ public:
 private:
 	std::shared_ptr<ENGINE::StaticMesh> m_pStaticMesh{};
 
+public:
+	weak_ptr<SphereCollider>			  m_pCollider;
 
-
-	//무기 붙이기용
 	std::weak_ptr<Em0000>				  m_pEm0000;
 	std::weak_ptr<ENGINE::SkeletonMesh>   m_pEm0000Mesh;
 	std::weak_ptr<ENGINE::Transform>	  m_pEm0000Trasform;
@@ -48,9 +48,5 @@ private:
 	Matrix*								  m_pParentBone;
 	Matrix								  m_ParentWorld;
 	Matrix								  m_Result;
-
-public:
-	void SetMesh(std::weak_ptr<ENGINE::SkeletonMesh> _pMesh);
-	void SetOwner(std::weak_ptr<Em0000> _pOwner);
 };
 #endif //__Em0000_Weapon_h__

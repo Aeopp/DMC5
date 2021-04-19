@@ -16,7 +16,7 @@ void Monster::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 	}
 }
 

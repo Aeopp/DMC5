@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "TestObject.h"
 #include <filesystem>
+#include "Em100Hand.h"
 
 void Em100::Free()
 {
@@ -257,7 +258,7 @@ HRESULT Em100::Ready()
 	RenderInit();
 // 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
+	InitTransform.lock()->SetScale({ 0.016,0.016,0.016 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -271,8 +272,32 @@ HRESULT Em100::Ready()
 
 HRESULT Em100::Awake()
 {
-	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
-	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	PushEditEntity(m_pCollider.lock().get());
+
+	for (int i = 0; i < 2; ++i)
+	{
+		m_pHand[i] = AddGameObject<Em100Hand>();
+		m_pHand[i].lock()->m_pEm100 = static_pointer_cast<Em100>(m_pGameObject.lock());
+		m_pHand[i].lock()->m_pEm100Mesh = m_pMesh;
+		m_pHand[i].lock()->m_bLeft = (bool)i;
+	}
+
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(false);
+
+
+
+	m_pCollider.lock()->SetRadius(1.7f);
+	m_pCollider.lock()->SetHeight(1.5f);
+	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
+
+	//m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
+	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
 
 	return S_OK;
@@ -317,19 +342,19 @@ UINT Em100::Update(const float _fDeltaTime)
 
 
 
-	if (Input::GetKeyDown(DIK_SPACE))
-	{
-		if (m_bTest == true)
-			m_bTest = false;
-		else
-			m_bTest = true;
-	}
+	//if (Input::GetKeyDown(DIK_SPACE))
+	//{
+	//	if (m_bTest == true)
+	//		m_bTest = false;
+	//	else
+	//		m_bTest = true;
+	//}
 
-	if (m_bTest == true)
-	{
-		Fight(_fDeltaTime);
-		State_Change(_fDeltaTime);
-	}
+	//if (m_bTest == true)
+	//{
+	//	Fight(_fDeltaTime);
+	//	State_Change(_fDeltaTime);
+	//}
 
 	/*if (Input::GetKeyDown(DIK_T))
 		Update_Angle();
@@ -372,6 +397,11 @@ void Em100::OnEnable()
 
 void Em100::OnDisable()
 {
+}
+
+void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)
@@ -481,6 +511,16 @@ void Em100::RenderInit()
 			RenderDebugSK(_Info);
 		}
 	} };
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
+
 	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 

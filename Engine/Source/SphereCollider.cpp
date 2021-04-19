@@ -45,7 +45,7 @@ HRESULT SphereCollider::ReadyCollider()
 	//Create BoxShape
 	m_pShape = PhysicsSystem::GetInstance()->GetPxPhysics()->createShape(PxSphereGeometry(m_fRadius), *m_pMaterial, true);
 	//
-	ReadyCollider();
+	Collider::ReadyCollider();
 	return S_OK;
 }
 
@@ -82,7 +82,7 @@ HRESULT SphereCollider::DrawCollider(const DrawInfo& _Info)
 	matWorld = matScale * matRot * matTrans * matInvScale * m_pGameObject.lock()->GetComponent<Transform>().lock()->GetRenderMatrix();
 
 	_Info.Fx->SetMatrix("World", &matWorld);
-
+	_Info.Fx->CommitChanges();
 	m_pMesh->DrawSubset(0);
 
 	return S_OK;

@@ -166,6 +166,8 @@
     <ClInclude Include="..\Header\Car.h" />
     <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\Effect.h" />
+    <ClInclude Include="..\Header\Em100Hand.h" />
+    <ClInclude Include="..\Header\Em5000Hand.h" />
     <ClInclude Include="..\Header\Glint.h" />
     <ClInclude Include="..\Header\Em0000.h" />
     <ClInclude Include="..\Header\Em0000_Weapon.h" />
@@ -205,6 +207,8 @@
     <ClCompile Include="..\Source\Car.cpp" />
     <ClCompile Include="..\Source\DashImpact.cpp" />
     <ClCompile Include="..\Source\Effect.cpp" />
+    <ClCompile Include="..\Source\Em100Hand.cpp" />
+    <ClCompile Include="..\Source\Em5000Hand.cpp" />
     <ClCompile Include="..\Source\Glint.cpp" />
     <ClCompile Include="..\Source\Em0000.cpp" />
     <ClCompile Include="..\Source\Em0000_Weapon.cpp" />

@@ -31,7 +31,7 @@ void Em0000Weapon::RenderReady()
 		_SpTransform)
 	{
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 	}
 }
 
@@ -41,18 +41,32 @@ HRESULT Em0000Weapon::Ready()
 
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01f,0.01f,0.01f});
+	InitTransform.lock()->SetScale({ 0.005f,0.005f,0.005f});
 	PushEditEntity(InitTransform.lock().get());
 
 
 	m_pTransform = GetComponent<ENGINE::Transform>();
+
+
+
 
 	return S_OK;
 };
 
 HRESULT Em0000Weapon::Awake()
 {
+	m_pEm0000Trasform = m_pEm0000.lock()->GetComponent<Transform>();
+
 	m_pParentBone = m_pEm0000Mesh.lock()->GetToRootMatrixPtr("R_WeaponHand");
+
+	m_pCollider = AddComponent<SphereCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	PushEditEntity(m_pCollider.lock().get());
+
+	m_pCollider.lock()->SetGravity(false);
+
+	m_pCollider.lock()->SetCenter({ -1.f,0.f,-1.7f });
+	m_pCollider.lock()->SetRadius(0.8f);
 
 	return S_OK;
 }
@@ -64,6 +78,7 @@ HRESULT Em0000Weapon::Start()
 
 UINT Em0000Weapon::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	//////////////무기 붙이기////////////////////////////
 	//오른손에만 붙였는데 왼손도 딱 맞게 붙음.
 	//m_ParentBone = m_pEm0000Mesh.lock()->GetNodeToRoot("R_WeaponHand");
@@ -132,6 +147,16 @@ void Em0000Weapon::RenderInit()
 			RenderDebug(_Info);
 		}
 	} };
+
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
 	RenderInterface::Initialize(_InitRenderProp);
 	m_pStaticMesh = Resources::Load<ENGINE::StaticMesh>(
 		L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em0000\\Weapon\\Weapon.fbx");
@@ -185,13 +210,4 @@ void Em0000Weapon::RenderShadow(const DrawInfo& _Info)
 	};
 }
 
-void Em0000Weapon::SetMesh(std::weak_ptr<ENGINE::SkeletonMesh> _pMesh)
-{
-	m_pEm0000Mesh = _pMesh;
-}
 
-void Em0000Weapon::SetOwner(std::weak_ptr<Em0000> _pOwner)
-{
-	m_pEm0000 = _pOwner;
-	m_pEm0000Trasform = m_pEm0000.lock()->GetComponent<Transform>();
-}

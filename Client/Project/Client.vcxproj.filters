@@ -118,6 +118,12 @@
     <Filter Include="02.GameObject\02.Monster\03.Em5000\Car">
       <UniqueIdentifier>{f7e815fa-94c1-43a1-8a89-e80638e252dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Monster\03.Em5000\00.HAND">
+      <UniqueIdentifier>{948b5e51-6edb-4043-a730-b86913ec6f1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Monster\00.Em100\00.Hand">
+      <UniqueIdentifier>{3848d087-87ec-4bc2-8f96-dedbfe780217}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -231,6 +237,12 @@
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\MainCamera.h" />
+    <ClInclude Include="..\Header\Em100Hand.h">
+      <Filter>02.GameObject\02.Monster\00.Em100\00.Hand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5000Hand.h">
+      <Filter>02.GameObject\02.Monster\03.Em5000\00.HAND</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -354,5 +366,11 @@
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\MainCamera.cpp" />
+    <ClCompile Include="..\Source\Em5000Hand.cpp">
+      <Filter>02.GameObject\02.Monster\03.Em5000\00.HAND</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em100Hand.cpp">
+      <Filter>02.GameObject\02.Monster\00.Em100\00.Hand</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

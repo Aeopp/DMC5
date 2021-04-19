@@ -6,7 +6,6 @@
 #include "Renderer.h"
 #include "TestObject.h"
 #include <filesystem>
-
 #include "Em0000_Weapon.h"
 
 void Em0000::Free()
@@ -234,7 +233,7 @@ HRESULT Em0000::Ready()
 
 // 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
+	InitTransform.lock()->SetScale({ 0.0005,0.0005,0.0005 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -249,14 +248,29 @@ HRESULT Em0000::Ready()
 
 HRESULT Em0000::Awake()
 {
-	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
-	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	//m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
+	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
-	auto pWeapon = AddGameObject<Em0000Weapon>();
 
-	pWeapon.lock()->SetMesh(m_pMesh);
-	pWeapon.lock()->SetOwner(std::static_pointer_cast<Em0000>(m_pGameObject.lock()));
+	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	PushEditEntity(m_pCollider.lock().get());
 
+	m_pWeapon = AddGameObject<Em0000Weapon>();
+	m_pWeapon.lock()->m_pEm0000 = static_pointer_cast<Em0000>(m_pGameObject.lock());
+	m_pWeapon.lock()->m_pEm0000Mesh = m_pMesh;
+
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(false);
+
+	
+
+	m_pCollider.lock()->SetRadius(0.7f);
+	m_pCollider.lock()->SetHeight(1.7f);
+	m_pCollider.lock()->SetCenter({ 0.f,1.3f,-0.3f });
 	return S_OK;
 }
 
@@ -299,7 +313,7 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 	
 
-	if (Input::GetKeyDown(DIK_SPACE))
+	/*if (Input::GetKeyDown(DIK_SPACE))
 	{
 		if (m_bTest == true)
 			m_bTest = false;
@@ -311,7 +325,7 @@ UINT Em0000::Update(const float _fDeltaTime)
 	{
 		Fight(_fDeltaTime);
 		State_Change(_fDeltaTime);
-	}
+	}*/
 
 	/*if (Input::GetKeyDown(DIK_T))
 		Update_Angle();
@@ -461,6 +475,16 @@ void Em0000::RenderInit()
 		[this](const DrawInfo& _Info)
 		{
 			RenderDebugSK(_Info);
+		}
+	} };
+
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
 		}
 	} };
 	RenderInterface::Initialize(_InitRenderProp);

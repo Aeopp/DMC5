@@ -7,6 +7,7 @@
 class TestObject;
 class Car;
 class Nero;
+class Em5000Hand;
 class Em5000 final : public Monster
 {
 public:
@@ -134,6 +135,9 @@ private:
 
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
+	std::weak_ptr<Em5000Hand>	m_pHand[2];
+	std::weak_ptr<ENGINE::CapsuleCollider> m_pCollider;
+
 };
 
 #endif // Em5000_h__

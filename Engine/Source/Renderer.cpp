@@ -1146,14 +1146,14 @@ HRESULT Renderer::RendererCollider()&
 		Fx->SetVector("DebugColor", &DebugColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		UINT Passes = 0u;
-		Fx->Begin(&Passes, NULL);
 		for (auto& [Entity, Call] : _EntityArr)
 		{
+			Fx->Begin(&Passes, NULL);
 			Fx->BeginPass(0);
 			Call(_DrawInfo);
 			Fx->EndPass();
+			Fx->End();
 		}
-		Fx->End();
 	}
 
 	return S_OK;
