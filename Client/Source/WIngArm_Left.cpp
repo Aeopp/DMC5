@@ -6,11 +6,14 @@
 
 WIngArm_Left::WIngArm_Left()
 	:m_bIsRender(false)
+	,m_bLoop(false)
+	,m_pParentBoneMat(nullptr)
 {
 }
 
 void WIngArm_Left::Free()
 {
+	GameObject::Free();
 }
 
 WIngArm_Left* WIngArm_Left::Create()
@@ -46,6 +49,7 @@ HRESULT WIngArm_Left::Start()
 
 UINT WIngArm_Left::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 	_RenderProperty.bRender = true;
 
@@ -85,6 +89,7 @@ UINT WIngArm_Left::LateUpdate(const float _fDeltaTime)
 
 void WIngArm_Left::OnEnable()
 {
+	GameObject::OnEnable();
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
 
@@ -93,6 +98,7 @@ void WIngArm_Left::OnEnable()
 
 void WIngArm_Left::OnDisable()
 {
+	GameObject::OnDisable();
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
 }
@@ -261,7 +267,7 @@ void WIngArm_Left::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

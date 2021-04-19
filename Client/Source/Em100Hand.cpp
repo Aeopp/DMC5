@@ -4,6 +4,7 @@
 
 void Em100Hand::Free()
 {
+	GameObject::Free();
 }
 
 Em100Hand* Em100Hand::Create()
@@ -90,10 +91,12 @@ void Em100Hand::Editor()
 
 void Em100Hand::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Em100Hand::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

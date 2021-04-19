@@ -8,7 +8,7 @@
 
 void OvertureHand::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string OvertureHand::GetName()
@@ -169,10 +169,10 @@ void OvertureHand::Editor()
 
 void OvertureHand::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void OvertureHand::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

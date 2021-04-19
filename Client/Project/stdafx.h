@@ -37,6 +37,9 @@ enum GAMEOBJECTTAG
 	Eff_OvertureHand,
 	ThrowCar,
 	TAG_Camera,
+	TAG_RedQueen,
+	TAG_BusterArm_Right,
+	TAG_WireArm,
 	Tag_END
 };
 

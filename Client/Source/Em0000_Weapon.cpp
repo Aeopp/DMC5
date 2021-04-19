@@ -10,7 +10,7 @@
 
 void Em0000Weapon::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Em0000Weapon::GetName()
@@ -61,6 +61,7 @@ HRESULT Em0000Weapon::Awake()
 
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
+	m_pCollider.lock()->SetTrigger(true);
 	PushEditEntity(m_pCollider.lock().get());
 
 	m_pCollider.lock()->SetGravity(false);
@@ -106,12 +107,12 @@ void Em0000Weapon::Editor()
 
 void Em0000Weapon::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void Em0000Weapon::OnDisable()
 {
-
+	GameObject::OnDisable();
 }
 
 void Em0000Weapon::RenderInit()

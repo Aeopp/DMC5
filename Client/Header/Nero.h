@@ -216,6 +216,14 @@ public:
 		WS_Idle,
 		WS_Battle
 	};
+
+	enum NeroDirection
+	{
+		Dir_Front,
+		Dir_Back,
+		Dir_Left,
+		Dir_Right
+	};
 	
 
 private:
@@ -240,6 +248,8 @@ public:
 	float Get_PlayingAccTime();
 	UINT Get_CurAnimationIndex() { return m_iCurAnimationIndex; }
 	UINT Get_PreAnimationIndex() { return m_iPreAnimationIndex; }
+	UINT Get_CurDirIndex() { return m_iCurDirIndex; }
+	UINT Get_PreDirIndex() { return m_iPreDirIndex; }
 	UINT Get_CurWeaponIndex() { return m_iCurWeaponIndex; }
 	UINT Get_JumpCount() { return m_iJumpCount; }
 	UINT Get_JumpDir() { return m_iJumpDirIndex; }
@@ -286,6 +296,7 @@ public:
 	void  ContinueAnimiation();
 	bool  IsAnimationEnd();
 public:
+	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex,const AnimNotify& _Notify = {});
 	void ChangeAnimationIndex(const UINT AnimationIndex);
@@ -332,6 +343,8 @@ private:
 	UINT	m_iPreAnimationIndex;
 	UINT	m_iCurWeaponIndex;
 	UINT	m_iJumpDirIndex;
+	UINT	m_iCurDirIndex;
+	UINT	m_iPreDirIndex;
 
 	bool	m_bDebugButton = true;
 	UINT	m_iJumpCount = 0;

@@ -10,6 +10,7 @@
 
 void Em100::Free()
 {
+	GameObject::Free();
 }
 
 std::string Em100::GetName()
@@ -393,10 +394,12 @@ void Em100::Editor()
 
 void Em100::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Em100::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

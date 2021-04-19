@@ -18,6 +18,8 @@ Nero::Nero()
 	, m_iCurWeaponIndex(RQ)
 	, m_iJumpDirIndex(Basic)
 	, m_fRedQueenGage(0.f)
+	, m_iCurDirIndex(Dir_Front)
+	, m_iPreDirIndex(Dir_Front)
 {
 	m_nTag = Player;
 }
@@ -49,10 +51,11 @@ Nero* Nero::Create()
 
 HRESULT Nero::Ready()
 {
+	//GameObject::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.01f,0.01f,0.01f });
-	m_pTransform.lock()->SetPosition(Vector3{0.f, 0.f, -5.f});
+	m_pTransform.lock()->SetPosition(Vector3{0.f, 5.f, 0.f});
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -74,11 +77,13 @@ HRESULT Nero::Ready()
 
 HRESULT Nero::Awake()
 {
+	//GameObject::Awake();
 	m_pFSM->ChangeState(NeroFSM::IDLE);
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
 	m_pCollider.lock()->SetRadius(0.4f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
@@ -92,7 +97,7 @@ HRESULT Nero::Awake()
 
 HRESULT Nero::Start()
 {
-	
+	//GameObject::Start();
 	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 
@@ -126,15 +131,18 @@ UINT Nero::Update(const float _fDeltaTime)
 
 UINT Nero::LateUpdate(const float _fDeltaTime)
 {
+	//GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Nero::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Nero::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Nero::RenderGBufferSK(const DrawInfo& _Info)
@@ -442,6 +450,12 @@ void Nero::ContinueAnimiation()
 bool Nero::IsAnimationEnd()
 {
 	return m_pMesh->IsAnimationEnd();
+}
+
+void Nero::ChangeNeroDirection(UINT _NeroDirection)
+{
+	m_iPreDirIndex = m_iCurDirIndex;
+	m_iCurDirIndex = _NeroDirection;
 }
 
 void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const UINT AnimationIndex, const AnimNotify& _Notify)

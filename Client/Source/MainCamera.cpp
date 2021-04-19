@@ -19,6 +19,7 @@ MainCamera::~MainCamera()
 
 void MainCamera::Free()
 {
+	GameObject::Free();
 }
 
 MainCamera* MainCamera::Create()
@@ -75,6 +76,7 @@ HRESULT MainCamera::Start()
 
 UINT MainCamera::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	if (Input::GetKeyDown(DIK_RSHIFT))
 		m_bFix = !m_bFix;
 	Mouse_Fix();
@@ -102,10 +104,12 @@ UINT MainCamera::LateUpdate(const float _fDeltaTime)
 
 void MainCamera::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void MainCamera::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void MainCamera::Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eAtType)

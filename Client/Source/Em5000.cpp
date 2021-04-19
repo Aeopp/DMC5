@@ -12,6 +12,7 @@
 
 void Em5000::Free()
 {
+	GameObject::Free();
 }
 
 std::string Em5000::GetName()
@@ -729,10 +730,12 @@ void Em5000::Editor()
 
 void Em5000::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Em5000::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em5000::RenderGBufferSK(const DrawInfo& _Info)

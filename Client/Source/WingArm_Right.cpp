@@ -6,11 +6,14 @@
 
 WingArm_Right::WingArm_Right()
 	:m_bIsRender(false)
+	,m_bLoop(false)
+	,m_pParentBoneMat(nullptr)
 {
 }
 
 void WingArm_Right::Free()
 {
+	GameObject::Free();
 }
 
 WingArm_Right* WingArm_Right::Create()
@@ -45,6 +48,7 @@ HRESULT WingArm_Right::Start()
 
 UINT WingArm_Right::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
 	float fCurAnimationTime = m_pMesh->PlayingTime();
@@ -84,6 +88,7 @@ UINT WingArm_Right::LateUpdate(const float _fDeltaTime)
 
 void WingArm_Right::OnEnable()
 {
+	GameObject::OnEnable();
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
 
@@ -92,6 +97,7 @@ void WingArm_Right::OnEnable()
 
 void WingArm_Right::OnDisable()
 {
+	GameObject::OnDisable();
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
 }
@@ -262,7 +268,7 @@ void WingArm_Right::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

@@ -8,7 +8,7 @@
 
 void Glint::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Glint::GetName()
@@ -199,10 +199,10 @@ void Glint::Editor()
 
 void Glint::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void Glint::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

@@ -5,10 +5,12 @@
 #include "Nero.h"
 RedQueen::RedQueen()
 {
+	m_nTag = TAG_RedQueen;
 }
 
 void RedQueen::Free()
 {
+	GameObject::Free();
 }
 
 RedQueen* RedQueen::Create()
@@ -18,6 +20,7 @@ RedQueen* RedQueen::Create()
 
 HRESULT RedQueen::Ready()
 {
+	//GameObject::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
@@ -29,20 +32,28 @@ HRESULT RedQueen::Ready()
 
 	_RenderProperty.bRender = true;
 	
+	
 	return S_OK;
 }
 
 HRESULT RedQueen::Awake()
 {
+	//GameObject::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("WeaponConst"));
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("L_WeaponHand"));
+
+	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	m_pCollider.lock()->SetTrigger(true);
+	PushEditEntity(m_pCollider.lock().get());
+
 	return S_OK;
 }
 
 HRESULT RedQueen::Start()
 {
-	 
+	//GameObject::Start();
 	return S_OK;
 }
 
@@ -59,6 +70,7 @@ UINT RedQueen::Update(const float _fDeltaTime)
 
 UINT RedQueen::LateUpdate(const float _fDeltaTime)
 {
+	//GameObject::LateUpdate(_fDeltaTime);
 	Matrix								ParentWorldMatrix,FinalWorld,RotX;
 	
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
@@ -77,11 +89,13 @@ UINT RedQueen::LateUpdate(const float _fDeltaTime)
 
 void RedQueen::OnEnable()
 {
+	GameObject::OnEnable();
 	_RenderProperty.bRender = true;
 }
 
 void RedQueen::OnDisable()
 {
+	GameObject::OnDisable();
 	_RenderProperty.bRender = false;
 }
 
@@ -213,6 +227,15 @@ void RedQueen::RenderInit()
 		[this](const DrawInfo& _Info)
 		{
 			RenderDebugSK(_Info);
+		}
+	} };
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
 		}
 	} };
 	RenderInterface::Initialize(_InitRenderProp);

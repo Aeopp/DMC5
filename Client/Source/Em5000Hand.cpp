@@ -4,6 +4,7 @@
 
 void Em5000Hand::Free()
 {
+	GameObject::Free();
 }
 
 Em5000Hand* Em5000Hand::Create()
@@ -89,10 +90,12 @@ void Em5000Hand::Editor()
 
 void Em5000Hand::OnEnable()
 {
+	GameObject::OnDisable();
 }
 
 void Em5000Hand::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em5000Hand::RenderInit()

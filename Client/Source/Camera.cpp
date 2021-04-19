@@ -8,6 +8,7 @@
 
 void Camera::Free()
 {
+    GameObject::Free();
 }
 
 Camera* Camera::Create()
@@ -107,10 +108,12 @@ UINT Camera::LateUpdate(const float _fDeltaTime)
 
 void Camera::OnEnable()
 {
+    GameObject::OnEnable();
 }
 
 void Camera::OnDisable()
 {
+    GameObject::OnDisable();
 }
 
 void Camera::LockOn()
