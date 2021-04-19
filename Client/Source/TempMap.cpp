@@ -189,7 +189,7 @@ HRESULT TempMap::Awake()
 {
 	m_pCollider = AddComponent<MeshCollider>();
 	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
-	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetRigid(false);
 	m_pCollider.lock()->SetGravity(false);
 	PushEditEntity(m_pCollider.lock().get());
 

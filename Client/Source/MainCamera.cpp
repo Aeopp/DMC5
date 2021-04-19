@@ -207,8 +207,8 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	{
 		//m_fDistanceToTarget -= dwMouseMove / 100.f;
 	}
-	if (m_fRotX <= -33.f)
-		m_fRotX = -33.f;
+	if (m_fRotX <= -37.f)
+		m_fRotX = -37.f;
 	if (m_fRotX >= 10.f)
 		m_fRotX = 10.f;
 
