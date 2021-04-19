@@ -10,7 +10,7 @@
 
 void Em0000Weapon::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Em0000Weapon::GetName()
@@ -37,6 +37,8 @@ void Em0000Weapon::RenderReady()
 
 HRESULT Em0000Weapon::Ready()
 {
+	GameObject::Ready();
+
 	RenderInit();
 
 	// 트랜스폼 초기화 .. 
@@ -55,6 +57,7 @@ HRESULT Em0000Weapon::Ready()
 
 HRESULT Em0000Weapon::Awake()
 {
+	GameObject::Awake();
 	m_pEm0000Trasform = m_pEm0000.lock()->GetComponent<Transform>();
 
 	m_pParentBone = m_pEm0000Mesh.lock()->GetToRootMatrixPtr("R_WeaponHand");
@@ -63,16 +66,19 @@ HRESULT Em0000Weapon::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	PushEditEntity(m_pCollider.lock().get());
 
+
 	m_pCollider.lock()->SetGravity(false);
 
 	m_pCollider.lock()->SetCenter({ -1.f,0.f,-1.7f });
 	m_pCollider.lock()->SetRadius(0.8f);
+	
 
 	return S_OK;
 }
 
 HRESULT Em0000Weapon::Start()
 {
+	GameObject::Start();
 	return S_OK;
 }
 
@@ -95,6 +101,7 @@ UINT Em0000Weapon::Update(const float _fDeltaTime)
 
 UINT Em0000Weapon::LateUpdate(const float _fDeltaTime)
 {
+	GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 }
 

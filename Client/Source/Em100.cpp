@@ -252,6 +252,7 @@ void Em100::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em100::Ready()
 {
+	GameObject::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster100;
 
@@ -272,6 +273,8 @@ HRESULT Em100::Ready()
 
 HRESULT Em100::Awake()
 {
+	GameObject::Awake();
+
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	PushEditEntity(m_pCollider.lock().get());
@@ -287,7 +290,7 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetRigid(false);
 	m_pCollider.lock()->SetGravity(false);
 
 
@@ -296,8 +299,8 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetHeight(1.5f);
 	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
 
-	//m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
-	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
+	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
 
 	return S_OK;
@@ -305,6 +308,7 @@ HRESULT Em100::Awake()
 
 HRESULT Em100::Start()
 {
+	GameObject::Start();
 	return S_OK;
 }
 
@@ -342,31 +346,19 @@ UINT Em100::Update(const float _fDeltaTime)
 
 
 
-	//if (Input::GetKeyDown(DIK_SPACE))
-	//{
-	//	if (m_bTest == true)
-	//		m_bTest = false;
-	//	else
-	//		m_bTest = true;
-	//}
-
-	//if (m_bTest == true)
-	//{
-	//	Fight(_fDeltaTime);
-	//	State_Change(_fDeltaTime);
-	//}
-
-	/*if (Input::GetKeyDown(DIK_T))
-		Update_Angle();
-
-	if (Input::GetKeyDown(DIK_Y))
+	if (Input::GetKeyDown(DIK_T))
 	{
-		if (m_bInteraction == true)
-			m_bInteraction = false;
+		if (m_bTest == true)
+			m_bTest = false;
 		else
-			m_bInteraction = true;
-	}*/
+			m_bTest = true;
+	}
 
+	if (m_bTest == true)
+	{
+		Fight(_fDeltaTime);
+		State_Change(_fDeltaTime);
+	}
 
 	Rotate(_fDeltaTime);
 
@@ -376,13 +368,17 @@ UINT Em100::Update(const float _fDeltaTime)
 
 UINT Em100::LateUpdate(const float _fDeltaTime)
 {
-
+	GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 
 }
 
 void Em100::Editor()
 {
+	GameObject::Editor();
+
+
+
 	GameObject::Editor();
 	if (bEdit)
 	{
@@ -393,15 +389,17 @@ void Em100::Editor()
 
 void Em100::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Em100::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	
+	int i = 0;
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)

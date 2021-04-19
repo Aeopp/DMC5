@@ -104,7 +104,7 @@ void TempMap::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Arcade.fbx", _InitInfo);
+		L"..\\..\\Resource\\Map\\Location\\Location2\\test\\Street_NoTexture.fbx", _InitInfo);
 	PushEditEntity(_StaticMesh.get());
 };
 
