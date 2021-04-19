@@ -41,23 +41,27 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	Scene::LoadScene();
-	
+	//AddGameObject<MainCamera>();
+
+	//AddGameObject<Nero>();
 	AddGameObject<Camera>();
 	//AddGameObject<MainCamera>();
 	//AddGameObject<Nero>();
+	//AddGameObject<Em5000>();
+	//AddGameObject<Car>();
+	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	AddGameObject<TempMap>();
+	
+
+	
 	//AddGameObject<TempMap>();
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	
+	//
 	AddGameObject<Em5000>();
-	//AddGameObject<Car>();
+	AddGameObject<Car>();
 
 	//AddGameObject<ShaderTester>();
 	/*
-	AddGameObject<TestAnimationObject>();*/
-
-	//AddGameObject<TestObject>();
-
 	/*AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();
@@ -68,13 +72,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();*/
 
-
 	AddGameObject<BtlPanel>();
-	
+
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
-	// ¼öÁ¤ ÇÊ¿ä
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
 
@@ -96,7 +99,6 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
 	//cout << "SceneUpdate" << endl;
 
 	return S_OK;

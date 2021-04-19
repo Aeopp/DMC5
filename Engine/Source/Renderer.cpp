@@ -1,15 +1,11 @@
-
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
-
 #include "Renderer.h"
 #include "FileHelper.h"
-
 #include "GraphicSystem.h"
 #include <ostream>
 #include <fstream>
 #include <istream>
-
 #include "FMath.hpp"
 #include "Color.h"
 #include "DxHelper.h"
@@ -199,11 +195,203 @@ void Renderer::ReadyRenderTargets()
 			RenderTargetDebugRenderSize);
 	}
 
-}
+	{
+		auto& avgluminance = RenderTargets["avgluminance"] = 
+			std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = 64;
+		InitInfo.Height = 64;
+		InitInfo.Levels = 0;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+		avgluminance->Initialize(InitInfo);
+		avgluminance->DebugBufferInitialize(
+			{ InitX + (XOffset* 1.f ) + Interval ,InitY  + Interval },
+			RenderTargetDebugRenderSize);
+
+		for (int32 i = 1; i < 4; ++i)
+		{
+			avgluminance->InsertSurface(i * 2);
+		}
+	}
+
+	{
+		auto& avglumsystemmem = RenderTargets["avglumsystemmem"] =
+			std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width  = 1;
+		InitInfo.Height = 1;
+		InitInfo.Levels = 0;
+		InitInfo.Usages = 0;
+		InitInfo.Format = D3DFMT_R16F;
+		InitInfo._D3DPool = D3DPOOL_SYSTEMMEM;
+		avglumsystemmem->Initialize(InitInfo);
+		avglumsystemmem->DebugBufferInitialize(
+			{ InitX + (XOffset * 1.f) + Interval,InitY + (YOffset * 1.f) + Interval },
+			RenderTargetDebugRenderSize);
+	}
+
+	{
+		auto& bloomresult = RenderTargets["bloomresult"] =
+			std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX / 2;
+		InitInfo.Height = g_nWndCY / 2;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A16B16G16R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+		bloomresult->Initialize(InitInfo);
+		bloomresult->DebugBufferInitialize(
+			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 2.f) + Interval },
+			RenderTargetDebugRenderSize);
+	};
+
+	{
+		auto& starresult = RenderTargets["starresult"] =
+			std::make_shared<RenderTarget >(); 
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX / 4;
+		InitInfo.Height = g_nWndCY / 4;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A16B16G16R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+		starresult->Initialize(InitInfo);
+		starresult->DebugBufferInitialize(
+			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 3.f) + Interval } ,
+			RenderTargetDebugRenderSize);
+	}
+
+	for (int i = 0; i < 5; ++i)
+	{
+		{
+			const std::string key = "dsampletargets" + std::to_string(i);
+
+			auto& dsampletargets = RenderTargets[key] =
+				std::make_shared<RenderTarget>();
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / (2 << i);
+			InitInfo.Height = g_nWndCY / (2 << i);
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			dsampletargets->Initialize(InitInfo);
+
+			dsampletargets->DebugBufferInitialize
+			(
+				{ InitX + (XOffset * 2.f) + Interval,
+				InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+				RenderTargetDebugRenderSize);
+		}
+
+		{
+			const std::string key = "blurtargets" + std::to_string(i);
+
+			auto& blurtargets = RenderTargets[key] =
+				std::make_shared<RenderTarget>();
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / (2 << i);
+			InitInfo.Height = g_nWndCY / (2 << i);
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			blurtargets->Initialize(InitInfo);
+
+			blurtargets->DebugBufferInitialize
+			(
+				{ InitX + (XOffset * 3.f) + Interval,
+				  InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+				RenderTargetDebugRenderSize);
+		}
+	}
+
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 2; ++j)
+			{
+				const std::string key = "startargets" +
+					std::to_string(i) + std::to_string(j);
+
+				auto& startargets = RenderTargets[key] =
+					std::make_shared<RenderTarget>();
+
+				RenderTarget::Info InitInfo{};
+				InitInfo.Width = g_nWndCX / 4;
+				InitInfo.Height = g_nWndCY / 4;
+				InitInfo.Levels = 1;
+				InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+				InitInfo.Format = D3DFMT_A16B16G16R16F;
+				InitInfo._D3DPool = D3DPOOL_DEFAULT;
+				startargets->Initialize(InitInfo);
+				startargets->DebugBufferInitialize(
+					{ InitX + (XOffset * (4 + j)) + Interval,
+					InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+					RenderTargetDebugRenderSize);
+			}
+		}
+	};
+
+	for (int i = 0; i < 2; ++i)
+	{
+		{
+			const std::string key = "lensflaretargets" + std::to_string(i);
+
+			auto& lensflaretargets = RenderTargets[key] = std::make_shared<RenderTarget>();
+
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / 2;
+			InitInfo.Height = g_nWndCY / 2;
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			lensflaretargets->Initialize(InitInfo);
+			lensflaretargets->DebugBufferInitialize
+			(
+				{ InitX + (XOffset * 6) + Interval,
+				  InitY + (YOffset * i) + ( i > 0 ? Interval : 0 ) },
+				RenderTargetDebugRenderSize
+			);
+		}
+
+		{
+			const std::string key = "afterimagetargets" + std::to_string(i);
+
+			auto& afterimagetargets = RenderTargets[key] = 
+				std::make_shared<RenderTarget>();
+
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / 2;
+			InitInfo.Height = g_nWndCY / 2;
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			afterimagetargets->Initialize(InitInfo);
+			afterimagetargets->DebugBufferInitialize
+			(
+				{     InitX + (XOffset * 6) + Interval,
+					  InitY + (YOffset * (i+2)) + (i > 0 ? Interval : 0) },
+						RenderTargetDebugRenderSize
+			);
+		}
+	}
+
+
+};
 
 void Renderer::ReadyRenderInfo()
 {
 	Matrix CameraView, CameraProjection, Ortho;
+
 	Device->GetTransform(D3DTS_VIEW, &CameraView);
 	Device->GetTransform(D3DTS_PROJECTION, &CameraProjection);
 
@@ -260,6 +448,7 @@ void Renderer::Push(const std::weak_ptr<GameObject>& _RenderEntity)&
 					{
 						RenderEntitys[_EntityOrder][ShaderKey].push_back(
 								RenderEntityType{ _SharedRenderEntity.get(), Call });
+						RenderEntitySet.insert(_SharedRenderEntity.get());
 					}
 				}
 			}
@@ -299,12 +488,24 @@ HRESULT Renderer::Render()&
 	BackBuffer->Release();
 
 	return S_OK;
-}
+};
 
 void Renderer::Editor()&
 {
 	ImGui::Begin("Render Editor");
 	{
+		if (ImGui::TreeNode("RenderTarget"))
+		{
+			for (auto& _RT : RenderTargets)
+			{
+				ImGui::Text(_RT.first.c_str());
+				ImGui::Image(reinterpret_cast<void**>
+					(_RT.second->GetTexture()), { 128,128 });
+				ImGui::Separator();
+			}
+
+			ImGui::TreePop();
+		}
 		if (ImGui::Button("LightSave"))
 		{
 			LightSave(FileHelper::OpenDialogBox());
@@ -382,20 +583,14 @@ void Renderer::RenderBegin()&
 {
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
-}
-// 등록코드수정 
+};
+
+//   등록코드수정 
 void Renderer::RenderReadyEntitys()&
 {
-	for (auto& [_Order,RenderEntitys] : RenderEntitys)
+	for (auto& _Entity : RenderEntitySet)
 	{
-		for (auto& [ShaderKey,RenderEntityArr] : RenderEntitys)
-		{
-			for (auto& RenderEntity : RenderEntityArr)
-			{
-				auto& _RenderInterface = RenderEntity.first;
-				_RenderInterface->RenderReady();
-			}
-		}
+		_Entity->RenderReady();
 	}
 }
 
@@ -431,6 +626,7 @@ void Renderer::RenderEnd()&
 void Renderer::RenderEntityClear()&
 {
 	RenderEntitys.clear();
+	RenderEntitySet.clear();
 };
 
 void Renderer::RenderShadowMaps()
@@ -452,7 +648,6 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetBool("isPerspective", FALSE);
 
 			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
-			RenderScene(shadowmap, viewproj);
 			
 			// 렌더 시작 ... 
 			DrawInfo _DrawInfo{};
@@ -532,7 +727,6 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
 			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
-			RenderScene(shadowmap, viewproj);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
 			// 렌더 시작 ... 
@@ -570,16 +764,16 @@ void Renderer::RenderGBuffer()
 	auto* const device = Device;
 	device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 
-	device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
-	device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
-	device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
+	device->SetRenderTarget (0, RenderTargets["ALBM"]->GetSurface());
+	device->SetRenderTarget (1, RenderTargets["NRMR"]->GetSurface());
+	device->SetRenderTarget (2, RenderTargets["Depth"]->GetSurface());
 
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	 device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 16);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState (0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 8);
+	device->SetSamplerState (0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	device->SetSamplerState (0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -629,9 +823,6 @@ void Renderer::RenderGBuffer()
 			Fx->End();
 		}
 	}
-
-	RenderScene(Shaders["gbuffer_ds"]->GetEffect() , _RenderInfo.ViewProjection);
-
 
 	device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
@@ -809,7 +1000,7 @@ void Renderer::DeferredShading()
 				rectvertices[13] += PtLt->LastScissorRect.bottom;
 				rectvertices[18] += PtLt->LastScissorRect.right;
 				rectvertices[19] += PtLt->LastScissorRect.top;
-
+				screenquad->CommitChanges();
 				device->DrawIndexedPrimitiveUP(
 					D3DPT_LINESTRIP, 0, 4, 4, rectindices, D3DFMT_INDEX16, rectvertices, 6 * sizeof(float));
 			}
@@ -821,111 +1012,6 @@ void Renderer::DeferredShading()
 	}
 
 }
-void Renderer::RenderScene(LPD3DXEFFECT effect, const D3DXMATRIX& viewproj)
-{
-	return;
-
-
-
-	D3DXMATRIX	inv;
-	D3DXMATRIX	world[4];
-	D3DXVECTOR4	uv(1, 1, 1, 1);
-
-	D3DXHANDLE	oldtech = effect->GetCurrentTechnique();
-	D3DXHANDLE	tech = effect->GetTechniqueByName("gbuffer_tbn");
-
-	// setup world matrices
-	D3DXMatrixScaling(&world[0], 0.15f, 0.15f, 0.15f);
-	D3DXMatrixScaling(&world[1], 0.15f, 0.15f, 0.15f);
-	D3DXMatrixScaling(&world[2], 0.15f, 0.15f, 0.15f);
-	D3DXMatrixScaling(&world[3], 75.f, 0.1f, 75.f);
-
-
-	world[0]._41 = -1.5;
-	world[0]._43 = 1.5;
-
-	world[1]._41 = 1.5;
-	world[1]._43 = 1.5;
-
-	world[2]._41 = 0;
-	world[2]._43 = -1;
-
-	world[3]._42 = -0.05f;
-
-	// render
-	D3DXMatrixInverse(&inv, NULL, &world[0]);
-
-	effect->SetMatrix("matWorld", &world[0]);
-	effect->SetMatrix("matWorldInv", &inv);
-	effect->SetMatrix("matViewProj", &viewproj);
-	effect->SetVector("uv", &uv);
-
-	effect->Begin(NULL, 0);
-	effect->BeginPass(0);
-	{
-		// skull 1
-		Device->SetTexture(0, marble);
-		//skull->DrawSubset(0);
-
-		//// skull 2
-		//D3DXMatrixInverse(&inv, NULL, &world[1]);
-
-		//effect->SetMatrix("matWorld", &world[1]);
-		//effect->SetMatrix("matWorldInv", &inv);
-		//effect->CommitChanges();
-
-		//skull->DrawSubset(0);
-
-		//// skull 3
-		//D3DXMatrixInverse(&inv, NULL, &world[2]);
-
-		//effect->SetMatrix("matWorld", &world[2]);
-		//effect->SetMatrix("matWorldInv", &inv);
-		//effect->CommitChanges();
-		//skull->DrawSubset(0);
-
-		Matrix targetscale,targettranslation ,targetworld,targetinverseworld;
- 		D3DXMatrixScaling(&targetscale, 0.15f, 0.15f, 0.15f) ;
-		D3DXMatrixTranslation(&targettranslation, 
-			MoonLightTarget.x, MoonLightTarget.y, MoonLightTarget.z);
-		targetworld = targetscale * targettranslation;
-		D3DXMatrixInverse(&targetinverseworld,nullptr, &targetworld); 
-
-		effect->SetMatrix("matWorld", &targetworld);
-		effect->SetMatrix("matWorldInv", &targetinverseworld);
-		effect->CommitChanges();
-		skull->DrawSubset(0);
-	}
-	effect->EndPass();
-	effect->End();
-
-	// floor
-	if (tech)
-		effect->SetTechnique(tech);
-
-	D3DXMatrixInverse(&inv, NULL, &world[3]);
-	uv = D3DXVECTOR4(30, 30, 0, 0);
-
-	effect->SetMatrix("matWorldInv", &inv);
-	effect->SetMatrix("matWorld", &world[3]);
-	effect->SetVector("uv", &uv);
-
-	effect->Begin(NULL, 0);
-	effect->BeginPass(0);
-	{
-		Device->SetTexture(0, wood);
-		Device->SetTexture(1, wood_normal);
-
-		box->DrawSubset(0);
-		uv = Vector4(1, 1, 0, 0);
-		effect->SetVector("uv", &uv);
-	}
-	effect->EndPass();
-	effect->End();
-
-	if (tech)
-		effect->SetTechnique(oldtech);
-};
 
 
 
@@ -1041,10 +1127,83 @@ HRESULT Renderer::RenderSky()&
 	screenquad->SetTechnique("screenquad");
 	screenquad->Begin(NULL, 0);
 	screenquad->BeginPass(0);
-	Device->SetTexture(0, sky);
+	Device->SetTexture(0, sky->GetTexture());
 	_Quad->Render(Device);
 	screenquad->EndPass();
-	screenquad->End();
+	screenquad->End(); 
+
+	//Matrix skyview = _RenderInfo.View;
+	//skyview._41 = 0.0f;
+	//skyview._42 = 0.0f;
+	//skyview._43 = 0.0f;
+	//const Matrix viewproj = 
+	//	skyview* _RenderInfo.Projection;
+
+	//Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState(0, D3DSAMP_MAGFILTER,
+	//	D3DTEXF_LINEAR);
+	//Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	//Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	//Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	//DWORD Cull{};
+	//DWORD ZWrite{};
+	//Device->GetRenderState(D3DRS_CULLMODE, &Cull);
+	//Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+
+	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+	//Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
+	//auto Fx =Shaders["sky"]->GetEffect();
+	//Fx->SetMatrix("matViewProj", &viewproj);
+	//static float skyrotationyaw = 0.0f;
+	//skyrotationyaw += (1.f / 60.f);
+	//
+	//const Matrix rotation= 
+	//	FMath::Rotation(Vector3{ 0.f,skyrotationyaw ,0.f });
+	//Fx->SetMatrix("matSkyRotation", &rotation);
+	//
+	//Fx->Begin(NULL, 0);
+	//Fx->BeginPass(0);
+	//Device->SetTexture(0u, environment);
+	//Fx->CommitChanges();
+	//skymesh->DrawSubset(0);
+	//Fx->EndPass();
+	//Fx->End();
+
+	//Device->SetSamplerState(
+	//	0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_ADDRESSU,D3DTADDRESS_CLAMP);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_ADDRESSV,D3DTADDRESS_CLAMP);
+
+	//Device->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	//Device->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	//Device->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+
+	//
+	//
+
+
+
+
+
+
+	//Device->SetRenderState(D3DRS_CULLMODE, Cull);
+	//Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+
+	
 
 	return S_OK;
 }
@@ -1052,9 +1211,12 @@ HRESULT Renderer::RenderSky()&
 HRESULT Renderer::Tonemapping()&
 {
 	//                     감마보정 수행 . 
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
-	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(
+		D3DRS_SRGBWRITEENABLE, TRUE);
+	Device->SetRenderState(
+		D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(
+		D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	auto tonemap = Shaders["ToneMap"]->GetEffect();
@@ -1225,8 +1387,6 @@ void Renderer::LightSave(std::filesystem::path path)
 		// Writer.Key("LightData");
 		Writer.StartObject();
 		{
-			
-
 			Writer.Key("sinAngularRadius");
 			Writer.Double(_Light->sinAngularRadius);
 			
@@ -1400,43 +1560,38 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 
 bool Renderer::TestShaderInit()
 {
-	//// Shader Test ... 
-	if (FAILED(D3DXLoadMeshFromX(L"../../Media/MeshesDX/box.x", D3DXMESH_MANAGED, Device, NULL, NULL, NULL, NULL, &box)))
+	if (FAILED(D3DXLoadMeshFromX(
+		L"../../Media/MeshesDX/skullocc3.x", D3DXMESH_MANAGED, Device, NULL, NULL, NULL, NULL, &skull)))
 		return false;
 
-	if (FAILED(DxHelper::DXGenTangentFrame(Device, box, &box)))
+	if (FAILED(D3DXLoadMeshFromX(L"../../Media/MeshesDX/sky.x", D3DXMESH_MANAGED, Device, NULL, NULL, NULL, NULL, &skymesh)))
 		return false;
 
-	if (FAILED(D3DXLoadMeshFromX(L"../../Media/MeshesDX/skullocc3.x", D3DXMESH_MANAGED, Device, NULL, NULL, NULL, NULL, &skull)))
+
+	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace.dds", &environment)))
 		return false;
 
-	if (FAILED(D3DXCreateTextureFromFileA(Device, "../../Media/Textures/marble.dds", &marble)))
+	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_diff_irrad.dds", &irradiance1)))
 		return false;
 
-	if (FAILED(D3DXCreateTextureFromFileA(Device, "../../Media/Textures/wood2.jpg", &wood)))
+	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_spec_irrad.dds", &irradiance2)))
 		return false;
 
-	if (FAILED(D3DXCreateTextureFromFileA(Device, "../../Media/Textures/wood2_normal.tga", &wood_normal)))
+	if (FAILED(D3DXCreateTextureFromFile(Device, L"../../Media/Textures/brdf.dds", &brdfLUT)))
 		return false;
 
-	if (FAILED(D3DXCreateTextureFromFileA(Device, "../../Media/Textures/static_sky.jpg", &sky)))
-		return false;
+	sky = Resources::Load<Texture >("../../Media/Textures/static_sky.jpg");
+
+	RenderTargets;
 }
 
 void Renderer::TestShaderRelease()
 {
-	if (wood_normal)
-		wood_normal->Release();
-	if (sky)
-		sky->Release();
-	if (wood)
-		wood->Release();
-	if (marble)
-		marble->Release();
+	if (skymesh)
+		skymesh->Release();
+
 	if (skull)
 		skull->Release();
-	if (box)
-		box->Release();
 }
 
 // 포인트 라이트 회전 !

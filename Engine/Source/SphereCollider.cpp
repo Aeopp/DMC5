@@ -90,6 +90,8 @@ HRESULT SphereCollider::DrawCollider(const DrawInfo& _Info)
 
 void SphereCollider::Editor()
 {
+	Component::Editor();
+
 	Collider::Editor();
 
 	float fRadius = m_fRadius;

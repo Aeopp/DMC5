@@ -16,6 +16,7 @@ private:
 		HP_GLASS,
 		EX_GAUGE_BACK,
 		EX_GAUGE,
+		STYLISH_LETTER,
 		HP_GAUGE,
 		TDT_GAUGE,
 		KEYBOARD,
@@ -52,6 +53,10 @@ private:
 	std::shared_ptr<ENGINE::Texture> _HPGlassNRMRTex{};
 	std::shared_ptr<ENGINE::Texture> _GlassTex{};
 	std::shared_ptr<ENGINE::Texture> _BloodTex{};
+
+	std::shared_ptr<ENGINE::StaticMesh> _StylishMesh{};
+	std::shared_ptr<ENGINE::Texture> _StylishALBMTex{};
+	std::shared_ptr<ENGINE::Texture> _StylishNRMRTex{};
 
 	std::shared_ptr<ENGINE::StaticMesh> _Ex0Mesh{};
 	std::shared_ptr<ENGINE::StaticMesh> _Ex1Mesh{};
@@ -103,13 +108,21 @@ private:
 	Vector2 _TargetHP_Normal0 = Vector2(0.f, 0.f);
 	Vector2 _TargetHP_Normal1 = Vector2(0.f, 0.f);
 	
-	int _HPGaugeCount = 6;
+	/* 0 ~ 1 */
+	float _PlayerHPRatio = 1.f;
+	int _HPGaugeCount = 5;
 	float _HPGaugeWidth = 50.f;
 	float _HPGauge_CurXPosOrtho = 0.f;
-	float _BossGauge_CurXPosOrtho = 0.f;
-	float _TDTGauge_CurXPosOrtho = 0.f;
-
 	float _HPGlassDirt = 0.f;
+	float _HPGlassDirtAccTime = 999.f;
+
+	float _BossGauge_CurXPosOrtho = 0.f;
+
+	/* 0 ~ 1 */
+	float _TDTGauge = 0.f;
+	float _TDTGauge_CurXPosOrtho = 0.f;
+	bool _TDTGauge_ConsumeStart = false;
+	float _TDTGauge_ConsumeSpeed = 1.f;
 
 	Vector2 _InputUIOffset = Vector2(0.f, 0.f);
 
@@ -155,6 +168,7 @@ private:
 	Matrix _PerspectiveProjMatrix = Matrix();
 
 	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
+	Vector3 _LightDir_ExGauge = Vector3(-1.f, 1.f, -1.f);
 
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
@@ -173,9 +187,10 @@ private:
 	void	Init_UIDescs();
 	void	Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt = 0);
 	void	Update_TargetInfo();
+	void	Update_PlayerHP(const float _fDeltaTime);
 	void	Update_Rank(const float _fDeltaTime);
 	void	Update_ExGauge(const float _fDeltaTime);
-	void	Update_GaugeOrthoPos();
+	void	Update_Gauge(const float _fDeltaTime);	// 위를 제외한 나머지 
 	Vector2	WorldPosToScreenPos(const Vector3& WorldPos);
 	Vector2	ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY);
 	void	Check_KeyInput(const float _fDeltaTime);
@@ -194,12 +209,23 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void SetTargetActive(bool IsActive);
-	void SetTargetPos(const Vector3& Pos) { _TargetPos = Pos; }
+	void SetTargetCursorActive(bool IsActive);
+	void SetTargetCursor(const Vector3& TargetPos, const float HPRatio = 1.f);	/* HPRatio = 현재 HP / 최대 HP */
+	
+	void SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass = true);		/* HPRatio = 현재 HP / 최대 HP */
+
+	float GetTDTGauge() const { return _TDTGauge; } /* 0 ~ 1 */
+	void AccumulateTDTGauge(const float Amount);
+	void ConsumeTDTGauge(const float Speed = 1.f);	/* 0이 될때까지 Speed * DeltaTime 만큼 TDTGauge 감소 */
+
 	void SetKeyInputActive(bool IsActive);
+	
 	void AddRankScore(float Score);
+	
 	float GetExGauge() const { return _ExGauge; }
+	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count);
+
 };
 #endif // !__UI_BTL_PANEL__

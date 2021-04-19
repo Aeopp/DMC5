@@ -77,6 +77,8 @@ HRESULT Nero::Awake()
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
+	m_pCollider.lock()->SetRadius(0.4f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
@@ -106,7 +108,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	D3DXMatrixRotationY(&RotY, D3DXToRadian(m_fAngle));
 	D3DXVec3TransformCoord(&Pos, &Pos, &RotY);
 
-	m_pTransform.lock()->SetPosition(m_pTransform.lock()->GetPosition() + Pos * m_pTransform.lock()->GetScale().x);
+	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
+	//m_pTransform.lock()->SetPosition(m_pTransform.lock()->GetPosition() + Pos * m_pTransform.lock()->GetScale().x);
 	
 
 	return 0;
@@ -269,7 +272,7 @@ void Nero::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 	}
 }
 

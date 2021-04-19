@@ -28,8 +28,9 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	_ImplInfo.Fx->SetMatrix("Perspective", &_PerspectiveProjMatrix);
 	_ImplInfo.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
-	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir, 3u);
 
+	// 레드퀸일 경우
+	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir_ExGauge, 3u);
 
 	//
 	CurID = HP_GLASS;
@@ -119,6 +120,32 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->EndPass();
 		}
 	}
+
+	//
+	CurID = STYLISH_LETTER;
+	if (_UIDescs[CurID].Using)
+	{
+		_ImplInfo.Fx->SetTexture("ALB0Map", _StylishALBMTex->GetTexture());
+		_ImplInfo.Fx->SetTexture("NRMR0Map", _StylishNRMRTex->GetTexture());
+
+		for (uint32 i = 0; i < 2u; ++i)
+		{
+			auto WeakSubset = _StylishMesh->GetSubset(i);
+			if (auto SharedSubset = WeakSubset.lock();
+				SharedSubset)
+			{
+				Create_ScreenMat(CurID, ScreenMat);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+				_ImplInfo.Fx->BeginPass(8);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+			}
+		}
+	}
+
+	// LightDirection 재지정
+	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir, 3u);
 
 	// 그리는 순서에 따라서 Clip하는 다른 애들때문에 지글지글 거림 ㅠ
 	CurID = TARGET_HP;
@@ -562,6 +589,10 @@ HRESULT BtlPanel::Ready()
 	_GlassTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\HP_IL_A_ALB.tga");
 	_BloodTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\BloodStoneCH16.png");
 
+	_StylishMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\UI\\hud_sc_s.fbx");
+	_StylishALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\DanteHUD_SC_ALBM.dds");
+	_StylishNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\DanteHUD_SC_NRMR.dds");
+
 	_Ex0Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\UI\\hud_ex_01.fbx");
 	_Ex1Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\UI\\hud_ex_02.fbx");
 	_Ex2Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\UI\\hud_ex_03.fbx");
@@ -622,18 +653,21 @@ HRESULT BtlPanel::Start()
 
 UINT BtlPanel::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
+
 	_DeltaTime = _fDeltaTime;
 	_TotalAccumulateTime += _fDeltaTime;
 
 	//
 	Update_TargetInfo();
-	Update_GaugeOrthoPos();
+	Update_PlayerHP(_fDeltaTime);
 	Update_ExGauge(_fDeltaTime);
 	Update_Rank(_fDeltaTime);
+	Update_Gauge(_fDeltaTime);
 	Check_KeyInput(_fDeltaTime);
 
 	//
-	Imgui_ModifyUI(EX_GAUGE);
+	Imgui_ModifyUI(EX_GAUGE_BACK);
 
 	//POINT pt{};
 	//GetCursorPos(&pt);
@@ -665,10 +699,58 @@ void BtlPanel::OnDisable()
 
 }
 
-void BtlPanel::SetTargetActive(bool IsActive)
+void BtlPanel::SetTargetCursorActive(bool IsActive)
 {
 	_UIDescs[TARGET_CURSOR].Using = IsActive;
 	_UIDescs[TARGET_HP].Using = IsActive;
+}
+
+void BtlPanel::SetTargetCursor(const Vector3& TargetPos, const float HPRatio/*= 1.f*/)
+{
+	_TargetPos = TargetPos;
+
+	float Ratio = HPRatio;
+	if (Ratio > 1.f)
+		Ratio = 1.f;
+	else if (Ratio < 0.f)
+		Ratio = 0.f;
+
+	_TargetHP_Degree = 360.f - Ratio * 360.f;
+}
+
+void BtlPanel::SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass/*= true*/)
+{
+	if (_PlayerHPRatio > HPRatio)
+	{
+		// + 서서히 줄어드는 빨간 게이지
+
+		if (IsBloodedGlass)
+			_HPGlassDirtAccTime = 0.f;
+	}
+
+	_PlayerHPRatio = HPRatio;
+	if (_PlayerHPRatio > 1.f)
+		_PlayerHPRatio = 1.f;
+	else if (_PlayerHPRatio < 0.f)
+		_PlayerHPRatio = 0.f;
+}
+
+void BtlPanel::AccumulateTDTGauge(const float Amount)
+{
+	_TDTGauge += Amount;
+	if (_TDTGauge > 1.f)
+		_TDTGauge = 1.f;
+	else if (_TDTGauge < 0.f)
+		_TDTGauge = 0.f;
+}
+
+void BtlPanel::ConsumeTDTGauge(const float Speed/*= 1.f*/)
+{
+	if (0.f >= Speed)
+		return;
+
+	_TDTGauge_ConsumeStart = true;
+	_TDTGauge_ConsumeSpeed = Speed;
 }
 
 void BtlPanel::SetKeyInputActive(bool IsActive)
@@ -727,8 +809,9 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[TARGET_HP] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.46f, 0.46f, 1.f) };
 	_UIDescs[BOSS_GUAGE] = { false, Vector3(640.f, 670.f, 0.5f), Vector3(4.7f, 5.f, 1.f) };
 	_UIDescs[HP_GLASS] = { true, Vector3(-30.f, 14.f, 30.f), Vector3(0.01f, 0.01f, 0.01f) };
-	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(60.f, 85.f, 0.5f), Vector3(1.5f, 1.5f, 1.f) };
+	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(80.f, 91.f, 0.5f), Vector3(2.4f, 1.8f, 1.f) };
 	_UIDescs[EX_GAUGE] = { true, Vector3(-7.55f, 3.15f, 15.f), Vector3(0.01f, 0.01f, 0.01f) };
+	_UIDescs[STYLISH_LETTER] = { true, Vector3(-8.25f, 2.8f, 15.f), Vector3(0.1f, 0.1f, 0.1f) };
 	_UIDescs[HP_GAUGE] = { true, Vector3(218.f, 50.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
 	_UIDescs[TDT_GAUGE] = { true, Vector3(315.f, 75.f, 0.5f), Vector3(3.5f, 3.5f, 1.f) };
 	_UIDescs[KEYBOARD] = { true, Vector3(270.f, 570.f, 0.02f), Vector3(5.f, 1.5f, 1.f) };
@@ -806,7 +889,7 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		_Out._11 = _UIDescs[_ID].Scale.x;
 		_Out._22 = _UIDescs[_ID].Scale.y;
 		_Out._33 = _UIDescs[_ID].Scale.z;
-		D3DXMatrixRotationZ(&RotMat, D3DXToRadian(20.f));
+		D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-167.f));
 		_Out *= RotMat;
 		_Out._41 = _UIDescs[_ID].Pos.x - (g_nWndCX >> 1);
 		_Out._42 = -(_UIDescs[_ID].Pos.y - (g_nWndCY >> 1));
@@ -841,8 +924,8 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out *= RotMat;
 			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-4.f));
 			_Out *= RotMat;
-			_Out._41 = -7.63f; //_UIDescs[_ID].Pos.x;
-			_Out._42 = 3.53f; //_UIDescs[_ID].Pos.y;
+			_Out._41 = -7.69f; //_UIDescs[_ID].Pos.x;
+			_Out._42 = 3.49f; //_UIDescs[_ID].Pos.y;
 			_Out._43 = 15.f; //_UIDescs[_ID].Pos.z;
 			break;
 		case 2:
@@ -853,7 +936,7 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out *= RotMat;
 			D3DXMatrixRotationY(&RotMat, D3DXToRadian(-89.f));
 			_Out *= RotMat;
-			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-4.f));
+			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-5.f));
 			_Out *= RotMat;
 			_Out._41 = -7.5f; //_UIDescs[_ID].Pos.x;
 			_Out._42 = 3.1f; //_UIDescs[_ID].Pos.y;
@@ -876,7 +959,7 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._33 = 1.f;
 			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-60.f));
 			_Out *= RotMat;
-			_Out._41 = 160.f - (g_nWndCX >> 1);
+			_Out._41 = 165.f - (g_nWndCX >> 1);
 			_Out._42 = -(56.f - (g_nWndCY >> 1));
 			_Out._43 = 0.2f;
 			break;
@@ -884,13 +967,24 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 0.75f;
 			_Out._22 = 1.f;
 			_Out._33 = 1.f;
-			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-57.f));
+			D3DXMatrixRotationZ(&RotMat, D3DXToRadian(-56.f));
 			_Out *= RotMat;
 			_Out._41 = 138.f - (g_nWndCX >> 1);
 			_Out._42 = -(22.f - (g_nWndCY >> 1));
 			_Out._43 = 0.2f;
 			break;
 		}
+		break;
+
+	case STYLISH_LETTER:
+		_Out._11 = _UIDescs[_ID].Scale.x;
+		_Out._22 = _UIDescs[_ID].Scale.z;
+		_Out._33 = _UIDescs[_ID].Scale.y;
+		D3DXMatrixRotationX(&RotMat, D3DXToRadian(-90.f));
+		_Out *= RotMat;
+		_Out._41 = _UIDescs[_ID].Pos.x;
+		_Out._42 = _UIDescs[_ID].Pos.y;
+		_Out._43 = _UIDescs[_ID].Pos.z;
 		break;
 
 	case HP_GAUGE:
@@ -1286,6 +1380,29 @@ void BtlPanel::Update_TargetInfo()
 	D3DXVec2Normalize(&_TargetHP_Normal1, &_TargetHP_Normal1);
 }
 
+void BtlPanel::Update_PlayerHP(const float _fDeltaTime)
+{
+	//
+	float HPGaugeOrthoWidth = 0.078125f;
+	float HPGaugeOrthoStartX = ScreenPosToOrtho(_UIDescs[HP_GAUGE].Pos.x, 0.f).x - HPGaugeOrthoWidth * 0.5f;
+	_HPGauge_CurXPosOrtho = HPGaugeOrthoStartX + _PlayerHPRatio * HPGaugeOrthoWidth * static_cast<float>(_HPGaugeCount);
+
+	//
+	_HPGlassDirtAccTime += _fDeltaTime;
+	if (0.3f > _HPGlassDirtAccTime && 1.f > _HPGlassDirt)
+	{
+		_HPGlassDirt += _fDeltaTime * 10.f;
+		if (1.f < _HPGlassDirt)
+			_HPGlassDirt = 1.f;
+	}
+	else if (0.f < _HPGlassDirt)
+	{
+		_HPGlassDirt -= _fDeltaTime * 1.f;
+		if (0.f > _HPGlassDirt)
+			_HPGlassDirt = 0.f;
+	}
+}
+
 void BtlPanel::Update_Rank(const float _fDeltaTime)
 {
 	_CurRank = static_cast<int>(_RankScore / 100.f);
@@ -1431,26 +1548,33 @@ void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 		_ExGauge_EmissivePower[2] = 1.f;
 		_ExGauge_EmissivePower[1] = 1.f;
 		_ExGauge_EmissivePower[0] = 1.f;
+		_LightDir_ExGauge.z = 1.f;
 		break;
 
 	case 2:
 		_ExGauge_EmissivePower[2] = Remainder;
 		_ExGauge_EmissivePower[1] = 1.f;
 		_ExGauge_EmissivePower[0] = 1.f;
+		_LightDir_ExGauge.z = 0.5f;
 		break;
 
 	case 1:		
 		_ExGauge_EmissivePower[2] = 0.f;
 		_ExGauge_EmissivePower[1] = Remainder;
 		_ExGauge_EmissivePower[0] = 1.f;
+		_LightDir_ExGauge.z = 0.f;
 		break;
 
 	case 0: default:
 		_ExGauge_EmissivePower[2] = 0.f;
 		_ExGauge_EmissivePower[1] = 0.f;
 		_ExGauge_EmissivePower[0] = Remainder;
+		_LightDir_ExGauge.z = -0.5f;
 		break;
 	}
+
+	if (16.f > _ExGauge_FireAccumulateTime && 3.f > _ExGauge)
+		_LightDir_ExGauge.z += 0.5f;
 
 	//
 	float cx = 16.f;// 가로 갯수
@@ -1480,7 +1604,7 @@ void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 	}
 }
 
-void BtlPanel::Update_GaugeOrthoPos()
+void BtlPanel::Update_Gauge(const float _fDeltaTime)
 {
 	float BossGaugeOrthoOffsetToCenter = 0.344f; // 직접 수작업으로 찾아야 하나 ㅠㅠ
 	// + 적 체력 받아와서 degree 같은 애들 갱신하자
@@ -1488,14 +1612,19 @@ void BtlPanel::Update_GaugeOrthoPos()
 	_BossGauge_CurXPosOrtho = -BossGaugeOrthoOffsetToCenter + ((360.f - _TargetHP_Degree) / 360.f * 2.f * BossGaugeOrthoOffsetToCenter);
 
 	//
-	float HPGaugeOrthoWidth = 0.078125f;
-	float HPGaugeOrthoStartX = ScreenPosToOrtho(_UIDescs[HP_GAUGE].Pos.x, 0.f).x - HPGaugeOrthoWidth * 0.5f;
-	_HPGauge_CurXPosOrtho = HPGaugeOrthoStartX + (360.f - _TargetHP_Degree) / 360.f * HPGaugeOrthoWidth * static_cast<float>(_HPGaugeCount);
-
-	//
 	float TDTGaugeOrthoStartX = -0.685938f;
 	float TDTGaugeOrthoEndX = -0.33125f;
-	_TDTGauge_CurXPosOrtho = TDTGaugeOrthoStartX + (360.f - _TargetHP_Degree) / 360.f * (TDTGaugeOrthoEndX - TDTGaugeOrthoStartX);
+	_TDTGauge_CurXPosOrtho = TDTGaugeOrthoStartX + _TDTGauge * (TDTGaugeOrthoEndX - TDTGaugeOrthoStartX);
+
+	if (_TDTGauge_ConsumeStart)
+	{
+		_TDTGauge -= _fDeltaTime * _TDTGauge_ConsumeSpeed;
+		if (0.f >= _TDTGauge)
+		{
+			_TDTGauge_ConsumeStart = false;
+			_TDTGauge = 0.f;
+		}
+	}
 
 	//POINT pt{};
 	//GetCursorPos(&pt);
@@ -1529,18 +1658,18 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 {
 	////////////////////////////
 	// 임시
-	if (Input::GetKey(DIK_LEFTARROW))
-	{
-		_TargetHP_Degree += 150.f * _fDeltaTime;
-		if (360.f < _TargetHP_Degree)
-			_TargetHP_Degree = 360.f;
-	}
-	if (Input::GetKey(DIK_RIGHTARROW))
-	{
-		_TargetHP_Degree -= 150.f * _fDeltaTime;
-		if (0.f > _TargetHP_Degree)
-			_TargetHP_Degree = 0.f;
-	}
+	//if (Input::GetKey(DIK_LEFTARROW))
+	//{
+	//	_TargetHP_Degree += 150.f * _fDeltaTime;
+	//	if (360.f < _TargetHP_Degree)
+	//		_TargetHP_Degree = 360.f;
+	//}
+	//if (Input::GetKey(DIK_RIGHTARROW))
+	//{
+	//	_TargetHP_Degree -= 150.f * _fDeltaTime;
+	//	if (0.f > _TargetHP_Degree)
+	//		_TargetHP_Degree = 0.f;
+	//}
 
 	if (Input::GetKeyDown(DIK_F1))
 	{
@@ -1552,7 +1681,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		static bool bActive = _UIDescs[TARGET_CURSOR].Using;
 		bActive = !bActive;
-		SetTargetActive(bActive);
+		SetTargetCursorActive(bActive);
 	}
 	if (Input::GetKeyDown(DIK_F3))
 	{
@@ -1565,6 +1694,16 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
+	}
+	if (Input::GetKeyDown(DIK_F6))
+	{
+		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), 9.f);
+		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
+		AccumulateTDTGauge(0.1f);
+	}
+	if (Input::GetKeyDown(DIK_F7))
+	{
+		ConsumeTDTGauge(0.5f);
 	}
 	////////////////////////////
 
