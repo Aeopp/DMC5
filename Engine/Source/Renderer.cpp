@@ -15,6 +15,9 @@
 #include <filesystem>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "StaticMesh.h"
+#include "Subset.h"
+
 
 USING(ENGINE)
 IMPLEMENT_SINGLETON(Renderer)
@@ -36,6 +39,7 @@ HRESULT Renderer::ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice)
 	ReadyLights();
 	ReadyFrustum();
 	ReadyQuad();
+	ReadySky();
 
 	TestShaderInit();
 	return S_OK;
@@ -55,7 +59,19 @@ void Renderer::ReadyShader(const std::filesystem::path& TargetPath)
 			Shaders[ShaderKey] = Resources::Load<Shader>(CurPath);
 		}
 	}
+};
 
+
+void Renderer::ReadySky()
+{
+	Mesh::InitializeInfo InitInfo{};
+	InitInfo.bLocalVertexLocationsStorage = false;
+
+	SkysphereMesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Sphere.fbx", InitInfo);
+
+	SkysphereTex = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\First.dds");
+	SkysphereTex2 = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\Second.dds");
 }
 
 void Renderer::ReadyLights()
@@ -461,16 +477,19 @@ HRESULT Renderer::Render()&
 {
 	RenderReady();
 	RenderBegin();
+
 	//  쉐도우 패스 
 	RenderShadowMaps();
 	// 기하 패스
 	RenderGBuffer();
+
 	// 디퍼드 렌더링 .
 	DeferredShading();
+
 	// 백버퍼로 백업 . 
 	Device->SetRenderTarget(0, BackBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	RenderSky();
+	RenderSkySphere();
 	Tonemapping();
 	AlphaBlendEffectRender();
 	UIRender();
@@ -583,6 +602,8 @@ void Renderer::RenderBegin()&
 {
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
+	Device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
+		0xff00ffff, 1.0f, 0);
 };
 
 //   등록코드수정 
@@ -853,12 +874,11 @@ void Renderer::DeferredShading()
 	device->SetRenderTarget(0, scenesurface);
 	device->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0f, 0);
 
-
 	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 16);
+	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 8);
 
 	for (int32 i = 1; i < 3; ++i)
 	{
@@ -930,7 +950,7 @@ void Renderer::DeferredShading()
 
 		// 여기서부터 ..
 		// point lights
-		// device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
 
 		for (auto& PointLight : PointLights)
 		{
@@ -1123,6 +1143,7 @@ HRESULT Renderer::RenderTargetDebugRender()&
 
 HRESULT Renderer::RenderSky()&
 {
+	// 기존 코드 
 	auto screenquad = Shaders["ScreenQuad"]->GetEffect();
 	screenquad->SetTechnique("screenquad");
 	screenquad->Begin(NULL, 0);
@@ -1130,94 +1151,132 @@ HRESULT Renderer::RenderSky()&
 	Device->SetTexture(0, sky->GetTexture());
 	_Quad->Render(Device);
 	screenquad->EndPass();
-	screenquad->End(); 
-
-	//Matrix skyview = _RenderInfo.View;
-	//skyview._41 = 0.0f;
-	//skyview._42 = 0.0f;
-	//skyview._43 = 0.0f;
-	//const Matrix viewproj = 
-	//	skyview* _RenderInfo.Projection;
-
-	//Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	//Device->SetSamplerState(0, D3DSAMP_MAGFILTER,
-	//	D3DTEXF_LINEAR);
-	//Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	//Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	//Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
-	//DWORD Cull{};
-	//DWORD ZWrite{};
-	//Device->GetRenderState(D3DRS_CULLMODE, &Cull);
-	//Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
-
-	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-	//Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-
-	//auto Fx =Shaders["sky"]->GetEffect();
-	//Fx->SetMatrix("matViewProj", &viewproj);
-	//static float skyrotationyaw = 0.0f;
-	//skyrotationyaw += (1.f / 60.f);
-	//
-	//const Matrix rotation= 
-	//	FMath::Rotation(Vector3{ 0.f,skyrotationyaw ,0.f });
-	//Fx->SetMatrix("matSkyRotation", &rotation);
-	//
-	//Fx->Begin(NULL, 0);
-	//Fx->BeginPass(0);
-	//Device->SetTexture(0u, environment);
-	//Fx->CommitChanges();
-	//skymesh->DrawSubset(0);
-	//Fx->EndPass();
-	//Fx->End();
-
-	//Device->SetSamplerState(
-	//	0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-
-	//Device->SetSamplerState
-	//	(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	//Device->SetSamplerState
-	//	(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Device->SetSamplerState
-	//	(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-	//Device->SetSamplerState
-	//	(1, D3DSAMP_ADDRESSU,D3DTADDRESS_CLAMP);
-	//Device->SetSamplerState
-	//	(1, D3DSAMP_ADDRESSV,D3DTADDRESS_CLAMP);
-
-	//Device->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	//Device->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	//Device->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	//Device->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	//Device->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
-
-	//
-	//
-
-
-
-
-
-
-	//Device->SetRenderState(D3DRS_CULLMODE, Cull);
-	//Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
-
-	
+	screenquad->End();
 
 	return S_OK;
 }
+HRESULT Renderer::RenderSkySphere()&
+{
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
+
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	Device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+
+	Matrix SkyView = _RenderInfo.View;
+	SkyView._41 = SkyView._42 = SkyView._43 = 0.0f;
+	const Matrix ViewProj = SkyView * _RenderInfo.Projection;
+
+	auto Fx = Shaders["skysphere"]->GetEffect();
+	Fx->SetMatrix("matViewProj", &ViewProj);
+
+	float scale = { 0.026f };
+	const Matrix world = FMath::Scale(scale);
+	Fx->SetMatrix("matSkyRotation", &world);
+
+	Fx->Begin(NULL, 0);
+	Fx->BeginPass(0);
+	Device->SetTexture(0u, SkysphereTex->GetTexture());
+	const int32 Numsubset = SkysphereMesh->GetNumSubset();
+	SkysphereMesh->GetSubset(0).lock()->Render(Fx);
+	/*for (int32 i = 0; i < Numsubset; ++i)
+	{
+		if (auto subset = SkysphereMesh->GetSubset(i).lock();
+			subset)
+		{
+			subset->Render(Fx);
+		};
+	};*/
+	Fx->EndPass();
+	Fx->End();
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+	return S_OK;
+};
+
+HRESULT Renderer::RenderSkyBox()&
+{
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
+
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+	Matrix skyview = _RenderInfo.View;
+	/*skyview._41 = ;
+	skyview._42 = 0.0f;
+	skyview._43 = 0.0f;*/
+	skyview._41 = skyview._42 = skyview._43 = 0.0f;
+
+	const Matrix viewproj = skyview * _RenderInfo.Projection;
+
+	auto Fx = Shaders["sky"]->GetEffect();
+	Fx->SetMatrix("matViewProj", &viewproj);
+	static float skyrotationyaw = 0.0f;
+	skyrotationyaw += (1.f / 1000.f);
+
+	static float scale = 1.f;
+
+	static Vector3 rot{ 0,0,0 };
+	static Vector3 loc{ 0,0,0 };
+	ImGui::Begin("sky_test");
+	ImGui::SliderFloat("scale", &scale, 0.f, 5.f);
+	ImGui::SliderFloat3("rot", rot, -360.f, 360.f);
+	ImGui::SliderFloat3("loc", loc, -1000.f, 1000.f);
+	ImGui::End();
+
+	Vector3 rad_rot =
+	{
+		FMath::ToRadian(rot.x) ,
+		FMath::ToRadian(rot.y) ,
+		FMath::ToRadian(rot.z) ,
+	};
+
+	auto rot_rad = rot;
+	rot_rad.y += skyrotationyaw;
+
+	const Matrix rotation = FMath::Rotation(rot);
+	const Matrix world = FMath::Scale(scale);
+
+	Fx->SetMatrix("matSkyRotation", &rotation);
+	Fx->SetMatrix("matWorld", &world);
+
+	Fx->Begin(NULL, 0);
+	Fx->BeginPass(0);
+	Device->SetTexture(0u, environment);
+	Fx->CommitChanges();
+	skymesh->DrawSubset(0);
+	Fx->EndPass();
+	Fx->End();
+	return S_OK;
+};
 
 HRESULT Renderer::Tonemapping()&
 {
-	//                     감마보정 수행 . 
-	Device->SetRenderState(
-		D3DRS_SRGBWRITEENABLE, TRUE);
-	Device->SetRenderState(
-		D3DRS_ALPHABLENDENABLE, TRUE);
-	Device->SetRenderState(
-		D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE,  TRUE);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
 	auto tonemap = Shaders["ToneMap"]->GetEffect();
 
@@ -1239,6 +1298,10 @@ HRESULT Renderer::Tonemapping()&
 }
 HRESULT Renderer::AlphaBlendEffectRender()&
 {
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	DrawInfo _DrawInfo{};
 	_DrawInfo.BySituation.reset();
@@ -1568,13 +1631,17 @@ bool Renderer::TestShaderInit()
 		return false;
 
 
-	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace.dds", &environment)))
+	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace.dds",
+		&environment)))
 		return false;
 
-	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_diff_irrad.dds", &irradiance1)))
+	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_diff_irrad.dds",
+		&irradiance1)))
 		return false;
 
-	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_spec_irrad.dds", &irradiance2)))
+
+	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_spec_irrad.dds",
+		&irradiance2)))
 		return false;
 
 	if (FAILED(D3DXCreateTextureFromFile(Device, L"../../Media/Textures/brdf.dds", &brdfLUT)))
@@ -1582,7 +1649,6 @@ bool Renderer::TestShaderInit()
 
 	sky = Resources::Load<Texture >("../../Media/Textures/static_sky.jpg");
 
-	RenderTargets;
 }
 
 void Renderer::TestShaderRelease()

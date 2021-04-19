@@ -355,4 +355,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\MainCamera.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\skysphere.hlsl" />
+  </ItemGroup>
 </Project>

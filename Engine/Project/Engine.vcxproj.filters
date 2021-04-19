@@ -636,5 +636,11 @@
     <None Include="..\..\Resource\Shader\Frustum.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\sky.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\skysphere.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
   </ItemGroup>
 </Project>
