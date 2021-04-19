@@ -8,6 +8,10 @@ uniform matrix matViewProj;
 uniform float2 uv = { 1, 1 };
 uniform float handedness = -1.0f;
 
+
+
+
+
 void vs_gbuffer_tbn(
 	in out float4 pos : POSITION,
 	in float3 norm : NORMAL,

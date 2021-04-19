@@ -1,10 +1,10 @@
-
 #define QUAD_PI		12.566370614359172
 
 uniform sampler2D albedo : register(s0);
 uniform sampler2D normals : register(s1);
 uniform sampler2D depth : register(s2);
 uniform sampler2D shadowMap : register(s3);
+
 uniform samplerCUBE cubeShadowMap : register(s4);
 
 uniform matrix matViewProjInv;
@@ -81,7 +81,7 @@ float metalness)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-   float f_specular = pow(ndoth, specularPower) * (1.0f - roughness);
+   float   f_specular = pow(ndoth, specularPower) * (1.0f - roughness);
     
     float costheta = saturate(dot(n, D));
     float illuminance = lightIlluminance * costheta;
@@ -130,10 +130,8 @@ float metalness)
     ShadowFactor = saturate(ShadowFactor);
     // 膠紫辦 部 
     
-    
-  //   float shadow = saturate(ShadowVariance(moments, d) + shadowmin);
-
-    return (f_diffuse + f_specular) * lightColor * illuminance * ShadowFactor;
+    return (f_diffuse + f_specular) * 
+        lightColor * illuminance * ShadowFactor;
 }
 
 float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float roughness,
@@ -152,48 +150,6 @@ float metalness)
 
     float3 f_diffuse = albedo;
     float f_specular = pow(ndoth, specularPower)  * (1.0f - roughness);
-   
-    
-    
-    //// 膠紫辦 衛濛
-    //float4 LightClipPosition = mul(float4(wpos.xyz, 1.f), lightViewProj);
-    //LightClipPosition.xyz = LightClipPosition.xyz / LightClipPosition.w;
-    //LightClipPosition.y *= -1.f;
-    //LightClipPosition.xy *= 0.5f;
-    //LightClipPosition.xy += 0.5f;
-    
-    //float ShadowFactor = 1.0f + shadowmin;
-    
-    ////if (saturate(LightClipPosition.z) == LightClipPosition.z)
-    ////{
-    ////    float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
-        
-    ////    float Shadow = 0.0;
-    ////    float TexelSizeU = 1.0 / ShadowDepthMapWidth;
-    ////    float TexelSizeV = 1.0 / ShadowDepthMapHeight;
-    ////    for (int x = -PCFCount; x <= PCFCount; ++x)
-    ////    {
-    ////        for (int y = -PCFCount; y <= PCFCount; ++y)
-    ////        {
-    ////            float3 UVOffset = float3(x * TexelSizeU, 0.0f, y * TexelSizeV);
-    ////            float pcfDepth = texCUBE(cubeShadowMap, float3(-l.x + UVOffset)).x;
-    ////            if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
-    ////            {
-    ////                Shadow += 1.0f;
-    ////            }
-    ////        }
-    ////    }
-    ////    Shadow /= LookUpCount;
-    ////    ShadowFactor -= Shadow;
-    ////}
-    //float pcfDepth = texCUBE(cubeShadowMap, (-l.x )).x;
-    //if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
-    //{
-    //    ShadowFactor -= 1.0f;
-    //}
-       
-    //ShadowFactor = saturate(ShadowFactor);
-    // 膠紫辦 部 
     
 	// calculate shadow
     float shadow = 1.f;
@@ -211,7 +167,8 @@ float metalness)
 
     // return ShadowFactor;
     
-    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * (shadow);
+    return (f_diffuse + f_specular) * 
+        lightColor * illuminance * attenuation * (shadow);
 }
 
 void ps_deferred(

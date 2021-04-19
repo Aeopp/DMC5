@@ -485,6 +485,7 @@ HRESULT Renderer::Render()&
 
 	// 디퍼드 렌더링 .
 	DeferredShading();
+	RenderInsulatorMetal();
 
 	// 백버퍼로 백업 . 
 	Device->SetRenderTarget(0, BackBuffer);
@@ -1426,6 +1427,34 @@ HRESULT Renderer::LightFrustumRender()&
 	return S_OK;
 };
 
+HRESULT Renderer::RenderInsulatorMetal()&
+{
+	Device->SetTexture(0, RenderTargets["ALBM"]->GetTexture());
+	Device->SetTexture(1, RenderTargets["SceneTarget"]->GetTexture());
+	Device->SetTexture(2, RenderTargets["NRMR"]->GetTexture());
+	Device->SetTexture(3, RenderTargets["Depth"]->GetTexture());
+	Device->SetTexture(4, irradiance1);
+	Device->SetTexture(5, irradiance1);
+	Device->SetTexture(6, brdfLUT);
+
+	Vector2 pixelSize{}; 
+	pixelSize.x = 1.f / (float)g_nWndCX;
+	pixelSize.y = -1.f / (float)g_nWndCY;
+
+	auto Fx = Shaders["InsulatorMetal"]->GetEffect(); 
+	Fx->Begin(nullptr,0);
+	Fx->BeginPass(0);
+	Fx->SetMatrix("matViewProj", &_RenderInfo.ViewProjection);
+	Fx->SetVector("eyePos", &_RenderInfo.Eye); 
+	Fx->SetFloatArray("pixelSize", pixelSize, 2);
+	_Quad->Render(Device, 1.f, 1.f, Fx);
+	Fx->CommitChanges(); 
+	Fx->EndPass(); 
+	Fx->End();
+
+	return S_OK;
+};
+
 void Renderer::LightSave(std::filesystem::path path)
 {
 	std::vector<FLight*> _Lights{};
@@ -1437,9 +1466,12 @@ void Renderer::LightSave(std::filesystem::path path)
 	{
 		_Lights.push_back(_Light.get());
 	}
+	// 1번 래피드 제이슨 네임스페이스 열기 
 	using namespace rapidjson;
 
+	// 스트링 버퍼
 	StringBuffer StrBuf{};
+
 	PrettyWriter<StringBuffer> Writer(StrBuf);
 	Writer.StartObject();
 	Writer.Key("LightDataArray");

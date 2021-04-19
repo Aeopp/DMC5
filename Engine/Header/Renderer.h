@@ -66,8 +66,7 @@ private:
 	HRESULT UIRender()&;
 	HRESULT RendererCollider()&;
 	HRESULT LightFrustumRender()&;
-private:
-
+	HRESULT RenderInsulatorMetal()&;
 public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
