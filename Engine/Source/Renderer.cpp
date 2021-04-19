@@ -307,7 +307,7 @@ void Renderer::ReadyRenderTargets()
 			blurtargets->DebugBufferInitialize
 			(
 				{ InitX + (XOffset * 3.f) + Interval,
-				InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+				  InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
 				RenderTargetDebugRenderSize);
 		}
 	}
@@ -317,18 +317,81 @@ void Renderer::ReadyRenderTargets()
 		{
 			for (int j = 0; j < 2; ++j)
 			{
-				const std::string key = "startargets" + 
+				const std::string key = "startargets" +
 					std::to_string(i) + std::to_string(j);
-				
-				// auto& star
+
+				auto& startargets = RenderTargets[key] =
+					std::make_shared<RenderTarget>();
+
+				RenderTarget::Info InitInfo{};
+				InitInfo.Width = g_nWndCX / 4;
+				InitInfo.Height = g_nWndCY / 4;
+				InitInfo.Levels = 1;
+				InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+				InitInfo.Format = D3DFMT_A16B16G16R16F;
+				InitInfo._D3DPool = D3DPOOL_DEFAULT;
+				startargets->Initialize(InitInfo);
+				startargets->DebugBufferInitialize(
+					{ InitX + (XOffset * (4 + j)) + Interval,
+					InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
+					RenderTargetDebugRenderSize);
 			}
 		}
+	};
+
+	for (int i = 0; i < 2; ++i)
+	{
+		{
+			const std::string key = "lensflaretargets" + std::to_string(i);
+
+			auto& lensflaretargets = RenderTargets[key] = std::make_shared<RenderTarget>();
+
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / 2;
+			InitInfo.Height = g_nWndCY / 2;
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			lensflaretargets->Initialize(InitInfo);
+			lensflaretargets->DebugBufferInitialize
+			(
+				{ InitX + (XOffset * 6) + Interval,
+				  InitY + (YOffset * i) + ( i > 0 ? Interval : 0 ) },
+				RenderTargetDebugRenderSize
+			);
+		}
+
+		{
+			const std::string key = "afterimagetargets" + std::to_string(i);
+
+			auto& afterimagetargets = RenderTargets[key] = 
+				std::make_shared<RenderTarget>();
+
+			RenderTarget::Info InitInfo{};
+			InitInfo.Width = g_nWndCX / 2;
+			InitInfo.Height = g_nWndCY / 2;
+			InitInfo.Levels = 1;
+			InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+			InitInfo.Format = D3DFMT_A16B16G16R16F;
+			InitInfo._D3DPool = D3DPOOL_DEFAULT;
+			afterimagetargets->Initialize(InitInfo);
+			afterimagetargets->DebugBufferInitialize
+			(
+				{     InitX + (XOffset * 6) + Interval,
+					  InitY + (YOffset * (i+2)) + (i > 0 ? Interval : 0) },
+						RenderTargetDebugRenderSize
+			);
+		}
 	}
-}
+
+
+};
 
 void Renderer::ReadyRenderInfo()
 {
 	Matrix CameraView, CameraProjection, Ortho;
+
 	Device->GetTransform(D3DTS_VIEW, &CameraView);
 	Device->GetTransform(D3DTS_PROJECTION, &CameraProjection);
 
@@ -425,12 +488,24 @@ HRESULT Renderer::Render()&
 	BackBuffer->Release();
 
 	return S_OK;
-}
+};
 
 void Renderer::Editor()&
 {
 	ImGui::Begin("Render Editor");
 	{
+		if (ImGui::TreeNode("RenderTarget"))
+		{
+			for (auto& _RT : RenderTargets)
+			{
+				ImGui::Text(_RT.first.c_str());
+				ImGui::Image(reinterpret_cast<void**>
+					(_RT.second->GetTexture()), { 128,128 });
+				ImGui::Separator();
+			}
+
+			ImGui::TreePop();
+		}
 		if (ImGui::Button("LightSave"))
 		{
 			LightSave(FileHelper::OpenDialogBox());
@@ -696,7 +771,7 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState (0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 16);
+	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 8);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
@@ -925,7 +1000,7 @@ void Renderer::DeferredShading()
 				rectvertices[13] += PtLt->LastScissorRect.bottom;
 				rectvertices[18] += PtLt->LastScissorRect.right;
 				rectvertices[19] += PtLt->LastScissorRect.top;
-
+				screenquad->CommitChanges();
 				device->DrawIndexedPrimitiveUP(
 					D3DPT_LINESTRIP, 0, 4, 4, rectindices, D3DFMT_INDEX16, rectvertices, 6 * sizeof(float));
 			}
@@ -1055,7 +1130,80 @@ HRESULT Renderer::RenderSky()&
 	Device->SetTexture(0, sky->GetTexture());
 	_Quad->Render(Device);
 	screenquad->EndPass();
-	screenquad->End();
+	screenquad->End(); 
+
+	//Matrix skyview = _RenderInfo.View;
+	//skyview._41 = 0.0f;
+	//skyview._42 = 0.0f;
+	//skyview._43 = 0.0f;
+	//const Matrix viewproj = 
+	//	skyview* _RenderInfo.Projection;
+
+	//Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState(0, D3DSAMP_MAGFILTER,
+	//	D3DTEXF_LINEAR);
+	//Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	//Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	//Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	//DWORD Cull{};
+	//DWORD ZWrite{};
+	//Device->GetRenderState(D3DRS_CULLMODE, &Cull);
+	//Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+
+	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+	//Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
+	//auto Fx =Shaders["sky"]->GetEffect();
+	//Fx->SetMatrix("matViewProj", &viewproj);
+	//static float skyrotationyaw = 0.0f;
+	//skyrotationyaw += (1.f / 60.f);
+	//
+	//const Matrix rotation= 
+	//	FMath::Rotation(Vector3{ 0.f,skyrotationyaw ,0.f });
+	//Fx->SetMatrix("matSkyRotation", &rotation);
+	//
+	//Fx->Begin(NULL, 0);
+	//Fx->BeginPass(0);
+	//Device->SetTexture(0u, environment);
+	//Fx->CommitChanges();
+	//skymesh->DrawSubset(0);
+	//Fx->EndPass();
+	//Fx->End();
+
+	//Device->SetSamplerState(
+	//	0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_ADDRESSU,D3DTADDRESS_CLAMP);
+	//Device->SetSamplerState
+	//	(1, D3DSAMP_ADDRESSV,D3DTADDRESS_CLAMP);
+
+	//Device->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	//Device->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	//Device->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	//Device->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+
+	//
+	//
+
+
+
+
+
+
+	//Device->SetRenderState(D3DRS_CULLMODE, Cull);
+	//Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+
+	
 
 	return S_OK;
 }
@@ -1063,9 +1211,12 @@ HRESULT Renderer::RenderSky()&
 HRESULT Renderer::Tonemapping()&
 {
 	//                     감마보정 수행 . 
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
-	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(
+		D3DRS_SRGBWRITEENABLE, TRUE);
+	Device->SetRenderState(
+		D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(
+		D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	auto tonemap = Shaders["ToneMap"]->GetEffect();
@@ -1410,6 +1561,14 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 
 bool Renderer::TestShaderInit()
 {
+	if (FAILED(D3DXLoadMeshFromX(
+		L"../../Media/MeshesDX/skullocc3.x", D3DXMESH_MANAGED, Device, NULL, NULL, NULL, NULL, &skull)))
+		return false;
+
+	if (FAILED(D3DXLoadMeshFromX(L"../../Media/MeshesDX/sky.x", D3DXMESH_MANAGED, Device, NULL, NULL, NULL, NULL, &skymesh)))
+		return false;
+
+
 	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace.dds", &environment)))
 		return false;
 
@@ -1429,7 +1588,11 @@ bool Renderer::TestShaderInit()
 
 void Renderer::TestShaderRelease()
 {
-	
+	if (skymesh)
+		skymesh->Release();
+
+	if (skull)
+		skull->Release();
 }
 
 // 포인트 라이트 회전 !

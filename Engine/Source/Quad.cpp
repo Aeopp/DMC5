@@ -64,6 +64,7 @@ void Quad::Render(
 	{
 		Fx->SetFloat("SizeXRatio", SizeXRatio);
 		Fx->SetFloat("SizeYRatio", SizeYRatio);
+		Fx->CommitChanges();
 	}
 	
 	{
