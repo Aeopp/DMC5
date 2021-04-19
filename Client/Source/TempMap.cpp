@@ -7,12 +7,12 @@
 
 void TempMap::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string TempMap::GetName()
 {
-	return "TestObject";
+	return "TempMap";
 };
 
 TempMap* TempMap::Create()
@@ -28,7 +28,7 @@ void TempMap::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_StaticMesh)
 		{
 			const uint32  Numsubset = _StaticMesh->GetNumSubset();  
@@ -47,7 +47,6 @@ void TempMap::RenderReady()
 
 void TempMap::RenderInit()
 {
-	m_nTag = Player;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -190,8 +189,8 @@ HRESULT TempMap::Awake()
 {
 	m_pCollider = AddComponent<MeshCollider>();
 	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
-	//m_pCollider.lock()->SetRigid(true);
-	//m_pCollider.lock()->SetGravity(false);
+	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetGravity(false);
 	PushEditEntity(m_pCollider.lock().get());
 
 	//auto pCollider = AddComponent<CapsuleCollider>();
@@ -238,10 +237,10 @@ void TempMap::Editor()
 
 void TempMap::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void TempMap::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

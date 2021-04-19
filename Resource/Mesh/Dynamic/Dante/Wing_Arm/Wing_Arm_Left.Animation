@@ -6,18 +6,33 @@
         "Offset Euler Roll": 0.0,
         "AnimInfoTable": [
             {
-                "Name": "ComboA2",
+                "Name": "ComboA1",
                 "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboC3",
+                "Name": "ComboA3",
                 "Acceleration": 0.56,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "ComboA4",
+                "Acceleration": 0.4,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "ComboC1",
+                "Acceleration": 0.4,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "ComboC2",
+                "Acceleration": 0.5,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "ComboC4",
-                "Acceleration": 0.56,
+                "Acceleration": 0.45,
                 "TransitionTime": 0.009999999776482582
             },
             {
@@ -26,22 +41,27 @@
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboD2",
+                "Name": "Hr_Ground",
                 "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboD3",
+                "Name": "Shuffle_Ex",
                 "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboD4",
+                "Name": "Split_End",
                 "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "Shuffle",
+                "Name": "Split_Loop",
+                "Acceleration": 0.56,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Split_Start",
                 "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
@@ -57,11 +77,6 @@
             },
             {
                 "Name": "Streak_Start",
-                "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
-            },
-            {
-                "Name": "Wire_Snatch_End",
                 "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             }

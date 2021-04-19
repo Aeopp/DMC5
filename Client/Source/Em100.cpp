@@ -10,6 +10,7 @@
 
 void Em100::Free()
 {
+	GameObject::Free();
 }
 
 std::string Em100::GetName()

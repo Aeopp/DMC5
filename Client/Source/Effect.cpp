@@ -24,6 +24,6 @@ void Effect::RenderReady()
 		_SpTransform)
 	{
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 	}
 }

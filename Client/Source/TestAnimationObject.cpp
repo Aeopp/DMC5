@@ -9,6 +9,7 @@
 
 void TestAnimationObject::Free()
 {
+	GameObject::Free();
 }
 
 std::string TestAnimationObject::GetName()
@@ -113,7 +114,7 @@ void TestAnimationObject::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_SkeletonMesh)
 		{
 			const uint32  Numsubset = _SkeletonMesh->GetNumSubset();
@@ -234,6 +235,7 @@ HRESULT TestAnimationObject::Start()
 
 UINT TestAnimationObject::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	auto [DeltaScale,DeltaQuat,DeltaPos ] = _SkeletonMesh->Update(_fDeltaTime);
 	 Vector3 Axis = { 1,0,0 };
 
@@ -265,10 +267,10 @@ void TestAnimationObject::Editor()
 
 void TestAnimationObject::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void TestAnimationObject::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

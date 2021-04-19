@@ -7,6 +7,7 @@
 
 void BtlPanel::Free()
 {
+	GameObject::Free();
 	SafeDeleteArray(_UIDescs);
 }
 
@@ -691,12 +692,12 @@ void BtlPanel::Editor()
 
 void BtlPanel::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void BtlPanel::OnDisable()
 {
-
+	GameObject::OnDisable();
 }
 
 void BtlPanel::SetTargetCursorActive(bool IsActive)

@@ -11,17 +11,21 @@
 #include "WIngArm_Left.h"
 #include "WingArm_Right.h"
 #include "MainCamera.h"
+#include "BtlPanel.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
 	, m_iCurWeaponIndex(RQ)
 	, m_iJumpDirIndex(Basic)
 	, m_fRedQueenGage(0.f)
+	, m_iCurDirIndex(Dir_Front)
+	, m_iPreDirIndex(Dir_Front)
 {
 	m_nTag = Player;
 }
 void Nero::Free()
 {
+	GameObject::Free();
 	m_pFSM = nullptr;
 }
 
@@ -47,10 +51,11 @@ Nero* Nero::Create()
 
 HRESULT Nero::Ready()
 {
+	//GameObject::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.01f,0.01f,0.01f });
-	m_pTransform.lock()->SetPosition(Vector3{0.f, 0.f, -5.f});
+	m_pTransform.lock()->SetPosition(Vector3{0.f, 5.f, 0.f});
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -72,11 +77,13 @@ HRESULT Nero::Ready()
 
 HRESULT Nero::Awake()
 {
+	//GameObject::Awake();
 	m_pFSM->ChangeState(NeroFSM::IDLE);
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
 	m_pCollider.lock()->SetRadius(0.4f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
@@ -90,13 +97,20 @@ HRESULT Nero::Awake()
 
 HRESULT Nero::Start()
 {
+	//GameObject::Start();
 	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
+	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+
 	return S_OK;
 }
 
 UINT Nero::Update(const float _fDeltaTime)
 {
-	//GameObject::Update(_fDeltaTime);
+	GameObject::Update(_fDeltaTime);
+
+	Update_Majin(_fDeltaTime);
+
+
 	if (Input::GetKeyDown(DIK_0))
 		m_bDebugButton = !m_bDebugButton;
 	
@@ -117,15 +131,18 @@ UINT Nero::Update(const float _fDeltaTime)
 
 UINT Nero::LateUpdate(const float _fDeltaTime)
 {
+	//GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Nero::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Nero::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Nero::RenderGBufferSK(const DrawInfo& _Info)
@@ -266,6 +283,21 @@ void Nero::RenderInit()
 	PushEditEntity(m_pMesh.get());
 }
 
+void Nero::Update_Majin(float _fDeltaTime)
+{
+	if (m_IsMajin)
+	{
+		m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
+	}
+
+	if (m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
+	{
+		m_IsMajin = false;
+		SetActive_Wings(false);
+	}
+
+}
+
 void Nero::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
@@ -316,6 +348,16 @@ void Nero::SetActive_Wings(bool ActiveOrNot)
 	m_pRWing.lock()->SetActive(ActiveOrNot);
 }
 
+void Nero::SetActive_Wing_Left(bool ActiveOrNot)
+{
+	m_pLWing.lock()->SetActive(ActiveOrNot);
+}
+
+void Nero::SetActive_Wing_Right(bool ActiveOrNot)
+{
+	m_pRWing.lock()->SetActive(ActiveOrNot);
+}
+
 void Nero::SetActive_Buster_Arm(bool ActiveOrNot)
 {
 	m_pBusterArm.lock()->SetActive(ActiveOrNot);
@@ -345,6 +387,56 @@ void Nero::SetAngleFromCamera()
 	m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
 }
 
+void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)
+{
+	m_pCamera.lock()->DecreaseDistance(_GoalDis, _fDeltaTime);
+}
+
+void Nero::IncreaseDistance(float _GoalDis, float _fDeltaTime)
+{
+	m_pCamera.lock()->IncreaseDistance(_GoalDis, _fDeltaTime);
+}
+
+float Nero::Get_ExGauge()
+{
+	return m_pBtlPanel.lock()->GetExGauge();
+}
+
+uint32 Nero::Get_ExGaugeCount()
+{
+	return m_pBtlPanel.lock()->GetExGaugeCount();
+}
+
+void Nero::Add_ExGauge(float ExGauge)
+{
+	m_pBtlPanel.lock()->AddExGauge(ExGauge);
+}
+
+void Nero::Use_ExGauge(const uint32 Count)
+{
+	m_pBtlPanel.lock()->UseExGauge(Count);
+}
+
+float Nero::Get_TDTGauge()
+{
+	return m_pBtlPanel.lock()->GetTDTGauge();
+}
+
+void Nero::AccumulateTDTGauge(const float Amount)
+{
+	m_pBtlPanel.lock()->AccumulateTDTGauge(Amount);
+}
+
+void Nero::ConsumeTDTGauge(const float Speed)
+{
+	m_pBtlPanel.lock()->ConsumeTDTGauge(Speed);
+}
+
+void Nero::AddRankScore(float Score)
+{
+	m_pBtlPanel.lock()->AddRankScore(Score);
+}
+
 void Nero::StopAnimation()
 {
 	m_pMesh->StopAnimation();
@@ -358,6 +450,12 @@ void Nero::ContinueAnimiation()
 bool Nero::IsAnimationEnd()
 {
 	return m_pMesh->IsAnimationEnd();
+}
+
+void Nero::ChangeNeroDirection(UINT _NeroDirection)
+{
+	m_iPreDirIndex = m_iCurDirIndex;
+	m_iCurDirIndex = _NeroDirection;
 }
 
 void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const UINT AnimationIndex, const AnimNotify& _Notify)

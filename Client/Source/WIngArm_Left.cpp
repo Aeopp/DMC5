@@ -6,11 +6,14 @@
 
 WIngArm_Left::WIngArm_Left()
 	:m_bIsRender(false)
+	,m_bLoop(false)
+	,m_pParentBoneMat(nullptr)
 {
 }
 
 void WIngArm_Left::Free()
 {
+	GameObject::Free();
 }
 
 WIngArm_Left* WIngArm_Left::Create()
@@ -46,13 +49,16 @@ HRESULT WIngArm_Left::Start()
 
 UINT WIngArm_Left::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 	_RenderProperty.bRender = true;
+
 	float fCurAnimationTime = m_pMesh->PlayingTime();
 
-	if (0.92 <= fCurAnimationTime)
+	if (0.57 <= fCurAnimationTime && !m_bLoop)
 	{
 		SetActive(false);
+		m_pNero.lock()->SetActive_Wing_Left(true);
 	}
 
 	return 0;
@@ -83,24 +89,25 @@ UINT WIngArm_Left::LateUpdate(const float _fDeltaTime)
 
 void WIngArm_Left::OnEnable()
 {
+	GameObject::OnEnable();
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
-	m_pMesh->SetPlayingTime(0);
-	//m_pMesh->SetDeltaTimeFactor(0);
-	m_pMesh->ContinueAnimation();
+
+	m_pNero.lock()->SetActive_Wing_Left(false);
 }
 
 void WIngArm_Left::OnDisable()
 {
+	GameObject::OnDisable();
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
-	//m_pMesh->SetPlayingTime(0);
-	m_pMesh->StopAnimation();
 }
 
 void WIngArm_Left::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
+
+	m_bLoop = bLoop;
 }
 
 std::string WIngArm_Left::GetName()
@@ -260,7 +267,7 @@ void WIngArm_Left::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

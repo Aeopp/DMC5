@@ -10,6 +10,7 @@
 
 void Em0000::Free()
 {
+	GameObject::Free();
 }
 
 std::string Em0000::GetName()
@@ -364,10 +365,12 @@ void Em0000::Editor()
 
 void Em0000::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Em0000::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em0000::RenderGBufferSK(const DrawInfo& _Info)

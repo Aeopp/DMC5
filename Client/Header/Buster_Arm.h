@@ -44,6 +44,7 @@ public:
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;
+	std::weak_ptr<SphereCollider> m_pCollider;
 
 	bool								m_bIsRender;
 };
