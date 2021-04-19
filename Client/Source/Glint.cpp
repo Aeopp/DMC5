@@ -84,6 +84,8 @@ HRESULT Glint::Start()
 
 UINT Glint::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
+
 	_AccumulateTime += _PlayingSpeed * _fDeltaTime;
 
 	if (1.5f < _AccumulateTime)

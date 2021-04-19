@@ -45,12 +45,17 @@ HRESULT TestScene::LoadScene()
 	
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
+
 	AddGameObject<Nero>();
+
 	AddGameObject<Em5000>();
 	AddGameObject<Car>();
 	Renderer::GetInstance()->LightLoad
 			("..\\..\\Resource\\LightData\\Light.json");
 	AddGameObject<TempMap>();
+
+	
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<ShaderTester>();
 	/*
@@ -67,7 +72,6 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();*/
-
 
 	AddGameObject<BtlPanel>();
 
