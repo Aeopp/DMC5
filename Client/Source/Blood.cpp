@@ -115,6 +115,8 @@ HRESULT Blood::Start()
 
 UINT Blood::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
+
 	if (Input::GetKeyDown(DIK_Y))
 	{
 		if (m_bTest == true)

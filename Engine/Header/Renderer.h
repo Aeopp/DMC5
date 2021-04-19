@@ -79,7 +79,8 @@ private:
 	// 쉐이더 키와 해당 쉐이더의 호출함수,객체들
 	using RenderEntityType = std::pair< RenderInterface*, RenderProperty::CallType>;
 	std::map<RenderProperty::Order, 
-		std::unordered_map<std::string,std::vector<RenderEntityType>>>
+		std::unordered_map<std::string,
+		std::vector<RenderEntityType>>>
 		RenderEntitys{};
 	std::set<RenderInterface* > RenderEntitySet{};
 	std::shared_ptr<Quad> _Quad;
@@ -104,6 +105,8 @@ private:
 	//LPD3DXEFFECT			hdreffects = nullptr;
 	//LPD3DXEFFECT			effect = nullptr;
 
+	LPD3DXMESH				skull = nullptr;
+	LPD3DXMESH skymesh = nullptr;
 	LPDIRECT3DCUBETEXTURE9	environment = nullptr;		// HDR environment
 	LPDIRECT3DCUBETEXTURE9	irradiance1 = nullptr;		// preintegrated diffuse irradiance
 	LPDIRECT3DCUBETEXTURE9	irradiance2 = nullptr;		// preintegrated specular irradiance

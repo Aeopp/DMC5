@@ -16,6 +16,7 @@ private:
 		HP_GLASS,
 		EX_GAUGE_BACK,
 		EX_GAUGE,
+		STYLISH_LETTER,
 		HP_GAUGE,
 		TDT_GAUGE,
 		KEYBOARD,
@@ -52,6 +53,10 @@ private:
 	std::shared_ptr<ENGINE::Texture> _HPGlassNRMRTex{};
 	std::shared_ptr<ENGINE::Texture> _GlassTex{};
 	std::shared_ptr<ENGINE::Texture> _BloodTex{};
+
+	std::shared_ptr<ENGINE::StaticMesh> _StylishMesh{};
+	std::shared_ptr<ENGINE::Texture> _StylishALBMTex{};
+	std::shared_ptr<ENGINE::Texture> _StylishNRMRTex{};
 
 	std::shared_ptr<ENGINE::StaticMesh> _Ex0Mesh{};
 	std::shared_ptr<ENGINE::StaticMesh> _Ex1Mesh{};
@@ -107,6 +112,9 @@ private:
 	float _HPGaugeWidth = 50.f;
 	float _HPGauge_CurXPosOrtho = 0.f;
 	float _BossGauge_CurXPosOrtho = 0.f;
+
+	/* 0 ~ 1 */
+	float _TDTGauge = 0.f;
 	float _TDTGauge_CurXPosOrtho = 0.f;
 
 	float _HPGlassDirt = 0.f;
@@ -155,6 +163,7 @@ private:
 	Matrix _PerspectiveProjMatrix = Matrix();
 
 	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
+	Vector3 _LightDir_ExGauge = Vector3(-1.f, 1.f, -1.f);
 
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
@@ -199,6 +208,7 @@ public:
 	void SetKeyInputActive(bool IsActive);
 	void AddRankScore(float Score);
 	float GetExGauge() const { return _ExGauge; }
+	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count);
 };

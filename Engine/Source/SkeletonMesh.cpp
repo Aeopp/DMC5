@@ -206,7 +206,7 @@ std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::AnimationUpdateImplementa
 	const float TimeBeyondAnimation = 
 		(CurrentAnimMotionTime - CurPlayAnimInfo.Duration);
 
-	if (TimeBeyondAnimation > 0.0f)
+	if (TimeBeyondAnimation > 0.0f && !bLoop)
 	{
 		bTimeBeyondAnimation = TimeBeyondAnimation;
 	}
@@ -328,7 +328,7 @@ std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::AnimationUpdateImplementa
 
 	VTFUpdate();
 
-	if (bTimeBeyondAnimation)
+	if (TimeBeyondAnimation > 0.0f)
 	{
 		AnimationEnd();
 	}
@@ -638,7 +638,7 @@ void SkeletonMesh::DisablePrevVTF()&
 
 std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::Update(const float DeltaTime)&
 {
-	if (bAnimationEnd || bAnimStop)return
+	if (bAnimationEnd || bAnimStop) return
 	{ {0,0,0},{0,0,0,1},{0,0,0} };
 
 	const float CalcDeltaTime = DeltaTime * DeltaTimeFactor;
@@ -833,10 +833,9 @@ void SkeletonMesh::StopAnimation()
 
 void SkeletonMesh::AnimationEnd()&
 {
-	CurrentAnimPrevFrameMotionTime = 0.0f;
-
 	if (bLoop)
 	{
+		CurrentAnimPrevFrameMotionTime = 0.0f;
 		CurrentAnimMotionTime -= CurPlayAnimInfo.Duration;
 		PrevAnimMotionTime = CurPlayAnimInfo.Duration;
 		TransitionDuration = CurPlayAnimInfo.TransitionTime;
@@ -848,6 +847,7 @@ void SkeletonMesh::AnimationEnd()&
 	}
 	else
 	{
+		bAnimStop = true;
 		bAnimationEnd = true;
 	}
 };
@@ -1269,7 +1269,6 @@ void SkeletonMesh::AnimationNotify()&
 			{
 				CurAnimNotify.Event.erase(EventIter->first);
 			}
-
 		}
 	}
 };

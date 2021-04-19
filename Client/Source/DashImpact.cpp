@@ -78,7 +78,7 @@ HRESULT DashImpact::Start()
 
 UINT DashImpact::Update(const float _fDeltaTime)
 {
-
+	GameObject::Update(_fDeltaTime);
 
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 		Sptransform)

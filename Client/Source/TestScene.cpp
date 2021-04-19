@@ -45,6 +45,7 @@ HRESULT TestScene::LoadScene()
 	
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
+
 	AddGameObject<Nero>();
 	//AddGameObject<Em5000>();
 	//AddGameObject<Car>();
@@ -53,7 +54,7 @@ HRESULT TestScene::LoadScene()
 	
 
 	
-	
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<ShaderTester>();
 	/*
@@ -71,13 +72,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();*/
 
-
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
-	// ¼öÁ¤ ÇÊ¿ä
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
 

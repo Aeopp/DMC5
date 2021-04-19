@@ -70,6 +70,10 @@ technique gbuffer_tbn
 {
     pass p0
     {
+        StencilEnable = true;
+        StencilFunc = always;
+        StencilPass = replace;
+        StencilRef = 1;
         vertexshader = compile vs_3_0 vs_gbuffer_tbn();
         pixelshader = compile ps_3_0 ps_gbuffer_tbn();
     }
