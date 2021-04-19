@@ -52,7 +52,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.01f,0.01f,0.01f });
-
+	m_pTransform.lock()->SetPosition(Vector3{0.f, 0.f, -5.f});
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();

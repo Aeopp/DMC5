@@ -14,7 +14,7 @@ Collider::Collider(std::weak_ptr<GameObject> const _pGameObject)
 	, m_bTrigger(false)
 	, m_vCenter(0.f, 0.f, 0.f)
 	, m_bLock{ false,false,false,false,false,false }
-	, m_bGravity(true)
+	, m_bGravity(false)
 {
 }
 
@@ -289,6 +289,9 @@ void Collider::SetGravity(const bool _bActive)
 
 	if (false == m_bRigid)
 		return;
+
+	if (true == m_bRigid && false == _bActive)
+		m_pRigidActor->is<PxRigidDynamic>()->clearForce();
 
 	m_pRigidActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !_bActive);
 }

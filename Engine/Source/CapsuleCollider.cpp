@@ -110,7 +110,7 @@ HRESULT CapsuleCollider::DrawCollider(const DrawInfo& _Info)
 	matWorld = matScale * matRot * matTrans * matInvScale * matGameObject;
 
 	_Info.Fx->SetMatrix("World", &matWorld);
-
+	_Info.Fx->CommitChanges();
 	for (UINT i = 0; i < m_nNumSubset; ++i)
 		m_pMesh->DrawSubset(i);
 

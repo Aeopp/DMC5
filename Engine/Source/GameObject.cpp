@@ -164,6 +164,7 @@ void GameObject::OnCollisionExit(std::weak_ptr<GameObject> _pOther)
 
 void GameObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+
 }
 
 void GameObject::OnTriggerExit(std::weak_ptr<GameObject> _pOther)

@@ -89,6 +89,7 @@ HRESULT BoxCollider::DrawCollider(const DrawInfo& _Info)
 
 
 	_Info.Fx->SetMatrix("World", &matWorld);
+	_Info.Fx->CommitChanges();
 
 	m_pMesh->DrawSubset(0);
 
