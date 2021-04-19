@@ -660,9 +660,10 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 
 	//
 	Update_TargetInfo();
-	Update_GaugeOrthoPos();
+	Update_PlayerHP(_fDeltaTime);
 	Update_ExGauge(_fDeltaTime);
 	Update_Rank(_fDeltaTime);
+	Update_Gauge(_fDeltaTime);
 	Check_KeyInput(_fDeltaTime);
 
 	//
@@ -698,10 +699,58 @@ void BtlPanel::OnDisable()
 
 }
 
-void BtlPanel::SetTargetActive(bool IsActive)
+void BtlPanel::SetTargetCursorActive(bool IsActive)
 {
 	_UIDescs[TARGET_CURSOR].Using = IsActive;
 	_UIDescs[TARGET_HP].Using = IsActive;
+}
+
+void BtlPanel::SetTargetCursor(const Vector3& TargetPos, const float HPRatio/*= 1.f*/)
+{
+	_TargetPos = TargetPos;
+
+	float Ratio = HPRatio;
+	if (Ratio > 1.f)
+		Ratio = 1.f;
+	else if (Ratio < 0.f)
+		Ratio = 0.f;
+
+	_TargetHP_Degree = 360.f - Ratio * 360.f;
+}
+
+void BtlPanel::SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass/*= true*/)
+{
+	if (_PlayerHPRatio > HPRatio)
+	{
+		// + 서서히 줄어드는 빨간 게이지
+
+		if (IsBloodedGlass)
+			_HPGlassDirtAccTime = 0.f;
+	}
+
+	_PlayerHPRatio = HPRatio;
+	if (_PlayerHPRatio > 1.f)
+		_PlayerHPRatio = 1.f;
+	else if (_PlayerHPRatio < 0.f)
+		_PlayerHPRatio = 0.f;
+}
+
+void BtlPanel::AccumulateTDTGauge(const float Amount)
+{
+	_TDTGauge += Amount;
+	if (_TDTGauge > 1.f)
+		_TDTGauge = 1.f;
+	else if (_TDTGauge < 0.f)
+		_TDTGauge = 0.f;
+}
+
+void BtlPanel::ConsumeTDTGauge(const float Speed/*= 1.f*/)
+{
+	if (0.f >= Speed)
+		return;
+
+	_TDTGauge_ConsumeStart = true;
+	_TDTGauge_ConsumeSpeed = Speed;
 }
 
 void BtlPanel::SetKeyInputActive(bool IsActive)
@@ -1331,6 +1380,29 @@ void BtlPanel::Update_TargetInfo()
 	D3DXVec2Normalize(&_TargetHP_Normal1, &_TargetHP_Normal1);
 }
 
+void BtlPanel::Update_PlayerHP(const float _fDeltaTime)
+{
+	//
+	float HPGaugeOrthoWidth = 0.078125f;
+	float HPGaugeOrthoStartX = ScreenPosToOrtho(_UIDescs[HP_GAUGE].Pos.x, 0.f).x - HPGaugeOrthoWidth * 0.5f;
+	_HPGauge_CurXPosOrtho = HPGaugeOrthoStartX + _PlayerHPRatio * HPGaugeOrthoWidth * static_cast<float>(_HPGaugeCount);
+
+	//
+	_HPGlassDirtAccTime += _fDeltaTime;
+	if (0.3f > _HPGlassDirtAccTime && 1.f > _HPGlassDirt)
+	{
+		_HPGlassDirt += _fDeltaTime * 10.f;
+		if (1.f < _HPGlassDirt)
+			_HPGlassDirt = 1.f;
+	}
+	else if (0.f < _HPGlassDirt)
+	{
+		_HPGlassDirt -= _fDeltaTime * 1.f;
+		if (0.f > _HPGlassDirt)
+			_HPGlassDirt = 0.f;
+	}
+}
+
 void BtlPanel::Update_Rank(const float _fDeltaTime)
 {
 	_CurRank = static_cast<int>(_RankScore / 100.f);
@@ -1532,7 +1604,7 @@ void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 	}
 }
 
-void BtlPanel::Update_GaugeOrthoPos()
+void BtlPanel::Update_Gauge(const float _fDeltaTime)
 {
 	float BossGaugeOrthoOffsetToCenter = 0.344f; // 직접 수작업으로 찾아야 하나 ㅠㅠ
 	// + 적 체력 받아와서 degree 같은 애들 갱신하자
@@ -1540,14 +1612,19 @@ void BtlPanel::Update_GaugeOrthoPos()
 	_BossGauge_CurXPosOrtho = -BossGaugeOrthoOffsetToCenter + ((360.f - _TargetHP_Degree) / 360.f * 2.f * BossGaugeOrthoOffsetToCenter);
 
 	//
-	float HPGaugeOrthoWidth = 0.078125f;
-	float HPGaugeOrthoStartX = ScreenPosToOrtho(_UIDescs[HP_GAUGE].Pos.x, 0.f).x - HPGaugeOrthoWidth * 0.5f;
-	_HPGauge_CurXPosOrtho = HPGaugeOrthoStartX + (360.f - _TargetHP_Degree) / 360.f * HPGaugeOrthoWidth * static_cast<float>(_HPGaugeCount);
-
-	//
 	float TDTGaugeOrthoStartX = -0.685938f;
 	float TDTGaugeOrthoEndX = -0.33125f;
-	_TDTGauge_CurXPosOrtho = TDTGaugeOrthoStartX + (360.f - _TargetHP_Degree) / 360.f * (TDTGaugeOrthoEndX - TDTGaugeOrthoStartX);
+	_TDTGauge_CurXPosOrtho = TDTGaugeOrthoStartX + _TDTGauge * (TDTGaugeOrthoEndX - TDTGaugeOrthoStartX);
+
+	if (_TDTGauge_ConsumeStart)
+	{
+		_TDTGauge -= _fDeltaTime * _TDTGauge_ConsumeSpeed;
+		if (0.f >= _TDTGauge)
+		{
+			_TDTGauge_ConsumeStart = false;
+			_TDTGauge = 0.f;
+		}
+	}
 
 	//POINT pt{};
 	//GetCursorPos(&pt);
@@ -1581,18 +1658,18 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 {
 	////////////////////////////
 	// 임시
-	if (Input::GetKey(DIK_LEFTARROW))
-	{
-		_TargetHP_Degree += 150.f * _fDeltaTime;
-		if (360.f < _TargetHP_Degree)
-			_TargetHP_Degree = 360.f;
-	}
-	if (Input::GetKey(DIK_RIGHTARROW))
-	{
-		_TargetHP_Degree -= 150.f * _fDeltaTime;
-		if (0.f > _TargetHP_Degree)
-			_TargetHP_Degree = 0.f;
-	}
+	//if (Input::GetKey(DIK_LEFTARROW))
+	//{
+	//	_TargetHP_Degree += 150.f * _fDeltaTime;
+	//	if (360.f < _TargetHP_Degree)
+	//		_TargetHP_Degree = 360.f;
+	//}
+	//if (Input::GetKey(DIK_RIGHTARROW))
+	//{
+	//	_TargetHP_Degree -= 150.f * _fDeltaTime;
+	//	if (0.f > _TargetHP_Degree)
+	//		_TargetHP_Degree = 0.f;
+	//}
 
 	if (Input::GetKeyDown(DIK_F1))
 	{
@@ -1604,7 +1681,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		static bool bActive = _UIDescs[TARGET_CURSOR].Using;
 		bActive = !bActive;
-		SetTargetActive(bActive);
+		SetTargetCursorActive(bActive);
 	}
 	if (Input::GetKeyDown(DIK_F3))
 	{
@@ -1617,6 +1694,16 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
+	}
+	if (Input::GetKeyDown(DIK_F6))
+	{
+		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), 9.f);
+		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
+		AccumulateTDTGauge(0.1f);
+	}
+	if (Input::GetKeyDown(DIK_F7))
+	{
+		ConsumeTDTGauge(0.5f);
 	}
 	////////////////////////////
 

@@ -563,7 +563,7 @@ PsOut PsMain_Glass(PsIn In)
 
     float Dirt = ATOSSample.g * _HPGlassDirt;
 
-    Out.Color = float4(Shade * ALB0Sample.rgb, saturate(0.05f + ATOSSample.b));
+    Out.Color = float4(Shade * ALB0Sample.rgb, saturate(0.1f + ATOSSample.b));
 
     if (0.f < Dirt)
         Out.Color = (Out.Color * (1.f - Dirt)) + float4(Shade * ALB1Sample.rgb, Dirt);
