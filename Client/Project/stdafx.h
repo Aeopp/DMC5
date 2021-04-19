@@ -39,3 +39,6 @@ enum GAMEOBJECTTAG
 	TAG_Camera,
 	Tag_END
 };
+
+#define OGDistance 2.4f
+#define MaxDistance 3.7f

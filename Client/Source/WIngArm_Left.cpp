@@ -48,11 +48,13 @@ UINT WIngArm_Left::Update(const float _fDeltaTime)
 {
 	m_pMesh->Update(_fDeltaTime);
 	_RenderProperty.bRender = true;
+
 	float fCurAnimationTime = m_pMesh->PlayingTime();
 
-	if (0.92 <= fCurAnimationTime)
+	if (0.57 <= fCurAnimationTime && !m_bLoop)
 	{
 		SetActive(false);
+		m_pNero.lock()->SetActive_Wing_Left(true);
 	}
 
 	return 0;
@@ -85,22 +87,21 @@ void WIngArm_Left::OnEnable()
 {
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
-	m_pMesh->SetPlayingTime(0);
-	//m_pMesh->SetDeltaTimeFactor(0);
-	m_pMesh->ContinueAnimation();
+
+	m_pNero.lock()->SetActive_Wing_Left(false);
 }
 
 void WIngArm_Left::OnDisable()
 {
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
-	//m_pMesh->SetPlayingTime(0);
-	m_pMesh->StopAnimation();
 }
 
 void WIngArm_Left::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
+
+	m_bLoop = bLoop;
 }
 
 std::string WIngArm_Left::GetName()

@@ -42,10 +42,13 @@ HRESULT MainCamera::Ready()
 
 
 	m_fCameraAngle = 35.f;
-	m_fDistanceToTarget = 3.1f;
+	m_fDistanceToTarget = OGDistance;
 
 	m_fRotX = -17.1f;
 	m_fFloatingAmount = 1.6f;
+
+	m_fDecreaseFactor = 5.f;
+	m_fIncreaseFactor = 0.7f;
 
 	return S_OK;
 }
@@ -111,6 +114,31 @@ void MainCamera::Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eA
 	m_eAtType = _eAtType;
 }
 
+void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
+{
+	if (m_fDistanceToTarget <= _GoalDis)
+	{
+		m_fDecreaseFactor = 5.f;
+		return;
+	}
+	if (m_fDecreaseFactor >= 0.4f)
+		m_fDecreaseFactor -= 0.4f;
+	m_fIncreaseFactor = 0.7f;
+	m_fDistanceToTarget -= m_fDecreaseFactor * _fDeltaTime;
+}
+
+void MainCamera::IncreaseDistance(float _GoalDis, float _fDeltaTime)
+{
+	if (m_fDistanceToTarget >= _GoalDis)
+	{
+		m_fIncreaseFactor = 0.7f;
+		return;
+	}
+	m_fDecreaseFactor = 5.f;
+	m_fIncreaseFactor += 0.1f;
+	m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
+}
+
 std::string MainCamera::GetName()
 {
 	return "MainCamera";
@@ -127,6 +155,8 @@ void MainCamera::Editor()
 		ImGui::InputScalar("Sensitive", ImGuiDataType_Float, &m_fSensitive, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("RotX", ImGuiDataType_Float, &m_fRotX, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("FloatingAmount", ImGuiDataType_Float, &m_fFloatingAmount, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("Test1", ImGuiDataType_Float, &m_fTest1, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("Test2", ImGuiDataType_Float, &m_fTest2, MyButton ? &ZeroDotOne : NULL);
 	}
 }
 

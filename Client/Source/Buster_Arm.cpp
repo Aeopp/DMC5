@@ -73,8 +73,8 @@ void Buster_Arm::OnEnable()
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
 
 	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
-	NeroWorld._41 += PlayerLook.x * -1.7;
-	NeroWorld._43 += PlayerLook.z * -1.7;
+	NeroWorld._41 += PlayerLook.x * -0.5;
+	NeroWorld._43 += PlayerLook.z * -0.5;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
