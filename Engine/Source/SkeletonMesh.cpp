@@ -203,12 +203,18 @@ void SkeletonMesh::NodeEditor()
 std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::AnimationUpdateImplementation()&
 {
 	std::optional<float> bTimeBeyondAnimation;
-	const float TimeBeyondAnimation = 
-		(CurrentAnimMotionTime - CurPlayAnimInfo.Duration);
+	const float TimeBeyondAnimation = (CurrentAnimMotionTime - CurPlayAnimInfo.Duration);
 
-	if (TimeBeyondAnimation > 0.0f && !bLoop)
+	if (TimeBeyondAnimation > 0.0f)
 	{
-		bTimeBeyondAnimation = TimeBeyondAnimation;
+		if (bLoop)
+		{
+			bTimeBeyondAnimation = TimeBeyondAnimation;
+		}
+		else
+		{
+			CurrentAnimMotionTime = CurPlayAnimInfo.Duration;
+		}
 	}
 
 	AnimationNotify();
