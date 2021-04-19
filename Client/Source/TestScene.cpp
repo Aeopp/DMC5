@@ -43,22 +43,15 @@ HRESULT TestScene::LoadScene()
 {
 	//AddGameObject<MainCamera>();
 
-	//AddGameObject<Nero>();
 	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
 	//AddGameObject<Nero>();
-	//AddGameObject<Em5000>();
+	AddGameObject<Em5000>();
 	//AddGameObject<Car>();
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 	
 
 	
-	//AddGameObject<TempMap>();
-	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	//
-	AddGameObject<Em5000>();
-	AddGameObject<Car>();
 
 	//AddGameObject<ShaderTester>();
 	/*
@@ -72,7 +65,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TestAnimationObject>();
 	AddGameObject<TestAnimationObject>();*/
 
-	AddGameObject<BtlPanel>();
+	//AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
