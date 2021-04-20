@@ -45,10 +45,10 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Camera>();
 	AddGameObject<Nero>();
-	AddGameObject<Em100>();
-	//AddGameObject<Car>();
+	AddGameObject<Em5000>();
+	AddGameObject<Car>();
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 	
 
 	

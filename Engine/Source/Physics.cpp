@@ -30,5 +30,5 @@ void Physics::RemoveActor(const UINT _nSceneID, physx::PxActor& _rActor)
 {
 	if (nullptr == m_pPhysicsSystem.lock() || m_pPhysicsSystem.expired())
 		return;
-	m_pPhysicsSystem.lock()->AddActor(_nSceneID, _rActor);
+	m_pPhysicsSystem.lock()->RemoveActor(_nSceneID, _rActor);
 }

@@ -72,7 +72,8 @@ public:
 	void RenderInit();
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle() override;
+	virtual void Update_Angle(const float _fDeltaTime, bool _bTest = false);
+	virtual void Update_Angle()override;
 private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
@@ -96,6 +97,8 @@ private:
 
 	weak_ptr<Em100Hand>		m_pHand[2];
 	weak_ptr<CapsuleCollider> m_pCollider;
+
+	float		m_fAngleTime = 0.f;
 };
 
 #endif // Em100_h__

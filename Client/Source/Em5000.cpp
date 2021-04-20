@@ -48,7 +48,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 	//거리가 멀때만 이동 or 회전을 함.
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
-	if (fDir >= 12.f)
+	if (fDir >= 20.f)
 	{
 		if (m_bThrow && m_bIng == false)
 		{
@@ -74,7 +74,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 			return;
 		}
-		if (m_bJumpAttack && fDir >= 20.f && fDir <=25.f)
+		if (m_bJumpAttack && fDir >= 25.f && fDir <=30.f)
 		{
 			if (m_eState == Move_Start || m_eState == Move_Loop)
 			{
@@ -262,7 +262,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 25.f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 35.f)
 				m_eState = Attack_Rush_End;
 		}
 		break;
@@ -618,7 +618,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ 0.f, 0.f, 0.f});
+	m_pTransform.lock()->SetPosition({ 10.f, 5.f, 0.f});
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -626,11 +626,12 @@ HRESULT Em5000::Ready()
 
 HRESULT Em5000::Awake()
 {
-	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-	//
-	//m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
-	//m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
+	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	
+	m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
+	m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
+
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	PushEditEntity(m_pCollider.lock().get());
@@ -644,7 +645,7 @@ HRESULT Em5000::Awake()
 		m_pHand[i].lock()->m_bLeft = (bool)i;
 	}
 
-	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetRigid(false);
 	m_pCollider.lock()->SetGravity(false);
 	
 	m_pCollider.lock()->SetRadius(6.f);
@@ -923,6 +924,8 @@ void Em5000::Update_Angle()
 	m_fRadian = fRadian;
 	m_fAccuangle = 0.f;
 
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
 
 	if (m_fRadian > 0)
 		m_fAngleSpeed = fabs(m_fAngleSpeed);

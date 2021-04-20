@@ -200,7 +200,7 @@ HRESULT Car::Ready()
 
 
 	m_pTransform = GetComponent<ENGINE::Transform>();
-	m_pTransform.lock()->SetPosition({ -20.83f, 32.f, 7.45f });
+	m_pTransform.lock()->SetPosition({ 10.f, 5.f, 10.f });
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 	// PushEditEntity(_ShaderInfo.ForwardAlphaBlendShader.get());

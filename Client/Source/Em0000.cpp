@@ -543,6 +543,9 @@ void Em0000::Update_Angle()
 	m_fRadian = fRadian;
 	m_fAccuangle = 0.f;
 
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
+
 	if (m_fRadian > 0)
 		m_fAngleSpeed = fabs(m_fAngleSpeed);
 	else
