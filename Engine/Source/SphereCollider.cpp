@@ -30,6 +30,12 @@ SphereCollider* SphereCollider::Create(std::weak_ptr<GameObject> const _pGameObj
 {
 	SphereCollider* pInstance = new SphereCollider(_pGameObject);
 
+	if (FAILED(pInstance->ReadyCollider()))
+	{
+		delete pInstance;
+		return nullptr;
+	}
+
 	if (nullptr == m_pMesh)
 		D3DXCreateSphere(Graphic::GetDevice(), 0.5f, 10, 10, &m_pMesh, nullptr);
 	else
@@ -41,7 +47,6 @@ SphereCollider* SphereCollider::Create(std::weak_ptr<GameObject> const _pGameObj
 HRESULT SphereCollider::ReadyCollider()
 {
 	m_pMaterial = PhysicsSystem::GetInstance()->GetDefaultMaterial();
-	m_pMaterial->acquireReference();
 	//Create BoxShape
 	m_pShape = PhysicsSystem::GetInstance()->GetPxPhysics()->createShape(PxSphereGeometry(m_fRadius), *m_pMaterial, true);
 	//

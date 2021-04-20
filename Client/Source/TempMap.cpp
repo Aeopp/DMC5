@@ -7,7 +7,7 @@
 
 void TempMap::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string TempMap::GetName()
@@ -104,7 +104,10 @@ void TempMap::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Arcade.fbx", _InitInfo);
+		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\street2.fbx", _InitInfo);
+
+	//L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Player.fbx"
+	//L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\street3.fbx"
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -183,13 +186,18 @@ HRESULT TempMap::Ready()
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
+
+	//m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider = AddComponent<MeshCollider>();
+	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVertexLocations()->data(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
+
 	return S_OK;
 };
 
 HRESULT TempMap::Awake()
 {
-	m_pCollider = AddComponent<MeshCollider>();
-	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
+	//m_pCollider = AddComponent<MeshCollider>();
+	//m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
 	//m_pCollider.lock()->SetRigid(true);
 	//m_pCollider.lock()->SetGravity(false);
 	PushEditEntity(m_pCollider.lock().get());

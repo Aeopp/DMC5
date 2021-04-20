@@ -41,9 +41,9 @@ HRESULT TestScene::LoadScene()
 {
 	Scene::LoadScene();
 	
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	//AddGameObject<Nero>();
 	AddGameObject<TempMap>();
 	
 	//AddGameObject<Em5000>();

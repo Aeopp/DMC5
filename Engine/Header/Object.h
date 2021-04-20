@@ -6,6 +6,8 @@ class ENGINE_DLL Object abstract
 {
 	friend Deleter<Object>;
 protected:
+	std::shared_ptr<Object> m_pThis;
+protected:
 	explicit Object();
 	explicit Object(const Object& rOther);
 	virtual ~Object() = default;
