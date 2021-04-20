@@ -926,12 +926,6 @@ void Renderer::DeferredShading()
 		device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
 	}
 
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
 	if (bSRGBNRMR)
 	{
 		device->SetSamplerState(1, D3DSAMP_SRGBTEXTURE, TRUE);
@@ -941,8 +935,7 @@ void Renderer::DeferredShading()
 		device->SetSamplerState(1, D3DSAMP_SRGBTEXTURE, FALSE);
 	}
 
-
-	for (int i = 3; i < 5; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
@@ -1492,7 +1485,7 @@ HRESULT Renderer::RenderInsulatorMetal()&
 	auto Fx = Shaders["InsulatorMetal"]->GetEffect(); 
 	Fx->Begin(nullptr,0);
 	Fx->BeginPass(0);
-	Fx->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjection);
+	Fx->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjectionInverse);
 	Fx->SetVector("eyePos", &_RenderInfo.Eye); 
 	Fx->SetFloatArray("pixelSize", pixelSize, 2);
 	_Quad->Render(Device, 1.f, 1.f, Fx);
