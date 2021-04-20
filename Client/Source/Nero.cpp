@@ -92,6 +92,10 @@ HRESULT Nero::Awake()
 
 
 	PushEditEntity(m_pCollider.lock().get());
+
+	vDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 	return S_OK;
 }
 
@@ -118,11 +122,30 @@ UINT Nero::Update(const float _fDeltaTime)
 		m_pFSM->UpdateFSM(_fDeltaTime);
 
 	auto [Scale,Rot,Pos] =m_pMesh->Update(_fDeltaTime);
-	Matrix RotY;
+
+	vAccumlatonDegree += Transform::QuaternionToEuler(Rot);
+
+	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
+
+	/*Matrix RotY;
 	D3DXMatrixRotationY(&RotY, D3DXToRadian(m_fAngle));
-	D3DXVec3TransformCoord(&Pos, &Pos, &RotY);
+	D3DXVec3TransformCoord(&Pos, &Pos, &RotY);*/
+
+	D3DXMATRIX matRot;
+	D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
+	D3DXMatrixRotationQuaternion(&matRot, &tQuat);
+	D3DXVec3TransformCoord(&Pos, &Pos, &matRot);
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
+
+
+	//게임오브젝트의 회전 상태에 따라 RootMotion 이동 값 방향 회전.
+	//Matrix RotY;
+	//D3DXMatrixRotationY(&RotY, D3DXToRadian(m_fAngle));
+	//D3DXVec3TransformCoord(&Pos, &Pos, &RotY);
+
+	////RootMotion 이동값 적용.
+	//m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
 	//m_pTransform.lock()->SetPosition(m_pTransform.lock()->GetPosition() + Pos * m_pTransform.lock()->GetScale().x);
 	
 
@@ -378,13 +401,20 @@ void Nero::SetActive_WingArm_Left(bool ActiveOrNot)
 	m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
 }
 
-void Nero::SetAngleFromCamera()
+void Nero::SetAngleFromCamera(float _fAddAngle)
 {
 	if (m_pCamera.expired())
 		return;
-	m_fAngle = m_pCamera.lock()->Get_Angle();
-	m_fAngle += m_fRotationAngle;
-	m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
+
+	m_fAngle = m_pCamera.lock()->Get_Angle(_fAddAngle);
+	vDegree.y = m_fAngle;
+	vRotationDegree.y = m_fRotationAngle;
+
+	//m_fAngle = m_pCamera.lock()->Get_Angle(_fAddAngle);
+	//m_fAngle += m_fRotationAngle;
+	//m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
+
+
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)

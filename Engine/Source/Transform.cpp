@@ -253,6 +253,14 @@ void Transform::Rotate(const D3DXVECTOR3 _vRotate)
 	m_bUpdated = true;
 }
 
+void Transform::Rotate(const D3DXQUATERNION _tRotate)
+{
+	m_tWorldQuaternion = m_tWorldQuaternion * _tRotate;
+
+	D3DXMatrixRotationQuaternion(&m_matRotation, &m_tWorldQuaternion);
+	m_bUpdated = true;
+}
+
 D3DXQUATERNION Transform::EulerToQuaternion(const D3DXVECTOR3 _vEuler)
 {
 	D3DXQUATERNION tQuat;

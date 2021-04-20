@@ -125,8 +125,8 @@ void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
 		m_fDecreaseFactor = 5.f;
 		return;
 	}
-	if (m_fDecreaseFactor >= 0.4f)
-		m_fDecreaseFactor -= 0.4f;
+	if (m_fDecreaseFactor >= 0.2f)
+		m_fDecreaseFactor -= 0.2f;
 	m_fIncreaseFactor = 0.7f;
 	m_fDistanceToTarget -= m_fDecreaseFactor * _fDeltaTime;
 }
@@ -139,7 +139,7 @@ void MainCamera::IncreaseDistance(float _GoalDis, float _fDeltaTime)
 		return;
 	}
 	m_fDecreaseFactor = 5.f;
-	m_fIncreaseFactor += 0.1f;
+	m_fIncreaseFactor += 0.05f;
 	m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
 }
 

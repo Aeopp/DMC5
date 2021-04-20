@@ -4,6 +4,7 @@
         "Offset Euler Yaw": 0.0,
         "Offset Euler Pitch": 0.0,
         "Offset Euler Roll": 0.0,
+        "RootMotion_RotationName": "root",
         "RootMotion_TransitionName": "root",
         "AnimInfoTable": [
             {
