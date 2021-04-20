@@ -14,7 +14,7 @@ public:
 	{
 		bool bLocalVertexLocationsStorage = false;
 	};
-protected:
+public:
 	std::vector<std::shared_ptr<Subset>>  m_vecSubset;
 	std::shared_ptr<std::vector<Vector3>> m_spVertexLocations;
 

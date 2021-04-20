@@ -47,6 +47,11 @@ CapsuleCollider* CapsuleCollider::Create(std::weak_ptr<GameObject> const _pGameO
 {
 	CapsuleCollider* pInstance = new CapsuleCollider(_pGameObject);
 
+	if (FAILED(pInstance->ReadyCollider()))
+	{
+		delete pInstance;
+		return nullptr;
+	}
 
 	if (nullptr == m_pMesh)
 		D3DXLoadMeshFromX(TEXT("../../Resource/Mesh/Static/Capsule.x"), D3DXMESH_MANAGED, Graphic::GetDevice(), &m_pAdjacency, &m_pSubset, nullptr, &m_nNumSubset, &m_pMesh);
@@ -63,7 +68,6 @@ CapsuleCollider* CapsuleCollider::Create(std::weak_ptr<GameObject> const _pGameO
 HRESULT CapsuleCollider::ReadyCollider()
 {
 	m_pMaterial = PhysicsSystem::GetInstance()->GetDefaultMaterial();
-	m_pMaterial->acquireReference();
 	//Create BoxShape
 
 	m_pShape = PhysicsSystem::GetInstance()->GetPxPhysics()->createShape(PxCapsuleGeometry(m_fRadius, m_fHeight * 0.5f), *m_pMaterial, true);
@@ -107,10 +111,10 @@ HRESULT CapsuleCollider::DrawCollider(const DrawInfo& _Info)
 	D3DXMatrixScaling(&matInvScale, vObjectScale.x, vObjectScale.y, vObjectScale.z);
 	D3DXMatrixInverse(&matInvScale, nullptr, &matInvScale);
 
-	matWorld = matScale * matRot * matTrans * matInvScale * m_pGameObject.lock()->GetComponent<Transform>().lock()->GetRenderMatrix();
+	matWorld = matScale * matRot * matTrans * matInvScale * matGameObject;
 
 	_Info.Fx->SetMatrix("World", &matWorld);
-
+	_Info.Fx->CommitChanges();
 	for (UINT i = 0; i < m_nNumSubset; ++i)
 		m_pMesh->DrawSubset(i);
 
@@ -125,11 +129,6 @@ void CapsuleCollider::Editor()
 		return;
 
 	Collider::Editor();
-
-
-	D3DXVECTOR3 vCenter = m_vCenter;
-	if (ImGui::InputFloat3("Center", vCenter))
-		SetCenter(vCenter);
 
 	float fRadius = m_fRadius;
 	if (ImGui::InputFloat("Radius", &fRadius))

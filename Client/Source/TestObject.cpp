@@ -8,7 +8,7 @@
 
 void TestObject::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string TestObject::GetName()
@@ -244,10 +244,10 @@ void TestObject::Editor()
 
 void TestObject::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void TestObject::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

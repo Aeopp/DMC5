@@ -21,7 +21,7 @@
 
 
 USING(ENGINE)
-
+using namespace std;
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
 
@@ -37,5 +37,11 @@ enum GAMEOBJECTTAG
 	Eff_OvertureHand,
 	ThrowCar,
 	TAG_Camera,
+	TAG_RedQueen,
+	TAG_BusterArm_Right,
+	TAG_WireArm,
 	Tag_END
 };
+
+#define OGDistance 2.4f
+#define MaxDistance 3.7f

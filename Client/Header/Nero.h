@@ -14,6 +14,7 @@ class Wire_Arm;
 class WIngArm_Left;
 class WingArm_Right;
 class MainCamera;
+class BtlPanel;
 class Nero :   public GameObject ,
 	public ENGINE::RenderInterface
 
@@ -215,6 +216,14 @@ public:
 		WS_Idle,
 		WS_Battle
 	};
+
+	enum NeroDirection
+	{
+		Dir_Front,
+		Dir_Back,
+		Dir_Left,
+		Dir_Right
+	};
 	
 
 private:
@@ -232,24 +241,29 @@ public:
 /// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
 	void Set_PlayingTime(float NewTime);
+
 public:
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
 	UINT Get_CurAnimationIndex() { return m_iCurAnimationIndex; }
 	UINT Get_PreAnimationIndex() { return m_iPreAnimationIndex; }
+	UINT Get_CurDirIndex() { return m_iCurDirIndex; }
+	UINT Get_PreDirIndex() { return m_iPreDirIndex; }
 	UINT Get_CurWeaponIndex() { return m_iCurWeaponIndex; }
 	UINT Get_JumpCount() { return m_iJumpCount; }
 	UINT Get_JumpDir() { return m_iJumpDirIndex; }
 	std::optional<Matrix> Get_BoneMatrix_ByName(std::string _BoneName);
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
-	UINT Get_RQ_Gage() { return (UINT)m_fRedQueenGage; }
+	bool Get_IsMajinMode() { return m_IsMajin; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_Wings(bool ActiveOrNot);
+	void SetActive_Wing_Left(bool ActiveOrNot);
+	void SetActive_Wing_Right(bool ActiveOrNot);
 	void SetActive_Buster_Arm(bool ActiveOrNot);
 	void SetActive_Wire_Arm(bool ActiveOrNot);
 	void SetActive_WingArm_Right(bool ActiveOrNot);
@@ -258,15 +272,32 @@ public:
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
-	void DecreaseRQ_Gage() { m_fRedQueenGage -= 1; }
+	//카메라
+	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
+	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
 	//테스트
-	void IncreaseRQ_Gage() { m_fRedQueenGage += 1; }
+
+public:
+	//UI관련
+	//EX게이지
+	float Get_ExGauge();
+	uint32 Get_ExGaugeCount();
+	void Add_ExGauge(float ExGauge);
+	void Use_ExGauge(const uint32 Count);
+	//변신게이지
+	float Get_TDTGauge();
+	void AccumulateTDTGauge(const float Amount);
+	void ConsumeTDTGauge(const float Speed = 1.f);
+	//랭크 스코어
+	void AddRankScore(float Score);
 public:
 	//애니메이션 관련
 	void  StopAnimation();
 	void  ContinueAnimiation();
 	bool  IsAnimationEnd();
 public:
+	void ChangeNeroDirection(UINT _NeroDirection);
+	void Change_To_MajinMode() { m_IsMajin = true; }
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex,const AnimNotify& _Notify = {});
 	void ChangeAnimationIndex(const UINT AnimationIndex);
 	void ChangeWeapon(UINT _iWeaponIndex);
@@ -291,6 +322,9 @@ public:
 	void RenderInit();
 
 private:
+	void Update_Majin(float _fDeltaTime);
+
+private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::shared_ptr<NeroFSM> m_pFSM;
 	std::weak_ptr<RedQueen> m_pRedQueen;
@@ -301,12 +335,16 @@ private:
 	std::weak_ptr<WIngArm_Left> m_pWingArm_Left;
 	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
 	std::weak_ptr<MainCamera> m_pCamera;
+	std::weak_ptr<CapsuleCollider> m_pCollider;
+	std::weak_ptr<BtlPanel>			m_pBtlPanel;
 
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
 	UINT	m_iCurWeaponIndex;
 	UINT	m_iJumpDirIndex;
+	UINT	m_iCurDirIndex;
+	UINT	m_iPreDirIndex;
 
 	bool	m_bDebugButton = true;
 	UINT	m_iJumpCount = 0;
@@ -314,6 +352,8 @@ private:
 	float	m_fRedQueenGage = 0.f;
 	float	m_fAngle = 0.f;
 	float	m_fRotationAngle = 0.f;
+
+	bool	m_IsMajin = false;
 };
 
 

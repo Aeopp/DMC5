@@ -1,3 +1,4 @@
+#include "Scene.h"
 #ifndef __SCENE_HPP__
 #define __SCENE_HPP__
 BEGIN(ENGINE)
@@ -15,7 +16,6 @@ inline std::weak_ptr<TYPE> Scene::AddGameObject()
 	std::shared_ptr<GameObject> pGameObject(pInstance, Deleter<Object>());
 
 	pGameObject->SetScene(this);
-	pGameObject->SetGameObject(pGameObject);
 
 	if (FAILED(pGameObject->Ready()))
 	{
@@ -30,6 +30,37 @@ inline std::weak_ptr<TYPE> Scene::AddGameObject()
 	m_Loop[ACTIVE][LOOP_AWAKE].emplace_back(pGameObject);
 
 	return std::static_pointer_cast<TYPE>(pGameObject);
+}
+
+template<typename TYPE>
+inline std::weak_ptr<TYPE> Scene::FindGameObjectWithType()
+{
+	for (UINT i = 0; i < LOOPSTATE::LOOP_END; ++i)
+	{
+		for (auto iter = m_Loop[ACTIVE][i].begin(); iter != m_Loop[ACTIVE][i].end(); ++iter)
+		{
+			if (false == (*iter).expired() && nullptr != std::dynamic_pointer_cast<TYPE>((*iter).lock()))
+				return (*iter);
+		}
+	}
+	return std::weak_ptr<TYPE>();
+}
+
+template<typename TYPE>
+inline std::list<std::weak_ptr<TYPE>> Scene::FindGameObjectsWithType()
+{
+	std::list<std::weak_ptr<TYPE>> findList;
+
+	for (UINT i = 0; i < LOOPSTATE::LOOP_END; ++i)
+	{
+		for (auto iter = m_Loop[ACTIVE][i].begin(); iter != m_Loop[ACTIVE][i].end(); ++iter)
+		{
+			if (false == (*iter).expired() && nullptr != std::dynamic_pointer_cast<TYPE>((*iter).lock()))
+				findList.push_back((*iter));
+		}
+	}
+
+	return findList;
 }
 END
 #endif // !__SCENE_HPP__

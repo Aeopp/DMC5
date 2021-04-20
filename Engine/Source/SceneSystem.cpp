@@ -1,6 +1,8 @@
 #include "SceneSystem.h"
 #include "Scene.h"
 
+#include "PhysicsSystem.h"
+
 USING(ENGINE)
 IMPLEMENT_SINGLETON(SceneSystem)
 
@@ -83,6 +85,9 @@ HRESULT SceneSystem::LoadScene(Scene* const _pScene, const bool _bSceneActivatio
 		return E_FAIL;
 	}
 
+	if(FAILED(PhysicsSystem::GetInstance()->CreateScene(pTemporary->UniqueID)))
+		return E_FAIL;
+	
 	//로딩 쓰레드 생성
 	m_hThread = (HANDLE)_beginthreadex(NULL, 0, LoadingThread, this, 0, NULL);
 
@@ -145,6 +150,7 @@ void SceneSystem::SwitchScene()
 	m_pCurrentScene.reset();
 	//씬 전환
 	m_pCurrentScene = m_pNextScene;
+	PhysicsSystem::GetInstance()->ChangeScene(m_pCurrentScene->UniqueID);
 	//
 	m_pNextScene.reset();
 	//

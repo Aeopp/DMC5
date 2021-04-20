@@ -8,9 +8,11 @@
 #include "Car.h"
 #include "Nero.h"
 #include <filesystem>
+#include "Em5000Hand.h"
 
 void Em5000::Free()
 {
+	GameObject::Free();
 }
 
 std::string Em5000::GetName()
@@ -606,7 +608,7 @@ HRESULT Em5000::Ready()
 
 // 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
+	InitTransform.lock()->SetScale({ 0.015,0.015,0.015 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -616,7 +618,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ -4.f, 32.f, 1.f});
+	m_pTransform.lock()->SetPosition({ 0.f, 0.f, 0.f});
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -624,11 +626,30 @@ HRESULT Em5000::Ready()
 
 HRESULT Em5000::Awake()
 {
-	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
+	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	//
+	//m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
+	//m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
+	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	PushEditEntity(m_pCollider.lock().get());
 
-	m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
-	m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
+
+	for (UINT i = 0; i < 2; ++i)
+	{
+		m_pHand[i] = AddGameObject<Em5000Hand>();
+		m_pHand[i].lock()->m_pEm5000 = static_pointer_cast<Em5000>(m_pGameObject.lock());
+		m_pHand[i].lock()->m_pEm5000Mesh = m_pMesh;
+		m_pHand[i].lock()->m_bLeft = (bool)i;
+	}
+
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(false);
+	
+	m_pCollider.lock()->SetRadius(6.f);
+	m_pCollider.lock()->SetHeight(8.f);
+	m_pCollider.lock()->SetCenter({ 0.f,6.f,-2.f });
 
 	return S_OK;
 }
@@ -703,18 +724,18 @@ UINT Em5000::LateUpdate(const float _fDeltaTime)
 void Em5000::Editor()
 {
 	GameObject::Editor();
-	if (bEdit)
-	{
-
-	}
+	if (false == bEdit)
+		return;
 }
 
 void Em5000::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Em5000::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em5000::RenderGBufferSK(const DrawInfo& _Info)
@@ -829,6 +850,17 @@ void Em5000::RenderInit()
 		[this](const DrawInfo& _Info)
 		{
 			RenderDebugSK(_Info);
+		}
+	} };
+
+	//
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
 		}
 	} };
 	RenderInterface::Initialize(_InitRenderProp);

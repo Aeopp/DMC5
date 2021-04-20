@@ -12,8 +12,8 @@ public:
 	static physx::PxPhysics* GetPxPhysics();
 	static physx::PxMaterial* GetDefaultMaterial();
 
-	static void AddActor(physx::PxActor& _rActor);
-	static void RemoveActor(physx::PxActor& _rActor);
+	static void AddActor(const UINT _nSceneID, physx::PxActor& _rActor);
+	static void RemoveActor(const UINT _nSceneID, physx::PxActor& _rActor);
 };
 END
 #endif // !__PHYSICS_H__

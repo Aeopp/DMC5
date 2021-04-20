@@ -30,6 +30,12 @@ SphereCollider* SphereCollider::Create(std::weak_ptr<GameObject> const _pGameObj
 {
 	SphereCollider* pInstance = new SphereCollider(_pGameObject);
 
+	if (FAILED(pInstance->ReadyCollider()))
+	{
+		delete pInstance;
+		return nullptr;
+	}
+
 	if (nullptr == m_pMesh)
 		D3DXCreateSphere(Graphic::GetDevice(), 0.5f, 10, 10, &m_pMesh, nullptr);
 	else
@@ -41,11 +47,10 @@ SphereCollider* SphereCollider::Create(std::weak_ptr<GameObject> const _pGameObj
 HRESULT SphereCollider::ReadyCollider()
 {
 	m_pMaterial = PhysicsSystem::GetInstance()->GetDefaultMaterial();
-	m_pMaterial->acquireReference();
 	//Create BoxShape
 	m_pShape = PhysicsSystem::GetInstance()->GetPxPhysics()->createShape(PxSphereGeometry(m_fRadius), *m_pMaterial, true);
 	//
-	ReadyCollider();
+	Collider::ReadyCollider();
 	return S_OK;
 }
 
@@ -82,7 +87,7 @@ HRESULT SphereCollider::DrawCollider(const DrawInfo& _Info)
 	matWorld = matScale * matRot * matTrans * matInvScale * m_pGameObject.lock()->GetComponent<Transform>().lock()->GetRenderMatrix();
 
 	_Info.Fx->SetMatrix("World", &matWorld);
-
+	_Info.Fx->CommitChanges();
 	m_pMesh->DrawSubset(0);
 
 	return S_OK;
@@ -90,7 +95,13 @@ HRESULT SphereCollider::DrawCollider(const DrawInfo& _Info)
 
 void SphereCollider::Editor()
 {
+	Component::Editor();
+
 	Collider::Editor();
+
+	float fRadius = m_fRadius;
+	if (ImGui::InputFloat("Radius##SphereCollider", &fRadius))
+		SetRadius(fRadius);
 }
 
 float SphereCollider::GetRadius()
