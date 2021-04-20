@@ -215,7 +215,7 @@ UINT Em101::Update(const float _fDeltaTime)
 
 UINT Em101::LateUpdate(const float _fDeltaTime)
 {
-	GameObject::LateUpdate();
+	GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 
 }

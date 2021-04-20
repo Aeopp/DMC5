@@ -27,6 +27,32 @@ void GameObject::Free()
 	Object::Free();
 }
 
+HRESULT GameObject::Ready()
+{
+	return S_OK;
+}
+
+HRESULT GameObject::Awake()
+{
+	return S_OK;
+}
+
+HRESULT GameObject::Start()
+{
+	return S_OK;
+}
+
+UINT GameObject::Update(const float _fDeltaTime)
+{
+	m_pTransform.lock()->UpdateTransform();
+	return 0;
+}
+
+UINT GameObject::LateUpdate(const float _fDeltaTime)
+{
+	return 0;
+}
+
 std::weak_ptr<GameObject> GameObject::FindGameObjectWithTag(const UINT& _nTag)
 {
 	return m_pScene->FindGameObjectWithTag(_nTag);
@@ -127,12 +153,6 @@ void GameObject::DrawCollider(const DrawInfo& _Info)
 			return;
 		}
 	}
-}
-
-UINT GameObject::Update(const float _fDeltaTime)
-{
-	m_pTransform.lock()->UpdateTransform();
-	return 0;
 }
 
 void GameObject::Editor()

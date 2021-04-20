@@ -84,7 +84,7 @@ UINT Em100Hand::Update(const float _fDeltaTime)
 
 UINT Em100Hand::LateUpdate(const float _fDeltaTime)
 {
-	GameObject::LateUpdate();
+	GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
