@@ -1,26 +1,35 @@
-#ifndef __BLOOD_H__
-#define __BLOOD_H__
-#include "GameObject.h"
-#include "RenderInterface.h"
+#ifndef __EFF_BLOOD_H__
+#define __EFF_BLOOD_H__
+#include "Effect.h"
 
-class Blood : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+class Blood final : public Effect
 {
 private:
-	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _Blood0Mesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _Blood1Mesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _Blood2Mesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _Blood3Mesh{};
+	std::shared_ptr<ENGINE::Texture> _BloodALB0Tex{};
+	std::shared_ptr<ENGINE::Texture> _BloodNRMR0Tex{};
+
+	uint32 _SubsetIdx = 0u;	// 애니메이션 프레임 같은 역할
+	uint32 _SubsetMaxIdx = 0u;
+
+	uint32 _VariationIdx = 0u;	// 총 베리에이션. 4종
+
 private:
 	explicit Blood() = default;
 	virtual ~Blood() = default;
-	// GameObject을(를) 통해 상속됨
+	// Effect을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
-
+	virtual void Reset() override;
+	virtual void Imgui_Modify() override;
+private:
+	void RenderInit();
+	void RenderGBuffer(const DrawInfo& _Info);
 public:
 	static Blood* Create();
-public:
-	 void    RenderForwardAlphaBlendImplementation(const DrawInfo& _ImplInfo);
-	void    RenderDebugImplementation(const DrawInfo& _ImplInfo);
-	virtual void    RenderReady()                          override;
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -30,12 +39,7 @@ public:
 	virtual void    Editor()override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
-
-
-private:
-
-	float   m_fTextTime = 0.f;
-	int		m_iIndex = 0;
-	bool	m_bTest = false;
+public:
+	void SetVariationIdx(const uint32 Idx);
 };
-#endif //
+#endif // !__EFF_BLOOD_H__

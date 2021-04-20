@@ -35,6 +35,7 @@ enum GAMEOBJECTTAG
 	UI_BtlPanel,
 	Eff_Glint,
 	Eff_OvertureHand,
+	Eff_Blood,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,

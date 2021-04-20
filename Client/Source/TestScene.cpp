@@ -16,6 +16,7 @@
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
+#include "Blood.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -41,15 +42,15 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
-	//AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<Nero>();
-	AddGameObject<Em100>();
+	//AddGameObject<Nero>();
+	//AddGameObject<Em100>();
 	//AddGameObject<Car>();
 	
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<ShaderTester>();
 	
@@ -67,9 +68,9 @@ HRESULT TestScene::LoadScene()
 
 	AddGameObject<Glint>();
 	AddGameObject<OvertureHand>();
-
+	AddGameObject<Blood>();
+ 
 	//AddGameObject<DashImpact>();
-	//AddGameObject<Blood>();
 
 	return S_OK;
 }

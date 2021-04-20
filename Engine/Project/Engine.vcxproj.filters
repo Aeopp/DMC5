@@ -428,6 +428,9 @@
       <Filter>03.Utility\00.Component</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\FileHelper.h" />
+    <ClInclude Include="..\..\Resource\Shader\Effect\Blood.hlsl">
+      <Filter>04.HLSL\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">

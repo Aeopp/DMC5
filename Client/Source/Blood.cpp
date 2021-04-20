@@ -16,95 +16,119 @@ std::string Blood::GetName()
 	return "Blood";
 };
 
+void Blood::Reset()
+{
+	_SubsetIdx = 0u;
+
+	Effect::Reset();
+}
+
+void Blood::Imgui_Modify()
+{
+	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+		Sptransform)
+	{
+		ImGui::Text("Eff_Blood : %d", _VariationIdx);
+		{
+			Vector3 SliderPosition = Sptransform->GetPosition();
+			ImGui::SliderFloat3("Pos##Blood", SliderPosition, -10.f, 10.f);
+			Sptransform->SetPosition(SliderPosition);
+		}
+
+		{
+			float Scale = Sptransform->GetScale().x;
+			ImGui::SliderFloat("Scale##Blood", &Scale, 0.1f, 1.f);
+			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
+			SetScale(Scale);
+		}
+
+		{
+			float PlayingSpeed = _PlayingSpeed;
+			ImGui::SliderFloat("PlayingSpeed##Blood", &PlayingSpeed, 0.1f, 10.f);
+			_PlayingSpeed = PlayingSpeed;
+		}
+	}
+}
+
+void Blood::RenderInit()
+{
+	SetRenderEnable(true);
+
+	ENGINE::RenderProperty _InitRenderProp;
+	_InitRenderProp.bRender = false;
+	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	{
+		{"Blood",
+		[this](const DrawInfo& _Info)
+			{
+				this->RenderGBuffer(_Info);
+			}
+		},
+	};
+	RenderInterface::Initialize(_InitRenderProp);
+}
+
+void Blood::RenderGBuffer(const DrawInfo& _Info)
+{
+	const Matrix World = _RenderUpdateInfo.World;
+	_Info.Fx->SetMatrix("matWorld", &World);
+
+	weak_ptr<ENGINE::Subset> WeakSubset;
+	switch (_VariationIdx)
+	{
+	case 0u:
+		WeakSubset = _Blood0Mesh->GetSubset(_SubsetIdx);
+		break;
+	case 1u:
+		WeakSubset = _Blood1Mesh->GetSubset(_SubsetIdx);
+		break;
+	case 2u:
+		WeakSubset = _Blood2Mesh->GetSubset(_SubsetIdx);
+		break;
+	case 3u:
+		WeakSubset = _Blood3Mesh->GetSubset(_SubsetIdx);
+		break;
+	}
+
+	if (auto SharedSubset = WeakSubset.lock();
+		SharedSubset)
+	{
+		_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
+		_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
+		SharedSubset->Render(_Info.Fx);
+	}
+}
+
 Blood* Blood::Create()
 {
 	return new Blood{};
 }
 
-
-void Blood::RenderForwardAlphaBlendImplementation(
-	const DrawInfo& _ImplInfo)
-{
-	const uint64 NumSubset = _StaticMesh->GetNumSubset();
-	for (uint64 SubsetIdx = 0u; SubsetIdx < NumSubset; ++SubsetIdx)
-	{
-		auto WeakSubset = _StaticMesh->GetSubset(m_iIndex);
-		if (auto SharedSubset = WeakSubset.lock();
-			SharedSubset)
-		{
-			const auto& VtxBufDesc = SharedSubset->GetVertexBufferDesc();
-			SharedSubset->BindProperty(TextureType::DIFFUSE, 0u, "ALBM0Map", _ImplInfo.Fx);
-			SharedSubset->BindProperty(TextureType::NORMALS, 0u, "NRMR0Map", _ImplInfo.Fx);
-			SharedSubset->Render(_ImplInfo.Fx);
-		}
-	}
-};
-
-void Blood::RenderDebugImplementation(const DrawInfo& _ImplInfo)
-{
-	const uint64 NumSubset = _StaticMesh->GetNumSubset();
-	for (uint64 SubsetIdx = 0u; SubsetIdx < NumSubset; ++SubsetIdx)
-	{
-		auto WeakSubset = _StaticMesh->GetSubset(SubsetIdx);
-		if (auto SharedSubset = WeakSubset.lock();
-			SharedSubset)
-		{
-			SharedSubset->Render(_ImplInfo.Fx);
-		}
-	}
-};
-
-void Blood::RenderReady()
-{
-	auto _WeakTransform = GetComponent<ENGINE::Transform>();
-	if (auto _SpTransform = _WeakTransform.lock();
-		_SpTransform)
-	{
-		_RenderProperty.bRender = true;
-		ENGINE::RenderInterface::UpdateInfo _UpdateInfo{};
-		_UpdateInfo.World = _SpTransform->GetRenderMatrix();
-	}
-}
-
 HRESULT Blood::Ready()
 {
-	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
-	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
-	SetRenderEnable(true);
+	RenderInit();
 
-	// 렌더 정보 초기화 ...
-	ENGINE::RenderProperty _InitRenderProp;
-	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
-	_InitRenderProp.bRender = true;
-	// 넘겨준 패스에서는 렌더링 호출 보장 . 
-	/*_InitRenderProp.RenderOrders =
-	{
-		RenderProperty::Order::ForwardAlphaBlend,
-		RenderProperty::Order::Debug
-	};*/
-	RenderInterface::Initialize(_InitRenderProp);
-	// 
+	m_nTag = GAMEOBJECTTAG::Eff_Blood;
 
-	// 
-
-	// 스태틱 메쉬 로딩
-	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Blood_4\\Blood4.fbx");
-	PushEditEntity(_StaticMesh.get());
-
-	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.3f,0.3f,0.3f });
-	PushEditEntity(InitTransform.lock().get());
+	InitTransform.lock()->SetScale({ 0.3f, 0.3f, 0.3f });
 
-	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
-	// PushEditEntity(_ShaderInfo.ForwardAlphaBlendShader.get());
+	_Blood0Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Blood\\Blood1.fbx");
+	_Blood1Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Blood\\Blood2.fbx");
+	_Blood2Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Blood\\Blood3.fbx");
+	_Blood3Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Blood\\Blood4.fbx");
+	_BloodALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_splash00_00_ALBM.tga");
+	_BloodNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_liquid_splash00_00_00_NRMR.tga");
+
+	_PlayingSpeed = 1.f;
+
+	SetVariationIdx(_VariationIdx);
 
 	return S_OK;
 };
 
 HRESULT Blood::Awake()
 {
-
 	return S_OK;
 }
 
@@ -115,31 +139,16 @@ HRESULT Blood::Start()
 
 UINT Blood::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Effect::Update(_fDeltaTime);
 
-	if (Input::GetKeyDown(DIK_Y))
-	{
-		if (m_bTest == true)
-			m_bTest = false;
-		else if (m_bTest == false)
-			m_bTest = true;
-	}
+	//
+	_SubsetIdx = static_cast<uint32>(_AccumulateTime);
+	if (_SubsetMaxIdx < _SubsetIdx)
+		Reset();
 
-	if (m_bTest == true)
-	{
-		m_fTextTime += _fDeltaTime * 40;
-	}
-	else
-		m_fTextTime = 0.f;
+	//
+	Imgui_Modify();
 
-	if (m_fTextTime >= 1.f)
-	{
-		m_iIndex++;
-		m_fTextTime = 0.f;
-	}
-
-	if (m_iIndex >= 17)
-		m_iIndex = 0;
 	return 0;
 }
 
@@ -153,7 +162,6 @@ void Blood::Editor()
 	GameObject::Editor();
 }
 
-
 void Blood::OnEnable()
 {
 	GameObject::OnEnable();
@@ -162,4 +170,30 @@ void Blood::OnEnable()
 void Blood::OnDisable()
 {
 	GameObject::OnDisable();
+}
+
+void Blood::SetVariationIdx(const uint32 Idx)
+{
+	if (Idx < 0u || Idx > 3u)
+		return;
+
+	Reset();
+
+	switch (Idx)
+	{
+	case 0u:
+		_SubsetMaxIdx = 15u;
+		break;
+	case 1u:
+		_SubsetMaxIdx = 17u;
+		break;
+	case 2u:
+		_SubsetMaxIdx = 25u;
+		break;
+	case 3u:
+		_SubsetMaxIdx = 21u;
+		break;
+	}
+
+	_VariationIdx = Idx;
 }
