@@ -4,9 +4,10 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-#include "TestObject.h"
 #include <filesystem>
 #include "Em100Hand.h"
+#include "Nero.h"
+#include "RedQueen.h"
 
 void Em100::Free()
 {
@@ -47,10 +48,27 @@ void Em100::Fight(const float _fDeltaTime)
 			m_fAttackTime = 0.f;
 		}
 	}
+	if (m_bHardAttack == false && m_BattleInfo.iHp <= 100)
+	{
+		m_fHardAttackTime += _fDeltaTime;
+		if (m_fHardAttackTime >= 7.f)
+		{
+			m_bHardAttack = true;
+			m_fHardAttackTime = 0.f;
+		}
+	}
 
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
+
+
+	if (m_BattleInfo.iHp <= 0.f)
+	{
+		m_eState = Dead;
+		m_bIng = true;
+		return;
+	}
 
 	//몬스터 움직이는 방향 정해주는 놈
 	int iRandom = FMath::Random<int>(1, 6);
@@ -80,6 +98,13 @@ void Em100::Fight(const float _fDeltaTime)
 	//플레이어랑 어느정도 가까워 졌으면 공격.	
 	if (fDir <= 6.f)
 	{
+		if (m_bHardAttack && m_bIng == false)
+		{
+			m_bIng = true;
+			m_eState = Attack_Hard;
+			return;
+		}
+
 		if (m_bAttack && m_bIng == false)
 		{
 			//체력이50% 이상일땐 Attack_A, Attack_D 둘중 하나 이거 두개는 그냥 넉백 히트
@@ -109,6 +134,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
+			m_BattleInfo.eAttackType = Attack_Normal;
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->PlayingTime() >= 0.9f)
 				{
@@ -123,6 +149,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_D", false, {}, 1.f, 50.f, true);
+			m_BattleInfo.eAttackType = Attack_Normal;
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
@@ -132,8 +159,23 @@ void Em100::State_Change(const float _fDeltaTime)
 		}
 		break;
 	case Em100::Attack_Hard:
+		if (m_bIng == true)
+		{
+			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 20.f, true);
+			m_BattleInfo.eAttackType = Attack_KnocBack;
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.9f)
+			{
+				m_eState = idle;
+				m_bIng = false;
+				m_bHardAttack = false;
+			}
+		}
 		break;
 	case Em100::Dead:
+		if (m_bIng == true)
+		{
+			m_pMesh->PlayAnimation("Dead", false, {}, 1.f, 20.f, true);
+		}
 		break;
 	case Em100::Hit_Air:
 		break;
@@ -239,6 +281,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		break;
 	case Em100::idle:
 		m_pMesh->PlayAnimation("idle", true, {}, 1.f, 50.f, true);
+		m_BattleInfo.eAttackType = Attack_END;
 		break;
 	default:
 		break;
@@ -256,6 +299,14 @@ HRESULT Em100::Ready()
 	GameObject::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster100;
+
+	m_BattleInfo.iMaxHp = 200;
+	m_BattleInfo.iHp = 200;
+	m_BattleInfo.iAttack = 20;
+
+	m_pTransform.lock()->SetPosition({ 0.f, 5.f, 5.f });
+	
+	
 
 	RenderInit();
 // 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -300,8 +351,9 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetHeight(1.5f);
 	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
 
-	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
 
 	return S_OK;
@@ -360,6 +412,10 @@ UINT Em100::Update(const float _fDeltaTime)
 		Fight(_fDeltaTime);
 		State_Change(_fDeltaTime);
 	}
+	if (Input::GetKeyDown(DIK_Y))
+		m_BattleInfo.iHp -= 10;
+
+	cout << m_BattleInfo.iHp << endl;
 
 	Rotate(_fDeltaTime);
 
@@ -400,7 +456,12 @@ void Em100::OnDisable()
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	int i = 0;
+	if (m_bCollEnable == true)
+	{
+
+
+		m_bCollEnable = false;
+	}
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)

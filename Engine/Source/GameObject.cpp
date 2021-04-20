@@ -13,14 +13,14 @@ GameObject::GameObject()
 	, m_bStatic(false)
 	, m_bDestroy(false)
 	, m_bRenderRegist(false)
+	, m_bCollEnable(false)
 {
 	m_pTransform = AddComponent<Transform>();
 }
 
 void GameObject::Free()
 {
-	GameObject::Free();
-
+	
 	Object::Free();
 }
 
@@ -117,9 +117,19 @@ BT_INFO GameObject::Get_BattleInfo()
 	return m_BattleInfo;
 }
 
+bool GameObject::Get_Coll()
+{
+	return m_bCollEnable;
+}
+
 void GameObject::SetScene(Scene* const _pScene)
 {
 	m_pScene = _pScene;
+}
+
+void GameObject::Set_Coll(const bool _bColl)
+{
+	m_bCollEnable = _bColl;
 }
 
 void GameObject::SetGameObject(std::weak_ptr<GameObject> _pGameObject)
