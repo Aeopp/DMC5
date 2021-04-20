@@ -34,7 +34,6 @@ float ShadowDepthBias;
 
 float shadowmin = 0.0f;
 
-
 void vs_main(
 	in out float4 pos : POSITION,
 	in out float2 tex : TEXCOORD0)
@@ -56,7 +55,7 @@ float ShadowVariance(float2 moments, float d)
 }
 
 float3 Luminance_Blinn_Directional(float3 albedo, 
-float3 wpos, float3 wnorm ,float roughness,float metalness)
+float3 wpos, float3 wnorm)
 {
 	// the sun has an angular diameter between [0.526, 0.545] degrees
     float3 v = normalize(eyePos.xyz - wpos);
@@ -80,7 +79,7 @@ float3 wpos, float3 wnorm ,float roughness,float metalness)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float   f_specular = pow(ndoth, specularPower) * (1.0f - roughness);
+    float f_specular = pow(ndoth, specularPower);
     
     float costheta = saturate(dot(n, D));
     float illuminance = lightIlluminance * costheta;
@@ -92,7 +91,6 @@ float3 wpos, float3 wnorm ,float roughness,float metalness)
 
     // float2 ptex = (lspos.xy / lspos.w) * float2(0.5f, -0.5f) + 0.5f;
     // float2 moments = tex2D(shadowMap, ptex).rg;
-    
     
     // 쉐도우 시작
     float4 LightClipPosition = mul(float4(wpos.xyz, 1.f), lightViewProj);
@@ -136,9 +134,7 @@ float3 wpos, float3 wnorm ,float roughness,float metalness)
         lightColor * illuminance * Shadow;
 }
 
-float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, 
-float roughness,
-float metalness)
+float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
 {
     float3 ldir = lightPos.xyz - wpos;
 
@@ -152,7 +148,7 @@ float metalness)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float f_specular = pow(ndoth, specularPower)  * (1.0f - roughness);
+    float f_specular = pow(ndoth, specularPower);
     
 	// calculate shadow
     float shadow = 1.f;
@@ -177,7 +173,7 @@ void ps_deferred(
 {
     // 감마 보정은 Device 세팅을 조절해서 결정 !
     // 알베도 + 메탈
-    float4 albm = tex2D(albedo, tex);
+    float4 albm = tex2D(albedo,  tex);
     // 월드 노말 + 거칠기 
     float4 nrmr = tex2D(normals, tex); 
     float3 wnorm = nrmr.xyz * 2.0f - 1.0f;
@@ -197,9 +193,7 @@ void ps_deferred(
             color.rgb = Luminance_Blinn_Directional(
             albm.rgb, 
             wpos.xyz, 
-            wnorm,
-            nrmr.a ,
-            albm.a);
+            wnorm);
         }
         else 
         {
@@ -208,9 +202,7 @@ void ps_deferred(
             Luminance_Blinn_Point(
             albm.rgb, 
             wpos.xyz, 
-            wnorm, 
-            nrmr.a,
-            albm.a);
+            wnorm);
         }
 
         color.a = 1;
