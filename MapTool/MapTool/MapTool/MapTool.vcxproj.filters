@@ -22,6 +22,39 @@
     <Filter Include="98.ImGUI">
       <UniqueIdentifier>{f839980a-2b1a-4b2f-8d60-c027024f3c5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.FileBrowser">
+      <UniqueIdentifier>{8c46a7af-925e-47e7-a9c8-078bde7e22c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Inspector">
+      <UniqueIdentifier>{eebd57e1-7011-4fd8-a4d4-0ef08c10e0e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Utility">
+      <UniqueIdentifier>{7f490229-0bbe-4497-85b5-690f9610de37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Utility\00.Component">
+      <UniqueIdentifier>{e65e12f7-54bc-4989-af09-34d76a6dbed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Utility\01.GameObject">
+      <UniqueIdentifier>{577527f0-a7c5-447f-b82f-938d253c1073}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Resource">
+      <UniqueIdentifier>{59953342-bdc6-43f0-a0d5-0b3f2d41ec33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Log">
+      <UniqueIdentifier>{3299744e-f914-400d-ab6f-e2048be47160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Camera">
+      <UniqueIdentifier>{b35b7801-e684-454b-b55e-1dee6cf2eb03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.Input">
+      <UniqueIdentifier>{bee461b2-1a5c-456d-993c-cf9e0f55c2ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Grid">
+      <UniqueIdentifier>{a9300f83-be6c-4e1d-b185-2f87b7cb7ede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Physics">
+      <UniqueIdentifier>{0f782fb8-19a0-45eb-a9e5-9228a015fc9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MapTool.h">
@@ -69,6 +102,49 @@
     <ClInclude Include="..\..\..\Reference\Header\imgui\imstb_truetype.h">
       <Filter>98.ImGUI</Filter>
     </ClInclude>
+    <ClInclude Include="FileBrowser.h">
+      <Filter>02.FileBrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="Inspector.h">
+      <Filter>03.Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>04.Utility\00.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>04.Utility\01.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>05.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>04.Utility\01.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMesh.h">
+      <Filter>05.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Subset.h">
+      <Filter>05.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>05.Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>06.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>97.Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>96.Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -111,5 +187,42 @@
     <ClCompile Include="..\..\..\Engine\Source\imgui\imgui_widgets.cpp">
       <Filter>98.ImGUI</Filter>
     </ClCompile>
+    <ClCompile Include="FileBrowser.cpp">
+      <Filter>02.FileBrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="Inspector.cpp">
+      <Filter>03.Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>04.Utility\00.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>04.Utility\01.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>05.Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
+      <Filter>04.Utility\01.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMesh.cpp">
+      <Filter>05.Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Subset.cpp">
+      <Filter>05.Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>05.Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>06.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>97.Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>96.Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp" />
   </ItemGroup>
 </Project>
