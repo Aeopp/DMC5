@@ -4,6 +4,8 @@
 #include "framework.h"
 #include "MapTool.h"
 #include "Graphic.h"
+#include "FileBrowser.h"
+#include "Physics.h"
 
 HWND		g_hWnd = NULL;
 HINSTANCE	g_hInstance = NULL;
@@ -12,6 +14,7 @@ int			g_nWndCY = 720;
 
 LPDIRECT3DDEVICE9 g_pDevice = nullptr;
 
+std::filesystem::path		g_BasePath = "";
 #define MAX_LOADSTRING 128
 
 #pragma region GLOBAL VARIABLE
@@ -34,7 +37,6 @@ void  SetupImGuiStyle(bool bStyleDark_, float alpha_);
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdParam, int nCmdShow)
 {
 	Graphic graphic;
-
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif // _DEBUG
@@ -57,7 +59,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 	if(FAILED(graphic.ReadyGraphic()))
 		return 0;
 
+	g_BasePath = TEXT("../../../Resource/");
+	g_BasePath = filesystem::canonical(g_BasePath);
+
+	g_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	if (FAILED(Input::ReadyInput()))
+		return 0;
+	if (FAILED(Grid::Ready()))
+		return 0;
 	ImGuiSetUp();
+
+	Physics::Ready();
 
 	// 메시지 루프.
 	MSG tMessage;
@@ -71,45 +84,27 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 			DispatchMessage(&tMessage);
 		}
 
+		Input::UpdateInput();
+
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 		ImGui::ShowDemoWindow();
-
-		g_pDevice->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 1.f, 1.f), 1.f, 0);
-		g_pDevice->BeginScene();
-
-		ImGui::SetNextWindowSize(ImVec2(400, 200));
-		ImGui::Begin("Test", nullptr,ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar);
-		ImGuiStyle& style = ImGui::GetStyle();
-
-		float frame_height = ImGui::GetFrameHeight();
-		float list_item_height = ImGui::GetFontSize() + style.ItemSpacing.y;
 		
-		ImVec2 pw_content_size = ImGui::GetWindowSize()  ;
-		ImVec2 sw_size = ImVec2(ImGui::CalcTextSize("Random").x + 140, style.WindowPadding.y * 2.0f + frame_height);
-		ImVec2 sw_content_size = sw_size  ;
-		ImVec2 nw_size = ImVec2(pw_content_size.x - style.ItemSpacing.x - sw_size.x, sw_size.y);
-		ImGui::BeginChild("##NavigationWindow", nw_size, true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar);
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.882f, 0.745f, 0.078f, 1.0f));
-
-		ImGui::Button("test");
-		ImGui::Button("test2");
-		if (ImGui::IsItemClicked(ImGuiMouseButton_::ImGuiMouseButton_Left))
-		{
-			std::cout << "Button" << std::endl;
-		}
-		ImGui::PopStyleColor();
-
-		ImGui::EndChild();
-		ImGui::End();
-		/*ImGui::BeginMenuBar();
-		ImGui::EndMenuBar();*/
+		ImGui::GetStyle().Alpha = 1.f;
+		Inspector::Instance.Update();
+		FileBrowser::Instance.Update();
+		GameObjectManager::Instance.Update();
+		ResourceManager::Instance.Update();
+		Camera::Update();
 
 		ImGui::EndFrame();
+		g_pDevice->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 1.f, 1.f), 1.f, 0);
+		g_pDevice->BeginScene();
+		Grid::Draw();
+		GameObjectManager::Instance.Render();
 		ImGui::Render();
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-
 		g_pDevice->EndScene();
 		g_pDevice->Present(NULL, NULL, NULL, NULL);
 	}
@@ -118,6 +113,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+
 
 	return int(tMessage.wParam);
 }
