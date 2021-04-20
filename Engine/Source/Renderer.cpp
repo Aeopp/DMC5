@@ -1492,7 +1492,7 @@ HRESULT Renderer::RenderInsulatorMetal()&
 	auto Fx = Shaders["InsulatorMetal"]->GetEffect(); 
 	Fx->Begin(nullptr,0);
 	Fx->BeginPass(0);
-	Fx->SetMatrix("matViewProj", &_RenderInfo.ViewProjection);
+	Fx->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjection);
 	Fx->SetVector("eyePos", &_RenderInfo.Eye); 
 	Fx->SetFloatArray("pixelSize", pixelSize, 2);
 	_Quad->Render(Device, 1.f, 1.f, Fx);

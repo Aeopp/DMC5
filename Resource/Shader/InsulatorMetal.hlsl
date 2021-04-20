@@ -10,7 +10,7 @@ uniform samplerCUBE irradiance1 : register(s4);
 uniform samplerCUBE irradiance2 : register(s5);
 uniform sampler2D   brdfLUT     : register(s6);
 
-uniform matrix matViewProj;
+uniform matrix matViewProjInv;
 
 uniform float4 eyePos;
 uniform float2 pixelSize;
@@ -37,7 +37,7 @@ void ps_main(
         float3 albedo = albm.rgb;
         // 월드 위치 언패킹
         float4 wpos = float4(tex.x * 2 - 1, 1 - 2 * tex.y, depth, 1);
-        wpos = mul(wpos, matViewProj);
+        wpos = mul(wpos, matViewProjInv);
         wpos /= wpos.w;
         float metal = saturate(albm.a);
         float roughness = saturate(nrmr.a);
