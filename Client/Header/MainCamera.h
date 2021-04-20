@@ -29,6 +29,9 @@ public:
     void Set_PlayerCamMode(UINT _ePlayerCamMode) { m_ePlayerCamMode = _ePlayerCamMode; }
     void Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eAtType);
 public:
+    void DecreaseDistance(float _GoalDis,float _fDeltaTime);
+    void IncreaseDistance(float _GoalDis, float _fDeltaTime);
+public:
     virtual std::string GetName() override;
     virtual void Editor()override;
 private:
@@ -59,9 +62,11 @@ private:
     float   m_fRotX = 0.f;
     float   m_fFloatingAmount = 0.f;
     //////////////////////////////////////////
+    float   m_fDecreaseFactor = 0.f;
+    float   m_fIncreaseFactor = 0.f;
 
-
-
+    float   m_fTest1;
+    float   m_fTest2;
 
 
 

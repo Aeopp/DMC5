@@ -7,10 +7,12 @@
 Buster_Arm::Buster_Arm()
 	:m_bIsRender(false)
 {
+	m_nTag = TAG_BusterArm_Right;
 }
 
 void Buster_Arm::Free()
 {
+	GameObject::Free();
 }
 
 Buster_Arm* Buster_Arm::Create()
@@ -20,6 +22,7 @@ Buster_Arm* Buster_Arm::Create()
 
 HRESULT Buster_Arm::Ready()
 {
+	//GameObject::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
@@ -32,24 +35,29 @@ HRESULT Buster_Arm::Ready()
 
 HRESULT Buster_Arm::Awake()
 {
+	//GameObject::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	
+	m_pCollider = AddComponent<SphereCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	m_pCollider.lock()->SetTrigger(true);
+	PushEditEntity(m_pCollider.lock().get());
 
 	return S_OK;
 }
 
 HRESULT Buster_Arm::Start()
 {
+	//GameObject::Start();
 	return S_OK;
 }
 
 UINT Buster_Arm::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
-	float fCurAnimationTime = m_pMesh->PlayingTime();
-
-	if (0.95 <= fCurAnimationTime)
+	if (m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);
 	}
@@ -59,11 +67,13 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 
 UINT Buster_Arm::LateUpdate(const float _fDeltaTime)
 {
+	//GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Buster_Arm::OnEnable()
 {
+	GameObject::OnEnable();
 	m_bIsRender = true;
 
 	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
@@ -73,8 +83,8 @@ void Buster_Arm::OnEnable()
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
 
 	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
-	NeroWorld._41 += PlayerLook.x * -1.7;
-	NeroWorld._43 += PlayerLook.z * -1.7;
+	NeroWorld._41 += PlayerLook.x * -0.5;
+	NeroWorld._43 += PlayerLook.z * -0.5;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
@@ -84,6 +94,7 @@ void Buster_Arm::OnEnable()
 
 void Buster_Arm::OnDisable()
 {
+	GameObject::OnDisable();
 	m_bIsRender = false;
 	m_pMesh->SetPlayingTime(0);
 
@@ -131,6 +142,15 @@ void Buster_Arm::RenderInit()
 		[this](const DrawInfo& _Info)
 		{
 			RenderDebugSK(_Info);
+		}
+	} };
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
 		}
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
@@ -250,7 +270,7 @@ void Buster_Arm::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

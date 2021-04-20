@@ -40,6 +40,7 @@ public:
 private:
 	std::weak_ptr<Nero>					m_pNero;
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
+	std::weak_ptr<CapsuleCollider> m_pCollider;
 
 	std::vector<Matrix*>					m_vecParentMat;
 	UINT								m_iStateIndex = 0;

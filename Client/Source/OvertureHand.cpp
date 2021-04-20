@@ -8,7 +8,7 @@
 
 void OvertureHand::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string OvertureHand::GetName()
@@ -120,6 +120,8 @@ HRESULT OvertureHand::Start()
 
 UINT OvertureHand::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
+
 	_AccumulateTime += _PlayingSpeed * _fDeltaTime;
 	if (1.5f < _AccumulateTime)
 	{
@@ -167,10 +169,10 @@ void OvertureHand::Editor()
 
 void OvertureHand::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void OvertureHand::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

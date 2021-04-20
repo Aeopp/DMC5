@@ -19,6 +19,7 @@ MainCamera::~MainCamera()
 
 void MainCamera::Free()
 {
+	GameObject::Free();
 }
 
 MainCamera* MainCamera::Create()
@@ -42,10 +43,13 @@ HRESULT MainCamera::Ready()
 
 
 	m_fCameraAngle = 35.f;
-	m_fDistanceToTarget = 3.1f;
+	m_fDistanceToTarget = OGDistance;
 
 	m_fRotX = -17.1f;
 	m_fFloatingAmount = 1.6f;
+
+	m_fDecreaseFactor = 5.f;
+	m_fIncreaseFactor = 0.7f;
 
 	return S_OK;
 }
@@ -72,6 +76,7 @@ HRESULT MainCamera::Start()
 
 UINT MainCamera::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	if (Input::GetKeyDown(DIK_RSHIFT))
 		m_bFix = !m_bFix;
 	Mouse_Fix();
@@ -99,16 +104,43 @@ UINT MainCamera::LateUpdate(const float _fDeltaTime)
 
 void MainCamera::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void MainCamera::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void MainCamera::Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eAtType)
 {
 	m_pAtTranform = _pTransform;
 	m_eAtType = _eAtType;
+}
+
+void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
+{
+	if (m_fDistanceToTarget <= _GoalDis)
+	{
+		m_fDecreaseFactor = 5.f;
+		return;
+	}
+	if (m_fDecreaseFactor >= 0.4f)
+		m_fDecreaseFactor -= 0.4f;
+	m_fIncreaseFactor = 0.7f;
+	m_fDistanceToTarget -= m_fDecreaseFactor * _fDeltaTime;
+}
+
+void MainCamera::IncreaseDistance(float _GoalDis, float _fDeltaTime)
+{
+	if (m_fDistanceToTarget >= _GoalDis)
+	{
+		m_fIncreaseFactor = 0.7f;
+		return;
+	}
+	m_fDecreaseFactor = 5.f;
+	m_fIncreaseFactor += 0.1f;
+	m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
 }
 
 std::string MainCamera::GetName()
@@ -127,6 +159,8 @@ void MainCamera::Editor()
 		ImGui::InputScalar("Sensitive", ImGuiDataType_Float, &m_fSensitive, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("RotX", ImGuiDataType_Float, &m_fRotX, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("FloatingAmount", ImGuiDataType_Float, &m_fFloatingAmount, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("Test1", ImGuiDataType_Float, &m_fTest1, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("Test2", ImGuiDataType_Float, &m_fTest2, MyButton ? &ZeroDotOne : NULL);
 	}
 }
 
@@ -173,8 +207,8 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	{
 		//m_fDistanceToTarget -= dwMouseMove / 100.f;
 	}
-	if (m_fRotX <= -33.f)
-		m_fRotX = -33.f;
+	if (m_fRotX <= -37.f)
+		m_fRotX = -37.f;
 	if (m_fRotX >= 10.f)
 		m_fRotX = 10.f;
 

@@ -3,7 +3,7 @@
 
 #include "Monster.h"
 
-
+class Em0000Weapon;
 class TestObject;
 class Em0000 final : public Monster
 {
@@ -39,8 +39,6 @@ private:
 		Air_End,
 		State_END
 	};
-
-
 
 private:
 	explicit Em0000() = default;
@@ -94,10 +92,12 @@ private:
 	//잠깐, 막기!
 	bool		m_bGuard = false;
 	float		m_fGuardTime = 0.f;
-	
 
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
+	
+	weak_ptr<Em0000Weapon>    m_pWeapon;
+	weak_ptr<CapsuleCollider> m_pCollider;
 };
 
 #endif // Em0000_h__

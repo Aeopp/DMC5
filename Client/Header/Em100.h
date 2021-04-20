@@ -5,6 +5,7 @@
 
 
 class TestObject;
+class Em100Hand;
 class Em100 final : public Monster
 {
 private:
@@ -49,8 +50,6 @@ private:
 public:
 	static Em100* Create();
 public:
-
-
 	virtual void Fight(const float _fDeltaTime)override;
 	virtual void State_Change(const float _fDeltaTime)override;
 	virtual void Skill_CoolTime(const float _fDeltaTime)override;
@@ -64,7 +63,8 @@ public:
 	virtual void Editor() override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
-
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -90,6 +90,9 @@ private:
 
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
+
+	weak_ptr<Em100Hand>		m_pHand[2];
+	weak_ptr<CapsuleCollider> m_pCollider;
 };
 
 #endif // Em100_h__

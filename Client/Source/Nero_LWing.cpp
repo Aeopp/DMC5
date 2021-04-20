@@ -5,11 +5,13 @@
 #include "Nero.h"
 Nero_LWing::Nero_LWing()
 	:m_bIsRender(false)
+	,m_pParentBoneMat(nullptr)
 {
 }
 
 void Nero_LWing::Free()
 {
+	GameObject::Free();
 }
 
 Nero_LWing* Nero_LWing::Create()
@@ -45,6 +47,8 @@ HRESULT Nero_LWing::Start()
 
 UINT Nero_LWing::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
+
 	m_pMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {});
 	m_pMesh->UpdateToRootMatricies();
 	m_pMesh->VTFUpdate();
@@ -71,12 +75,14 @@ UINT Nero_LWing::LateUpdate(const float _fDeltaTime)
 
 void Nero_LWing::OnEnable()
 {
+	GameObject::OnEnable();
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
 }
 
 void Nero_LWing::OnDisable()
 {
+	GameObject::OnDisable();
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
 }
@@ -222,7 +228,7 @@ void Nero_LWing::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

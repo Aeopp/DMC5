@@ -91,6 +91,7 @@ HRESULT BoxCollider::DrawCollider(const DrawInfo& _Info)
 
 
 	_Info.Fx->SetMatrix("World", &matWorld);
+	_Info.Fx->CommitChanges();
 
 	m_pMesh->DrawSubset(0);
 
@@ -99,6 +100,8 @@ HRESULT BoxCollider::DrawCollider(const DrawInfo& _Info)
 
 void BoxCollider::Editor()
 {
+	Component::Editor();
+
 	Collider::Editor();
 
 	D3DXVECTOR3 vSize = m_vSize;

@@ -9,6 +9,7 @@
 
 void Em101::Free()
 {
+	GameObject::Free();
 }
 
 std::string Em101::GetName()
@@ -109,6 +110,7 @@ void Em101::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em101::Ready()
 {
+	GameObject::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster101;
 
@@ -130,6 +132,8 @@ HRESULT Em101::Ready()
 
 HRESULT Em101::Awake()
 {
+	GameObject::Awake();
+
 	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
@@ -139,6 +143,7 @@ HRESULT Em101::Awake()
 
 HRESULT Em101::Start()
 {
+	GameObject::Start();
 	return S_OK;
 }
 
@@ -210,7 +215,7 @@ UINT Em101::Update(const float _fDeltaTime)
 
 UINT Em101::LateUpdate(const float _fDeltaTime)
 {
-	
+	GameObject::LateUpdate();
 	return 0;
 
 }
@@ -227,10 +232,12 @@ void Em101::Editor()
 
 void Em101::OnEnable()
 {
+	GameObject::OnEnable();
 }
 
 void Em101::OnDisable()
 {
+	GameObject::OnDisable();
 }
 
 void Em101::RenderGBufferSK(const DrawInfo& _Info)

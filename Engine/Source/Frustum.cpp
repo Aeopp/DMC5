@@ -154,7 +154,7 @@ void Frustum::Render(IDirect3DDevice9* const Device,
 	Device->SetStreamSource(0, VertexBuffer, 0, sizeof(Vector3));
 	Device->SetIndices(IndexBuffer);
 	Device->SetFVF(D3DFVF_XYZ);
-
+	Fx->CommitChanges();
 	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	//Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
@@ -169,6 +169,7 @@ void Frustum::DebugRender(IDirect3DDevice9* const Device)&
 	Device->SetStreamSource(0, VertexBuffer, 0, sizeof(Vector3));
 	Device->SetIndices(IndexBuffer);
 	Device->SetFVF(D3DFVF_XYZ);
+
 	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);

@@ -12,7 +12,7 @@ void TempMap::Free()
 
 std::string TempMap::GetName()
 {
-	return "TestObject";
+	return "TempMap";
 };
 
 TempMap* TempMap::Create()
@@ -28,7 +28,7 @@ void TempMap::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_StaticMesh)
 		{
 			const uint32  Numsubset = _StaticMesh->GetNumSubset();  
@@ -47,7 +47,6 @@ void TempMap::RenderReady()
 
 void TempMap::RenderInit()
 {
-	m_nTag = Player;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -104,10 +103,7 @@ void TempMap::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\street2.fbx", _InitInfo);
-
-	//L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Player.fbx"
-	//L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\street3.fbx"
+		L"..\\..\\Resource\\Map\\Location\\Location2\\test\\Street_NoTexture.fbx", _InitInfo);
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -186,20 +182,15 @@ HRESULT TempMap::Ready()
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
-
-	//m_pCollider = AddComponent<CapsuleCollider>();
-	m_pCollider = AddComponent<MeshCollider>();
-	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVertexLocations()->data(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
-
 	return S_OK;
 };
 
 HRESULT TempMap::Awake()
 {
-	//m_pCollider = AddComponent<MeshCollider>();
-	//m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
-	//m_pCollider.lock()->SetRigid(true);
-	//m_pCollider.lock()->SetGravity(false);
+	m_pCollider = AddComponent<MeshCollider>();
+	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
+	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetGravity(false);
 	PushEditEntity(m_pCollider.lock().get());
 
 	//auto pCollider = AddComponent<CapsuleCollider>();
@@ -246,10 +237,10 @@ void TempMap::Editor()
 
 void TempMap::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void TempMap::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

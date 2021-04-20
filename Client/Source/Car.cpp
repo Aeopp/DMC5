@@ -10,7 +10,7 @@
 
 void Car::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Car::GetName()
@@ -171,7 +171,7 @@ void Car::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_StaticMesh)
 		{
 			const uint32  Numsubset = _StaticMesh->GetNumSubset();
@@ -196,14 +196,12 @@ HRESULT Car::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01});
-	InitTransform.lock()->SetPosition({ -1.83f, 32.f, 7.45f });
 	PushEditEntity(InitTransform.lock().get());
 
 
 	m_pTransform = GetComponent<ENGINE::Transform>();
+	m_pTransform.lock()->SetPosition({ -20.83f, 32.f, 7.45f });
 
-
-	m_pTransform.lock()->SetPosition({ 1.f, 2.4, 7.6f });
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 	// PushEditEntity(_ShaderInfo.ForwardAlphaBlendShader.get());
 
@@ -219,9 +217,6 @@ HRESULT Car::Awake()
 	m_pMonsterTrans = m_pMonster.lock()->GetComponent<ENGINE::Transform>();
 	m_pMonsterMesh = m_pMonster.lock()->Get_Mesh();
 
-	
-
-
 	return S_OK;
 }
 
@@ -233,11 +228,12 @@ HRESULT Car::Start()
 
 UINT Car::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	Quaternion QuatIdentity{ 0.f,0.f,0.f,1.f };
 	_StaticMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {}, QuatIdentity);
 	_StaticMesh->UpdateToRootMatricies();
 	_StaticMesh->VTFUpdate();
-
+	
 	//다 짜면 이렇게 바꾸셈
 	if (m_pMonster.lock()->Get_State() == Em5000::Attack_Grap_Car)
 	{
@@ -280,12 +276,12 @@ void Car::Editor()
 
 void Car::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void Car::OnDisable()
 {
-
+	GameObject::OnDisable();
 }
 
 void Car::Throw(const float _fDeltaTime)
@@ -305,7 +301,7 @@ void Car::Throw(const float _fDeltaTime)
 		else
 		{
 			m_pTransform.lock()->Rotate({ 5.f, 0.f,0.f });
-			m_pTransform.lock()->Translate(vDir * 0.5f);
+			m_pTransform.lock()->Translate(vDir * 1.f);
 		}
 
 		if (m_pMonster.lock()->Get_State() == Em5000::Attack_Throw_Car && m_pMonsterMesh.lock()->PlayingTime()>=0.9f)

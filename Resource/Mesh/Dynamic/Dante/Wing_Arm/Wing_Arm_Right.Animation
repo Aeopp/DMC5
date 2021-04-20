@@ -7,62 +7,62 @@
         "AnimInfoTable": [
             {
                 "Name": "ComboA2",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "ComboC3",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "ComboC4",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "ComboD1",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "ComboD2",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "ComboD3",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "ComboD4",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "Shuffle",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "Streak_End",
-                "Acceleration": 1.0,
+                "Acceleration": 0.65,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "Streak_Loop",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "Streak_Start",
-                "Acceleration": 1.0,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "Wire_Snatch_End",
-                "Acceleration": 0.10000000149011612,
+                "Acceleration": 0.56,
                 "TransitionTime": 0.009999999776482582
             }
         ]

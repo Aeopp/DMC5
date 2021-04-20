@@ -123,6 +123,8 @@ void RenderTarget::DebugRender(ID3DXEffect* const Fx)
 			g_pDevice->SetStreamSource(0, VtxBuf, 0u, Stride);
 			g_pDevice->SetVertexDeclaration(DebugBufVtxDecl);
 			g_pDevice->SetIndices(IdxBuf);
+			Fx->CommitChanges();
+
 			g_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4u, 0u, 2u);
 		}
 		Fx->EndPass();

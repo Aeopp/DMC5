@@ -8,7 +8,7 @@
 
 void Glint::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Glint::GetName()
@@ -84,6 +84,8 @@ HRESULT Glint::Start()
 
 UINT Glint::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
+
 	_AccumulateTime += _PlayingSpeed * _fDeltaTime;
 
 	if (1.5f < _AccumulateTime)
@@ -197,10 +199,10 @@ void Glint::Editor()
 
 void Glint::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void Glint::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

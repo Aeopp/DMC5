@@ -8,6 +8,7 @@
 
 void DashImpact::Free()
 {
+	GameObject::Free();
 }
 std::string DashImpact::GetName()
 {
@@ -78,7 +79,7 @@ HRESULT DashImpact::Start()
 
 UINT DashImpact::Update(const float _fDeltaTime)
 {
-
+	GameObject::Update(_fDeltaTime);
 
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 		Sptransform)
@@ -149,10 +150,10 @@ void DashImpact::Editor()
 
 void DashImpact::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void DashImpact::OnDisable()
 {
-
+	GameObject::OnDisable();
 }
