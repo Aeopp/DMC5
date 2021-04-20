@@ -486,12 +486,27 @@ HRESULT Renderer::Render()&
 	// 디퍼드 렌더링 .
 	DeferredShading();
 	RenderInsulatorMetal();
-
+	RenderMeasureLuminance();
+	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
+	AdaptLuminance(DeltaTime);
+	BrightPass();
+	DownSample();
+	Stars();
+	Bloom();
+	LensFlare();
 	// 백버퍼로 백업 . 
 	Device->SetRenderTarget(0, BackBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	RenderSkySphere();
-	Tonemapping();
+	if (bEnvironmentRender)
+	{
+		RenderEnvironment();
+	}
+	else
+	{
+		RenderSkySphere();
+	}
+	ToneMap();
+	// Tonemapping();
 	AlphaBlendEffectRender();
 	UIRender();
 
@@ -535,8 +550,10 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
-
+		ImGui::Checkbox("AfterImage", &drawafterimage);
+		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
+
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 
 		// ImGui::SliderFloat("ShadowMin", &ShadowMin, 0.0f, 1.0f);
@@ -1188,14 +1205,6 @@ HRESULT Renderer::RenderSkySphere()&
 	Device->SetTexture(0u, SkysphereTex->GetTexture());
 	const int32 Numsubset = SkysphereMesh->GetNumSubset();
 	SkysphereMesh->GetSubset(0).lock()->Render(Fx);
-	/*for (int32 i = 0; i < Numsubset; ++i)
-	{
-		if (auto subset = SkysphereMesh->GetSubset(i).lock();
-			subset)
-		{
-			subset->Render(Fx);
-		};
-	};*/
 	Fx->EndPass();
 	Fx->End();
 	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -1203,56 +1212,33 @@ HRESULT Renderer::RenderSkySphere()&
 	return S_OK;
 };
 
-HRESULT Renderer::RenderSkyBox()&
-{
 
+HRESULT Renderer::RenderEnvironment()&
+{
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE,  FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE,			FALSE);
 	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
 
 	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
+	Device->SetRenderState(    D3DRS_CULLMODE, D3DCULL_CCW);
 
-	Matrix skyview = _RenderInfo.View;
-	/*skyview._41 = ;
-	skyview._42 = 0.0f;
-	skyview._43 = 0.0f;*/
-	skyview._41 = skyview._42 = skyview._43 = 0.0f;
+	Matrix Skyview = _RenderInfo.View;
+	Skyview._41 = Skyview._42 = Skyview._43 = 0.0f;
 
-	const Matrix viewproj = skyview * _RenderInfo.Projection;
+	const Matrix viewproj = Skyview * _RenderInfo.Projection;
 
 	auto Fx = Shaders["sky"]->GetEffect();
 	Fx->SetMatrix("matViewProj", &viewproj);
-	static float skyrotationyaw = 0.0f;
-	skyrotationyaw += (1.f / 1000.f);
 
-	static float scale = 1.f;
+	static float EnvironmentScale = 2.f;
 
-	static Vector3 rot{ 0,0,0 };
-	static Vector3 loc{ 0,0,0 };
-	ImGui::Begin("sky_test");
-	ImGui::SliderFloat("scale", &scale, 0.f, 5.f);
-	ImGui::SliderFloat3("rot", rot, -360.f, 360.f);
-	ImGui::SliderFloat3("loc", loc, -1000.f, 1000.f);
-	ImGui::End();
-
-	Vector3 rad_rot =
-	{
-		FMath::ToRadian(rot.x) ,
-		FMath::ToRadian(rot.y) ,
-		FMath::ToRadian(rot.z) ,
-	};
-
-	auto rot_rad = rot;
-	rot_rad.y += skyrotationyaw;
-
-	const Matrix rotation = FMath::Rotation(rot);
-	const Matrix world = FMath::Scale(scale);
+	const Matrix rotation = FMath::Rotation(Vector3{0,0,0});
+	const Matrix world = FMath::Scale(EnvironmentScale);
 
 	Fx->SetMatrix("matSkyRotation", &rotation);
 	Fx->SetMatrix("matWorld", &world);
@@ -1429,6 +1415,8 @@ HRESULT Renderer::LightFrustumRender()&
 
 HRESULT Renderer::RenderInsulatorMetal()&
 {
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	Device->SetTexture(0, RenderTargets["ALBM"]->GetTexture());
 	Device->SetTexture(1, RenderTargets["SceneTarget"]->GetTexture());
 	Device->SetTexture(2, RenderTargets["NRMR"]->GetTexture());
@@ -1451,6 +1439,591 @@ HRESULT Renderer::RenderInsulatorMetal()&
 	Fx->CommitChanges(); 
 	Fx->EndPass(); 
 	Fx->End();
+
+	// 컬링 다시 켜기 . 
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+	return S_OK;
+}
+HRESULT Renderer::RenderMeasureLuminance()
+{
+	Device->SetSamplerState(0,
+		D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	Device->SetSamplerState(0,
+		D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	Device->SetSamplerState(0,
+		D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	Device->SetSamplerState(0,
+		D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0,
+		D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+
+	D3DVIEWPORT9 viewport;
+	viewport.MinZ = 0.0f;
+	viewport.MaxZ = 1.f;
+	viewport.X = 0.0f;
+	viewport.Y = 0.0f;
+	Vector4 pixelsize{ 0, 0, 0, 1 };
+	Vector4 texelsize{0,0,0,1};
+
+	for (int i = 0; i < 4; ++i)
+	{
+		viewport.Width = 64 >> (i * 2);
+		viewport.Height = 64 >> (i * 2);
+
+		pixelsize.x =  1.0f / (float)viewport.Width;
+		pixelsize.y = -1.0f / (float)viewport.Height;
+
+		auto measureeffect =
+			Shaders["measureluminance"]->GetEffect();
+
+		if (i == 0)
+		{
+			texelsize.x = 1.0f / 
+					(float)_RenderInfo.Viewport.Width;
+			texelsize.y = 1.0f / 
+					(float)_RenderInfo.Viewport.Height;
+	
+			measureeffect->SetTechnique("avgluminital");
+
+			Device->SetTexture(0,
+				RenderTargets["SceneTarget"]->GetTexture());
+		}
+		else if (i == 3)
+		{
+			texelsize.x =
+				1.0f / (float)(64 >> (2 * (i - 1)));
+			texelsize.y =
+				1.0f / (float)(64 >> (2 * (i - 1)));
+
+			measureeffect->SetTechnique("avglumfinal");
+			Device->SetTexture(0, 
+				RenderTargets["avgluminance"]->GetTexture());
+		}
+		else
+		{
+			texelsize.x = 1.0f / (float)(64 >> (2 * (i - 1)));
+			texelsize.y = 1.0f / (float)(64 >> (2 * (i - 1)));
+
+			measureeffect->SetTechnique("avglumiterative");
+			Device->SetTexture(0, 
+				RenderTargets["avgluminance"]->GetTexture());
+		}
+
+		measureeffect->SetInt("prevLevel", (i - 1) * 2);
+		measureeffect->SetVector("pixelSize", &pixelsize);
+		measureeffect->SetVector("texelSize", &texelsize);
+		
+		Device->SetRenderTarget(0, 
+			RenderTargets["avgluminance"]->GetSurface(i));
+		Device->SetViewport(&viewport);
+
+		measureeffect->Begin(NULL, 0);
+		measureeffect->BeginPass(0);
+		{
+			_Quad->Render(Device, 1.f, 1.f, measureeffect);
+		}
+		measureeffect->EndPass();
+		measureeffect->End();
+	}
+
+	D3DLOCKED_RECT rect;
+
+	Device->GetRenderTargetData(
+		RenderTargets["avgluminance"]->GetSurface(3),
+		RenderTargets["avglumsystemmem"]->GetSurface(0)
+	);
+
+	auto& avglumsystemmem = RenderTargets["avglumsystemmem"];
+	auto * avglumsystemmem_tex = avglumsystemmem->GetTexture();
+	avglumsystemmem_tex->LockRect
+				(0, &rect, NULL, D3DLOCK_READONLY);
+	{
+		averageluminance =
+			((Math::Float16*)rect.pBits)->operator float();
+	}
+	avglumsystemmem_tex->UnlockRect(0);
+
+	Device->SetViewport(&_RenderInfo.Viewport);
+	return S_OK;
+}
+HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
+{
+	// 델타타임에 영향을 매우 많이 받음 . 
+	adaptedluminance = adaptedluminance +
+		(averageluminance - adaptedluminance) *
+		(1.0f - powf(0.98f, 50.0f * DeltaTime));
+
+	float two_ad_EV = adaptedluminance * (100.0f / 12.5f);
+	exposure = 1.0f / (1.2f * two_ad_EV);
+
+	return S_OK;
+}
+HRESULT Renderer::BrightPass()&
+{
+	D3DVIEWPORT9 viewport;
+	viewport.X = 0.0f;
+	viewport.Y = 0.0f;
+	viewport.MinZ = 0.0f;
+	viewport.MaxZ = 1.f;
+
+	Vector4 pixelsize{ 0,0,0,1 };
+	viewport.Width = _RenderInfo.Viewport.Width / 2;
+	viewport.Height = _RenderInfo.Viewport.Height / 2;
+
+	pixelsize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
+	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
+
+	Device->SetRenderTarget(0, 
+		RenderTargets["dsampletargets0"]->GetSurface());
+	Device->SetViewport(&viewport);
+
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	
+	auto hdreffects = Shaders["hdreffects"]->GetEffect();
+	hdreffects->SetTechnique("brightpass");
+	hdreffects->SetVector("pixelSize", &pixelsize);
+	hdreffects->SetFloat("exposure", exposure); 
+
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+
+	{
+		Device->SetTexture(0, 
+			RenderTargets["SceneTarget"]->GetTexture());
+		_Quad->Render(Device,1.f,1.f,hdreffects);
+	}
+
+	hdreffects->EndPass();
+	hdreffects->End();
+	std::string idxstr = std::to_string(currentafterimage);
+	Device->SetRenderTarget(0, 
+		RenderTargets["afterimagetargets" + idxstr]->GetSurface(0));
+
+	if (drawafterimage)
+	{
+		hdreffects->SetTechnique("afterimage");
+		hdreffects->SetVector("pixelSize", &pixelsize);
+
+		hdreffects->Begin(NULL, 0);
+		hdreffects->BeginPass(0);
+		{
+			std::string idxstr = std::to_string(1 - currentafterimage);
+			Device->SetTexture(0,
+				RenderTargets["afterimagetargets" + idxstr]->GetTexture());
+			Device->SetTexture(1,
+				RenderTargets["dsampletargets0"]->GetTexture());
+			_Quad->Render(Device, 1.f, 1.f, hdreffects);
+		}
+		hdreffects->EndPass();
+		hdreffects->End();
+	}
+	else
+	{
+		Device->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1, 0);
+	};
+
+	currentafterimage = 1 - currentafterimage;
+	// 렌터가셍 ㅔ잔상을 그린다 . 
+	/*Device->SetRenderTarget(0,)*/
+	return S_OK;
+}
+HRESULT Renderer::DownSample()
+{
+	D3DVIEWPORT9 viewport;
+	viewport.X = 0.0f;
+	viewport.Y = 0.0f;
+	viewport.MinZ = 0.0f;
+	viewport.MaxZ = 1.0f;
+	viewport.Width = _RenderInfo.Viewport.Width / 2;
+	viewport.Height = _RenderInfo.Viewport.Height / 2;
+
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	auto hdreffects = Shaders["hdreffects"]->GetEffect();
+	hdreffects->SetTechnique("downsample" );
+
+	hdreffects->Begin(NULL, 0); 
+	hdreffects->BeginPass(0);
+
+	Vector4 texelsize{0.f,0.f,0.f ,0.f};
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f};
+	{
+		for (int i = 1; i < 5; ++i)
+		{
+			texelsize.x = 1.0f / (float)viewport.Width;
+			texelsize.y = 1.0f / (float)viewport.Height;
+
+			viewport.Width /= 2;
+			viewport.Height /= 2;
+
+			pixelsize.x = 1.0f / (float)viewport.Width;
+			pixelsize.y = -1.0f / (float)viewport.Height;
+
+			hdreffects->SetVector("pixelSize", &pixelsize);
+			hdreffects->SetVector("texelSize", &texelsize);
+			hdreffects->CommitChanges();
+
+			std::string idxstr = std::to_string(i);
+			Device->SetRenderTarget(0, 
+				RenderTargets["dsampletargets" + idxstr]->GetSurface(0));
+			idxstr = std::to_string(i - 1);
+
+			Device->SetTexture(0,
+				RenderTargets["dsampletargets" + idxstr]->GetTexture());
+			Device->SetViewport(&viewport);
+
+			_Quad->Render(Device, 1.f, 1.f, hdreffects);
+
+		}
+	}
+
+	hdreffects->EndPass();
+	hdreffects->End();
+	
+
+
+	return S_OK;
+}
+HRESULT Renderer::Stars()
+{
+	D3DVIEWPORT9 viewport;
+	viewport.Width = _RenderInfo.Viewport.Width / 4;
+	viewport.Height = _RenderInfo.Viewport.Height / 4;
+	viewport.X = viewport.Y = 0.0f;
+	viewport.MinZ = 0.0f;
+	viewport.MaxZ = 1.f;
+
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f };
+	pixelsize.x = 1.0f / (float)viewport.Width;
+	pixelsize.y = -1.0f / (float)viewport.Height;
+
+	Vector4 texelsize{ 0.f ,0.f ,0.f ,0.f };
+	texelsize.x = 1.0f / (float)viewport.Width;
+	texelsize.y = 1.0f / (float)viewport.Height;
+
+	Device->SetViewport(&viewport);
+
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV , D3DTADDRESS_BORDER);
+
+	auto hdreffects = Shaders["hdreffects"]->GetEffect();
+	hdreffects->SetTechnique("star");
+	hdreffects->SetVector("pixelSize", &pixelsize);
+	hdreffects->SetVector("texelSize", &texelsize);
+
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			hdreffects->SetInt("starDirection", i);
+
+			for (int j = 0; j < 3; ++j)
+			{
+				hdreffects->SetInt("starPass", j);
+				hdreffects->CommitChanges();
+
+				std::string idxstr = std::to_string(i) + 
+										std::to_string(j % 2);
+
+				Device->SetRenderTarget(0,
+					RenderTargets["startargets" + idxstr]->GetSurface(0));
+
+				auto* _Tex = j==0 ? 
+					RenderTargets["dsampletargets1"]->GetTexture() :
+					RenderTargets[
+						"startargets" + std::to_string(i)
+							+ std::to_string(1 - j % 2 )]->GetTexture();
+
+				Device->SetTexture(0, _Tex);
+
+				_Quad->Render(Device, 1.f, 1.f, hdreffects);
+			}
+
+		}
+	}
+	hdreffects->EndPass();
+	hdreffects->End();
+
+	for (int i = 1; i < 4; ++i)
+	{
+		Device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	}
+	
+	hdreffects->SetTechnique("starcombine");
+
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+	{
+		Device->SetRenderTarget(0, 
+			RenderTargets["starresult"]->GetSurface(0));
+
+		Device->SetTexture(0,
+			RenderTargets["startargets" + 
+			std::to_string(0) + 
+			std::to_string(0)]
+			->GetTexture() );
+
+		Device->SetTexture(1,
+			RenderTargets["startargets" + 
+			std::to_string(1) + 
+			std::to_string(0)]
+			->GetTexture());
+
+		Device->SetTexture(2,
+			RenderTargets["startargets" + 
+			std::to_string(2) + 
+			std::to_string(0)]
+			->GetTexture());
+
+		Device->SetTexture(3,
+			RenderTargets["startargets" +
+			std::to_string(3) + 
+			std::to_string(0)]
+			->GetTexture());
+
+		_Quad->Render(Device, 1.f, 1.f, hdreffects);
+	}
+	hdreffects->EndPass();
+	hdreffects->End();
+
+
+	return S_OK;
+}
+HRESULT Renderer::Bloom()
+{
+	D3DVIEWPORT9 viewport{};
+	viewport.X = viewport.Y = 0.0f;
+	viewport.MinZ = 0.0f;
+	viewport.MaxZ = 1.f;
+
+	viewport.Width = _RenderInfo.Viewport.Width / 2;
+	viewport.Height = _RenderInfo.Viewport.Height / 2;
+
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+
+	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
+
+	Vector4 pixelsize{0.f,0.f,0.f,1.f};
+	Vector4 texelsize{ 0.f,0.f,0.f ,0.f };
+	hdreffects->SetTechnique("blur");
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+			Device->SetViewport(&viewport);
+
+			pixelsize.x = 1.0f / (float)viewport.Width;
+			pixelsize.y = -1.0f / (float)viewport.Height;
+
+			texelsize.x = 1.0f / (float)viewport.Width;
+			texelsize.y = 1.0f / (float)viewport.Height;
+
+			hdreffects->SetVector("pixelSize", &pixelsize);
+			hdreffects->SetVector("texelSize", &texelsize);
+
+			// 가로 방향
+			hdreffects->SetInt("blurDirection", 0);
+			hdreffects->CommitChanges();
+
+			Device->SetRenderTarget(0,
+				RenderTargets[
+					"blurtargets"+std::to_string(i)]->GetSurface(0));
+			Device->SetTexture(0,
+				RenderTargets[
+					"dsampletargets" + std::to_string(i)]->GetTexture());
+			_Quad->Render(Device, 1.f, 1.f, hdreffects);
+
+			// 세로 방향
+			hdreffects->SetInt("blurDirection", 1);
+			hdreffects->CommitChanges();
+			
+			Device->SetRenderTarget(0,
+				RenderTargets["dsampletargets" + std::to_string(i)]
+				->GetSurface(0));
+
+			Device->SetTexture(0,
+				RenderTargets["blurtargets" + std::to_string(i)]
+				->GetTexture());
+
+			_Quad->Render(Device, 1.f, 1.f, hdreffects);
+
+			viewport.Width /= 2;
+			viewport.Height /= 2;
+		}
+	}
+	hdreffects->EndPass();
+	hdreffects->End();
+
+	viewport.Width = _RenderInfo.Viewport.Width / 2;
+	viewport.Height = _RenderInfo.Viewport.Height / 2;
+
+	pixelsize.x = 1.0f / (float)viewport.Width;
+	pixelsize.y = -1.0f / (float)viewport.Height;
+
+
+	for (int i = 1; i < 5; ++i)
+	{
+		Device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	}
+
+	hdreffects->SetTechnique("blurcombine");
+	hdreffects->SetVector("pixelSize", &pixelsize);
+
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+	{
+		Device->SetRenderTarget(0,
+			RenderTargets["bloomresult"]->GetSurface(0));
+		Device->SetViewport(&viewport);
+		
+		Device->SetTexture(0, 
+			RenderTargets["dsampletargets0"]->GetTexture());
+		Device->SetTexture(1,
+			RenderTargets["dsampletargets1"]->GetTexture());
+		Device->SetTexture(2,
+			RenderTargets["dsampletargets2"]->GetTexture());
+		Device->SetTexture(3,
+			RenderTargets["dsampletargets3"]->GetTexture());
+		Device->SetTexture(4,
+			RenderTargets["dsampletargets4"]->GetTexture());
+
+		_Quad->Render(Device, 1.f, 1.f, hdreffects);
+	}
+	hdreffects->EndPass();
+	hdreffects->End();
+
+	return S_OK;
+}
+HRESULT Renderer::LensFlare()
+{
+	D3DVIEWPORT9 viewport{};
+	viewport.X = viewport.Y = 0.0f;
+	viewport.MinZ = 0.0f;
+	viewport.MaxZ = 1.f;
+
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f };
+	Vector4 texelsize{ 0.f,0.f,0.f ,0.f };
+
+	viewport.Width = _RenderInfo.Viewport.Width / 2;
+	viewport.Height = _RenderInfo.Viewport.Height / 2;
+
+	pixelsize.x = 1.0f / (float)viewport.Width;
+	pixelsize.y = -1.0f / (float)viewport.Height;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		Device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+	}
+
+	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
+	hdreffects->SetTechnique("lensflare");
+	hdreffects->SetVector("pixelSize", &pixelsize);
+
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+	{
+		Device->SetRenderTarget(0, 
+			RenderTargets["lensflaretargets0"]->GetSurface(0));
+		Device->SetViewport(&viewport);
+
+		Device->SetTexture(0,
+			RenderTargets["dsampletargets0"]->GetTexture());
+		Device->SetTexture(1,
+			RenderTargets["dsampletargets1"]->GetTexture());
+		Device->SetTexture(2,
+			RenderTargets["dsampletargets2"]->GetTexture());
+
+		_Quad->Render(Device, 1.f, 1.f, hdreffects);
+	}
+	hdreffects->EndPass();
+	hdreffects->End();
+
+	hdreffects->SetTechnique("lensflare_expand");
+
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+	{
+		Device->SetRenderTarget(0,
+			RenderTargets["lensflaretargets1"]->GetSurface(0));
+		Device->SetViewport(&viewport);
+
+		Device->SetTexture(0,
+			RenderTargets["lensflaretargets0"]->GetTexture());
+		_Quad->Render(Device, 1.f, 1.f, hdreffects);
+	}
+	hdreffects->EndPass();
+	hdreffects->End();
+	
+
+
+
+
+	return S_OK;
+};
+HRESULT Renderer::ToneMap()
+{
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f};
+
+	pixelsize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
+	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
+
+	Device->SetViewport(&_RenderInfo.Viewport);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
+
+	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
+	hdreffects->SetTechnique("tonemap");
+	hdreffects->SetVector("pixelSize", &pixelsize);
+	hdreffects->SetFloat("exposure", exposure);
+
+	hdreffects->Begin(NULL, 0);
+	hdreffects->BeginPass(0);
+	{
+		Device->SetTexture(0, RenderTargets["SceneTarget"]->GetTexture());
+		Device->SetTexture(1, RenderTargets["bloomresult"]->GetTexture());
+		Device->SetTexture(2, RenderTargets["starresult"]->GetTexture());
+		Device->SetTexture(3, RenderTargets["lensflaretargets1"]->GetTexture());
+		Device->SetTexture(4, RenderTargets["afterimagetargets" + 
+			std::to_string ( 1-currentafterimage) ]->GetTexture());
+		
+		_Quad->Render(Device, 1.f, 1.f, hdreffects);
+	}
+	hdreffects->EndPass();
+	hdreffects->End();
 
 	return S_OK;
 };
@@ -1662,7 +2235,6 @@ bool Renderer::TestShaderInit()
 	if (FAILED(D3DXLoadMeshFromX(L"../../Media/MeshesDX/sky.x", D3DXMESH_MANAGED, Device, NULL, NULL, NULL, NULL, &skymesh)))
 		return false;
 
-
 	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace.dds",
 		&environment)))
 		return false;
@@ -1670,7 +2242,6 @@ bool Renderer::TestShaderInit()
 	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_diff_irrad.dds",
 		&irradiance1)))
 		return false;
-
 
 	if (FAILED(D3DXCreateCubeTextureFromFile(Device, L"../../Media/Textures/grace_spec_irrad.dds",
 		&irradiance2)))
@@ -1707,3 +2278,7 @@ void Renderer::TestLightRotation()
 
 	time += TimeSystem::GetInstance()->DeltaTime();
 };
+
+
+
+

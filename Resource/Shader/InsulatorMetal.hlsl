@@ -27,6 +27,7 @@ void ps_main(
     out float4 Color : COLOR0)
 {
     float depth = tex2D(depthsp, tex).r;
+    
     if (depth > 0.0f)
     {
         float4 albm = tex2D(albmsp, tex);
@@ -70,7 +71,10 @@ void ps_main(
         Color.rgb = brdf_diff * brdf_spec;
         Color.a = 1.f;
     }
-
+    else
+    {
+        Color.rgba = (0, 0, 0, 0);
+    }
       
 }
 

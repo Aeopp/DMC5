@@ -20,20 +20,12 @@ void ps_main(
      view = normalize(view);
      color = texCUBE(environment, view);
      color.a = 1.f;
-    
-    // color = float4(view, 0.5f);
- 
-    
-    // color = float4(1, 1, 1,  1  );
 }
 
 technique sky
 {
     pass p0
     {
-        //StencilEnable = true;
-        //StencilRef = 1;
-        //StencilFunc = notequal;
         vertexshader = compile vs_3_0 vs_main();
         pixelshader = compile ps_3_0 ps_main();
     }

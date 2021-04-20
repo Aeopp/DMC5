@@ -42,7 +42,7 @@ public:
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;
 	const Frustum* GetCameraFrustum()const& { return CameraFrustum.get(); };
 	bool bLightRender = false;
-
+	bool bEnvironmentRender = false;
 	void LightSave(std::filesystem::path path);
 	void LightLoad(const std::filesystem::path & path);
 private:
@@ -60,18 +60,33 @@ private:
 	HRESULT RenderTargetDebugRender()&;
 	HRESULT RenderSky()&;
 	HRESULT RenderSkySphere()&;
-	HRESULT RenderSkyBox()&;
+	HRESULT RenderEnvironment()&;
 	HRESULT Tonemapping()&;
 	HRESULT AlphaBlendEffectRender()&;
 	HRESULT UIRender()&;
 	HRESULT RendererCollider()&;
 	HRESULT LightFrustumRender()&;
 	HRESULT RenderInsulatorMetal()&;
+	HRESULT RenderMeasureLuminance();
+	HRESULT AdaptLuminance(const float DeltaTime)&;
+	HRESULT BrightPass()&;
+	HRESULT DownSample();
+	HRESULT Stars();
+	HRESULT Bloom();
+	HRESULT LensFlare();
+	HRESULT ToneMap();
 public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	bool drawafterimage = false;
+	int currentafterimage = 0;
+	// 0 으로 세팅되면 미정의 동작 . 
+	float averageluminance = 0.1f;
+	// 0 으로 세팅되면 미정의 동작 . 
+	float adaptedluminance = 0.1f;
+
 	float exposure = 1.f;
 	IDirect3DSurface9* BackBuffer{ nullptr };
 	std::shared_ptr<Frustum> CameraFrustum{};

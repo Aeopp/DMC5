@@ -14,7 +14,7 @@ void vs_main(
 }
 
 void ps_avgluminital(
-	in float2 tex : TEXCOORD0,
+	in float2 tex    : TEXCOORD0,
 	out float4 color : COLOR0)
 {
     float logsum = 0;

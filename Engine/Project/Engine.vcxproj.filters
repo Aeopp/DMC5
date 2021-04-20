@@ -654,5 +654,11 @@
     <None Include="..\..\Resource\Shader\InsulatorMetal.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\measureluminance.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\hdreffects.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
   </ItemGroup>
 </Project>
