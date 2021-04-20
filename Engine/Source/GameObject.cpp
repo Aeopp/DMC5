@@ -136,11 +136,6 @@ void GameObject::Set_Coll(const bool _bColl)
 	m_bCollEnable = _bColl;
 }
 
-void GameObject::SetGameObject(std::weak_ptr<GameObject> _pGameObject)
-{
-	m_pGameObject = _pGameObject;
-}
-
 UINT GameObject::GetLoopIdx()
 {
 	return m_nLoopIdx;
