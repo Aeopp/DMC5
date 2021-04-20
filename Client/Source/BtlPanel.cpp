@@ -5,6 +5,11 @@
 #include "TextureType.h"
 #include "Renderer.h"
 
+// test
+//#include "Glint.h"
+//#include "OvertureHand.h"
+
+
 void BtlPanel::Free()
 {
 	GameObject::Free();
@@ -1917,21 +1922,25 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F4))
 	{
 		AddExGauge(0.333f);
+
+		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(3.5f);
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
+
+		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
-		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		//AccumulateTDTGauge(0.5f);
+		SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
+		AccumulateTDTGauge(0.3f);
 		ChangeWeaponUI(Nero::WeaponList::RQ);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
-		//ConsumeTDTGauge(0.5f);
+		ConsumeTDTGauge(0.5f);
 		ChangeWeaponUI(Nero::WeaponList::Cbs);
 	}
 	////////////////////////////

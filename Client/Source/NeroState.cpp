@@ -1823,7 +1823,7 @@ HRESULT RunLoop::StateEnter()
 {
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
-	UINT PreAnimationIndex = m_pNero.lock()->Get_PreAnimationIndex();
+
 
 	switch (CurAnimationIndex)
 	{
@@ -1847,7 +1847,7 @@ HRESULT RunLoop::StateExit()
 {
 	NeroState::StateExit();
 	//m_pNero.lock()->SetRotationAngle(0.f);
-
+	m_fRequireTimeForDash = 0.f;
 	return S_OK;
 }
 
@@ -1861,6 +1861,10 @@ HRESULT RunLoop::StateUpdate(const float _fDeltaTime)
 		//-> 그러면 대쉬 루프로 변환하고
 		//칼들고 달리고있었으면 칼 집어넣고
 		KeyInput_Run(NeroFSM::RUNLOOP);
+		m_fRequireTimeForDash += _fDeltaTime;
+		if (m_fRequireTimeForDash >= 1.2f 
+			&& Nero::ANI_RUNLOOP == m_pNero.lock()->Get_CurAnimationIndex())
+			m_pFSM->ChangeState(NeroFSM::DASHLOOP);
 	}
 	else
 	{
@@ -1893,6 +1897,7 @@ HRESULT RunStartFront::StateEnter()
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT PreAnimationIndex = m_pNero.lock()->Get_PreAnimationIndex();
 	m_pNero.lock()->Reset_RotationAngle();
+	m_pNero.lock()->Reset_Test();
 	m_pNero.lock()->SetAngleFromCamera();
 
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
@@ -2144,6 +2149,11 @@ DashLoop* DashLoop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Ne
 
 HRESULT DashLoop::StateEnter()
 {
+	NeroState::StateEnter();
+	m_pNero.lock()->ChangeAnimation("DashLoop", true, Nero::ANI_DASHLOOP);
+	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
+	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
+	m_fGradient = 0.f;
 	return S_OK;
 }
 
@@ -2154,6 +2164,165 @@ HRESULT DashLoop::StateExit()
 
 HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 {
+	UINT Ex_Gauge = m_pNero.lock()->Get_ExGaugeCount();
+	m_pNero.lock()->IncreaseDistance(MaxDistance, _fDeltaTime);
+	if (Input::GetKey(DIK_LSHIFT))
+	{
+		//락온
+		if (Input::GetKey(DIK_Q))
+		{
+			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
+		}
+		else if (Input::GetKey(DIK_W))
+		{
+			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
+			{
+				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				if (Ex_Gauge > 0)
+					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE_EX);
+				else
+					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE);
+			}
+			else if (Input::GetMouse(DIM_L))
+			{
+				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				if (Ex_Gauge > 0)
+					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3);
+				else
+					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK);
+			}
+			else if (Input::GetMouse(DIM_R))
+			{
+
+			}
+			else if (Input::GetMouse(DIM_M))
+			{
+				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_UP);
+			}
+		}
+		else if (Input::GetKey(DIK_S))
+		{
+			if (Input::GetMouse(DIM_L))
+			{
+				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND);
+			}
+			else if (Input::GetMouse(DIM_R))
+			{
+				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pFSM->ChangeState(NeroFSM::SKILL_HR_EX_START);
+			}
+			else if (Input::GetMouse(DIM_M))
+			{
+				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_DOWN);
+			}
+			else if (Input::GetKey(DIK_SPACE))
+			{
+				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_JumpDir(Nero::Back);
+				m_pFSM->ChangeState(NeroFSM::JUMP_START);
+
+				return S_OK;
+			}
+		}
+	}
+
+	else if (Input::GetMouseDown(DIM_L))
+	{
+		m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+		m_pFSM->ChangeState(NeroFSM::ATT1_DASH);
+	}
+	else if (Input::GetMouseDown(DIM_M))
+	{
+		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT);
+	}
+	else if (Input::GetKeyDown(DIK_SPACE))
+	{
+		//점프
+		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_JumpDir(Nero::Front);
+		m_pFSM->ChangeState(NeroFSM::JUMP_START);
+	}
+	else if (Input::GetKeyDown(DIK_LCONTROL))
+	{
+		//m_pNero.lock()->ChangeWeapon(Nero::Cbs);
+		//m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+	}
+
+	else if (Input::GetKey(DIK_Q))
+	{
+		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pFSM->ChangeState(NeroFSM::BUSTER_START);
+	}
+
+	else if (Input::GetKey(DIK_F))
+	{
+		//변신게이지 있는지 체크
+		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pFSM->ChangeState(NeroFSM::TO_MAJIN);
+	}
+
+	else if (Input::GetKey(DIK_W))
+	{
+		if (Input::GetKey(DIK_A))
+		{
+			//왼쪽으로 45도 회전 // 점차 누적시켜서 45도 완성
+			m_fGradient = FMath::Lerp(m_fGradient, -60.f, float(_fDeltaTime * 7.f));
+			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
+		}
+		else if (Input::GetKey(DIK_D))
+		{
+			//오른쪽으로 45도 회전
+			m_fGradient = FMath::Lerp(m_fGradient, 60.f, float(_fDeltaTime * 7.f));
+			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
+		}
+		else if (Input::GetKey(DIK_S))
+		{
+			//DashTurn으로 변환
+			m_pFSM->ChangeState(NeroFSM::DASHTURN);
+			m_pNero.lock()->SetAngleFromCamera();
+		}
+		else
+		{
+			m_fGradient = FMath::Lerp(m_fGradient, 0.f, float(_fDeltaTime * 7.f));
+			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
+		}
+	}
+	else if (Input::GetKey(DIK_S))
+	{
+		if (Input::GetKey(DIK_A))
+		{
+			//왼쪽으로 45도 회전 // 점차 누적시켜서 45도 완성
+			m_fGradient = FMath::Lerp(m_fGradient, -60.f, float(_fDeltaTime * 7.f));
+			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
+		}
+		else if (Input::GetKey(DIK_D))
+		{
+			//오른쪽으로 45도 회전
+			m_fGradient = FMath::Lerp(m_fGradient, 60.f, float(_fDeltaTime * 7.f));
+			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
+		}
+		else if (Input::GetKey(DIK_W))
+		{
+			//DashTurn으로 변환
+			m_pFSM->ChangeState(NeroFSM::DASHTURN);
+			m_pNero.lock()->SetAngleFromCamera();
+		}
+		else
+		{
+			m_fGradient = FMath::Lerp(m_fGradient, 0.f, float(_fDeltaTime * 7.f));
+			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
+		}
+	}
+	else
+	{
+		m_pFSM->ChangeState(NeroFSM::DASHSTOP);
+		m_pNero.lock()->SetAngleFromCamera();
+	}
 	return S_OK;
 }
 
@@ -2173,16 +2342,23 @@ DashStop* DashStop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Ne
 
 HRESULT DashStop::StateEnter()
 {
+	NeroState::StateEnter();
+
+	m_pNero.lock()->ChangeAnimation("DashStop", false, Nero::ANI_DASHSTOP);
 	return S_OK;
 }
 
 HRESULT DashStop::StateExit()
 {
+	NeroState::StateExit();
 	return S_OK;
 }
 
 HRESULT DashStop::StateUpdate(const float _fDeltaTime)
 {
+	m_pNero.lock()->DecreaseDistance(OGDistance, _fDeltaTime);
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
 }
 
@@ -2202,16 +2378,32 @@ DashTurn* DashTurn::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Ne
 
 HRESULT DashTurn::StateEnter()
 {
+	NeroState::StateEnter();
+	m_pNero.lock()->ChangeAnimation("DashTurn", false, Nero::ANI_DASHTURN);
+	m_bRotationEnable = true;
 	return S_OK;
 }
 
 HRESULT DashTurn::StateExit()
 {
+	NeroState::StateExit();
+
 	return S_OK;
 }
 
 HRESULT DashTurn::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		//m_pNero.lock()->SetRotationAngle(180.f);
+		if (Input::GetKey(DIK_W) || Input::GetKey(DIK_S))
+		{
+			m_pFSM->ChangeState(NeroFSM::DASHLOOP);
+		}
+		else
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+	}
+	m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 

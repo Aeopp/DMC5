@@ -63,6 +63,12 @@ public:
 
 	std::weak_ptr<GameObject>				FindGameObjectWithTag(const UINT & _nTag);
 	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithTag(const UINT & _nTag);
+
+	template<typename TYPE>
+	std::weak_ptr<GameObject>				FindGameObjectWithType();
+	template<typename TYPE>
+	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithType();
+
 public:
 	void	Destroy(std::weak_ptr<GameObject> const _pGameObject);
 	bool    IsRenderEnable();

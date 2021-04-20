@@ -4,6 +4,7 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include "TestObject.h"
 #include <filesystem>
 #include "Em100Hand.h"
 #include "Nero.h"
