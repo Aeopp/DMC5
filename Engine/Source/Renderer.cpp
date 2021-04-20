@@ -550,6 +550,9 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
+
+		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
+		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
@@ -620,8 +623,9 @@ void Renderer::RenderBegin()&
 {
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
-	Device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
-		0xff00ffff, 1.0f, 0);
+	Device->Clear(0, nullptr, 
+		D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
+		0xff00ff00, 1.0f, 0);
 };
 
 //   등록코드수정 
@@ -638,6 +642,7 @@ void Renderer::ResetState()&
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	Device->SetViewport(&_RenderInfo.Viewport);
 };
 
@@ -670,9 +675,10 @@ void Renderer::RenderEntityClear()&
 
 void Renderer::RenderShadowMaps()
 {
+	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
 	auto shadowmap = Shaders["Shadow"]->GetEffect();
-	auto Blur = Shaders["Blur"]->GetEffect();
 
 	for (auto& DirLight : DirLights)
 	{
@@ -717,7 +723,7 @@ void Renderer::RenderShadowMaps()
 
 			});
 	};
-
+	// auto Blur = Shaders["Blur"]->GetEffect();
 	//for (auto& DirLight : DirLights)
 	//{
 	//	DirLight->BlurShadowMap(Device, [&](FLight* light) {
@@ -743,9 +749,8 @@ void Renderer::RenderShadowMaps()
 	//}
 
 	// point lights
-	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	shadowmap->SetBool("isPerspective", TRUE);
-
 	for (auto& PointLight : PointLights)
 	{
 		Sphere PtlightSphere{};
@@ -765,7 +770,8 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("lightPos", &light->GetPosition());
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
-			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			Device->Clear(0, 
+				NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
 			// 렌더 시작 ... 
@@ -796,11 +802,12 @@ void Renderer::RenderShadowMaps()
 		});
 	}
 
-	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 void Renderer::RenderGBuffer()
 {
 	auto* const device = Device;
+	// 감마보정은 쉐이딩시 수행 기하 정보를 그릴때는 필요 없음 . 
 	device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 
 	device->SetRenderTarget (0, RenderTargets["ALBM"]->GetSurface());
@@ -810,17 +817,17 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
 	device->SetSamplerState (0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 8);
+	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 4);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	// device->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, 16);
+	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
+	// 알베도 노말 깊이 렌더타겟 한번에 초기화 . 
 	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 	auto& GBufferGroup = RenderEntitys[RenderProperty::Order::GBuffer];
@@ -863,8 +870,6 @@ void Renderer::RenderGBuffer()
 		}
 	}
 
-	device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
 	device->SetRenderTarget(1, NULL);
 	device->SetRenderTarget(2, NULL);
 }
@@ -873,12 +878,11 @@ void Renderer::DeferredShading()
 {
 	D3DXVECTOR4			pixelsize(1, 1, 1, 1);
 
-	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	// STEP 2: deferred shading
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	pixelsize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
 	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
-	// Device->SetFVF(D3DFVF_XYZW | D3DFVF_TEX1);
-	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 	auto device = Device;
 
@@ -890,29 +894,53 @@ void Renderer::DeferredShading()
 	auto deferred = Shaders["DeferredShading"]->GetEffect();
 
 	device->SetRenderTarget(0, scenesurface);
+	// Scene 타겟은 Z-Buffer 클리어 필요 없음 . 
 	device->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0f, 0);
 
-	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 8);
-
-	for (int32 i = 1; i < 3; ++i)
+	// albm 맵에서 감마보정 수행 .
+	if (bSRGBAlbm)
 	{
-		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-		device->SetSamplerState(i, D3DSAMP_SRGBTEXTURE, FALSE);
-	};
+		device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
+	}
+	else
+	{
+		device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
+	}
+
+	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	if (bSRGBNRMR)
+	{
+		device->SetSamplerState(1, D3DSAMP_SRGBTEXTURE, TRUE);
+	}
+	else
+	{
+		device->SetSamplerState(1, D3DSAMP_SRGBTEXTURE, FALSE);
+	}
+
 
 	for (int i = 3; i < 5; ++i) {
-		device->SetSamplerState(i, D3DSAMP_BORDERCOLOR, 0xffffffff);
-		device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
-		device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
-		device->SetSamplerState(i, D3DSAMP_SRGBTEXTURE, FALSE);
+		device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+
+		// 그림자를 맵 샘플링을 위한 처리 그림자맵이 그려지지 않은 곳은 그림자 없음 .
+		if (i > 2)
+		{
+			device->SetSamplerState(i, D3DSAMP_BORDERCOLOR, 0xffffffff);
+			device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+			device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+		}
+		else
+		{
+			// 노말 and 깊이 
+			device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+			device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		}
 	};
 
 	device->SetTexture(0, albedo);
@@ -1012,8 +1040,10 @@ void Renderer::DeferredShading()
 	deferred->EndPass();
 	deferred->End();
 
-	device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	device->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE);
+	// 0 , 1 ( 알베도 , 노말 감마보정 꺼주기 )
 	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
+	device->SetSamplerState(1, D3DSAMP_SRGBTEXTURE, FALSE);
 
 	if (g_bRenderPtLightScissorTest)
 	{
@@ -1415,6 +1445,7 @@ HRESULT Renderer::LightFrustumRender()&
 
 HRESULT Renderer::RenderInsulatorMetal()&
 {
+	// 감마보정 X
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	Device->SetTexture(0, RenderTargets["ALBM"]->GetTexture());
@@ -1422,8 +1453,16 @@ HRESULT Renderer::RenderInsulatorMetal()&
 	Device->SetTexture(2, RenderTargets["NRMR"]->GetTexture());
 	Device->SetTexture(3, RenderTargets["Depth"]->GetTexture());
 	Device->SetTexture(4, irradiance1);
-	Device->SetTexture(5, irradiance1);
+	Device->SetTexture(5, irradiance2);
 	Device->SetTexture(6, brdfLUT);
+	for (int i = 0; i < 7; ++i)
+	{
+		Device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+		Device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	}
 
 	Vector2 pixelSize{}; 
 	pixelSize.x = 1.f / (float)g_nWndCX;
@@ -1441,7 +1480,7 @@ HRESULT Renderer::RenderInsulatorMetal()&
 	Fx->End();
 
 	// 컬링 다시 켜기 . 
-	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	return S_OK;
 }

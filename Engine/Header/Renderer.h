@@ -80,6 +80,8 @@ public:
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	bool bSRGBAlbm = true;
+	bool bSRGBNRMR = false;
 	bool drawafterimage = false;
 	int currentafterimage = 0;
 	// 0 으로 세팅되면 미정의 동작 . 

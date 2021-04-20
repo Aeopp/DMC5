@@ -55,11 +55,10 @@ float ShadowVariance(float2 moments, float d)
     return max(((d <= mean) ? 1.0f : 0.0f), chebychev);
 }
 
-float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm ,float roughness,
-float metalness)
+float3 Luminance_Blinn_Directional(float3 albedo, 
+float3 wpos, float3 wnorm ,float roughness,float metalness)
 {
 	// the sun has an angular diameter between [0.526, 0.545] degrees
-
     float3 v = normalize(eyePos.xyz - wpos);
     float3 n = normalize(wnorm);
 
@@ -81,7 +80,7 @@ float metalness)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-   float   f_specular = pow(ndoth, specularPower) * (1.0f - roughness);
+    float   f_specular = pow(ndoth, specularPower) * (1.0f - roughness);
     
     float costheta = saturate(dot(n, D));
     float illuminance = lightIlluminance * costheta;
@@ -102,39 +101,43 @@ float metalness)
     LightClipPosition.xy *= 0.5f;
     LightClipPosition.xy += 0.5f;
     
-    float ShadowFactor = 1.0f + shadowmin;
+    float Shadow  = 1.f;
     
-    if (saturate(LightClipPosition.z) == LightClipPosition.z)
+    if (ShadowDepthMapHeight > 0)
     {
-        float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
-        
-        float Shadow = 0.0;
-        float TexelSizeU = 1.0 / ShadowDepthMapWidth;
-        float TexelSizeV = 1.0 / ShadowDepthMapHeight;
-        for (int x = -PCFCount; x <= PCFCount; ++x)
+        if (saturate(LightClipPosition.z) == LightClipPosition.z)
         {
-            for (int y = -PCFCount; y <= PCFCount; ++y)
+            Shadow = 0.0f;
+            float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
+        
+            float TexelSizeU = 1.0 / ShadowDepthMapWidth;
+            float TexelSizeV = 1.0 / ShadowDepthMapHeight;
+            for (int x = -PCFCount; x <= PCFCount; ++x)
             {
-                float2 UVOffset = float2(x * TexelSizeU, y * TexelSizeV);
-                
-                float pcfDepth = tex2D(shadowMap, LightClipPosition.xy + UVOffset).x;
-                if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
+                for (int y = -PCFCount; y <= PCFCount; ++y)
                 {
-                    Shadow += 1.0f;
+                    float2 UVOffset = float2(x * TexelSizeU, y * TexelSizeV);
+                
+                    float pcfDepth = tex2D(shadowMap, LightClipPosition.xy + UVOffset).x;
+                    if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
+                    {
+                        Shadow += 1.0f;
+                    }
                 }
             }
+            Shadow /= LookUpCount;
+            Shadow += shadowmin;
+            Shadow = saturate(Shadow);
         }
-        Shadow /= LookUpCount;
-        ShadowFactor -= Shadow;
     }
-    ShadowFactor = saturate(ShadowFactor);
     // 쉐도우 끝 
     
     return (f_diffuse + f_specular) * 
-        lightColor * illuminance * ShadowFactor;
+        lightColor * illuminance * Shadow;
 }
 
-float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, float roughness,
+float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm, 
+float roughness,
 float metalness)
 {
     float3 ldir = lightPos.xyz - wpos;
@@ -165,38 +168,49 @@ float metalness)
     float illuminance = (lightFlux / (QUAD_PI * dist2)) * ndotl;
     float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);
 
-    // return ShadowFactor;
-    
-    return (f_diffuse + f_specular) * 
-        lightColor * illuminance * attenuation * (shadow);
+    return (f_diffuse + f_specular) * lightColor * illuminance * attenuation * (shadow);
 }
 
 void ps_deferred(
 	in float2 tex : TEXCOORD0,
 	out float4 color : COLOR0)
 {
-    float4 base = tex2D(albedo, tex);
-    float4 nrmr = tex2D(normals, tex).rgba; 
+    // 감마 보정은 Device 세팅을 조절해서 결정 !
+    // 알베도 + 메탈
+    float4 albm = tex2D(albedo, tex);
+    // 월드 노말 + 거칠기 
+    float4 nrmr = tex2D(normals, tex); 
     float3 wnorm = nrmr.xyz * 2.0f - 1.0f;
-    float d = tex2D(depth, tex).r;
+    float  d = tex2D(depth, tex).r;
     float4 wpos = float4(tex.x * 2 - 1, 1 - 2 * tex.y, d, 1);
 
     if (d > 0.0f)
     {
+        // 월드 위치 언팩 . 
         wpos = mul(wpos, matViewProjInv);
         wpos /= wpos.w;
 
+        // 방향 조명
         if (IsPoint==false)
         {
 			// directional light
-            color.rgb = Luminance_Blinn_Directional(base.rgb, wpos.xyz, wnorm,nrmr.a ,
-            base.a);
+            color.rgb = Luminance_Blinn_Directional(
+            albm.rgb, 
+            wpos.xyz, 
+            wnorm,
+            nrmr.a ,
+            albm.a);
         }
         else 
         {
-			// point light
-            color.rgb = Luminance_Blinn_Point(base.rgb, wpos.xyz, wnorm ,nrmr.a ,
-            base.a);
+			// 점 조명
+            color.rgb = 
+            Luminance_Blinn_Point(
+            albm.rgb, 
+            wpos.xyz, 
+            wnorm, 
+            nrmr.a,
+            albm.a);
         }
 
         color.a = 1;
@@ -215,3 +229,4 @@ technique deferred
         pixelshader = compile ps_3_0 ps_deferred();
     }
 }
+
