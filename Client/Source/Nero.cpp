@@ -127,28 +127,13 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
 
-	/*Matrix RotY;
-	D3DXMatrixRotationY(&RotY, D3DXToRadian(m_fAngle));
-	D3DXVec3TransformCoord(&Pos, &Pos, &RotY);*/
-
 	D3DXMATRIX matRot;
 	D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
 	D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 	D3DXVec3TransformCoord(&Pos, &Pos, &matRot);
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
-
-
-	//게임오브젝트의 회전 상태에 따라 RootMotion 이동 값 방향 회전.
-	//Matrix RotY;
-	//D3DXMatrixRotationY(&RotY, D3DXToRadian(m_fAngle));
-	//D3DXVec3TransformCoord(&Pos, &Pos, &RotY);
-
-	////RootMotion 이동값 적용.
-	//m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
-	//m_pTransform.lock()->SetPosition(m_pTransform.lock()->GetPosition() + Pos * m_pTransform.lock()->GetScale().x);
 	
-
 	return 0;
 }
 
