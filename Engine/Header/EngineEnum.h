@@ -24,6 +24,14 @@ enum ATTACKTYPE
 	Attack_KnocBack,
 	Attack_END
 };
+enum ATTACKDIR
+{
+	Attack_L,
+	Attack_R,
+	Attack_Front,
+	Attack_Back,
+	AttackDir_End
+};
 
 
 

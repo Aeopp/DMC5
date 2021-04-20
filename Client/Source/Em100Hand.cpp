@@ -36,6 +36,8 @@ HRESULT Em100Hand::Ready()
 
 	
 
+	
+
 	return S_OK;
 }
 
@@ -112,7 +114,6 @@ void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		if (m_pEm100.expired())
 			return;
 
-		m_pEm100.lock()->OnTriggerEnter(_pOther);
 	}
 }
 

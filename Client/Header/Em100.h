@@ -4,8 +4,9 @@
 #include "Monster.h"
 
 
-class TestObject;
+class RedQueen;
 class Em100Hand;
+class Nero;
 class Em100 final : public Monster
 {
 private:
@@ -37,8 +38,6 @@ private:
 		idle,
 		State_END
 	};
-
-
 
 private:
 	explicit Em100() = default;
@@ -77,9 +76,10 @@ public:
 private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
-	//TestPlayer 받아옴.
+	//Player 받아옴.
+	std::weak_ptr<Nero>				 m_pPlayer;
 	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<TestObject>		 m_pPlayer;
+	std::weak_ptr<RedQueen>			 m_pRedQueen;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;
@@ -87,6 +87,9 @@ private:
 
 	bool		m_bAttack = false;	
 	float		m_fAttackTime = 0.f;
+
+	bool		m_bHardAttack = false;
+	float		m_fHardAttackTime = 0.f;
 
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
