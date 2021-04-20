@@ -35,14 +35,15 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		pUserData[0] = (LPPXUSERDATA)pairHeader.actors[0]->userData;
 		pUserData[1] = (LPPXUSERDATA)pairHeader.actors[1]->userData;
 
+		//Collider 컴포넌트가 해제되어 pUserData가 nullptr인 경우의 예외처리.
+		if (nullptr == pUserData[0] || nullptr == pUserData[1])
+			continue;
+
 		pCollider[0] = pUserData[0]->pCollider;
 		pCollider[1] = pUserData[1]->pCollider;
 
 		if (physx::PxPairFlag::eNOTIFY_TOUCH_FOUND == pairs[i].events)
 		{
-#ifdef _DEBUG
-			//cout << "OnCollisionEnter" << endl;
-#endif // _DEBUG
 			if(false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnCollisionEnter(pCollider[1].lock()->GetGameObject());
 			if (false == pCollider[1].expired())
@@ -50,9 +51,6 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		}
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS == pairs[i].events)
 		{
-#ifdef _DEBUG
-			//cout << "OnCollisionStay" << endl;
-#endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnCollisionStay(pCollider[1].lock()->GetGameObject());
 			if (false == pCollider[1].expired())
@@ -60,9 +58,6 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		}
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_LOST == pairs[i].events)
 		{
-#ifdef _DEBUG
-			//cout << "OnCollisionExit" << endl;
-#endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnCollisionExit(pCollider[1].lock()->GetGameObject());
 			if (false == pCollider[1].expired())
@@ -81,14 +76,15 @@ void CollisionCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 coun
 		pUserData[0] = (LPPXUSERDATA)pairs->otherActor->userData;
 		pUserData[1] = (LPPXUSERDATA)pairs->triggerActor->userData;
 
+		//Collider 컴포넌트가 해제되어 pUserData가 nullptr인 경우의 예외처리.
+		if (nullptr == pUserData[0] || nullptr == pUserData[1])
+			continue;
+
 		pCollider[0] = pUserData[0]->pCollider;
 		pCollider[1] = pUserData[1]->pCollider;
 
 		if (physx::PxPairFlag::eNOTIFY_TOUCH_FOUND == pairs[i].status)
 		{
-#ifdef _DEBUG
-			//cout << "OnTriggerEnter" << endl;
-#endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnTriggerEnter(pCollider[1].lock()->GetGameObject());
 			if (false == pCollider[1].expired())
@@ -96,9 +92,6 @@ void CollisionCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 coun
 		}
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_LOST == pairs[i].status)
 		{
-#ifdef _DEBUG
-			//cout << "OnTriggerExit" << endl;
-#endif // _DEBUG
 			if (false == pCollider[0].expired())
 				pCollider[0].lock()->GetGameObject().lock()->OnTriggerExit(pCollider[1].lock()->GetGameObject());
 			if (false == pCollider[1].expired())

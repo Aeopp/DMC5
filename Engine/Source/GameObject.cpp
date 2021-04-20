@@ -13,13 +13,45 @@ GameObject::GameObject()
 	, m_bStatic(false)
 	, m_bDestroy(false)
 	, m_bRenderRegist(false)
+	, m_bCollEnable(false)
 {
 	m_pTransform = AddComponent<Transform>();
+	m_pGameObject = std::static_pointer_cast<GameObject>(m_pThis);
 }
 
 void GameObject::Free()
 {
+	for (auto& rPair : m_Components)
+		rPair.second.reset();
+
+	m_Components.clear();
 	Object::Free();
+}
+
+HRESULT GameObject::Ready()
+{
+	return S_OK;
+}
+
+HRESULT GameObject::Awake()
+{
+	return S_OK;
+}
+
+HRESULT GameObject::Start()
+{
+	return S_OK;
+}
+
+UINT GameObject::Update(const float _fDeltaTime)
+{
+	m_pTransform.lock()->UpdateTransform();
+	return 0;
+}
+
+UINT GameObject::LateUpdate(const float _fDeltaTime)
+{
+	return 0;
 }
 
 std::weak_ptr<GameObject> GameObject::FindGameObjectWithTag(const UINT& _nTag)
@@ -89,14 +121,19 @@ BT_INFO GameObject::Get_BattleInfo()
 	return m_BattleInfo;
 }
 
+bool GameObject::Get_Coll()
+{
+	return m_bCollEnable;
+}
+
 void GameObject::SetScene(Scene* const _pScene)
 {
 	m_pScene = _pScene;
 }
 
-void GameObject::SetGameObject(std::weak_ptr<GameObject> _pGameObject)
+void GameObject::Set_Coll(const bool _bColl)
 {
-	m_pGameObject = _pGameObject;
+	m_bCollEnable = _bColl;
 }
 
 UINT GameObject::GetLoopIdx()
@@ -109,6 +146,14 @@ void GameObject::SetLoopIdx(const UINT _nLoopIdx)
 	m_nLoopIdx = _nLoopIdx;
 }
 
+UINT GameObject::GetSceneID()
+{
+	if (nullptr == m_pScene)
+		return 0;
+
+	return m_pScene->UniqueID;
+}
+
 void GameObject::DrawCollider(const DrawInfo& _Info)
 {
 	for (auto& rPair : m_Components)
@@ -119,12 +164,6 @@ void GameObject::DrawCollider(const DrawInfo& _Info)
 			return;
 		}
 	}
-}
-
-UINT GameObject::Update(const float _fDeltaTime)
-{
-	m_pTransform.lock()->UpdateTransform();
-	return 0;
 }
 
 void GameObject::Editor()
@@ -164,7 +203,6 @@ void GameObject::OnCollisionExit(std::weak_ptr<GameObject> _pOther)
 
 void GameObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-
 }
 
 void GameObject::OnTriggerExit(std::weak_ptr<GameObject> _pOther)

@@ -4,7 +4,7 @@
 BEGIN(ENGINE)
 class ENGINE_DLL Subset final : public Object
 {
-private:
+public:
 	LPDIRECT3DDEVICE9		m_pDevice;
 
 	LPDIRECT3DVERTEXBUFFER9	m_pVertexBuffer;

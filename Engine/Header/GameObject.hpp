@@ -21,8 +21,6 @@ inline std::weak_ptr<TYPE> GameObject::AddComponent()
 
 	iterFind = (m_Components.emplace(nTypeID, std::shared_ptr<Component>(pComponent, Deleter<Object>()))).first;
 	
-	pComponent->SetWeakPtr(iterFind->second);
-
 	return std::static_pointer_cast<TYPE>(iterFind->second);
 }
 

@@ -42,5 +42,9 @@ private:
 
 	Vector3 m_vTest = {0.001f, 0.001f, 0.001f};
 
+
+	// Effect을(를) 통해 상속됨
+	virtual void Reset() override;
+
 };
 #endif // !__DashEffect_h__

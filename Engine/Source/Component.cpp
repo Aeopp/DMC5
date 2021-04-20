@@ -7,6 +7,7 @@ Component::Component(std::weak_ptr<GameObject> const _pGameObject)
 	: m_bActive(true)
 	, m_pGameObject(_pGameObject)
 {
+	m_pThis.reset(this, DummyDeleter<Object>());
 }
 
 void Component::Free()
@@ -32,9 +33,4 @@ bool Component::IsActive()
 void Component::SetActive(const bool _bActive)
 {
 	m_bActive = _bActive;
-}
-
-void Component::SetWeakPtr(std::weak_ptr<Component> _pThis)
-{
-	m_pThis = _pThis;
 }

@@ -31,7 +31,10 @@ void Em100Hand::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em100Hand::Ready()
 {
+	GameObject::Ready();
 	RenderInit();
+
+	
 
 	
 
@@ -40,6 +43,9 @@ HRESULT Em100Hand::Ready()
 
 HRESULT Em100Hand::Awake()
 {
+	GameObject::Awake();
+
+
 	m_pParentBone = m_pEm100Mesh.lock()->GetToRootMatrixPtr(m_bLeft ? "L_Hand" : "R_Hand");
 	m_pEm100Trans = m_pEm100.lock()->GetComponent<ENGINE::Transform>();
 
@@ -64,6 +70,7 @@ HRESULT Em100Hand::Awake()
 
 HRESULT Em100Hand::Start()
 {
+	GameObject::Start();
 	return S_OK;
 }
 
@@ -79,6 +86,7 @@ UINT Em100Hand::Update(const float _fDeltaTime)
 
 UINT Em100Hand::LateUpdate(const float _fDeltaTime)
 {
+	GameObject::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
@@ -106,7 +114,6 @@ void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		if (m_pEm100.expired())
 			return;
 
-		m_pEm100.lock()->OnTriggerEnter(_pOther);
 	}
 }
 

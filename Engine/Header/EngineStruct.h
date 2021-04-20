@@ -116,6 +116,7 @@ typedef struct tagBattleInfo
 	int		iHp;
 
 	ATTACKTYPE	eAttackType;
+	ATTACKDIR   eAttackDir;
 }BT_INFO;
 END
 #endif // !__ENGINE_STRUCT_H__
