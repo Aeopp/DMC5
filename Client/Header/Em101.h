@@ -58,6 +58,8 @@ public:
 	virtual void Editor() override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
@@ -68,7 +70,6 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
-
 
 private:
 	//몬스터 상태

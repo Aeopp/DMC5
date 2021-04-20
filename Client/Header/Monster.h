@@ -1,11 +1,11 @@
 #ifndef Monster_h__
 #define Monster_h__
 
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 #include "SkeletonMesh.h"
 
-class Monster : public ENGINE::GameObject,
+class Monster : public Unit,
 				public ENGINE::RenderInterface
 {
 protected:
@@ -34,7 +34,8 @@ public:
 	virtual void    Editor()override PURE;
 	virtual void	OnEnable() override PURE;
 	virtual void    OnDisable() override PURE;
-
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;

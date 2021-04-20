@@ -1,10 +1,12 @@
 #ifndef Gauntlet_h__
 #define Gauntlet_h__
 
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
-class Nero;
-class Gauntlet abstract : public GameObject,
+#include "Renderer.h"
+#include "Subset.h"
+#include "Nero.h"
+class Gauntlet abstract : public Unit,
 	public ENGINE::RenderInterface
 {
 protected:
@@ -20,10 +22,25 @@ public:
 	virtual void    Editor()                        override;
 	virtual void	OnEnable()							PURE;
 	virtual void	OnDisable()							PURE;
-
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther)PURE;
-	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther) PURE;
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther)PURE;
+public:
+	virtual void RenderReady() override;
+	// ·»´õ¸µ ÇÔ¼ö ...
+	void RenderGBufferSK(const DrawInfo& _Info);
+	void RenderShadowSK(const DrawInfo& _Info);
+	void RenderDebugBone(const DrawInfo& _Info);
+	void RenderDebugSK(const DrawInfo& _Info);
+	void RenderInit();
+
+protected:
+	std::weak_ptr<Nero>					m_pNero;
+	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
+
+	Matrix*					m_pParentMat = nullptr;
 };
 
 

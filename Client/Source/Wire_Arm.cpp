@@ -12,7 +12,7 @@ Wire_Arm::Wire_Arm()
 
 void Wire_Arm::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 Wire_Arm* Wire_Arm::Create()
@@ -22,7 +22,7 @@ Wire_Arm* Wire_Arm::Create()
 
 HRESULT Wire_Arm::Ready()
 {
-	//GameObject::Ready();
+	Unit::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
@@ -35,7 +35,7 @@ HRESULT Wire_Arm::Ready()
 
 HRESULT Wire_Arm::Awake()
 {
-	//GameObject::Awake();
+	Unit::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	
 	m_pCollider = AddComponent<SphereCollider>();
@@ -48,13 +48,13 @@ HRESULT Wire_Arm::Awake()
 
 HRESULT Wire_Arm::Start()
 {
-	//GameObject::Start();
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Wire_Arm::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
 	if (m_pMesh->IsAnimationEnd())
@@ -67,13 +67,13 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 
 UINT Wire_Arm::LateUpdate(const float _fDeltaTime)
 {
-	//GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Wire_Arm::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 	m_bIsRender = true;
 
 	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
@@ -92,10 +92,14 @@ void Wire_Arm::OnEnable()
 
 void Wire_Arm::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
 	//m_pMesh->SetPlayingTime(0);
+}
+
+void Wire_Arm::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Wire_Arm::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
@@ -144,7 +148,7 @@ void Wire_Arm::RenderReady()
 
 void Wire_Arm::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (bEdit)
 	{
 		// ¿¡µðÅÍ .... 

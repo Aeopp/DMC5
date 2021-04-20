@@ -11,7 +11,7 @@
 
 void Em100::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 std::string Em100::GetName()
@@ -296,7 +296,7 @@ void Em100::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em100::Ready()
 {
-	GameObject::Ready();
+	Unit::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster100;
 
@@ -325,7 +325,7 @@ HRESULT Em100::Ready()
 
 HRESULT Em100::Awake()
 {
-	GameObject::Awake();
+	Unit::Awake();
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
@@ -361,13 +361,13 @@ HRESULT Em100::Awake()
 
 HRESULT Em100::Start()
 {
-	GameObject::Start();
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Em100::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -425,18 +425,18 @@ UINT Em100::Update(const float _fDeltaTime)
 
 UINT Em100::LateUpdate(const float _fDeltaTime)
 {
-	GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 
 }
 
 void Em100::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 
 
 
-	GameObject::Editor();
+	Unit::Editor();
 	if (bEdit)
 	{
 
@@ -446,12 +446,16 @@ void Em100::Editor()
 
 void Em100::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Em100::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

@@ -10,7 +10,7 @@
 
 void Em0000::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 std::string Em0000::GetName()
@@ -282,7 +282,7 @@ HRESULT Em0000::Start()
 
 UINT Em0000::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -355,7 +355,7 @@ UINT Em0000::LateUpdate(const float _fDeltaTime)
 
 void Em0000::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (bEdit)
 	{
 
@@ -365,12 +365,16 @@ void Em0000::Editor()
 
 void Em0000::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Em0000::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Em0000::RenderGBufferSK(const DrawInfo& _Info)
