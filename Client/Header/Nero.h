@@ -15,7 +15,7 @@ class WIngArm_Left;
 class WingArm_Right;
 class MainCamera;
 class BtlPanel;
-class Nero :   public GameObject ,
+class Nero : public GameObject,
 	public ENGINE::RenderInterface
 
 {
@@ -199,7 +199,7 @@ public:
 
 	enum WeaponList
 	{
-		RQ , // °Ë
+		RQ, // °Ë
 		Cbs // »ïÀý°ï
 
 	};
@@ -224,7 +224,6 @@ public:
 		Dir_Left,
 		Dir_Right
 	};
-	
 
 private:
 	explicit Nero();
@@ -238,7 +237,7 @@ public:
 	virtual void RenderReady() override;
 	virtual void Editor()override;
 public:
-/// <For RedQueen>
+	/// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
 	void Set_PlayingTime(float NewTime);
 
@@ -260,6 +259,7 @@ public:
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
+	void Reset_Test() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_Wings(bool ActiveOrNot);
 	void SetActive_Wing_Left(bool ActiveOrNot);
@@ -268,7 +268,7 @@ public:
 	void SetActive_Wire_Arm(bool ActiveOrNot);
 	void SetActive_WingArm_Right(bool ActiveOrNot);
 	void SetActive_WingArm_Left(bool ActiveOrNot);
-	void SetAngleFromCamera();
+	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
@@ -298,7 +298,7 @@ public:
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex,const AnimNotify& _Notify = {});
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
 	void ChangeAnimationIndex(const UINT AnimationIndex);
 	void ChangeWeapon(UINT _iWeaponIndex);
 	void Change_BusterArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
@@ -354,6 +354,11 @@ private:
 	float	m_fRotationAngle = 0.f;
 
 	bool	m_IsMajin = false;
+
+	//
+	D3DXVECTOR3 vDegree;
+	D3DXVECTOR3 vRotationDegree;
+	D3DXVECTOR3 vAccumlatonDegree;
 };
 
 

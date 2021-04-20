@@ -31,6 +31,7 @@ protected:
 
 	//전투 관련된 변수
 	BT_INFO		m_BattleInfo;
+	bool		m_bCollEnable;
 protected:
 	explicit GameObject();
 	virtual ~GameObject() = default;
@@ -79,6 +80,8 @@ public:
 	void    PushEditEntity(Object * _EditObject);
 
 	BT_INFO Get_BattleInfo();
+	bool	Get_Coll();
+	void	Set_Coll(const bool _bColl);
 private:
 	void	SetScene(Scene* const _pScene);
 	UINT	GetLoopIdx();

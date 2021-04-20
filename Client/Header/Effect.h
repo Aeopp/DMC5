@@ -9,6 +9,8 @@ class Effect abstract: public ENGINE::GameObject,
 protected:
 	float _AccumulateTime = 0.f;
 	float _PlayingSpeed = 1.f;
+	bool _IsPlaying = false;
+	bool _Loop = false;
 
 protected:
 	explicit Effect() = default;
@@ -27,5 +29,15 @@ public:
 	virtual void    Editor() override PURE;
 	virtual void	OnEnable() override PURE;
 	virtual void    OnDisable() override PURE;
+public:
+	virtual void	Reset() PURE;
+	virtual void	SetScale(const float AllScale);
+	virtual void	SetRotation(const Vector3& Rot);
+	virtual void	SetPosition(const Vector3& Pos);
+	virtual void	Imgui_Modify() {}
+public:
+	bool IsPlaying() const	{ return _IsPlaying; }
+	void SetLoop(bool Loop) { _Loop = Loop; _AccumulateTime = 0.f; }
+	void PlayStart(const float PlayingSpeed = 1.f);
 };
 #endif // !__EFFECT__

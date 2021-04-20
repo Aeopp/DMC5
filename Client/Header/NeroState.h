@@ -159,6 +159,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	float m_fRequireTimeForDash = 0.f;
 };
 
 class RunStartFront : public NeroState
@@ -290,6 +293,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	float m_fGradient; // 좌우키 같이 눌렀을때 기우는 값
 };
 
 class DashStop : public NeroState
@@ -322,6 +328,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	bool			m_bRotationEnable = false;
 };
 
 class WalkLoop : public NeroState

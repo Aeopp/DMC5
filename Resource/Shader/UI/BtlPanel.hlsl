@@ -13,6 +13,7 @@ float _HP_Degree = 0.f; // 0 ~ 360 범위
 float2 _HP_StartPt;
 float2 _HP_Normal0;
 float2 _HP_Normal1;
+float _TargetCursorAlpha = 1.f; // 0 ~ 1
 
 float _HPGaugeCurXPosOrtho;
 float _BossGaugeCurXPosOrtho;
@@ -25,6 +26,8 @@ float2 _MinTexUV = float2(0.f, 0.f);
 float2 _MaxTexUV = float2(1.f, 1.f);
 
 float _EmissivePower = 0.f;
+
+float3 _ExtraColor = float3(0.f, 0.f, 0.f);
 
 
 texture NoiseMap;
@@ -93,6 +96,18 @@ texture Emissive0Map;
 sampler Emissive0 = sampler_state
 {
     texture = Emissive0Map;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    sRGBTexture = true;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+texture BurnRamp0Map;
+sampler BurnRamp0 = sampler_state
+{
+    texture = BurnRamp0Map;
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
@@ -325,7 +340,7 @@ PsOut PsMain_Plane(PsIn In)
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
-    float Ambient = ATOSSample.b * 0.1f;
+    float Ambient = ATOSSample.b * 0.4f;
 
     Out.Color = (Diffuse + Ambient) * float4(ALB0Sample.rgb, 1.f);
     Out.Color.a = ATOSSample.r;
@@ -352,7 +367,7 @@ PsOut PsMain_Mesh(PsIn In)
     
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
 
-    Out.Color = Diffuse * float4(ALB0Sample.rgb, 1.f);
+    Out.Color = Diffuse * float4(ALB0Sample.rgb + _ExtraColor, 1.f); // 일단 여기만 넣는다 ㅠ
     Out.Color.a = 1.f;
     
     return Out;
@@ -395,7 +410,7 @@ PsOut PsMain_TargetCursor(PsIn In)
     float2 newUV = In.UV;
     newUV.y -= _AccumulationTexV;
     
-    float Alp = tex2D(ATOS0, In.UV).r * tex2D(Noise, newUV);
+    float Alp = saturate(tex2D(ATOS0, In.UV).r * tex2D(Noise, newUV).b);
     
     Out.Color = float4(1.f, 0.4f, 0.4f, Alp);
 
@@ -406,7 +421,7 @@ PsOut PsMain_TargetHP(PsIn_NoiseClip In)
 {
     PsOut Out = (PsOut) 0;
     
-    clip(In.UV.y - 0.75f);
+    clip(In.UV.y - 0.8f);
     clip(In.Clip);
     
     float4 Noise0 = tex2D(Noise, In.NoiseCoord0).rrrr;
@@ -428,7 +443,7 @@ PsOut PsMain_TargetHP(PsIn_NoiseClip In)
     float2 NoiseCoord = In.UV + FinalNoise.xy;  // 원본 uv를 밀어냄
        
     Out.Color = float4(0.5f, 0.647f, 0.698f, tex2D(ATOS0, NoiseCoord).r);
-    Out.Color.a *= ((In.UV.y - 0.8f) * 5.f);
+    Out.Color.a *= ((In.UV.y - 0.8f) * 5.f * _TargetCursorAlpha);
     
     return Out;
 };
@@ -451,7 +466,7 @@ PsOut PsMain_BossGauge0(PsIn_Clip In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f; // Diffuse + Ambient
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f; // Diffuse + Ambient
     
     Out.Color.rgb = Shade * float3(0.416f, 0.525f, 0.65f);
     Out.Color.a = ATOSSample.a;
@@ -477,7 +492,7 @@ PsOut PsMain_BossGauge1(PsIn_Clip In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f; // Diffuse + Ambient
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f; // Diffuse + Ambient
     
     Out.Color.rgb = Shade * float3(0.282f, 0.391f, 0.588f);
     Out.Color.a = ATOSSample.g;
@@ -504,7 +519,7 @@ PsOut PsMain_BossGauge2(PsIn_Clip In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f; // Diffuse + Ambient
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f; // Diffuse + Ambient
     
     Out.Color.rgb = Shade * float3(0.263f, 0.227f, 0.733f); // 위
     Out.Color.a = ATOSSample.b;
@@ -533,7 +548,7 @@ PsOut PsMain_BossGauge3(PsIn_Clip In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f; // Diffuse + Ambient
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f; // Diffuse + Ambient
     
     Out.Color.rgb = Shade * float3(0.627f, 0.674f, 0.984f);
     Out.Color.a = ATOSSample.r;
@@ -559,7 +574,7 @@ PsOut PsMain_Glass(PsIn In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
    
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;    // Diffuse + Ambient
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f; // Diffuse + Ambient
 
     float Dirt = ATOSSample.g * _HPGlassDirt;
 
@@ -571,7 +586,7 @@ PsOut PsMain_Glass(PsIn In)
     return Out;
 };
 
-PsOut PsMain_HPGauge(PsIn_Clip In)
+PsOut PsMain_HPGauge0(PsIn_Clip In)
 {
     PsOut Out = (PsOut) 0;
     
@@ -590,9 +605,36 @@ PsOut PsMain_HPGauge(PsIn_Clip In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f;
     
     Out.Color.rgb = Shade * (ALB0Sample.rgb * float3(0.027f, 0.78f, 0.478f));
+    Out.Color.a = ATOSSample.r;
+    
+    return Out;
+};
+
+PsOut PsMain_HPGauge1(PsIn_Clip In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    clip(_HPGaugeCurXPosOrtho - In.Clip.x);
+    
+    float4 ALB0Sample = tex2D(ALB0, In.UV);
+    float4 ATOSSample = tex2D(ATOS0, In.UV);
+    float4 NRMRSample = tex2D(NRMR0, In.UV);
+    
+    float2 NormalXY = NRMRSample.xy * 2.f - 1.f;
+    float NormalZ = sqrt(1 - dot(NormalXY, NormalXY));
+   
+    float3x3 TBN = float3x3(normalize(In.Tangent),
+                            normalize(In.BiNormal),
+                            normalize(In.Normal));
+
+    float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
+    
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f;
+    
+    Out.Color.rgb = Shade * (ALB0Sample.rgb * float3(1.f, 0.f, 0.f));
     Out.Color.a = ATOSSample.r;
     
     return Out;
@@ -614,7 +656,7 @@ PsOut PsMain_TDTGauge0(PsIn In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
    
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f;
     
     float2 newUV = In.UV;
     newUV.y += _AccumulationTexV;
@@ -643,20 +685,34 @@ PsOut PsMain_TDTGauge1(PsIn_Clip In)
 
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
    
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;
+    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.4f;
     
     float2 newUV = In.UV;
     newUV.x += _AccumulationTexU;
 
-    Out.Color.rgb = Shade * (float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa);
-    Out.Color.a = ATOSSample.b;
+    if (0.01f > _EmissivePower)
+    {
+        // 변신 X
+        Out.Color.rgb = Shade * (float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa);
+    }
+    else
+    {
+        // 변신 O
+        Out.Color.rgb = Shade * (float3(1.f - _EmissivePower * 0.5f, 0.f, _EmissivePower) + tex2D(ATOS0, newUV).g * (float3(_EmissivePower * 0.5f, 1.f, 1.f - _EmissivePower)));
+    }
     
+    Out.Color.a = ATOSSample.b;
+
     return Out;
 };
 
 PsOut PsMain_ExGauge(PsIn In)
 {
     PsOut Out = (PsOut) 0;
+    
+    float4 NoiseSample = tex2D(Noise, In.UV).rrrr; // r,g,b 각각 다른 노이즈. 그 중 하나만 사용
+    NoiseSample.rgb -= _SliceAmount;
+    clip(NoiseSample);
     
     float4 ALB0Sample = tex2D(ALB0, In.UV);
     float4 ALB1Sample = tex2D(ALB1, In.UV);
@@ -671,13 +727,17 @@ PsOut PsMain_ExGauge(PsIn In)
                             normalize(In.Normal));
     
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
-    
+             
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
     float Emissive = saturate(_EmissivePower * (EmissiveSample.r + EmissiveSample.g + 0.7f * EmissiveSample.b + 1.8f * EmissiveSample.a));
 
     if (ALB0Sample.r < 0.001f)
         ALB0Sample.rgb = saturate((1.8f - _EmissivePower) * ALB0Sample.rgb) + saturate((_EmissivePower - 0.8f) * ALB1Sample.rgb);
     
+    //float BurnSize = 0.2f;
+    if (NoiseSample.r < 0.2f && _SliceAmount > 0.f)
+        ALB0Sample += tex2D(BurnRamp0, float2(NoiseSample.r * (5.f), 0.f)); // 5.f = 1 / 0.2f
+
     Out.Color = Diffuse * ALB0Sample + Emissive * ALB1Sample;
     Out.Color.a = 1.f;
 
@@ -760,7 +820,7 @@ PsOut PsMain_Rank(PsIn_Clip In)
 
     float3 Albedo = ALB0Sample.rgb;
     if (In.Clip.y < _RankGaugeCurYPosOrtho)
-        Albedo = tex2D(ALB1, tex2D(Noise, (In.UV - float2(_AccumulationTexU, 0.f))).xy).rgb * 1.5f;
+        Albedo = tex2D(ALB1, tex2D(Noise, (In.UV - float2(_AccumulationTexU, 0.f))).xy).rgb * 2.f;
     
     Out.Color = Diffuse * float4(Albedo, 1.f);
     Out.Color.a = 1.f;
@@ -889,7 +949,7 @@ technique Default
         sRGBWRITEENABLE = true;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
-        pixelshader = compile ps_3_0 PsMain_HPGauge();
+        pixelshader = compile ps_3_0 PsMain_HPGauge0();
     }
     pass p10
     {
@@ -986,5 +1046,17 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
         pixelshader = compile ps_3_0 PsMain_ExGauge();
+    }
+    pass p18
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = true;
+
+        vertexshader = compile vs_3_0 VsMain_ClipPos();
+        pixelshader = compile ps_3_0 PsMain_HPGauge1();
     }
 };
