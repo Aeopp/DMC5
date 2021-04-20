@@ -80,6 +80,14 @@ public:
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	std::array <float, 5> adaptedluminance_var
+	{
+		0.98f,
+		50.0f,
+		100.0f,
+		12.5f,
+		1.2f
+	};
 	bool bSRGBAlbm = true;
 	bool bSRGBNRMR = false;
 	bool drawafterimage = false;

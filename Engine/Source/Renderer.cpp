@@ -556,9 +556,28 @@ void Renderer::Editor()&
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
-
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 
+		if (ImGui::CollapsingHeader("AdaptLuminance"))
+		{
+			for (int32 i = 0; i < adaptedluminance_var.size(); ++i)
+			{
+				std::string label = "adpvar " + std::to_string(i);
+				ImGui::SliderFloat(label.c_str(), &adaptedluminance_var[i], 0.0f, 100.f);
+			};
+			if (ImGui::Button("AdaptLuminance Default"))
+			{
+				adaptedluminance_var =
+				{
+					0.98f,
+					50.0f,
+					100.0f,
+					12.5f,
+					1.2f
+				};
+			}
+		}
+		
 		// ImGui::SliderFloat("ShadowMin", &ShadowMin, 0.0f, 1.0f);
 
 		if (ImGui::CollapsingHeader("Add Light"))
@@ -1202,7 +1221,8 @@ HRESULT Renderer::RenderSky()&
 	screenquad->End();
 
 	return S_OK;
-}
+};
+
 HRESULT Renderer::RenderSkySphere()&
 {
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
@@ -1455,6 +1475,7 @@ HRESULT Renderer::RenderInsulatorMetal()&
 	Device->SetTexture(4, irradiance1);
 	Device->SetTexture(5, irradiance2);
 	Device->SetTexture(6, brdfLUT);
+
 	for (int i = 0; i < 7; ++i)
 	{
 		Device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -1593,10 +1614,12 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 	// 델타타임에 영향을 매우 많이 받음 . 
 	adaptedluminance = adaptedluminance +
 		(averageluminance - adaptedluminance) *
-		(1.0f - powf(0.98f, 50.0f * DeltaTime));
+		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] * DeltaTime));
 
-	float two_ad_EV = adaptedluminance * (100.0f / 12.5f);
-	exposure = 1.0f / (1.2f * two_ad_EV);
+	float two_ad_EV = adaptedluminance * 
+		(adaptedluminance_var[2] / adaptedluminance_var[3]);
+
+	exposure = 1.0f / (adaptedluminance_var[4] * two_ad_EV);
 
 	return S_OK;
 }
@@ -1612,8 +1635,8 @@ HRESULT Renderer::BrightPass()&
 	viewport.Width = _RenderInfo.Viewport.Width / 2;
 	viewport.Height = _RenderInfo.Viewport.Height / 2;
 
-	pixelsize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
-	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
+	pixelsize.x = 1.0f / (float)viewport.Width;
+	pixelsize.y = -1.0f / (float)viewport.Height;
 
 	Device->SetRenderTarget(0, 
 		RenderTargets["dsampletargets0"]->GetSurface());
@@ -1669,8 +1692,6 @@ HRESULT Renderer::BrightPass()&
 	};
 
 	currentafterimage = 1 - currentafterimage;
-	// 렌터가셍 ㅔ잔상을 그린다 . 
-	/*Device->SetRenderTarget(0,)*/
 	return S_OK;
 }
 HRESULT Renderer::DownSample()
@@ -1688,9 +1709,9 @@ HRESULT Renderer::DownSample()
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
+	
 	auto hdreffects = Shaders["hdreffects"]->GetEffect();
-	hdreffects->SetTechnique("downsample" );
+	hdreffects->SetTechnique("downsample");
 
 	hdreffects->Begin(NULL, 0); 
 	hdreffects->BeginPass(0);
@@ -1781,7 +1802,7 @@ HRESULT Renderer::Stars()
 
 				Device->SetRenderTarget(0,
 					RenderTargets["startargets" + idxstr]->GetSurface(0));
-
+				
 				auto* _Tex = j==0 ? 
 					RenderTargets["dsampletargets1"]->GetTexture() :
 					RenderTargets[
@@ -1862,7 +1883,7 @@ HRESULT Renderer::Bloom()
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
-
+	
 	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
 
 	Vector4 pixelsize{0.f,0.f,0.f,1.f};
@@ -2031,6 +2052,7 @@ HRESULT Renderer::LensFlare()
 
 	return S_OK;
 };
+
 HRESULT Renderer::ToneMap()
 {
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
