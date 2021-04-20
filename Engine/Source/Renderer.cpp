@@ -485,7 +485,7 @@ HRESULT Renderer::Render()&
 
 	// 디퍼드 렌더링 .
 	DeferredShading();
-	RenderInsulatorMetal();
+	/*RenderInsulatorMetal();
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
 	AdaptLuminance(DeltaTime);
@@ -493,7 +493,7 @@ HRESULT Renderer::Render()&
 	DownSample();
 	Stars();
 	Bloom();
-	LensFlare();
+	LensFlare();*/
 	// 백버퍼로 백업 . 
 	Device->SetRenderTarget(0, BackBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
@@ -505,8 +505,8 @@ HRESULT Renderer::Render()&
 	{
 		RenderSkySphere();
 	}
-	ToneMap();
-	// Tonemapping();
+	// ToneMap();
+	Tonemapping();
 	AlphaBlendEffectRender();
 	UIRender();
 

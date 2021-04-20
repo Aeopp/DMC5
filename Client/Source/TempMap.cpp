@@ -180,6 +180,7 @@ HRESULT TempMap::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
+	InitTransform.lock()->SetPosition({-6.56712f,10.20113f,-640.95453f});
 	//InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
 
 	PushEditEntity(InitTransform.lock().get());
