@@ -125,7 +125,7 @@ UINT Glint::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
-	std::cout << _AccumulateTime << endl;
+	//std::cout << _AccumulateTime << endl;
 
 	if (1.5f < _AccumulateTime)
 		Reset();
