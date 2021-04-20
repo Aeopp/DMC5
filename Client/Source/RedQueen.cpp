@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Subset.h"
 #include "Nero.h"
+#include "Glint.h"
 RedQueen::RedQueen()
 {
 	m_nTag = TAG_RedQueen;
@@ -54,6 +55,7 @@ HRESULT RedQueen::Awake()
 HRESULT RedQueen::Start()
 {
 	//GameObject::Start();
+	m_pGlint = std::static_pointer_cast<Glint>(FindGameObjectWithTag(GAMEOBJECTTAG::Eff_Glint).lock());
 	return S_OK;
 }
 

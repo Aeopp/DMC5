@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "RenderInterface.h"
 class Nero;
+class Glint;
 class RedQueen : public GameObject,
 	public ENGINE::RenderInterface
 {
@@ -41,6 +42,8 @@ private:
 	std::weak_ptr<Nero>					m_pNero;
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<CapsuleCollider> m_pCollider;
+	std::weak_ptr<Glint>			m_pGlint; // ¶§·ÈÀ»¶§ ¹ÝÂ¦ÀÌ´Â ÀÌÆåÆ®
+
 
 	std::vector<Matrix*>					m_vecParentMat;
 	UINT								m_iStateIndex = 0;

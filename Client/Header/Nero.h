@@ -338,7 +338,6 @@ private:
 	std::weak_ptr<CapsuleCollider> m_pCollider;
 	std::weak_ptr<BtlPanel>			m_pBtlPanel;
 
-
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
 	UINT	m_iCurWeaponIndex;

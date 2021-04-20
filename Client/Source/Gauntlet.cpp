@@ -1,0 +1,5 @@
+#include "stdafx.h"
+#include "Gauntlet.h"
+#include "Renderer.h"
+#include "Subset.h"
+#include "Nero.h"
