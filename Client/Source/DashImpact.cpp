@@ -157,3 +157,7 @@ void DashImpact::OnDisable()
 {
 	GameObject::OnDisable();
 }
+
+void DashImpact::Reset()
+{
+}
