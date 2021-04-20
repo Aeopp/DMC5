@@ -99,39 +99,36 @@ float3 wpos, float3 wnorm)
     LightClipPosition.xy *= 0.5f;
     LightClipPosition.xy += 0.5f;
     
-    float Shadow  = 1.f;
+    float ShadowFactor = 1.0f + shadowmin;
     
     if (ShadowDepthMapHeight > 0)
     {
-        if (saturate(LightClipPosition.z) == LightClipPosition.z)
-        {
-            Shadow = 0.0f;
-            float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
+        float LookUpCount = (PCFCount * 2.0f + 1) * (PCFCount * 2.0f + 1);
         
-            float TexelSizeU = 1.0 / ShadowDepthMapWidth;
-            float TexelSizeV = 1.0 / ShadowDepthMapHeight;
-            for (int x = -PCFCount; x <= PCFCount; ++x)
+        float Shadow = 0.0;
+        float TexelSizeU = 1.0 / ShadowDepthMapWidth;
+        float TexelSizeV = 1.0 / ShadowDepthMapHeight;
+        for (int x = -PCFCount; x <= PCFCount; ++x)
+        {
+            for (int y = -PCFCount; y <= PCFCount; ++y)
             {
-                for (int y = -PCFCount; y <= PCFCount; ++y)
-                {
-                    float2 UVOffset = float2(x * TexelSizeU, y * TexelSizeV);
+                float2 UVOffset = float2(x * TexelSizeU, y * TexelSizeV);
                 
-                    float pcfDepth = tex2D(shadowMap, LightClipPosition.xy + UVOffset).x;
-                    if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
-                    {
-                        Shadow += 1.0f;
-                    }
+                float pcfDepth = tex2D(shadowMap, LightClipPosition.xy + UVOffset).x;
+                if (LightClipPosition.z > (pcfDepth + ShadowDepthBias))
+                {
+                    Shadow += 1.0f;
                 }
             }
-            Shadow /= LookUpCount;
-            Shadow += shadowmin;
-            Shadow = saturate(Shadow);
         }
+        Shadow /= LookUpCount;
+        ShadowFactor -= Shadow;
     }
+    ShadowFactor = saturate(ShadowFactor);
     // ½¦µµ¿ì ³¡ 
     
     return (f_diffuse + f_specular) * 
-        lightColor * illuminance * Shadow;
+        lightColor * illuminance * ShadowFactor;
 }
 
 float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
@@ -154,11 +151,13 @@ float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
     float shadow = 1.f;
     if (ShadowDepthMapHeight > 0)
     {
-        float2 moments = texCUBE(cubeShadowMap, -l).xy;
-
         float z = length(ldir);
         float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-        shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+        
+        {
+            float2 moments = texCUBE(cubeShadowMap, -l).xy;
+            shadow = saturate(ShadowVariance(moments, d) + shadowmin);
+        }
     }
 
     float illuminance = (lightFlux / (QUAD_PI * dist2)) * ndotl;

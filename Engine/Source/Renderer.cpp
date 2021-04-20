@@ -701,6 +701,8 @@ void Renderer::RenderShadowMaps()
 
 	for (auto& DirLight : DirLights)
 	{
+		if (DirLight->GetShadowMapSize() <= 0) continue;
+
 		DirLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX  viewproj;
 			D3DXVECTOR4 clipplanes(light->GetNearPlane(), light->GetFarPlane(), 0, 0);
@@ -943,7 +945,7 @@ void Renderer::DeferredShading()
 		// 그림자를 맵 샘플링을 위한 처리 그림자맵이 그려지지 않은 곳은 그림자 없음 .
 		if (i > 2)
 		{
-			device->SetSamplerState(i, D3DSAMP_BORDERCOLOR, 0xffffffff);
+			device->SetSamplerState(i, D3DSAMP_BORDERCOLOR, 0x00000000);
 			device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
 			device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
 		}
