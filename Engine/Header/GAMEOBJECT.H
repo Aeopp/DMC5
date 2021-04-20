@@ -25,7 +25,7 @@ private:
 	UINT		m_nLoopIdx;
 	bool		m_bRenderRegist;
 protected:
-	std::vector<Object*> m_pEditObjects{};
+	std::vector<Object*>		m_pEditObjects{};
 	std::weak_ptr<GameObject>	m_pGameObject;
 	std::weak_ptr<Transform>	m_pTransform;
 
@@ -78,9 +78,10 @@ public:
 	void	Set_Coll(const bool _bColl);
 private:
 	void	SetScene(Scene* const _pScene);
-	void	SetGameObject(std::weak_ptr<GameObject> _pGameObject);
 	UINT	GetLoopIdx();
 	void	SetLoopIdx(const UINT _nLoopIdx);
+public:
+	UINT	GetSceneID();
 public:
 	void	DrawCollider(const DrawInfo & _Info);
 };

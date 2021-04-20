@@ -17,8 +17,15 @@ void MeshCollider::Free()
 
 MeshCollider* MeshCollider::Create(std::weak_ptr<GameObject> const _pGameObject)
 {
-	MeshCollider* pinstance = new MeshCollider(_pGameObject);
-	return pinstance;
+	MeshCollider* pInstance = new MeshCollider(_pGameObject);
+
+	if (FAILED(pInstance->ReadyCollider()))
+	{
+		delete pInstance;
+		return nullptr;
+	}
+
+	return pInstance;
 }
 
 HRESULT MeshCollider::ReadyCollider()
@@ -54,7 +61,7 @@ void MeshCollider::CookTriangleMesh(D3DXVECTOR3* _pPoints, UINT _nNumPoint, UINT
 	triangleMeshDesc.points.data = _pPoints;
 
 	triangleMeshDesc.triangles.count = _nNumFace / 3;
-	triangleMeshDesc.triangles.stride = 3 * sizeof(UINT);
+	triangleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
 	triangleMeshDesc.triangles.data = _pIndices;
 
 	triangleMeshDesc.flags = PxMeshFlags(0);
@@ -63,7 +70,9 @@ void MeshCollider::CookTriangleMesh(D3DXVECTOR3* _pPoints, UINT _nNumPoint, UINT
 
 	PxTriangleMeshCookingResult::Enum eResult;
 
+	bool bTemp = PhysicsSystem::GetInstance()->GetCooking()->validateTriangleMesh(triangleMeshDesc);
 	bool status = PhysicsSystem::GetInstance()->GetCooking()->cookTriangleMesh(triangleMeshDesc, writeBuffer, &eResult);
+
 
 	if (false == status)
 	{
@@ -73,6 +82,5 @@ void MeshCollider::CookTriangleMesh(D3DXVECTOR3* _pPoints, UINT _nNumPoint, UINT
 	PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 
 	m_pTriangleMesh = PhysicsSystem::GetInstance()->GetPxPhysics()->createTriangleMesh(readBuffer);
-
 }
 

@@ -107,27 +107,13 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 		return E_FAIL;
 	}
 
-	//Scene Description
-	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.f, -9.81f, 0.f);
-	m_pDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
-	sceneDesc.cpuDispatcher = m_pDispatcher;
-	sceneDesc.filterShader = contactReportFilterShader;
-
-	//Scene
-	m_pScene = m_pPhysics->createScene(sceneDesc);
-	if (nullptr == m_pScene)
-	{
-		PRINT_LOG(TEXT("Error"), TEXT("Failed to createScene (PhysicsSystem)"));
-		return E_FAIL;
-	}
-	m_pCollisionCallback = new CollisionCallback;
-	m_pScene->setSimulationEventCallback(m_pCollisionCallback);
-	//Default Material
-	m_pDefaultMaterial = m_pPhysics->createMaterial(1.f, 1.f, 0.f);
-
 	//Cooking
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, m_pPhysics->getTolerancesScale());
+
+	//Default Material
+	m_pDefaultMaterial = m_pPhysics->createMaterial(1.f, 1.f, 0.f);
+	
+	m_pDispatcher = PxDefaultCpuDispatcherCreate(2);
 
 	return S_OK;
 }
@@ -208,6 +194,95 @@ void PhysicsSystem::FetchResults(const bool _bBlock)
 
 }
 
+HRESULT PhysicsSystem::CreateScene(const UINT _nSceneID)
+{
+	PxScene* pScene = nullptr;
+
+	//Scene Description
+	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
+	sceneDesc.gravity = physx::PxVec3(0.f, -9.81f, 0.f);
+	sceneDesc.cpuDispatcher = m_pDispatcher;
+	sceneDesc.filterShader = contactReportFilterShader;
+
+	//Create Scene
+	pScene = m_pPhysics->createScene(sceneDesc);
+
+	if (nullptr == pScene)
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to createScene (PhysicsSystem)"));
+		return E_FAIL;
+	}
+
+	//Simulation Event Callback 등록.
+	pScene->setSimulationEventCallback(new CollisionCallback);
+
+	//map container에 저장
+	m_mapScene.emplace(_nSceneID, pScene);
+	return S_OK;
+}
+
+HRESULT PhysicsSystem::ChangeScene(const UINT _nSceneID)
+{
+	auto iterFind = m_mapScene.find(_nSceneID);
+
+	//씬 아이디에 해당하는 피직스 씬이 없는 경우 피직스 씬 전환 실패.
+	if (m_mapScene.end() == iterFind)
+		return E_FAIL;
+
+	//이전 피직스 씬이 없는경우 
+	//맵 컨테이너에서 찾은 씬을 현재 씬으로 설정.
+	if (nullptr == m_pScene)
+	{
+		m_pScene = iterFind->second;
+		return S_OK;
+	}
+
+	//이전 피직스 씬이 있는경우 
+	
+	// 1. 이전 피직스 씬에 남아있는 Actor를 현재 씬으로 옮김
+	PxU32		nNumActors = 0;
+	PxActor**	ppActors = nullptr;
+
+	//Scene에 있는 RigidDynamicActor의 개수
+	nNumActors = m_pScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
+	//Scene에 있는 RigidDynamicActor 포인터를 받아오기 위한 동적 배열 생성
+	ppActors = new PxActor * [nNumActors];
+	//Scene에서 RigidDynamicActor들을 가져옴.
+	m_pScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, ppActors, nNumActors);
+	//변경할 씬에 남아있는 Actor를 넘겨줌.
+	iterFind->second->addActors(ppActors, nNumActors);
+	//생성한 동적 배열 삭제
+	delete[] ppActors;
+
+	//Scene에 있는 RigidStaticActor의 숫자
+	nNumActors = m_pScene->getNbActors(PxActorTypeFlag::eRIGID_STATIC);
+	//Scene에 있는 RigidStaticActor 포인터를 받아오기 위한 동적 배열 생성
+	ppActors = new PxActor * [nNumActors];
+	//Scene에서 RigidStaticActor들을 가져옴.
+	m_pScene->getActors(PxActorTypeFlag::eRIGID_STATIC, ppActors, nNumActors);
+	//변경할 씬에 남아있는 Actor를 넘겨줌.
+	iterFind->second->addActors(ppActors, nNumActors);
+	//생성한 동적 배열 삭제
+	delete[] ppActors;
+
+	// 2. 이전 피직스 씬을 맵 컨테이너에서 제거
+	for (auto iterCurr = m_mapScene.begin(); iterCurr != m_mapScene.end(); ++iterCurr)
+	{
+		if (iterCurr->second == m_pScene)
+		{
+			m_mapScene.erase(iterCurr);
+			break;
+		}
+	}
+
+	// 3. 이전 피직스 씬을 해제 한 후 맵 컨테이너에서 찾은 씬을 현재 씬으로 설정.
+	m_pScene->release();
+
+	m_pScene = iterFind->second;
+
+	return S_OK;
+}
+
 physx::PxPhysics* PhysicsSystem::GetPxPhysics()
 {
 	return m_pPhysics;
@@ -223,23 +298,28 @@ PxCooking* PhysicsSystem::GetCooking()
 	return m_pCooking;
 }
 
-void PhysicsSystem::AddActor(physx::PxActor& _rActor)
+void PhysicsSystem::AddActor(const UINT _nSceneID, physx::PxActor& _rActor)
 {
-	if (nullptr == m_pScene)
+	auto iterFind = m_mapScene.find(_nSceneID);
+
+	if (m_mapScene.end() == iterFind)
+	{
+		PRINT_LOG(TEXT("Failed to AddActor"), TEXT("Failed to Find PxScene."));
 		return;
-	m_pScene->addActor(_rActor);
+	}
+
+	iterFind->second->addActor(_rActor);
 }
 
-void PhysicsSystem::RemoveActor(physx::PxActor& _rActor)
+void PhysicsSystem::RemoveActor(const UINT _nSceneID, physx::PxActor& _rActor)
 {
-	if (nullptr == m_pScene)
-		return;
-	m_pScene->removeActor(_rActor);
-}
+	auto iterFind = m_mapScene.find(_nSceneID);
 
-void PhysicsSystem::ReleaseActor(physx::PxActor& _rActor)
-{
-	if (nullptr == m_pScene)
+	if (m_mapScene.end() == iterFind)
+	{
+		PRINT_LOG(TEXT("Failed to RemoveActor"), TEXT("Failed to Find PxScene."));
 		return;
-	m_vecRelease.push_back(&_rActor);
+	}
+
+	iterFind->second->removeActor(_rActor);
 }

@@ -23,14 +23,15 @@ private:
 	PxPvd* m_pPVD;
 	//
 	PxScene* m_pScene;
+	std::unordered_map<UINT, PxScene*> m_mapScene;
 	//
 	CollisionCallback* m_pCollisionCallback;
 
 	bool					m_bSimulate;
 
-	std::vector<PxActor*>	m_vecAdd;
-	std::vector<PxActor*>	m_vecRemove;
-	std::vector<PxActor*>	m_vecRelease;
+	//std::vector<PxActor*>	m_vecAdd;
+	//std::vector<PxActor*>	m_vecRemove;
+	//std::vector<PxActor*>	m_vecRelease;
 
 private:
 	explicit PhysicsSystem();
@@ -41,14 +42,16 @@ public:
 	HRESULT ReadyPhysicsSystem();
 	void	Simulate(const float _fDeltaTime);
 	void	FetchResults(const bool _bBlock = false);
-
 public:
-	PxPhysics* GetPxPhysics();
+	HRESULT CreateScene(const UINT _nSceneID);
+	HRESULT ChangeScene(const UINT _nSceneID);
+public:
+	void AddActor(const UINT _nSceneID, physx::PxActor& _rActor);
+	void RemoveActor(const UINT _nSceneID, physx::PxActor& _rActor);
+	
+	PxPhysics*	GetPxPhysics();
 	PxMaterial* GetDefaultMaterial();
-	PxCooking* GetCooking();
-	void AddActor(physx::PxActor& _rActor);
-	void RemoveActor(physx::PxActor& _rActor);
-	void ReleaseActor(physx::PxActor& _rActor);
+	PxCooking*	GetCooking();
 };
 END
 #endif // !__PHYSICS_SYSTEM_H__

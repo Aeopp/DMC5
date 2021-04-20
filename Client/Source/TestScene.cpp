@@ -70,7 +70,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	
-	// ���� �ʿ�
+	// 수정 필요
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
 
