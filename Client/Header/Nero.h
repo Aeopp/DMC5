@@ -16,6 +16,7 @@ class WingArm_Right;
 class MainCamera;
 class BtlPanel;
 class GT_Overture;
+class GT_Rockman;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -306,6 +307,7 @@ public:
 	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_Overture_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -341,6 +343,7 @@ private:
 	std::weak_ptr<CapsuleCollider> m_pCollider;
 	std::weak_ptr<BtlPanel>			m_pBtlPanel;
 	std::weak_ptr<GT_Overture>		m_pOverture;
+	std::weak_ptr<GT_Rockman>		m_pRockman;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

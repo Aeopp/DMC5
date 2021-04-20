@@ -5364,7 +5364,7 @@ HRESULT Overture_Shoot::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot", false, Nero::ANI_OVERTURE_SHOOT);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5406,7 +5406,7 @@ HRESULT Overture_Shoot_Up::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Up", false, Nero::ANI_OVERTURE_SHOOT_UP);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5447,7 +5447,7 @@ HRESULT Overture_Shoot_Down::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Down", false, Nero::ANI_OVERTURE_SHOOT_DOWN);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 
 	return S_OK;
 }
@@ -5491,7 +5491,7 @@ HRESULT Overture_Shoot_Air::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air", false, Nero::ANI_OVERTURE_SHOOT_AIR);
 	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5532,7 +5532,7 @@ HRESULT Overture_Shoot_Air_Up::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air_Up", false, Nero::ANI_OVERTURE_SHOOT_AIR_UP);
 	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR_UP);
-	
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5573,7 +5573,7 @@ HRESULT Overture_Shoot_Air_Down::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air_Down", false, Nero::ANI_OVERTURE_SHOOT_AIR_DOWN);
 	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR_DOWN);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 
 	return S_OK;
 }

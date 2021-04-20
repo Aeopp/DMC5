@@ -66,11 +66,12 @@ private:
 private:
 
 public:
+	float exposure = 10.f;
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
-	float exposure = 1.f;
+	
 	IDirect3DSurface9* BackBuffer{ nullptr };
 	std::shared_ptr<Frustum> CameraFrustum{};
 	std::shared_ptr<Frustum> CurShadowFrustum{};

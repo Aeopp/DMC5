@@ -22,6 +22,8 @@ HRESULT Gauntlet::Awake()
 	Unit::Awake();
     m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
     //부모 뼈 설정 해주고
+		//R_Forearm
+	m_pParentMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Forearm");
 
     return S_OK;
 }
@@ -29,18 +31,35 @@ HRESULT Gauntlet::Awake()
 HRESULT Gauntlet::Start()
 {
 	Unit::Start();
+
+
     return S_OK;
 }
 
 UINT Gauntlet::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
+	m_pMesh->Update(_fDeltaTime);
     return 0;
 }
 
 UINT Gauntlet::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
+
+	Matrix								ParentWorldMatrix, FinalWorld, RotX;
+	Matrix RotY,Scale;
+	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
+
+	D3DXMatrixRotationX(&RotX, D3DXToRadian(-90));
+	D3DXMatrixRotationY(&RotY, D3DXToRadian(180));
+	D3DXMatrixScaling(&Scale, 1.1f, 1.1f, 1.1f);
+	if (nullptr != m_pParentMat)
+	{
+		FinalWorld = Scale * *m_pParentMat * ParentWorldMatrix;
+		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+	}
+
     return 0;
 }
 
@@ -65,6 +84,11 @@ void Gauntlet::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Gauntlet::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
+}
+
+void Gauntlet::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+{
+	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
 }
 
 void Gauntlet::RenderReady()

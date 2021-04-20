@@ -12,6 +12,8 @@
 #include "WingArm_Right.h"
 #include "MainCamera.h"
 #include "BtlPanel.h"
+#include "GT_Overture.h"
+#include "GT_Rockman.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -65,6 +67,8 @@ HRESULT Nero::Ready()
 	m_pWireArm = AddGameObject<Wire_Arm>();
 	m_pWingArm_Left = AddGameObject <WIngArm_Left>();
 	m_pWingArm_Right = AddGameObject<WingArm_Right>();
+	//m_pOverture = AddGameObject<GT_Overture>();
+	m_pRockman = AddGameObject<GT_Rockman>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -509,6 +513,10 @@ void Nero::Change_WingArm_Left_Animation(const std::string& InitAnimName, const 
 void Nero::Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
 	m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+}
+void Nero::Change_Overture_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+{
+	m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }
 //if (Input::GetKeyDown(DIK_LCONTROL))
 //	m_iCurWeaponIndex = m_iCurWeaponIndex == RQ ? Cbs : RQ;

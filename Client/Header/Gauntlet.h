@@ -28,6 +28,8 @@ public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther)PURE;
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther)PURE;
 public:
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+public:
 	virtual void RenderReady() override;
 	// ·»´õ¸µ ÇÔ¼ö ...
 	void RenderGBufferSK(const DrawInfo& _Info);
