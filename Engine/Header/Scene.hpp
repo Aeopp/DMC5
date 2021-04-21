@@ -1,4 +1,3 @@
-#include "Scene.h"
 #ifndef __SCENE_HPP__
 #define __SCENE_HPP__
 BEGIN(ENGINE)
@@ -40,7 +39,7 @@ inline std::weak_ptr<TYPE> Scene::FindGameObjectWithType()
 		for (auto iter = m_Loop[ACTIVE][i].begin(); iter != m_Loop[ACTIVE][i].end(); ++iter)
 		{
 			if (false == (*iter).expired() && nullptr != std::dynamic_pointer_cast<TYPE>((*iter).lock()))
-				return (*iter);
+				return std::static_pointer_cast<TYPE>((*iter)->lock());
 		}
 	}
 	return std::weak_ptr<TYPE>();
@@ -56,7 +55,7 @@ inline std::list<std::weak_ptr<TYPE>> Scene::FindGameObjectsWithType()
 		for (auto iter = m_Loop[ACTIVE][i].begin(); iter != m_Loop[ACTIVE][i].end(); ++iter)
 		{
 			if (false == (*iter).expired() && nullptr != std::dynamic_pointer_cast<TYPE>((*iter).lock()))
-				findList.push_back((*iter));
+				findList.push_back(std::static_pointer_cast<TYPE>((*iter)->lock()));
 		}
 	}
 

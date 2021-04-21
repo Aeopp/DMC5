@@ -2,15 +2,12 @@
 #define __GAMEOBJECT_H__
 #include "Object.h"
 #include "RenderProperty.h"
-
-
 BEGIN(ENGINE)
 class Scene;
 class Component;
 class Renderer;
 class Transform;
-class ENGINE_DLL GameObject abstract : public Object
-								
+class ENGINE_DLL GameObject abstract : public Object							
 {
 	friend Scene;
 private:
@@ -60,10 +57,12 @@ public:
 	std::weak_ptr<GameObject>				FindGameObjectWithTag(const UINT & _nTag);
 	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithTag(const UINT & _nTag);
 
+	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithLayer(const UINT & _nLayer);
+
 	template<typename TYPE>
-	std::weak_ptr<GameObject>				FindGameObjectWithType();
+	std::weak_ptr<TYPE>				FindGameObjectWithType();
 	template<typename TYPE>
-	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithType();
+	std::list<std::weak_ptr<TYPE>>	FindGameObjectsWithType();
 
 public:
 	void	Destroy(std::weak_ptr<GameObject> const _pGameObject);

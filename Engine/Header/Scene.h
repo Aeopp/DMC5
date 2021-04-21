@@ -41,6 +41,8 @@ public:
 	std::weak_ptr<GameObject>				FindGameObjectWithTag(const UINT& _nTag);
 	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithTag(const UINT& _nTag);
 
+	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithLayer(const UINT& _nLayer);
+
 	template <typename TYPE>
 	std::weak_ptr<TYPE>						FindGameObjectWithType();
 	template <typename TYPE>

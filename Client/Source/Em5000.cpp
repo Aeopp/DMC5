@@ -25,9 +25,6 @@ Em5000* Em5000::Create()
 	return new Em5000{};
 }
 
-
-
-
 void Em5000::Fight(const float _fDeltaTime)
 {
 	Skill_CoolTime(_fDeltaTime);
@@ -607,7 +604,7 @@ HRESULT Em5000::Ready()
 
 	RenderInit();
 
-// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
+	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.015,0.015,0.015 });
 	PushEditEntity(InitTransform.lock().get());
@@ -636,7 +633,6 @@ HRESULT Em5000::Awake()
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	PushEditEntity(m_pCollider.lock().get());
-
 
 	for (UINT i = 0; i < 2; ++i)
 	{
@@ -674,7 +670,6 @@ UINT Em5000::Update(const float _fDeltaTime)
 	//_Notify.Event[0.5] = [this]() {  AttackStart();  return false; };
 
 	const float Length = FMath::Length(DeltaPos);
-
 
 	//DeltaPos = FMath::RotationVecNormal(DeltaPos, Axis, FMath::ToRadian(90.f)) * Length;
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -721,6 +716,7 @@ UINT Em5000::Update(const float _fDeltaTime)
 
 UINT Em5000::LateUpdate(const float _fDeltaTime)
 {
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 

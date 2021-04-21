@@ -26,9 +26,6 @@ Em100* Em100::Create()
 }
 
 
-
-
-
 void Em100::Fight(const float _fDeltaTime)
 {
 	if (m_bMove == false)
@@ -333,12 +330,9 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iAttack = 20;
 
 	m_pTransform.lock()->SetPosition({ 5.f, 5.f, 0.f });
-	
-	
-	
-
+		
 	RenderInit();
-// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
+	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
 	PushEditEntity(InitTransform.lock().get());
@@ -447,10 +441,6 @@ UINT Em100::LateUpdate(const float _fDeltaTime)
 
 void Em100::Editor()
 {
-	GameObject::Editor();
-
-
-
 	Unit::Editor();
 	if (bEdit)
 	{
@@ -471,14 +461,45 @@ void Em100::OnDisable()
 
 void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+	
+	switch (_BattleInfo.eAttackDir)
+	{
+	case ATTACKDIR::Attack_L:
+		m_eState = Hit_L;
+		m_bIng = false;
+		break;
+	case ATTACKDIR::Attack_R:
+		m_eState = Hit_R;
+		m_bIng = true;
+		break;
+	case ATTACKDIR::Attack_Front:
+		break;
+	case ATTACKDIR::Attack_Back:
+		break;
+	case ATTACKDIR::AttackDir_End:
+		break;
+	default:
+		m_bIng = true;
+		break;
+	}
+	
+	
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (m_bCollEnable == true)
 	{
-
-
+		//레드퀸, 버스터암, 건틀릿들, 와이어암
+		switch (_pOther.lock()->m_nTag)	
+		{
+		case GAMEOBJECTTAG::TAG_RedQueen:
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+			break;
+		default:
+			break;
+		}
 		m_bCollEnable = false;
 	}
 }

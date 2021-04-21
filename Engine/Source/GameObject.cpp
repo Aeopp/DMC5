@@ -63,6 +63,11 @@ std::list<std::weak_ptr<GameObject>> GameObject::FindGameObjectsWithTag(const UI
 	return m_pScene->FindGameObjectsWithTag(_nTag);
 }
 
+std::list<std::weak_ptr<GameObject>> GameObject::FindGameObjectsWithLayer(const UINT& _nLayer)
+{
+	return m_pScene->FindGameObjectsWithLayer(_nLayer);
+}
+
 void GameObject::Destroy(std::weak_ptr<GameObject> const _pGameObject)
 {
 	m_pScene->Destroy(_pGameObject);

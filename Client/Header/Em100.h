@@ -36,6 +36,8 @@ private:
 		Walk_Right_Loop,
 		Walk_Right_Start,
 		idle,
+		Hit_Buster_Start,
+		Hit_Buster_End,
 		State_END
 	};
 
