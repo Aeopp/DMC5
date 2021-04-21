@@ -99,7 +99,7 @@ HRESULT Nero::Awake()
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
-	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetRigid(false);
 	m_pCollider.lock()->SetGravity(false);
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
 	m_pCollider.lock()->SetRadius(0.4f);

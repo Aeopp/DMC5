@@ -59,12 +59,12 @@ void Em100::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	if (m_BattleInfo.iHp <= 0.f)
-	{
-		m_eState = Dead;
-		m_bIng = true;
-		return;
-	}
+	//if (m_BattleInfo.iHp <= 0.f)
+	//{
+	//	m_eState = Dead;
+	//	m_bIng = true;
+	//	return;
+	//}
 
 	//몬스터 움직이는 방향 정해주는 놈
 	if (fDir >= 3.f)
@@ -431,10 +431,10 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
-	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(false);
 
-	m_pCollider.lock()->SetTrigger(true);
+	//m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRadius(1.1f);
 	m_pCollider.lock()->SetHeight(1.5f);
 	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
@@ -497,8 +497,6 @@ UINT Em100::Update(const float _fDeltaTime)
 		Fight(_fDeltaTime);
 		State_Change(_fDeltaTime);
 	}
-	if (Input::GetKeyDown(DIK_Y))
-		m_BattleInfo.iHp -= 10;
 
 	cout << m_BattleInfo.iHp << endl;
 
@@ -571,7 +569,7 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
-		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
+		if (static_pointer_cast<Unit>(_pOther.lock())->Get_Coll() == false)
 			break;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
@@ -704,6 +702,8 @@ void Em100::RenderInit()
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.fbx", _InitInfo);
 
 	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Ani");
+	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.Animation");
+
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
 	//몬스터 초기상태 idle

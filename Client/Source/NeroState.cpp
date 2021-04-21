@@ -670,7 +670,7 @@ HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 
 void NeroState::ActiveColl_RedQueen(bool _ActiveOrNot)
 {
-	m_pNero.lock()->Set_Coll(_ActiveOrNot);
+	m_pNero.lock()->Set_RQ_Coll(_ActiveOrNot);
 }
 
 
