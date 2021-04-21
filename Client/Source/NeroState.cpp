@@ -3497,7 +3497,7 @@ HRESULT BT_Att1::StateEnter()
 	//달리고있었으면 대쉬 ComboA로 가야됨
 	m_pNero.lock()->ChangeAnimation("ComboA1", false,Nero::ANI_COMBOA1);
 	m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_END);
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_Front);
 	
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
@@ -3549,7 +3549,7 @@ HRESULT BT_Att2::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA2", false,Nero::ANI_COMBOA2);
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_END);
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_R);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Right(true);
@@ -3599,8 +3599,8 @@ BT_Att3* BT_Att3::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero
 HRESULT BT_Att3::StateEnter()
 {
 	NeroState::StateEnter();
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_END);
 	m_pNero.lock()->ChangeAnimation("ComboA3", false, Nero::ANI_COMBOA3);
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_L);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);
@@ -3656,7 +3656,7 @@ HRESULT BT_Att4::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA4", false, Nero::ANI_COMBOA4);
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_END);
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_KnocBack);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);

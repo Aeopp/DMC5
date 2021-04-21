@@ -175,7 +175,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	m_BattleInfo.iHp -= _BattleInfo.iHp;
 	switch (_BattleInfo.eAttackType)
 	{
-	case Attack_Normal:
+	case Attack_Front:
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	case Attack_Down:

@@ -8,8 +8,7 @@ RedQueen::RedQueen()
 {
 	m_nTag = TAG_RedQueen;
 	m_BattleInfo.iAttack = 10;
-	m_BattleInfo.eAttackDir = AttackDir_End;
-	m_BattleInfo.eAttackType = Attack_Normal;
+	m_BattleInfo.eAttackType = Attack_END;
 }
 
 void RedQueen::Free()

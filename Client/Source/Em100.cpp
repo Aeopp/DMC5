@@ -141,6 +141,9 @@ void Em100::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
 
+			for (int i = 2; i < 0; ++i)
+				m_pHand[i].lock()->Set_Coll(true);
+
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
 			m_BattleInfo.eAttackType = Attack_Front;
@@ -150,6 +153,9 @@ void Em100::State_Change(const float _fDeltaTime)
 					m_eState = idle;
 					m_bIng = false;
 					m_bAttack = false;
+
+					for (int i = 2; i < 0; ++i)
+						m_pHand[i].lock()->Set_Coll(false);
 				}
 			}
 		}
@@ -163,11 +169,17 @@ void Em100::State_Change(const float _fDeltaTime)
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
 
+			for (int i = 2; i < 0; ++i)
+				m_pHand[i].lock()->Set_Coll(true);
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
+
+				for (int i = 2; i < 0; ++i)
+					m_pHand[i].lock()->Set_Coll(false);
 			}
 		}
 		break;
@@ -180,11 +192,17 @@ void Em100::State_Change(const float _fDeltaTime)
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
 			
+			for (int i = 2; i < 0; ++i)
+				m_pHand[i].lock()->Set_Coll(true);
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
 				m_bIng = false;
 				m_bHardAttack = false;
+
+				for (int i = 2; i < 0; ++i)
+					m_pHand[i].lock()->Set_Coll(false);
 			}
 		}
 		break;
@@ -197,8 +215,6 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Hit_Air:
 		break;
 	case Em100::Hit_Back:
-		break;
-	case Em100::Hit_End:
 		break;
 	case Em100::Hit_Finish:
 		break;
@@ -237,6 +253,19 @@ void Em100::State_Change(const float _fDeltaTime)
 			{
 				m_eState = idle;
 				m_bHit = false;
+				m_bIng = false;
+			}
+		}
+		break;
+	case Em100::Hit_KnocBack:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->PlayingTime() >= 0.9f)
+			{
+				m_eState = Hit_End;
+				m_bHit = true;
 				m_bIng = false;
 			}
 		}
