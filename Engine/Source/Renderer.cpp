@@ -493,7 +493,8 @@ HRESULT Renderer::Render()&
 	{
 		RenderSkySphere();
 	}
-	RenderInsulatorMetal();
+
+	// RenderInsulatorMetal();
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
 	AdaptLuminance(DeltaTime);
@@ -1252,7 +1253,7 @@ HRESULT Renderer::RenderSkySphere()&
 
 	Fx->Begin(NULL, 0);
 	Fx->BeginPass(0);
-	Device->SetTexture(0u, SkysphereTex->GetTexture());
+	Device->SetTexture(0u, SkysphereTex2->GetTexture());
 	const int32 Numsubset = SkysphereMesh->GetNumSubset();
 	SkysphereMesh->GetSubset(0).lock()->Render(Fx);
 	Fx->EndPass();

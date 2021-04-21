@@ -5,10 +5,10 @@ static const float Epsilon = 0.00001;
 // 모든 물체에 대한 일정한 수직 입사 프레 넬 계수.
 static const float3 Fdielectric = 0.04;
 
-uniform sampler2D albedo : register(s0);
-uniform sampler2D normals : register(s1);
-uniform sampler2D depth : register(s2);
-uniform sampler2D shadowMap : register(s3);
+uniform sampler2D   albedo : register(s0);
+uniform sampler2D   normals : register(s1);
+uniform sampler2D   depth : register(s2);
+uniform sampler2D   shadowMap : register(s3);
 uniform samplerCUBE cubeShadowMap : register(s4);
 
 uniform matrix matViewProjInv;
@@ -43,8 +43,6 @@ float shadowmin = 0.0f;
 // 라디언즈 입력하기 . 
 float3 LightDirection;
 float3 Lradiance;
-
-
 
 // 디즈니
 float ndfGGX(float cosLh, float roughness)
@@ -321,10 +319,16 @@ void ps_deferred(
 {
     // 감마 보정은 Device 세팅을 조절해서 결정 !
     // 알베도 + 메탈
+    // 0.3 ^ (1 / 2.2) 감마 패킹 (높아짐)
+    // 0.3 ^ (2.2) 감마 언팩 (낮아짐 )  
     float4 albm = tex2D(albedo,  tex);
+    float metal = saturate(pow(albm.a, abs(1.0 / 2.2)));
+    
     // 월드 노말 + 거칠기 
     float4 nrmr = tex2D(normals, tex); 
     float3 wnorm = nrmr.xyz * 2.0f - 1.0f;
+    float  roughness = nrmr.a;
+    
     float  d = tex2D(depth, tex).r;
     float4 wpos = float4(tex.x * 2 - 1, 1 - 2 * tex.y, d, 1);
 
@@ -339,18 +343,18 @@ void ps_deferred(
         {
             // directional light
 
-            color.rgb = Luminance_Blinn_Directional(
-            albm.rgb,
-            wpos.xyz,
-            wnorm);
-            
-            //color.rgb = 
-            //pbr_direction(
+            //color.rgb = Luminance_Blinn_Directional(
             //albm.rgb,
-            //albm.a,
-            //wnorm,
-            //nrmr.a,
-            //wpos.xyz);
+            //wpos.xyz,
+            //wnorm);
+            
+            color.rgb =
+            pbr_direction(
+            albm.rgb,
+            metal,
+            wnorm,
+             roughness,
+            wpos.xyz);
         }
         else 
         {

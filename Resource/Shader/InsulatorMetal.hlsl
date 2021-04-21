@@ -14,6 +14,14 @@ uniform matrix matViewProjInv;
 
 uniform float4 eyePos;
 uniform float2 pixelSize;
+#define Fdielectric 0.04
+
+// Shlick's approximation of the Fresnel factor.
+float3 fresnelSchlick(float3 F0, float cosTheta)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
 
 void vs_main(
 	in out float4 pos : POSITION,
@@ -39,12 +47,12 @@ void ps_main(
         float4 wpos = float4(tex.x * 2 - 1, 1 - 2 * tex.y, depth, 1);
         wpos = mul(wpos, matViewProjInv);
         wpos /= wpos.w;
-        float metal = saturate(albm.a);
+        float metal = saturate(pow(albm.a, abs(1.0 / 2.2)));
         float roughness = saturate(nrmr.a);
     
         float3 v       = normalize(eyePos.xyz - wpos.xyz);
         float3 n       = normalize(nrmr.xyz * 2.0f - 1.0f);
-        float3 r       = reflect(-v, n);
+        float3 r = normalize(reflect(-v, n));
     
         float ndotv    = max(dot(n, v), 0.0);
         float miplevel = roughness * (NUM_MIPS - 1);
@@ -66,10 +74,36 @@ void ps_main(
         
         // 조도 * 알베도 *  PI ;
         float3 brdf_diff = diff_irrad * albedo.rgb * ONE_OVER_PI * light_diffuse;
-        float3 brdf_spec = spec_irrad * (f0_scale_bias.x + f0_scale_bias.y) * light_specular;
+        float3 brdf_spec = spec_irrad * ( 0.04*f0_scale_bias.x + f0_scale_bias.y) * light_specular;
         
-        Color.rgb = (brdf_diff * (1.0f - metal)) + (brdf_spec * metal) * 1.f;
+        Color.rgb = (brdf_diff) + (brdf_spec) * 1.f;
         
+        
+        
+        
+  //      // pbr ibl 시작  
+        
+		//// Calculate Fresnel term for ambient lighting.
+		//// Since we use pre-filtered cubemap(s) and irradiance is coming from many directions
+		//// use cosLo instead of angle with light's half-vector (cosLh above).
+		//// See: https://seblagarde.wordpress.com/2011/08/17/hello-world/
+  //      float3 F0 = lerp(Fdielectric, albedo, metal);
+  //      float3 Lo = normalize(eyePos - wpos);
+  //      float cosLo = max(0.0, dot(n, Lo));
+  //      float3 F = fresnelSchlick(F0, cosLo);
+
+		//// Get diffuse contribution factor (as with direct lighting).
+  //      float3 kd = lerp(1.0 - F, 0.0, metal);
+
+		//// Irradiance map contains exitant radiance assuming Lambertian BRDF, no need to scale by 1/PI here either.
+  //      float3 diffuseIBL = kd * albedo * diff_irrad;
+        
+		//// Total specular IBL contribution.
+  //      float3 specularIBL = (F0 * f0_scale_bias.x + f0_scale_bias.y) * spec_irrad;
+
+		//// Total ambient lighting contribution.
+  //      Color.rgb = diffuseIBL + specularIBL; 
+        // 끝
         
         Color.a = 1.f;
     }
