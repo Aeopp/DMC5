@@ -187,6 +187,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	case Attack_END:
 		break;
 	default:
+		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	}
 }
