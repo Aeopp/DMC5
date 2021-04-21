@@ -148,7 +148,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_BattleInfo.eAttackType = Attack_Front;
 			{
-				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->PlayingTime() >= 0.9f)
+				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
 				{
 					m_eState = idle;
 					m_bIng = false;
@@ -169,10 +169,10 @@ void Em100::State_Change(const float _fDeltaTime)
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
 
-			for (int i = 2; i < 0; ++i)
+			for(int i = 2; i < 0; ++i)
 				m_pHand[i].lock()->Set_Coll(true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bIng = false;
@@ -195,7 +195,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			for (int i = 2; i < 0; ++i)
 				m_pHand[i].lock()->Set_Coll(true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bIng = false;
@@ -223,7 +223,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Hit_Front", false, {}, 1.f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Front" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Front" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bHit = false;
@@ -236,7 +236,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Hit_L", false, {}, 1.f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_L" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_L" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bHit = false;
@@ -249,7 +249,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Hit_R", false, {}, 1.f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_R" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_R" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bHit = false;
@@ -258,14 +258,16 @@ void Em100::State_Change(const float _fDeltaTime)
 		}
 		break;
 	case Em100::Hit_KnocBack:
+		//날라가는거
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = Hit_End;
-				m_bHit = true;
+				
+				m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
+				m_bHit = false;
 				m_bIng = false;
 			}
 		}
@@ -273,9 +275,9 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Front_End:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Front_End", false, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_C_End", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Front_End" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_C_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bMove = false;
@@ -286,7 +288,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Front_Loop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Front_Loop", true, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_C_Loop", true, {}, 1.f, 50.f, true);
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
 
@@ -299,18 +301,18 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Front_Start:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Front_Start", false, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_C_Start", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Front_Start" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_C_Start" && m_pMesh->IsAnimationEnd())
 				m_eState = Walk_Front_Loop;
 		}
 		break;
 	case Em100::Walk_Left_End:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Left_End", false, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_L_End", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Left_End" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_L_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bMove = false;
@@ -321,27 +323,27 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Left_Loop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Left_Loop", false, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_L_Loop", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Left_Loop" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_L_Loop" && m_pMesh->IsAnimationEnd())
 				m_eState = Walk_Left_End;
 		}
 		break;
 	case Em100::Walk_Left_Start:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Left_Start", false, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_L_Start", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Left_Start" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_L_Start" && m_pMesh->IsAnimationEnd())
 				m_eState = Walk_Left_Loop;
 		}
 		break;
 	case Em100::Walk_Right_Stop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Right_Stop", false, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_R_End", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Right_Stop" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_R_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
 				m_bMove = false;
@@ -352,22 +354,22 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Walk_Right_Loop:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Right_Loop", false, {}, 1.f, 50.f, true);
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Right_Loop" && m_pMesh->PlayingTime() >= 0.9f)
+			m_pMesh->PlayAnimation("Move_R_Loop", false, {}, 1.f, 50.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_R_Loop" && m_pMesh->IsAnimationEnd())
 				m_eState = Walk_Right_Stop;
 		}
 		break;
 	case Em100::Walk_Right_Start:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Walk_Right_Start", false, {}, 1.f, 50.f, true);
+			m_pMesh->PlayAnimation("Move_R_Start", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Walk_Right_Start" && m_pMesh->PlayingTime() >= 0.9f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_R_Start" && m_pMesh->IsAnimationEnd())
 				m_eState = Walk_Right_Loop;
 		}
 		break;
 	case Em100::idle:
-		m_pMesh->PlayAnimation("idle", true, {}, 1.f, 50.f, true);
+		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
 		break;
 	default:
@@ -429,17 +431,17 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
-	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetRigid(false);
 	m_pCollider.lock()->SetGravity(false);
 
-	//m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRadius(1.1f);
 	m_pCollider.lock()->SetHeight(1.5f);
 	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
 
-	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
-	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-	//m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
+	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
 	return S_OK;
 }
@@ -565,18 +567,16 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	if (m_bCollEnable == true)
-	{
 		//레드퀸, 버스터암, 건틀릿들, 와이어암
-		switch (_pOther.lock()->m_nTag)	
-		{
-		case GAMEOBJECTTAG::TAG_RedQueen:
-			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+	switch (_pOther.lock()->m_nTag)	
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
 			break;
-		default:
-			break;
-		}
-		m_bCollEnable = false;
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	default:
+		break;
 	}
 }
 
