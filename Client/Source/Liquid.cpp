@@ -8,6 +8,9 @@
 
 void Liquid::Free()
 {
+	_LiquidMeshVec.clear();
+	_LiquidMeshVec.shrink_to_fit();
+
 	GameObject::Free();
 }
 
@@ -65,7 +68,7 @@ void Liquid::RenderInit()
 	_InitRenderProp.bRender = false;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"Liquid",
+		{"GBufferLiquid",
 		[this](const DrawInfo& _Info)
 			{
 				this->RenderGBuffer(_Info);
@@ -91,13 +94,13 @@ void Liquid::RenderGBuffer(const DrawInfo& _Info)
 	//
 	
 	// meat
-	//_ExtraColor = Vector3(1.f, 1.f, 1.f);
+	//_ExtraColor = Vector3(0.f, 0.f, 0.f);
 	//_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	//_Info._Device->SetTexture(0, _MeatALB0Tex->GetTexture());
 	//_Info._Device->SetTexture(1, _MeatNRMR0Tex->GetTexture());
 	//
 
-	auto WeakSubset = _LiquidMeshVec[_VariationIdx]->GetSubset(_SubsetIdx);
+	auto WeakSubset = _LiquidMeshVec[_VariationIdx].first->GetSubset(_SubsetIdx);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
@@ -120,17 +123,17 @@ HRESULT Liquid::Ready()
 	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
 
 	_LiquidMeshVec.reserve(MAX_VARIATION_IDX);
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood4.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood3.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood1.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood2.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_12.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_11.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_03.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_14.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\chain_capcom_liquid_splash00_00.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\chain_capcom_liquid_splash01_00.fbx"));
-	_LiquidMeshVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\chain_capcom_liquid_splash02_00.fbx"));
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood4.fbx"), 21u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood3.fbx"), 25u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood1.fbx"), 15u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood2.fbx"), 17u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_12.fbx"), 30u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_11.fbx"), 25u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_03.fbx"), 10u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\mesh_capcom_liquid_splash00_14.fbx"), 18u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\chain_capcom_liquid_splash00_00.fbx"), 29u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\chain_capcom_liquid_splash01_00.fbx"), 63u });
+	_LiquidMeshVec.push_back({ Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\chain_capcom_liquid_splash02_00.fbx"), 31u });
 	
 	_BloodALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_blood_ALBM.tga");
 	_BloodNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_blood_NRMR.tga");
@@ -158,9 +161,12 @@ UINT Liquid::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
+	if (MAX_VARIATION_IDX <= _VariationIdx)
+		return 0;
+
 	//
 	_SubsetIdx = static_cast<uint32>(_AccumulateTime);
-	if (_SubsetMaxIdx < _SubsetIdx)
+	if (_LiquidMeshVec[_VariationIdx].second < _SubsetIdx)
 		Reset();
 
 	//
@@ -195,46 +201,6 @@ void Liquid::SetVariationIdx(Liquid::VARIATION Idx)
 		return;
 
 	Reset();
-
-	switch (Idx)
-	{
-	case BLOOD_0:	// Blood4.fbx
-		_SubsetMaxIdx = 21u;
-		break;
-	case BLOOD_1:	// Blood3.fbx
-		_SubsetMaxIdx = 25u;
-		break;
-	case BLOOD_2:	// Blood1.fbx
-		_SubsetMaxIdx = 15u;
-		break;
-	case BLOOD_3:	// Blood2.fbx
-		_SubsetMaxIdx = 17u;
-		break;
-	case BLOOD_4:	// mesh_capcom_liquid_splash00_12.fbx
-		_SubsetMaxIdx = 30u;
-		break;
-	case BLOOD_5:	// mesh_capcom_liquid_splash00_11.fbx
-		_SubsetMaxIdx = 25u;
-		break;
-	case BLOOD_6:	// mesh_capcom_liquid_splash00_03.fbx
-		_SubsetMaxIdx = 10u;
-		break;
-	case BLOOD_7:	// mesh_capcom_liquid_splash00_14.fbx
-		_SubsetMaxIdx = 18u;
-		break;
-	case BLOOD_8:	// chain_capcom_liquid_splash00_00.fbx
-		_SubsetMaxIdx = 29u;
-		break;
-	case BLOOD_9:	// chain_capcom_liquid_splash01_00.fbx
-		_SubsetMaxIdx = 63u;
-		break;
-	case BLOOD_10:	// chain_capcom_liquid_splash02_00.fbx
-		_SubsetMaxIdx = 31u;
-		break;
-	default:
-		_SubsetMaxIdx = 0u;
-		break;
-	}
 
 	_VariationIdx = Idx;
 }

@@ -36,6 +36,7 @@ enum GAMEOBJECTTAG
 	Eff_Glint,
 	Eff_OvertureHand,
 	Eff_Liquid,
+	Eff_AppearGroundMonster,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,

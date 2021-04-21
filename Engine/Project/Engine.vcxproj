@@ -425,7 +425,7 @@ call Engine.bat</Command>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\Liquid.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

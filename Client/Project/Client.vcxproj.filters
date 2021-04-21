@@ -124,6 +124,9 @@
     <Filter Include="02.GameObject\Effect\Liquid">
       <UniqueIdentifier>{b7667868-436c-417f-b44f-5022f169be9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Effect\Monster">
+      <UniqueIdentifier>{08b14e90-60c4-4cb0-8629-b42ca265ee62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -242,6 +245,9 @@
     </ClInclude>
     <ClInclude Include="..\Header\Em5000Hand.h">
       <Filter>02.GameObject\02.Monster\03.Em5000\00.HAND</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\AppearGroundMonster.h">
+      <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -371,6 +377,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Em100Hand.cpp">
       <Filter>02.GameObject\02.Monster\00.Em100\00.Hand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AppearGroundMonster.cpp">
+      <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
