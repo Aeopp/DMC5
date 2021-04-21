@@ -67,8 +67,8 @@ HRESULT Nero::Ready()
 	m_pWireArm = AddGameObject<Wire_Arm>();
 	m_pWingArm_Left = AddGameObject <WIngArm_Left>();
 	m_pWingArm_Right = AddGameObject<WingArm_Right>();
-	//m_pOverture = AddGameObject<GT_Overture>();
-	m_pRockman = AddGameObject<GT_Rockman>();
+	m_pOverture = AddGameObject<GT_Overture>();
+	//m_pRockman = AddGameObject<GT_Rockman>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
