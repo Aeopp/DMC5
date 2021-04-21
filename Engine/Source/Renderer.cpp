@@ -485,7 +485,14 @@ HRESULT Renderer::Render()&
 
 	// 디퍼드 렌더링 .
 	DeferredShading();
-
+	if (bEnvironmentRender)
+	{
+		RenderEnvironment();
+	}
+	else
+	{
+		RenderSkySphere();
+	}
 	/*RenderInsulatorMetal();
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
@@ -499,14 +506,7 @@ HRESULT Renderer::Render()&
 	Device->SetRenderTarget(0, BackBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	// 테스트 
-	if (bEnvironmentRender)
-	{
-		RenderEnvironment();
-	}
-	else
-	{
-		RenderSkySphere();
-	}
+
 	// ToneMap();
 	Tonemapping();
 	AlphaBlendEffectRender();
@@ -1277,6 +1277,7 @@ HRESULT Renderer::RenderEnvironment()&
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
 	Device->SetRenderState(    D3DRS_CULLMODE, D3DCULL_CCW);
 
+	
 	Matrix Skyview = _RenderInfo.View;
 	Skyview._41 = Skyview._42 = Skyview._43 = 0.0f;
 
