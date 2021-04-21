@@ -25,6 +25,8 @@ Nero::Nero()
 	, m_iPreDirIndex(Dir_Front)
 {
 	m_nTag = Player;
+	m_BattleInfo.iMaxHp = 100;
+	m_BattleInfo.iHp = 100;
 }
 void Nero::Free()
 {
@@ -174,7 +176,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Normal:
-		//m_pFSM->ChangeState()
+		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	case Attack_Down:
 		break;
@@ -195,8 +197,8 @@ void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (eTag)
 	{
 	case MonsterWeapon:
-		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
-			return;
+		//if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
+		//	return;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:

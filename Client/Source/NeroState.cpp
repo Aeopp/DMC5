@@ -2626,17 +2626,20 @@ HRESULT HitFront::StateEnter()
 {
 	NeroState::StateEnter();
 
-
+	m_pNero.lock()->ChangeAnimation("HitFront", false, Nero::ANI_HITFRONT);
 	return S_OK;
 }
 
 HRESULT HitFront::StateExit()
 {
+	NeroState::StateExit();
 	return S_OK;
 }
 
 HRESULT HitFront::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
 }
 
