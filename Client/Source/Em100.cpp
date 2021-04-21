@@ -143,7 +143,7 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
-			m_BattleInfo.eAttackType = Attack_Normal;
+			m_BattleInfo.eAttackType = Attack_Front;
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->PlayingTime() >= 0.9f)
 				{
@@ -158,7 +158,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_D", false, {}, 1.f, 50.f, true);
-			m_BattleInfo.eAttackType = Attack_Normal;
+			m_BattleInfo.eAttackType = Attack_Front;
 
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
@@ -191,7 +191,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Dead:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Dead", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
 		}
 		break;
 	case Em100::Hit_Air:
@@ -203,10 +203,43 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Hit_Finish:
 		break;
 	case Em100::Hit_Front:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_Front", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Front" && m_pMesh->PlayingTime() >= 0.9f)
+			{
+				m_eState = idle;
+				m_bHit = false;
+				m_bIng = false;
+			}
+		}
 		break;
 	case Em100::Hit_L:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_L", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_L" && m_pMesh->PlayingTime() >= 0.9f)
+			{
+				m_eState = idle;
+				m_bHit = false;
+				m_bIng = false;
+			}
+		}
 		break;
 	case Em100::Hit_R:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_R", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_R" && m_pMesh->PlayingTime() >= 0.9f)
+			{
+				m_eState = idle;
+				m_bHit = false;
+				m_bIng = false;
+			}
+		}
 		break;
 	case Em100::Walk_Front_End:
 		if (m_bIng == true)
@@ -364,16 +397,20 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(false);
 
+	//m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRadius(1.1f);
 	m_pCollider.lock()->SetHeight(1.5f);
 	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
 
-	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
-	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
+	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
+	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	//m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
 	return S_OK;
 }
@@ -411,6 +448,10 @@ UINT Em100::Update(const float _fDeltaTime)
 
 	Rotate(_fDeltaTime);
 
+	if (m_bHit)
+		m_bIng = true;
+
+
 
 	if (Input::GetKeyDown(DIK_T))
 	{
@@ -428,7 +469,7 @@ UINT Em100::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_Y))
 		m_BattleInfo.iHp -= 10;
 
-	//cout << m_BattleInfo.iHp << endl;
+	cout << m_BattleInfo.iHp << endl;
 
 	return 0;
 }
@@ -463,21 +504,27 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	
-	switch (_BattleInfo.eAttackDir)
+	switch (_BattleInfo.eAttackType)
 	{
-	case ATTACKDIR::Attack_L:
+	case ATTACKTYPE::Attack_L:
 		m_eState = Hit_L;
-		m_bIng = false;
+		m_bHit = true;
 		break;
-	case ATTACKDIR::Attack_R:
+	case ATTACKTYPE::Attack_R:
 		m_eState = Hit_R;
-		m_bIng = true;
+		m_bHit = true;
 		break;
-	case ATTACKDIR::Attack_Front:
+	case ATTACKTYPE::Attack_Front:
+		m_eState = Hit_Front;
+		m_bHit = true;
 		break;
-	case ATTACKDIR::Attack_Back:
+	case ATTACKTYPE::Attack_KnocBack:
+		m_eState = Hit_KnocBack;
+		m_bHit = true;
 		break;
-	case ATTACKDIR::AttackDir_End:
+	case ATTACKTYPE::Attack_Back:
+		break;
+	case ATTACKTYPE::Attack_END:
 		break;
 	default:
 		m_bIng = true;
@@ -626,10 +673,12 @@ void Em100::RenderInit()
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.fbx", _InitInfo);
+
+	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Ani");
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
 	//몬스터 초기상태 idle
-	m_pMesh->PlayAnimation("idle", true);
+	m_pMesh->PlayAnimation("Idle", true);
 }
 
 void Em100::Rotate(const float _fDeltaTime)

@@ -34,6 +34,8 @@ HRESULT Em100Hand::Ready()
 	Unit::Ready();
 	RenderInit();
 
+	m_nTag = MonsterWeapon;
+
 	
 
 	
@@ -117,9 +119,7 @@ void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	{
 		if (m_pEm100.expired())
 			return;
-		
-		
-
+	
 	}
 }
 

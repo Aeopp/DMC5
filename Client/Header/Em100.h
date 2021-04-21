@@ -26,6 +26,7 @@ private:
 		Hit_Front,
 		Hit_L,
 		Hit_R,
+		Hit_KnocBack,
 		Walk_Front_End,
 		Walk_Front_Loop,
 		Walk_Front_Start,
