@@ -35,7 +35,7 @@ HRESULT Em100Hand::Ready()
 	RenderInit();
 
 	
-
+	m_nTag = GAMEOBJECTTAG::MonsterWeapon;
 	
 
 	return S_OK;

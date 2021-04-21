@@ -24,6 +24,9 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
+public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual std::string GetName() override;
 public:

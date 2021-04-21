@@ -41,15 +41,15 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
-	//AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<Nero>();
+	//AddGameObject<Nero>();
 	AddGameObject<Em100>();
 	//AddGameObject<Car>();
 	
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 	Renderer::GetInstance()->exposure = 10.0f;
 	//AddGameObject<ShaderTester>();
 	

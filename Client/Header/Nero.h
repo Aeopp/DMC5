@@ -243,6 +243,7 @@ public:
 	/// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
 	void Set_RQ_AttDir(ATTACKDIR _eAttDir);
+	void Set_RQ_Coll(bool _ActiveOrNot);
 	void Set_PlayingTime(float NewTime);
 
 public:
@@ -321,6 +322,9 @@ public:
 	virtual void OnDisable() override;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
 	// ·»´õ¸µ ÇÔ¼ö....
 	void RenderGBufferSK(const DrawInfo& _Info);

@@ -42,6 +42,11 @@ void Nero::Set_PlayingTime(float NewTime)
 	m_pMesh->SetPlayingTime(NewTime);
 }
 
+void Nero::Set_RQ_Coll(bool _ActiveOrNot)
+{
+	m_pRedQueen.lock()->Set_Coll(_ActiveOrNot);
+}
+
 std::list<std::weak_ptr<Monster>> Nero::GetAllMonster()
 {
 	return FindGameObjectsWithType<Monster>();
@@ -92,7 +97,7 @@ HRESULT Nero::Awake()
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
-	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(false);
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
 	m_pCollider.lock()->SetRadius(0.4f);
@@ -165,6 +170,43 @@ void Nero::OnDisable()
 
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	m_BattleInfo.iHp -= _BattleInfo.iHp;
+	switch (_BattleInfo.eAttackType)
+	{
+	case Attack_Normal:
+		//m_pFSM->ChangeState()
+		break;
+	case Attack_Down:
+		break;
+	case Attack_Stun:
+		break;
+	case Attack_KnocBack:
+		break;
+	case Attack_END:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
+	switch (eTag)
+	{
+	case MonsterWeapon:
+		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
+			return;
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+
 }
 
 void Nero::RenderGBufferSK(const DrawInfo& _Info)

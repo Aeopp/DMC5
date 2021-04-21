@@ -2,7 +2,6 @@
 #include "NeroState.h"
 #include "Nero.h"
 #include "NeroFSM.h"
-#include "Monster.h"
 
 #pragma region PARENT // ºÎ¸ð
 
@@ -669,13 +668,9 @@ HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 	return S_OK;
 }
 
-void NeroState::AcitveColl_AllMonsters(bool _ActiveOrNot)
+void NeroState::ActiveColl_RedQueen(bool _ActiveOrNot)
 {
-	std::list<std::weak_ptr<Monster>> AllMonsters = m_pNero.lock()->GetAllMonster();
-	for (auto& pMonster : AllMonsters)
-	{
-		pMonster.lock()->Set_Coll(_ActiveOrNot);
-	}
+	m_pNero.lock()->Set_Coll(_ActiveOrNot);
 }
 
 
@@ -2629,6 +2624,9 @@ HitFront* HitFront::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Ne
 
 HRESULT HitFront::StateEnter()
 {
+	NeroState::StateEnter();
+
+
 	return S_OK;
 }
 
@@ -3503,14 +3501,14 @@ HRESULT BT_Att1::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
 	}
-	NeroState::AcitveColl_AllMonsters(true);
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att1::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::AcitveColl_AllMonsters(false);
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
@@ -3554,14 +3552,14 @@ HRESULT BT_Att2::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboA2", false);
 	}
-	NeroState::AcitveColl_AllMonsters(true);
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att2::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::AcitveColl_AllMonsters(false);
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
@@ -3605,14 +3603,14 @@ HRESULT BT_Att3::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
 	}
-	NeroState::AcitveColl_AllMonsters(true);
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att3::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::AcitveColl_AllMonsters(false);
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
@@ -3661,14 +3659,14 @@ HRESULT BT_Att4::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA4", false);
 	}
-	NeroState::AcitveColl_AllMonsters(true);
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att4::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::AcitveColl_AllMonsters(false);
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
