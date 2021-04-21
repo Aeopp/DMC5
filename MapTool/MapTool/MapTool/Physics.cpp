@@ -129,7 +129,7 @@ GameObject* Physics::RayCast()
 	PxVec3 vOrigin(vRayOrigin.x, vRayOrigin.y, vRayOrigin.z);
 	PxVec3 vDir(vRayDir.x, vRayDir.y, vRayDir.z);
 	PxRaycastBuffer rayCastBuf;
-	bool bResult = Physics::Instance.m_pScene->raycast(vOrigin, vDir, 2000.f, rayCastBuf);
+	bool bResult = Physics::Instance.m_pScene->raycast(vOrigin, vDir, 30000.f, rayCastBuf);
 
 	if (bResult)
 	{

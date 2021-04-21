@@ -45,7 +45,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
-	//AddGameObject<Em100>();
+	AddGameObject<Em100>();
 	//AddGameObject<Car>();
 	
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
@@ -65,8 +65,8 @@ HRESULT TestScene::LoadScene()
 
 	AddGameObject<BtlPanel>();
 
-	AddGameObject<Glint>();
-	AddGameObject<OvertureHand>();
+	//AddGameObject<Glint>();
+	//AddGameObject<OvertureHand>();
 
 	//AddGameObject<DashImpact>();
 	//AddGameObject<Blood>();
