@@ -28,6 +28,7 @@ public:
 	virtual std::string GetName() override;
 public:
 	void	SetWeaponState(UINT _StateIndex) { m_iStateIndex = _StateIndex; }
+	void	SetAttDir(ATTACKDIR _eAttDir) { m_BattleInfo.eAttackDir = _eAttDir; }
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;

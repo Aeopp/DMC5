@@ -14,6 +14,7 @@
 #include "BtlPanel.h"
 #include "GT_Overture.h"
 #include "GT_Rockman.h"
+#include "Monster.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -39,6 +40,11 @@ void Nero::Set_RQ_State(UINT _StateIndex)
 void Nero::Set_PlayingTime(float NewTime)
 {
 	m_pMesh->SetPlayingTime(NewTime);
+}
+
+std::list<std::weak_ptr<Monster>> Nero::GetAllMonster()
+{
+	return FindGameObjectsWithType<Monster>();
 }
 
 std::string Nero::GetName()
@@ -408,6 +414,11 @@ void Nero::SetAngleFromCamera(float _fAddAngle)
 	//m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
 
 
+}
+
+void Nero::Set_RQ_AttDir(ATTACKDIR _eAttDir)
+{
+	m_pRedQueen.lock()->SetAttDir(_eAttDir);
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)

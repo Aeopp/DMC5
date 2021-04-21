@@ -17,6 +17,7 @@ class MainCamera;
 class BtlPanel;
 class GT_Overture;
 class GT_Rockman;
+class Monster;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -241,9 +242,11 @@ public:
 public:
 	/// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
+	void Set_RQ_AttDir(ATTACKDIR _eAttDir);
 	void Set_PlayingTime(float NewTime);
 
 public:
+	std::list<std::weak_ptr<Monster>> GetAllMonster();
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();

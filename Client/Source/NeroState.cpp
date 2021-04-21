@@ -2,6 +2,7 @@
 #include "NeroState.h"
 #include "Nero.h"
 #include "NeroFSM.h"
+#include "Monster.h"
 
 #pragma region PARENT // 부모
 
@@ -666,6 +667,15 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 {
 	return S_OK;
+}
+
+void NeroState::AcitveColl_AllMonsters(bool _ActiveOrNot)
+{
+	std::list<std::weak_ptr<Monster>> AllMonsters = m_pNero.lock()->GetAllMonster();
+	for (auto& pMonster : AllMonsters)
+	{
+		pMonster.lock()->Set_Coll(_ActiveOrNot);
+	}
 }
 
 
@@ -3486,18 +3496,21 @@ HRESULT BT_Att1::StateEnter()
 	//달리고있었으면 대쉬 ComboA로 가야됨
 	m_pNero.lock()->ChangeAnimation("ComboA1", false,Nero::ANI_COMBOA1);
 	m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+	m_pNero.lock()->Set_RQ_AttDir(ATTACKDIR::Attack_L);
 	
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
 	}
+	NeroState::AcitveColl_AllMonsters(true);
 	return S_OK;
 }
 
 HRESULT BT_Att1::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::AcitveColl_AllMonsters(false);
 	return S_OK;
 }
 
@@ -3535,18 +3548,20 @@ HRESULT BT_Att2::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA2", false,Nero::ANI_COMBOA2);
-
+	m_pNero.lock()->Set_RQ_AttDir(ATTACKDIR::Attack_R);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboA2", false);
 	}
+	NeroState::AcitveColl_AllMonsters(true);
 	return S_OK;
 }
 
 HRESULT BT_Att2::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::AcitveColl_AllMonsters(false);
 	return S_OK;
 }
 
@@ -3583,18 +3598,21 @@ BT_Att3* BT_Att3::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero
 HRESULT BT_Att3::StateEnter()
 {
 	NeroState::StateEnter();
+	m_pNero.lock()->Set_RQ_AttDir(ATTACKDIR::Attack_L);
 	m_pNero.lock()->ChangeAnimation("ComboA3", false, Nero::ANI_COMBOA3);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
 	}
+	NeroState::AcitveColl_AllMonsters(true);
 	return S_OK;
 }
 
 HRESULT BT_Att3::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::AcitveColl_AllMonsters(false);
 	return S_OK;
 }
 
@@ -3637,19 +3655,20 @@ HRESULT BT_Att4::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA4", false, Nero::ANI_COMBOA4);
-
+	m_pNero.lock()->Set_RQ_AttDir(ATTACKDIR::Attack_Front);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA4", false);
 	}
-
+	NeroState::AcitveColl_AllMonsters(true);
 	return S_OK;
 }
 
 HRESULT BT_Att4::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::AcitveColl_AllMonsters(false);
 	return S_OK;
 }
 
