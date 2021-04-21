@@ -63,6 +63,8 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	// ·»´õ¸µ ÇÔ¼ö....
 	void RenderGBufferSK(const DrawInfo& _Info);

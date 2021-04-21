@@ -1,7 +1,7 @@
 uniform sampler2D renderedscene : register(s0);
 
 uniform float2 pixelSize;
-uniform float exposure = 1.0f;
+uniform float exposure = 10.0f;
 
 static const float A = 0.22;
 static const float B = 0.30;

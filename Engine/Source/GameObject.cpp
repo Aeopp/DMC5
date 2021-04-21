@@ -13,7 +13,6 @@ GameObject::GameObject()
 	, m_bStatic(false)
 	, m_bDestroy(false)
 	, m_bRenderRegist(false)
-	, m_bCollEnable(false)
 {
 	m_pTransform = AddComponent<Transform>();
 	m_pGameObject = std::static_pointer_cast<GameObject>(m_pThis);
@@ -116,24 +115,9 @@ void GameObject::PushEditEntity(Object* _EditObject)
 	m_pEditObjects.push_back(_EditObject);
 }
 
-BT_INFO GameObject::Get_BattleInfo()
-{
-	return m_BattleInfo;
-}
-
-bool GameObject::Get_Coll()
-{
-	return m_bCollEnable;
-}
-
 void GameObject::SetScene(Scene* const _pScene)
 {
 	m_pScene = _pScene;
-}
-
-void GameObject::Set_Coll(const bool _bColl)
-{
-	m_bCollEnable = _bColl;
 }
 
 UINT GameObject::GetLoopIdx()

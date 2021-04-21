@@ -50,7 +50,7 @@ HRESULT TestScene::LoadScene()
 	
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	AddGameObject<TempMap>();
-
+	Renderer::GetInstance()->exposure = 10.0f;
 	//AddGameObject<ShaderTester>();
 	
 	/*AddGameObject<TestAnimationObject>();

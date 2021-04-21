@@ -2,7 +2,7 @@
 #define Player_h__
 
 #pragma once
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 
 class NeroFSM;
@@ -15,7 +15,9 @@ class WIngArm_Left;
 class WingArm_Right;
 class MainCamera;
 class BtlPanel;
-class Nero : public GameObject,
+class GT_Overture;
+class GT_Rockman;
+class Nero : public Unit,
 	public ENGINE::RenderInterface
 
 {
@@ -305,6 +307,7 @@ public:
 	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_Overture_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -313,6 +316,8 @@ public:
 	virtual UINT LateUpdate(const float _fDeltaTime) override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	// ·»´õ¸µ ÇÔ¼ö....
 	void RenderGBufferSK(const DrawInfo& _Info);
@@ -337,7 +342,8 @@ private:
 	std::weak_ptr<MainCamera> m_pCamera;
 	std::weak_ptr<CapsuleCollider> m_pCollider;
 	std::weak_ptr<BtlPanel>			m_pBtlPanel;
-
+	std::weak_ptr<GT_Overture>		m_pOverture;
+	std::weak_ptr<GT_Rockman>		m_pRockman;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

@@ -51,7 +51,6 @@ UINT WIngArm_Left::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
-	_RenderProperty.bRender = true;
 
 	float fCurAnimationTime = m_pMesh->PlayingTime();
 

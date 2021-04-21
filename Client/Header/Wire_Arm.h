@@ -1,10 +1,10 @@
 #ifndef Wire_Arm_h__
 #define Wire_Arm_h__
 
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 class Nero;
-class Wire_Arm : public GameObject,
+class Wire_Arm : public Unit,
 	public ENGINE::RenderInterface
 {
 private:
@@ -21,6 +21,8 @@ public:
 	virtual UINT LateUpdate(const float _fDeltaTime) override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:

@@ -4,6 +4,11 @@
 #include <iostream>
 
 
+void Monster::Free()
+{
+	Unit::Free();
+}
+
 std::string Monster::GetName()
 {
 	return "Monster";

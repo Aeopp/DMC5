@@ -12,6 +12,8 @@
 #include "WingArm_Right.h"
 #include "MainCamera.h"
 #include "BtlPanel.h"
+#include "GT_Overture.h"
+#include "GT_Rockman.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -25,7 +27,7 @@ Nero::Nero()
 }
 void Nero::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 	m_pFSM = nullptr;
 }
 
@@ -51,7 +53,7 @@ Nero* Nero::Create()
 
 HRESULT Nero::Ready()
 {
-	//GameObject::Ready();
+	Unit::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.01f,0.01f,0.01f });
@@ -65,6 +67,8 @@ HRESULT Nero::Ready()
 	m_pWireArm = AddGameObject<Wire_Arm>();
 	m_pWingArm_Left = AddGameObject <WIngArm_Left>();
 	m_pWingArm_Right = AddGameObject<WingArm_Right>();
+	m_pOverture = AddGameObject<GT_Overture>();
+	//m_pRockman = AddGameObject<GT_Rockman>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -77,7 +81,7 @@ HRESULT Nero::Ready()
 
 HRESULT Nero::Awake()
 {
-	//GameObject::Awake();
+	Unit::Awake();
 	m_pFSM->ChangeState(NeroFSM::IDLE);
 
 	m_pCollider = AddComponent<CapsuleCollider>();
@@ -101,7 +105,7 @@ HRESULT Nero::Awake()
 
 HRESULT Nero::Start()
 {
-	//GameObject::Start();
+	Unit::Start();
 	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 
@@ -110,7 +114,7 @@ HRESULT Nero::Start()
 
 UINT Nero::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 
 	Update_Majin(_fDeltaTime);
 
@@ -139,18 +143,22 @@ UINT Nero::Update(const float _fDeltaTime)
 
 UINT Nero::LateUpdate(const float _fDeltaTime)
 {
-	//GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Nero::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Nero::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Nero::RenderGBufferSK(const DrawInfo& _Info)
@@ -319,7 +327,7 @@ void Nero::RenderReady()
 
 void Nero::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	bool MyButton = true;
 	float ZeroDotOne = 0.1f;
 	if (bEdit)
@@ -505,6 +513,10 @@ void Nero::Change_WingArm_Left_Animation(const std::string& InitAnimName, const 
 void Nero::Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
 	m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+}
+void Nero::Change_Overture_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+{
+	m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }
 //if (Input::GetKeyDown(DIK_LCONTROL))
 //	m_iCurWeaponIndex = m_iCurWeaponIndex == RQ ? Cbs : RQ;
