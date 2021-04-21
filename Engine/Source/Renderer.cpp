@@ -1467,6 +1467,10 @@ HRESULT Renderer::LightFrustumRender()&
 HRESULT Renderer::RenderInsulatorMetal()&
 {
 	// 감마보정 X
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	Device->SetTexture(0, RenderTargets["ALBM"]->GetTexture());
@@ -1503,6 +1507,7 @@ HRESULT Renderer::RenderInsulatorMetal()&
 
 	// 컬링 다시 켜기 . 
 	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
 	return S_OK;
 }

@@ -68,7 +68,9 @@ void ps_main(
         float3 brdf_diff = diff_irrad * albedo.rgb * ONE_OVER_PI * light_diffuse;
         float3 brdf_spec = spec_irrad * (f0_scale_bias.x + f0_scale_bias.y) * light_specular;
         
-        Color.rgb = ( brdf_diff * (1.0f - metal) ) + (brdf_spec * metal);
+        Color.rgb = (brdf_diff * (1.0f - metal)) + (brdf_spec * metal) * 1.f;
+        
+        
         Color.a = 1.f;
     }
     else
