@@ -22,6 +22,13 @@ technique sky
 {
     pass p0
     {
+        zenable = false;
+        alphablendenable = false;
+        zwriteenable = false;
+        fillmode = solid;
+        StencilEnable = true;
+        StencilRef = 1;
+        StencilFunc = notequal;
         vertexshader = compile vs_3_0 vs_main();
         pixelshader = compile ps_3_0 ps_main();
     }

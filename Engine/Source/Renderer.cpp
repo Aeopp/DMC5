@@ -485,6 +485,7 @@ HRESULT Renderer::Render()&
 
 	// 디퍼드 렌더링 .
 	DeferredShading();
+
 	/*RenderInsulatorMetal();
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
@@ -497,6 +498,7 @@ HRESULT Renderer::Render()&
 	// 백버퍼로 백업 . 
 	Device->SetRenderTarget(0, BackBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	// 테스트 
 	if (bEnvironmentRender)
 	{
 		RenderEnvironment();
@@ -1263,7 +1265,7 @@ HRESULT Renderer::RenderSkySphere()&
 
 HRESULT Renderer::RenderEnvironment()&
 {
-	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	// Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE,  FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE,			FALSE);
 	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
