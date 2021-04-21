@@ -460,9 +460,9 @@ void Nero::SetAngleFromCamera(float _fAddAngle)
 
 }
 
-void Nero::Set_RQ_AttDir(ATTACKDIR _eAttDir)
+void Nero::Set_RQ_AttType(ATTACKTYPE _eAttDir)
 {
-	m_pRedQueen.lock()->SetAttDir(_eAttDir);
+	m_pRedQueen.lock()->SetAttType(_eAttDir);
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)

@@ -242,7 +242,7 @@ public:
 public:
 	/// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
-	void Set_RQ_AttDir(ATTACKDIR _eAttDir);
+	void Set_RQ_AttType(ATTACKTYPE _eAttDir);
 	void Set_RQ_Coll(bool _ActiveOrNot);
 	void Set_PlayingTime(float NewTime);
 
