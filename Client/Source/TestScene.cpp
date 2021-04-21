@@ -16,7 +16,7 @@
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
-#include "Blood.h"
+#include "Liquid.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -68,7 +68,7 @@ HRESULT TestScene::LoadScene()
 
 	AddGameObject<Glint>();
 	AddGameObject<OvertureHand>();
-	AddGameObject<Blood>();
+	AddGameObject<Liquid>();
  
 	//AddGameObject<DashImpact>();
 

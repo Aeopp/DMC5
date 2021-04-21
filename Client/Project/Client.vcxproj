@@ -159,7 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Header\Application.h" />
-    <ClInclude Include="..\Header\Blood.h" />
+    <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
     <ClInclude Include="..\Header\Buster_Arm.h" />
     <ClInclude Include="..\Header\Camera.h" />
@@ -200,7 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Application.cpp" />
-    <ClCompile Include="..\Source\Blood.cpp" />
+    <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
     <ClCompile Include="..\Source\Buster_Arm.cpp" />
     <ClCompile Include="..\Source\Camera.cpp" />

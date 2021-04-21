@@ -8,7 +8,7 @@
 // test
 #include "Glint.h"
 #include "OvertureHand.h"
-#include "Blood.h"
+#include "Liquid.h"
 
 void BtlPanel::Free()
 {
@@ -1918,23 +1918,25 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F3))
 	{
 		AddRankScore(10.f);
-
-		std::static_pointer_cast<Blood>(FindGameObjectWithTag(Eff_Blood).lock())->SetLoop(true);
-		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(3.5f);
 	}
 	if (Input::GetKeyDown(DIK_F4))
 	{
 		AddExGauge(0.333f);
 
-		std::static_pointer_cast<Blood>(FindGameObjectWithTag(Eff_Blood).lock())->PlayStart(40.f);
-		std::static_pointer_cast<Blood>(FindGameObjectWithTag(Eff_Blood).lock())->SetVariationIdx(0u);
+		std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->PlayStart(40.f);
+		std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(true);
+		static uint32 idx = Liquid::MAX_VARIATION_IDX;
+		++idx;
+		if (idx >= Liquid::MAX_VARIATION_IDX)
+			idx = 0u;
+		std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetVariationIdx((Liquid::VARIATION)idx);
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
 
-		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
-		std::static_pointer_cast<Blood>(FindGameObjectWithTag(Eff_Blood).lock())->SetVariationIdx(1u);
+		std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
@@ -1942,15 +1944,11 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
 		AccumulateTDTGauge(0.3f);
 		ChangeWeaponUI(Nero::WeaponList::RQ);
-
-		std::static_pointer_cast<Blood>(FindGameObjectWithTag(Eff_Blood).lock())->SetVariationIdx(2u);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
 		ConsumeTDTGauge(0.5f);
 		ChangeWeaponUI(Nero::WeaponList::Cbs);
-
-		std::static_pointer_cast<Blood>(FindGameObjectWithTag(Eff_Blood).lock())->SetVariationIdx(3u);
 	}
 	////////////////////////////
 
