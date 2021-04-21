@@ -210,7 +210,8 @@ float3 wpos, float3 wnorm)
     float3 n = normalize(wnorm);
 
 	// closest point to disk (approximation)
-    float3 D = normalize(lightPos.xyz);
+    // float3 D = normalize(lightPos.xyz);
+    float3 D = -normalize(LightDirection);
     float3 R = reflect(-v, n);
 
     float DdotR = dot(D, R);
