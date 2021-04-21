@@ -995,7 +995,9 @@ void Renderer::DeferredShading()
 				deferred->SetFloat("ShadowDepthBias",DirLight->shadowdepthbias);
 				deferred->SetFloat("ShadowDepthMapHeight", DirLight->GetShadowMapSize());
 				deferred->SetFloat("ShadowDepthMapWidth", DirLight->GetShadowMapSize());
-				
+				Vector3 LightDirection = DirLight->GetDirection();
+				deferred->SetFloatArray("LightDirection", LightDirection,3);
+				deferred->SetFloatArray("Lradiance", DirLight->Lradiance, 3);
 				deferred->SetFloat("sinAngularRadius", DirLight->sinAngularRadius);
 				deferred->SetFloat("cosAngularRadius", DirLight->cosAngularRadius);
 
@@ -1038,6 +1040,7 @@ void Renderer::DeferredShading()
 			deferred->SetFloat("ShadowDepthBias", PointLight->shadowdepthbias);
 			deferred->SetFloat("ShadowDepthMapHeight",PointLight->GetShadowMapSize());
 			deferred->SetFloat("ShadowDepthMapWidth",PointLight->GetShadowMapSize());
+			deferred->SetFloatArray("Lradiance", PointLight->Lradiance, 3);
 			deferred->SetBool("IsPoint", true);
 			deferred->SetVector("clipPlanes", &clipplanes);
 			deferred->SetVector("lightColor", (D3DXVECTOR4*)&PointLight->GetColor());
@@ -2158,6 +2161,14 @@ void Renderer::LightSave(std::filesystem::path path)
 			Writer.Double(_Light->Direction.y);
 			Writer.Double(_Light->Direction.z);
 			Writer.EndArray();
+			
+			Writer.Key("Lradiance");
+			Writer.StartArray();
+			Writer.Double(_Light->Lradiance.x);
+			Writer.Double(_Light->Lradiance.y);
+			Writer.Double(_Light->Lradiance.z);
+			Writer.EndArray();
+
 
 			Writer.Key("Position");
 			Writer.StartArray();
@@ -2249,6 +2260,13 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 			_Light->Direction.x = Direction[0].GetDouble();
 			_Light->Direction.y = Direction[1].GetDouble();
 			_Light->Direction.z = Direction[2].GetDouble();
+
+
+			auto Lradiance = iter->FindMember("Lradiance")->value.GetArray();
+			_Light->Lradiance.x = Lradiance[0].GetDouble();
+			_Light->Lradiance.y = Lradiance[1].GetDouble();
+			_Light->Lradiance.z = Lradiance[2].GetDouble();
+
 
 			auto Position = iter->FindMember("Position")->value.GetArray();
 			_Light->Position.x = Position[0].GetDouble();
