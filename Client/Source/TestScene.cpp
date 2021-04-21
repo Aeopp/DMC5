@@ -49,7 +49,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Car>();
 	
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 	Renderer::GetInstance()->exposure = 10.0f;
 	//AddGameObject<ShaderTester>();
 	

@@ -126,6 +126,7 @@ public:
 		SKILL_HR_EX_START,
 		BUSTER_START,
 		TO_MAJIN,
+		HIT_FRONT,
 		STATE_END
 	};
 

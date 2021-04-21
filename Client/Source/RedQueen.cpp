@@ -109,6 +109,14 @@ void RedQueen::OnDisable()
 	_RenderProperty.bRender = false;
 }
 
+void RedQueen::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+}
+
+void RedQueen::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+}
+
 void RedQueen::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }

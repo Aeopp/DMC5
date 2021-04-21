@@ -37,7 +37,7 @@ HRESULT Em100Hand::Ready()
 	m_nTag = MonsterWeapon;
 
 	
-
+	m_nTag = GAMEOBJECTTAG::MonsterWeapon;
 	
 
 	return S_OK;

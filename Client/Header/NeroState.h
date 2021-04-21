@@ -29,7 +29,7 @@ protected:
 	virtual HRESULT KeyInput_Jump(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Cbs_Jump(const int _nIndex = -1);
 protected:
-	void AcitveColl_AllMonsters(bool _ActiveOrNot);
+	void ActiveColl_RedQueen(bool _ActiveOrNot);
 };
 
 class Idle : public NeroState
