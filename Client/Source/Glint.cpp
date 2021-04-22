@@ -194,7 +194,7 @@ UINT Glint::Update(const float _fDeltaTime)
 	}
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

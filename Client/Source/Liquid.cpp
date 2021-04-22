@@ -54,7 +54,7 @@ void Liquid::Imgui_Modify()
 
 		{
 			static float PlayingSpeed = _PlayingSpeed;
-			ImGui::SliderFloat("PlayingSpeed##Liquid", &PlayingSpeed, 0.1f, 10.f);
+			ImGui::SliderFloat("PlayingSpeed##Liquid", &PlayingSpeed, 1.f, 50.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
 	}
@@ -140,7 +140,7 @@ HRESULT Liquid::Ready()
 	_MeatALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_Meat_ALBM.tga");
 	_MeatNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_Meat_NRMR.tga");
 
-	_PlayingSpeed = 1.f;
+	_PlayingSpeed = 40.f;
 
 	SetVariationIdx(_VariationIdx);
 
@@ -170,7 +170,7 @@ UINT Liquid::Update(const float _fDeltaTime)
 		Reset();
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

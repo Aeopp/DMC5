@@ -430,7 +430,12 @@ call Engine.bat</Command>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\DecalBlood.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

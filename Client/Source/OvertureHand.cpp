@@ -162,7 +162,7 @@ UINT OvertureHand::Update(const float _fDeltaTime)
 		Reset();
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

@@ -24,13 +24,13 @@ void AppearGroundMonster::Reset()
 	for (auto& Element : _BloodMeshVec)
 	{
 		Element.SubsetIdx = static_cast<float>(FMath::Random<int>(-20, -1));
-		D3DXMatrixScaling(&Element.WorldMatrix, 0.1f, 0.1f, 0.1f);
-		Element.WorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
-		Element.WorldMatrix._42 = 0.001f;
-		Element.WorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);
+		D3DXMatrixScaling(&Element.ChildWorldMatrix, 0.2f, 0.2f, 0.2f);
+		Element.ChildWorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
+		Element.ChildWorldMatrix._42 = 0.001f;
+		Element.ChildWorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);
 	}
 
-	_PlaneSliceAmount = 1.f;
+	_SliceAmount = 1.f;
 
 	Effect::Reset();
 }
@@ -91,7 +91,7 @@ void AppearGroundMonster::RenderInit()
 	};
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"DecalBlood",
+		{"AppearGroundMonster",
 		[this](const DrawInfo& _Info)
 			{
 				this->RenderAlphaBlendEffect(_Info);
@@ -116,7 +116,7 @@ void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 		if (0.f > Element.SubsetIdx)
 			continue;
 
-		Matrix World = Element.WorldMatrix * _RenderUpdateInfo.World;
+		Matrix World = Element.ChildWorldMatrix * _RenderUpdateInfo.World;
 		_Info.Fx->SetMatrix("matWorld", &World);
 
 		auto WeakSubset = Element.Mesh->GetSubset(static_cast<UINT>(Element.SubsetIdx));
@@ -134,17 +134,13 @@ void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
-		Matrix World = _PlaneWorldMatrix * _RenderUpdateInfo.World;
+		Matrix World = _DecalBloodChildWorldMatrix * _RenderUpdateInfo.World;
 		_Info.Fx->SetMatrix("World", &World);
 
-		_Info.Fx->SetTexture("ALB0Map", _DecalBloodALB0Tex->GetTexture());
 		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
 		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
-		
-		_ExtraColor = Vector3(0.f, 1.f, 0.f);
-		_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
-		_Info.Fx->SetFloat("_SliceAmount", _PlaneSliceAmount);
+		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
 		SharedSubset->Render(_Info.Fx);
 	}
@@ -160,6 +156,8 @@ HRESULT AppearGroundMonster::Ready()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
 	
+	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+
 	_BloodMeshVec.reserve(MESH_CNT);
 
 	BloodMesh InitBloodMesh;
@@ -177,23 +175,20 @@ HRESULT AppearGroundMonster::Ready()
 	InitBloodMesh.MaxSubsetIdx = 17.f;
 	_BloodMeshVec.push_back(InitBloodMesh);
 	_BloodMeshVec.push_back(InitBloodMesh);
-	
-	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-
-	Matrix TempMat;
-	D3DXMatrixScaling(&_PlaneWorldMatrix, 0.15f, 0.1f, 0.15f);
-	D3DXMatrixRotationX(&TempMat, D3DXToRadian(-90.f));
-	_PlaneWorldMatrix *= TempMat;
-	_PlaneWorldMatrix._42 = 0.001f;
 
 	_BloodALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_blood_ALBM.tga");
 	_BloodNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_blood_NRMR.tga");
 
-	_DecalBloodALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_blood_env_0000_alba.tga");
 	_DecalBloodNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_blood_env_0000_nrmr.tga");
 	_DecalBloodMsk0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_blood_env_0000_msk2.tga");
+	
+	Matrix TempMat;
+	D3DXMatrixScaling(&_DecalBloodChildWorldMatrix, 0.15f, 0.1f, 0.15f);
+	D3DXMatrixRotationX(&TempMat, D3DXToRadian(-90.f));
+	_DecalBloodChildWorldMatrix *= TempMat;
+	_DecalBloodChildWorldMatrix._42 = 0.001f;
 
-	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\noiseInput_ATOS.tga");
+	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 	_PlayingSpeed = 1.f;
 
@@ -220,9 +215,9 @@ UINT AppearGroundMonster::Update(const float _fDeltaTime)
 	if (5.f < _AccumulateTime)
 		Reset();
 	else if (4.f < _AccumulateTime)
-		_PlaneSliceAmount =  (_AccumulateTime - 4.f) * 0.6f;
+		_SliceAmount =  (_AccumulateTime - 4.f) * 0.6f;
 	else
-		_PlaneSliceAmount = 1.f - _AccumulateTime * 0.6f;
+		_SliceAmount = 1.f - _AccumulateTime * 0.6f;
 
 	//
 	for (auto& Element : _BloodMeshVec)
@@ -237,16 +232,16 @@ UINT AppearGroundMonster::Update(const float _fDeltaTime)
 			else
 			{
 				Element.SubsetIdx = static_cast<float>(FMath::Random<int>(-20, 0));
-				D3DXMatrixScaling(&Element.WorldMatrix, 0.1f, 0.1f, 0.1f);
-				Element.WorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
-				Element.WorldMatrix._42 = 0.001f;
-				Element.WorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);
+				D3DXMatrixScaling(&Element.ChildWorldMatrix, 0.2f, 0.2f, 0.2f);
+				Element.ChildWorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
+				Element.ChildWorldMatrix._42 = 0.001f;
+				Element.ChildWorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);
 			}
 		}
 	}
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

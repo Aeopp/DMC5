@@ -40,7 +40,6 @@ private:
 	// Effect을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
-	virtual void Reset() override;
 	virtual void Imgui_Modify() override;
 private:
 	void RenderInit();
@@ -56,5 +55,7 @@ public:
 	virtual void    Editor()override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
+public:
+	virtual void Reset() override;
 };
 #endif // !__EFF_LIQUID_H__

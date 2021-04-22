@@ -18,6 +18,7 @@
 #include "Glint.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
+#include "Dust.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -68,10 +69,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
-	AddGameObject<OvertureHand>();
+	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
-	AddGameObject<AppearGroundMonster>();
+	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<Dust>();
 
+	// 수정 필요
 	//AddGameObject<DashImpact>();
 
 	return S_OK;

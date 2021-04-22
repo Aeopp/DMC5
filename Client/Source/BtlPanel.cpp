@@ -7,9 +7,10 @@
 
 // test
 //#include "Glint.h"
-#include "OvertureHand.h"
+//#include "OvertureHand.h"
 //#include "Liquid.h"
-#include "AppearGroundMonster.h"
+//#include "AppearGroundMonster.h"
+//#include "Dust.h"
 
 void BtlPanel::Free()
 {
@@ -1932,15 +1933,17 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//if (idx >= Liquid::MAX_VARIATION_IDX)
 		//	idx = 0u;
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetVariationIdx((Liquid::VARIATION)idx);
-		std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->PlayStart();
-		std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->SetLoop(true);
+		//std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->PlayStart();
+		//std::static_pointer_cast<Dust>(FindGameObjectWithTag(Eff_Dust).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
 
-		std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
+		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		//std::static_pointer_cast<Dust>(FindGameObjectWithTag(Eff_Dust).lock())->Reset();		
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{

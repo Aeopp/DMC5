@@ -431,7 +431,10 @@
     <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
       <Filter>04.HLSL\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\DecalBlood.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
+      <Filter>04.HLSL\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
       <Filter>04.HLSL\Effect</Filter>
     </ClInclude>
   </ItemGroup>
