@@ -8,12 +8,47 @@
 
 void OvertureHand::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string OvertureHand::GetName()
 {
 	return "OvertureHand";
+}
+
+void OvertureHand::Reset()
+{
+	_RandTexV0 = FMath::Random<float>(0.75f, 0.9f);
+	_RandTexV1 = FMath::Random<float>(0.4f, 0.8f);
+
+	Effect::Reset();
+}
+
+void OvertureHand::Imgui_Modify()
+{
+	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+		Sptransform)
+	{
+		//
+		ImGui::Text("Eff_OvertureHand");
+		{
+			Vector3 SliderPosition = Sptransform->GetPosition();
+			ImGui::SliderFloat3("Pos##OvertureHand", SliderPosition, -10.f, 10.f);
+			Sptransform->SetPosition(SliderPosition);
+		}
+
+		{
+			float AllScale = Sptransform->GetScale().x;
+			ImGui::SliderFloat("Scale##OvertureHand", &AllScale, 0.01f, 1.f);
+			Sptransform->SetScale({ AllScale,AllScale,AllScale });
+		}
+
+		{
+			Vector3 SliderRotation{ 0,0,0 };
+			ImGui::SliderFloat3("Rot##OvertureHand", SliderRotation, 0.f, 360.f);
+			Sptransform->SetRotation(SliderRotation);
+		}
+	}
 }
 
 OvertureHand* OvertureHand::Create()
@@ -25,7 +60,6 @@ OvertureHand* OvertureHand::Create()
 void OvertureHand::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
 {
 	auto WeakSubset = _HandMesh->GetSubset(0u);
-
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
@@ -76,7 +110,7 @@ HRESULT OvertureHand::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_OvertureHand;
 
 	ENGINE::RenderProperty _InitRenderProp;
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = false;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
 		{"OvertureHand",
@@ -91,19 +125,21 @@ HRESULT OvertureHand::Ready()
 	auto InitTransform =  GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01f, 0.01f, 0.01f });
 
-	_PlayingSpeed = 1.f;
-
 	_HandMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\wp00_010_0000.fbx");
 	_LightningTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\lightning.dds");
 	_GlowTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Light\\tex_capcom_light_glow_0002_alpg.tga");
 	_LightningColorTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\lightning_alb.png");
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
-	PushEditEntity(_HandMesh.get());
-	PushEditEntity(_LightningTex.get());
-	PushEditEntity(_GlowTex.get());
-	PushEditEntity(_LightningColorTex.get());
-	PushEditEntity(_NoiseTex.get());
+	_PlayingSpeed = 1.f;
+
+	Reset();	// PlayStart()·Î Àç»ý
+
+	//PushEditEntity(_HandMesh.get());
+	//PushEditEntity(_LightningTex.get());
+	//PushEditEntity(_GlowTex.get());
+	//PushEditEntity(_LightningColorTex.get());
+	//PushEditEntity(_NoiseTex.get());
 
 	return S_OK;
 }
@@ -120,39 +156,13 @@ HRESULT OvertureHand::Start()
 
 UINT OvertureHand::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Effect::Update(_fDeltaTime);
 
-	_AccumulateTime += _PlayingSpeed * _fDeltaTime;
 	if (1.5f < _AccumulateTime)
-	{
-		_RandTexV0 = FMath::Random<float>(0.75f, 0.9f);
-		_RandTexV1 = FMath::Random<float>(0.4f, 0.8f);
-		_AccumulateTime = 0.f;
-	}
+		Reset();
 
-	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
-		Sptransform)
-	{
-		//
-		ImGui::Text("Eff_OvertureHand");
-		{
-			Vector3 SliderPosition = Sptransform->GetPosition();
-			ImGui::SliderFloat3("Pos##OvertureHand", SliderPosition, -10.f, 10.f);
-			Sptransform->SetPosition(SliderPosition);
-		}
-
-		{
-			float AllScale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##OvertureHand", &AllScale, 0.01f, 1.f);
-			Sptransform->SetScale({ AllScale,AllScale,AllScale });
-		}
-
-		{
-			Vector3 SliderRotation{ 0,0,0 };
-			ImGui::SliderFloat3("Rot##OvertureHand", SliderRotation, 0.f, 360.f);
-			Sptransform->SetRotation(SliderRotation);
-		}
-	}
+	//
+	Imgui_Modify();
 
 	return 0;
 }
@@ -169,10 +179,10 @@ void OvertureHand::Editor()
 
 void OvertureHand::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void OvertureHand::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

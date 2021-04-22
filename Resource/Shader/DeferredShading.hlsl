@@ -216,8 +216,8 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
-   
-    Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor;
+    float ao = 0.01f;
+    Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor + (lightColor * ao);
     return Lo;
 }
 
@@ -400,7 +400,9 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
-    return (diffuseBRDF + specularBRDF) * Lradiance * cosLi * ShadowFactor;
+    float ao = 0.1f;
+    
+    return ((diffuseBRDF + specularBRDF) * Lradiance * cosLi) * ShadowFactor + ao * lightColor;
 }
 
 

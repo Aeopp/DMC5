@@ -8,9 +8,11 @@
 #include "Car.h"
 #include "Nero.h"
 #include <filesystem>
+#include "Em5000Hand.h"
 
 void Em5000::Free()
 {
+	Unit::Free();
 }
 
 std::string Em5000::GetName()
@@ -22,9 +24,6 @@ Em5000* Em5000::Create()
 {
 	return new Em5000{};
 }
-
-
-
 
 void Em5000::Fight(const float _fDeltaTime)
 {
@@ -46,7 +45,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 	//거리가 멀때만 이동 or 회전을 함.
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
-	if (fDir >= 12.f)
+	if (fDir >= 20.f)
 	{
 		if (m_bThrow && m_bIng == false)
 		{
@@ -72,7 +71,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 			return;
 		}
-		if (m_bJumpAttack && fDir >= 20.f && fDir <=25.f)
+		if (m_bJumpAttack && fDir >= 25.f && fDir <=30.f)
 		{
 			if (m_eState == Move_Start || m_eState == Move_Loop)
 			{
@@ -260,7 +259,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 25.f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 35.f)
 				m_eState = Attack_Rush_End;
 		}
 		break;
@@ -599,14 +598,15 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em5000::Ready()
 {
+	Unit::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster5000;
 
 	RenderInit();
 
-// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
+	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
+	InitTransform.lock()->SetScale({ 0.015,0.015,0.015 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -616,7 +616,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ -4.f, 32.f, 1.f});
+	m_pTransform.lock()->SetPosition({ 10.f, 5.f, 0.f});
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -624,23 +624,43 @@ HRESULT Em5000::Ready()
 
 HRESULT Em5000::Awake()
 {
-	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	Unit::Awake();
+	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
+	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	//
+	//m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
+	//m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
+	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	PushEditEntity(m_pCollider.lock().get());
 
-	m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
-	m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
+	for (UINT i = 0; i < 2; ++i)
+	{
+		m_pHand[i] = AddGameObject<Em5000Hand>();
+		m_pHand[i].lock()->m_pEm5000 = static_pointer_cast<Em5000>(m_pGameObject.lock());
+		m_pHand[i].lock()->m_pEm5000Mesh = m_pMesh;
+		m_pHand[i].lock()->m_bLeft = (bool)i;
+	}
+
+	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetGravity(false);
+	
+	m_pCollider.lock()->SetRadius(6.f);
+	m_pCollider.lock()->SetHeight(8.f);
+	m_pCollider.lock()->SetCenter({ 0.f,6.f,-2.f });
 
 	return S_OK;
 }
 
 HRESULT Em5000::Start()
 {
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Em5000::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -650,7 +670,6 @@ UINT Em5000::Update(const float _fDeltaTime)
 	//_Notify.Event[0.5] = [this]() {  AttackStart();  return false; };
 
 	const float Length = FMath::Length(DeltaPos);
-
 
 	//DeltaPos = FMath::RotationVecNormal(DeltaPos, Axis, FMath::ToRadian(90.f)) * Length;
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -697,23 +716,28 @@ UINT Em5000::Update(const float _fDeltaTime)
 
 UINT Em5000::LateUpdate(const float _fDeltaTime)
 {
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Em5000::Editor()
 {
-	GameObject::Editor();
-	if (bEdit)
-	{
-
-	}
+	Unit::Editor();
+	if (false == bEdit)
+		return;
 }
 
 void Em5000::OnEnable()
 {
+	Unit::OnEnable();
 }
 
 void Em5000::OnDisable()
+{
+	Unit::OnDisable();
+}
+
+void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
@@ -831,6 +855,17 @@ void Em5000::RenderInit()
 			RenderDebugSK(_Info);
 		}
 	} };
+
+	//
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 스켈레톤 메쉬 로딩 ... 
@@ -891,6 +926,8 @@ void Em5000::Update_Angle()
 	m_fRadian = fRadian;
 	m_fAccuangle = 0.f;
 
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
 
 	if (m_fRadian > 0)
 		m_fAngleSpeed = fabs(m_fAngleSpeed);

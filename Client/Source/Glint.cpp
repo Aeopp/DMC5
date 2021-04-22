@@ -8,12 +8,52 @@
 
 void Glint::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Glint::GetName()
 {
 	return "Glint";
+}
+
+void Glint::Reset()
+{
+	for (uint32 i = 0u; i < 3u; ++i)
+	{
+		_SliceAmount[i] = 1.f;
+		_Scale[i] = 0.1f;
+		D3DXMatrixIdentity(&_WorldMatrix[i]);
+	}
+	_Interval = 0.f;
+
+	Effect::Reset();
+}
+
+void Glint::Imgui_Modify()
+{
+	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+		Sptransform)
+	{
+		ImGui::Text("Eff_Glint");
+		{
+			Vector3 SliderPosition = Sptransform->GetPosition();
+			ImGui::SliderFloat3("Pos##Glint", SliderPosition, -10.f, 10.f);
+			Sptransform->SetPosition(SliderPosition);
+		}
+
+		{
+			float Scale = Sptransform->GetScale().x;
+			ImGui::SliderFloat("Scale##Glint", &Scale, 0.1f, 10.f);
+			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
+			SetScale(Scale);
+		}
+
+		{
+			float PlayingSpeed = _PlayingSpeed;
+			ImGui::SliderFloat("PlayingSpeed##Glint", &PlayingSpeed, 0.1f, 10.f);
+			_PlayingSpeed = PlayingSpeed;
+		}
+	}
 }
 
 Glint* Glint::Create()
@@ -49,7 +89,7 @@ HRESULT Glint::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_Glint;
 
 	ENGINE::RenderProperty _InitRenderProp;
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = false;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
 		{"Glint",
@@ -61,13 +101,12 @@ HRESULT Glint::Ready()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
-	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 1.f, 1.f, 1.f });
+	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+	_GlintTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Light\\tex_capcom_light_glint_0017_alpg.tga");
 
 	_PlayingSpeed = 3.5f;
 
-	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-	_GlintTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Light\\tex_capcom_light_glint_0017_alpg.tga");
+	Reset();	// PlayStart()로 재생
 
 	return S_OK;
 }
@@ -84,28 +123,18 @@ HRESULT Glint::Start()
 
 UINT Glint::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Effect::Update(_fDeltaTime);
 
-	_AccumulateTime += _PlayingSpeed * _fDeltaTime;
+	//std::cout << _AccumulateTime << endl;
 
 	if (1.5f < _AccumulateTime)
-	{
-		for (UINT i = 0u; i < 3u; ++i)
-		{
-			_SliceAmount[i] = 1.f;
-			_Scale[i] = 0.1f;
-			D3DXMatrixIdentity(&_WorldMatrix[i]);
-		}
-		_Interval = 0.f;
-
-		_AccumulateTime = 0.f;
-	}
+		Reset();
 
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 		Sptransform)
 	{
 		float ScaleSpeed = 0.018f;
-		for (UINT i = 0u; i < 3u; ++i)
+		for (uint32 i = 0u; i < 3u; ++i)
 		{
 			_SliceAmount[i] = _AccumulateTime - _Interval > 1.f ? 1.f : _AccumulateTime - _Interval;
 			if (0.f > _SliceAmount[i])
@@ -162,27 +191,10 @@ UINT Glint::Update(const float _fDeltaTime)
 			else
 				_Interval = 0.f;
 		}
-
-		//
-		ImGui::Text("Eff_Glint");
-		{
-			Vector3 SliderPosition = Sptransform->GetPosition();
-			ImGui::SliderFloat3("Pos##Glint", SliderPosition, -10.f, 10.f);
-			Sptransform->SetPosition(SliderPosition);
-		}
-
-		{
-			float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##Glint", &Scale, 0.1f, 10.f);
-			Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
-		}
-
-		{
-			float Aspect = _Aspect;
-			ImGui::SliderFloat("Aspect##Glint", &Aspect, 0.1f, 1.f);
-			_Aspect = Aspect;
-		}
 	}
+
+	//
+	Imgui_Modify();
 
 	return 0;
 }
@@ -199,10 +211,10 @@ void Glint::Editor()
 
 void Glint::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void Glint::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

@@ -46,6 +46,7 @@ private:
 	
 	Matrix*								m_pParentBoneMat;
 	bool								m_bIsRender;
+	bool								m_bLoop;
 };
 
 

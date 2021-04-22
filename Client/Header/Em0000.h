@@ -3,7 +3,7 @@
 
 #include "Monster.h"
 
-
+class Em0000Weapon;
 class TestObject;
 class Em0000 final : public Monster
 {
@@ -40,8 +40,6 @@ private:
 		State_END
 	};
 
-
-
 private:
 	explicit Em0000() = default;
 	virtual ~Em0000() = default;
@@ -67,7 +65,8 @@ public:
 	virtual void Editor() override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
-
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -94,10 +93,12 @@ private:
 	//잠깐, 막기!
 	bool		m_bGuard = false;
 	float		m_fGuardTime = 0.f;
-	
 
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
+	
+	weak_ptr<Em0000Weapon>    m_pWeapon;
+	weak_ptr<CapsuleCollider> m_pCollider;
 };
 
 #endif // Em0000_h__

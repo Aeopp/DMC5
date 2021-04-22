@@ -15,13 +15,15 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-
 #include "Engine.h"
 #include <windows.h>
 
+// default = 0.01
+
+static constexpr float GScale = 0.001f;
 
 USING(ENGINE)
-
+using namespace std;
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
 
@@ -32,10 +34,19 @@ enum GAMEOBJECTTAG
 	Monster101,
 	Monster0000,
 	Monster5000,
+	MonsterWeapon,
 	UI_BtlPanel,
 	Eff_Glint,
 	Eff_OvertureHand,
 	ThrowCar,
 	TAG_Camera,
+	TAG_RedQueen,
+	TAG_BusterArm_Right,
+	TAG_WireArm,
+	Overture,
 	Tag_END
 };
+
+#define OGDistance 2.4f
+#define MaxDistance 3.7f
+#define RotateDistance 3.f

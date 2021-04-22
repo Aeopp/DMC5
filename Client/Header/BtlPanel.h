@@ -2,6 +2,7 @@
 #define __UI_BTL_PANEL__
 #include "GameObject.h"
 #include "RenderInterface.h"
+#include "Nero.h"
 
 class BtlPanel : public ENGINE::GameObject,
 				 public ENGINE::RenderInterface				
@@ -42,6 +43,9 @@ private:
 	std::shared_ptr<ENGINE::Texture> _RedOrbATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};
 
+	// 더미 나중에 폰트 제대로 만들자~
+	std::shared_ptr<ENGINE::Texture> _Dummy0000Tex{};
+
 	std::shared_ptr<ENGINE::Texture> _TargetCursorTex{};
 	std::shared_ptr<ENGINE::Texture> _EnemyHPTex{};
 
@@ -68,6 +72,7 @@ private:
 	std::shared_ptr<ENGINE::Texture> _ExNRMR0Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExEmissive0Tex{};
 	std::shared_ptr<ENGINE::Texture> _ExFireTex{};
+	std::shared_ptr<ENGINE::Texture> _BurnRampTex{};
 
 	std::shared_ptr<ENGINE::Texture> _HPGaugeBaseALBMTex{};
 	std::shared_ptr<ENGINE::Texture> _HPGaugeBaseATOSTex{};
@@ -107,14 +112,18 @@ private:
 	Vector2 _TargetHP_StartPtOrtho = Vector2(0.f, 0.f);
 	Vector2 _TargetHP_Normal0 = Vector2(0.f, 0.f);
 	Vector2 _TargetHP_Normal1 = Vector2(0.f, 0.f);
+	float _TargetCursorAlpha = 0.f;
 	
 	/* 0 ~ 1 */
 	float _PlayerHPRatio = 1.f;
+	float _PlayerHPRatioDelay = 1.f;
 	int _HPGaugeCount = 5;
 	float _HPGaugeWidth = 50.f;
 	float _HPGauge_CurXPosOrtho = 0.f;
+	float _HPGauge_CurXPosOrthoDelay = 0.f;
 	float _HPGlassDirt = 0.f;
 	float _HPGlassDirtAccTime = 999.f;
+	float _HPGlassRotY = 0.f;
 
 	float _BossGauge_CurXPosOrtho = 0.f;
 
@@ -123,6 +132,7 @@ private:
 	float _TDTGauge_CurXPosOrtho = 0.f;
 	bool _TDTGauge_ConsumeStart = false;
 	float _TDTGauge_ConsumeSpeed = 1.f;
+	float _TDTGauge_EmissivePower = 0.f;
 
 	Vector2 _InputUIOffset = Vector2(0.f, 0.f);
 
@@ -156,7 +166,8 @@ private:
 	Vector4 _ExGauge_FireFrame = Vector4();
 	float _ExGauge_FireAccumulateTime = 999.f;
 	float _ExGauge_FullFireAccumulateTime = 0.f;
-
+	float _ExGauge_DissolveAmount = 0.f;
+	
 	enum KEY_INPUT_ID
 	{
 		Q = 0, W, E, R, A, S, D, F, Z, X, C, V,
@@ -165,11 +176,14 @@ private:
 	};
 	bool _KeyboardInput[KEY_INPUT_END] = { false, };
 
+	Nero::WeaponList _CurWeaponIdx = Nero::WeaponList::RQ;
+
 	Matrix _PerspectiveProjMatrix = Matrix();
 
 	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
 	Vector3 _LightDir_ExGauge = Vector3(-1.f, 1.f, -1.f);
-
+	Vector3 _LightDir_Stylish = Vector3(0.f, -1.f, 1.f);
+	
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
@@ -186,7 +200,7 @@ private:
 private:
 	void	Init_UIDescs();
 	void	Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt = 0);
-	void	Update_TargetInfo();
+	void	Update_TargetInfo(const float _fDeltaTime);
 	void	Update_PlayerHP(const float _fDeltaTime);
 	void	Update_Rank(const float _fDeltaTime);
 	void	Update_ExGauge(const float _fDeltaTime);
@@ -226,6 +240,8 @@ public:
 	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count);
+
+	void ChangeWeaponUI(Nero::WeaponList NextWeapon);
 
 };
 #endif // !__UI_BTL_PANEL__

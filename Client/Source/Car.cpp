@@ -10,7 +10,7 @@
 
 void Car::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Car::GetName()
@@ -171,7 +171,7 @@ void Car::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_StaticMesh)
 		{
 			const uint32  Numsubset = _StaticMesh->GetNumSubset();
@@ -200,7 +200,7 @@ HRESULT Car::Ready()
 
 
 	m_pTransform = GetComponent<ENGINE::Transform>();
-	m_pTransform.lock()->SetPosition({ -20.83f, 32.f, 7.45f });
+	m_pTransform.lock()->SetPosition({ 10.f, 5.f, 10.f });
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 	// PushEditEntity(_ShaderInfo.ForwardAlphaBlendShader.get());
@@ -228,6 +228,7 @@ HRESULT Car::Start()
 
 UINT Car::Update(const float _fDeltaTime)
 {
+	GameObject::Update(_fDeltaTime);
 	Quaternion QuatIdentity{ 0.f,0.f,0.f,1.f };
 	_StaticMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {}, QuatIdentity);
 	_StaticMesh->UpdateToRootMatricies();
@@ -275,12 +276,12 @@ void Car::Editor()
 
 void Car::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void Car::OnDisable()
 {
-
+	GameObject::OnDisable();
 }
 
 void Car::Throw(const float _fDeltaTime)

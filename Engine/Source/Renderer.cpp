@@ -560,6 +560,7 @@ void Renderer::Editor()&
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
+		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
 
 		if (ImGui::CollapsingHeader("AdaptLuminance"))
 		{
@@ -570,14 +571,7 @@ void Renderer::Editor()&
 			};
 			if (ImGui::Button("AdaptLuminance Default"))
 			{
-				adaptedluminance_var =
-				{
-					0.98f,
-					50.0f,
-					100.0f,
-					12.5f,
-					1.2f
-				};
+				adaptedluminance_var = def_adaptedluminance_var;
 			}
 		}
 		
@@ -1261,7 +1255,7 @@ HRESULT Renderer::RenderSkySphere()&
 	float scale = { 0.026f };
 	const Matrix world = FMath::Scale(scale);
 	Fx->SetMatrix("matSkyRotation", &world);
-
+	Fx->SetFloat("intencity", SkyIntencity);
 	Fx->Begin(NULL, 0);
 	Fx->BeginPass(0);
 	Device->SetTexture(0u, SkysphereTex2->GetTexture());
@@ -1422,14 +1416,14 @@ HRESULT Renderer::RendererCollider()&
 		Fx->SetVector("DebugColor", &DebugColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		UINT Passes = 0u;
-		Fx->Begin(&Passes, NULL);
 		for (auto& [Entity, Call] : _EntityArr)
 		{
+			Fx->Begin(&Passes, NULL);
 			Fx->BeginPass(0);
 			Call(_DrawInfo);
 			Fx->EndPass();
+			Fx->End();
 		}
-		Fx->End();
 	}
 
 	return S_OK;
@@ -1638,7 +1632,8 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 	float two_ad_EV = adaptedluminance * 
 		(adaptedluminance_var[2] / adaptedluminance_var[3]);
 
-	exposure = 1.0f / (adaptedluminance_var[4] * two_ad_EV);
+	exposure = 1.0f / (adaptedluminance_var[4] * two_ad_EV) *
+					adaptedluminance_var[5];
 
 	return S_OK;
 }

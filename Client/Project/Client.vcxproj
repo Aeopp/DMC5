@@ -166,6 +166,9 @@
     <ClInclude Include="..\Header\Car.h" />
     <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\Effect.h" />
+    <ClInclude Include="..\Header\Em100Hand.h" />
+    <ClInclude Include="..\Header\Em5000Hand.h" />
+    <ClInclude Include="..\Header\Gauntlet.h" />
     <ClInclude Include="..\Header\Glint.h" />
     <ClInclude Include="..\Header\Em0000.h" />
     <ClInclude Include="..\Header\Em0000_Weapon.h" />
@@ -174,7 +177,10 @@
     <ClInclude Include="..\Header\Em5000.h" />
     <ClInclude Include="..\Header\FSMBase.h" />
     <ClInclude Include="..\Header\FSMState.h" />
+    <ClInclude Include="..\Header\GT_Overture.h" />
+    <ClInclude Include="..\Header\GT_Rockman.h" />
     <ClInclude Include="..\Header\MainCamera.h" />
+    <ClInclude Include="..\Header\MapObject.h" />
     <ClInclude Include="..\Header\Monster.h" />
     <ClInclude Include="..\Header\NeroFSM.h" />
     <ClInclude Include="..\Header\Nero.h" />
@@ -187,6 +193,7 @@
     <ClInclude Include="..\Header\OvertureHand.h" />
     <ClInclude Include="..\Header\TestObject.h" />
     <ClInclude Include="..\Header\TestScene.h" />
+    <ClInclude Include="..\Header\Unit.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
@@ -205,6 +212,9 @@
     <ClCompile Include="..\Source\Car.cpp" />
     <ClCompile Include="..\Source\DashImpact.cpp" />
     <ClCompile Include="..\Source\Effect.cpp" />
+    <ClCompile Include="..\Source\Em100Hand.cpp" />
+    <ClCompile Include="..\Source\Em5000Hand.cpp" />
+    <ClCompile Include="..\Source\Gauntlet.cpp" />
     <ClCompile Include="..\Source\Glint.cpp" />
     <ClCompile Include="..\Source\Em0000.cpp" />
     <ClCompile Include="..\Source\Em0000_Weapon.cpp" />
@@ -213,7 +223,10 @@
     <ClCompile Include="..\Source\Em5000.cpp" />
     <ClCompile Include="..\Source\FSMBase.cpp" />
     <ClCompile Include="..\Source\FSMState.cpp" />
+    <ClCompile Include="..\Source\GT_Overture.cpp" />
+    <ClCompile Include="..\Source\GT_Rockman.cpp" />
     <ClCompile Include="..\Source\MainCamera.cpp" />
+    <ClCompile Include="..\Source\MapObject.cpp" />
     <ClCompile Include="..\Source\Monster.cpp" />
     <ClCompile Include="..\Source\NeroFSM.cpp" />
     <ClCompile Include="..\Source\Nero.cpp" />
@@ -226,6 +239,7 @@
     <ClCompile Include="..\Source\OvertureHand.cpp" />
     <ClCompile Include="..\Source\TestObject.cpp" />
     <ClCompile Include="..\Source\TestScene.cpp" />
+    <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />

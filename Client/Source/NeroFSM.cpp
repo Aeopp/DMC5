@@ -44,6 +44,7 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(RunStop::Create(this, RUNSTOP, m_pNero));
 	m_vecState.emplace_back(DashLoop::Create(this, DASHLOOP, m_pNero));
 	m_vecState.emplace_back(DashStop::Create(this, DASHSTOP, m_pNero));
+	m_vecState.emplace_back(DashTurn::Create(this, DASHTURN, m_pNero));
 
 	m_vecState.emplace_back(BT_Att_ComboC_R_to_L::Create(this, ATT_COMBO_C_R, m_pNero));
 	m_vecState.emplace_back(BT_Att_ComboC_L_to_R::Create(this, ATT_COMBO_C_L, m_pNero));
@@ -167,6 +168,8 @@ HRESULT NeroFSM::ReadyFSM()
 
 	m_vecState.emplace_back(Buster_Start::Create(this, BUSTER_START, m_pNero));
 	m_vecState.emplace_back(To_Majin::Create(this, TO_MAJIN, m_pNero));
+
+	m_vecState.emplace_back(HitFront::Create(this, HIT_FRONT, m_pNero));
 
 	return S_OK;						
 }

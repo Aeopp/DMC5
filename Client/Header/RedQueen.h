@@ -1,10 +1,11 @@
 #ifndef RedQueen_h__
 #define RedQueen_h__
 
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 class Nero;
-class RedQueen : public GameObject,
+class Glint;
+class RedQueen : public Unit,
 	public ENGINE::RenderInterface
 {
 private:
@@ -22,9 +23,15 @@ public:
 	virtual UINT LateUpdate(const float _fDeltaTime) override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual std::string GetName() override;
 public:
 	void	SetWeaponState(UINT _StateIndex) { m_iStateIndex = _StateIndex; }
+	void	SetAttType(ATTACKTYPE _eAttDir) { m_BattleInfo.eAttackType = _eAttDir; }
 public:
 	// RenderInterface¿ª(∏¶) ≈Î«ÿ ªÛº”µ 
 	virtual void RenderReady() override;
@@ -40,6 +47,9 @@ public:
 private:
 	std::weak_ptr<Nero>					m_pNero;
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
+	std::weak_ptr<CapsuleCollider> m_pCollider;
+	std::weak_ptr<Glint>			m_pGlint; // ∂ß∑»¿ª∂ß π›¬¶¿Ã¥¬ ¿Ã∆Â∆Æ
+
 
 	std::vector<Matrix*>					m_vecParentMat;
 	UINT								m_iStateIndex = 0;

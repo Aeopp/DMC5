@@ -3,6 +3,9 @@ uniform sampler2D skytexture : register(s0);
 uniform matrix matViewProj;
 uniform matrix matSkyRotation;
 
+uniform float intencity = 1.f;
+
+
 void vs_main(
 	in out float4 pos : POSITION,
     in out float2 tex : TEXCOORD0)
@@ -15,7 +18,9 @@ void ps_main(
 	in float2 tex    : TEXCOORD0,
 	out float4 color : COLOR0)
 {
-    color = tex2D(skytexture, tex);
+    color = tex2D(skytexture, tex) ;
+
+    color.rgb *= intencity;
 }
 
 technique sky

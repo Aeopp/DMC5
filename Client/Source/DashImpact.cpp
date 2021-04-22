@@ -8,6 +8,7 @@
 
 void DashImpact::Free()
 {
+	GameObject::Free();
 }
 std::string DashImpact::GetName()
 {
@@ -149,10 +150,14 @@ void DashImpact::Editor()
 
 void DashImpact::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void DashImpact::OnDisable()
 {
+	GameObject::OnDisable();
+}
 
+void DashImpact::Reset()
+{
 }

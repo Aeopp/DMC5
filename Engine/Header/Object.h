@@ -6,6 +6,8 @@ class ENGINE_DLL Object abstract
 {
 	friend Deleter<Object>;
 protected:
+	std::shared_ptr<Object> m_pThis;
+protected:
 	explicit Object();
 	explicit Object(const Object& rOther);
 	virtual ~Object() = default;
@@ -18,6 +20,7 @@ public:
 	std::string  EditName{};
 
 	UINT32 m_nTag;
+	UINT32 m_nLayer;
 };
 END
 #endif // !__OBJECT_H__

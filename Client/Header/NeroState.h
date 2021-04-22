@@ -9,7 +9,7 @@ class NeroState :    public FSMState
 {
 protected:
 	weak_ptr<Nero>	m_pNero;
-
+	bool			m_bActiveColl = false;
 	//weak_ptr<Animator>	m_pAnimator;
 public:
 	explicit NeroState(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
@@ -28,6 +28,10 @@ protected:
 	virtual HRESULT KeyInput_Cbs_Idle(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Jump(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Cbs_Jump(const int _nIndex = -1);
+protected:
+	void ActiveColl_RedQueen(bool _ActiveOrNot);
+	void ActiveColl_Monsters(bool _ActiveOrNot);
+
 };
 
 class Idle : public NeroState
@@ -159,6 +163,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	float m_fRequireTimeForDash = 0.f;
 };
 
 class RunStartFront : public NeroState
@@ -290,6 +297,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	float m_fGradient; // 좌우키 같이 눌렀을때 기우는 값
 };
 
 class DashStop : public NeroState
@@ -322,6 +332,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	bool			m_bRotationEnable = false;
 };
 
 class WalkLoop : public NeroState

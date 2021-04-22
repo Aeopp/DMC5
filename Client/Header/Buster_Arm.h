@@ -1,10 +1,10 @@
 #ifndef Buster_Arm_h__
 #define Buster_Arm_h__
 
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 class Nero;
-class Buster_Arm : public GameObject,
+class Buster_Arm : public Unit,
 	public ENGINE::RenderInterface
 {
 private:
@@ -22,7 +22,8 @@ public:
 	virtual UINT LateUpdate(const float _fDeltaTime) override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
-
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	// ·»´õ¸µ ÇÔ¼ö ... 
 	void RenderInit();
 	void RenderGBufferSK(const DrawInfo& _Info);
@@ -44,6 +45,7 @@ public:
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;
+	std::weak_ptr<SphereCollider> m_pCollider;
 
 	bool								m_bIsRender;
 };

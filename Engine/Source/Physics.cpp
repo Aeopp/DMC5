@@ -19,16 +19,16 @@ physx::PxMaterial* Physics::GetDefaultMaterial()
 	return m_pPhysicsSystem.lock()->GetDefaultMaterial();
 }
 
-void Physics::AddActor(physx::PxActor& _rActor)
+void Physics::AddActor(const UINT _nSceneID, physx::PxActor& _rActor)
 {
 	if (nullptr == m_pPhysicsSystem.lock() || m_pPhysicsSystem.expired())
 		return;
-	m_pPhysicsSystem.lock()->AddActor(_rActor);
+	m_pPhysicsSystem.lock()->AddActor(_nSceneID, _rActor);
 }
 
-void Physics::RemoveActor(physx::PxActor& _rActor)
+void Physics::RemoveActor(const UINT _nSceneID, physx::PxActor& _rActor)
 {
 	if (nullptr == m_pPhysicsSystem.lock() || m_pPhysicsSystem.expired())
 		return;
-	m_pPhysicsSystem.lock()->RemoveActor(_rActor);
+	m_pPhysicsSystem.lock()->RemoveActor(_nSceneID, _rActor);
 }

@@ -8,7 +8,7 @@
 
 void Blood::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string Blood::GetName()
@@ -62,7 +62,7 @@ void Blood::RenderReady()
 	{
 		_RenderProperty.bRender = true;
 		ENGINE::RenderInterface::UpdateInfo _UpdateInfo{};
-		_UpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_UpdateInfo.World = _SpTransform->GetRenderMatrix();
 	}
 }
 
@@ -156,10 +156,10 @@ void Blood::Editor()
 
 void Blood::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void Blood::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

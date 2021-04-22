@@ -29,15 +29,16 @@ BoxCollider* BoxCollider::Create(std::weak_ptr<GameObject> const _pGameObject)
 {
 	BoxCollider* pInstance = new BoxCollider(_pGameObject);
 
+	if (FAILED(pInstance->ReadyCollider()))
+	{
+		delete pInstance;
+		return nullptr;
+	}
+
 	if (nullptr == m_pMesh)
 		D3DXCreateBox(Graphic::GetDevice(), 1.f, 1.f, 1.f, &m_pMesh, nullptr);
 	else
 		SafeAddRef(m_pMesh);
-	//if (FAILED(pInstance->ReadyBoxCollider()))
-	//{
-	//	delete pInstance;
-	//	return nullptr;
-	//}
 
 	return pInstance;
 }
@@ -49,11 +50,12 @@ HRESULT BoxCollider::ReadyCollider()
 	vHalfExtent = vHalfExtent * 0.5f;
 
 	m_pMaterial = Physics::GetDefaultMaterial();
-	m_pMaterial->acquireReference();
+
 	//Create BoxShape
 	m_pShape = Physics::GetPxPhysics()->createShape(physx::PxBoxGeometry(vHalfExtent), *m_pMaterial, true);
-	//
+
 	Collider::ReadyCollider();
+
 	return S_OK;
 }
 
@@ -89,6 +91,7 @@ HRESULT BoxCollider::DrawCollider(const DrawInfo& _Info)
 
 
 	_Info.Fx->SetMatrix("World", &matWorld);
+	_Info.Fx->CommitChanges();
 
 	m_pMesh->DrawSubset(0);
 

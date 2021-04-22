@@ -1,6 +1,6 @@
-#include "Scene.h"
 #ifndef __GAMEOBJECT_HPP__
 #define __GAMEOBJECT_HPP__
+#include "Scene.h"
 BEGIN(ENGINE)
 template<typename TYPE>
 inline std::weak_ptr<TYPE> GameObject::AddComponent()
@@ -21,8 +21,6 @@ inline std::weak_ptr<TYPE> GameObject::AddComponent()
 
 	iterFind = (m_Components.emplace(nTypeID, std::shared_ptr<Component>(pComponent, Deleter<Object>()))).first;
 	
-	pComponent->SetWeakPtr(iterFind->second);
-
 	return std::static_pointer_cast<TYPE>(iterFind->second);
 }
 
@@ -43,6 +41,18 @@ template<typename TYPE>
 inline std::weak_ptr<TYPE> GameObject::AddGameObject()
 {
 	return m_pScene->AddGameObject<TYPE>();
+}
+
+template<typename TYPE>
+inline std::weak_ptr<TYPE> GameObject::FindGameObjectWithType()
+{
+	return m_pScene->FindGameObjectWithType<TYPE>();
+}
+
+template<typename TYPE>
+inline std::list<std::weak_ptr<TYPE>> GameObject::FindGameObjectsWithType()
+{
+	return m_pScene->FindGameObjectsWithType<TYPE>();
 }
 END
 #endif // !__GAMEOBJECT_HPP__

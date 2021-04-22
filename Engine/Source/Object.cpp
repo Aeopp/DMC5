@@ -6,14 +6,17 @@ static uint32 UniqueIDRegist = 0u;
 Object::Object() :
 	UniqueID { UniqueIDRegist++}
 	, m_nTag(0)
+	, m_nLayer(0)
 {
-
+	m_pThis.reset(this, DummyDeleter<Object>());
 }
 
 Object::Object(const Object& rOther)
 	: UniqueID{ UniqueIDRegist++ }
 	, m_nTag(rOther.m_nTag)
+	, m_nLayer(rOther.m_nLayer)
 {
+	m_pThis.reset(this, DummyDeleter<Object>());
 }
 
 void Object::Free()

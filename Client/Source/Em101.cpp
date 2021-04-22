@@ -9,6 +9,7 @@
 
 void Em101::Free()
 {
+	Unit::Free();
 }
 
 std::string Em101::GetName()
@@ -109,6 +110,7 @@ void Em101::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em101::Ready()
 {
+	Unit::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster101;
 
@@ -130,6 +132,8 @@ HRESULT Em101::Ready()
 
 HRESULT Em101::Awake()
 {
+	Unit::Awake();
+
 	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
@@ -139,12 +143,13 @@ HRESULT Em101::Awake()
 
 HRESULT Em101::Start()
 {
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Em101::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -210,14 +215,14 @@ UINT Em101::Update(const float _fDeltaTime)
 
 UINT Em101::LateUpdate(const float _fDeltaTime)
 {
-	
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 
 }
 
 void Em101::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (bEdit)
 	{
 
@@ -227,10 +232,12 @@ void Em101::Editor()
 
 void Em101::OnEnable()
 {
+	Unit::OnEnable();
 }
 
 void Em101::OnDisable()
 {
+	Unit::OnDisable();
 }
 
 void Em101::RenderGBufferSK(const DrawInfo& _Info)
@@ -398,4 +405,8 @@ void Em101::Update_Angle()
 		m_fAngleSpeed = fabs(m_fAngleSpeed);
 	else
 		m_fAngleSpeed = -fabs(m_fAngleSpeed);
+}
+
+void Em101::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }

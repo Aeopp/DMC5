@@ -7,12 +7,12 @@
 
 void TempMap::Free()
 {
-
+	GameObject::Free();
 }
 
 std::string TempMap::GetName()
 {
-	return "TestObject";
+	return "TempMap";
 };
 
 TempMap* TempMap::Create()
@@ -28,7 +28,7 @@ void TempMap::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_StaticMesh)
 		{
 			const uint32  Numsubset = _StaticMesh->GetNumSubset();  
@@ -47,7 +47,6 @@ void TempMap::RenderReady()
 
 void TempMap::RenderInit()
 {
-	m_nTag = Player;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -58,34 +57,34 @@ void TempMap::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
-	{
-		{"gbuffer_ds",
-		[this](const DrawInfo& _Info)
-			{
-				RenderGBuffer(_Info);
-			}
-		},
-	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"Shadow" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadow(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_ds",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBuffer(_Info);
+	//		}
+	//	},
+	//};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+	//	=
+	//{
+	//	{"Shadow" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderShadow(_Info);
+	//	}
+	//} };
 
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
-		=
-	{
-		{"Debug" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderDebug(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
+	//	=
+	//{
+	//	{"Debug" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderDebug(_Info);
+	//	}
+	//} };
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
@@ -93,7 +92,7 @@ void TempMap::RenderInit()
 		{"Debug" ,
 		[this](const DrawInfo& _Info)
 		{
-			DrawCollider(_Info);
+			RenderDebug(_Info);
 		}
 	} };
 
@@ -104,12 +103,7 @@ void TempMap::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Static\\Temp\\1357_theatrefloor_01.fbx", _InitInfo);
-	/*_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-			L"..\\..\\..\\TestResource\\Hotel\\Hotel.fbx", _InitInfo); */
-	
-	/*_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Arcade.fbx", _InitInfo);*/
+		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Test.fbx", _InitInfo);
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -183,8 +177,7 @@ HRESULT TempMap::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition({-6.56712f,10.20113f,-640.95453f});
-	//InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
+	InitTransform.lock()->SetPosition(Vector3{ -3672.85 ,896.892 ,1526.073 }*GScale) ;
 
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
@@ -196,8 +189,8 @@ HRESULT TempMap::Awake()
 {
 	m_pCollider = AddComponent<MeshCollider>();
 	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
-	//m_pCollider.lock()->SetRigid(true);
-	//m_pCollider.lock()->SetGravity(false);
+	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetGravity(false);
 	PushEditEntity(m_pCollider.lock().get());
 
 	//auto pCollider = AddComponent<CapsuleCollider>();
@@ -244,10 +237,10 @@ void TempMap::Editor()
 
 void TempMap::OnEnable()
 {
-
+	GameObject::OnEnable();
 }
 
 void TempMap::OnDisable()
 {
-
+	GameObject::OnDisable();
 }

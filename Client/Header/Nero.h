@@ -2,7 +2,7 @@
 #define Player_h__
 
 #pragma once
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 
 class NeroFSM;
@@ -14,7 +14,12 @@ class Wire_Arm;
 class WIngArm_Left;
 class WingArm_Right;
 class MainCamera;
-class Nero :   public GameObject ,
+class BtlPanel;
+class GT_Overture;
+class GT_Rockman;
+class Monster;
+class Em100;
+class Nero : public Unit,
 	public ENGINE::RenderInterface
 
 {
@@ -198,7 +203,7 @@ public:
 
 	enum WeaponList
 	{
-		RQ , // 검
+		RQ, // 검
 		Cbs // 삼절곤
 
 	};
@@ -215,7 +220,14 @@ public:
 		WS_Idle,
 		WS_Battle
 	};
-	
+
+	enum NeroDirection
+	{
+		Dir_Front,
+		Dir_Back,
+		Dir_Left,
+		Dir_Right
+	};
 
 private:
 	explicit Nero();
@@ -229,51 +241,81 @@ public:
 	virtual void RenderReady() override;
 	virtual void Editor()override;
 public:
-/// <For RedQueen>
+	/// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
+	void Set_RQ_AttType(ATTACKTYPE _eAttDir);
+	void Set_RQ_Coll(bool _ActiveOrNot);
 	void Set_PlayingTime(float NewTime);
+
 public:
+	std::list<std::weak_ptr<Monster>> GetAllMonster();
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
 	UINT Get_CurAnimationIndex() { return m_iCurAnimationIndex; }
 	UINT Get_PreAnimationIndex() { return m_iPreAnimationIndex; }
+	UINT Get_CurDirIndex() { return m_iCurDirIndex; }
+	UINT Get_PreDirIndex() { return m_iPreDirIndex; }
 	UINT Get_CurWeaponIndex() { return m_iCurWeaponIndex; }
 	UINT Get_JumpCount() { return m_iJumpCount; }
 	UINT Get_JumpDir() { return m_iJumpDirIndex; }
 	std::optional<Matrix> Get_BoneMatrix_ByName(std::string _BoneName);
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
-	UINT Get_RQ_Gage() { return (UINT)m_fRedQueenGage; }
+	bool Get_IsMajinMode() { return m_IsMajin; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
+	void Reset_RootRotation() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_Wings(bool ActiveOrNot);
+	void SetActive_Wing_Left(bool ActiveOrNot);
+	void SetActive_Wing_Right(bool ActiveOrNot);
 	void SetActive_Buster_Arm(bool ActiveOrNot);
 	void SetActive_Wire_Arm(bool ActiveOrNot);
 	void SetActive_WingArm_Right(bool ActiveOrNot);
 	void SetActive_WingArm_Left(bool ActiveOrNot);
-	void SetAngleFromCamera();
+	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
+	void SetColl_Monsters(bool _AcitveOrNot);
+public:
+	void CheckAutoRotate();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
-	void DecreaseRQ_Gage() { m_fRedQueenGage -= 1; }
+	//카메라
+	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
+	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
 	//테스트
-	void IncreaseRQ_Gage() { m_fRedQueenGage += 1; }
+
+public:
+	//UI관련
+	//EX게이지
+	float Get_ExGauge();
+	uint32 Get_ExGaugeCount();
+	void Add_ExGauge(float ExGauge);
+	void Use_ExGauge(const uint32 Count);
+	//변신게이지
+	float Get_TDTGauge();
+	void AccumulateTDTGauge(const float Amount);
+	void ConsumeTDTGauge(const float Speed = 1.f);
+	//랭크 스코어
+	void AddRankScore(float Score);
 public:
 	//애니메이션 관련
 	void  StopAnimation();
 	void  ContinueAnimiation();
 	bool  IsAnimationEnd();
 public:
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex,const AnimNotify& _Notify = {});
+	void ChangeNeroDirection(UINT _NeroDirection);
+	void Change_To_MajinMode() { m_IsMajin = true; }
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
 	void ChangeAnimationIndex(const UINT AnimationIndex);
 	void ChangeWeapon(UINT _iWeaponIndex);
 	void Change_BusterArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_Overture_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -283,12 +325,20 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
+public:
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
 	void RenderInit();
+
+private:
+	void Update_Majin(float _fDeltaTime);
 
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
@@ -302,12 +352,16 @@ private:
 	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
 	std::weak_ptr<MainCamera> m_pCamera;
 	std::weak_ptr<CapsuleCollider> m_pCollider;
-
+	std::weak_ptr<BtlPanel>			m_pBtlPanel;
+	std::weak_ptr<GT_Overture>		m_pOverture;
+	std::weak_ptr<GT_Rockman>		m_pRockman;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
 	UINT	m_iCurWeaponIndex;
 	UINT	m_iJumpDirIndex;
+	UINT	m_iCurDirIndex;
+	UINT	m_iPreDirIndex;
 
 	bool	m_bDebugButton = true;
 	UINT	m_iJumpCount = 0;
@@ -316,6 +370,27 @@ private:
 	float	m_fAngle = 0.f;
 	float	m_fRotationAngle = 0.f;
 
+	bool	m_IsMajin = false;
+
+	float	m_fDistanceToMonster = 0.f;
+	float	m_fTest = 0.f;
+	//
+	D3DXVECTOR3 vDegree;
+	D3DXVECTOR3 vRotationDegree;
+	D3DXVECTOR3 vAccumlatonDegree;
+
+
+	///////////
+
+	std::weak_ptr<Em100>			 m_pMonster;
+	std::weak_ptr<ENGINE::Transform> m_pMonsterTrans;
+
+
+	bool	m_bInteraction = false;;
+	float	m_fRadian = 0.f;
+	float	m_fAccuangle = 0.f;
+	float	m_fAngleSpeed = 0.f;
+	
 };
 
 

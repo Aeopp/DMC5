@@ -21,6 +21,8 @@ private:
 	// Effect을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
+	virtual void Reset() override;
+	virtual void Imgui_Modify() override;
 private:
 	void RenderAlphaBlendEffect(const DrawInfo& _ImplInfo);
 public:

@@ -1,0 +1,20 @@
+{
+    "AnimationData": {
+        "RootMotion_DeltaFactor": 1.0,
+        "Offset Euler Yaw": 0.0,
+        "Offset Euler Pitch": 0.0,
+        "Offset Euler Roll": 0.0,
+        "AnimInfoTable": [
+            {
+                "Name": "Shoot_Front",
+                "Acceleration": 1.2790000438690186,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "idle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            }
+        ]
+    }
+}
