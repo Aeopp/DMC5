@@ -6,8 +6,11 @@ class Em100;
 class BtlPanel;
 class Camera : public GameObject
 {
+
 private:
-	explicit Camera() = default;
+	D3DXVECTOR3 m_vRot;
+private:
+	explicit Camera();
 	virtual ~Camera() = default;
 
 	virtual void Free() override;
@@ -22,43 +25,26 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 
-
-private:
-	void	LockOn();
-
+	virtual std::string GetName() override;
+	virtual void Editor() override;
 public:
-	void	Move(const float& _fTimeDelta);
-	void	Move_Mouse(const float& _fTimeDelta);
-	void	Mouse_Fix();
+	 void MoveCamera();
+public:
+	 void UpdateCamera();
 
+	 void ShowCameraInfo();
 
 private:
-	Vector3	m_vEye, m_vAt, m_vUp;
-	float	m_fFovY, m_fAspect, m_fNear, m_fFar;
-	Matrix	m_matView, m_matProj;
+	D3DXMATRIX	m_matView;
+	D3DXMATRIX	m_matProjection;
+	float		m_fFovY;
+	float		m_fNear;
+	float		m_fFar;
 
-	bool	m_bFix = false;
-	bool	m_bClick = false;
+	float		m_fSensitivityMove;
+	float		m_fSensitivityWheel;
+	float		m_fSensitivityRot;
 
-
-
-	//플레이어
-	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<TestObject>		 m_pPlayer;
-
-	std::weak_ptr<ENGINE::Transform> m_pEm100Trans;
-	std::weak_ptr<Em100>			 m_pEm100;
-
-	std::weak_ptr<BtlPanel>			 m_pBtlPanel;
-
-
-	int		m_iTest = -7;
-	bool	m_bLockon = false;
-
-	long	m_fCameraAngle = 3;
-	
-
-	
-
+	float		m_fDistance;
 };
 

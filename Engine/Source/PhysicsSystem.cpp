@@ -136,7 +136,10 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 	m_pScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, ppActors, nNumActors);
 	//
 	for (UINT i = 0; i < nNumActors; ++i)
-		((LPPXUSERDATA)(ppActors[i]->userData))->pCollider.lock()->ReadySimulate();
+	{
+		if (ppActors[i]->userData)
+			((LPPXUSERDATA)(ppActors[i]->userData))->pCollider.lock()->ReadySimulate();
+	}
 	//생성한 동적 배열 삭제
 	delete[] ppActors;
 
@@ -148,7 +151,10 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 	m_pScene->getActors(PxActorTypeFlag::eRIGID_STATIC, ppActors, nNumActors);
 	//
 	for (UINT i = 0; i < nNumActors; ++i)
-		((LPPXUSERDATA)(ppActors[i]->userData))->pCollider.lock()->ReadySimulate();
+	{
+		if (ppActors[i]->userData)
+			((LPPXUSERDATA)(ppActors[i]->userData))->pCollider.lock()->ReadySimulate();
+	}
 	//생성한 동적 배열 삭제
 	delete[] ppActors;
 

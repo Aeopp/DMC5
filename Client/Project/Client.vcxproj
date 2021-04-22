@@ -180,6 +180,7 @@
     <ClInclude Include="..\Header\GT_Overture.h" />
     <ClInclude Include="..\Header\GT_Rockman.h" />
     <ClInclude Include="..\Header\MainCamera.h" />
+    <ClInclude Include="..\Header\MapObject.h" />
     <ClInclude Include="..\Header\Monster.h" />
     <ClInclude Include="..\Header\NeroFSM.h" />
     <ClInclude Include="..\Header\Nero.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="..\Source\GT_Overture.cpp" />
     <ClCompile Include="..\Source\GT_Rockman.cpp" />
     <ClCompile Include="..\Source\MainCamera.cpp" />
+    <ClCompile Include="..\Source\MapObject.cpp" />
     <ClCompile Include="..\Source\Monster.cpp" />
     <ClCompile Include="..\Source\NeroFSM.cpp" />
     <ClCompile Include="..\Source\Nero.cpp" />
@@ -253,6 +255,11 @@
   <ItemGroup>
     <Image Include="Client.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\skysphere.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

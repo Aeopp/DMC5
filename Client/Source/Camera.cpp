@@ -6,6 +6,20 @@
 #include "Em100.h"
 #include "BtlPanel.h"
 
+Camera::Camera()
+    : m_fFovY(90.f)
+    , m_fNear(0.1f)
+    , m_fFar(10000.f)
+    , m_fSensitivityMove(5.f)
+    , m_fSensitivityRot(0.2f)
+    , m_fSensitivityWheel(0.5f)
+    , m_fDistance(10.f)
+{
+    D3DXMatrixIdentity(&m_matView);
+    D3DXMatrixIdentity(&m_matProjection);
+    m_vRot = D3DXVECTOR3(45.f, 0.f, 0.f);
+}
+
 void Camera::Free()
 {
     GameObject::Free();
@@ -18,28 +32,14 @@ Camera* Camera::Create()
 
 HRESULT Camera::Ready()
 {
-    m_vEye = Vector3(0.f, 0.f, -5.f);
-    m_vAt = Vector3(0.f, 0.f, 0.f);
-    m_vUp = Vector3(0.f, 1.f, 0.f);
-
-    m_fFovY = D3DXToRadian(60.f);
-    m_fAspect = float(g_nWndCX) / g_nWndCY;
-    m_fNear = 1.f;
-    m_fFar = 1000.f;
-
-
-    D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
-    Graphic::GetDevice()->SetTransform(D3DTS_VIEW, &m_matView);
-
-    D3DXMatrixPerspectiveFovLH(&m_matProj, m_fFovY, m_fAspect, m_fNear, m_fFar);
-    Graphic::GetDevice()->SetTransform(D3DTS_PROJECTION, &m_matProj);
+    m_pTransform.lock()->SetPosition(D3DXVECTOR3(0.f, 10.f, 0.f));
+    m_pTransform.lock()->SetRotation(D3DXVECTOR3(45.f, 0.f, 0.f));
 
     return S_OK;
 }
 
 HRESULT Camera::Awake()
 {
-	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
  	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
     //m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(BTLPANEL).lock());
@@ -57,20 +57,10 @@ HRESULT Camera::Start()
 
 UINT Camera::Update(const float _fDeltaTime)
 {
-    //////////////////////////////////////////////////
-	D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
-	Graphic::GetDevice()->SetTransform(D3DTS_VIEW, &m_matView);
+    ShowCameraInfo();
+    MoveCamera();
+    UpdateCamera();
 
-	D3DXMatrixPerspectiveFovLH(&m_matProj, m_fFovY, m_fAspect, m_fNear, m_fFar);
-	Graphic::GetDevice()->SetTransform(D3DTS_PROJECTION, &m_matProj);
-    //////////////////////////////////////////////////
-    if (true == m_bFix)
-    {
-		Mouse_Fix();
-		Move_Mouse(_fDeltaTime);
-    }
-   Move(_fDeltaTime);
-    
 
 
     //////LockOn////////////////
@@ -116,155 +106,109 @@ void Camera::OnDisable()
     GameObject::OnDisable();
 }
 
-void Camera::LockOn()
+std::string Camera::GetName()
 {
+    return "Camera";
+}
 
-    Vector3 vPlayerLook, vPlayerRight;
+void Camera::Editor()
+{
+    ShowCameraInfo();
+}
 
-    m_vAt = m_pEm100Trans.lock()->GetPosition();
-    vPlayerLook = m_pPlayerTrans.lock()->GetLook();
-	D3DXVec3Normalize(&vPlayerLook, &vPlayerLook);
+void Camera::MoveCamera()
+{
+    if (Input::GetKey(DIK_LALT))
+    {
+        if (Input::GetMouse(DIM_M))
+        {
+            D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
+            D3DXVECTOR3 vTrans(0.f, 0.f, 0.f);
+            LONG lMove = 0;
+            if (lMove = Input::GetMouseMove(DIM_X))
+            {
+                D3DXVECTOR3 vRight = m_pTransform.lock()->GetRight();
+                vTrans -= lMove * vRight;
+            }
+            if (lMove = Input::GetMouseMove(DIM_Y))
+            {
+                D3DXVECTOR3 vUp = m_pTransform.lock()->GetUp();
+                vTrans += lMove * vUp;
+            }
+            m_pTransform.lock()->SetPosition(vPosition + vTrans * m_fSensitivityMove);
 
-	vPlayerLook *= m_fCameraAngle;
+        }
+        else if (Input::GetMouse(DIM_L))
+        {
+            LONG lMove = 0;
+            D3DXVECTOR3 vRot(0.f, 0.f, 0.f);
+            if (lMove = Input::GetMouseMove(DIM_X))
+            {
+                vRot.y += lMove;
+            }
+            if (lMove = Input::GetMouseMove(DIM_Y))
+            {
+                vRot.x += lMove;
+            }
 
-    vPlayerRight = m_pPlayerTrans.lock()->GetRight();
-	D3DXVec3Normalize(&vPlayerRight, &vPlayerRight);
+            m_vRot += vRot * m_fSensitivityRot;
 
-	Matrix matRotAxis;
+            m_pTransform.lock()->SetRotation(m_vRot);
+        }
+        else if (Input::GetMouse(DIM_R))
+        {
 
-	D3DXMatrixRotationAxis(&matRotAxis, &vPlayerRight, D3DXToRadian(m_fCameraAngle));
-	D3DXVec3TransformNormal(&vPlayerLook, &vPlayerLook, &matRotAxis);
+        }
+    }
 
-    D3DXVECTOR3 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pEm100Trans.lock()->GetPosition();
+    LONG lWheel = 0;
+    if (lWheel = Input::GetMouseMove(DIM_Z))
+    {
+        D3DXVECTOR3 vLook = m_pTransform.lock()->GetLook();
 
-    D3DXVec3Normalize(&vDir, &vDir);
+        D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
 
-	//m_vEye = m_pPlayerTrans.lock()->GetPosition()+(-m_pPlayerTrans.lock()->GetLook() * 5);
+        m_pTransform.lock()->SetPosition(vPosition + vLook * lWheel * m_fSensitivityWheel);
+    }
+}
 
+void Camera::UpdateCamera()
+{
+    D3DXMATRIX matWorld = m_pTransform.lock()->GetWorldMatrix();
+    D3DXMatrixInverse(&(m_matView), nullptr, &matWorld);
+    D3DXMatrixPerspectiveFovLH(&m_matProjection, D3DXToRadian(m_fFovY), g_nWndCX / (float)g_nWndCY, m_fNear, m_fFar);
 
-	m_vEye = m_pPlayerTrans.lock()->GetPosition() + (vDir * 5) + Vector3(0.f, m_fCameraAngle, 0.f);
-
-	//m_pTransformCom->m_vInfo[INFO_POS] = m_vEye;
-
-
-    long    dwMouseMove = 0;
-
-	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
-		m_fCameraAngle += (dwMouseMove / 100);
+    g_pDevice->SetTransform(D3DTS_VIEW, &m_matView);
+    g_pDevice->SetTransform(D3DTS_PROJECTION, &m_matProjection);
 
 }
 
-void Camera::Move(const float& _fTimeDelta)
+void Camera::ShowCameraInfo()
 {
-    Matrix      matCameraWorld;
-    D3DXMatrixInverse(&matCameraWorld, NULL, &m_matView);
-        
-    if (Input::GetKey(DIK_UP))
-    {
-        Vector3 vLook;
-        memcpy(&vLook, &matCameraWorld.m[2][0], sizeof(Vector3));
+    ImGui::InputFloat("FovY", &m_fFovY);
+    ImGui::InputFloat("Near", &m_fNear);
+    ImGui::InputFloat("Far", &m_fFar);
 
-        Vector3 vLength = *D3DXVec3Normalize(&vLook, &vLook) * 50.f * _fTimeDelta;
+    ImGui::Text("Transform");
 
-        m_vEye += vLength;
-        m_vAt += vLength;
-    }
+    D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
+    D3DXVECTOR3 vRotation = m_vRot;
+    D3DXVECTOR3 vScale = m_pTransform.lock()->GetScale();
 
-    if (Input::GetKey(DIK_DOWN))
-    {
-        Vector3 vLook;
-        memcpy(&vLook, &matCameraWorld.m[2][0], sizeof(Vector3));
+    ImGui::InputFloat3("Scale", vScale);
+    ImGui::InputFloat3("Rotation", vRotation);
+    ImGui::InputFloat3("Position", vPosition);
 
-		Vector3 vLength = *D3DXVec3Normalize(&vLook, &vLook) * 50.f * _fTimeDelta;
+    m_pTransform.lock()->SetScale(vScale);
+    m_vRot = vRotation;
+    m_pTransform.lock()->SetPosition(vPosition);
 
-		m_vEye -= vLength;
-		m_vAt -= vLength;
-    }
-    
-    if (Input::GetKey(DIK_LEFT))
-    {
-        Vector3 vRight;
-        memcpy(&vRight, &matCameraWorld.m[0][0], sizeof(Vector3));
+    ImGui::Text("Sensitivity");
+    ImGui::InputFloat("Wheel", &m_fSensitivityWheel);
+    ImGui::InputFloat("Move", &m_fSensitivityMove);
+    ImGui::InputFloat("Rotation", &m_fSensitivityRot);
 
-		Vector3 vLength = *D3DXVec3Normalize(&vRight, &vRight) * 25.f * _fTimeDelta;
-
-		m_vEye -= vLength;
-		m_vAt -= vLength;
-    }
-
-	if (Input::GetKey(DIK_RIGHT))
-	{
-		Vector3 vRight;
-		memcpy(&vRight, &matCameraWorld.m[0][0], sizeof(Vector3));
-
-		Vector3 vLength = *D3DXVec3Normalize(&vRight, &vRight) * 25.f * _fTimeDelta;
-
-		m_vEye += vLength;
-		m_vAt += vLength;
-	}
-
-    if (Input::GetKeyDown(DIK_LCONTROL))
-    {
-        if (true == m_bClick)
-            return;
-
-        m_bClick = true;
-
-        if (true == m_bFix)
-            m_bFix = false;
-        else
-            m_bFix = true;
-    }
-    else
-        m_bClick = false;
-
-    if (false == m_bFix)
-        return;
- }
-
-void Camera::Move_Mouse(const float& _fTimeDelta)
-{
-    Matrix  matCameraWorld;
-    D3DXMatrixInverse(&matCameraWorld, NULL, &m_matView);
-
-    long    dwMouseMove = 0;
-
-    if (dwMouseMove = Input::GetMouseMove(DIM_Y))
-    {
-        Vector3  vRight;
-        memcpy(&vRight, &matCameraWorld.m[0][0], sizeof(Vector3));
-
-        Vector3 vLook = m_vAt - m_vEye;
-
-        Matrix  matRot;
-        D3DXMatrixRotationAxis(&matRot, &vRight, D3DXToRadian(dwMouseMove) / 10.f);
-        D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
-
-        m_vAt = m_vEye + vLook;
-    }
-
-    if (dwMouseMove = Input::GetMouseMove(DIM_X))
-    {
-        Vector3 vUp = Vector3(0.f, 1.f, 0.f);
-        Vector3 vLook = m_vAt - m_vEye;
-
-        Matrix matRot;
-        D3DXMatrixRotationAxis(&matRot, &vUp, D3DXToRadian(dwMouseMove) / 10.f);
-        D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
-
-
-        m_vAt = m_vEye + vLook;
-    }
-
-  
-
- }
-
-void Camera::Mouse_Fix()
-{
-    POINT   ptMouse{ g_nWndCX >> 1, g_nWndCY >> 1 };
-
-    ClientToScreen(g_hWnd, &ptMouse);
-    SetCursorPos(ptMouse.x, ptMouse.y);
+    ImGui::Text("");
+    ImGui::InputFloat("Distance##Cam", &m_fDistance);
 
 }

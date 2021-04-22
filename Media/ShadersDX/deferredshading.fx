@@ -21,6 +21,9 @@ uniform float4 eyePos;
 uniform float2 pixelSize;
 uniform float2 clipPlanes;
 
+uniform float sinAngularRadius = 0.0046251;
+uniform float cosAngularRadius = 0.9999893;
+
 void vs_main(
 	in out float4 pos : POSITION,
 	in out float2 tex : TEXCOORD0)
@@ -44,8 +47,6 @@ float ShadowVariance(float2 moments, float d)
 float3 Luminance_Blinn_Directional(float3 albedo, float3 wpos, float3 wnorm)
 {
 	// the sun has an angular diameter between [0.526, 0.545] degrees
-	const float sinAngularRadius = 0.0046251;
-	const float cosAngularRadius = 0.9999893;
 
 	float3 v = normalize(eyePos.xyz - wpos);
 	float3 n = normalize(wnorm);

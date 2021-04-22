@@ -193,6 +193,23 @@ void FLight::EditImplementation(const uint32 Idx)
 	}
 
 	{
+		ImGui::Text("Lradiance : %4.3f, %4.3f, %4.3f", Lradiance.x, Lradiance.y, Lradiance.z);
+		static float LradianceSliderPower = 0.01f;
+		ImGui::SliderFloat("LradianceSliderPower", &LradianceSliderPower, FLT_MIN, 1.f);
+		ImGui::InputFloat3("In Lradiance", Lradiance);
+		Vector3 AddLradiancen{ 0,0,0 };
+		if (ImGui::SliderFloat3("Add Lradiancen", AddLradiancen, -1.f, 1.f, "%4.6f"))
+		{
+			AddLradiancen *= LradianceSliderPower;
+		}
+
+		Lradiance.x += AddLradiancen.x;
+		Lradiance.y += AddLradiancen.y;
+		Lradiance.z += AddLradiancen.z;
+		ImGui::Separator();
+	}
+
+	{
 		ImGui::Text(
 			"Direction : Yaw %4.3f, Pitch %4.3f, Roll %4.3f", 
 			Direction.y, Direction.x, Direction.z);
@@ -387,11 +404,10 @@ void FLight::CalculateViewProjection(D3DXMATRIX& out)
 		/*if (fabs(Position.y) > 0.999f)
 			up = D3DXVECTOR3(1, 0, 0);*/
 		
-		Vector3 At = eye + FMath::MulNormal(Vector3{ 0,0,1 },
-			FMath::Rotation({ 
-				FMath::ToRadian( Direction.x  ) ,
-				FMath::ToRadian( Direction.y ),
-				FMath::ToRadian( Direction.z )  }));
+		
+
+		Vector3 At = eye + GetDirection();
+
 		D3DXMatrixLookAtLH(&out, &eye, &At, &up);
 		D3DXMatrixOrthoLH(&this->proj, 
 			Projparams.x, Projparams.y, Projparams.z, Projparams.w);
@@ -419,7 +435,7 @@ void FLight::CalculateScissorRect(RECT& out, const D3DXMATRIX& view, const D3DXM
 {
 	// 카메라의 right 벡터를 얻어온다 . 
 	/*
-	std::memcpy(&camera_right, &viewinv._11, sizeof(Vector3));*/
+	std::memcpy(&camera_right, &viewinv._11, sizeof(Vector3));*/ 
 
 	static const Vector3 to_RT = FMath::RotationVecNormal({ 1,0,0 }, { 0,0,1 }, FMath::ToRadian(45.f));
 	static const Vector3 to_LB = FMath::RotationVecNormal({ 1,0,0 }, { 0,0,1 }, FMath::ToRadian(225.f));
@@ -442,6 +458,11 @@ void FLight::CalculateScissorRect(RECT& out, const D3DXMATRIX& view, const D3DXM
 
 	out.right = RTScreenPos.x;
 	out.top = RTScreenPos.y;
+	if (view_position.z <= 0.0f)
+	{
+		std::swap(out.left, out.right);
+		std::swap(out.top, out.bottom);
+	}
 	LastScissorRect = out;
 	//if (_Type != Point)
 	//	return;

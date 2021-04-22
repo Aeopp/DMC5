@@ -131,8 +131,8 @@ HRESULT Nero::Awake()
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
-	m_pCollider.lock()->SetRigid(false);
-	m_pCollider.lock()->SetGravity(false);
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
 	m_pCollider.lock()->SetRadius(0.4f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
@@ -315,13 +315,13 @@ void Nero::RenderDebugSK(const DrawInfo& _Info)
 
 void Nero::RenderInit()
 {
-	// ·»´õ¸¦ ¼öÇàÇØ¾ßÇÏ´Â ¿ÀºêÁ§Æ®¶ó°í (·»´õ·¯¿¡ µî·Ï °¡´É) ¾Ë¸².
-    // ·»´õ ÀÎÅÍÆäÀÌ½º »ó¼Ó¹ÞÁö ¾Ê¾Ò´Ù¸é Å°Áö¸¶¼¼¿ä.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½Ë¸ï¿½.
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ ï¿½Ê¾Ò´Ù¸ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	SetRenderEnable(true);
 
-	// ·»´õ ¼Ó¼º ÀüÃ¼ ÃÊ±âÈ­ 
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½ï¿½Ã¼ ï¿½Ê±ï¿½È­ 
 	ENGINE::RenderProperty _InitRenderProp;
-	// ÀÌ°ªÀ» ·±Å¸ÀÓ¿¡ ¹Ù²Ù¸é ·»´õ¸¦ ÄÑ°í ²ø¼ö ÀÖÀ½. 
+	// ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ó¿ï¿½ ï¿½Ù²Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. 
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
@@ -371,9 +371,9 @@ void Nero::RenderInit()
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
 
-	// ½ºÄÌ·¹Åæ ¸Þ½¬ ·Îµù ... 
+	// ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ ï¿½Îµï¿½ ... 
 	Mesh::InitializeInfo _InitInfo{};
-	// ¹öÅØ½º Á¤Á¡ Á¤º¸°¡ CPU ¿¡¼­µµ ÇÊ¿ä ÇÑ°¡ ? 
+	// ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CPU ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½Ñ°ï¿½ ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Player.fbx", _InitInfo);
 
@@ -421,7 +421,7 @@ void Nero::Editor()
 	float ZeroDotOne = 0.1f;
 	if (bEdit)
 	{
-		// ¿¡µðÅÍ .... 
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ .... 
 		ImGui::InputScalar("RotY", ImGuiDataType_Float, &m_fRotationAngle, MyButton ? &ZeroDotOne : NULL);
 	}
 
@@ -492,10 +492,6 @@ void Nero::SetAngleFromCamera(float _fAddAngle)
 	vDegree.y = m_fAngle;
 	vRotationDegree.y = m_fRotationAngle;
 
-	//m_fAngle = m_pCamera.lock()->Get_Angle(_fAddAngle);
-	//m_fAngle += m_fRotationAngle;
-	//m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
-
 
 }
 
@@ -515,11 +511,11 @@ void Nero::CheckAutoRotate()
 	std::weak_ptr<Monster> LockOnMonster;
 	if (0 == MonsterList.size())
 		return;
-	//Ã¹¹øÂ°·Î ÀÖ´Â¾Ö¶û °Å¸® °Ë»ç
+	//Ã¹ï¿½ï¿½Â°ï¿½ï¿½ ï¿½Ö´Â¾Ö¶ï¿½ ï¿½Å¸ï¿½ ï¿½Ë»ï¿½
 	Vector3 Dir = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float Distance = D3DXVec3Length(&Dir);
 	LockOnMonster = MonsterList.begin()->lock();
-	//·çÇÁ µ¹¸é¼­ ¾ÖµéÀÌ¶û °Å¸® °Ë»ç
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½é¼­ ï¿½Öµï¿½ï¿½Ì¶ï¿½ ï¿½Å¸ï¿½ ï¿½Ë»ï¿½
 	for (auto& pMonster : MonsterList)
 	{
 		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
@@ -675,6 +671,3 @@ void Nero::Change_Overture_Animation(const std::string& InitAnimName, const bool
 {
 	m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }
-
-//if (Input::GetKeyDown(DIK_LCONTROL))
-//	m_iCurWeaponIndex = m_iCurWeaponIndex == RQ ? Cbs : RQ;

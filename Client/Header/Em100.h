@@ -36,8 +36,12 @@ private:
 		Walk_Right_Stop,
 		Walk_Right_Loop,
 		Walk_Right_Start,
-		idle,
+		Idle,
+		Idle2,
+		Idle3,
+		Idle4,		
 		Hit_Buster_Start,
+		Hit_Buster_Loop,
 		Hit_Buster_End,
 		Downword_Down_StandUp,
 		State_END
@@ -105,6 +109,10 @@ private:
 	weak_ptr<CapsuleCollider> m_pCollider;
 
 	float		m_fAngleTime = 0.f;
+
+	float		m_fPower = 0.f;
+	D3DXVECTOR3 m_vPower;
+
 };
 
 #endif // Em100_h__

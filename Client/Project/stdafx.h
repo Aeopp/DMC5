@@ -15,10 +15,12 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-
 #include "Engine.h"
 #include <windows.h>
 
+// default = 0.01
+
+static constexpr float GScale = 0.001f;
 
 USING(ENGINE)
 using namespace std;
