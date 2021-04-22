@@ -18,6 +18,7 @@ class BtlPanel;
 class GT_Overture;
 class GT_Rockman;
 class Monster;
+class Em100;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -372,6 +373,19 @@ private:
 	D3DXVECTOR3 vDegree;
 	D3DXVECTOR3 vRotationDegree;
 	D3DXVECTOR3 vAccumlatonDegree;
+
+
+	///////////
+
+	std::weak_ptr<Em100>			 m_pMonster;
+	std::weak_ptr<ENGINE::Transform> m_pMonsterTrans;
+
+
+	bool	m_bInteraction = false;;
+	float	m_fRadian = 0.f;
+	float	m_fAccuangle = 0.f;
+	float	m_fAngleSpeed = 0.f;
+	
 };
 
 

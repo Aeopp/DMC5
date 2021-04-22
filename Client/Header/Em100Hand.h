@@ -5,7 +5,7 @@
 #include "Monster.h"
 
 class Em100;
-class Em100Hand final : public Monster
+class Em100Hand final : public Unit
 {
 private:
 	explicit Em100Hand() = default;
@@ -16,9 +16,6 @@ public:
 	static Em100Hand* Create();
 public:
 	virtual std::string GetName() override;
-	virtual void Fight(const float _fDeltaTime) override;
-	virtual void State_Change(const float _fDeltaTime) override;
-	virtual void Skill_CoolTime(const float _fDeltaTime) override;
 public:
 	virtual HRESULT Ready()								override;
 	virtual HRESULT Awake()								override;
@@ -34,11 +31,6 @@ public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther) override;
 public:
 	void RenderInit();
-
-	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle() override;
-
-
 public:
 	weak_ptr<Em100>						  m_pEm100;
 	weak_ptr<ENGINE::SkeletonMesh>		  m_pEm100Mesh;

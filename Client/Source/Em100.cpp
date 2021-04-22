@@ -49,7 +49,6 @@ void Em100::Fight(const float _fDeltaTime)
 			m_bInteraction = true;
 			Update_Angle(_fDeltaTime);
 			////////////////////////////
-
 			if (iRandom == 1)
 			{
 				m_eState = Walk_Left_Start;
@@ -234,7 +233,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
-
+			
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = Hit_End;
@@ -253,9 +252,8 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Downword_Down_StandUp:
 		if (m_bHit == true)
 		{
-			m_pMesh->PlayAnimation("Upward_Down_StandUp", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Upward_Down_StandUp" && m_pMesh->IsAnimationEnd())
+			m_pMesh->PlayAnimation("Downword_Down_StandUp", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Downword_Down_StandUp" && m_pMesh->IsAnimationEnd())
 			{
 				m_bHit = false;
 				m_bIng = false;
@@ -267,7 +265,6 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Move_C_End", false, {}, 1.f, 50.f, true);
-
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_C_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
@@ -360,10 +357,19 @@ void Em100::State_Change(const float _fDeltaTime)
 		}
 		break;
 	case Em100::idle:
-		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
+
+		int iRandom = FMath::Random<int>(1, 4);
+
+		if(iRandom == 1)
+			m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
+		else if(iRandom == 2)
+			m_pMesh->PlayAnimation("Idle2", true, {}, 1.f, 50.f, true);
+		else if(iRandom == 3)
+			m_pMesh->PlayAnimation("Idle3", true, {}, 1.f, 50.f, true);
+		else if(iRandom == 4)
+			m_pMesh->PlayAnimation("Idle4", true, {}, 1.f, 50.f, true);
+
 		m_BattleInfo.eAttackType = Attack_END;
-		break;
-	default:
 		break;
 	}
 
@@ -585,7 +591,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-		//레드퀸, 버스터암, 건틀릿들, 와이어암
+	//레드퀸, 버스터암, 건틀릿들, 와이어암
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
@@ -744,6 +750,7 @@ void Em100::Rotate(const float _fDeltaTime)
 		m_bInteraction = false;
 		return;
 	}
+	
 	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fAngleSpeed * _fDeltaTime), 0.f });
 
 	m_fAccuangle += m_fAngleSpeed * _fDeltaTime;

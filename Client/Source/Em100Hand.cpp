@@ -17,17 +17,6 @@ std::string Em100Hand::GetName()
 	return std::string();
 }
 
-void Em100Hand::Fight(const float _fDeltaTime)
-{
-}
-
-void Em100Hand::State_Change(const float _fDeltaTime)
-{
-}
-
-void Em100Hand::Skill_CoolTime(const float _fDeltaTime)
-{
-}
 
 HRESULT Em100Hand::Ready()
 {
@@ -115,11 +104,11 @@ void Em100Hand::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+
 	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
 	{
 		if (m_pEm100.expired())
 			return;
-	
 	}
 }
 
@@ -142,14 +131,5 @@ void Em100Hand::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
-
-	RenderInterface::Initialize(_InitRenderProp);
 }
 
-void Em100Hand::Rotate(const float _fDeltaTime)
-{
-}
-
-void Em100Hand::Update_Angle()
-{
-}

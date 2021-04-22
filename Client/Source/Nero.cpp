@@ -15,6 +15,7 @@
 #include "GT_Overture.h"
 #include "GT_Rockman.h"
 #include "Monster.h"
+#include "Em100.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -113,6 +114,10 @@ HRESULT Nero::Awake()
 	vDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+
+
+	m_pMonster = std::static_pointer_cast<Em100>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster100).lock());
+	m_pMonsterTrans = m_pMonster.lock()->GetComponent<ENGINE::Transform>();
 	return S_OK;
 }
 
@@ -150,7 +155,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	D3DXVec3TransformCoord(&Pos, &Pos, &matRot);
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
-	
+
+
 	return 0;
 }
 
@@ -363,6 +369,7 @@ void Nero::Update_Majin(float _fDeltaTime)
 	}
 
 }
+
 
 void Nero::RenderReady()
 {
