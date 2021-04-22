@@ -416,4 +416,7 @@
       <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\skysphere.hlsl" />
+  </ItemGroup>
 </Project>

@@ -197,8 +197,8 @@ void MapObject::SetUp(const TSTRING _sMesh, const D3DXVECTOR3& _vScale, const D3
 {
 	m_pStaticMesh = Resources::Load<ENGINE::StaticMesh>(_sMesh);
 
-	D3DXVECTOR3 vScale = _vScale * 0.01f;
-	D3DXVECTOR3 vPos = _vPosition * 0.01f;
+	D3DXVECTOR3 vScale = _vScale * GScale;
+	D3DXVECTOR3 vPos = _vPosition * GScale;
 	m_pTransform.lock()->SetScale(vScale);
 	m_pTransform.lock()->SetRotation(_vRotation);
 	m_pTransform.lock()->SetPosition(vPos);

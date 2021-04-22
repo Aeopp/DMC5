@@ -177,7 +177,7 @@ HRESULT TempMap::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition(Vector3{ -36.7285,8.96892 ,15.26073 });
+	InitTransform.lock()->SetPosition(Vector3{ -3672.85 ,896.892 ,1526.073 }*GScale) ;
 
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();

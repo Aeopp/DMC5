@@ -1,9 +1,8 @@
-
 uniform sampler2D prevtarget : register(s0);
 
 uniform float2 pixelSize;
 uniform float2 texelSize;
-uniform int prevLevel;
+uniform int    prevLevel;
 
 static const float3 LuminanceVector = { 0.2125, 0.7154, 0.0721 };
 

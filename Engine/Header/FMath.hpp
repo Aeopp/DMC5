@@ -108,6 +108,7 @@ public:
 		const Vector3& Location);
 
 	static inline Matrix Scale(const Vector3& Scale);
+	static inline Matrix Scale(const float Scale);
 	// Yaw Pitch Roll
 	static inline Matrix Rotation(const Vector3& Rotation);
 	static inline Matrix Translation(const Vector3& Location);
@@ -452,6 +453,13 @@ Vector3 FMath::RotationVecNormal(const Vector3& Lhs, const Vector3& Axis,
 	return *D3DXVec3TransformNormal(&Target, &Lhs,
 		D3DXMatrixRotationAxis(&TargetMatrix, &Axis, Radian));;
 };
+
+
+inline Matrix FMath::Scale(const float Scale)
+{
+	Matrix Target;
+	return *D3DXMatrixScaling(&Target, Scale, Scale, Scale);
+}
 
 inline Matrix FMath::Scale(const Vector3& Scale)
 {

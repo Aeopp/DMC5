@@ -589,6 +589,15 @@
     <Filter Include="04.HLSL\Common">
       <UniqueIdentifier>{df583113-5bdd-4bdb-840d-ad47ba152e9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.HLSL\Common\GBuffer">
+      <UniqueIdentifier>{ed4f4418-919e-4d06-81dc-61dcb9489c89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.HLSL\Common\Blur">
+      <UniqueIdentifier>{8b4fb9cf-5c26-484c-bbaf-e408c65737ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.HLSL\Common\Debug">
+      <UniqueIdentifier>{0910d899-4839-4bba-9520-60be49d32132}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
@@ -597,25 +606,7 @@
     <None Include="..\..\Resource\Shader\Blur.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
-    <None Include="..\..\Resource\Shader\Debug.hlsl">
-      <Filter>04.HLSL\Common</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\DebugBone.hlsl">
-      <Filter>04.HLSL\Common</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\DebugSK.hlsl">
-      <Filter>04.HLSL\Common</Filter>
-    </None>
     <None Include="..\..\Resource\Shader\DeferredShading.hlsl">
-      <Filter>04.HLSL\Common</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\gbuffer_ds.hlsl">
-      <Filter>04.HLSL\Common</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\gbuffer_dsSK.hlsl">
-      <Filter>04.HLSL\Common</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\GBufferSK.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
     <None Include="..\..\Resource\Shader\RTDebug.hlsl">
@@ -634,6 +625,39 @@
       <Filter>04.HLSL\Common</Filter>
     </None>
     <None Include="..\..\Resource\Shader\Frustum.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\sky.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\skysphere.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\gbuffer_ds.hlsl">
+      <Filter>04.HLSL\Common\GBuffer</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\gbuffer_dsSK.hlsl">
+      <Filter>04.HLSL\Common\GBuffer</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\GBufferSK.hlsl">
+      <Filter>04.HLSL\Common\GBuffer</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Debug.hlsl">
+      <Filter>04.HLSL\Common\Debug</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\DebugBone.hlsl">
+      <Filter>04.HLSL\Common\Debug</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\DebugSK.hlsl">
+      <Filter>04.HLSL\Common\Debug</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\InsulatorMetal.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\measureluminance.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\hdreffects.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
   </ItemGroup>

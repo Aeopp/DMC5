@@ -1,4 +1,3 @@
-
 uniform sampler2D renderedscene		: register(s0);
 uniform sampler2D previoustarget	: register(s0);
 uniform sampler2D averageluminance	: register(s1);
