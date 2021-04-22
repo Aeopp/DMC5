@@ -7,6 +7,7 @@ GraphicSystem::GraphicSystem()
 	: m_pSDK(nullptr)
 	, m_pDevice(nullptr)
 {
+
 }
 
 void GraphicSystem::Free()
@@ -98,6 +99,15 @@ HRESULT GraphicSystem::ReadyGraphicSystem(
 		SafeRelease(m_pSDK);
 		return E_FAIL;
 	}
+
+	if (
+		(tD3DCaps.RasterCaps &
+			D3DPRASTERCAPS_SLOPESCALEDEPTHBIAS)
+		&& (tD3DCaps.RasterCaps & D3DPRASTERCAPS_DEPTHBIAS))
+	{
+		m_bDepthBiasCap = true;
+	}
+
 
 	g_pDevice = m_pDevice;
 

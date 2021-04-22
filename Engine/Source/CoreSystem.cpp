@@ -98,6 +98,7 @@ static void GlobalVariableSetup()
 	g_bRenderTargetVisible = false;
 	g_bDebugRender = false;
 	g_bRenderEdit = false;
+	g_bTime = false;
 
 	ID3DXBuffer* SphereMeshAdjacency{ nullptr };
 	D3DXCreateSphere(g_pDevice, 0.00001f, 8, 8, &g_pSphereMesh, &SphereMeshAdjacency);
@@ -232,7 +233,8 @@ static void GlobalVariableEditor()
 	ImGui::Begin("System");
 	{
 		ImGui::Checkbox("Edit", &g_bEditMode);
-		ImGui::Checkbox("Debug", &g_bDebugMode);
+		ImGui::Checkbox("Debug", &g_bDebugMode);	
+		ImGui::Checkbox("Time", &g_bTime);
 		if (g_bDebugMode)
 		{
 			ImGui::Checkbox("CollisionVisible", &g_bCollisionVisible);
@@ -288,6 +290,12 @@ HRESULT CoreSystem::UpdateEngine(const float Delta)
 
 void CoreSystem::Editor()
 {
+
+	if (g_bTime)
+	{
+		m_pTimeSystem.lock()->Editor();
+	};
+
 	if (g_bEditMode)
 	{
 		ImGui::Begin("Object Editor");
@@ -301,11 +309,6 @@ void CoreSystem::Editor()
 			m_pRenderer.lock()->Editor();
 		}
 
-		if (g_bEditMode)
-		{
-			m_pTimeSystem.lock()->Editor();
-		}
-		
 
 		ImGui::Begin("Log");
 		//for (const auto& CurLog : g_Logs)
