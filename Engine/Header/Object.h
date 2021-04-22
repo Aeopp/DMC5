@@ -20,6 +20,7 @@ public:
 	std::string  EditName{};
 
 	UINT32 m_nTag;
+	UINT32 m_nLayer;
 };
 END
 #endif // !__OBJECT_H__

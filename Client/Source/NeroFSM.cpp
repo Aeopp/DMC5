@@ -169,6 +169,8 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(Buster_Start::Create(this, BUSTER_START, m_pNero));
 	m_vecState.emplace_back(To_Majin::Create(this, TO_MAJIN, m_pNero));
 
+	m_vecState.emplace_back(HitFront::Create(this, HIT_FRONT, m_pNero));
+
 	return S_OK;						
 }
 

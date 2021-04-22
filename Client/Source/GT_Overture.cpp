@@ -18,12 +18,20 @@ GT_Overture* GT_Overture::Create()
 HRESULT GT_Overture::Ready()
 {
 	Gauntlet::Ready();
+
+	RenderInit();
+
+	m_pTransform.lock()->SetScale({ 0.013f,0.013f,0.013f });
+
+	PushEditEntity(m_pTransform.lock().get());
+
 	return S_OK;
 }
 
 HRESULT GT_Overture::Awake()
 {
 	Gauntlet::Awake();
+	m_pMesh->PlayAnimation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -66,6 +74,16 @@ std::string GT_Overture::GetName()
 
 void GT_Overture::Editor()
 {
+	Gauntlet::Editor();
+	if(bEdit)
+	{
+		static char BoneName[MAX_PATH] = "";
+		ImGui::InputText("BoneName", BoneName, MAX_PATH);
+		if (ImGui::Button("ChangeBone"))
+		{
+			m_pParentMat = m_pNero.lock()->Get_BoneMatrixPtr(BoneName);
+		}
+	}
 }
 
 void GT_Overture::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
@@ -164,7 +182,7 @@ void GT_Overture::RenderInit()
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
-	//m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Static\\RedQueen\\RedQueen.fbx", _InitInfo);
+	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Gauntlet\\Overture\\Overture.fbx", _InitInfo);
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
 

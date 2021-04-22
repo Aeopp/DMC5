@@ -12,6 +12,10 @@
 #include "WingArm_Right.h"
 #include "MainCamera.h"
 #include "BtlPanel.h"
+#include "GT_Overture.h"
+#include "GT_Rockman.h"
+#include "Monster.h"
+#include "Em100.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -22,6 +26,8 @@ Nero::Nero()
 	, m_iPreDirIndex(Dir_Front)
 {
 	m_nTag = Player;
+	m_BattleInfo.iMaxHp = 100;
+	m_BattleInfo.iHp = 100;
 }
 void Nero::Free()
 {
@@ -37,6 +43,16 @@ void Nero::Set_RQ_State(UINT _StateIndex)
 void Nero::Set_PlayingTime(float NewTime)
 {
 	m_pMesh->SetPlayingTime(NewTime);
+}
+
+void Nero::Set_RQ_Coll(bool _ActiveOrNot)
+{
+	m_pRedQueen.lock()->Set_Coll(_ActiveOrNot);
+}
+
+std::list<std::weak_ptr<Monster>> Nero::GetAllMonster()
+{
+	return FindGameObjectsWithType<Monster>();
 }
 
 std::string Nero::GetName()
@@ -65,6 +81,8 @@ HRESULT Nero::Ready()
 	m_pWireArm = AddGameObject<Wire_Arm>();
 	m_pWingArm_Left = AddGameObject <WIngArm_Left>();
 	m_pWingArm_Right = AddGameObject<WingArm_Right>();
+	m_pOverture = AddGameObject<GT_Overture>();
+	//m_pRockman = AddGameObject<GT_Rockman>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -82,8 +100,8 @@ HRESULT Nero::Awake()
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
-	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetGravity(true);
+	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetGravity(false);
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
 	m_pCollider.lock()->SetRadius(0.4f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
@@ -96,6 +114,10 @@ HRESULT Nero::Awake()
 	vDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+
+
+	m_pMonster = std::static_pointer_cast<Em100>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster100).lock());
+	m_pMonsterTrans = m_pMonster.lock()->GetComponent<ENGINE::Transform>();
 	return S_OK;
 }
 
@@ -133,7 +155,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	D3DXVec3TransformCoord(&Pos, &Pos, &matRot);
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
-	
+
+
 	return 0;
 }
 
@@ -155,6 +178,43 @@ void Nero::OnDisable()
 
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	m_BattleInfo.iHp -= _BattleInfo.iHp;
+	switch (_BattleInfo.eAttackType)
+	{
+	case Attack_Front:
+		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+		break;
+	case Attack_Down:
+		break;
+	case Attack_Stun:
+		break;
+	case Attack_KnocBack:
+		break;
+	case Attack_END:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
+	switch (eTag)
+	{
+	case MonsterWeapon:
+		//if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
+		//	return;
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+
 }
 
 void Nero::RenderGBufferSK(const DrawInfo& _Info)
@@ -310,6 +370,7 @@ void Nero::Update_Majin(float _fDeltaTime)
 
 }
 
+
 void Nero::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
@@ -404,6 +465,11 @@ void Nero::SetAngleFromCamera(float _fAddAngle)
 	//m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
 
 
+}
+
+void Nero::Set_RQ_AttType(ATTACKTYPE _eAttDir)
+{
+	m_pRedQueen.lock()->SetAttType(_eAttDir);
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)
@@ -509,6 +575,10 @@ void Nero::Change_WingArm_Left_Animation(const std::string& InitAnimName, const 
 void Nero::Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
 	m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+}
+void Nero::Change_Overture_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+{
+	m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }
 //if (Input::GetKeyDown(DIK_LCONTROL))
 //	m_iCurWeaponIndex = m_iCurWeaponIndex == RQ ? Cbs : RQ;

@@ -57,7 +57,7 @@ void PhysicsSystem::Free()
 
 	if (m_bSimulate)
 		while (false == (m_pScene->fetchResults(false)));
-
+	delete m_pScene->getSimulationEventCallback();
 	PX_RELEASE(m_pScene);
 
 	SafeDelete(m_pCollisionCallback);
@@ -274,6 +274,8 @@ HRESULT PhysicsSystem::ChangeScene(const UINT _nSceneID)
 			break;
 		}
 	}
+
+	delete m_pScene->getSimulationEventCallback();
 
 	// 3. 이전 피직스 씬을 해제 한 후 맵 컨테이너에서 찾은 씬을 현재 씬으로 설정.
 	m_pScene->release();

@@ -44,6 +44,7 @@ protected:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh = nullptr;
 
 	bool	m_bIng = false;
+	bool	m_bHit = false;
 
 	//플레이어 방향 회전하기 용
 	bool	m_bInteraction = false;;

@@ -136,6 +136,9 @@
     <Filter Include="02.GameObject\02.MapObject">
       <UniqueIdentifier>{177763a5-206d-447e-bfa8-d1f6afd3a203}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Unit\01.Player\07.Gauntlet\01.GT_Rockman">
+      <UniqueIdentifier>{43b66900-3306-43ca-83c8-cf95d79228be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -267,6 +270,7 @@
     <ClInclude Include="..\Header\MapObject.h">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\GT_Rockman.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -408,5 +412,6 @@
     <ClCompile Include="..\Source\MapObject.cpp">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GT_Rockman.cpp" />
   </ItemGroup>
 </Project>

@@ -16,6 +16,9 @@ class WingArm_Right;
 class MainCamera;
 class BtlPanel;
 class GT_Overture;
+class GT_Rockman;
+class Monster;
+class Em100;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -240,9 +243,12 @@ public:
 public:
 	/// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
+	void Set_RQ_AttType(ATTACKTYPE _eAttDir);
+	void Set_RQ_Coll(bool _ActiveOrNot);
 	void Set_PlayingTime(float NewTime);
 
 public:
+	std::list<std::weak_ptr<Monster>> GetAllMonster();
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
@@ -306,6 +312,7 @@ public:
 	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_Overture_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -316,6 +323,9 @@ public:
 	virtual void OnDisable() override;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
 	// ·»´õ¸µ ÇÔ¼ö....
 	void RenderGBufferSK(const DrawInfo& _Info);
@@ -341,6 +351,7 @@ private:
 	std::weak_ptr<CapsuleCollider> m_pCollider;
 	std::weak_ptr<BtlPanel>			m_pBtlPanel;
 	std::weak_ptr<GT_Overture>		m_pOverture;
+	std::weak_ptr<GT_Rockman>		m_pRockman;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -362,6 +373,19 @@ private:
 	D3DXVECTOR3 vDegree;
 	D3DXVECTOR3 vRotationDegree;
 	D3DXVECTOR3 vAccumlatonDegree;
+
+
+	///////////
+
+	std::weak_ptr<Em100>			 m_pMonster;
+	std::weak_ptr<ENGINE::Transform> m_pMonsterTrans;
+
+
+	bool	m_bInteraction = false;;
+	float	m_fRadian = 0.f;
+	float	m_fAccuangle = 0.f;
+	float	m_fAngleSpeed = 0.f;
+	
 };
 
 

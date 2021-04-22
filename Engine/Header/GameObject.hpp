@@ -1,7 +1,6 @@
-#include "Scene.h"
-#include "GAMEOBJECT.H"
 #ifndef __GAMEOBJECT_HPP__
 #define __GAMEOBJECT_HPP__
+#include "Scene.h"
 BEGIN(ENGINE)
 template<typename TYPE>
 inline std::weak_ptr<TYPE> GameObject::AddComponent()
@@ -45,13 +44,13 @@ inline std::weak_ptr<TYPE> GameObject::AddGameObject()
 }
 
 template<typename TYPE>
-inline std::weak_ptr<GameObject> GameObject::FindGameObjectWithType()
+inline std::weak_ptr<TYPE> GameObject::FindGameObjectWithType()
 {
 	return m_pScene->FindGameObjectWithType<TYPE>();
 }
 
 template<typename TYPE>
-inline std::list<std::weak_ptr<GameObject>> GameObject::FindGameObjectsWithType()
+inline std::list<std::weak_ptr<TYPE>> GameObject::FindGameObjectsWithType()
 {
 	return m_pScene->FindGameObjectsWithType<TYPE>();
 }

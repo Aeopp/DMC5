@@ -7,6 +7,8 @@
 RedQueen::RedQueen()
 {
 	m_nTag = TAG_RedQueen;
+	m_BattleInfo.iAttack = 10;
+	m_BattleInfo.eAttackType = Attack_END;
 }
 
 void RedQueen::Free()
@@ -47,6 +49,11 @@ HRESULT RedQueen::Awake()
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
+
+	m_pCollider.lock()->SetRadius(0.1f);
+	m_pCollider.lock()->SetHeight(0.55f);
+	m_pCollider.lock()->SetCenter({ 0.f, 1.f, 0.f });
+
 	PushEditEntity(m_pCollider.lock().get());
 
 	return S_OK;
@@ -99,6 +106,14 @@ void RedQueen::OnDisable()
 {
 	Unit::OnDisable();
 	_RenderProperty.bRender = false;
+}
+
+void RedQueen::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+}
+
+void RedQueen::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
 }
 
 void RedQueen::Hit(BT_INFO _BattleInfo, void* pArg)

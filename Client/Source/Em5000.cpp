@@ -25,9 +25,6 @@ Em5000* Em5000::Create()
 	return new Em5000{};
 }
 
-
-
-
 void Em5000::Fight(const float _fDeltaTime)
 {
 	Skill_CoolTime(_fDeltaTime);
@@ -48,7 +45,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 	//거리가 멀때만 이동 or 회전을 함.
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
-	if (fDir >= 12.f)
+	if (fDir >= 20.f)
 	{
 		if (m_bThrow && m_bIng == false)
 		{
@@ -74,7 +71,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 			return;
 		}
-		if (m_bJumpAttack && fDir >= 20.f && fDir <=25.f)
+		if (m_bJumpAttack && fDir >= 25.f && fDir <=30.f)
 		{
 			if (m_eState == Move_Start || m_eState == Move_Loop)
 			{
@@ -262,7 +259,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 25.f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 35.f)
 				m_eState = Attack_Rush_End;
 		}
 		break;
@@ -607,7 +604,7 @@ HRESULT Em5000::Ready()
 
 	RenderInit();
 
-// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
+	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.015,0.015,0.015 });
 	PushEditEntity(InitTransform.lock().get());
@@ -619,7 +616,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ 0.f, 0.f, 0.f});
+	m_pTransform.lock()->SetPosition({ 10.f, 5.f, 0.f});
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -637,7 +634,6 @@ HRESULT Em5000::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	PushEditEntity(m_pCollider.lock().get());
 
-
 	for (UINT i = 0; i < 2; ++i)
 	{
 		m_pHand[i] = AddGameObject<Em5000Hand>();
@@ -646,7 +642,7 @@ HRESULT Em5000::Awake()
 		m_pHand[i].lock()->m_bLeft = (bool)i;
 	}
 
-	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetRigid(false);
 	m_pCollider.lock()->SetGravity(false);
 	
 	m_pCollider.lock()->SetRadius(6.f);
@@ -674,7 +670,6 @@ UINT Em5000::Update(const float _fDeltaTime)
 	//_Notify.Event[0.5] = [this]() {  AttackStart();  return false; };
 
 	const float Length = FMath::Length(DeltaPos);
-
 
 	//DeltaPos = FMath::RotationVecNormal(DeltaPos, Axis, FMath::ToRadian(90.f)) * Length;
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -721,6 +716,7 @@ UINT Em5000::Update(const float _fDeltaTime)
 
 UINT Em5000::LateUpdate(const float _fDeltaTime)
 {
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
@@ -930,6 +926,8 @@ void Em5000::Update_Angle()
 	m_fRadian = fRadian;
 	m_fAccuangle = 0.f;
 
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
 
 	if (m_fRadian > 0)
 		m_fAngleSpeed = fabs(m_fAngleSpeed);

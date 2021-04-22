@@ -7,10 +7,10 @@ Camera Camera::Instance;
 Camera::Camera()
 	: m_fFovY(90.f)
 	, m_fNear(0.1f)
-	, m_fFar(1000.f)
-	, m_fSensitivityMove(1.f)
-	, m_fSensitivityRot(1.f)
-	, m_fSensitivityWheel(1.f)
+	, m_fFar(10000.f)
+	, m_fSensitivityMove(5.f)
+	, m_fSensitivityRot(0.2f)
+	, m_fSensitivityWheel(0.5f)
 	, m_fDistance(10.f)
 {
 	D3DXMatrixIdentity(&m_matView);
@@ -54,7 +54,7 @@ void Camera::MoveCamera()
 			if (lMove = Input::GetMouseMove(DIM_Y))
 			{
 				D3DXVECTOR3 vUp = Instance.m_pTransform->GetUp();
-				vTrans -= lMove * vUp;
+				vTrans += lMove * vUp;
 			}
 			Instance.m_pTransform->SetPosition(vPosition + vTrans * Instance.m_fSensitivityMove);
 

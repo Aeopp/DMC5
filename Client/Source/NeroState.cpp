@@ -668,6 +668,11 @@ HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 	return S_OK;
 }
 
+void NeroState::ActiveColl_RedQueen(bool _ActiveOrNot)
+{
+	m_pNero.lock()->Set_RQ_Coll(_ActiveOrNot);
+}
+
 
 #pragma endregion 
 
@@ -2619,16 +2624,22 @@ HitFront* HitFront::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Ne
 
 HRESULT HitFront::StateEnter()
 {
+	NeroState::StateEnter();
+
+	m_pNero.lock()->ChangeAnimation("HitFront", false, Nero::ANI_HITFRONT);
 	return S_OK;
 }
 
 HRESULT HitFront::StateExit()
 {
+	NeroState::StateExit();
 	return S_OK;
 }
 
 HRESULT HitFront::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
 }
 
@@ -3486,18 +3497,21 @@ HRESULT BT_Att1::StateEnter()
 	//달리고있었으면 대쉬 ComboA로 가야됨
 	m_pNero.lock()->ChangeAnimation("ComboA1", false,Nero::ANI_COMBOA1);
 	m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_Front);
 	
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
 	}
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att1::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
@@ -3535,18 +3549,20 @@ HRESULT BT_Att2::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA2", false,Nero::ANI_COMBOA2);
-
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_R);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboA2", false);
 	}
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att2::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
@@ -3584,17 +3600,20 @@ HRESULT BT_Att3::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA3", false, Nero::ANI_COMBOA3);
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_L);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
 	}
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att3::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
@@ -3637,19 +3656,20 @@ HRESULT BT_Att4::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA4", false, Nero::ANI_COMBOA4);
-
+	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_KnocBack);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA4", false);
 	}
-
+	NeroState::ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
 HRESULT BT_Att4::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::ActiveColl_RedQueen(false);
 	return S_OK;
 }
 
@@ -5364,7 +5384,7 @@ HRESULT Overture_Shoot::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot", false, Nero::ANI_OVERTURE_SHOOT);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5406,7 +5426,7 @@ HRESULT Overture_Shoot_Up::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Up", false, Nero::ANI_OVERTURE_SHOOT_UP);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5447,7 +5467,7 @@ HRESULT Overture_Shoot_Down::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Down", false, Nero::ANI_OVERTURE_SHOOT_DOWN);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 
 	return S_OK;
 }
@@ -5491,7 +5511,7 @@ HRESULT Overture_Shoot_Air::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air", false, Nero::ANI_OVERTURE_SHOOT_AIR);
 	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5532,7 +5552,7 @@ HRESULT Overture_Shoot_Air_Up::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air_Up", false, Nero::ANI_OVERTURE_SHOOT_AIR_UP);
 	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR_UP);
-	
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5573,7 +5593,7 @@ HRESULT Overture_Shoot_Air_Down::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air_Down", false, Nero::ANI_OVERTURE_SHOOT_AIR_DOWN);
 	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR_DOWN);
-
+	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
 
 	return S_OK;
 }

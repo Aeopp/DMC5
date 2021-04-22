@@ -24,10 +24,14 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
+public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual std::string GetName() override;
 public:
 	void	SetWeaponState(UINT _StateIndex) { m_iStateIndex = _StateIndex; }
+	void	SetAttType(ATTACKTYPE _eAttDir) { m_BattleInfo.eAttackType = _eAttDir; }
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
