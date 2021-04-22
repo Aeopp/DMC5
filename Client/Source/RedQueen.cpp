@@ -81,7 +81,7 @@ UINT RedQueen::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
 	Matrix								ParentWorldMatrix,FinalWorld,RotX;
-	
+
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
 	
 	D3DXMatrixRotationX(&RotX, D3DXToRadian(-90));

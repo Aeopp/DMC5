@@ -29,9 +29,9 @@ MainCamera* MainCamera::Create()
 
 HRESULT MainCamera::Ready()
 {
-	m_fFovY = D3DXToRadian(60.f);
+	m_fFovY = D3DXToRadian(45.f);
 	m_fAspect = float(float(g_nWndCX) / float(g_nWndCY));
-	m_fNear = 1.f;
+	m_fNear = 0.1f;
 	m_fFar = 500.f;
 
 
@@ -46,10 +46,10 @@ HRESULT MainCamera::Ready()
 	m_fDistanceToTarget = OGDistance;
 
 	m_fRotX = -17.1f;
-	m_fFloatingAmount = 1.6f;
+	m_fFloatingAmount = 0.16f;
 
-	m_fDecreaseFactor = 5.f;
-	m_fIncreaseFactor = 0.7f;
+	m_fDecreaseFactor = 0.5f;
+	m_fIncreaseFactor = 0.07f;
 
 	return S_OK;
 }
@@ -65,7 +65,7 @@ HRESULT MainCamera::Awake()
 	Vector3 vLook;
 	memcpy(&vLook, m_pAtTranform.lock()->GetWorldMatrix().m[2], sizeof(Vector3));
 
-	m_vEye = m_vAt + vLook * -50.f;
+	m_vEye = m_vAt + vLook * -5.f;
 	return S_OK;
 }
 
@@ -122,12 +122,12 @@ void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
 {
 	if (m_fDistanceToTarget <= _GoalDis)
 	{
-		m_fDecreaseFactor = 5.f;
+		m_fDecreaseFactor = 0.5f;
 		return;
 	}
-	if (m_fDecreaseFactor >= 0.2f)
-		m_fDecreaseFactor -= 0.2f;
-	m_fIncreaseFactor = 0.7f;
+	if (m_fDecreaseFactor >= 0.02f)
+		m_fDecreaseFactor -= 0.02f;
+	m_fIncreaseFactor = 0.07f;
 	m_fDistanceToTarget -= m_fDecreaseFactor * _fDeltaTime;
 }
 
@@ -135,11 +135,11 @@ void MainCamera::IncreaseDistance(float _GoalDis, float _fDeltaTime)
 {
 	if (m_fDistanceToTarget >= _GoalDis)
 	{
-		m_fIncreaseFactor = 0.7f;
+		m_fIncreaseFactor = 0.07f;
 		return;
 	}
-	m_fDecreaseFactor = 5.f;
-	m_fIncreaseFactor += 0.05f;
+	m_fDecreaseFactor = 0.5f;
+	m_fIncreaseFactor += 0.005f;
 	m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
 }
 
@@ -159,7 +159,7 @@ void MainCamera::Editor()
 		ImGui::InputScalar("Sensitive", ImGuiDataType_Float, &m_fSensitive, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("RotX", ImGuiDataType_Float, &m_fRotX, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("FloatingAmount", ImGuiDataType_Float, &m_fFloatingAmount, MyButton ? &ZeroDotOne : NULL);
-		ImGui::InputScalar("Test1", ImGuiDataType_Float, &m_fTest1, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("m_fNear", ImGuiDataType_Float, &m_fNear, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("Test2", ImGuiDataType_Float, &m_fTest2, MyButton ? &ZeroDotOne : NULL);
 	}
 }

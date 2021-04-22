@@ -1376,6 +1376,17 @@ HRESULT RunStartLeft::StateEnter()
 		if (Nero::Dir_Left != NeroPreDir)
 			m_pNero.lock()->SetRotationAngle(-90.f);
 		break;
+	case Nero::ANI_DASHSTOP:
+		if (Nero::Dir_Left == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+			m_pNero.lock()->SetRotationAngle(-90.f);
+		}
+		break;
 	default:
 		if (Nero::Dir_Left == NeroPreDir)
 		{
@@ -1580,6 +1591,17 @@ HRESULT RunStartRight::StateEnter()
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
 		if (Nero::Dir_Right != NeroPreDir)
 			m_pNero.lock()->SetRotationAngle(90.f);
+		break;
+	case Nero::ANI_DASHSTOP:
+		if (Nero::Dir_Right == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+			m_pNero.lock()->SetRotationAngle(90.f);
+		}
 		break;
 	default:
 		if (Nero::Dir_Right == NeroPreDir)
@@ -1787,6 +1809,17 @@ HRESULT RunStart180::StateEnter()
 		if (Nero::Dir_Back != NeroPreDir)
 			m_pNero.lock()->SetRotationAngle(180.f);
 		break;
+	case Nero::ANI_DASHSTOP:
+		if (Nero::Dir_Back == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+			m_pNero.lock()->SetRotationAngle(180.f);
+		}
+		break;
 	default:
 		if (Nero::Dir_Back == NeroPreDir)
 		{
@@ -1977,6 +2010,9 @@ HRESULT RunStartFront::StateEnter()
 	case Nero::ANI_WIRE_SNATCH_PULL:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
 		break;
+	case Nero::ANI_DASHSTOP:
+		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		break;
 	default:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
 		break;
@@ -2085,7 +2121,7 @@ HRESULT RunStop::StateUpdate(const float _fDeltaTime)
 			break;
 		}
 	}
-	if (0.62 <= fCurrAnimationTime)
+	if (0.57 <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Idle(NeroFSM::RUNSTOP);
 	}
@@ -2392,7 +2428,13 @@ HRESULT DashStop::StateExit()
 
 HRESULT DashStop::StateUpdate(const float _fDeltaTime)
 {
+	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
 	m_pNero.lock()->DecreaseDistance(OGDistance, _fDeltaTime);
+
+	if (0.58 <= fCurAnimationTime)
+		NeroState::KeyInput_Idle(NeroFSM::DASHSTOP);
+
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
@@ -5423,6 +5465,7 @@ HRESULT Overture_Shoot::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot", false, Nero::ANI_OVERTURE_SHOOT);
 	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	m_pNero.lock()->CreateOvertureEff();
 	return S_OK;
 }
 
@@ -5465,6 +5508,7 @@ HRESULT Overture_Shoot_Up::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Up", false, Nero::ANI_OVERTURE_SHOOT_UP);
 	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	m_pNero.lock()->CreateOvertureEff(Nero::EffDir_Up);
 	return S_OK;
 }
 
@@ -7938,18 +7982,26 @@ HRESULT Buster_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Buster_Start", false, Nero::ANI_BUSTER_START);
 	m_pNero.lock()->SetActive_Buster_Arm(true);
 	m_pNero.lock()->Change_BusterArm_Animation("Buster_Catch", false);
+	NeroState::ActiveColl_Monsters(true);
 	return S_OK;
 }
 
 HRESULT Buster_Start::StateExit()
 {
 	NeroState::StateExit();
-
+	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
 HRESULT Buster_Start::StateUpdate(const float _fDeltaTime)
 {
+	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if(0.2 <= fCurAnimationTime && 0.6 <= fCurAnimationTime)
+		NeroState::ActiveColl_Monsters(true);
+	else
+		NeroState::ActiveColl_Monsters(false);
+
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 
@@ -7994,5 +8046,413 @@ HRESULT To_Majin::StateUpdate(const float _fDeltaTime)
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 
+	return S_OK;
+}
+
+Buster_Air_Catch::Buster_Air_Catch(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+Buster_Air_Catch::~Buster_Air_Catch()
+{
+}
+
+Buster_Air_Catch* Buster_Air_Catch::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Buster_Air_Catch(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT Buster_Air_Catch::StateEnter()
+{
+	NeroState::StateEnter();
+	m_pNero.lock()->ChangeAnimation("Buster_Air_Catch", false, Nero::ANI_BUSTER_AIR_CATCH);
+
+	return S_OK;
+}
+
+HRESULT Buster_Air_Catch::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT Buster_Air_Catch::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+Buster_Strike_Common::Buster_Strike_Common(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+Buster_Strike_Common::~Buster_Strike_Common()
+{
+}
+
+Buster_Strike_Common* Buster_Strike_Common::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Buster_Strike_Common(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT Buster_Strike_Common::StateEnter()
+{
+	NeroState::StateEnter();
+	m_pNero.lock()->ChangeAnimation("Buster_Strike_Common", false, Nero::ANI_BUSTER_STRIKE_COMMON);
+	return S_OK;
+}
+
+HRESULT Buster_Strike_Common::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT Buster_Strike_Common::StateUpdate(const float _fDeltaTime)
+{
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::IDLE);
+	return S_OK;
+}
+
+Buster_Strike_Common_Air::Buster_Strike_Common_Air(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+Buster_Strike_Common_Air::~Buster_Strike_Common_Air()
+{
+}
+
+Buster_Strike_Common_Air* Buster_Strike_Common_Air::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Buster_Strike_Common_Air(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT Buster_Strike_Common_Air::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT Buster_Strike_Common_Air::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT Buster_Strike_Common_Air::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+M_Buster_Strike_Common_Start::M_Buster_Strike_Common_Start(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+M_Buster_Strike_Common_Start::~M_Buster_Strike_Common_Start()
+{
+}
+
+M_Buster_Strike_Common_Start* M_Buster_Strike_Common_Start::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new M_Buster_Strike_Common_Start(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT M_Buster_Strike_Common_Start::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT M_Buster_Strike_Common_Start::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT M_Buster_Strike_Common_Start::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+M_Buster_Strike_Common_Loop::M_Buster_Strike_Common_Loop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+M_Buster_Strike_Common_Loop::~M_Buster_Strike_Common_Loop()
+{
+}
+
+M_Buster_Strike_Common_Loop* M_Buster_Strike_Common_Loop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new M_Buster_Strike_Common_Loop(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT M_Buster_Strike_Common_Loop::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT M_Buster_Strike_Common_Loop::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT M_Buster_Strike_Common_Loop::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em0000_Buster_Start::em0000_Buster_Start(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em0000_Buster_Start::~em0000_Buster_Start()
+{
+}
+
+em0000_Buster_Start* em0000_Buster_Start::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em0000_Buster_Start(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em0000_Buster_Start::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em0000_Buster_Start::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em0000_Buster_Start::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em0000_Buster_Finish::em0000_Buster_Finish(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em0000_Buster_Finish::~em0000_Buster_Finish()
+{
+}
+
+em0000_Buster_Finish* em0000_Buster_Finish::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em0000_Buster_Finish(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em0000_Buster_Finish::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em0000_Buster_Finish::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em0000_Buster_Finish::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em0000_M_Buster::em0000_M_Buster(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em0000_M_Buster::~em0000_M_Buster()
+{
+}
+
+em0000_M_Buster* em0000_M_Buster::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em0000_M_Buster(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em0000_M_Buster::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em0000_M_Buster::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em0000_M_Buster::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em0000_Buster_Air::em0000_Buster_Air(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em0000_Buster_Air::~em0000_Buster_Air()
+{
+}
+
+em0000_Buster_Air* em0000_Buster_Air::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em0000_Buster_Air(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em0000_Buster_Air::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em0000_Buster_Air::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em0000_Buster_Air::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em5000_Buster_Start::em5000_Buster_Start(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em5000_Buster_Start::~em5000_Buster_Start()
+{
+}
+
+em5000_Buster_Start* em5000_Buster_Start::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em5000_Buster_Start(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em5000_Buster_Start::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Start::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Start::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em5000_Buster_Swing::em5000_Buster_Swing(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em5000_Buster_Swing::~em5000_Buster_Swing()
+{
+}
+
+em5000_Buster_Swing* em5000_Buster_Swing::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em5000_Buster_Swing(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em5000_Buster_Swing::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Swing::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Swing::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em5000_Buster_Swing_Loop::em5000_Buster_Swing_Loop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em5000_Buster_Swing_Loop::~em5000_Buster_Swing_Loop()
+{
+}
+
+em5000_Buster_Swing_Loop* em5000_Buster_Swing_Loop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em5000_Buster_Swing_Loop(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em5000_Buster_Swing_Loop::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Swing_Loop::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Swing_Loop::StateUpdate(const float _fDeltaTime)
+{
+	return S_OK;
+}
+
+em5000_Buster_Finish::em5000_Buster_Finish(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+em5000_Buster_Finish::~em5000_Buster_Finish()
+{
+}
+
+em5000_Buster_Finish* em5000_Buster_Finish::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em5000_Buster_Finish(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT em5000_Buster_Finish::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Finish::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em5000_Buster_Finish::StateUpdate(const float _fDeltaTime)
+{
 	return S_OK;
 }

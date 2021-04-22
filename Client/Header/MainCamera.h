@@ -69,7 +69,6 @@ private:
     float   m_fTest2;
 
 
-
 };
 
 

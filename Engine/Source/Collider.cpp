@@ -47,6 +47,10 @@ HRESULT Collider::DrawCollider(const DrawInfo& _Info)
 
 void Collider::Editor()
 {
+	bool bTrigger = m_bTrigger;
+	if (ImGui::Checkbox("Trigger", &bTrigger))
+		SetTrigger(bTrigger);
+
 	bool bRigid = m_bRigid;
 	if (ImGui::Checkbox("Rigid", &bRigid))
 		SetRigid(bRigid);

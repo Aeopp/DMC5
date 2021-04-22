@@ -15,7 +15,7 @@
 #include "GT_Overture.h"
 #include "GT_Rockman.h"
 #include "Monster.h"
-#include "Em100.h"
+#include "OvertureHand.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -50,6 +50,36 @@ void Nero::Set_RQ_Coll(bool _ActiveOrNot)
 	m_pRedQueen.lock()->Set_Coll(_ActiveOrNot);
 }
 
+void Nero::CreateOvertureEff(EffDircetion eDir)
+{
+	m_pEffOverture.lock()->PlayStart();
+	Matrix World = /**(m_pMesh->GetNodeToRoot("R_MiddleF3_SS")) **/ m_pTransform.lock()->GetWorldMatrix();
+	Vector3 Pos,Rot;
+	memcpy(&Pos, World.m[3], sizeof(Vector3));
+	switch (eDir)
+	{
+	case EffDircetion::EffDir_Front:
+		Pos += (m_pTransform.lock()->GetLook()) * -2.5f;
+		Pos.y += 0.8f;
+		Rot = { 0.f,0.f,0.f };
+		break;
+	case EffDircetion::EffDir_Up:
+		Rot = { 90.f,180.f,0.f };
+		Pos += (m_pTransform.lock()->GetLook()) * -0.8f;
+		Pos.y += 2.3f;
+		break;
+	case EffDircetion::EffDir_Down:
+		Rot = { -90.f,180.f,0.f };
+		break;
+	default:
+		break;
+	}
+	Vector3 MyRotation = (Transform::QuaternionToEuler(m_pTransform.lock()->GetQuaternion()));
+	
+	m_pEffOverture.lock()->SetRotation(MyRotation + Rot);
+	m_pEffOverture.lock()->SetPosition(Pos);
+}
+
 std::list<std::weak_ptr<Monster>> Nero::GetAllMonster()
 {
 	return FindGameObjectsWithType<Monster>();
@@ -70,7 +100,7 @@ HRESULT Nero::Ready()
 	Unit::Ready();
 	RenderInit();
 
-	m_pTransform.lock()->SetScale({ 0.01f,0.01f,0.01f });
+	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
 	m_pTransform.lock()->SetPosition(Vector3{0.f, 5.f, 0.f});
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -82,6 +112,7 @@ HRESULT Nero::Ready()
 	m_pWingArm_Left = AddGameObject <WIngArm_Left>();
 	m_pWingArm_Right = AddGameObject<WingArm_Right>();
 	m_pOverture = AddGameObject<GT_Overture>();
+	m_pEffOverture = AddGameObject<OvertureHand>();
 	//m_pRockman = AddGameObject<GT_Rockman>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
@@ -115,9 +146,6 @@ HRESULT Nero::Awake()
 	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 
-
-	m_pMonster = std::static_pointer_cast<Em100>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster100).lock());
-	m_pMonsterTrans = m_pMonster.lock()->GetComponent<ENGINE::Transform>();
 	return S_OK;
 }
 
@@ -368,6 +396,8 @@ void Nero::Update_Majin(float _fDeltaTime)
 	{
 		m_IsMajin = false;
 		SetActive_Wings(false);
+		SetActive_WingArm_Left(false);
+		SetActive_WingArm_Right(false);
 	}
 
 }
@@ -535,11 +565,15 @@ void Nero::Set_RQ_AttType(ATTACKTYPE _eAttDir)
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)
 {
+	if (m_pCamera.expired())
+		return;
 	m_pCamera.lock()->DecreaseDistance(_GoalDis, _fDeltaTime);
 }
 
 void Nero::IncreaseDistance(float _GoalDis, float _fDeltaTime)
 {
+	if (m_pCamera.expired())
+		return;
 	m_pCamera.lock()->IncreaseDistance(_GoalDis, _fDeltaTime);
 }
 
@@ -641,5 +675,6 @@ void Nero::Change_Overture_Animation(const std::string& InitAnimName, const bool
 {
 	m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }
+
 //if (Input::GetKeyDown(DIK_LCONTROL))
 //	m_iCurWeaponIndex = m_iCurWeaponIndex == RQ ? Cbs : RQ;

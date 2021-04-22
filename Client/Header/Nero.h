@@ -18,7 +18,7 @@ class BtlPanel;
 class GT_Overture;
 class GT_Rockman;
 class Monster;
-class Em100;
+class Effect;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -198,6 +198,19 @@ public:
 		ANI_BUSTER_START,
 		ANI_TO_MAJIN,
 		ANI_TO_MAJIN2,
+		ANI_BUSTER_AIR_CATCH,
+		ANI_BUSTER_STRIKE_COMMON,
+		ANI_BUSTER_STRIKE_COMMON_AIR,
+		ANI_M_BUSTER_STRIKE_COMMON_START,
+		ANI_M_BUSTER_STRIKE_COMMON_LOOP,
+		ANI_EM0000_BUSTER_START,
+		ANI_EM0000_BUSTER_FINISH,
+		ANI_EM0000_M_BUSTER,
+		ANI_EM0000_BUSTER_AIR,
+		ANI_EM5000_BUSTER_START,
+		ANI_EM5000_BUSTER_SWING,
+		ANI_EM5000_BUSTER_SWING_LOOP,
+		ANI_EM5000_BUSTER_FINISH,
 		ANI_END
 	};
 
@@ -229,6 +242,13 @@ public:
 		Dir_Right
 	};
 
+	enum EffDircetion
+	{
+		EffDir_Front,
+		EffDir_Up,
+		EffDir_Down
+	};
+
 private:
 	explicit Nero();
 	virtual ~Nero() = default;
@@ -248,6 +268,11 @@ public:
 	void Set_PlayingTime(float NewTime);
 
 public:
+	// <For Overture Eff>
+	void CreateOvertureEff(EffDircetion eDir = EffDir_Front);
+
+public:
+	std::weak_ptr<NeroFSM> GetFsm() { return m_pFSM; }
 	std::list<std::weak_ptr<Monster>> GetAllMonster();
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
@@ -355,6 +380,7 @@ private:
 	std::weak_ptr<BtlPanel>			m_pBtlPanel;
 	std::weak_ptr<GT_Overture>		m_pOverture;
 	std::weak_ptr<GT_Rockman>		m_pRockman;
+	std::weak_ptr<Effect>			m_pEffOverture;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -372,24 +398,11 @@ private:
 
 	bool	m_IsMajin = false;
 
-	float	m_fDistanceToMonster = 0.f;
-	float	m_fTest = 0.f;
 	//
 	D3DXVECTOR3 vDegree;
 	D3DXVECTOR3 vRotationDegree;
 	D3DXVECTOR3 vAccumlatonDegree;
 
-
-	///////////
-
-	std::weak_ptr<Em100>			 m_pMonster;
-	std::weak_ptr<ENGINE::Transform> m_pMonsterTrans;
-
-
-	bool	m_bInteraction = false;;
-	float	m_fRadian = 0.f;
-	float	m_fAccuangle = 0.f;
-	float	m_fAngleSpeed = 0.f;
 	
 };
 

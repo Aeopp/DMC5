@@ -3,6 +3,8 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+#include "Monster.h"
+#include "NeroFSM.h"
 
 Buster_Arm::Buster_Arm()
 	:m_bIsRender(false)
@@ -41,6 +43,7 @@ HRESULT Buster_Arm::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->SetCenter({ 0.f,1.f,0.f });
 	PushEditEntity(m_pCollider.lock().get());
 
 	return S_OK;
@@ -102,6 +105,33 @@ void Buster_Arm::OnDisable()
 }
 
 void Buster_Arm::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	if (nullptr == dynamic_pointer_cast<Monster>(_pOther.lock()))
+		return;
+	UINT MonsterTag = _pOther.lock()->m_nTag;
+	
+	switch (MonsterTag)
+	{
+	case Monster100:
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON);
+		break;
+	case Monster101:
+		break;
+	case Monster0000:
+		break;
+	case Monster5000:
+		break;
+	default:
+		break;
+	}
+
+}
+
+void Buster_Arm::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
 }
 
