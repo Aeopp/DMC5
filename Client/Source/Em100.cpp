@@ -431,10 +431,10 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
-	m_pCollider.lock()->SetRigid(false);
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(false);
 
-	m_pCollider.lock()->SetTrigger(true);
+	//m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRadius(1.1f);
 	m_pCollider.lock()->SetHeight(1.5f);
 	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
@@ -498,7 +498,7 @@ UINT Em100::Update(const float _fDeltaTime)
 		State_Change(_fDeltaTime);
 	}
 
-	cout << m_BattleInfo.iHp << endl;
+	//cout << m_BattleInfo.iHp << endl;
 
 	return 0;
 }
@@ -565,12 +565,13 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (!m_bCollEnable)
+		return;
 		//레드퀸, 버스터암, 건틀릿들, 와이어암
+	m_bCollEnable = false;
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
-		if (static_pointer_cast<Unit>(_pOther.lock())->Get_Coll() == false)
-			break;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
