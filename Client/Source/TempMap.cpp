@@ -57,34 +57,34 @@ void TempMap::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
-	{
-		{"gbuffer_ds",
-		[this](const DrawInfo& _Info)
-			{
-				RenderGBuffer(_Info);
-			}
-		},
-	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"Shadow" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadow(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_ds",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBuffer(_Info);
+	//		}
+	//	},
+	//};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+	//	=
+	//{
+	//	{"Shadow" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderShadow(_Info);
+	//	}
+	//} };
 
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
-		=
-	{
-		{"Debug" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderDebug(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
+	//	=
+	//{
+	//	{"Debug" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderDebug(_Info);
+	//	}
+	//} };
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
@@ -92,7 +92,7 @@ void TempMap::RenderInit()
 		{"Debug" ,
 		[this](const DrawInfo& _Info)
 		{
-			DrawCollider(_Info);
+			RenderDebug(_Info);
 		}
 	} };
 
@@ -177,7 +177,7 @@ HRESULT TempMap::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	//InitTransform.lock()->SetPosition(Vector3{ -12.f,-0.9f,-638.f });
+	InitTransform.lock()->SetPosition(Vector3{ -36.7285,8.96892 ,15.26073 });
 
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();

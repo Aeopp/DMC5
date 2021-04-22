@@ -113,6 +113,17 @@ void MapObject::RenderInit()
 			RenderShadow(_Info);
 		}
 	} };
+
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
+	//	=
+	//{
+	//	{"Debug" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderDebug(_Info);
+	//	}
+	//} };
+	RenderInterface::Initialize(_InitRenderProp);
 }
 
 void MapObject::RenderGBuffer(const DrawInfo& _Info)
@@ -186,7 +197,9 @@ void MapObject::SetUp(const TSTRING _sMesh, const D3DXVECTOR3& _vScale, const D3
 {
 	m_pStaticMesh = Resources::Load<ENGINE::StaticMesh>(_sMesh);
 
-	m_pTransform.lock()->SetScale(_vScale);
+	D3DXVECTOR3 vScale = _vScale * 0.01f;
+	D3DXVECTOR3 vPos = _vPosition * 0.01f;
+	m_pTransform.lock()->SetScale(vScale);
 	m_pTransform.lock()->SetRotation(_vRotation);
-	m_pTransform.lock()->SetPosition(_vPosition);
+	m_pTransform.lock()->SetPosition(vPos);
 }
