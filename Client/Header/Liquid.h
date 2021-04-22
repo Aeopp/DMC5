@@ -24,7 +24,7 @@ public:
 
 private:
 	std::vector<pair<std::shared_ptr<ENGINE::StaticMesh>, uint32>> _LiquidMeshVec;	// <mesh, maxSubsetIdx>
-	Liquid::VARIATION _VariationIdx = MAX_VARIATION_IDX;	// 醚 海府俊捞记
+	Liquid::VARIATION _VariationIdx = BLOOD_0;	// 醚 海府俊捞记
 
 	std::shared_ptr<ENGINE::Texture> _BloodALB0Tex{};
 	std::shared_ptr<ENGINE::Texture> _BloodNRMR0Tex{};

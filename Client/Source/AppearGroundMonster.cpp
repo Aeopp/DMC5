@@ -22,7 +22,15 @@ std::string AppearGroundMonster::GetName()
 void AppearGroundMonster::Reset()
 {
 	for (auto& Element : _BloodMeshVec)
-		Element.SubsetIdx = 0.f;
+	{
+		Element.SubsetIdx = static_cast<float>(FMath::Random<int>(-20, -1));
+		D3DXMatrixScaling(&Element.WorldMatrix, 0.1f, 0.1f, 0.1f);
+		Element.WorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
+		Element.WorldMatrix._42 = 0.001f;
+		Element.WorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);
+	}
+
+	_PlaneSliceAmount = 1.f;
 
 	Effect::Reset();
 }
@@ -35,30 +43,35 @@ void AppearGroundMonster::Imgui_Modify()
 		ImGui::Text("Eff_AppearGroundMonster");
 
 		{
-			Vector3 SliderPosition = Sptransform->GetPosition();
+			static Vector3 SliderPosition = Sptransform->GetPosition();
 			ImGui::SliderFloat3("Pos##AppearGroundMonster", SliderPosition, -10.f, 10.f);
 			Sptransform->SetPosition(SliderPosition);
 		}
 
 		{
-			float Scale = Sptransform->GetScale().x;
+			static float Scale = Sptransform->GetScale().x;
 			ImGui::SliderFloat("Scale##AppearGroundMonster", &Scale, 0.1f, 1.f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 			SetScale(Scale);
 		}
 
 		{
-			Vector3 SliderRotation{ 0,0,0 };
+			static Vector3 SliderRotation{ 0,0,0 };
 			ImGui::SliderFloat3("Rot##AppearGroundMonster", SliderRotation, 0.f, 360.f);
 			Sptransform->SetRotation(SliderRotation);
 		}
 
 		{
-			float PlayingSpeed = _PlayingSpeed;
+			static float PlayingSpeed = _PlayingSpeed;
 			ImGui::SliderFloat("PlayingSpeed##AppearGroundMonster", &PlayingSpeed, 0.1f, 10.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
 	}
+}
+
+AppearGroundMonster* AppearGroundMonster::Create()
+{
+	return new AppearGroundMonster{};
 }
 
 void AppearGroundMonster::RenderInit()
@@ -76,8 +89,15 @@ void AppearGroundMonster::RenderInit()
 			}
 		},
 	};
-
-	// + 바닥 blood decal
+	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
+	{
+		{"DecalBlood",
+		[this](const DrawInfo& _Info)
+			{
+				this->RenderAlphaBlendEffect(_Info);
+			}
+		},
+	};
 
 	RenderInterface::Initialize(_InitRenderProp);
 }
@@ -85,14 +105,17 @@ void AppearGroundMonster::RenderInit()
 void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 {
 	// blood
-	_ExtraColor = Vector3(1.f, 0.f, 0.f);
-	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
 	_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
+	_ExtraColor = Vector3(1.f, 0.f, 0.f);
+	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	//
 	
 	for (auto& Element : _BloodMeshVec)
 	{
+		if (0.f > Element.SubsetIdx)
+			continue;
+
 		Matrix World = Element.WorldMatrix * _RenderUpdateInfo.World;
 		_Info.Fx->SetMatrix("matWorld", &World);
 
@@ -105,10 +128,28 @@ void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 	}
 }
 
-AppearGroundMonster* AppearGroundMonster::Create()
+void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	return new AppearGroundMonster{};
+	auto WeakSubset = _PlaneMesh->GetSubset(0u);
+	if (auto SharedSubset = WeakSubset.lock();
+		SharedSubset)
+	{
+		Matrix World = _PlaneWorldMatrix * _RenderUpdateInfo.World;
+		_Info.Fx->SetMatrix("World", &World);
+
+		_Info.Fx->SetTexture("ALB0Map", _DecalBloodALB0Tex->GetTexture());
+		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
+		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
+		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+		
+		_ExtraColor = Vector3(0.f, 1.f, 0.f);
+		_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
+		_Info.Fx->SetFloat("_SliceAmount", _PlaneSliceAmount);
+
+		SharedSubset->Render(_Info.Fx);
+	}
 }
+
 
 HRESULT AppearGroundMonster::Ready()
 {
@@ -118,34 +159,45 @@ HRESULT AppearGroundMonster::Ready()
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
-
+	
 	_BloodMeshVec.reserve(MESH_CNT);
 
 	BloodMesh InitBloodMesh;
 	InitBloodMesh.Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood3.fbx");
-	InitBloodMesh.SubsetIdx = 0.f;
 	InitBloodMesh.MaxSubsetIdx = 25.f;
-	D3DXMatrixIdentity(&InitBloodMesh.WorldMatrix);
-InitBloodMesh.WorldMatrix._41 -= 5.f;
+	_BloodMeshVec.push_back(InitBloodMesh);
 	_BloodMeshVec.push_back(InitBloodMesh);
 
 	InitBloodMesh.Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood1.fbx");
-	InitBloodMesh.SubsetIdx = 0.f;
 	InitBloodMesh.MaxSubsetIdx = 15.f;
-	D3DXMatrixIdentity(&InitBloodMesh.WorldMatrix);
+	_BloodMeshVec.push_back(InitBloodMesh);
 	_BloodMeshVec.push_back(InitBloodMesh);
 
 	InitBloodMesh.Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Liquid\\Blood2.fbx");
-	InitBloodMesh.SubsetIdx = 0.f;
 	InitBloodMesh.MaxSubsetIdx = 17.f;
-	D3DXMatrixIdentity(&InitBloodMesh.WorldMatrix);
-InitBloodMesh.WorldMatrix._41 += 5.f;
 	_BloodMeshVec.push_back(InitBloodMesh);
+	_BloodMeshVec.push_back(InitBloodMesh);
+	
+	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+
+	Matrix TempMat;
+	D3DXMatrixScaling(&_PlaneWorldMatrix, 0.15f, 0.1f, 0.15f);
+	D3DXMatrixRotationX(&TempMat, D3DXToRadian(-90.f));
+	_PlaneWorldMatrix *= TempMat;
+	_PlaneWorldMatrix._42 = 0.001f;
 
 	_BloodALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_blood_ALBM.tga");
 	_BloodNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_blood_NRMR.tga");
 
+	_DecalBloodALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_blood_env_0000_alba.tga");
+	_DecalBloodNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_blood_env_0000_nrmr.tga");
+	_DecalBloodMsk0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_blood_env_0000_msk2.tga");
+
+	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\noiseInput_ATOS.tga");
+
 	_PlayingSpeed = 1.f;
+
+	Reset();
 
 	return S_OK;
 };
@@ -165,17 +217,31 @@ UINT AppearGroundMonster::Update(const float _fDeltaTime)
 	Effect::Update(_fDeltaTime);
 
 	//
-	if (2.f < _AccumulateTime)
+	if (5.f < _AccumulateTime)
 		Reset();
+	else if (4.f < _AccumulateTime)
+		_PlaneSliceAmount =  (_AccumulateTime - 4.f) * 0.6f;
+	else
+		_PlaneSliceAmount = 1.f - _AccumulateTime * 0.6f;
 
 	//
 	for (auto& Element : _BloodMeshVec)
 	{
-		Element.SubsetIdx += _fDeltaTime * 40.f;
+		if (1.5f < _AccumulateTime)
+			Element.SubsetIdx += _fDeltaTime * 40.f;
+
 		if (Element.MaxSubsetIdx < Element.SubsetIdx)
 		{
-			// + 위치 변경
-			Element.SubsetIdx = 0.f;
+			if (4.f < _AccumulateTime)
+				Element.SubsetIdx = -999.f;
+			else
+			{
+				Element.SubsetIdx = static_cast<float>(FMath::Random<int>(-20, 0));
+				D3DXMatrixScaling(&Element.WorldMatrix, 0.1f, 0.1f, 0.1f);
+				Element.WorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
+				Element.WorldMatrix._42 = 0.001f;
+				Element.WorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);
+			}
 		}
 	}
 

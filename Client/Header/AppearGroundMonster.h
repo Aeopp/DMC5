@@ -6,21 +6,29 @@ class AppearGroundMonster final : public Effect
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
-
+	
 	struct BloodMesh
 	{
 		std::shared_ptr<ENGINE::StaticMesh> Mesh;
-		float SubsetIdx;	// uint 형변환해서 frame으로 사용
-		float MaxSubsetIdx;
+		float SubsetIdx = 0.f;	// uint 형변환해서 frame으로 사용
+		float MaxSubsetIdx = 0.f;
 		Matrix WorldMatrix;
 	};
-	enum { MESH_CNT = 3 };
+	enum { MESH_CNT = 6 };
 	std::vector<BloodMesh> _BloodMeshVec;	// <mesh, maxSubsetIdx>
 
 	std::shared_ptr<ENGINE::Texture> _BloodALB0Tex{};
 	std::shared_ptr<ENGINE::Texture> _BloodNRMR0Tex{};
 
+	std::shared_ptr<ENGINE::Texture> _DecalBloodALB0Tex{};
+	std::shared_ptr<ENGINE::Texture> _DecalBloodNRMR0Tex{};
+	std::shared_ptr<ENGINE::Texture> _DecalBloodMsk0Tex{};
+
+	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
+
 	Vector3 _ExtraColor = Vector3(0.f, 0.f, 0.f);	// 원본 albedo에 더해줄 색
+	float _PlaneSliceAmount = 1.f;
+	Matrix _PlaneWorldMatrix = Matrix();
 
 private:
 	explicit AppearGroundMonster() = default;
@@ -33,7 +41,7 @@ private:
 private:
 	void RenderInit();
 	void RenderGBuffer(const DrawInfo& _Info);
-	// + 알파 들어간 바닥
+	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 public:
 	static AppearGroundMonster* Create();
 public:

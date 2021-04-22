@@ -34,26 +34,26 @@ void Liquid::Imgui_Modify()
 		ImGui::Text("Eff_Liquid : %d", _VariationIdx);
 
 		{
-			Vector3 SliderPosition = Sptransform->GetPosition();
+			static Vector3 SliderPosition = Sptransform->GetPosition();
 			ImGui::SliderFloat3("Pos##Liquid", SliderPosition, -10.f, 10.f);
 			Sptransform->SetPosition(SliderPosition);
 		}
 
 		{
-			float Scale = Sptransform->GetScale().x;
+			static float Scale = Sptransform->GetScale().x;
 			ImGui::SliderFloat("Scale##Liquid", &Scale, 0.1f, 1.f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x¸¸ À¯È¿
 			SetScale(Scale);
 		}
 
 		{
-			Vector3 SliderRotation{ 0,0,0 };
+			static Vector3 SliderRotation{ 0,0,0 };
 			ImGui::SliderFloat3("Rot##Liquid", SliderRotation, 0.f, 360.f);
 			Sptransform->SetRotation(SliderRotation);
 		}
 
 		{
-			float PlayingSpeed = _PlayingSpeed;
+			static float PlayingSpeed = _PlayingSpeed;
 			ImGui::SliderFloat("PlayingSpeed##Liquid", &PlayingSpeed, 0.1f, 10.f);
 			_PlayingSpeed = PlayingSpeed;
 		}

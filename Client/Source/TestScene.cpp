@@ -68,7 +68,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
+	AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	AddGameObject<AppearGroundMonster>();
 

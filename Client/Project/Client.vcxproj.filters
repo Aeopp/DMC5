@@ -189,9 +189,7 @@
     <ClInclude Include="..\Header\Car.h">
       <Filter>02.GameObject\02.Monster\03.Em5000\Car</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\DashImpact.h" />
-    <ClInclude Include="..\Header\Blood.h" />
     <ClInclude Include="..\Header\TestObject.h">
       <Filter>02.GameObject\Test</Filter>
     </ClInclude>
@@ -248,6 +246,9 @@
     </ClInclude>
     <ClInclude Include="..\Header\AppearGroundMonster.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Liquid.h">
+      <Filter>02.GameObject\Effect\Liquid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

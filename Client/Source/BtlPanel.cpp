@@ -7,7 +7,7 @@
 
 // test
 //#include "Glint.h"
-//#include "OvertureHand.h"
+#include "OvertureHand.h"
 //#include "Liquid.h"
 #include "AppearGroundMonster.h"
 
@@ -1933,12 +1933,13 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//	idx = 0u;
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetVariationIdx((Liquid::VARIATION)idx);
 		std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->PlayStart();
+		std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->SetLoop(true);
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
 
-		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
 	}
 	if (Input::GetKeyDown(DIK_F6))

@@ -18,7 +18,7 @@ Camera* Camera::Create()
 
 HRESULT Camera::Ready()
 {
-    m_vEye = Vector3(0.f, 0.f, -5.f);
+    m_vEye = Vector3(0.f, 5.f, -5.f);
     m_vAt = Vector3(0.f, 0.f, 0.f);
     m_vUp = Vector3(0.f, 1.f, 0.f);
 
@@ -164,7 +164,7 @@ void Camera::Move(const float& _fTimeDelta)
         Vector3 vLook;
         memcpy(&vLook, &matCameraWorld.m[2][0], sizeof(Vector3));
 
-        Vector3 vLength = *D3DXVec3Normalize(&vLook, &vLook) * 50.f * _fTimeDelta;
+        Vector3 vLength = *D3DXVec3Normalize(&vLook, &vLook) * 10.f * _fTimeDelta;
 
         m_vEye += vLength;
         m_vAt += vLength;
@@ -175,7 +175,7 @@ void Camera::Move(const float& _fTimeDelta)
         Vector3 vLook;
         memcpy(&vLook, &matCameraWorld.m[2][0], sizeof(Vector3));
 
-		Vector3 vLength = *D3DXVec3Normalize(&vLook, &vLook) * 50.f * _fTimeDelta;
+		Vector3 vLength = *D3DXVec3Normalize(&vLook, &vLook) * 10.f * _fTimeDelta;
 
 		m_vEye -= vLength;
 		m_vAt -= vLength;
@@ -186,7 +186,7 @@ void Camera::Move(const float& _fTimeDelta)
         Vector3 vRight;
         memcpy(&vRight, &matCameraWorld.m[0][0], sizeof(Vector3));
 
-		Vector3 vLength = *D3DXVec3Normalize(&vRight, &vRight) * 25.f * _fTimeDelta;
+		Vector3 vLength = *D3DXVec3Normalize(&vRight, &vRight) * 5.f * _fTimeDelta;
 
 		m_vEye -= vLength;
 		m_vAt -= vLength;
@@ -197,7 +197,7 @@ void Camera::Move(const float& _fTimeDelta)
 		Vector3 vRight;
 		memcpy(&vRight, &matCameraWorld.m[0][0], sizeof(Vector3));
 
-		Vector3 vLength = *D3DXVec3Normalize(&vRight, &vRight) * 25.f * _fTimeDelta;
+		Vector3 vLength = *D3DXVec3Normalize(&vRight, &vRight) * 5.f * _fTimeDelta;
 
 		m_vEye += vLength;
 		m_vAt += vLength;
