@@ -8,6 +8,8 @@ class GraphicSystem final : public Object
 private:
 	LPDIRECT3D9			m_pSDK;
 	LPDIRECT3DDEVICE9	m_pDevice;
+public:
+	bool  m_bDepthBiasCap;
 private:
 	explicit GraphicSystem();
 	virtual	~GraphicSystem() = default;

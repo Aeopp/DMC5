@@ -480,6 +480,7 @@ HRESULT Renderer::Render()&
 
 	//  ½¦µµ¿ì ÆÐ½º 
 	RenderShadowMaps();
+	EnableDepthBias();
 	// ±âÇÏ ÆÐ½º
 	RenderGBuffer();
 
@@ -521,6 +522,7 @@ HRESULT Renderer::Render()&
 	RenderDebugBone();
 	ImguiRender();
 	GraphicSystem::GetInstance()->End();
+	DisableDepthBias();
 	RenderEnd();
 	Device->Present(NULL, NULL, NULL, NULL);
 	BackBuffer->Release();
@@ -561,6 +563,16 @@ void Renderer::Editor()&
 		ImGui::Checkbox("LightRender", &bLightRender);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
+		// ½Ã¹ß ³ª¶û ½Î¿ìÀÚ Z 
+		static bool  DepthBiasButton = true;
+		static float ZeroDotOne = 0.000001f;
+		
+		{
+			ImGui::InputScalar("SlpoeScaleDepthBias", ImGuiDataType_Float, &SlpoeScaleDepthBias, DepthBiasButton ? &ZeroDotOne : NULL,nullptr,
+				"%1.7f");
+			ImGui::InputScalar("DepthBias", ImGuiDataType_Float, &DepthBias, DepthBiasButton ? &ZeroDotOne : NULL
+			,nullptr, "%1.7f");
+		}
 
 		if (ImGui::CollapsingHeader("AdaptLuminance"))
 		{
@@ -2103,7 +2115,24 @@ HRESULT Renderer::ToneMap()
 	hdreffects->End();
 
 	return S_OK;
-};
+}
+inline DWORD F2DW(FLOAT f)
+{
+	return *((DWORD*)&f);
+}
+void Renderer::EnableDepthBias()&
+{
+	Device->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS,
+		F2DW(SlpoeScaleDepthBias));
+	Device->SetRenderState(D3DRS_DEPTHBIAS, F2DW(DepthBias));
+}
+void Renderer::DisableDepthBias()&
+{
+	Device->
+		SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, F2DW(0.0f));
+	Device->SetRenderState(D3DRS_DEPTHBIAS, F2DW(0.0f));
+}
+;
 
 void Renderer::LightSave(std::filesystem::path path)
 {

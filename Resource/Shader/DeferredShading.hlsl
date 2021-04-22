@@ -96,12 +96,12 @@ float gaSchlickGGX(float cosLi, float cosLo, float roughness)
 // Shlick의 프레넬 계수 (근사치)
 float3 fresnelSchlick(float3 F0, float cosTheta)
 {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, abs(5.0) );
 }
 
 float3 fresnelSchlickF3(float cosTheta, float3 F0)
 {
-    return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
+    return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), abs(5.0) );
 }
 
 float DistributionGGX(float3  N, float3 H, float roughness)

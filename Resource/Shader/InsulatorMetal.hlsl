@@ -19,7 +19,7 @@ uniform float2 pixelSize;
 // Shlick's approximation of the Fresnel factor.
 float3 fresnelSchlick(float3 F0, float cosTheta)
 {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, abs(5.0) );
 }
 
 
