@@ -1,9 +1,9 @@
 #define QUAD_PI		12.566370614359172
-static const float PI = 3.141592;
-static const float Epsilon = 0.00001;
-
+#define PI 3.141592
+#define Epsilon 0.00001
+#define Fdielectric 0.04
 // 모든 물체에 대한 일정한 수직 입사 프레 넬 계수.
-static const float3 Fdielectric = 0.04;
+
 
 uniform sampler2D   albedo : register(s0);
 uniform sampler2D   normals : register(s1);
@@ -44,6 +44,28 @@ float shadowmin = 0.0f;
 float3 LightDirection;
 float3 Lradiance;
 
+float GeometrySchlickGGX(float NdotV, float roughness)
+{
+    float r = (roughness + 1.0);
+    float k = (r * r) / 8.0;
+
+    float num = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+	
+    return num / denom;
+}
+
+
+float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+	
+    return ggx1 * ggx2;
+}
+
 // 디즈니
 float ndfGGX(float cosLh, float roughness)
 {
@@ -73,6 +95,25 @@ float gaSchlickGGX(float cosLi, float cosLo, float roughness)
 float3 fresnelSchlick(float3 F0, float cosTheta)
 {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
+float3 fresnelSchlickF3(float cosTheta, float3 F0)
+{
+    return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
+}
+
+float DistributionGGX(float3  N, float3 H, float roughness)
+{
+    float a = roughness * roughness;
+    float a2 = a * a;
+    float NdotH = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH * NdotH;
+	
+    float num = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+	
+    return num / denom;
 }
 
 // 반사 Image based lighting 환경 맵에 대한 밉맵 레벨 수 반환 .
@@ -115,6 +156,9 @@ in float roughness,
 // 언팩한 월드 
 in float3 wpos)
 {
+    //metalness = 0.0f;
+    //roughness = 1.f;
+    
     // 픽셀 월드 -> 카메라 
     float3 Lo = normalize(eyePos.xyz - wpos);
     // 월드 노말
@@ -196,7 +240,9 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
-    return (diffuseBRDF + specularBRDF) * lightColor * Lradiance * cosLi * ShadowFactor;
+    return saturate((diffuseBRDF + specularBRDF) * lightColor * Lradiance * cosLi * ShadowFactor);
+    
+
 }
 
 
@@ -278,6 +324,50 @@ float3 wpos, float3 wnorm)
         lightColor * illuminance * ShadowFactor;
 }
 
+float3 pbr_point(
+// albm
+in float3 albedo,
+in float metalness,
+// nrmr 
+in float3 wnorm,
+in float roughness,
+// 언팩한 월드 
+in float3 wpos)
+{
+    float3 N = normalize(wnorm);
+    float3 V = normalize(eyePos.xyz - wpos);
+    
+    float3 F0 = float3(0.04f, 0.04f, 0.04f);
+    F0 = lerp(F0, albedo, metalness);
+    
+    float3 Lo = float3(0, 0, 0);
+    
+    float3 L = normalize(lightPos.xyz- wpos);
+    float3 H = normalize(V + L);
+    
+    float distance = length(lightPos.xyz- wpos.xyz);
+    float attenuation = 1.0 / (distance * distance);
+    float radiance = lightColor * attenuation;
+    
+    float NDF = DistributionGGX(N, H, roughness);
+    float G   = GeometrySmith(N, V, L, roughness);
+    float3 F = fresnelSchlickF3(max(dot(H, V), 0.0), F0);
+
+    float3 kS = F;
+    float3 kD = float3(1.0 ,1.0,1.0) - kS;
+    kD *= 1.0 - metalness;
+        
+    float3 numerator = NDF * G * F;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+    float3 specular = numerator / max(denominator, 0.001);
+    
+    float NdotL = max(dot(N, L), 0.0);
+    Lo = (kD * albedo / PI + specular) * radiance * NdotL;
+    
+    return Lo;
+};
+
+
 float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
 {
     float3 ldir = lightPos.xyz - wpos;
@@ -325,9 +415,10 @@ void ps_deferred(
     float metal = saturate(pow(albm.a, abs(1.0 / 2.2)));
     
     // 월드 노말 + 거칠기 
+    
     float4 nrmr = tex2D(normals, tex); 
     float3 wnorm = nrmr.xyz * 2.0f - 1.0f;
-    float  roughness = nrmr.a;
+    float roughness = (nrmr.a);
     
     float  d = tex2D(depth, tex).r;
     float4 wpos = float4(tex.x * 2 - 1, 1 - 2 * tex.y, d, 1);
@@ -358,12 +449,17 @@ void ps_deferred(
         }
         else 
         {
+            
 			// 점 조명
-            color.rgb = 
-            Luminance_Blinn_Point(
-            albm.rgb, 
-            wpos.xyz, 
-            wnorm);
+            //color.rgb = 
+            //Luminance_Blinn_Point(
+            //albm.rgb, 
+            //wpos.xyz, 
+            //wnorm);
+            
+            
+            color.rgb = pbr_point(albm.rgb, metal, wnorm, roughness, wpos);
+
         }
 
         color.a = 1;

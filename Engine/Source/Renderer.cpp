@@ -566,7 +566,7 @@ void Renderer::Editor()&
 			for (int32 i = 0; i < adaptedluminance_var.size(); ++i)
 			{
 				std::string label = "adpvar " + std::to_string(i);
-				ImGui::SliderFloat(label.c_str(), &adaptedluminance_var[i], 0.0f, 100.f);
+				ImGui::SliderFloat(label.c_str(), &adaptedluminance_var[i], -1000.f, 1000.f);
 			};
 			if (ImGui::Button("AdaptLuminance Default"))
 			{
@@ -838,9 +838,9 @@ void Renderer::RenderGBuffer()
 	device->SetRenderTarget (1, RenderTargets["NRMR"]->GetSurface());
 	device->SetRenderTarget (2, RenderTargets["Depth"]->GetSurface());
 
-	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-	device->SetSamplerState (0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState (0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 4);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState (0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
@@ -1015,6 +1015,7 @@ void Renderer::DeferredShading()
 
 		// 여기서부터 ..
 		// point lights
+		// 현재 버그 ... 
 		device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
 
 		for (auto& PointLight : PointLights)
@@ -1644,6 +1645,8 @@ HRESULT Renderer::BrightPass()&
 
 	pixelsize.x = 1.0f / (float)viewport.Width;
 	pixelsize.y = -1.0f / (float)viewport.Height;
+
+	// 여기서 샘플링 .
 
 	Device->SetRenderTarget(0, 
 		RenderTargets["dsampletargets0"]->GetSurface());

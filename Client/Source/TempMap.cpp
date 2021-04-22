@@ -103,10 +103,10 @@ void TempMap::RenderInit()
 	// 스태틱 메쉬 로딩
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
-	/*_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Static\\Temp\\1357_theatrefloor_01.fbx", _InitInfo);*/
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-			L"..\\..\\..\\TestResource\\Hotel\\Hotel.fbx", _InitInfo); 
+		L"..\\..\\Resource\\Map\\Static\\Temp\\1357_theatrefloor_01.fbx", _InitInfo);
+	/*_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
+			L"..\\..\\..\\TestResource\\Hotel\\Hotel.fbx", _InitInfo); */
 	
 	/*_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
 		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Arcade.fbx", _InitInfo);*/

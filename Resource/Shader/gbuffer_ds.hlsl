@@ -51,7 +51,6 @@ void ps_gbuffer_tbn(
                 float3x3(normalize(float3(wtan)),
                          normalize(float3(wbin)),
                          normalize(float3(wnorm)));
-    
     tbn = transpose(tbn);
     float4 normap_sample = tex2D(normalMap, tex);
     
