@@ -28,6 +28,9 @@ enum ATTACKTYPE
 	Attack_Hard, //으으윽
 	Attack_Air_Start, //올라가기 시작
 	Attack_Air,	//올라가있을때
+	Attack_Buster_Start,
+	Attack_Buster_Loop,
+	Attack_Buster_End,
 	Attack_END
 };
 

@@ -25,7 +25,7 @@ using namespace std;
 
 TestScene::TestScene()
 {
-
+	pPlane = nullptr;
 }
 
 void TestScene::Free()
@@ -41,10 +41,10 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
-	//AddGameObject<Camera>();
-
-	AddGameObject<Nero>();
+	//AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
+	
+	//AddGameObject<Nero>();
 	AddGameObject<Em100>();
 	//AddGameObject<Car>();
 	
@@ -77,7 +77,13 @@ HRESULT TestScene::LoadScene()
 HRESULT TestScene::Awake()
 {
 	Scene::Awake();
-	return S_OK;
+
+	if (nullptr != pPlane)
+		return S_OK;
+
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+
+	Physics::AddActor(UniqueID, *pPlane);
 }
 
 HRESULT TestScene::Start()

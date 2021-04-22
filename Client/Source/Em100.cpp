@@ -121,7 +121,17 @@ void Em100::State_Change(const float _fDeltaTime)
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
 				{
-					m_eState = idle;
+					int iRandom = FMath::Random<int>(1, 4);
+
+					if (iRandom == 1)
+						m_eState = Idle;
+					else if (iRandom == 2)
+						m_eState = Idle2;
+					else if (iRandom == 3)
+						m_eState = Idle3;
+					else if (iRandom == 4)
+						m_eState = Idle4;
+
 					m_bIng = false;
 					m_bAttack = false;
 
@@ -145,7 +155,17 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bIng = false;
 				m_bAttack = false;
 
@@ -168,7 +188,17 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bIng = false;
 				m_bHardAttack = false;
 
@@ -196,7 +226,17 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Front" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bHit = false;
 				m_bIng = false;
 			}
@@ -205,11 +245,21 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Hit_L:
 		if (m_bHit == true)
 		{
-			m_pMesh->PlayAnimation("Hit_L", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Hit_L", false, {}, 0.8f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_L" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bHit = false;
 				m_bIng = false;
 			}
@@ -218,11 +268,21 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Hit_R:
 		if (m_bHit == true)
 		{
-			m_pMesh->PlayAnimation("Hit_R", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Hit_R", false, {}, 0.8f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_R" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bHit = false;
 				m_bIng = false;
 			}
@@ -233,9 +293,8 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
-			
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->IsAnimationEnd())
-			{
+			{	
 				m_eState = Hit_End;
 				m_bIng = false;
 			}
@@ -244,7 +303,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Hit_End:
 		if (m_bHit == true)
 		{
-			m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Hit_End", false, {}, 1.2f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
 				m_eState = Downword_Down_StandUp;
 		}
@@ -257,7 +316,16 @@ void Em100::State_Change(const float _fDeltaTime)
 			{
 				m_bHit = false;
 				m_bIng = false;
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
 			}
 		}
 		break;
@@ -267,7 +335,17 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Move_C_End", false, {}, 1.f, 50.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_C_End" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bMove = false;
 				m_bIng = false;
 			}
@@ -302,7 +380,17 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_L_End" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bMove = false;
 				m_bIng = false;
 			}
@@ -333,7 +421,17 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_R_End" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = idle;
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
 				m_bMove = false;
 				m_bIng = false;
 			}
@@ -356,20 +454,49 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_eState = Walk_Right_Loop;
 		}
 		break;
-	case Em100::idle:
-
-		int iRandom = FMath::Random<int>(1, 4);
-
-		if(iRandom == 1)
-			m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
-		else if(iRandom == 2)
-			m_pMesh->PlayAnimation("Idle2", true, {}, 1.f, 50.f, true);
-		else if(iRandom == 3)
-			m_pMesh->PlayAnimation("Idle3", true, {}, 1.f, 50.f, true);
-		else if(iRandom == 4)
-			m_pMesh->PlayAnimation("Idle4", true, {}, 1.f, 50.f, true);
-
+	case Em100::Idle:
+		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
+		break;
+	case Em100::Idle2:
+		m_pMesh->PlayAnimation("Idle2", true, {}, 1.f, 50.f, true);
+		m_BattleInfo.eAttackType = Attack_END;
+		break;
+	case Em100::Idle3:
+		m_pMesh->PlayAnimation("Idle3", true, {}, 1.f, 50.f, true);
+		m_BattleInfo.eAttackType = Attack_END;
+		break;
+	case Em100::Idle4:
+		m_pMesh->PlayAnimation("Idle4", true, {}, 1.f, 50.f, true);
+		m_BattleInfo.eAttackType = Attack_END;
+		break;
+
+	case Em100::Hit_Buster_Start:
+		if (m_bHit)
+			m_pMesh->PlayAnimation("Slam_Damage_fall_loop", true, {}, 1.f, 20.f, true);
+		break;
+	case Em100::Hit_Buster_End:
+		if (m_bHit)
+		{
+			m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
+			{
+				m_bHit = false;
+				m_bIng = false;
+				
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+			}
+		}
 		break;
 	}
 
@@ -422,15 +549,18 @@ HRESULT Em100::Ready()
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
+	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 	// 	PushEditEntity(_ShaderInfo.GetShader(RenderProperty::Order::ForwardAlphaBlend).get());
 
-
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
+
+
+	m_fPower = 300.f;
+	m_vPower = D3DXVECTOR3(0.f, 0.5f, 0.8f);
 	return S_OK;
 }
 
@@ -452,20 +582,19 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
-	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+
+
 	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetGravity(false);
+	m_pCollider.lock()->SetGravity(true);
 
 	//m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(1.1f);
-	m_pCollider.lock()->SetHeight(1.5f);
-	m_pCollider.lock()->SetCenter({ 0.f, 1.5f, 0.f });
+	m_pCollider.lock()->SetRadius(0.08f);
+	m_pCollider.lock()->SetHeight(0.15f);
+	m_pCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
 
-	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
-	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
+	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
+	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	//m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
 	return S_OK;
 }
@@ -524,6 +653,8 @@ UINT Em100::Update(const float _fDeltaTime)
 		State_Change(_fDeltaTime);
 	}
 
+
+
 	//cout << m_BattleInfo.iHp << endl;
 
 	return 0;
@@ -542,6 +673,14 @@ void Em100::Editor()
 	{
 		ImGui::Text("Deg %3.4f", m_fRadian);
 		ImGui::Text("Acc Deg %3.4f", m_fAccuangle);
+
+		ImGui::InputFloat("Power", &m_fPower);
+
+		ImGui::InputFloat("vPowerX", &m_vPower.x);
+		ImGui::InputFloat("vPowerY", &m_vPower.y);
+		ImGui::InputFloat("vPowerZ", &m_vPower.z);
+
+
 	}
 }
 
@@ -574,12 +713,38 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		m_bHit = true;
 		break;
 	case ATTACKTYPE::Attack_KnocBack:
+	{
 		m_eState = Hit_KnocBack;
 		m_bHit = true;
+		Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+		D3DXVec3Normalize(&vLook, &vLook);
+
+		
+		m_vPower += -vLook;
+
+		m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+		m_vPower.x = 0.f;
+		m_vPower.y = 0.5f;
+		m_vPower.z = 0.8f;
 		break;
+	}
 	case ATTACKTYPE::Attack_Back:
 		break;
-	case ATTACKTYPE::Attack_END:
+	case ATTACKTYPE::Attack_Buster_Start:
+		m_eState = Hit_Buster_Start;
+		m_bHit = true;
+		break;
+	case ATTACKTYPE::Attack_Buster_Loop:
+		m_eState = Hit_Buster_Loop;
+		m_bHit = true;
+		break;
+	case ATTACKTYPE::Attack_Buster_End:
+		m_eState = Hit_Buster_End;
+		m_bHit = true;
 		break;
 	default:
 		m_bIng = true;
@@ -733,7 +898,7 @@ void Em100::RenderInit()
 
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
-	//몬스터 초기상태 idle
+	//몬스터 초기상태 Idle
 	m_pMesh->PlayAnimation("Idle", true);
 }
 

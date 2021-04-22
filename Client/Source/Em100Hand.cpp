@@ -48,13 +48,13 @@ HRESULT Em100Hand::Awake()
 
 	if (m_bLeft)
 	{
-		m_pCollider.lock()->SetRadius(0.4f);
-		m_pCollider.lock()->SetCenter({ 0.4, 0.f, 0.0f });
+		m_pCollider.lock()->SetRadius(0.04f);
+		m_pCollider.lock()->SetCenter({ 0.04, 0.f, 0.0f });
 	}
 	else
 	{
-		m_pCollider.lock()->SetRadius(0.4f);
-		m_pCollider.lock()->SetCenter({ -0.4, 0.f, 0.1f });
+		m_pCollider.lock()->SetRadius(0.04f);
+		m_pCollider.lock()->SetCenter({ -0.04, 0.f, 0.01f });
 	}
 	return S_OK;
 }

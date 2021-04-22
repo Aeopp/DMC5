@@ -4,6 +4,9 @@
 class TestScene : public Scene
 {
 private:
+
+	PxRigidStatic* pPlane;
+private:
 	explicit TestScene();
 	virtual ~TestScene() = default;
 	// Scene을(를) 통해 상속됨

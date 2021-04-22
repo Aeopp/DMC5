@@ -53,6 +53,8 @@ public:
 
 	bool		IsGravity();
 	void		SetGravity(const bool _bActive);
+
+	void		AddForce(const D3DXVECTOR3 _vForce);
 };
 END
 #endif // !__COLLIDER_H__
