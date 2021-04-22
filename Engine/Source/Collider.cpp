@@ -298,6 +298,19 @@ void Collider::SetGravity(const bool _bActive)
 	m_pRigidActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !_bActive);
 }
 
+bool Collider::IsGround()
+{
+	if (false == m_bRigid)
+		return;
+
+	PxVec3 vVelocity = m_pRigidActor->is<PxRigidDynamic>()->getLinearVelocity();
+
+	if (fabs(vVelocity.y) > 0.0001)
+		return false;
+
+	return true;
+}
+
 void Collider::AddForce(const D3DXVECTOR3 _vForce)
 {
 	if (false == m_bRigid)

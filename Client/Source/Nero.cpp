@@ -116,8 +116,8 @@ HRESULT Nero::Awake()
 	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 
 
-	m_pMonster = std::static_pointer_cast<Em100>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster100).lock());
-	m_pMonsterTrans = m_pMonster.lock()->GetComponent<ENGINE::Transform>();
+	//m_pMonster = std::static_pointer_cast<Em100>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster100).lock());
+	//m_pMonsterTrans = m_pMonster.lock()->GetComponent<ENGINE::Transform>();
 	return S_OK;
 }
 

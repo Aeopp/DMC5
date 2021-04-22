@@ -401,7 +401,7 @@ call Engine.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\ToneMap.hlsl">
-      <FileType>Document</FileType>
+      <FileType>HLSL</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -421,6 +421,31 @@ call Engine.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Frustum.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\sky.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\skysphere.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\InsulatorMetal.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\measureluminance.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\hdreffects.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
