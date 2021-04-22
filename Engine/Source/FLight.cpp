@@ -435,7 +435,7 @@ void FLight::CalculateScissorRect(RECT& out, const D3DXMATRIX& view, const D3DXM
 {
 	// 카메라의 right 벡터를 얻어온다 . 
 	/*
-	std::memcpy(&camera_right, &viewinv._11, sizeof(Vector3));*/
+	std::memcpy(&camera_right, &viewinv._11, sizeof(Vector3));*/ 
 
 	static const Vector3 to_RT = FMath::RotationVecNormal({ 1,0,0 }, { 0,0,1 }, FMath::ToRadian(45.f));
 	static const Vector3 to_LB = FMath::RotationVecNormal({ 1,0,0 }, { 0,0,1 }, FMath::ToRadian(225.f));
@@ -458,6 +458,11 @@ void FLight::CalculateScissorRect(RECT& out, const D3DXMATRIX& view, const D3DXM
 
 	out.right = RTScreenPos.x;
 	out.top = RTScreenPos.y;
+	if (view_position.z <= 0.0f)
+	{
+		std::swap(out.left, out.right);
+		std::swap(out.top, out.bottom);
+	}
 	LastScissorRect = out;
 	//if (_Type != Point)
 	//	return;

@@ -1024,8 +1024,18 @@ void Renderer::DeferredShading()
 
 			PtLtSp.Center = (D3DXVECTOR3&)PointLight->GetPosition();
 			PtLtSp.Radius = PointLight->GetPointRadius();
-			if (false == CameraFrustum->IsIn(PtLtSp))continue;
 
+			/*if (FMath::Length((Vector3&)_RenderInfo.Eye - PtLtSp.Center) <= PtLtSp.Radius)
+			{
+
+			}
+			else
+			{
+			
+			}*/
+
+
+			if (false == CameraFrustum->IsIn(PtLtSp))continue;
 			clipplanes.x = PointLight->GetNearPlane();
 			clipplanes.y = PointLight->GetFarPlane();
 			RECT scissorrect;
