@@ -673,6 +673,14 @@ void NeroState::ActiveColl_RedQueen(bool _ActiveOrNot)
 	m_pNero.lock()->Set_RQ_Coll(_ActiveOrNot);
 }
 
+void NeroState::ActiveColl_Monsters(bool _ActiveOrNot)
+{
+	if (m_bActiveColl == _ActiveOrNot)
+		return;
+	m_bActiveColl = _ActiveOrNot;
+	m_pNero.lock()->SetColl_Monsters(_ActiveOrNot);
+}
+
 
 #pragma endregion 
 
@@ -1363,6 +1371,11 @@ HRESULT RunStartLeft::StateEnter()
 			m_pNero.lock()->SetRotationAngle(-90.f);
 		}
 		break;
+	case Nero::ANI_COMBOA4:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		if (Nero::Dir_Left != NeroPreDir)
+			m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
 	default:
 		if (Nero::Dir_Left == NeroPreDir)
 		{
@@ -1562,6 +1575,11 @@ HRESULT RunStartRight::StateEnter()
 			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
 			m_pNero.lock()->SetRotationAngle(90.f);
 		}
+		break;
+	case Nero::ANI_COMBOA4:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		if (Nero::Dir_Right != NeroPreDir)
+			m_pNero.lock()->SetRotationAngle(90.f);
 		break;
 	default:
 		if (Nero::Dir_Right == NeroPreDir)
@@ -1764,6 +1782,11 @@ HRESULT RunStart180::StateEnter()
 			m_pNero.lock()->SetRotationAngle(180.f);
 		}
 		break;
+	case Nero::ANI_COMBOA4:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		if (Nero::Dir_Back != NeroPreDir)
+			m_pNero.lock()->SetRotationAngle(180.f);
+		break;
 	default:
 		if (Nero::Dir_Back == NeroPreDir)
 		{
@@ -1902,7 +1925,7 @@ HRESULT RunStartFront::StateEnter()
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT PreAnimationIndex = m_pNero.lock()->Get_PreAnimationIndex();
 	m_pNero.lock()->Reset_RotationAngle();
-	m_pNero.lock()->Reset_Test();
+	m_pNero.lock()->Reset_RootRotation();
 	m_pNero.lock()->SetAngleFromCamera();
 
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
@@ -2017,6 +2040,14 @@ HRESULT RunStop::StateEnter()
 	case Nero::RQ:
 		if(Nero::ANI_RUNLOOP_FROM_COMBOA1 == CurAnimationIndex)
 			m_pNero.lock()->ChangeAnimation("Idle_From_ComboA1_End", false, Nero::ANI_IDLE_FROM_COMBOA1_END);
+		else if (Nero::ANI_RUNSTART_FROM_COMBOA1 == CurAnimationIndex)
+		{
+			m_pNero.lock()->ChangeAnimation("Idle_From_ComboA1_End", false, Nero::ANI_IDLE_FROM_COMBOA1_END);
+		}
+		else if (Nero::ANI_RUNSTART_FROM_COMBOA2 == CurAnimationIndex)
+		{
+			m_pNero.lock()->ChangeAnimation("Idle_From_ComboA1_End", false, Nero::ANI_IDLE_FROM_COMBOA1_END);
+		}
 		else
 			m_pNero.lock()->ChangeAnimation("RunStop", false, Nero::ANI_RUNSTOP);
 		break;
@@ -3504,14 +3535,15 @@ HRESULT BT_Att1::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
 	}
-	NeroState::ActiveColl_RedQueen(true);
+	NeroState::ActiveColl_Monsters(true);
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
 HRESULT BT_Att1::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_RedQueen(false);
+	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
@@ -3555,14 +3587,15 @@ HRESULT BT_Att2::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboA2", false);
 	}
-	NeroState::ActiveColl_RedQueen(true);
+	NeroState::ActiveColl_Monsters(true);
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
 HRESULT BT_Att2::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_RedQueen(false);
+	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
@@ -3606,14 +3639,15 @@ HRESULT BT_Att3::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
 	}
-	NeroState::ActiveColl_RedQueen(true);
+	NeroState::ActiveColl_Monsters(true);
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
 HRESULT BT_Att3::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_RedQueen(false);
+	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
@@ -3662,20 +3696,24 @@ HRESULT BT_Att4::StateEnter()
 		m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA4", false);
 	}
-	NeroState::ActiveColl_RedQueen(true);
+	NeroState::ActiveColl_Monsters(true);
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
 HRESULT BT_Att4::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_RedQueen(false);
+	
 	return S_OK;
 }
 
 HRESULT BT_Att4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if(0.35 <= fCurrAnimationTime)
+		NeroState::ActiveColl_Monsters(false);
 		
 	if (0.44 <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::IDLE);
@@ -7067,7 +7105,7 @@ HRESULT ComboA_Dash::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA1_Dash", false, Nero::ANI_COMBOA1_DASH);
-	m_pNero.lock()->SetAngleFromCamera();
+	//m_pNero.lock()->SetAngleFromCamera();
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{

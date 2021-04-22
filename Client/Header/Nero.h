@@ -266,7 +266,7 @@ public:
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
-	void Reset_Test() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
+	void Reset_RootRotation() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_Wings(bool ActiveOrNot);
 	void SetActive_Wing_Left(bool ActiveOrNot);
@@ -277,6 +277,9 @@ public:
 	void SetActive_WingArm_Left(bool ActiveOrNot);
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
+	void SetColl_Monsters(bool _AcitveOrNot);
+public:
+	void CheckAutoRotate();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//Ä«¸Þ¶ó
@@ -369,6 +372,8 @@ private:
 
 	bool	m_IsMajin = false;
 
+	float	m_fDistanceToMonster = 0.f;
+	float	m_fTest = 0.f;
 	//
 	D3DXVECTOR3 vDegree;
 	D3DXVECTOR3 vRotationDegree;

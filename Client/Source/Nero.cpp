@@ -193,6 +193,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	case Attack_END:
 		break;
 	default:
+		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	}
 }
@@ -203,9 +204,10 @@ void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (eTag)
 	{
 	case MonsterWeapon:
-		//if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
-		//	return;
+		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
+			return;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
 		break;
 	default:
 		break;
@@ -464,6 +466,65 @@ void Nero::SetAngleFromCamera(float _fAddAngle)
 	//m_fAngle += m_fRotationAngle;
 	//m_pTransform.lock()->SetRotation(Vector3(0.f, m_fAngle, 0.f));
 
+
+}
+
+void Nero::SetColl_Monsters(bool _AcitveOrNot)
+{
+	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
+
+	for (auto& pMonster : MonsterList)
+	{
+		pMonster.lock()->Set_Coll(_AcitveOrNot);
+	}
+}
+
+void Nero::CheckAutoRotate()
+{
+	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
+	std::weak_ptr<Monster> LockOnMonster;
+	if (0 == MonsterList.size())
+		return;
+	//첫번째로 있는애랑 거리 검사
+	Vector3 Dir = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+	float Distance = D3DXVec3Length(&Dir);
+	LockOnMonster = MonsterList.begin()->lock();
+	//루프 돌면서 애들이랑 거리 검사
+	for (auto& pMonster : MonsterList)
+	{
+		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		float Temp = D3DXVec3Length(&Direction);
+		if (Distance >= Temp)
+		{
+			Distance = Temp;
+			LockOnMonster = pMonster;
+		}
+	}
+
+	if (Distance <= RotateDistance)
+	{
+		Vector3 vMonsterPos = LockOnMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+		Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+		Vector3 vDir = vMonsterPos - vMyPos;
+		vDir.y = 0;
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+		float fDot = D3DXVec3Dot(&vDir, &vLook);
+		float fRadian = acosf(fDot);
+		
+		Vector3	vCross;
+		D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+		if (vCross.y > 0)
+			fRadian *= -1;
+		m_fAngle += -D3DXToDegree(fRadian);
+		vDegree.y = m_fAngle;
+		vRotationDegree.y = 0;
+		Reset_RootRotation();
+	}
 
 }
 

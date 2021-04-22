@@ -524,7 +524,7 @@ UINT Em100::Update(const float _fDeltaTime)
 		State_Change(_fDeltaTime);
 	}
 
-	cout << m_BattleInfo.iHp << endl;
+	//cout << m_BattleInfo.iHp << endl;
 
 	return 0;
 }
@@ -591,12 +591,13 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	//레드퀸, 버스터암, 건틀릿들, 와이어암
+	if (!m_bCollEnable)
+		return;
+		//레드퀸, 버스터암, 건틀릿들, 와이어암
+	m_bCollEnable = false;
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
-		if (static_pointer_cast<Unit>(_pOther.lock())->Get_Coll() == false)
-			break;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
