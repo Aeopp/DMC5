@@ -562,9 +562,10 @@ void Renderer::Editor()&
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
+		ImGui::SliderFloat("ao", &ao,0.0f,1.f );
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
-		// ½Ã¹ß ³ª¶û ½Î¿ìÀÚ Z 
+		
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
 		
@@ -884,6 +885,12 @@ void Renderer::RenderGBuffer()
 
 					if (bLightRender)
 					{
+						DWORD zwrite, zenable;
+						Device->GetRenderState(D3DRS_ZWRITEENABLE, &zwrite);
+						Device->GetRenderState(D3DRS_ZENABLE, &zenable);
+
+						Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+						Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 						for (auto& _Light : DirLights)
 						{
 							_Light->Render(_DrawInfo);
@@ -892,6 +899,9 @@ void Renderer::RenderGBuffer()
 						{
 							_Light->Render(_DrawInfo);
 						}
+
+						Device->SetRenderState(D3DRS_ZENABLE, zenable);
+						Device->SetRenderState(D3DRS_ZWRITEENABLE, zwrite);
 					}
 
 				}
@@ -1005,6 +1015,7 @@ void Renderer::DeferredShading()
 				deferred->SetFloat("ShadowDepthBias",DirLight->shadowdepthbias);
 				deferred->SetFloat("ShadowDepthMapHeight", DirLight->GetShadowMapSize());
 				deferred->SetFloat("ShadowDepthMapWidth", DirLight->GetShadowMapSize());
+				deferred->SetFloat("ao", ao);
 				Vector3 LightDirection = DirLight->GetDirection();
 				deferred->SetFloatArray("LightDirection", LightDirection,3);
 				deferred->SetFloatArray("Lradiance", DirLight->Lradiance, 3);

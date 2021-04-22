@@ -83,6 +83,7 @@ public:
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	float ao = 0.012f;
 	float SlpoeScaleDepthBias = 0.0f;
 	float DepthBias = 0.0f;
 	float DefaultDepthBias = 0.0f;

@@ -26,7 +26,7 @@ uniform float  specularPower = 80.0f;
 uniform float4 eyePos;
 uniform float2 pixelSize;
 uniform float2 clipPlanes;
-
+uniform float ao = 0.1f;
 uniform float sinAngularRadius = 0.0046251;
 uniform float cosAngularRadius = 0.9999893;
 
@@ -216,7 +216,7 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
-    float ao = 0.01f;
+    
     Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor + (lightColor * ao);
     return Lo;
 }
@@ -399,8 +399,6 @@ in float3 wpos)
         ShadowFactor -= Shadow;
     }
     ShadowFactor = saturate(ShadowFactor);
-    
-    float ao = 0.1f;
     
     return ((diffuseBRDF + specularBRDF) * Lradiance * cosLi) * ShadowFactor + ao * lightColor;
 }
