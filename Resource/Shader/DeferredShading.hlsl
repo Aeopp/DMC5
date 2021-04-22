@@ -221,6 +221,94 @@ in float3 wpos)
     return Lo;
 }
 
+
+float3 pbr_point(
+// albm
+in float3 albedo,
+in float metalness,
+// nrmr 
+in float3 wnorm,
+in float roughness,
+// 언팩한 월드 
+in float3 wpos)
+{
+    float3 N = normalize(wnorm);
+    float3 V = normalize(eyePos.xyz - wpos);
+    
+    float3 F0 = float3(0.04f, 0.04f, 0.04f);
+    F0 = lerp(F0, albedo, metalness);
+    
+    float3 Lo = float3(0, 0, 0);
+    
+    float3 L = normalize(lightPos.xyz - wpos);
+    float3 H = normalize(V + L);
+    
+    // Origin
+    float distance = length(lightPos.xyz - wpos.xyz);
+    float attenuation = 1.0 / (distance * distance);
+    float radiance = lightColor * attenuation;
+    // 
+    
+   
+    float NDF = DistributionGGX(N, H, roughness);
+    float G = GeometrySmith(N, V, L, roughness);
+    float3 F = fresnelSchlickF3(max(dot(H, V), 0.0), F0);
+
+    float3 kS = F;
+    float3 kD = float3(1.0, 1.0, 1.0) - kS;
+    kD *= 1.0 - metalness;
+        
+    float3 numerator = NDF * G * F;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+    float3 specular = numerator / max(denominator, 0.001);
+    float NdotL = max(dot(N, L), 0.0);
+    
+    // calculate shadow
+    //float ShadowFactor = 1.0f;
+    //// 깊이가 더 깊다면 투영 했을때 ????? 먼저 닿았음
+    //if (ShadowDepthMapHeight > 0)
+    //{
+    //    float pcfDepth = texCUBE(cubeShadowMap, -L).x;
+    //    // 깊이 포인트 
+    //    float d = (distance - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
+    //    if ((pcfDepth + ShadowDepthBias) < d)
+    //    {
+    //        ShadowFactor -= 1.f;
+    //    }
+    //    ShadowFactor = saturate(ShadowFactor +shadowmin);
+    //}
+    // shadow end
+    
+    // 포인트 라인트용 모먼트 
+    float ShadowFactor = 1.f;
+    if (ShadowDepthMapHeight > 0)
+    {
+        float2 moments = texCUBE(cubeShadowMap, -L).xy;
+
+        float z = distance;
+        float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
+        float shadow = ShadowVariance(moments, d);
+        ShadowFactor = saturate(shadow + shadowmin);
+    }
+    
+    // 
+    
+    // 변형 
+    
+    //float dist2 = max(dot(ldir, ldir), 1e-4f);
+    //float illuminance = (lightFlux / (QUAD_PI * dist2)) * saturate(NdotL);
+    //float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);
+    
+    //
+    
+    // Origin 
+    // Lo = (kD * albedo / PI + specular) * radiance * NdotL;
+    
+    Lo = (kD * albedo / PI + specular) * lightFlux * radiance * NdotL * ShadowFactor;
+    
+    return Lo;
+};
+
 float3 pbr_direction(
 // albm
 in float3 albedo,
@@ -394,87 +482,6 @@ float3 wpos, float3 wnorm)
     return (f_diffuse + f_specular) * lightColor * illuminance * ShadowFactor;
 }
 
-float3 pbr_point(
-// albm
-in float3 albedo,
-in float metalness,
-// nrmr 
-in float3 wnorm,
-in float roughness,
-// 언팩한 월드 
-in float3 wpos)
-{
-    float3 N = normalize(wnorm);
-    float3 V = normalize(eyePos.xyz - wpos);
-    
-    float3 F0 = float3(0.04f, 0.04f, 0.04f);
-    F0 = lerp(F0, albedo, metalness);
-    
-    float3 Lo = float3(0, 0, 0);
-    
-    float3 L = normalize(lightPos.xyz- wpos);
-    float3 H = normalize(V + L);
-    
-    // Origin
-    float distance = length(lightPos.xyz - wpos.xyz);
-    float attenuation = 1.0 / (distance * distance);
-    float radiance = lightColor * attenuation;
-    // 
-    
-   
-    float NDF = DistributionGGX(N, H, roughness);
-    float G   = GeometrySmith(N, V, L, roughness);
-    float3 F = fresnelSchlickF3(max(dot(H, V), 0.0), F0);
-
-    float3 kS = F;
-    float3 kD = float3(1.0 ,1.0,1.0) - kS;
-    kD *= 1.0 - metalness;
-        
-    float3 numerator = NDF * G * F;
-    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
-    float3 specular = numerator / max(denominator, 0.001);
-    float NdotL = max(dot(N, L), 0.0);
-    
-    // calculate shadow
-    //float ShadowFactor = 1.0f;
-    //// 깊이가 더 깊다면 투영 했을때 ????? 먼저 닿았음
-    //if (ShadowDepthMapHeight > 0)
-    //{
-    //    float pcfDepth = texCUBE(cubeShadowMap, -L).x;
-    //    // 깊이 포인트 
-    //    float d = (distance - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-    //    if ((pcfDepth + ShadowDepthBias) < d)
-    //    {
-    //        ShadowFactor -= 1.f;
-    //    }
-    //    ShadowFactor = saturate(ShadowFactor +shadowmin);
-    //}
-    // shadow end
-    
-    // 포인트 라인트용 모먼트 
-    float2 moments = texCUBE(cubeShadowMap, -L).xy;
-
-    float z = distance;
-    float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-    float shadow = ShadowVariance(moments, d);
-    float ShadowFactor = saturate(shadow + shadowmin);
-    // 
-    
-    // 변형 
-    
-    //float dist2 = max(dot(ldir, ldir), 1e-4f);
-    //float illuminance = (lightFlux / (QUAD_PI * dist2)) * saturate(NdotL);
-    //float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);
-    
-    //
-    
-    // Origin 
-    // Lo = (kD * albedo / PI + specular) * radiance * NdotL;
-    
-    Lo = (kD * albedo / PI + specular) * lightFlux * radiance * NdotL * ShadowFactor;
-    
-    return Lo;
-};
 
 
 float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
