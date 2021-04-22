@@ -39,6 +39,7 @@ private:
 		idle,
 		Hit_Buster_Start,
 		Hit_Buster_End,
+		Downword_Down_StandUp,
 		State_END
 	};
 

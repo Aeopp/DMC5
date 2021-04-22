@@ -28,34 +28,6 @@ Em100* Em100::Create()
 
 void Em100::Fight(const float _fDeltaTime)
 {
-	if (m_bMove == false)
-	{
-		m_fMoveTime += _fDeltaTime;
-		if (m_fMoveTime >= 5.f)
-		{
-			m_bMove = true;
-			m_fMoveTime = 0.f;
-		}
-	}
-	if (m_bAttack == false)
-	{
-		m_fAttackTime += _fDeltaTime;
-		if (m_fAttackTime >= 5.f)
-		{
-			m_bAttack = true;
-			m_fAttackTime = 0.f;
-		}
-	}
-	if (m_bHardAttack == false && m_BattleInfo.iHp <= 100)
-	{
-		m_fHardAttackTime += _fDeltaTime;
-		if (m_fHardAttackTime >= 7.f)
-		{
-			m_bHardAttack = true;
-			m_fHardAttackTime = 0.f;
-		}
-	}
-
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
@@ -265,10 +237,29 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->IsAnimationEnd())
 			{
-				
-				m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
+				m_eState = Hit_End;
+				m_bIng = false;
+			}
+		}
+		break;
+	case Em100::Hit_End:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
+				m_eState = Downword_Down_StandUp;
+		}
+		break;
+	case Em100::Downword_Down_StandUp:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Upward_Down_StandUp", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Upward_Down_StandUp" && m_pMesh->IsAnimationEnd())
+			{
 				m_bHit = false;
 				m_bIng = false;
+				m_eState = idle;
 			}
 		}
 		break;
@@ -381,6 +372,33 @@ void Em100::State_Change(const float _fDeltaTime)
 
 void Em100::Skill_CoolTime(const float _fDeltaTime)
 {
+	if (m_bMove == false)
+	{
+		m_fMoveTime += _fDeltaTime;
+		if (m_fMoveTime >= 5.f)
+		{
+			m_bMove = true;
+			m_fMoveTime = 0.f;
+		}
+	}
+	if (m_bAttack == false)
+	{
+		m_fAttackTime += _fDeltaTime;
+		if (m_fAttackTime >= 5.f)
+		{
+			m_bAttack = true;
+			m_fAttackTime = 0.f;
+		}
+	}
+	if (m_bHardAttack == false && m_BattleInfo.iHp <= 100)
+	{
+		m_fHardAttackTime += _fDeltaTime;
+		if (m_fHardAttackTime >= 7.f)
+		{
+			m_bHardAttack = true;
+			m_fHardAttackTime = 0.f;
+		}
+	}
 }
 
 HRESULT Em100::Ready()
@@ -494,6 +512,8 @@ UINT Em100::Update(const float _fDeltaTime)
 
 	if (m_bTest == true)
 	{
+		if(!m_bHit)
+			Skill_CoolTime(_fDeltaTime);
 		Fight(_fDeltaTime);
 		State_Change(_fDeltaTime);
 	}
