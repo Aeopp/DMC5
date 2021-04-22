@@ -30,7 +30,7 @@ uniform float2 clipPlanes;
 uniform float sinAngularRadius = 0.0046251;
 uniform float cosAngularRadius = 0.9999893;
 
-#define PCFCount 3
+#define PCFCount 2
 
 bool IsPoint;
 
