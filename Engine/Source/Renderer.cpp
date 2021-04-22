@@ -496,6 +496,7 @@ HRESULT Renderer::Render()&
 	}
 
 	// RenderInsulatorMetal();
+	
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
 	AdaptLuminance(DeltaTime);
