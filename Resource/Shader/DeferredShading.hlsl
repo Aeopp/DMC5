@@ -432,7 +432,7 @@ float3 wpos, float3 wnorm)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float f_specular = pow(ndoth, specularPower);
+    float f_specular = pow(abs(ndoth), abs(specularPower) );
     
     float costheta = saturate(dot(n, D));
     float illuminance = lightIlluminance * costheta;
@@ -500,7 +500,7 @@ float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float f_specular = pow(ndoth, specularPower);
+    float f_specular = pow(abs(ndoth), abs(specularPower));
     
 	// calculate shadow
     float shadow = 1.f;
@@ -531,7 +531,7 @@ void ps_deferred(
     // 0.3 ^ (1 / 2.2) °¨¸¶ ÆÐÅ· (³ô¾ÆÁü)
     // 0.3 ^ (2.2) °¨¸¶ ¾ðÆÑ (³·¾ÆÁü )  
     float4 albm = tex2D(albedo,  tex);
-    float metal = saturate(pow(albm.a, abs(1.0 / 2.2)));
+    float metal = saturate(pow(abs(albm.a) , abs(1.0 / 2.2)));
     
     // ¿ùµå ³ë¸» + °ÅÄ¥±â 
     
