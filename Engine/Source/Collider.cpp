@@ -301,7 +301,7 @@ void Collider::SetGravity(const bool _bActive)
 bool Collider::IsGround()
 {
 	if (false == m_bRigid)
-		return;
+		return false;
 
 	PxVec3 vVelocity = m_pRigidActor->is<PxRigidDynamic>()->getLinearVelocity();
 
