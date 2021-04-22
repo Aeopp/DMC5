@@ -1319,9 +1319,9 @@ HRESULT Renderer::RenderEnvironment()&
 HRESULT Renderer::Tonemapping()&
 {
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE,  TRUE);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	Device->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -1345,7 +1345,8 @@ HRESULT Renderer::Tonemapping()&
 	tonemap->End();
 
 	return S_OK;
-}
+};
+
 HRESULT Renderer::AlphaBlendEffectRender()&
 {
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
