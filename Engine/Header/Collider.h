@@ -53,6 +53,8 @@ public:
 
 	bool		IsGravity();
 	void		SetGravity(const bool _bActive);
+
+	bool		IsGround();
 };
 END
 #endif // !__COLLIDER_H__
