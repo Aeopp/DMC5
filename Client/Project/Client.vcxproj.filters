@@ -133,6 +133,9 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\03.Em5000\00.HAND">
       <UniqueIdentifier>{948b5e51-6edb-4043-a730-b86913ec6f1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.MapObject">
+      <UniqueIdentifier>{177763a5-206d-447e-bfa8-d1f6afd3a203}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -260,6 +263,9 @@
     </ClInclude>
     <ClInclude Include="..\Header\Unit.h">
       <Filter>02.GameObject\01.Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\MapObject.h">
+      <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -398,6 +404,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Unit.cpp">
       <Filter>02.GameObject\01.Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\MapObject.cpp">
+      <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
