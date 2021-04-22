@@ -28,10 +28,6 @@ protected:
 	std::vector<Object*>		m_pEditObjects{};
 	std::weak_ptr<GameObject>	m_pGameObject;
 	std::weak_ptr<Transform>	m_pTransform;
-
-	//전투 관련된 변수
-	BT_INFO		m_BattleInfo;
-	bool		m_bCollEnable;
 protected:
 	explicit GameObject();
 	virtual ~GameObject() = default;
@@ -79,9 +75,6 @@ public:
 	void	SetStatic(const bool _bStatic);
 	void    PushEditEntity(Object * _EditObject);
 
-	BT_INFO Get_BattleInfo();
-	bool	Get_Coll();
-	void	Set_Coll(const bool _bColl);
 private:
 	void	SetScene(Scene* const _pScene);
 	UINT	GetLoopIdx();

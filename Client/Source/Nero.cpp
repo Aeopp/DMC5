@@ -25,7 +25,7 @@ Nero::Nero()
 }
 void Nero::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 	m_pFSM = nullptr;
 }
 
@@ -51,7 +51,7 @@ Nero* Nero::Create()
 
 HRESULT Nero::Ready()
 {
-	//GameObject::Ready();
+	Unit::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.01f,0.01f,0.01f });
@@ -77,7 +77,7 @@ HRESULT Nero::Ready()
 
 HRESULT Nero::Awake()
 {
-	//GameObject::Awake();
+	Unit::Awake();
 	m_pFSM->ChangeState(NeroFSM::IDLE);
 
 	m_pCollider = AddComponent<CapsuleCollider>();
@@ -101,7 +101,7 @@ HRESULT Nero::Awake()
 
 HRESULT Nero::Start()
 {
-	//GameObject::Start();
+	Unit::Start();
 	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 
@@ -110,7 +110,7 @@ HRESULT Nero::Start()
 
 UINT Nero::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 
 	Update_Majin(_fDeltaTime);
 
@@ -139,18 +139,22 @@ UINT Nero::Update(const float _fDeltaTime)
 
 UINT Nero::LateUpdate(const float _fDeltaTime)
 {
-	//GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Nero::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Nero::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Nero::RenderGBufferSK(const DrawInfo& _Info)
@@ -319,7 +323,7 @@ void Nero::RenderReady()
 
 void Nero::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	bool MyButton = true;
 	float ZeroDotOne = 0.1f;
 	if (bEdit)

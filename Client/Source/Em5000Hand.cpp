@@ -31,6 +31,7 @@ void Em5000Hand::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em5000Hand::Ready()
 {
+	Unit::Ready();
 	RenderInit();
 
 	return S_OK;
@@ -38,6 +39,7 @@ HRESULT Em5000Hand::Ready()
 
 HRESULT Em5000Hand::Awake()
 {
+	Unit::Awake();
 	m_pParentBone = m_pEm5000Mesh.lock()->GetToRootMatrixPtr(m_bLeft ? "L_Hand" : "R_Hand");
 	m_pEm5000Trans = m_pEm5000.lock()->GetComponent<ENGINE::Transform>();
 
@@ -68,7 +70,7 @@ HRESULT Em5000Hand::Start()
 
 UINT Em5000Hand::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 
 	m_ParentWorld = m_pEm5000Trans.lock()->GetWorldMatrix();
 	m_pTransform.lock()->SetWorldMatrix(*m_pParentBone * m_ParentWorld);
@@ -78,24 +80,29 @@ UINT Em5000Hand::Update(const float _fDeltaTime)
 
 UINT Em5000Hand::LateUpdate(const float _fDeltaTime)
 {
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Em5000Hand::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (false == bEdit)
 		return;
 }
 
 void Em5000Hand::OnEnable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
 }
 
 void Em5000Hand::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Em5000Hand::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Em5000Hand::RenderInit()

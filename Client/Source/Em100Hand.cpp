@@ -4,7 +4,7 @@
 
 void Em100Hand::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 Em100Hand* Em100Hand::Create()
@@ -31,7 +31,7 @@ void Em100Hand::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em100Hand::Ready()
 {
-	GameObject::Ready();
+	Unit::Ready();
 	RenderInit();
 
 	
@@ -43,7 +43,7 @@ HRESULT Em100Hand::Ready()
 
 HRESULT Em100Hand::Awake()
 {
-	GameObject::Awake();
+	Unit::Awake();
 
 
 	m_pParentBone = m_pEm100Mesh.lock()->GetToRootMatrixPtr(m_bLeft ? "L_Hand" : "R_Hand");
@@ -70,13 +70,13 @@ HRESULT Em100Hand::Awake()
 
 HRESULT Em100Hand::Start()
 {
-	GameObject::Start();
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Em100Hand::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 
 	m_ParentWorld = m_pEm100Trans.lock()->GetWorldMatrix();
 	m_pTransform.lock()->SetWorldMatrix(*m_pParentBone * m_ParentWorld);
@@ -86,25 +86,29 @@ UINT Em100Hand::Update(const float _fDeltaTime)
 
 UINT Em100Hand::LateUpdate(const float _fDeltaTime)
 {
-	GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Em100Hand::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (false == bEdit)
 		return;
 }
 
 void Em100Hand::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Em100Hand::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Em100Hand::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

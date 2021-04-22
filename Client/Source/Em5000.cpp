@@ -12,7 +12,7 @@
 
 void Em5000::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 std::string Em5000::GetName()
@@ -601,6 +601,7 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em5000::Ready()
 {
+	Unit::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster5000;
 
@@ -626,6 +627,7 @@ HRESULT Em5000::Ready()
 
 HRESULT Em5000::Awake()
 {
+	Unit::Awake();
 	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	//
@@ -656,12 +658,13 @@ HRESULT Em5000::Awake()
 
 HRESULT Em5000::Start()
 {
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Em5000::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -723,19 +726,23 @@ UINT Em5000::LateUpdate(const float _fDeltaTime)
 
 void Em5000::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (false == bEdit)
 		return;
 }
 
 void Em5000::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Em5000::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Em5000::RenderGBufferSK(const DrawInfo& _Info)

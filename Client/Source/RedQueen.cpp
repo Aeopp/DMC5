@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Subset.h"
 #include "Nero.h"
+#include "Glint.h"
 RedQueen::RedQueen()
 {
 	m_nTag = TAG_RedQueen;
@@ -10,7 +11,7 @@ RedQueen::RedQueen()
 
 void RedQueen::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 RedQueen* RedQueen::Create()
@@ -20,7 +21,7 @@ RedQueen* RedQueen::Create()
 
 HRESULT RedQueen::Ready()
 {
-	//GameObject::Ready();
+	Unit::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
@@ -38,7 +39,7 @@ HRESULT RedQueen::Ready()
 
 HRESULT RedQueen::Awake()
 {
-	//GameObject::Awake();
+	Unit::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("WeaponConst"));
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("L_WeaponHand"));
@@ -53,13 +54,14 @@ HRESULT RedQueen::Awake()
 
 HRESULT RedQueen::Start()
 {
-	//GameObject::Start();
+	Unit::Start();
+	m_pGlint = std::static_pointer_cast<Glint>(FindGameObjectWithTag(GAMEOBJECTTAG::Eff_Glint).lock());
 	return S_OK;
 }
 
 UINT RedQueen::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	Quaternion QuatIdentity{0.f,0.f,0.f,1.f};
 	m_pMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {} , QuatIdentity);
 	m_pMesh->UpdateToRootMatricies();
@@ -70,7 +72,7 @@ UINT RedQueen::Update(const float _fDeltaTime)
 
 UINT RedQueen::LateUpdate(const float _fDeltaTime)
 {
-	//GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	Matrix								ParentWorldMatrix,FinalWorld,RotX;
 	
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
@@ -89,14 +91,18 @@ UINT RedQueen::LateUpdate(const float _fDeltaTime)
 
 void RedQueen::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 	_RenderProperty.bRender = true;
 }
 
 void RedQueen::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
 	_RenderProperty.bRender = false;
+}
+
+void RedQueen::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 std::string RedQueen::GetName()
@@ -252,5 +258,5 @@ void RedQueen::RenderInit()
 
 void RedQueen::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 }
