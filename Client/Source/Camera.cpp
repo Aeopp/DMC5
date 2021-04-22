@@ -192,15 +192,15 @@ void Camera::ShowCameraInfo()
     ImGui::Text("Transform");
 
     D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
-    //D3DXVECTOR3 vRotation = m_pTransform.lock()->GetRotation();
+    D3DXVECTOR3 vRotation = m_vRot;
     D3DXVECTOR3 vScale = m_pTransform.lock()->GetScale();
 
     ImGui::InputFloat3("Scale", vScale);
-    //ImGui::InputFloat3("Rotation", vRotation);
+    ImGui::InputFloat3("Rotation", vRotation);
     ImGui::InputFloat3("Position", vPosition);
 
     m_pTransform.lock()->SetScale(vScale);
-    //m_pTransform.lock()->SetRotation(vRotation);
+    m_vRot = vRotation;
     m_pTransform.lock()->SetPosition(vPosition);
 
     ImGui::Text("Sensitivity");
