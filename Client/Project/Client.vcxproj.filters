@@ -52,9 +52,6 @@
     <Filter Include="02.GameObject\Effect\Common">
       <UniqueIdentifier>{9d62ca16-6527-44a0-a433-1dd09ed55225}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Effect\Blood">
-      <UniqueIdentifier>{b7667868-436c-417f-b44f-5022f169be9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\01.Unit">
       <UniqueIdentifier>{52ae7e1c-cbd1-423e-810c-366d18207adc}</UniqueIdentifier>
     </Filter>
@@ -145,6 +142,9 @@
     <Filter Include="02.GameObject\Effect\Monster">
       <UniqueIdentifier>{08b14e90-60c4-4cb0-8629-b42ca265ee62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\99.MainCamera">
+      <UniqueIdentifier>{2bca4428-2e97-442e-8dc9-ce5d306b6452}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -211,7 +211,6 @@
     <ClInclude Include="..\Header\TestObject.h">
       <Filter>02.GameObject\Test</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\TempMap.h" />
     <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\Buster_Arm.h">
       <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
@@ -249,13 +248,9 @@
     <ClInclude Include="..\Header\WingArm_Right.h">
       <Filter>02.GameObject\01.Unit\01.Player\02.WingArms\Right</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Blood.h">
-      <Filter>02.GameObject\Effect\Blood</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\DashImpact.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\MainCamera.h" />
     <ClInclude Include="..\Header\Em100Hand.h">
       <Filter>02.GameObject\01.Unit\02.Monster\00.Em100\00.Hand</Filter>
     </ClInclude>
@@ -274,7 +269,6 @@
     <ClInclude Include="..\Header\MapObject.h">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\GT_Rockman.h" />
     <ClInclude Include="..\Header\AppearGroundMonster.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
@@ -283,6 +277,15 @@
     </ClInclude>
     <ClInclude Include="..\Header\Dust.h">
       <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\MainCamera.h">
+      <Filter>02.GameObject\99.MainCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\GT_Rockman.h">
+      <Filter>02.GameObject\01.Unit\01.Player\07.Gauntlet\01.GT_Rockman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\TempMap.h">
+      <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -353,46 +356,6 @@
     <ClCompile Include="..\Source\Car.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\Car</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\RedQueen.cpp" />
-    <ClCompile Include="..\Source\Nero_LWing.cpp" />
-    <ClCompile Include="..\Source\Nero_RWing.cpp" />
-    <ClCompile Include="..\Source\Wire_Arm.cpp" />
-    <ClCompile Include="..\Source\Buster_Arm.cpp" />
-    <ClCompile Include="..\Source\FSMBase.cpp" />
-    <ClCompile Include="..\Source\FSMState.cpp" />
-    <ClCompile Include="..\Source\NeroFSM.cpp" />
-    <ClCompile Include="..\Source\NeroState.cpp" />
-    <ClCompile Include="..\Source\TempMap.cpp" />
-    <ClCompile Include="..\Source\Buster_Arm.cpp">
-      <Filter>02.GameObject\01.Player\04.BusterArm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FSMBase.cpp">
-      <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FSMState.cpp">
-      <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Nero.cpp">
-      <Filter>02.GameObject\01.Player\00.Nero</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\NeroFSM.cpp">
-      <Filter>02.GameObject\01.Player\99.FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\NeroState.cpp">
-      <Filter>02.GameObject\01.Player\99.FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\RedQueen.cpp">
-      <Filter>02.GameObject\01.Player\05.RedQueen</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Wire_Arm.cpp">
-      <Filter>02.GameObject\01.Player\03.WireArm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Nero_LWing.cpp">
-      <Filter>02.GameObject\01.Player\01.Wings\Left</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Nero_RWing.cpp">
-      <Filter>02.GameObject\01.Player\01.Wings\Right</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\WIngArm_Left.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\02.WingArms\Left</Filter>
     </ClCompile>
@@ -405,7 +368,6 @@
     <ClCompile Include="..\Source\DashImpact.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\MainCamera.cpp" />
     <ClCompile Include="..\Source\Em5000Hand.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\00.HAND</Filter>
     </ClCompile>
@@ -424,18 +386,60 @@
     <ClCompile Include="..\Source\MapObject.cpp">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GT_Rockman.cpp" />
-    <ClCompile Include="..\Source\Nero.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\AppearGroundMonster.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Dust.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Resource\Shader\skysphere.hlsl" />
+    <ClCompile Include="..\Source\Nero.cpp" />
+    <ClCompile Include="..\Source\NeroFSM.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroState.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FSMBase.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FSMState.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Nero_LWing.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\01.Wings\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Nero_RWing.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\01.Wings\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Buster_Arm.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RedQueen.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\05.RedQueen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\MainCamera.cpp">
+      <Filter>02.GameObject\99.MainCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GT_Rockman.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\07.Gauntlet\01.GT_Rockman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Wire_Arm.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TempMap.cpp">
+      <Filter>02.GameObject\02.MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Buster_Arm.cpp" />
+    <ClCompile Include="..\Source\FSMBase.cpp" />
+    <ClCompile Include="..\Source\FSMState.cpp" />
+    <ClCompile Include="..\Source\NeroFSM.cpp" />
+    <ClCompile Include="..\Source\NeroState.cpp" />
+    <ClCompile Include="..\Source\Nero_LWing.cpp" />
+    <ClCompile Include="..\Source\Nero_RWing.cpp" />
+    <ClCompile Include="..\Source\RedQueen.cpp" />
+    <ClCompile Include="..\Source\Wire_Arm.cpp" />
+    <ClCompile Include="..\Source\Nero.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

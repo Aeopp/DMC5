@@ -261,6 +261,7 @@ call Engine.bat</Command>
     <ClCompile Include="..\Source\Collider.cpp" />
     <ClCompile Include="..\Source\CollisionCallback.cpp" />
     <ClCompile Include="..\Source\Color.cpp" />
+    <ClCompile Include="..\Source\DxHelper.cpp" />
     <ClCompile Include="..\Source\FileHelper.cpp" />
     <ClCompile Include="..\Source\FLight.cpp" />
     <ClCompile Include="..\Source\MeshCollider.cpp" />
@@ -308,7 +309,6 @@ call Engine.bat</Command>
     <ClCompile Include="..\Source\TimeSystem.cpp" />
     <ClCompile Include="..\Source\Transform.cpp" />
     <ClCompile Include="..\Source\_3Dmath.cpp" />
-    <ClCompile Include="DxHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\ForwardAlphaBlendSK.hlsl">

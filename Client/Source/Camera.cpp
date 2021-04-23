@@ -2,9 +2,9 @@
 #include "Camera.h"
 
 
-#include "TestObject.h"
-#include "Em100.h"
-#include "BtlPanel.h"
+//#include "TestObject.h"
+//#include "Em100.h"
+//#include "BtlPanel.h"
 
 Camera::Camera()
     : m_fFovY(45.f)

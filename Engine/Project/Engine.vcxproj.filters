@@ -151,9 +151,6 @@
     <ClCompile Include="..\Source\Color.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
-    <ClCompile Include="DxHelper.cpp">
-      <Filter>06.Render</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FLight.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
@@ -172,7 +169,12 @@
     <ClCompile Include="..\Source\BoxCollider.cpp">
       <Filter>03.Utility\00.Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FileHelper.cpp" />
+    <ClCompile Include="..\Source\FileHelper.cpp">
+      <Filter>98.UnLabeld</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DxHelper.cpp">
+      <Filter>06.Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
@@ -427,7 +429,6 @@
     <ClInclude Include="..\Header\BoxCollider.h">
       <Filter>03.Utility\00.Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\FileHelper.h" />
     <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
       <Filter>04.HLSL\Effect</Filter>
     </ClInclude>
@@ -436,6 +437,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
       <Filter>04.HLSL\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\FileHelper.h">
+      <Filter>98.UnLabeld</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
