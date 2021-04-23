@@ -38,6 +38,9 @@ enum GAMEOBJECTTAG
 	UI_BtlPanel,
 	Eff_Glint,
 	Eff_OvertureHand,
+	Eff_Liquid,
+	Eff_AppearGroundMonster,
+	Eff_Dust,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,
@@ -47,6 +50,6 @@ enum GAMEOBJECTTAG
 	Tag_END
 };
 
-#define OGDistance 0.24f
-#define MaxDistance 0.37f
+#define OGDistance 0.33f
+#define MaxDistance 0.48f
 #define RotateDistance 0.3f
