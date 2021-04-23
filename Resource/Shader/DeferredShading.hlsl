@@ -2,8 +2,8 @@
 #define PI 3.141592
 #define Epsilon 0.00001
 #define Fdielectric 0.04
-// 모든 물체에 대한 일정한 수직 입사 프레 넬 계수.
 
+// 모든 물체에 대한 일정한 수직 입사 프레 넬 계수.
 
 uniform sampler2D   albedo : register(s0);
 uniform sampler2D   normals : register(s1);
@@ -20,7 +20,6 @@ uniform float  lightFlux = 10.0f; // lumen
 uniform float  lightIlluminance = 1.5f; // lux
 uniform float  lightRadius = 5.0f; // meter
 uniform float  specularPower = 80.0f;
-
 
 
 uniform float4 eyePos;

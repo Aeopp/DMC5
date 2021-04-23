@@ -37,6 +37,7 @@ private:
 	void    ReadyQuad();
 public:	
 	HRESULT Render()&;
+	HRESULT OptRender()&;
 	void    Editor()&;
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;

@@ -475,6 +475,12 @@ void Renderer::Push(const std::weak_ptr<GameObject>& _RenderEntity)&
 // 렌더 레디에서 절두체 준비 ..
 HRESULT Renderer::Render()&
 {
+	if (g_bOptRender)
+	{
+		return OptRender();
+	}
+
+
 	RenderReady();
 	RenderBegin();
 
@@ -486,6 +492,7 @@ HRESULT Renderer::Render()&
 
 	// 디퍼드 렌더링 .
 	DeferredShading();
+
 	if (bEnvironmentRender)
 	{
 		RenderEnvironment();
@@ -496,7 +503,6 @@ HRESULT Renderer::Render()&
 	}
 
 	// RenderInsulatorMetal();
-	
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
 	AdaptLuminance(DeltaTime);
@@ -507,9 +513,49 @@ HRESULT Renderer::Render()&
 	LensFlare();
 	// 백버퍼로 백업 . 
 	Device->SetRenderTarget(0, BackBuffer);
-	Device->SetRenderState (D3DRS_SRGBWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	// 테스트 
 	ToneMap();
+	
+	// Tonemapping();
+	AlphaBlendEffectRender();
+	UIRender();
+
+	ResetState();
+	RenderTargetDebugRender();
+	RenderDebug();
+	LightFrustumRender();
+	RendererCollider();
+	RenderDebugBone();
+	ImguiRender();
+	GraphicSystem::GetInstance()->End();
+	DisableDepthBias();
+	RenderEnd();
+	Device->Present(NULL, NULL, NULL, NULL);
+	BackBuffer->Release();
+
+	return S_OK;
+}
+HRESULT Renderer::OptRender()&
+{
+	RenderReady();
+	RenderBegin();
+	EnableDepthBias();
+	// 기하 패스
+	Device->SetRenderTarget(0, BackBuffer);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+
+	RenderGBuffer();
+
+	if (bEnvironmentRender)
+	{
+		RenderEnvironment();
+	}
+	else
+	{
+		RenderSkySphere();
+	}
+	// 백버퍼로 백업 . 
 
 	// Tonemapping();
 	AlphaBlendEffectRender();
@@ -529,7 +575,9 @@ HRESULT Renderer::Render()&
 	BackBuffer->Release();
 
 	return S_OK;
-};
+}
+;
+
 
 void Renderer::Editor()&
 {
@@ -556,7 +604,6 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
-
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
@@ -674,6 +721,7 @@ void Renderer::ResetState()&
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	Device->SetViewport(&_RenderInfo.Viewport);
 };
@@ -844,9 +892,17 @@ void Renderer::RenderGBuffer()
 	// 감마보정은 쉐이딩시 수행 기하 정보를 그릴때는 필요 없음 . 
 	device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 
-	device->SetRenderTarget (0, RenderTargets["ALBM"]->GetSurface());
-	device->SetRenderTarget (1, RenderTargets["NRMR"]->GetSurface());
-	device->SetRenderTarget (2, RenderTargets["Depth"]->GetSurface());
+	if (g_bOptRender)
+	{
+		device->SetRenderTarget(0, BackBuffer);
+	}
+	else
+	{
+		device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
+		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
+		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
+	}
+	
 
 	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
