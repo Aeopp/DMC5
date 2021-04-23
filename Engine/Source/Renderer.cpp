@@ -475,6 +475,12 @@ void Renderer::Push(const std::weak_ptr<GameObject>& _RenderEntity)&
 // 렌더 레디에서 절두체 준비 ..
 HRESULT Renderer::Render()&
 {
+	if (g_bOptRender)
+	{
+		return OptRender();
+	}
+
+
 	RenderReady();
 	RenderBegin();
 
@@ -486,6 +492,7 @@ HRESULT Renderer::Render()&
 
 	// 디퍼드 렌더링 .
 	DeferredShading();
+
 	if (bEnvironmentRender)
 	{
 		RenderEnvironment();
@@ -496,7 +503,6 @@ HRESULT Renderer::Render()&
 	}
 
 	// RenderInsulatorMetal();
-	
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
 	AdaptLuminance(DeltaTime);
@@ -509,8 +515,8 @@ HRESULT Renderer::Render()&
 	Device->SetRenderTarget(0, BackBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	// 테스트 
-
 	ToneMap();
+	
 	// Tonemapping();
 	AlphaBlendEffectRender();
 	UIRender();
@@ -529,7 +535,49 @@ HRESULT Renderer::Render()&
 	BackBuffer->Release();
 
 	return S_OK;
-};
+}
+HRESULT Renderer::OptRender()&
+{
+	RenderReady();
+	RenderBegin();
+	EnableDepthBias();
+	// 기하 패스
+	Device->SetRenderTarget(0, BackBuffer);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+
+	RenderGBuffer();
+
+	if (bEnvironmentRender)
+	{
+		RenderEnvironment();
+	}
+	else
+	{
+		RenderSkySphere();
+	}
+	// 백버퍼로 백업 . 
+
+	// Tonemapping();
+	AlphaBlendEffectRender();
+	UIRender();
+
+	ResetState();
+	RenderTargetDebugRender();
+	RenderDebug();
+	LightFrustumRender();
+	RendererCollider();
+	RenderDebugBone();
+	ImguiRender();
+	GraphicSystem::GetInstance()->End();
+	DisableDepthBias();
+	RenderEnd();
+	Device->Present(NULL, NULL, NULL, NULL);
+	BackBuffer->Release();
+
+	return S_OK;
+}
+;
+
 
 void Renderer::Editor()&
 {
@@ -556,7 +604,6 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
-
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
@@ -565,6 +612,8 @@ void Renderer::Editor()&
 		ImGui::SliderFloat("ao", &ao,0.0f,1.f );
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
+		ImGui::SliderFloat("FogDistance",  &FogDistance, 0.0f, 1000.f);
+		ImGui::ColorEdit3("FogColor", FogColor);
 		
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
@@ -672,6 +721,7 @@ void Renderer::ResetState()&
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	Device->SetViewport(&_RenderInfo.Viewport);
 };
@@ -842,9 +892,17 @@ void Renderer::RenderGBuffer()
 	// 감마보정은 쉐이딩시 수행 기하 정보를 그릴때는 필요 없음 . 
 	device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 
-	device->SetRenderTarget (0, RenderTargets["ALBM"]->GetSurface());
-	device->SetRenderTarget (1, RenderTargets["NRMR"]->GetSurface());
-	device->SetRenderTarget (2, RenderTargets["Depth"]->GetSurface());
+	if (g_bOptRender)
+	{
+		device->SetRenderTarget(0, BackBuffer);
+	}
+	else
+	{
+		device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
+		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
+		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
+	}
+	
 
 	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -2085,9 +2143,6 @@ HRESULT Renderer::LensFlare()
 	}
 	hdreffects->EndPass();
 	hdreffects->End();
-	
-
-
 
 
 	return S_OK;
@@ -2098,7 +2153,7 @@ HRESULT Renderer::ToneMap()
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-	Vector4 pixelsize{ 0.f,0.f,0.f,1.f};
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f };
 
 	pixelsize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
 	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
@@ -2109,7 +2164,11 @@ HRESULT Renderer::ToneMap()
 	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
 	hdreffects->SetTechnique("tonemap");
 	hdreffects->SetVector("pixelSize", &pixelsize);
-	hdreffects->SetFloat("exposure", exposure);
+	hdreffects->SetFloat("exposure", exposure); 
+	hdreffects->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjectionInverse);
+	hdreffects->SetFloatArray("eyepos", _RenderInfo.Eye, 3u);
+	hdreffects->SetFloatArray("fogcolor", FogColor, 3u);
+	hdreffects->SetFloat("fogdistance", FogDistance);
 
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
@@ -2118,16 +2177,18 @@ HRESULT Renderer::ToneMap()
 		Device->SetTexture(1, RenderTargets["bloomresult"]->GetTexture());
 		Device->SetTexture(2, RenderTargets["starresult"]->GetTexture());
 		Device->SetTexture(3, RenderTargets["lensflaretargets1"]->GetTexture());
-		Device->SetTexture(4, RenderTargets["afterimagetargets" + 
-			std::to_string ( 1-currentafterimage) ]->GetTexture());
-		
+		Device->SetTexture(4, RenderTargets["afterimagetargets" +
+			std::to_string(1 - currentafterimage)]->GetTexture());
+		Device->SetTexture(5, RenderTargets["Depth"]->GetTexture());
+
 		_Quad->Render(Device, 1.f, 1.f, hdreffects);
 	}
 	hdreffects->EndPass();
 	hdreffects->End();
 
 	return S_OK;
-}
+};
+
 inline DWORD F2DW(FLOAT f)
 {
 	return *((DWORD*)&f);
@@ -2411,6 +2472,7 @@ void Renderer::TestLightRotation()
 
 	time += TimeSystem::GetInstance()->DeltaTime();
 };
+
 
 
 
