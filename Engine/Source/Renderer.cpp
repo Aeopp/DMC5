@@ -2446,6 +2446,7 @@ bool Renderer::TestShaderInit()
 
 	sky = Resources::Load<Texture >("../../Media/Textures/static_sky.jpg");
 
+	return true;
 }
 
 void Renderer::TestShaderRelease()

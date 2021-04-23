@@ -47,13 +47,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
-	//AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<Nero>();
+	//AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em100>();
-// 	AddGameObject<Car>();
+	//AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	//AddGameObject<TempMap>();
@@ -61,13 +61,13 @@ HRESULT TestScene::LoadScene()
 	//LoadMap();
 	
 
-	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
-	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<Dust>();
+	AddGameObject<Glint>();
+	AddGameObject<OvertureHand>();
+	AddGameObject<Liquid>();
+	AddGameObject<AppearGroundMonster>();
+	AddGameObject<Dust>();
 
-	// ���� �ʿ�
+	// 수정필요
 	//AddGameObject<DashImpact>();
 
 	return S_OK;
