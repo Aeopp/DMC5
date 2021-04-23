@@ -359,9 +359,6 @@
     <ClCompile Include="..\Source\FSMState.cpp">
       <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Nero.cpp">
-      <Filter>02.GameObject\01.Player\00.Nero</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Player\99.FSM</Filter>
     </ClCompile>
@@ -415,6 +412,7 @@
     <ClCompile Include="..\Source\Nero.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Nero.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\skysphere.hlsl" />

@@ -48,10 +48,20 @@ HRESULT TestScene::LoadScene()
 
 	AddGameObject<Nero>();
 	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+	AddGameObject<Em100>();
+
 // 	AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-//  AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 
 	LoadMap();
 	

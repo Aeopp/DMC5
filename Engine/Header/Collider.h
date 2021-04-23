@@ -33,6 +33,8 @@ public:
 	virtual	HRESULT DrawCollider(const DrawInfo & _Info)	PURE;
 	virtual void	Editor()								override;
 public:
+	virtual void	SetActive(const bool _bActive)			override;
+public:
 	void ReadySimulate();
 private:
 	void CreateRigidActor();
