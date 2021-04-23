@@ -480,6 +480,7 @@ HRESULT Renderer::Render()&
 
 	//  쉐도우 패스 
 	RenderShadowMaps();
+	EnableDepthBias();
 	// 기하 패스
 	RenderGBuffer();
 
@@ -495,6 +496,7 @@ HRESULT Renderer::Render()&
 	}
 
 	// RenderInsulatorMetal();
+	
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
 	AdaptLuminance(DeltaTime);
@@ -521,6 +523,7 @@ HRESULT Renderer::Render()&
 	RenderDebugBone();
 	ImguiRender();
 	GraphicSystem::GetInstance()->End();
+	DisableDepthBias();
 	RenderEnd();
 	Device->Present(NULL, NULL, NULL, NULL);
 	BackBuffer->Release();
@@ -559,8 +562,19 @@ void Renderer::Editor()&
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
+		ImGui::SliderFloat("ao", &ao,0.0f,1.f );
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
+		
+		static bool  DepthBiasButton = true;
+		static float ZeroDotOne = 0.000001f;
+		
+		{
+			ImGui::InputScalar("SlpoeScaleDepthBias", ImGuiDataType_Float, &SlpoeScaleDepthBias, DepthBiasButton ? &ZeroDotOne : NULL,nullptr,
+				"%1.7f");
+			ImGui::InputScalar("DepthBias", ImGuiDataType_Float, &DepthBias, DepthBiasButton ? &ZeroDotOne : NULL
+			,nullptr, "%1.7f");
+		}
 
 		if (ImGui::CollapsingHeader("AdaptLuminance"))
 		{
@@ -871,6 +885,12 @@ void Renderer::RenderGBuffer()
 
 					if (bLightRender)
 					{
+						DWORD zwrite, zenable;
+						Device->GetRenderState(D3DRS_ZWRITEENABLE, &zwrite);
+						Device->GetRenderState(D3DRS_ZENABLE, &zenable);
+
+						Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+						Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 						for (auto& _Light : DirLights)
 						{
 							_Light->Render(_DrawInfo);
@@ -879,6 +899,9 @@ void Renderer::RenderGBuffer()
 						{
 							_Light->Render(_DrawInfo);
 						}
+
+						Device->SetRenderState(D3DRS_ZENABLE, zenable);
+						Device->SetRenderState(D3DRS_ZWRITEENABLE, zwrite);
 					}
 
 				}
@@ -992,6 +1015,7 @@ void Renderer::DeferredShading()
 				deferred->SetFloat("ShadowDepthBias",DirLight->shadowdepthbias);
 				deferred->SetFloat("ShadowDepthMapHeight", DirLight->GetShadowMapSize());
 				deferred->SetFloat("ShadowDepthMapWidth", DirLight->GetShadowMapSize());
+				deferred->SetFloat("ao", ao);
 				Vector3 LightDirection = DirLight->GetDirection();
 				deferred->SetFloatArray("LightDirection", LightDirection,3);
 				deferred->SetFloatArray("Lradiance", DirLight->Lradiance, 3);
@@ -2103,7 +2127,24 @@ HRESULT Renderer::ToneMap()
 	hdreffects->End();
 
 	return S_OK;
-};
+}
+inline DWORD F2DW(FLOAT f)
+{
+	return *((DWORD*)&f);
+}
+void Renderer::EnableDepthBias()&
+{
+	Device->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS,
+		F2DW(SlpoeScaleDepthBias));
+	Device->SetRenderState(D3DRS_DEPTHBIAS, F2DW(DepthBias));
+}
+void Renderer::DisableDepthBias()&
+{
+	Device->
+		SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, F2DW(0.0f));
+	Device->SetRenderState(D3DRS_DEPTHBIAS, F2DW(0.0f));
+}
+;
 
 void Renderer::LightSave(std::filesystem::path path)
 {

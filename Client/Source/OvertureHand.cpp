@@ -32,19 +32,19 @@ void OvertureHand::Imgui_Modify()
 		//
 		ImGui::Text("Eff_OvertureHand");
 		{
-			Vector3 SliderPosition = Sptransform->GetPosition();
+			static Vector3 SliderPosition = Sptransform->GetPosition();
 			ImGui::SliderFloat3("Pos##OvertureHand", SliderPosition, -10.f, 10.f);
 			Sptransform->SetPosition(SliderPosition);
 		}
 
 		{
-			float AllScale = Sptransform->GetScale().x;
+			static float AllScale = Sptransform->GetScale().x;
 			ImGui::SliderFloat("Scale##OvertureHand", &AllScale, 0.01f, 1.f);
 			Sptransform->SetScale({ AllScale,AllScale,AllScale });
 		}
 
 		{
-			Vector3 SliderRotation{ 0,0,0 };
+			static Vector3 SliderRotation{ 0,0,0 };
 			ImGui::SliderFloat3("Rot##OvertureHand", SliderRotation, 0.f, 360.f);
 			Sptransform->SetRotation(SliderRotation);
 		}

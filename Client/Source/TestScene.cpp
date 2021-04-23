@@ -16,6 +16,9 @@
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
+#include "Liquid.h"
+#include "AppearGroundMonster.h"
+#include "Dust.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -44,7 +47,7 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	AddGameObject<MainCamera>();
-	// AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
@@ -58,10 +61,13 @@ HRESULT TestScene::LoadScene()
 	
 
 	//AddGameObject<Glint>();
-	//
+	//AddGameObject<OvertureHand>();
+	//AddGameObject<Liquid>();
+	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<Dust>();
 
+	// ���� �ʿ�
 	//AddGameObject<DashImpact>();
-	//AddGameObject<Blood>();
 
 	return S_OK;
 }

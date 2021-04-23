@@ -36,20 +36,20 @@ void Glint::Imgui_Modify()
 	{
 		ImGui::Text("Eff_Glint");
 		{
-			Vector3 SliderPosition = Sptransform->GetPosition();
+			static Vector3 SliderPosition = Sptransform->GetPosition();
 			ImGui::SliderFloat3("Pos##Glint", SliderPosition, -10.f, 10.f);
 			Sptransform->SetPosition(SliderPosition);
 		}
 
 		{
-			float Scale = Sptransform->GetScale().x;
+			static float Scale = Sptransform->GetScale().x;
 			ImGui::SliderFloat("Scale##Glint", &Scale, 0.1f, 10.f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x¸¸ À¯È¿
 			SetScale(Scale);
 		}
 
 		{
-			float PlayingSpeed = _PlayingSpeed;
+			static float PlayingSpeed = _PlayingSpeed;
 			ImGui::SliderFloat("PlayingSpeed##Glint", &PlayingSpeed, 0.1f, 10.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
@@ -194,7 +194,7 @@ UINT Glint::Update(const float _fDeltaTime)
 	}
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

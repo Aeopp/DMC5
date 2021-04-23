@@ -162,7 +162,7 @@ call Engine.bat</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;assimp-vc142-mt.lib;fmod_vc.lib;fmodL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;assimp-vc142-mt.lib;fmod_vc.lib;fmodL_vc.lib;PhysXExtensions_static_64.lib;PhysX_64.lib;PhysXPvdSDK_static_64.lib;PhysXVehicle_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCooking_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference\PhysX\Lib\Release;$(SolutionDir)Reference\Lib\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -261,6 +261,7 @@ call Engine.bat</Command>
     <ClCompile Include="..\Source\Collider.cpp" />
     <ClCompile Include="..\Source\CollisionCallback.cpp" />
     <ClCompile Include="..\Source\Color.cpp" />
+    <ClCompile Include="..\Source\DxHelper.cpp" />
     <ClCompile Include="..\Source\FileHelper.cpp" />
     <ClCompile Include="..\Source\FLight.cpp" />
     <ClCompile Include="..\Source\MeshCollider.cpp" />
@@ -308,7 +309,6 @@ call Engine.bat</Command>
     <ClCompile Include="..\Source\TimeSystem.cpp" />
     <ClCompile Include="..\Source\Transform.cpp" />
     <ClCompile Include="..\Source\_3Dmath.cpp" />
-    <ClCompile Include="DxHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\ForwardAlphaBlendSK.hlsl">
@@ -448,6 +448,21 @@ call Engine.bat</Command>
     <None Include="..\..\Resource\Shader\hdreffects.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
