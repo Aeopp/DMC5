@@ -249,6 +249,19 @@ public:
 		EffDir_Down
 	};
 
+	enum NeroComponentID
+	{
+		NeroCom_Wings,
+		NeroCom_LWing,
+		NeroCom_RWing,
+		NeroCom_BusterArm,
+		NeroCom_WireArm,
+		NeroCom_WIngArm_Left,
+		NeroCom_WingArm_Right,
+		NeroCom_Overture,
+		NeroCom_End
+	};			
+
 private:
 	explicit Nero();
 	virtual ~Nero() = default;
@@ -293,18 +306,15 @@ public:
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
 	void Reset_RootRotation() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
-	void SetActive_Wings(bool ActiveOrNot);
-	void SetActive_Wing_Left(bool ActiveOrNot);
-	void SetActive_Wing_Right(bool ActiveOrNot);
-	void SetActive_Buster_Arm(bool ActiveOrNot);
-	void SetActive_Wire_Arm(bool ActiveOrNot);
-	void SetActive_WingArm_Right(bool ActiveOrNot);
-	void SetActive_WingArm_Left(bool ActiveOrNot);
+	void SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot);
+	void SetActive_NeroComponent_Collider(NeroComponentID _eNeroComID, bool ActiveOrNot);
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 	void SetColl_Monsters(bool _AcitveOrNot);
+	void SetAddForce(Vector3 _vJumpPos);
 public:
 	void CheckAutoRotate();
+	bool CheckIsGround();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//Ä«¸Þ¶ó

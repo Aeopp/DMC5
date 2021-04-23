@@ -38,6 +38,9 @@ public:
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
 	void RenderInit();
+
+private:
+	std::weak_ptr<SphereCollider> m_pCollider;
 };
 
 #endif // GT_Overture_h__

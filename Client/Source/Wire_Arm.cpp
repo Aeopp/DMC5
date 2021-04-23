@@ -83,7 +83,7 @@ void Wire_Arm::OnEnable()
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3],sizeof(Vector3));
 
 	Vector3 PlayeUp = m_pNero.lock()->GetComponent<Transform>().lock()->GetUp();
-	NeroWorld._42 += PlayeUp.y * -1.2;
+	NeroWorld._42 += PlayeUp.y * -0.12f;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 

@@ -16,6 +16,9 @@
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
+#include "Liquid.h"
+#include "AppearGroundMonster.h"
+#include "Dust.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -44,21 +47,28 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	// AddGameObject<MainCamera>();
-	AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	//AddGameObject<Camera>();
 
-	/* AddGameObject<Nero>();
-	 AddGameObject<Em100>();
- 	AddGameObject<Car>();*/
+	AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
+	//AddGameObject<Em100>();
+// 	AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
-	LoadMap();
-	
-	AddGameObject<BtlPanel>();
-	AddGameObject<Glint>();
-	//
+	//AddGameObject<TempMap>();
 
+	//LoadMap();
+	
+
+	//AddGameObject<Glint>();
+	//AddGameObject<OvertureHand>();
+	//AddGameObject<Liquid>();
+	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<Dust>();
+
+	// ���� �ʿ�
+	//AddGameObject<DashImpact>();
 
 	return S_OK;
 }
@@ -73,6 +83,8 @@ HRESULT TestScene::Awake()
 	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
 	Physics::AddActor(UniqueID, *pPlane);
+
+	return S_OK;
 }
 
 HRESULT TestScene::Start()

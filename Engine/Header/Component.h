@@ -19,7 +19,7 @@ protected:
 public:
 	std::weak_ptr<GameObject>	GetGameObject();
 	bool						IsActive();
-	void						SetActive(const bool _bActive);
+	virtual void				SetActive(const bool _bActive);
 };
 END
 #endif // !__COMPONENT_H__
