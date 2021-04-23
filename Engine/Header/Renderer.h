@@ -84,6 +84,7 @@ public:
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
 	float FogDistance = 100.f;
 	float ao = 0.012f;

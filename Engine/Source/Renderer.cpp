@@ -607,6 +607,7 @@ void Renderer::Editor()&
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
+		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
 		ImGui::SliderFloat("ao", &ao,0.0f,1.f );
@@ -1092,7 +1093,11 @@ void Renderer::DeferredShading()
 		// 여기서부터 ..
 		// point lights
 		// 현재 버그 ... 
-		device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		if (bPtLightScrRtTest)
+		{
+			device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		}
+			
 
 		for (auto& PointLight : PointLights)
 		{
@@ -1110,8 +1115,8 @@ void Renderer::DeferredShading()
 			
 			}*/
 
-
 			if (false == CameraFrustum->IsIn(PtLtSp))continue;
+
 			clipplanes.x = PointLight->GetNearPlane();
 			clipplanes.y = PointLight->GetFarPlane();
 			RECT scissorrect;
@@ -1141,7 +1146,10 @@ void Renderer::DeferredShading()
 			_Quad->Render(Device);
 		}
 
-		device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+		if (bPtLightScrRtTest)
+		{
+			device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+		}
 	}
 
 	deferred->EndPass();
@@ -2446,6 +2454,7 @@ bool Renderer::TestShaderInit()
 
 	sky = Resources::Load<Texture >("../../Media/Textures/static_sky.jpg");
 
+	return true;
 }
 
 void Renderer::TestShaderRelease()
