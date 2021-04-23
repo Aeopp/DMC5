@@ -56,7 +56,8 @@ UINT WingArm_Right::Update(const float _fDeltaTime)
 	if (0.52 <= fCurAnimationTime && !m_bLoop)
 	{
 		SetActive(false);
-		m_pNero.lock()->SetActive_Wing_Right(true);
+		//m_pNero.lock()->SetActive_Wing_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
 	}
 
 	return 0;
@@ -92,7 +93,8 @@ void WingArm_Right::OnEnable()
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
 
-	m_pNero.lock()->SetActive_Wing_Right(false);
+	//m_pNero.lock()->SetActive_Wing_Right(false);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
 }
 
 void WingArm_Right::OnDisable()

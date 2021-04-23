@@ -396,9 +396,9 @@ void Nero::Update_Majin(float _fDeltaTime)
 	if (m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
 	{
 		m_IsMajin = false;
-		SetActive_Wings(false);
-		SetActive_WingArm_Left(false);
-		SetActive_WingArm_Right(false);
+		SetActive_NeroComponent(NeroCom_Wings, false);
+		SetActive_NeroComponent(NeroCom_WIngArm_Left, false);
+		SetActive_NeroComponent(NeroCom_WingArm_Right, false);
 	}
 
 }
@@ -448,40 +448,69 @@ Matrix* Nero::Get_BoneMatrixPtr(std::string _BoneName)
 	return m_pMesh->GetToRootMatrixPtr(_BoneName);;
 }
 
-void Nero::SetActive_Wings(bool ActiveOrNot)
+
+void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot)
 {
-	m_pLWing.lock()->SetActive(ActiveOrNot);
-	m_pRWing.lock()->SetActive(ActiveOrNot);
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_Wings:
+		m_pLWing.lock()->SetActive(ActiveOrNot);
+		m_pRWing.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_LWing:
+		m_pLWing.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_RWing:
+		m_pRWing.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_WireArm:
+		m_pWireArm.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_WIngArm_Left:
+		m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_WingArm_Right:
+		m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
-void Nero::SetActive_Wing_Left(bool ActiveOrNot)
+void Nero::SetActive_NeroComponent_Collider(NeroComponentID _eNeroComID, bool ActiveOrNot)
 {
-	m_pLWing.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_Wing_Right(bool ActiveOrNot)
-{
-	m_pRWing.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_Buster_Arm(bool ActiveOrNot)
-{
-	m_pBusterArm.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_Wire_Arm(bool ActiveOrNot)
-{
-	m_pWireArm.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_WingArm_Right(bool ActiveOrNot)
-{
-	m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_WingArm_Left(bool ActiveOrNot)
-{
-	m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_Wings:
+		break;
+	case Nero::NeroCom_LWing:
+		break;
+	case Nero::NeroCom_RWing:
+		break;
+	case Nero::NeroCom_BusterArm:
+		break;
+	case Nero::NeroCom_WireArm:
+		break;
+	case Nero::NeroCom_WIngArm_Left:
+		break;
+	case Nero::NeroCom_WingArm_Right:
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
 void Nero::SetAngleFromCamera(float _fAddAngle)

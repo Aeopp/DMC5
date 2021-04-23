@@ -3255,7 +3255,8 @@ HRESULT Wire_Pull::StateEnter()
 
 	//몬스터 위치에 따라서 분기
 	m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull", false, Nero::ANI_WIRE_SNATCH_PULL);
-	m_pNero.lock()->SetActive_Wire_Arm(true);
+	//m_pNero.lock()->SetActive_Wire_Arm(true);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WireArm, true);
 	m_pNero.lock()->Change_WireArm_Animation("Wire_Arm_Start31", false);
 	//NeroState::ResetAnimation()
 	return S_OK;
@@ -3469,7 +3470,8 @@ HRESULT Wire_Pull_Air::StateEnter()
 
 	NeroState::ResetAnimation(0.96, Nero::ANI_WIRE_SNATCH_PULL_AIR);
 
-	m_pNero.lock()->SetActive_Wire_Arm(true);
+	//m_pNero.lock()->SetActive_Wire_Arm(true);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WireArm, true);
 	m_pNero.lock()->Change_WireArm_Animation("Wire_Arm_Start31", false);
 	return S_OK;
 }
@@ -3579,7 +3581,8 @@ HRESULT BT_Att1::StateEnter()
 	
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
 	}
 	NeroState::ActiveColl_Monsters(true);
@@ -3631,7 +3634,8 @@ HRESULT BT_Att2::StateEnter()
 	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_R);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboA2", false);
 	}
 	NeroState::ActiveColl_Monsters(true);
@@ -3683,7 +3687,8 @@ HRESULT BT_Att3::StateEnter()
 	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_L);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
 	}
 	NeroState::ActiveColl_Monsters(true);
@@ -3740,7 +3745,8 @@ HRESULT BT_Att4::StateEnter()
 	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_KnocBack);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA4", false);
 	}
 	NeroState::ActiveColl_Monsters(true);
@@ -3919,7 +3925,8 @@ HRESULT BT_Att_ComboC_1::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
 	}
 	return S_OK;
@@ -3969,7 +3976,8 @@ HRESULT BT_Att_ComboC_2::StateEnter()
 	m_pNero.lock()->ChangeAnimation("ComboC2", false, Nero::ANI_COMBOC2);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
 	}
 	return S_OK;
@@ -4020,7 +4028,8 @@ HRESULT BT_Att_ComboC_3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboC3", false);
 	}
 	return S_OK;
@@ -4070,9 +4079,11 @@ HRESULT BT_Att_ComboC_4::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
 
+		//얘는 타이밍에 맞춰서 켜야됨
 		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		//m_pNero.lock()->Change_WingArm_Right_Animation("ComboC4", false);
 	}
@@ -4123,10 +4134,12 @@ HRESULT BT_Att_ComboD_1::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboD1", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD1", false);
 	}
 	return S_OK;
@@ -4177,7 +4190,8 @@ HRESULT BT_Att_ComboD_2::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD2", false);
 	}
 	return S_OK;
@@ -4228,7 +4242,8 @@ HRESULT BT_Att_ComboD_3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD3", false);
 	}
 	return S_OK;
@@ -4279,7 +4294,8 @@ HRESULT BT_Att_ComboD_4::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD4", false);
 	}
 	return S_OK;
@@ -4336,7 +4352,8 @@ HRESULT BT_Air_Att1::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD1", false);
 	}
 
@@ -4398,7 +4415,8 @@ HRESULT BT_Air_Att2::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
 	}
 	return S_OK;
@@ -4466,7 +4484,8 @@ HRESULT BT_Air_Att3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
 	}
 
@@ -4516,7 +4535,8 @@ HRESULT BT_Air_ComboB::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD1", false);
 	}
 
@@ -4535,7 +4555,8 @@ HRESULT BT_Air_ComboB::StateUpdate(const float _fDeltaTime)
 
 	if (0.1 <= fCurAnimationTime && 0.2 <= fCurAnimationTime && m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboD1", false);
 	}
 
@@ -4605,7 +4626,8 @@ HRESULT Skill_Split::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Start", false);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
@@ -4649,7 +4671,8 @@ HRESULT Skill_Split_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Loop", true);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
@@ -4698,7 +4721,8 @@ HRESULT Skill_Split_Landing::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Split_End", false);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
@@ -4744,7 +4768,8 @@ HRESULT Skill_Float_Ground::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Hr_Ground", false);
 	}
 
@@ -4857,7 +4882,8 @@ HRESULT Skill_Shuffle::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Shuffle", false);
 	}
 	return S_OK;
@@ -4903,10 +4929,12 @@ HRESULT Skill_Streak::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
@@ -4953,10 +4981,12 @@ HRESULT Skill_Streak_Ex3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
 	}
 
@@ -5001,10 +5031,12 @@ HRESULT Skill_Streak_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Loop", true);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Loop", true);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
@@ -5046,10 +5078,12 @@ HRESULT Skill_Streak_End::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
@@ -5093,10 +5127,12 @@ HRESULT Skill_Streak_Ex3_Rush::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Loop", true);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Loop", true);
 	}
 
@@ -5182,10 +5218,12 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
 	}
 
@@ -7162,7 +7200,8 @@ HRESULT ComboA_Dash::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
 	}
 	return S_OK;
@@ -7214,10 +7253,12 @@ HRESULT Skill_Caliber::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
 	}
 
@@ -7266,10 +7307,12 @@ HRESULT Skill_Caliber_End::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
 	}
 
@@ -7370,7 +7413,8 @@ HRESULT Hr_Ex_Start::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Hr_Ground", false);
 	}
 
@@ -7605,7 +7649,8 @@ HRESULT Skill_Split_Ex::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Start", false);
 	}
 
@@ -7652,7 +7697,8 @@ HRESULT Skill_Split_Ex_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Loop", true);
 	}
 
@@ -7701,7 +7747,8 @@ HRESULT Skill_Split_Ex_Landing::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Split_End", false);
 	}
 
@@ -7752,10 +7799,12 @@ HRESULT Air_Dive_Slash_Start::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
 	}
 
@@ -7802,10 +7851,12 @@ HRESULT Air_Dive_Slash_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Loop", true);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Loop", true);
 	}
 
@@ -7858,10 +7909,12 @@ HRESULT Air_Dive_Slash_End::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
 
-		m_pNero.lock()->SetActive_WingArm_Right(true);
+		//m_pNero.lock()->SetActive_WingArm_Right(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
 		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
 	}
 
@@ -7915,7 +7968,8 @@ HRESULT Skill_Shuffle_Ex::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		m_pNero.lock()->SetActive_WingArm_Left(true);
+		//m_pNero.lock()->SetActive_WingArm_Left(true);
+		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->Change_WingArm_Left_Animation("Shuffle_Ex", false);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
@@ -7994,7 +8048,8 @@ HRESULT Buster_Start::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Buster_Start", false, Nero::ANI_BUSTER_START);
-	m_pNero.lock()->SetActive_Buster_Arm(true);
+	//m_pNero.lock()->SetActive_Buster_Arm(true);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_BusterArm, true);
 	m_pNero.lock()->Change_BusterArm_Animation("Buster_Catch", false);
 	NeroState::ActiveColl_Monsters(true);
 	return S_OK;
@@ -8041,7 +8096,8 @@ HRESULT To_Majin::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("To_Majin", false, Nero::ANI_BUSTER_START);
-	m_pNero.lock()->SetActive_Wings(true);
+	//m_pNero.lock()->SetActive_Wings(true);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Wings, true);
 
 	m_pNero.lock()->Change_To_MajinMode();
 
