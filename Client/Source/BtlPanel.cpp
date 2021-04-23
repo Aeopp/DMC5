@@ -5,15 +5,12 @@
 #include "TextureType.h"
 #include "Renderer.h"
 
-// test
-//#include "Glint.h"
-//#include "OvertureHand.h"
-
 
 void BtlPanel::Free()
 {
-	GameObject::Free();
 	SafeDeleteArray(_UIDescs);
+
+	GameObject::Free();
 }
 
 std::string BtlPanel::GetName()
@@ -1922,14 +1919,15 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F4))
 	{
 		AddExGauge(0.333f);
-
-		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(3.5f);
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
 
+		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
+		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
 		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		//std::static_pointer_cast<Dust>(FindGameObjectWithTag(Eff_Dust).lock())->Reset();		
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{

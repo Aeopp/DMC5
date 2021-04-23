@@ -2,12 +2,12 @@
 #include "Camera.h"
 
 
-#include "TestObject.h"
-#include "Em100.h"
-#include "BtlPanel.h"
+//#include "TestObject.h"
+//#include "Em100.h"
+//#include "BtlPanel.h"
 
 Camera::Camera()
-    : m_fFovY(90.f)
+    : m_fFovY(45.f)
     , m_fNear(0.1f)
     , m_fFar(10000.f)
     , m_fSensitivityMove(0.005f)

@@ -19,7 +19,7 @@ uniform float2 pixelSize;
 // Shlick's approximation of the Fresnel factor.
 float3 fresnelSchlick(float3 F0, float cosTheta)
 {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(abs(1.0 - cosTheta), abs(5.0));
 }
 
 
@@ -47,7 +47,7 @@ void ps_main(
         float4 wpos = float4(tex.x * 2 - 1, 1 - 2 * tex.y, depth, 1);
         wpos = mul(wpos, matViewProjInv);
         wpos /= wpos.w;
-        float metal = saturate(pow(albm.a, abs(1.0 / 2.2)));
+        float metal = saturate(pow(abs(albm.a) , abs(1.0 / 2.2)));
         float roughness = saturate(nrmr.a);
     
         float3 v       = normalize(eyePos.xyz - wpos.xyz);

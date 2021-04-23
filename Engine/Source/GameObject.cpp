@@ -100,6 +100,13 @@ void GameObject::SetActive(const bool _bActive)
 	else
 		OnDisable();
 
+	//컴포넌트 활성화 설정.
+	for (auto& rPair : m_Components)
+	{
+		if (nullptr != rPair.second)
+			rPair.second->SetActive(_bActive);
+	}
+
 	m_pScene->SetActive(m_pGameObject, _bActive);
 }
 

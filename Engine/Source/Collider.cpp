@@ -99,6 +99,19 @@ void Collider::Editor()
 		SetCenter(vCenter);
 }
 
+void Collider::SetActive(const bool _bActive)
+{
+	if (_bActive == m_bActive)
+		return;
+
+	m_bActive = _bActive;
+
+	if (false == _bActive)
+		Physics::RemoveActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
+	else
+		Physics::AddActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
+}
+
 void Collider::ReadySimulate()
 {
 	std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
@@ -170,13 +183,15 @@ void Collider::SetRigid(const bool _bRigid)
 	m_bRigid = _bRigid;
 
 	//Scene에서 Actor제거
-	Physics::RemoveActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);;
+	if (m_bActive)
+		Physics::RemoveActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 
 	//RigidActor 생성
 	CreateRigidActor();
 
 	//Scene에 새로운 Actor추가
-	Physics::AddActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);;
+	if (m_bActive)
+		Physics::AddActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 
 	if (true == _bRigid)
 	{

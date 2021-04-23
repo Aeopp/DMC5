@@ -45,7 +45,7 @@ void MeshCollider::ReadyMeshCollider(D3DXVECTOR3* _pPoints, UINT _nNumPoint, UIN
 	PxTriangleMeshGeometry geometry;
 
 	geometry.triangleMesh = m_pTriangleMesh;
-	geometry.scale = PxVec3(0.01f, 0.01f, 0.01f);
+	geometry.scale = PxVec3(0.001f, 0.001f, 0.001f);
 
 	m_pShape = PhysicsSystem::GetInstance()->GetPxPhysics()->createShape(geometry, *PhysicsSystem::GetInstance()->GetDefaultMaterial(), true);
 

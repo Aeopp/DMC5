@@ -2,8 +2,8 @@
 #define PI 3.141592
 #define Epsilon 0.00001
 #define Fdielectric 0.04
-// 모든 물체에 대한 일정한 수직 입사 프레 넬 계수.
 
+// 모든 물체에 대한 일정한 수직 입사 프레 넬 계수.
 
 uniform sampler2D   albedo : register(s0);
 uniform sampler2D   normals : register(s1);
@@ -22,11 +22,10 @@ uniform float  lightRadius = 5.0f; // meter
 uniform float  specularPower = 80.0f;
 
 
-
 uniform float4 eyePos;
 uniform float2 pixelSize;
 uniform float2 clipPlanes;
-
+uniform float ao = 0.1f;
 uniform float sinAngularRadius = 0.0046251;
 uniform float cosAngularRadius = 0.9999893;
 
@@ -96,12 +95,12 @@ float gaSchlickGGX(float cosLi, float cosLo, float roughness)
 // Shlick의 프레넬 계수 (근사치)
 float3 fresnelSchlick(float3 F0, float cosTheta)
 {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, abs(5.0) );
 }
 
 float3 fresnelSchlickF3(float cosTheta, float3 F0)
 {
-    return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
+    return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), abs(5.0) );
 }
 
 float DistributionGGX(float3  N, float3 H, float roughness)
@@ -125,8 +124,6 @@ float DistributionGGX(float3  N, float3 H, float roughness)
 //    specularTexture.GetDimensions(0, width, height, levels);
 //    return levels;
 //}
-
-
 
 void vs_main(
 	in out float4 pos : POSITION,
@@ -216,7 +213,7 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
-    float ao = 0.01f;
+    
     Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor + (lightColor * ao);
     return Lo;
 }
@@ -400,8 +397,6 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
-    float ao = 0.1f;
-    
     return ((diffuseBRDF + specularBRDF) * Lradiance * cosLi) * ShadowFactor + ao * lightColor;
 }
 
@@ -432,7 +427,7 @@ float3 wpos, float3 wnorm)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float f_specular = pow(ndoth, specularPower);
+    float f_specular = pow(abs(ndoth), abs(specularPower) );
     
     float costheta = saturate(dot(n, D));
     float illuminance = lightIlluminance * costheta;
@@ -500,7 +495,7 @@ float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
     float ndoth = saturate(dot(n, h));
 
     float3 f_diffuse = albedo;
-    float f_specular = pow(ndoth, specularPower);
+    float f_specular = pow(abs(ndoth), abs(specularPower));
     
 	// calculate shadow
     float shadow = 1.f;
@@ -531,7 +526,7 @@ void ps_deferred(
     // 0.3 ^ (1 / 2.2) 감마 패킹 (높아짐)
     // 0.3 ^ (2.2) 감마 언팩 (낮아짐 )  
     float4 albm = tex2D(albedo,  tex);
-    float metal = saturate(pow(albm.a, abs(1.0 / 2.2)));
+    float metal = saturate(pow(abs(albm.a) , abs(1.0 / 2.2)));
     
     // 월드 노말 + 거칠기 
     
@@ -577,6 +572,7 @@ void ps_deferred(
             // wnorm);
             
             color.rgb = pbr_point(albm.rgb, metal, wnorm, roughness, wpos.xyz);
+            
         }
         
         color.a = 1;

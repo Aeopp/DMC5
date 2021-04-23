@@ -1,9 +1,6 @@
 #pragma once
 #include "GameObject.h"
 
-class TestObject;
-class Em100;
-class BtlPanel;
 class Camera : public GameObject
 {
 

@@ -37,6 +37,7 @@ private:
 	void    ReadyQuad();
 public:	
 	HRESULT Render()&;
+	HRESULT OptRender()&;
 	void    Editor()&;
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;
@@ -75,11 +76,20 @@ private:
 	HRESULT Bloom();
 	HRESULT LensFlare();
 	HRESULT ToneMap();
+private:
+	void EnableDepthBias()&;
+	void DisableDepthBias()&;
 public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	Vector3 FogColor{ 0.5f,0.5f,0.5f };
+	float FogDistance = 100.f;
+	float ao = 0.012f;
+	float SlpoeScaleDepthBias = 0.0f;
+	float DepthBias = 0.0f;
+	float DefaultDepthBias = 0.0f;
 	float SkyIntencity = 1.f;
 	static const inline std::array <float, 6> def_adaptedluminance_var
 	{

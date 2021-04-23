@@ -4,8 +4,7 @@
 class TestScene : public Scene
 {
 private:
-
-	PxRigidStatic* pPlane;
+	physx::PxRigidStatic* pPlane;
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;

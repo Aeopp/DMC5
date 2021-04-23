@@ -16,10 +16,14 @@
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
+#include "Liquid.h"
+#include "AppearGroundMonster.h"
+#include "Dust.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+
 
 #include <iostream>
 #include <fstream>
@@ -55,13 +59,15 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 	
-	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
-	//
+	//AddGameObject<OvertureHand>();
+	//AddGameObject<Liquid>();
+	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<Dust>();
 
+	// ���� �ʿ�
 	//AddGameObject<DashImpact>();
-	//AddGameObject<Blood>();
 
 	return S_OK;
 }
@@ -76,6 +82,8 @@ HRESULT TestScene::Awake()
 	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
 	Physics::AddActor(UniqueID, *pPlane);
+
+	return S_OK;
 }
 
 HRESULT TestScene::Start()
