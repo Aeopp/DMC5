@@ -75,11 +75,18 @@ private:
 	HRESULT Bloom();
 	HRESULT LensFlare();
 	HRESULT ToneMap();
+private:
+	void EnableDepthBias()&;
+	void DisableDepthBias()&;
 public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	float ao = 0.012f;
+	float SlpoeScaleDepthBias = 0.0f;
+	float DepthBias = 0.0f;
+	float DefaultDepthBias = 0.0f;
 	float SkyIntencity = 1.f;
 	static const inline std::array <float, 6> def_adaptedluminance_var
 	{

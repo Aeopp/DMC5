@@ -2,17 +2,17 @@
 #include "Camera.h"
 
 
-#include "TestObject.h"
-#include "Em100.h"
-#include "BtlPanel.h"
+//#include "TestObject.h"
+//#include "Em100.h"
+//#include "BtlPanel.h"
 
 Camera::Camera()
-    : m_fFovY(90.f)
+    : m_fFovY(45.f)
     , m_fNear(0.1f)
-    , m_fFar(10000.f)
-    , m_fSensitivityMove(5.f)
+    , m_fFar(30.f)
+    , m_fSensitivityMove(0.05f)
     , m_fSensitivityRot(0.2f)
-    , m_fSensitivityWheel(0.5f)
+    , m_fSensitivityWheel(0.005f)
     , m_fDistance(10.f)
 {
     D3DXMatrixIdentity(&m_matView);

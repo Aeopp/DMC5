@@ -29,12 +29,13 @@ public:
 	virtual void    Editor() override PURE;
 	virtual void	OnEnable() override PURE;
 	virtual void    OnDisable() override PURE;
+protected:
+	virtual void	Imgui_Modify() {}
 public:
 	virtual void	Reset() PURE;
 	virtual void	SetScale(const float AllScale);
 	virtual void	SetRotation(const Vector3& Rot);
 	virtual void	SetPosition(const Vector3& Pos);
-	virtual void	Imgui_Modify() {}
 public:
 	bool IsPlaying() const	{ return _IsPlaying; }
 	void SetLoop(bool Loop) { _Loop = Loop; _AccumulateTime = 0.f; }

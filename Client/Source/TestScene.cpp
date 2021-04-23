@@ -16,6 +16,9 @@
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
+#include "Liquid.h"
+#include "AppearGroundMonster.h"
+#include "Dust.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -44,34 +47,27 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	AddGameObject<MainCamera>();
-	// AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
 	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-	AddGameObject<Em100>();
-
-// 	AddGameObject<Car>();
+ 	//AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 
 	LoadMap();
 	
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
-	//
+	//AddGameObject<OvertureHand>();
+	//AddGameObject<Liquid>();
+	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<Dust>();
 
+	// 수정 필요
 	//AddGameObject<DashImpact>();
-	//AddGameObject<Blood>();
 
 	return S_OK;
 }
