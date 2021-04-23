@@ -480,7 +480,6 @@ HRESULT Renderer::Render()&
 		return OptRender();
 	}
 
-
 	RenderReady();
 	RenderBegin();
 
@@ -1634,6 +1633,8 @@ HRESULT Renderer::RenderMeasureLuminance()
 		auto measureeffect =
 			Shaders["measureluminance"]->GetEffect();
 
+		// 여기서 평균 휘도를 구한다 . 
+		// 휘도를 구하고 CPU 메모리에 복사함 . 
 		if (i == 0)
 		{
 			texelsize.x = 1.0f / 
@@ -1766,6 +1767,7 @@ HRESULT Renderer::BrightPass()&
 	Device->SetRenderTarget(0, 
 		RenderTargets["afterimagetargets" + idxstr]->GetSurface(0));
 
+	// 잔상 드로우 콜 . 
 	if (drawafterimage)
 	{
 		hdreffects->SetTechnique("afterimage");
@@ -1774,7 +1776,8 @@ HRESULT Renderer::BrightPass()&
 		hdreffects->Begin(NULL, 0);
 		hdreffects->BeginPass(0);
 		{
-			std::string idxstr = std::to_string(1 - currentafterimage);
+			std::string idxstr = 
+				std::to_string(1 - currentafterimage);
 			Device->SetTexture(0,
 				RenderTargets["afterimagetargets" + idxstr]->GetTexture());
 			Device->SetTexture(1,
@@ -1862,6 +1865,7 @@ HRESULT Renderer::Stars()
 	viewport.MinZ = 0.0f;
 	viewport.MaxZ = 1.f;
 
+	
 	Vector4 pixelsize{ 0.f,0.f,0.f,1.f };
 	pixelsize.x = 1.0f / (float)viewport.Width;
 	pixelsize.y = -1.0f / (float)viewport.Height;
@@ -1899,7 +1903,8 @@ HRESULT Renderer::Stars()
 										std::to_string(j % 2);
 
 				Device->SetRenderTarget(0,
-					RenderTargets["startargets" + idxstr]->GetSurface(0));
+					RenderTargets["startargets" + idxstr]->
+					GetSurface(0));
 				
 				auto* _Tex = j==0 ? 
 					RenderTargets["dsampletargets1"]->GetTexture() :
