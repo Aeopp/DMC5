@@ -519,10 +519,7 @@ HRESULT Renderer::Render()&
 	 ToneMap();
 	//  여기 까지 ..... 
 	}
-	
-	Device->SetRenderTarget(0, BackBuffer);
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	
+
 	// Tonemapping();
 	AlphaBlendEffectRender();
 	UIRender();
