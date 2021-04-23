@@ -3,6 +3,8 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+#include "Monster.h"
+#include "NeroFSM.h"
 
 Buster_Arm::Buster_Arm()
 	:m_bIsRender(false)
@@ -12,7 +14,7 @@ Buster_Arm::Buster_Arm()
 
 void Buster_Arm::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 Buster_Arm* Buster_Arm::Create()
@@ -22,7 +24,7 @@ Buster_Arm* Buster_Arm::Create()
 
 HRESULT Buster_Arm::Ready()
 {
-	//GameObject::Ready();
+	Unit::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
@@ -35,12 +37,13 @@ HRESULT Buster_Arm::Ready()
 
 HRESULT Buster_Arm::Awake()
 {
-	//GameObject::Awake();
+	Unit::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->SetCenter({ 0.f,1.f,0.f });
 	PushEditEntity(m_pCollider.lock().get());
 
 	return S_OK;
@@ -48,13 +51,13 @@ HRESULT Buster_Arm::Awake()
 
 HRESULT Buster_Arm::Start()
 {
-	//GameObject::Start();
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Buster_Arm::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
 	if (m_pMesh->IsAnimationEnd())
@@ -67,13 +70,13 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 
 UINT Buster_Arm::LateUpdate(const float _fDeltaTime)
 {
-	//GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Buster_Arm::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 	m_bIsRender = true;
 
 	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
@@ -94,11 +97,42 @@ void Buster_Arm::OnEnable()
 
 void Buster_Arm::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
 	m_bIsRender = false;
 	m_pMesh->SetPlayingTime(0);
 
 	_RenderProperty.bRender = m_bIsRender;
+}
+
+void Buster_Arm::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	if (nullptr == dynamic_pointer_cast<Monster>(_pOther.lock()))
+		return;
+	UINT MonsterTag = _pOther.lock()->m_nTag;
+	
+	switch (MonsterTag)
+	{
+	case Monster100:
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON);
+		break;
+	case Monster101:
+		break;
+	case Monster0000:
+		break;
+	case Monster5000:
+		break;
+	default:
+		break;
+	}
+
+}
+
+void Buster_Arm::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
 }
 
 void Buster_Arm::RenderInit()
@@ -290,7 +324,7 @@ void Buster_Arm::RenderReady()
 
 void Buster_Arm::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (bEdit)
 	{
 		// ¿¡µðÅÍ .... 

@@ -2,15 +2,12 @@
 #define __GAMEOBJECT_H__
 #include "Object.h"
 #include "RenderProperty.h"
-
-
 BEGIN(ENGINE)
 class Scene;
 class Component;
 class Renderer;
 class Transform;
-class ENGINE_DLL GameObject abstract : public Object
-								
+class ENGINE_DLL GameObject abstract : public Object							
 {
 	friend Scene;
 private:
@@ -28,10 +25,6 @@ protected:
 	std::vector<Object*>		m_pEditObjects{};
 	std::weak_ptr<GameObject>	m_pGameObject;
 	std::weak_ptr<Transform>	m_pTransform;
-
-	//전투 관련된 변수
-	BT_INFO		m_BattleInfo;
-	bool		m_bCollEnable;
 protected:
 	explicit GameObject();
 	virtual ~GameObject() = default;
@@ -63,6 +56,14 @@ public:
 
 	std::weak_ptr<GameObject>				FindGameObjectWithTag(const UINT & _nTag);
 	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithTag(const UINT & _nTag);
+
+	std::list<std::weak_ptr<GameObject>>	FindGameObjectsWithLayer(const UINT & _nLayer);
+
+	template<typename TYPE>
+	std::weak_ptr<TYPE>				FindGameObjectWithType();
+	template<typename TYPE>
+	std::list<std::weak_ptr<TYPE>>	FindGameObjectsWithType();
+
 public:
 	void	Destroy(std::weak_ptr<GameObject> const _pGameObject);
 	bool    IsRenderEnable();
@@ -73,9 +74,6 @@ public:
 	void	SetStatic(const bool _bStatic);
 	void    PushEditEntity(Object * _EditObject);
 
-	BT_INFO Get_BattleInfo();
-	bool	Get_Coll();
-	void	Set_Coll(const bool _bColl);
 private:
 	void	SetScene(Scene* const _pScene);
 	UINT	GetLoopIdx();

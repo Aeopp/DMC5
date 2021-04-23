@@ -26,6 +26,7 @@ private:
 		Hit_Front,
 		Hit_L,
 		Hit_R,
+		Hit_KnocBack,
 		Walk_Front_End,
 		Walk_Front_Loop,
 		Walk_Front_Start,
@@ -35,7 +36,14 @@ private:
 		Walk_Right_Stop,
 		Walk_Right_Loop,
 		Walk_Right_Start,
-		idle,
+		Idle,
+		Idle2,
+		Idle3,
+		Idle4,		
+		Hit_Buster_Start,
+		Hit_Buster_Loop,
+		Hit_Buster_End,
+		Downword_Down_StandUp,
 		State_END
 	};
 
@@ -63,6 +71,8 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
@@ -72,7 +82,8 @@ public:
 	void RenderInit();
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle() override;
+	virtual void Update_Angle(const float _fDeltaTime, bool _bTest = false);
+	virtual void Update_Angle()override;
 private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
@@ -96,6 +107,12 @@ private:
 
 	weak_ptr<Em100Hand>		m_pHand[2];
 	weak_ptr<CapsuleCollider> m_pCollider;
+
+	float		m_fAngleTime = 0.f;
+
+	float		m_fPower = 0.f;
+	D3DXVECTOR3 m_vPower;
+
 };
 
 #endif // Em100_h__

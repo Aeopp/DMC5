@@ -18,19 +18,20 @@ enum MOUSEBUTTON
 };
 enum ATTACKTYPE
 {
-	Attack_Normal,
-	Attack_Down,
-	Attack_Stun,
-	Attack_KnocBack,
-	Attack_END
-};
-enum ATTACKDIR
-{
+	Attack_Front, // 윽
+	Attack_Back,
 	Attack_L,
 	Attack_R,
-	Attack_Front,
-	Attack_Back,
-	AttackDir_End
+	Attack_Down,
+	Attack_Stun,
+	Attack_KnocBack, //뒹구르르
+	Attack_Hard, //으으윽
+	Attack_Air_Start, //올라가기 시작
+	Attack_Air,	//올라가있을때
+	Attack_Buster_Start,
+	Attack_Buster_Loop,
+	Attack_Buster_End,
+	Attack_END
 };
 
 

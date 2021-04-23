@@ -29,6 +29,8 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
 	void RenderInit();
 
 	virtual void Rotate(const float _fDeltaTime) override;

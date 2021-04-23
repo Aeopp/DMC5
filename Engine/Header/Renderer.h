@@ -20,30 +20,31 @@
 BEGIN(ENGINE)
 class ENGINE_DLL Renderer final : public Object
 {
-	DECLARE_SINGLETON(Renderer) 
-private : 
+	DECLARE_SINGLETON(Renderer)
+private:
 	explicit Renderer();
 	virtual ~Renderer() = default;
-	virtual void Free()	override ;
-public :
+	virtual void Free()	override;
+public:
 	HRESULT ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice);
 private:
 	void    ReadyRenderTargets();
 	void	ReadyShader(const std::filesystem::path & TargetPath);
+	void    ReadySky();
 	void    ReadyLights();
 	void    ReadyRenderInfo();
 	void    ReadyFrustum();
-	void    ReadyQuad();	
-public : 
+	void    ReadyQuad();
+public:	
 	HRESULT Render()&;
 	void    Editor()&;
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;
-	const Frustum * GetCameraFrustum()const& { return CameraFrustum.get();  };
+	const Frustum* GetCameraFrustum()const& { return CameraFrustum.get(); };
 	bool bLightRender = false;
-
+	bool bEnvironmentRender = false;
 	void LightSave(std::filesystem::path path);
-	void LightLoad(const std::filesystem::path& path);
+	void LightLoad(const std::filesystem::path & path);
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -58,18 +59,55 @@ private:
 	HRESULT ImguiRender()&;
 	HRESULT RenderTargetDebugRender()&;
 	HRESULT RenderSky()&;
+	HRESULT RenderSkySphere()&;
+	HRESULT RenderEnvironment()&;
 	HRESULT Tonemapping()&;
 	HRESULT AlphaBlendEffectRender()&;
 	HRESULT UIRender()&;
 	HRESULT RendererCollider()&;
 	HRESULT LightFrustumRender()&;
+	HRESULT RenderInsulatorMetal()&;
+	HRESULT RenderMeasureLuminance();
+	HRESULT AdaptLuminance(const float DeltaTime)&;
+	HRESULT BrightPass()&;
+	HRESULT DownSample();
+	HRESULT Stars();
+	HRESULT Bloom();
+	HRESULT LensFlare();
+	HRESULT ToneMap();
 private:
-
+	void EnableDepthBias()&;
+	void DisableDepthBias()&;
 public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	float ao = 0.012f;
+	float SlpoeScaleDepthBias = 0.0f;
+	float DepthBias = 0.0f;
+	float DefaultDepthBias = 0.0f;
+	float SkyIntencity = 1.f;
+	static const inline std::array <float, 6> def_adaptedluminance_var
+	{
+		0.98f,
+		50.0f,
+		100.0f,
+		12.5f,
+		1.2f ,
+		1.0f
+	};
+
+	std::array <float, 6> adaptedluminance_var = def_adaptedluminance_var;
+	bool bSRGBAlbm = true;
+	bool bSRGBNRMR = false;
+	bool drawafterimage = false;
+	int currentafterimage = 0;
+	// 0 으로 세팅되면 미정의 동작 . 
+	float averageluminance = 0.1f;
+	// 0 으로 세팅되면 미정의 동작 . 
+	float adaptedluminance = 0.1f;
+
 	float exposure = 1.f;
 	IDirect3DSurface9* BackBuffer{ nullptr };
 	std::shared_ptr<Frustum> CameraFrustum{};
@@ -78,7 +116,7 @@ private:
 	// 렌더패스와 쉐이더 키 
 	// 쉐이더 키와 해당 쉐이더의 호출함수,객체들
 	using RenderEntityType = std::pair< RenderInterface*, RenderProperty::CallType>;
-	std::map<RenderProperty::Order, 
+	std::map<RenderProperty::Order,
 		std::unordered_map<std::string,
 		std::vector<RenderEntityType>>>
 		RenderEntitys{};
@@ -88,6 +126,10 @@ private:
 	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
+
+	std::shared_ptr<Texture> SkysphereTex{};
+	std::shared_ptr<Texture> SkysphereTex2{};
+	std::shared_ptr<StaticMesh> SkysphereMesh{};
 	std::shared_ptr<Texture> sky{};
 
 	// 쉐이더 테스트 시작 ....

@@ -2,7 +2,7 @@
 #define Player_h__
 
 #pragma once
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 
 class NeroFSM;
@@ -15,7 +15,11 @@ class WIngArm_Left;
 class WingArm_Right;
 class MainCamera;
 class BtlPanel;
-class Nero :   public GameObject ,
+class GT_Overture;
+class GT_Rockman;
+class Monster;
+class Effect;
+class Nero : public Unit,
 	public ENGINE::RenderInterface
 
 {
@@ -194,12 +198,25 @@ public:
 		ANI_BUSTER_START,
 		ANI_TO_MAJIN,
 		ANI_TO_MAJIN2,
+		ANI_BUSTER_AIR_CATCH,
+		ANI_BUSTER_STRIKE_COMMON,
+		ANI_BUSTER_STRIKE_COMMON_AIR,
+		ANI_M_BUSTER_STRIKE_COMMON_START,
+		ANI_M_BUSTER_STRIKE_COMMON_LOOP,
+		ANI_EM0000_BUSTER_START,
+		ANI_EM0000_BUSTER_FINISH,
+		ANI_EM0000_M_BUSTER,
+		ANI_EM0000_BUSTER_AIR,
+		ANI_EM5000_BUSTER_START,
+		ANI_EM5000_BUSTER_SWING,
+		ANI_EM5000_BUSTER_SWING_LOOP,
+		ANI_EM5000_BUSTER_FINISH,
 		ANI_END
 	};
 
 	enum WeaponList
 	{
-		RQ , // °Ë
+		RQ, // °Ë
 		Cbs // »ïÀý°ï
 
 	};
@@ -224,7 +241,13 @@ public:
 		Dir_Left,
 		Dir_Right
 	};
-	
+
+	enum EffDircetion
+	{
+		EffDir_Front,
+		EffDir_Up,
+		EffDir_Down
+	};
 
 private:
 	explicit Nero();
@@ -238,11 +261,19 @@ public:
 	virtual void RenderReady() override;
 	virtual void Editor()override;
 public:
-/// <For RedQueen>
+	/// <For RedQueen>
 	void Set_RQ_State(UINT _StateIndex);
+	void Set_RQ_AttType(ATTACKTYPE _eAttDir);
+	void Set_RQ_Coll(bool _ActiveOrNot);
 	void Set_PlayingTime(float NewTime);
 
 public:
+	// <For Overture Eff>
+	void CreateOvertureEff(EffDircetion eDir = EffDir_Front);
+
+public:
+	std::weak_ptr<NeroFSM> GetFsm() { return m_pFSM; }
+	std::list<std::weak_ptr<Monster>> GetAllMonster();
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
@@ -260,6 +291,7 @@ public:
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
+	void Reset_RootRotation() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_Wings(bool ActiveOrNot);
 	void SetActive_Wing_Left(bool ActiveOrNot);
@@ -268,8 +300,11 @@ public:
 	void SetActive_Wire_Arm(bool ActiveOrNot);
 	void SetActive_WingArm_Right(bool ActiveOrNot);
 	void SetActive_WingArm_Left(bool ActiveOrNot);
-	void SetAngleFromCamera();
+	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
+	void SetColl_Monsters(bool _AcitveOrNot);
+public:
+	void CheckAutoRotate();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//Ä«¸Þ¶ó
@@ -298,13 +333,14 @@ public:
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex,const AnimNotify& _Notify = {});
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
 	void ChangeAnimationIndex(const UINT AnimationIndex);
 	void ChangeWeapon(UINT _iWeaponIndex);
 	void Change_BusterArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void Change_Overture_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -313,6 +349,11 @@ public:
 	virtual UINT LateUpdate(const float _fDeltaTime) override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
+public:
+	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
 	// ·»´õ¸µ ÇÔ¼ö....
 	void RenderGBufferSK(const DrawInfo& _Info);
@@ -337,7 +378,9 @@ private:
 	std::weak_ptr<MainCamera> m_pCamera;
 	std::weak_ptr<CapsuleCollider> m_pCollider;
 	std::weak_ptr<BtlPanel>			m_pBtlPanel;
-
+	std::weak_ptr<GT_Overture>		m_pOverture;
+	std::weak_ptr<GT_Rockman>		m_pRockman;
+	std::weak_ptr<Effect>			m_pEffOverture;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -354,6 +397,13 @@ private:
 	float	m_fRotationAngle = 0.f;
 
 	bool	m_IsMajin = false;
+
+	//
+	D3DXVECTOR3 vDegree;
+	D3DXVECTOR3 vRotationDegree;
+	D3DXVECTOR3 vAccumlatonDegree;
+
+	
 };
 
 

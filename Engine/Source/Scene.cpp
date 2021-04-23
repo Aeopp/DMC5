@@ -174,6 +174,21 @@ std::list<std::weak_ptr<GameObject>> Scene::FindGameObjectsWithTag(const UINT& _
 	return listFind;
 }
 
+std::list<std::weak_ptr<GameObject>> Scene::FindGameObjectsWithLayer(const UINT& _nLayer)
+{
+	std::list<std::weak_ptr<GameObject>> listFind;
+
+	for (UINT i = 0; i < LOOPSTATE::LOOP_END; ++i)
+	{
+		for (auto iter = m_Loop[ACTIVE][i].begin(); iter != m_Loop[ACTIVE][i].end(); ++iter)
+		{
+			if (false == (*iter).expired() && _nLayer == (*iter).lock()->m_nLayer)
+				listFind.push_back((*iter));
+		}
+	}
+	return listFind;
+}
+
 void Scene::Destroy(std::weak_ptr<GameObject> const _pGameObject)
 {
 	if (_pGameObject.expired() || _pGameObject.lock()->m_bDestroy)

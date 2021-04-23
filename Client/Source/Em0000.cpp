@@ -10,7 +10,7 @@
 
 void Em0000::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 std::string Em0000::GetName()
@@ -228,11 +228,12 @@ void Em0000::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em0000::Ready()
 {
+	Unit::Ready();
 	m_nTag = Monster0000;
 
 	RenderInit();
 
-// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
+	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.0005,0.0005,0.0005 });
 	PushEditEntity(InitTransform.lock().get());
@@ -249,6 +250,7 @@ HRESULT Em0000::Ready()
 
 HRESULT Em0000::Awake()
 {
+	Unit::Awake();
 	//m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
 	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
@@ -277,12 +279,13 @@ HRESULT Em0000::Awake()
 
 HRESULT Em0000::Start()
 {
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Em0000::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -348,14 +351,14 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 UINT Em0000::LateUpdate(const float _fDeltaTime)
 {
-	
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 
 }
 
 void Em0000::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (bEdit)
 	{
 
@@ -365,12 +368,16 @@ void Em0000::Editor()
 
 void Em0000::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Em0000::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Em0000::RenderGBufferSK(const DrawInfo& _Info)
@@ -542,6 +549,9 @@ void Em0000::Update_Angle()
 
 	m_fRadian = fRadian;
 	m_fAccuangle = 0.f;
+
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
 
 	if (m_fRadian > 0)
 		m_fAngleSpeed = fabs(m_fAngleSpeed);

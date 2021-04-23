@@ -4,6 +4,7 @@
         "Offset Euler Yaw": 0.0,
         "Offset Euler Pitch": 0.0,
         "Offset Euler Roll": 0.0,
+        "RootMotion_RotationName": "root",
         "RootMotion_TransitionName": "root",
         "AnimInfoTable": [
             {
@@ -22,9 +23,24 @@
                 "TransitionTime": 0.10000000149011612
             },
             {
+                "Name": "Buster_Air_Catch",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
                 "Name": "Buster_Start",
                 "Acceleration": 1.190000057220459,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "Buster_Strike_Common",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "Buster_Strike_Common_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
             },
             {
                 "Name": "Caliber_End",
@@ -502,6 +518,16 @@
                 "TransitionTime": 0.10000000149011612
             },
             {
+                "Name": "M-Buster_Strike_Common_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "M-Buster_Strike_Common_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
                 "Name": "Middle_Cbs_BiAttack",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.10000000149011612
@@ -870,6 +896,46 @@
                 "Name": "Wire_Snatch_Pull_U",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.008999999612569809
+            },
+            {
+                "Name": "em0000_Buster_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "em0000_Buster_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "em0000_Buster_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "em0000_M-Buster",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "em5000_Buster_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "em5000_Buster_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "em5000_Buster_Swing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "em5000_Buster_Swing_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
             }
         ]
     }

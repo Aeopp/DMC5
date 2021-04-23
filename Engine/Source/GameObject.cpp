@@ -13,7 +13,6 @@ GameObject::GameObject()
 	, m_bStatic(false)
 	, m_bDestroy(false)
 	, m_bRenderRegist(false)
-	, m_bCollEnable(false)
 {
 	m_pTransform = AddComponent<Transform>();
 	m_pGameObject = std::static_pointer_cast<GameObject>(m_pThis);
@@ -62,6 +61,11 @@ std::weak_ptr<GameObject> GameObject::FindGameObjectWithTag(const UINT& _nTag)
 std::list<std::weak_ptr<GameObject>> GameObject::FindGameObjectsWithTag(const UINT& _nTag)
 {
 	return m_pScene->FindGameObjectsWithTag(_nTag);
+}
+
+std::list<std::weak_ptr<GameObject>> GameObject::FindGameObjectsWithLayer(const UINT& _nLayer)
+{
+	return m_pScene->FindGameObjectsWithLayer(_nLayer);
 }
 
 void GameObject::Destroy(std::weak_ptr<GameObject> const _pGameObject)
@@ -116,24 +120,9 @@ void GameObject::PushEditEntity(Object* _EditObject)
 	m_pEditObjects.push_back(_EditObject);
 }
 
-BT_INFO GameObject::Get_BattleInfo()
-{
-	return m_BattleInfo;
-}
-
-bool GameObject::Get_Coll()
-{
-	return m_bCollEnable;
-}
-
 void GameObject::SetScene(Scene* const _pScene)
 {
 	m_pScene = _pScene;
-}
-
-void GameObject::Set_Coll(const bool _bColl)
-{
-	m_bCollEnable = _bColl;
 }
 
 UINT GameObject::GetLoopIdx()

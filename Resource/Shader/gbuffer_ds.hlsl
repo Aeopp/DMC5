@@ -8,6 +8,10 @@ uniform matrix matViewProj;
 uniform float2 uv = { 1, 1 };
 uniform float handedness = -1.0f;
 
+
+
+
+
 void vs_gbuffer_tbn(
 	in out float4 pos : POSITION,
 	in float3 norm : NORMAL,
@@ -47,7 +51,6 @@ void ps_gbuffer_tbn(
                 float3x3(normalize(float3(wtan)),
                          normalize(float3(wbin)),
                          normalize(float3(wnorm)));
-    
     tbn = transpose(tbn);
     float4 normap_sample = tex2D(normalMap, tex);
     

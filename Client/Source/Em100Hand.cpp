@@ -4,7 +4,7 @@
 
 void Em100Hand::Free()
 {
-	GameObject::Free();
+	Unit::Free();
 }
 
 Em100Hand* Em100Hand::Create()
@@ -17,25 +17,16 @@ std::string Em100Hand::GetName()
 	return std::string();
 }
 
-void Em100Hand::Fight(const float _fDeltaTime)
-{
-}
-
-void Em100Hand::State_Change(const float _fDeltaTime)
-{
-}
-
-void Em100Hand::Skill_CoolTime(const float _fDeltaTime)
-{
-}
 
 HRESULT Em100Hand::Ready()
 {
-	GameObject::Ready();
+	Unit::Ready();
 	RenderInit();
 
-	
+	m_nTag = MonsterWeapon;
 
+	
+	m_nTag = GAMEOBJECTTAG::MonsterWeapon;
 	
 
 	return S_OK;
@@ -43,7 +34,7 @@ HRESULT Em100Hand::Ready()
 
 HRESULT Em100Hand::Awake()
 {
-	GameObject::Awake();
+	Unit::Awake();
 
 
 	m_pParentBone = m_pEm100Mesh.lock()->GetToRootMatrixPtr(m_bLeft ? "L_Hand" : "R_Hand");
@@ -57,26 +48,26 @@ HRESULT Em100Hand::Awake()
 
 	if (m_bLeft)
 	{
-		m_pCollider.lock()->SetRadius(0.4f);
-		m_pCollider.lock()->SetCenter({ 0.4, 0.f, 0.0f });
+		m_pCollider.lock()->SetRadius(0.04f);
+		m_pCollider.lock()->SetCenter({ 0.04, 0.f, 0.0f });
 	}
 	else
 	{
-		m_pCollider.lock()->SetRadius(0.4f);
-		m_pCollider.lock()->SetCenter({ -0.4, 0.f, 0.1f });
+		m_pCollider.lock()->SetRadius(0.04f);
+		m_pCollider.lock()->SetCenter({ -0.04, 0.f, 0.01f });
 	}
 	return S_OK;
 }
 
 HRESULT Em100Hand::Start()
 {
-	GameObject::Start();
+	Unit::Start();
 	return S_OK;
 }
 
 UINT Em100Hand::Update(const float _fDeltaTime)
 {
-	GameObject::Update(_fDeltaTime);
+	Unit::Update(_fDeltaTime);
 
 	m_ParentWorld = m_pEm100Trans.lock()->GetWorldMatrix();
 	m_pTransform.lock()->SetWorldMatrix(*m_pParentBone * m_ParentWorld);
@@ -86,34 +77,38 @@ UINT Em100Hand::Update(const float _fDeltaTime)
 
 UINT Em100Hand::LateUpdate(const float _fDeltaTime)
 {
-	GameObject::LateUpdate(_fDeltaTime);
+	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
 void Em100Hand::Editor()
 {
-	GameObject::Editor();
+	Unit::Editor();
 	if (false == bEdit)
 		return;
 }
 
 void Em100Hand::OnEnable()
 {
-	GameObject::OnEnable();
+	Unit::OnEnable();
 }
 
 void Em100Hand::OnDisable()
 {
-	GameObject::OnDisable();
+	Unit::OnDisable();
+}
+
+void Em100Hand::Hit(BT_INFO _BattleInfo, void* pArg)
+{
 }
 
 void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+
 	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
 	{
 		if (m_pEm100.expired())
 			return;
-
 	}
 }
 
@@ -136,14 +131,5 @@ void Em100Hand::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
-
-	RenderInterface::Initialize(_InitRenderProp);
 }
 
-void Em100Hand::Rotate(const float _fDeltaTime)
-{
-}
-
-void Em100Hand::Update_Angle()
-{
-}

@@ -44,6 +44,7 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(RunStop::Create(this, RUNSTOP, m_pNero));
 	m_vecState.emplace_back(DashLoop::Create(this, DASHLOOP, m_pNero));
 	m_vecState.emplace_back(DashStop::Create(this, DASHSTOP, m_pNero));
+	m_vecState.emplace_back(DashTurn::Create(this, DASHTURN, m_pNero));
 
 	m_vecState.emplace_back(BT_Att_ComboC_R_to_L::Create(this, ATT_COMBO_C_R, m_pNero));
 	m_vecState.emplace_back(BT_Att_ComboC_L_to_R::Create(this, ATT_COMBO_C_L, m_pNero));
@@ -167,6 +168,23 @@ HRESULT NeroFSM::ReadyFSM()
 
 	m_vecState.emplace_back(Buster_Start::Create(this, BUSTER_START, m_pNero));
 	m_vecState.emplace_back(To_Majin::Create(this, TO_MAJIN, m_pNero));
+
+	m_vecState.emplace_back(HitFront::Create(this, HIT_FRONT, m_pNero));
+
+	m_vecState.emplace_back(Buster_Air_Catch::Create(this, BUSTER_AIR_CATCH, m_pNero));
+	m_vecState.emplace_back(Buster_Strike_Common::Create(this, BUSTER_STRIKE_COMMON, m_pNero));
+	m_vecState.emplace_back(Buster_Strike_Common_Air::Create(this, BUSTER_STRIKE_COMMON_AIR, m_pNero));
+	m_vecState.emplace_back(M_Buster_Strike_Common_Start::Create(this, M_BUSTER_STRIKE_COMMON_START, m_pNero));
+	m_vecState.emplace_back(M_Buster_Strike_Common_Loop::Create(this, M_BUSTER_STRIKE_COMMON_LOOP, m_pNero));
+	m_vecState.emplace_back(em0000_Buster_Start::Create(this, EM0000_BUSTER_START, m_pNero));
+	m_vecState.emplace_back(em0000_Buster_Finish::Create(this, EM0000_BUSTER_FINISH, m_pNero));
+	m_vecState.emplace_back(em0000_M_Buster::Create(this, EM0000_M_BUSTER, m_pNero));
+	m_vecState.emplace_back(em0000_Buster_Air::Create(this, EM0000_BUSTER_AIR, m_pNero));
+	m_vecState.emplace_back(em5000_Buster_Start::Create(this, EM5000_BUSTER_START, m_pNero));
+	m_vecState.emplace_back(em5000_Buster_Swing::Create(this, EM5000_BUSTER_SWING, m_pNero));
+	m_vecState.emplace_back(em5000_Buster_Swing_Loop::Create(this, EM5000_BUSTER_SWING_LOOP, m_pNero));
+	m_vecState.emplace_back(em5000_Buster_Finish::Create(this, EM5000_BUSTER_FINISH, m_pNero));
+
 
 	return S_OK;						
 }

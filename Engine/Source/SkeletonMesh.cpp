@@ -843,8 +843,8 @@ void SkeletonMesh::AnimationEnd()&
 	{
 		CurrentAnimPrevFrameMotionTime = 0.0f;
 		CurrentAnimMotionTime -= CurPlayAnimInfo.Duration;
-		PrevAnimMotionTime = CurPlayAnimInfo.Duration;
-		TransitionDuration = CurPlayAnimInfo.TransitionTime;
+		PrevAnimMotionTime     = CurPlayAnimInfo.Duration;
+		TransitionDuration     = CurPlayAnimInfo.TransitionTime;
 		bAnimationEnd = false;
 		bAnimStop = false;
 		PrevAccelerationFactor = CurrentAccelerationFactor;

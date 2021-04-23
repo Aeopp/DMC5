@@ -8,6 +8,8 @@
 #include <functional>
 #include "StaticMesh.h"
 #include "Texture.h"
+#include "FMath.hpp"
+
 
 
 BEGIN(ENGINE)
@@ -74,6 +76,14 @@ public:
 	RECT LastScissorRect{ 0,0,0,0 };
 
 public:
+	Vector3 GetDirection()
+	{
+		return FMath::Normalize(FMath::MulNormal(Vector3{ 0,0,1 },
+			FMath::Rotation({
+			FMath::ToRadian(Direction.x) ,
+			FMath::ToRadian(Direction.y),
+			FMath::ToRadian(Direction.z) })));
+	}
 	D3DXVECTOR4				Position;	// or direction
 
 	D3DXVECTOR3				Spotdirection;
@@ -86,6 +96,9 @@ public:
 	LPDIRECT3DTEXTURE9		Blurredshadowmap;
 	LPDIRECT3DSURFACE9      DepthStencil{};
 
+
+	
+	Vector3 Lradiance{ 1,1,1 };
 
 
 	uint16_t				ShadowMapSize;

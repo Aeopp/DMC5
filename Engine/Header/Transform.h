@@ -68,6 +68,7 @@ public:
 public:
 	void	Translate(const D3DXVECTOR3 _vTranslate);
 	void	Rotate(const D3DXVECTOR3 _vRotate);
+	void	Rotate(const D3DXQUATERNION _tRotate);
 public:
 	static D3DXQUATERNION EulerToQuaternion(const D3DXVECTOR3 _vEuler);
 	static D3DXVECTOR3 QuaternionToEuler(const D3DXQUATERNION _vQuat);

@@ -24,7 +24,7 @@ public:
     virtual void OnEnable() override;
     virtual void OnDisable() override;
 public:
-    float Get_Angle() { return m_fAngle; }
+    float Get_Angle(float _fAddAngle = 0.f) { return m_fAngle + _fAddAngle; }
 public:
     void Set_PlayerCamMode(UINT _ePlayerCamMode) { m_ePlayerCamMode = _ePlayerCamMode; }
     void Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eAtType);
@@ -67,7 +67,6 @@ private:
 
     float   m_fTest1;
     float   m_fTest2;
-
 
 
 };

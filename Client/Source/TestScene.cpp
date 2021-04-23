@@ -22,13 +22,15 @@
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
+#include "MapObject.h"
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 TestScene::TestScene()
 {
-
+	pPlane = nullptr;
 }
 
 void TestScene::Free()
@@ -44,28 +46,18 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<MainCamera>();
-	AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	// AddGameObject<Camera>();
 
-	//AddGameObject<Nero>();
-	//AddGameObject<Em100>();
-	//AddGameObject<Car>();
-	
+	 AddGameObject<Nero>();
+	 AddGameObject<Em100>();
+ 	AddGameObject<Car>();
+
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	//AddGameObject<TempMap>();
 
-	//AddGameObject<ShaderTester>();
+	LoadMap();
 	
-	/*AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();
-	AddGameObject<TestAnimationObject>();*/
-
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
@@ -83,7 +75,13 @@ HRESULT TestScene::LoadScene()
 HRESULT TestScene::Awake()
 {
 	Scene::Awake();
-	return S_OK;
+
+	if (nullptr != pPlane)
+		return S_OK;
+
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+
+	Physics::AddActor(UniqueID, *pPlane);
 }
 
 HRESULT TestScene::Start()
@@ -104,4 +102,66 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 {
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
+}
+
+void TestScene::LoadMap()
+{
+	std::ifstream inputStream{ "../../Data/Stage2.json" };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+		Resources::Load<StaticMesh>(sFullPath);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<MapObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetDouble();
+			vScale.y = scale[1].GetDouble();
+			vScale.z = scale[2].GetDouble();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetDouble();
+			vRotation.y = rotation[1].GetDouble();
+			vRotation.z = rotation[2].GetDouble();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetDouble();
+			vPosition.y = position[1].GetDouble();
+			vPosition.z = position[2].GetDouble();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+		}	
+	}
+	
+
+
 }

@@ -4,6 +4,9 @@
 class TestScene : public Scene
 {
 private:
+
+	PxRigidStatic* pPlane;
+private:
 	explicit TestScene();
 	virtual ~TestScene() = default;
 	// Scene을(를) 통해 상속됨
@@ -17,5 +20,8 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
+
+public:
+	void LoadMap();
 };
 #endif // !__TEST_SCENE_H__

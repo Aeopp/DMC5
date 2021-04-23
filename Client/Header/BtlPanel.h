@@ -225,7 +225,6 @@ public:
 public:
 	void SetTargetCursorActive(bool IsActive);
 	void SetTargetCursor(const Vector3& TargetPos, const float HPRatio = 1.f);	/* HPRatio = 현재 HP / 최대 HP */
-	
 	void SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass = true);		/* HPRatio = 현재 HP / 최대 HP */
 
 	float GetTDTGauge() const { return _TDTGauge; } /* 0 ~ 1 */

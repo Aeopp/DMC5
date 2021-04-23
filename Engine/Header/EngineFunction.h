@@ -3,6 +3,8 @@
 
 BEGIN(ENGINE)
 
+
+
 #pragma region DELETE_DYNAMIC_MEMORY
 template <typename T>
 void SafeDelete(T& ptr)
