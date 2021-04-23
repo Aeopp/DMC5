@@ -479,6 +479,7 @@ HRESULT Renderer::Render()&
 	{
 		return OptRender();
 	}
+
 	RenderReady();
 	RenderBegin();
 
@@ -487,7 +488,6 @@ HRESULT Renderer::Render()&
 	EnableDepthBias();
 	// 기하 패스
 	RenderGBuffer();
-
 	// 디퍼드 렌더링 .
 	DeferredShading();
 
@@ -502,27 +502,30 @@ HRESULT Renderer::Render()&
 
 	// RenderInsulatorMetal();
 
+	AlphaBlendEffectRender();
+	UIRender();
+
 	{
-	// 테스트 끝나면 주석 풀기
-	RenderMeasureLuminance();
-	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
-	AdaptLuminance(DeltaTime);
-	BrightPass();
-	DownSample();
-	Stars();
-	Bloom();
-	LensFlare();
-	// 백버퍼로 백업 . 
-	Device->SetRenderTarget(0, BackBuffer);
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	// 테스트 
-	 ToneMap();
-	//  여기 까지 ..... 
+	    // 테스트 끝나면 주석 풀기
+	    RenderMeasureLuminance();
+	    const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
+	    AdaptLuminance(DeltaTime);
+	    BrightPass();
+	    DownSample();
+	    Stars();
+	    Bloom();
+	    LensFlare();
+	    // 백버퍼로 백업 . 
+	    Device->SetRenderTarget(0, BackBuffer);
+	    Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	    // 테스트 
+	     ToneMap();
+	    //  여기 까지 ..... 
 	}
 
 	// Tonemapping();
-	AlphaBlendEffectRender();
-	UIRender();
+	//AlphaBlendEffectRender();
+	//UIRender();
 
 	ResetState();
 	RenderTargetDebugRender();
@@ -1440,6 +1443,13 @@ HRESULT Renderer::Tonemapping()&
 HRESULT Renderer::AlphaBlendEffectRender()&
 {
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	DWORD ZEnable, ZWrite;
+
+	Device->GetRenderState(D3DRS_ZENABLE, &ZEnable);
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE , FALSE);
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
@@ -1452,7 +1462,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
-		
+
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
@@ -1470,6 +1480,10 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			Fx->End();
 		}
 	}
+
+	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+
 	return S_OK;
 }
 HRESULT Renderer::UIRender()&
