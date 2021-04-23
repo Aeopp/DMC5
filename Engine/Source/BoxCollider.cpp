@@ -61,6 +61,9 @@ HRESULT BoxCollider::ReadyCollider()
 
 HRESULT BoxCollider::DrawCollider(const DrawInfo& _Info)
 {
+	if (FAILED(Collider::DrawCollider(_Info)))
+		return S_OK;
+
 	if (nullptr == m_pMesh)
 		return S_OK;
 	

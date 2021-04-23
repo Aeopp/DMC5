@@ -140,7 +140,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{0.f, 0.f, 0.f});
+	m_pTransform.lock()->SetPosition(Vector3{-3.5f, 0.f, 5.5f});
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -329,7 +329,7 @@ void Nero::RenderShadowSK(const DrawInfo& _Info)
 
 void Nero::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 
@@ -585,11 +585,11 @@ void Nero::CheckAutoRotate()
 	std::weak_ptr<Monster> LockOnMonster;
 	if (0 == MonsterList.size())
 		return;
-	//ù��°�� �ִ¾ֶ� �Ÿ� �˻�
+
 	Vector3 Dir = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float Distance = D3DXVec3Length(&Dir);
 	LockOnMonster = MonsterList.begin()->lock();
-	//���� ���鼭 �ֵ��̶� �Ÿ� �˻�
+
 	for (auto& pMonster : MonsterList)
 	{
 		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
@@ -620,9 +620,9 @@ void Nero::CheckAutoRotate()
 
 		if (vCross.y > 0)
 			fRadian *= -1;
-		m_fAngle += -D3DXToDegree(fRadian);
+		m_fAngle += -D3DXToDegree(fRadian) + vRotationDegree.y;
 		vDegree.y = m_fAngle;
-		vRotationDegree.y = 0;
+		vRotationDegree.y = m_fRotationAngle = 0;
 		Reset_RootRotation();
 	}
 

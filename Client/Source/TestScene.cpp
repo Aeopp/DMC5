@@ -56,9 +56,9 @@ HRESULT TestScene::LoadScene()
 // 	AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 
-	LoadMap();
+	//LoadMap();
 	
 
 	//AddGameObject<Glint>();
@@ -77,12 +77,12 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	//if (nullptr != pPlane)
-	//	return S_OK;
+	if (nullptr != pPlane)
+		return S_OK;
 
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
-	//Physics::AddActor(UniqueID, *pPlane);
+	Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }

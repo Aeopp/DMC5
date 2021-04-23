@@ -544,7 +544,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 200;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ 5.f, 5.f, 0.f });
+	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -592,9 +592,9 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetHeight(0.15f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
 
-	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
-	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-	//m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
+	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
 	return S_OK;
 }
@@ -756,14 +756,26 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	if (!m_bCollEnable)
-		return;
-		//레드퀸, 버스터암, 건틀릿들, 와이어암
-	m_bCollEnable = false;
+	static int i = 0;
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	default:
+		break;
+	}
+}
+
+void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+	static int j = 0;
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		++j;
+		cout << "뿌직!" << j << endl;
+		//Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
 		break;

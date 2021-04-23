@@ -10,10 +10,10 @@ Camera::Camera()
     : m_fFovY(45.f)
     , m_fNear(0.1f)
     , m_fFar(30.f)
-    , m_fSensitivityMove(0.05f)
+    , m_fSensitivityMove(0.001f)
     , m_fSensitivityRot(0.2f)
-    , m_fSensitivityWheel(0.005f)
-    , m_fDistance(10.f)
+    , m_fSensitivityWheel(0.001f)
+    , m_fDistance(5.f)
 {
     D3DXMatrixIdentity(&m_matView);
     D3DXMatrixIdentity(&m_matProjection);
@@ -32,7 +32,7 @@ Camera* Camera::Create()
 
 HRESULT Camera::Ready()
 {
-    m_pTransform.lock()->SetPosition(D3DXVECTOR3(0.f, 10.f, 0.f));
+    m_pTransform.lock()->SetPosition(D3DXVECTOR3(0.f, 1.f, 0.f));
     m_pTransform.lock()->SetRotation(D3DXVECTOR3(45.f, 0.f, 0.f));
 
     return S_OK;

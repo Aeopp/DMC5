@@ -76,9 +76,9 @@ UINT WingArm_Right::LateUpdate(const float _fDeltaTime)
 		D3DXMatrixTranslation(&Trans, m_pParentBoneMat->_41, m_pParentBoneMat->_42, m_pParentBoneMat->_43);
 
 		FinalWorld = Trans * ParentWorldMatrix;
-		FinalWorld._41 += PlayerLook.x * 0.03;
+		FinalWorld._41 += PlayerLook.x * 0.03f;
 		FinalWorld._42 += 0.005f;
-		FinalWorld._43 += PlayerLook.z * 0.02;
+		FinalWorld._43 += PlayerLook.z * 0.02f;
 		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
 	}
 
@@ -232,7 +232,7 @@ void WingArm_Right::RenderShadowSK(const DrawInfo& _Info)
 
 void WingArm_Right::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.001,0.001 ,0.001 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 
