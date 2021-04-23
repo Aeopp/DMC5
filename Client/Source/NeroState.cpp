@@ -1021,6 +1021,7 @@ HRESULT Jump_Basic::StateEnter()
 	{
 	case Nero::Basic:
 		m_pNero.lock()->ChangeAnimation("Jump", false, Nero::ANI_JUMP);
+		m_pNero.lock()->SetAddForce({ 0.f,300.f,0.f });
 		break;
 	case Nero::Front:
 		m_pNero.lock()->ChangeAnimation("Jump_Front", false, Nero::ANI_JUMP_FRONT);
@@ -1046,8 +1047,10 @@ HRESULT Jump_Basic::StateUpdate(const float _fDeltaTime)
 
 	if (m_pNero.lock()->IsAnimationEnd() /* || ¶¥¿¡ ´ê¾Ò´Ù*/)
 	{
-		m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
+		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
 	}
+	if(m_pNero.lock()->CheckIsGround())
+		m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
 	KeyInput_Jump();
 	return S_OK;
 }
@@ -1084,6 +1087,8 @@ HRESULT Jump_Fly_Loop::StateUpdate(const float _fDeltaTime)
 	NeroState::KeyInput_Jump();
 
 	//Å×½ºÆ®¿ë
+	if (m_pNero.lock()->CheckIsGround())
+		m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
 
 	if (Input::GetKey(DIK_M))
 		m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
@@ -4660,6 +4665,10 @@ HRESULT Skill_Split_Loop::StateExit()
 
 HRESULT Skill_Split_Loop::StateUpdate(const float _fDeltaTime)
 {
+	//¶¥¿¡ ´ê¾ÒÀ»¶§
+	if (m_pNero.lock()->CheckIsGround())
+		m_pFSM->ChangeState(NeroFSM::SKILL_SPLIT_END);
+
 	//Å×½ºÆ®
 
 	if (Input::GetKey(DIK_M))
@@ -7659,8 +7668,11 @@ HRESULT Skill_Split_Ex_Loop::StateExit()
 
 HRESULT Skill_Split_Ex_Loop::StateUpdate(const float _fDeltaTime)
 {
-
 	//¶¥¿¡ ´ê¾ÒÀ»¶§
+	if (m_pNero.lock()->CheckIsGround())
+		m_pFSM->ChangeState(NeroFSM::SKILL_SPLIT_EX_END);
+
+	//Å×½ºÆ®
 	if(Input::GetKey(DIK_M))
 		m_pFSM->ChangeState(NeroFSM::SKILL_SPLIT_EX_END);
 	return S_OK;
@@ -7810,6 +7822,8 @@ HRESULT Air_Dive_Slash_Loop::StateExit()
 HRESULT Air_Dive_Slash_Loop::StateUpdate(const float _fDeltaTime)
 {
 	// ¶¥¿¡ ´ê¾ÒÀ»¶§
+	if(m_pNero.lock()->CheckIsGround())
+		m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_END);
 
 	//Å×½ºÆ®¿ë
 

@@ -53,20 +53,20 @@ void Nero::Set_RQ_Coll(bool _ActiveOrNot)
 void Nero::CreateOvertureEff(EffDircetion eDir)
 {
 	m_pEffOverture.lock()->PlayStart();
-	Matrix World = /**(m_pMesh->GetNodeToRoot("R_MiddleF3_SS")) **/ m_pTransform.lock()->GetWorldMatrix();
+	Matrix World = m_pTransform.lock()->GetWorldMatrix();
 	Vector3 Pos,Rot;
 	memcpy(&Pos, World.m[3], sizeof(Vector3));
 	switch (eDir)
 	{
 	case EffDircetion::EffDir_Front:
-		Pos += (m_pTransform.lock()->GetLook()) * -2.5f;
-		Pos.y += 0.8f;
+		Pos += (m_pTransform.lock()->GetLook()) * -0.25f;
+		Pos.y += 0.08f;
 		Rot = { 0.f,0.f,0.f };
 		break;
 	case EffDircetion::EffDir_Up:
 		Rot = { 90.f,180.f,0.f };
-		Pos += (m_pTransform.lock()->GetLook()) * -0.8f;
-		Pos.y += 2.3f;
+		Pos += (m_pTransform.lock()->GetLook()) * -0.08f;
+		Pos.y += 0.23f;
 		break;
 	case EffDircetion::EffDir_Down:
 		Rot = { -90.f,180.f,0.f };
@@ -133,8 +133,9 @@ HRESULT Nero::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
-	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
-	m_pCollider.lock()->SetRadius(0.4f);
+	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.08f, 0.f));
+	m_pCollider.lock()->SetRadius(0.04f);
+	m_pCollider.lock()->SetHeight(0.1f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
@@ -505,6 +506,11 @@ void Nero::SetColl_Monsters(bool _AcitveOrNot)
 	}
 }
 
+void Nero::SetAddForce(Vector3 _vJumpPos)
+{
+	m_pCollider.lock()->AddForce(_vJumpPos);
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -552,6 +558,11 @@ void Nero::CheckAutoRotate()
 		Reset_RootRotation();
 	}
 
+}
+
+bool Nero::CheckIsGround()
+{
+	return m_pCollider.lock()->IsGround();
 }
 
 void Nero::Set_RQ_AttType(ATTACKTYPE _eAttDir)

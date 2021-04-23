@@ -303,8 +303,10 @@ public:
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 	void SetColl_Monsters(bool _AcitveOrNot);
+	void SetAddForce(Vector3 _vJumpPos);
 public:
 	void CheckAutoRotate();
+	bool CheckIsGround();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//Ä«¸Þ¶ó

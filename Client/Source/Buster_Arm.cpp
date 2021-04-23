@@ -43,7 +43,8 @@ HRESULT Buster_Arm::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetCenter({ 0.f,1.f,0.f });
+	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.05f });
+	m_pCollider.lock()->SetRadius(0.05f);
 	PushEditEntity(m_pCollider.lock().get());
 
 	return S_OK;
@@ -86,8 +87,8 @@ void Buster_Arm::OnEnable()
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
 
 	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
-	NeroWorld._41 += PlayerLook.x * -0.5;
-	NeroWorld._43 += PlayerLook.z * -0.5;
+	NeroWorld._41 += PlayerLook.x * -0.05;
+	NeroWorld._43 += PlayerLook.z * -0.05;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 

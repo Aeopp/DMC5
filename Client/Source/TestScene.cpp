@@ -47,15 +47,15 @@ HRESULT TestScene::LoadScene()
 	// AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
-	AddGameObject<Em100>();
+	AddGameObject<BtlPanel>();
+	//AddGameObject<Em100>();
 // 	AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-//  AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 
-	LoadMap();
+	//LoadMap();
 	
-	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Glint>();
 	//
@@ -76,6 +76,8 @@ HRESULT TestScene::Awake()
 	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
 	Physics::AddActor(UniqueID, *pPlane);
+
+	return S_OK;
 }
 
 HRESULT TestScene::Start()

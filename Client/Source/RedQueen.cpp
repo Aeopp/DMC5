@@ -50,9 +50,9 @@ HRESULT RedQueen::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
 
-	m_pCollider.lock()->SetRadius(0.1f);
-	m_pCollider.lock()->SetHeight(0.55f);
-	m_pCollider.lock()->SetCenter({ 0.f, 1.f, 0.f });
+	m_pCollider.lock()->SetRadius(0.01f);
+	m_pCollider.lock()->SetHeight(0.055f);
+	m_pCollider.lock()->SetCenter({ 0.f, 0.1f, 0.f });
 
 	PushEditEntity(m_pCollider.lock().get());
 
