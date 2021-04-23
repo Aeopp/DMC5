@@ -35,19 +35,58 @@ void Nero::Free()
 	m_pFSM = nullptr;
 }
 
-void Nero::Set_RQ_State(UINT _StateIndex)
-{
-	m_pRedQueen.lock()->SetWeaponState(_StateIndex);
-}
-
 void Nero::Set_PlayingTime(float NewTime)
 {
 	m_pMesh->SetPlayingTime(NewTime);
 }
 
-void Nero::Set_RQ_Coll(bool _ActiveOrNot)
+
+void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 {
-	m_pRedQueen.lock()->Set_Coll(_ActiveOrNot);
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
+{
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetAttType(_eAttDir);
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex)
+{
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetWeaponState(_StateIndex);
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
 void Nero::CreateOvertureEff(EffDircetion eDir)
@@ -101,7 +140,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{0.f, 5.f, 0.f});
+	m_pTransform.lock()->SetPosition(Vector3{0.f, 0.f, 0.f});
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -594,11 +633,6 @@ bool Nero::CheckIsGround()
 	return m_pCollider.lock()->IsGround();
 }
 
-void Nero::Set_RQ_AttType(ATTACKTYPE _eAttDir)
-{
-	m_pRedQueen.lock()->SetAttType(_eAttDir);
-}
-
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)
 {
 	if (m_pCamera.expired())
@@ -681,33 +715,37 @@ void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, co
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
 }
 
-void Nero::ChangeAnimationIndex(const UINT AnimationIndex)
+void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
-	m_iPreAnimationIndex = m_iCurAnimationIndex;
-	m_iCurAnimationIndex = AnimationIndex;
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_WireArm:
+		m_pWireArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_WIngArm_Left:
+		m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_WingArm_Right:
+		m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_RedQueen:
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
 void Nero::ChangeWeapon(UINT _iWeaponIndex)
 {
 	m_iCurWeaponIndex = _iWeaponIndex;
-}
-void Nero::Change_BusterArm_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_WireArm_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pWireArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_Overture_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }

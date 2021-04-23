@@ -29,7 +29,6 @@ protected:
 	virtual HRESULT KeyInput_Jump(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Cbs_Jump(const int _nIndex = -1);
 protected:
-	void ActiveColl_RedQueen(bool _ActiveOrNot);
 	void ActiveColl_Monsters(bool _ActiveOrNot);
 
 };

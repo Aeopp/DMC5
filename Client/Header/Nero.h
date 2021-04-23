@@ -259,6 +259,8 @@ public:
 		NeroCom_WIngArm_Left,
 		NeroCom_WingArm_Right,
 		NeroCom_Overture,
+		NeroCom_RedQueen,
+		NeroCom_Cerberos,
 		NeroCom_End
 	};			
 
@@ -274,11 +276,10 @@ public:
 	virtual void RenderReady() override;
 	virtual void Editor()override;
 public:
-	/// <For RedQueen>
-	void Set_RQ_State(UINT _StateIndex);
-	void Set_RQ_AttType(ATTACKTYPE _eAttDir);
-	void Set_RQ_Coll(bool _ActiveOrNot);
-	void Set_PlayingTime(float NewTime);
+	/// <For Weapon>
+	void Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot);
+	void Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir);
+	void Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex);
 
 public:
 	// <For Overture Eff>
@@ -305,6 +306,7 @@ public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
 	void Reset_RootRotation() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
+
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot);
 	void SetActive_NeroComponent_Collider(NeroComponentID _eNeroComID, bool ActiveOrNot);
@@ -340,17 +342,13 @@ public:
 	void  StopAnimation();
 	void  ContinueAnimiation();
 	bool  IsAnimationEnd();
+	void  Set_PlayingTime(float NewTime);
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
-	void ChangeAnimationIndex(const UINT AnimationIndex);
+	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 	void ChangeWeapon(UINT _iWeaponIndex);
-	void Change_BusterArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
-	void Change_WireArm_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
-	void Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
-	void Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
-	void Change_Overture_Animation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
