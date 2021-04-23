@@ -21,6 +21,7 @@
 #include "Renderer.h"
 #include "MapObject.h"
 
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -43,25 +44,21 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
-	// AddGameObject<Camera>();
+	// AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
 
-	 AddGameObject<Nero>();
+	/* AddGameObject<Nero>();
 	 AddGameObject<Em100>();
- 	AddGameObject<Car>();
+ 	AddGameObject<Car>();*/
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	AddGameObject<TempMap>();
-
 	LoadMap();
 	
 	AddGameObject<BtlPanel>();
-
-	//AddGameObject<Glint>();
+	AddGameObject<Glint>();
 	//
 
-	//AddGameObject<DashImpact>();
-	//AddGameObject<Blood>();
 
 	return S_OK;
 }

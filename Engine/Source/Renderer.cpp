@@ -507,10 +507,10 @@ HRESULT Renderer::Render()&
 	LensFlare();
 	// 백버퍼로 백업 . 
 	Device->SetRenderTarget(0, BackBuffer);
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	Device->SetRenderState (D3DRS_SRGBWRITEENABLE, FALSE);
 	// 테스트 
-
 	ToneMap();
+
 	// Tonemapping();
 	AlphaBlendEffectRender();
 	UIRender();
@@ -565,6 +565,8 @@ void Renderer::Editor()&
 		ImGui::SliderFloat("ao", &ao,0.0f,1.f );
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
+		ImGui::SliderFloat("FogDistance",  &FogDistance, 0.0f, 1000.f);
+		ImGui::ColorEdit3("FogColor", FogColor);
 		
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
@@ -2085,9 +2087,6 @@ HRESULT Renderer::LensFlare()
 	}
 	hdreffects->EndPass();
 	hdreffects->End();
-	
-
-
 
 
 	return S_OK;
@@ -2098,7 +2097,7 @@ HRESULT Renderer::ToneMap()
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-	Vector4 pixelsize{ 0.f,0.f,0.f,1.f};
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f };
 
 	pixelsize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
 	pixelsize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
@@ -2109,7 +2108,11 @@ HRESULT Renderer::ToneMap()
 	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
 	hdreffects->SetTechnique("tonemap");
 	hdreffects->SetVector("pixelSize", &pixelsize);
-	hdreffects->SetFloat("exposure", exposure);
+	hdreffects->SetFloat("exposure", exposure); 
+	hdreffects->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjectionInverse);
+	hdreffects->SetFloatArray("eyepos", _RenderInfo.Eye, 3u);
+	hdreffects->SetFloatArray("fogcolor", FogColor, 3u);
+	hdreffects->SetFloat("fogdistance", FogDistance);
 
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
@@ -2118,16 +2121,18 @@ HRESULT Renderer::ToneMap()
 		Device->SetTexture(1, RenderTargets["bloomresult"]->GetTexture());
 		Device->SetTexture(2, RenderTargets["starresult"]->GetTexture());
 		Device->SetTexture(3, RenderTargets["lensflaretargets1"]->GetTexture());
-		Device->SetTexture(4, RenderTargets["afterimagetargets" + 
-			std::to_string ( 1-currentafterimage) ]->GetTexture());
-		
+		Device->SetTexture(4, RenderTargets["afterimagetargets" +
+			std::to_string(1 - currentafterimage)]->GetTexture());
+		Device->SetTexture(5, RenderTargets["Depth"]->GetTexture());
+
 		_Quad->Render(Device, 1.f, 1.f, hdreffects);
 	}
 	hdreffects->EndPass();
 	hdreffects->End();
 
 	return S_OK;
-}
+};
+
 inline DWORD F2DW(FLOAT f)
 {
 	return *((DWORD*)&f);
@@ -2411,6 +2416,7 @@ void Renderer::TestLightRotation()
 
 	time += TimeSystem::GetInstance()->DeltaTime();
 };
+
 
 
 

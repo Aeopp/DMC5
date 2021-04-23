@@ -126,8 +126,6 @@ float DistributionGGX(float3  N, float3 H, float roughness)
 //    return levels;
 //}
 
-
-
 void vs_main(
 	in out float4 pos : POSITION,
 	in out float2 tex : TEXCOORD0)
@@ -575,6 +573,7 @@ void ps_deferred(
             // wnorm);
             
             color.rgb = pbr_point(albm.rgb, metal, wnorm, roughness, wpos.xyz);
+            
         }
         
         color.a = 1;

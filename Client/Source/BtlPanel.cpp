@@ -6,7 +6,7 @@
 #include "Renderer.h"
 
 // test
-//#include "Glint.h"
+#include "Glint.h"
 //#include "OvertureHand.h"
 
 
@@ -1923,7 +1923,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		AddExGauge(0.333f);
 
-		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(3.5f);
+		std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(3.5f);
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{

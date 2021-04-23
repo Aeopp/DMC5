@@ -83,6 +83,8 @@ public:
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	Vector3 FogColor{ 0.5f,0.5f,0.5f };
+	float FogDistance = 100.f;
 	float ao = 0.012f;
 	float SlpoeScaleDepthBias = 0.0f;
 	float DepthBias = 0.0f;
