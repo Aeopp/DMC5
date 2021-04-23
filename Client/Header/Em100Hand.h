@@ -5,7 +5,8 @@
 #include "Monster.h"
 
 class Em100;
-class Em100Hand final : public Unit
+class Em100Hand final : public Unit,
+						public ENGINE::RenderInterface
 {
 private:
 	explicit Em100Hand() = default;
@@ -42,8 +43,11 @@ public:
 	Matrix								  m_Result;
 		
 	bool								  m_bLeft;
+	 
+	weak_ptr<SphereCollider>		 	  m_pCollider;
 
-	weak_ptr<SphereCollider>			m_pCollider;
+	// RenderInterface을(를) 통해 상속됨
+	virtual void RenderReady() override;
 };
 
 #endif // Em100Hand_h__

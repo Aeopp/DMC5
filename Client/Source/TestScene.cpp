@@ -43,17 +43,17 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
-	// AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<Nero>();
-	AddGameObject<Em100>();
-// 	AddGameObject<Car>();
+	//AddGameObject<Nero>();
+	AddGameObject<Em0000>();
+    //AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-//  AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 
-	LoadMap();
+	//LoadMap();
 	
 	AddGameObject<BtlPanel>();
 

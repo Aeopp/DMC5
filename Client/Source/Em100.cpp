@@ -592,9 +592,9 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetHeight(0.15f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
 
-	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
-	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-	//m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
+	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
 	return S_OK;
 }

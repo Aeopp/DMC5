@@ -7981,6 +7981,7 @@ HRESULT Buster_Start::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Buster_Start", false, Nero::ANI_BUSTER_START);
 	m_pNero.lock()->SetActive_Buster_Arm(true);
+	
 	m_pNero.lock()->Change_BusterArm_Animation("Buster_Catch", false);
 	NeroState::ActiveColl_Monsters(true);
 	return S_OK;
