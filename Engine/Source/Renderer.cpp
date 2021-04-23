@@ -479,8 +479,6 @@ HRESULT Renderer::Render()&
 	{
 		return OptRender();
 	}
-
-
 	RenderReady();
 	RenderBegin();
 
@@ -503,6 +501,9 @@ HRESULT Renderer::Render()&
 	}
 
 	// RenderInsulatorMetal();
+
+	{
+	// 테스트 끝나면 주석 풀기
 	RenderMeasureLuminance();
 	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
 	AdaptLuminance(DeltaTime);
@@ -515,7 +516,12 @@ HRESULT Renderer::Render()&
 	Device->SetRenderTarget(0, BackBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	// 테스트 
-	ToneMap();
+	 ToneMap();
+	//  여기 까지 ..... 
+	}
+	
+	Device->SetRenderTarget(0, BackBuffer);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 	
 	// Tonemapping();
 	AlphaBlendEffectRender();
@@ -840,6 +846,9 @@ void Renderer::RenderShadowMaps()
 		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
 		PtlightSphere.Radius = PointLight->GetFarPlane();
 		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
+		PtlightSphere.Radius = PointLight->GetPointRadius();
+		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
+
 		if (PointLight->GetShadowMapSize() <= 0) continue;
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
