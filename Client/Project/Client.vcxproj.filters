@@ -287,6 +287,9 @@
     <ClInclude Include="..\Header\NeroFSM.h">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\QliphothBlock.h">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -374,9 +377,6 @@
     <ClCompile Include="..\Source\FSMState.cpp">
       <Filter>02.GameObject\01.Player\99.FSM\Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\NeroFSM.cpp">
-      <Filter>02.GameObject\01.Player\99.FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\NeroState.cpp">
       <Filter>02.GameObject\01.Player\99.FSM</Filter>
     </ClCompile>
@@ -455,6 +455,10 @@
     </ClCompile>
     <ClCompile Include="..\Source\Nero.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroFSM.cpp" />
+    <ClCompile Include="..\Source\QliphothBlock.cpp">
+      <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

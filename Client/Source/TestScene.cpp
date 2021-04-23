@@ -19,6 +19,7 @@
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
 #include "Dust.h"
+#include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -61,11 +62,12 @@ HRESULT TestScene::LoadScene()
 	//LoadMap();
 	
 
-	AddGameObject<Glint>();
-	AddGameObject<OvertureHand>();
-	AddGameObject<Liquid>();
-	AddGameObject<AppearGroundMonster>();
-	AddGameObject<Dust>();
+	//AddGameObject<Glint>();
+	//AddGameObject<OvertureHand>();
+	//AddGameObject<Liquid>();
+	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<Dust>();
+	AddGameObject<QliphothBlock>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
