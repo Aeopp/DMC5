@@ -393,38 +393,11 @@
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Nero.cpp" />
-    <ClCompile Include="..\Source\NeroFSM.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\NeroState.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FSMBase.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\99.FSM\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FSMState.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\99.FSM\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Nero_LWing.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\01.Wings\Left</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Nero_RWing.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\01.Wings\Right</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Buster_Arm.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\RedQueen.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\05.RedQueen</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\MainCamera.cpp">
       <Filter>02.GameObject\99.MainCamera</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GT_Rockman.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\07.Gauntlet\01.GT_Rockman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Wire_Arm.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\TempMap.cpp">
       <Filter>02.GameObject\02.MapObject</Filter>
@@ -440,6 +413,33 @@
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
     <ClCompile Include="..\Source\Nero.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Buster_Arm.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FSMBase.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FSMState.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Nero_LWing.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\01.Wings\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Nero_RWing.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\01.Wings\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroFSM.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroState.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Wire_Arm.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RedQueen.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\05.RedQueen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
