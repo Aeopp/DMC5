@@ -43,6 +43,12 @@ void Nero::Set_PlayingTime(float NewTime)
 
 void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 {
+	if (_ActiveOrNot)
+	{
+		std::list<std::weak_ptr<Monster>> Monsters = GetAllMonster();
+		for (auto& pMonster : Monsters)
+			pMonster.lock()->Set_Coll(true);
+	}
 	switch (_eNeroComID)
 	{
 	case Nero::NeroCom_RedQueen:

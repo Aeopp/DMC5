@@ -159,7 +159,7 @@
             },
             {
                 "Name": "ComboA4",
-                "Acceleration": 0.8,
+                "Acceleration": 1.0,
                 "TransitionTime": 0.10000000149011612
             },
             {
