@@ -8048,17 +8048,14 @@ HRESULT Buster_Start::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Buster_Start", false, Nero::ANI_BUSTER_START);
-	//m_pNero.lock()->SetActive_Buster_Arm(true);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_BusterArm, true);
 	m_pNero.lock()->Change_BusterArm_Animation("Buster_Catch", false);
-	NeroState::ActiveColl_Monsters(true);
 	return S_OK;
 }
 
 HRESULT Buster_Start::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
@@ -8066,13 +8063,6 @@ HRESULT Buster_Start::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if(0.2 <= fCurAnimationTime && 0.6 <= fCurAnimationTime)
-		NeroState::ActiveColl_Monsters(true);
-	else
-		NeroState::ActiveColl_Monsters(false);
-
-	if (0.4 <= fCurAnimationTime)
-		m_pFSM->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON);
 
 	return S_OK;
 }
