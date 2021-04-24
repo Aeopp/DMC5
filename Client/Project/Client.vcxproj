@@ -202,6 +202,7 @@
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
+    <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
+    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

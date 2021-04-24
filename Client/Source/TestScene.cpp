@@ -48,6 +48,7 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	AddGameObject<MainCamera>();
 	//AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
