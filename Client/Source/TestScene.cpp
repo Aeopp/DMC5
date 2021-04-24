@@ -56,9 +56,9 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em100>();
 	//AddGameObject<Car>();
 
-	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	LoadMap();
-	AddGameObject<TempMap>();
+//	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+//	LoadMap();
+//	AddGameObject<TempMap>();
 
 	
 	
@@ -66,9 +66,9 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
-	AddGameObject<AppearGroundMonster>();
+	//AddGameObject<AppearGroundMonster>();
 	//AddGameObject<Dust>();
-	//AddGameObject<QliphothBlock>();
+	AddGameObject<QliphothBlock>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();

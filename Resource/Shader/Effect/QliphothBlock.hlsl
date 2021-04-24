@@ -1,32 +1,9 @@
 matrix World;
 matrix ViewProjection;
-float3 LightDirection = float3(0.f, -1.f, 0.f);
 
+float _AccumulationTexU = 0.f;
+float _AccumulationTexV = 0.f;
 float _SliceAmount = 0.f;
-
-
-texture ALB0Map;
-sampler ALB0 = sampler_state
-{
-    texture = ALB0Map;
-    minfilter = anisotropic;
-    magfilter = anisotropic;
-    mipfilter = anisotropic;
-    sRGBTexture = false;
-    MaxAnisotropy = 4;
-};
-
-texture NRMR0Map;
-sampler NRMR0 = sampler_state
-{
-    texture = NRMR0Map;
-    minfilter = point;
-    magfilter = point;
-    mipfilter = point;
-    sRGBTexture = false;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
 
 texture NoiseMap;
 sampler Noise = sampler_state
@@ -44,9 +21,6 @@ sampler Noise = sampler_state
 struct VsIn
 {
     float4 Position : POSITION;
-    float3 Normal : NORMAL;
-    float3 Tangent : TANGENT;
-    float3 BiNormal : BINORMAL;
     float2 UV : TEXCOORD0;
 };
 
@@ -54,9 +28,6 @@ struct VsOut
 {
     float4 Position : POSITION;
     float2 UV : TEXCOORD0;
-    float3 Normal : TEXCOORD1;
-    float3 Tangent : TEXCOORD2;
-    float3 BiNormal : TEXCOORD3;
 };
 
 VsOut VsMain(VsIn In)
@@ -67,9 +38,6 @@ VsOut VsMain(VsIn In)
     WVP = mul(WVP, ViewProjection);
     
     Out.Position = mul(float4(In.Position.xyz, 1.f), WVP);
-    Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), World));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), World));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), World));
     Out.UV = In.UV;
         
     return Out;
@@ -79,9 +47,6 @@ VsOut VsMain(VsIn In)
 struct PsIn
 {
     float2 UV : TEXCOORD0;
-    float3 Normal : TEXCOORD1;
-    float3 Tangent : TEXCOORD2;
-    float3 BiNormal : TEXCOORD3;
 };
 
 struct PsOut
@@ -93,27 +58,14 @@ PsOut PsMain(PsIn In)
 {
     PsOut Out = (PsOut) 0;
     
-    //float4 NoiseSample = tex2D(Noise, In.UV).rrrr;
-    //NoiseSample.rgb -= saturate(_SliceAmount);
-    //clip(NoiseSample);
-
-    float4 AlbSample = tex2D(ALB0, In.UV);
-    float4 NRMRSample = tex2D(NRMR0, In.UV);
-
-    float2 NormalXY = NRMRSample.xy * 2.f - 1.f;
-    float NormalZ = sqrt(1 - dot(NormalXY, NormalXY));
-   
-    float3x3 TBN = float3x3(normalize(In.Tangent),
-                            normalize(In.BiNormal),
-                            normalize(In.Normal));
+    float2 newUV = In.UV;
+    newUV.x += _AccumulationTexU;
+    newUV.y += _AccumulationTexV;
     
-    float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
-    
-    float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
+    float4 NoiseSample = tex2D(Noise, newUV);
 
-    Out.Color = Diffuse * AlbSample;
-    //Out.Color.a = 1.f;
-    
+    Out.Color = float4(0.1f * NoiseSample.g, 0.f, 0.f, saturate(NoiseSample.b * 0.1f + 0.9f) * (1.f - _SliceAmount));
+  
     return Out;
 };
 
