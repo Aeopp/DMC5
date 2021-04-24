@@ -105,6 +105,10 @@ void Em5000Hand::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
+void Em5000Hand::Buster(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
 void Em5000Hand::RenderInit()
 {
 	SetRenderEnable(true);

@@ -10,6 +10,7 @@ class NeroState :    public FSMState
 protected:
 	weak_ptr<Nero>	m_pNero;
 	bool			m_bActiveColl = false;
+	bool			m_bActiveColl_RedQueen = false;
 	//weak_ptr<Animator>	m_pAnimator;
 public:
 	explicit NeroState(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
@@ -29,8 +30,9 @@ protected:
 	virtual HRESULT KeyInput_Jump(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Cbs_Jump(const int _nIndex = -1);
 protected:
-	void ActiveColl_RedQueen(bool _ActiveOrNot);
+	
 	void ActiveColl_Monsters(bool _ActiveOrNot);
+	void ActiveColl_RedQueen(bool _ActiveOrNot);
 
 };
 

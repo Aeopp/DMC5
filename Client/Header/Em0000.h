@@ -4,7 +4,7 @@
 #include "Monster.h"
 
 class Em0000Weapon;
-class TestObject;
+class Nero;
 class Em0000 final : public Monster
 {
 private:
@@ -67,6 +67,7 @@ public:
 	virtual void OnDisable() override;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -81,7 +82,7 @@ private:
 	Em0000_State	m_eState =State_END;		
 	//TestPlayer 받아옴.
 	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<TestObject>		 m_pPlayer;
+	std::weak_ptr<Nero>				 m_pPlayer;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;

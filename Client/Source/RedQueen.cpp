@@ -54,6 +54,8 @@ HRESULT RedQueen::Awake()
 	m_pCollider.lock()->SetHeight(0.055f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.1f, 0.f });
 
+	m_pCollider.lock()->SetActive(false);
+
 	PushEditEntity(m_pCollider.lock().get());
 
 	return S_OK;
@@ -110,6 +112,7 @@ void RedQueen::OnDisable()
 
 void RedQueen::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+
 }
 
 void RedQueen::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
@@ -180,7 +183,7 @@ void RedQueen::RenderShadowSK(const DrawInfo& _Info)
 
 void RedQueen::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 

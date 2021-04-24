@@ -44,6 +44,7 @@ private:
 		Hit_Buster_Loop,
 		Hit_Buster_End,
 		Downword_Down_StandUp,
+		Downword_Damage,
 		State_END
 	};
 
@@ -72,8 +73,10 @@ public:
 	virtual void OnDisable() override;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -88,9 +91,9 @@ private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
 	//Player 받아옴.
-	std::weak_ptr<Nero>				 m_pPlayer;
-	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<RedQueen>			 m_pRedQueen;
+	std::weak_ptr<Nero>					m_pPlayer;
+	std::weak_ptr<ENGINE::Transform>	m_pPlayerTrans;
+	std::weak_ptr<RedQueen>				m_pRedQueen;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;
@@ -112,6 +115,12 @@ private:
 
 	float		m_fPower = 0.f;
 	D3DXVECTOR3 m_vPower;
+	//////////버스터 용////////////////
+	Matrix*								  m_pPlayerBone;
+	Matrix								  m_PlayerWorld;
+	Matrix								  m_Result;
+	Matrix								  m_TempMatrix;
+	////////////////
 
 };
 

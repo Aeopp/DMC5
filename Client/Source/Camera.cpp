@@ -9,9 +9,9 @@
 Camera::Camera()
     : m_fFovY(45.f)
     , m_fNear(0.1f)
-    , m_fFar(10.f)
-    , m_fSensitivityMove(0.05f)
-    , m_fSensitivityRot(0.2f)
+    , m_fFar(10000.f)
+    , m_fSensitivityMove(0.005f)
+    , m_fSensitivityRot(0.1f)
     , m_fSensitivityWheel(0.005f)
     , m_fDistance(10.f)
 {
@@ -32,7 +32,7 @@ Camera* Camera::Create()
 
 HRESULT Camera::Ready()
 {
-    m_pTransform.lock()->SetPosition(D3DXVECTOR3(0.f, 2.f, -2.f));
+    m_pTransform.lock()->SetPosition(D3DXVECTOR3(0.f, 1.f, 0.f));
     m_pTransform.lock()->SetRotation(D3DXVECTOR3(45.f, 0.f, 0.f));
 
     return S_OK;
@@ -159,17 +159,19 @@ void Camera::MoveCamera()
         {
 
         }
+
+		LONG lWheel = 0;
+		if (lWheel = Input::GetMouseMove(DIM_Z))
+		{
+			D3DXVECTOR3 vLook = m_pTransform.lock()->GetLook();
+
+			D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
+
+			m_pTransform.lock()->SetPosition(vPosition + vLook * lWheel * m_fSensitivityWheel);
+		}
     }
 
-    LONG lWheel = 0;
-    if (lWheel = Input::GetMouseMove(DIM_Z))
-    {
-        D3DXVECTOR3 vLook = m_pTransform.lock()->GetLook();
 
-        D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
-
-        m_pTransform.lock()->SetPosition(vPosition + vLook * lWheel * m_fSensitivityWheel);
-    }
 }
 
 void Camera::UpdateCamera()
