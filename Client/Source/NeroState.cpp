@@ -3683,11 +3683,12 @@ HRESULT BT_Att1::StateUpdate(const float _fDeltaTime)
 	//현재 애니메이션 프레임 위치
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.16f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.21f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+
+	else if (0.16f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.26f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 	{
@@ -3738,11 +3739,12 @@ HRESULT BT_Att2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.1f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.135f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+
+	else if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.26f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 	{
@@ -3794,11 +3796,12 @@ HRESULT BT_Att3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.16f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
 
 	if (0.23f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+
+	else if (0.16f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
 
 	if (0.68f <= fCurrAnimationTime)
 	{
@@ -3855,11 +3858,12 @@ HRESULT BT_Att4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.16f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.23f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+
+	else if (0.16f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 		
 	if (0.44f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::IDLE);
@@ -3938,11 +3942,11 @@ HRESULT BT_Att_ComboC_R_to_L::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.02f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.09f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.02f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -3991,11 +3995,11 @@ HRESULT BT_Att_ComboC_L_to_R::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.034f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.1f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.034f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -4050,11 +4054,11 @@ HRESULT BT_Att_ComboC_1::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.18f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.22f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.18f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -4108,11 +4112,11 @@ HRESULT BT_Att_ComboC_2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.048f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.1f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.048f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -4167,11 +4171,11 @@ HRESULT BT_Att_ComboC_3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.048f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.1f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.048f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -4229,17 +4233,16 @@ HRESULT BT_Att_ComboC_4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.1f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
-	if (0.135f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(false);
-
-	if (0.3f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
 
 	if (0.35f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.3f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+	else if (0.135f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+	else if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.65f <= fCurrAnimationTime)
 	{
@@ -4293,11 +4296,11 @@ HRESULT BT_Att_ComboD_1::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.07f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.1f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.07f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -4351,11 +4354,11 @@ HRESULT BT_Att_ComboD_2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.06f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.1f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.06f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -4409,11 +4412,11 @@ HRESULT BT_Att_ComboD_3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.07f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.1f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.07f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (Input::GetMouseDown(DIM_L))
 	{
@@ -4467,11 +4470,11 @@ HRESULT BT_Att_ComboD_4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.055f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.1f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.055f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.6f <= fCurrAnimationTime)
 	{
@@ -4533,11 +4536,11 @@ HRESULT BT_Air_Att1::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT  CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 
-	if (0.24f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.32f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.24f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 
 	if(0.8f <= fCurrAnimationTime)
@@ -4600,11 +4603,11 @@ HRESULT BT_Air_Att2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.2f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.3f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.85f <= fCurrAnimationTime)
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
@@ -4675,11 +4678,11 @@ HRESULT BT_Air_Att3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.19f <= fCurAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.3f <= fCurAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.19f <= fCurAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.78f <= fCurAnimationTime)
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
@@ -4730,18 +4733,15 @@ HRESULT BT_Air_ComboB::StateExit()
 HRESULT BT_Air_ComboB::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
-
-	if (0.13f <= fCurAnimationTime)
-		ActiveColl_RedQueen(true);
-
-	if (0.21f <= fCurAnimationTime)
-		ActiveColl_RedQueen(false);
-
-	if (0.29f <= fCurAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.47f <= fCurAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.29f <= fCurAnimationTime)
+		ActiveColl_RedQueen(true);
+	else if (0.21f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+	else if (0.13f <= fCurAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.1f <= fCurAnimationTime && 0.2f <= fCurAnimationTime && m_pNero.lock()->Get_IsMajinMode())
 	{
@@ -4975,11 +4975,11 @@ HRESULT Skill_Float_Ground::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.11f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.17f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.11f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.45f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_FLOAT_GROUND);
@@ -5023,14 +5023,14 @@ HRESULT Skill_Float_Ground_Ex3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.2f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(false);
-
-	if (0.34f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.6f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.34f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+	else if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+
 
 	return S_OK;
 }
@@ -5118,11 +5118,11 @@ HRESULT Skill_Shuffle::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.23f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.28f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.23f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.55f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_SHUFFLE);
@@ -7443,11 +7443,11 @@ HRESULT ComboA_Dash::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.13f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.2f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.13f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
 
 	if (0.18f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 	{
@@ -8236,17 +8236,17 @@ HRESULT Skill_Shuffle_Ex::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.2f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
-	if (0.28f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(false);
-
-	if (0.4f <= fCurrAnimationTime)
-		ActiveColl_RedQueen(true);
-
 	if (0.44f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+	else if (0.4f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+	else if (0.28f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+	else if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+
+
 
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);

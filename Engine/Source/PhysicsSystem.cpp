@@ -170,7 +170,7 @@ void PhysicsSystem::FetchResults(const bool _bBlock)
 	if (false == m_bSimulate || nullptr == m_pScene)
 		return;
 
-	while (false == (m_pScene->fetchResults(_bBlock)));
+	while (false == (m_pScene->fetchResults(true)));
 
 	//Simulation 결과로 Actor에 설정된 globalPose를 Transform에 적용.
 	PxU32		nNumActors = 0;
