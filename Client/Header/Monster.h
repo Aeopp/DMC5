@@ -54,6 +54,8 @@ protected:
 	float	m_fAccuangle = 0.f;
 	float	m_fAngleSpeed = 0.f;
 	/////////////////////////////
+	float		m_fPower = 0.f;
+	D3DXVECTOR3 m_vPower;
 };
 
 

@@ -309,10 +309,8 @@ public:
 
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot);
-	void SetActive_NeroComponent_Collider(NeroComponentID _eNeroComID, bool ActiveOrNot);
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
-	void SetColl_Monsters(bool _AcitveOrNot);
 	void SetAddForce(Vector3 _vJumpPos);
 public:
 	void CheckAutoRotate();

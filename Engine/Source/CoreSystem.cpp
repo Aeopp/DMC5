@@ -237,6 +237,9 @@ static void GlobalVariableEditor()
 		ImGui::Checkbox("Debug", &g_bDebugMode);	
 		ImGui::Checkbox("Time", &g_bTime);
 		ImGui::Checkbox("OptmizeRender", &g_bOptRender);
+		D3DXVECTOR3 vGravity = PhysicsSystem::GetInstance()->GetGravity();
+		if (ImGui::InputFloat3("Gravity##Physics", vGravity))
+			PhysicsSystem::GetInstance()->SetGravity(PxVec3(vGravity.x, vGravity.y, vGravity.z));
 		if (g_bDebugMode)
 		{			
 			ImGui::Checkbox("CollisionVisible", &g_bCollisionVisible);
