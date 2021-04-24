@@ -8071,8 +8071,8 @@ HRESULT Buster_Start::StateUpdate(const float _fDeltaTime)
 	else
 		NeroState::ActiveColl_Monsters(false);
 
-	if (m_pNero.lock()->IsAnimationEnd())
-		m_pFSM->ChangeState(NeroFSM::IDLE);
+	if (0.4 <= fCurAnimationTime)
+		m_pFSM->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON);
 
 	return S_OK;
 }

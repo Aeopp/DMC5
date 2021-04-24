@@ -410,3 +410,7 @@ void Em101::Update_Angle()
 void Em101::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
+
+void Em101::Buster(BT_INFO _BattleInfo, void* pArg)
+{
+}

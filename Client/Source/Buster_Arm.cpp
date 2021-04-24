@@ -93,6 +93,8 @@ void Buster_Arm::OnEnable()
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
 	_RenderProperty.bRender = m_bIsRender;
+	if (m_pCollider.lock())
+	m_pCollider.lock()->SetActive(true);
 
 }
 
@@ -103,6 +105,9 @@ void Buster_Arm::OnDisable()
 	m_pMesh->SetPlayingTime(0);
 
 	_RenderProperty.bRender = m_bIsRender;
+
+	if(m_pCollider.lock())
+	m_pCollider.lock()->SetActive(false);
 }
 
 void Buster_Arm::Hit(BT_INFO _BattleInfo, void* pArg)

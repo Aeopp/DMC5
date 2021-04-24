@@ -30,6 +30,7 @@ public:
 	virtual void OnDisable() override;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	void RenderInit();
 
