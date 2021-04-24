@@ -36,7 +36,7 @@ sampler Noise = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = true;
+    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -90,7 +90,7 @@ struct PsOut
     float4 Color : COLOR0;
 };
 
-PsOut PsMain(PsIn In)
+PsOut PsMain0(PsIn In)
 {
     PsOut Out = (PsOut) 0;
     
@@ -112,10 +112,35 @@ PsOut PsMain(PsIn In)
              
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
 
-    Out.Color = float4(0.55f, 0.f, 0.f, MskSample.b - 0.5f);
-    Out.Color += float4(0.424f, 0.f, 0.039f, MskSample.g - 0.5f);
-    saturate(Out.Color);
+    Out.Color = float4(0.4f, 0.2f, 0.2f, (MskSample.b - 0.5f) * 2.f);
     
+    return Out;
+};
+
+PsOut PsMain1(PsIn In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    float4 NoiseSample = tex2D(Noise, In.UV).rrrr;
+    NoiseSample.rgb -= saturate(_SliceAmount);
+    clip(NoiseSample);
+
+    float4 NRMRSample = tex2D(NRMR0, In.UV);
+    float4 MskSample = tex2D(Msk0, In.UV);
+   
+    float2 NormalXY = NRMRSample.xy * 2.f - 1.f;
+    float NormalZ = sqrt(1 - dot(NormalXY, NormalXY));
+   
+    float3x3 TBN = float3x3(normalize(In.Tangent),
+                            normalize(In.BiNormal),
+                            normalize(In.Normal));
+    
+    float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
+             
+    float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
+
+    Out.Color = float4(0.6f, 0.4f, 0.4f, (MskSample.g - 0.5f) * 2.f);
+
     return Out;
 };
 
@@ -132,6 +157,18 @@ technique Default
         sRGBWRITEENABLE = false; // 텍스쳐 안쓰면 끄는게 나은듯.....
 
         vertexshader = compile vs_3_0 VsMain();
-        pixelshader = compile ps_3_0 PsMain();
+        pixelshader = compile ps_3_0 PsMain0();
+    }
+    pass p1
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        //zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false; // 텍스쳐 안쓰면 끄는게 나은듯.....
+
+        vertexshader = compile vs_3_0 VsMain();
+        pixelshader = compile ps_3_0 PsMain1();
     }
 };

@@ -145,9 +145,6 @@ UINT Dust::Update(const float _fDeltaTime)
 	_SmokeMaxTexUV.x = _SmokeMinTexUV.x + 1.f / cx;
 	_SmokeMaxTexUV.y = _SmokeMinTexUV.y + 1.f / cy;
 
-std::cout << _SmokeMinTexUV.x << " " << _SmokeMinTexUV.y << std::endl;
-std::cout << _SmokeMaxTexUV.x << " " << _SmokeMaxTexUV.y << std::endl << std::endl;
-
 	Matrix TempMat, BillMat;
 	TempMat = Renderer::GetInstance()->_RenderInfo.View;
 	D3DXMatrixIdentity(&BillMat);

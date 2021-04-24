@@ -185,6 +185,8 @@ void Camera::UpdateCamera()
 
 void Camera::ShowCameraInfo()
 {
+    if (false==g_bEditMode)return;
+
     ImGui::InputFloat("FovY", &m_fFovY);
     ImGui::InputFloat("Near", &m_fNear);
     ImGui::InputFloat("Far", &m_fFar);

@@ -464,6 +464,11 @@ call Engine.bat</Command>
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
