@@ -57,7 +57,6 @@ UINT WIngArm_Left::Update(const float _fDeltaTime)
 	if (0.52 <= fCurAnimationTime && !m_bLoop)
 	{
 		SetActive(false);
-		//m_pNero.lock()->SetActive_Wing_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_LWing, true);
 	}
 
@@ -78,9 +77,9 @@ UINT WIngArm_Left::LateUpdate(const float _fDeltaTime)
 		D3DXMatrixTranslation(&Trans, m_pParentBoneMat->_41, m_pParentBoneMat->_42, m_pParentBoneMat->_43);
 
 		FinalWorld = Trans * ParentWorldMatrix;
-		FinalWorld._41 += PlayerLook.x * 0.03;
+		FinalWorld._41 += PlayerLook.x * 0.03f;
 		FinalWorld._42 += 0.005f;
-		FinalWorld._43 += PlayerLook.z * 0.02;
+		FinalWorld._43 += PlayerLook.z * 0.02f;
 		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
 	}
 
@@ -93,7 +92,6 @@ void WIngArm_Left::OnEnable()
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
 
-	//m_pNero.lock()->SetActive_Wing_Left(false);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_LWing, true);
 }
 
@@ -233,7 +231,7 @@ void WIngArm_Left::RenderShadowSK(const DrawInfo& _Info)
 
 void WIngArm_Left::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 

@@ -48,21 +48,23 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<MainCamera>();
-	AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	//AddGameObject<Camera>();
 
-	//AddGameObject<Nero>();
+	AddGameObject<Nero>();
+	AddGameObject<Em100>();
+    //AddGameObject<Car>();
+
+	
+	LoadMap();
+	AddGameObject<TempMap>();
+		//LoadMap();
+	//AddGameObject<TempMap>();
+
+	
+	
+
 	AddGameObject<BtlPanel>();
-	//AddGameObject<Em100>();
-	//AddGameObject<Car>();
-
-//	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-//	LoadMap();
-//	AddGameObject<TempMap>();
-
-	
-	
-
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
@@ -72,6 +74,18 @@ HRESULT TestScene::LoadScene()
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
+
+
+
+	// 렌더러 씬 맵 특성에 맞춘 세팅
+	auto _Renderer = Renderer::GetInstance();
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+	_Renderer->ao = 0.01f;
+	_Renderer->SkyIntencity = 0.111f;
+	_Renderer->SkysphereScale = 0.078f;
+	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 
+	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
 
 	return S_OK;
 }

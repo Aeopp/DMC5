@@ -35,6 +35,8 @@ HRESULT MeshCollider::ReadyCollider()
 
 HRESULT MeshCollider::DrawCollider(const DrawInfo& _Info)
 {
+	if (FAILED(Collider::DrawCollider(_Info)))
+		return S_OK;
 	return S_OK;
 }
 
