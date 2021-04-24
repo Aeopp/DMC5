@@ -18,7 +18,7 @@
 #include "Glint.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-#include "Dust.h"
+#include "Smoke.h"
 #include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
@@ -58,15 +58,15 @@ HRESULT TestScene::LoadScene()
 
 	LoadMap();
 	AddGameObject<TempMap>();
+	AddGameObject<Smoke>().lock()->PlayStart();
 
 
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
-	AddGameObject<Liquid>();
+	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
-	AddGameObject<Dust>();
-	AddGameObject<QliphothBlock>();
+	//AddGameObject<QliphothBlock>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();

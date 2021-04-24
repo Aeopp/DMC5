@@ -1,66 +1,76 @@
 #include "stdafx.h"
-#include "..\Header\Dust.h"
+#include "..\Header\Smoke.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
 
 
-void Dust::Free()
+void Smoke::SetVariationIdx(Smoke::VARIATION Idx)
+{
+	if (Idx > MAX_VARIATION_IDX)
+		return;
+
+	Reset();
+
+	_VariationIdx = Idx;
+}
+
+void Smoke::Free()
 {
 	GameObject::Free();
 }
 
-std::string Dust::GetName()
+std::string Smoke::GetName()
 {
-	return "Dust";
+	return "Smoke";
 };
 
-void Dust::Reset()
+void Smoke::Reset()
 {
 	Effect::Reset();
 }
 
-void Dust::Imgui_Modify()
+void Smoke::Imgui_Modify()
 {
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 		Sptransform)
 	{
-		ImGui::Text("Eff_Dust");
+		ImGui::Text("Eff_Smoke");
 
 		{
 			static Vector3 SliderPosition = Sptransform->GetPosition();
-			ImGui::SliderFloat3("Pos##Dust", SliderPosition, -10.f, 10.f);
+			ImGui::SliderFloat3("Pos##Smoke", SliderPosition, -10.f, 10.f);
 			Sptransform->SetPosition(SliderPosition);
 		}
 
 		{
 			static float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##Dust", &Scale, 0.1f, 1.f);
+			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.1f, 1.f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 			SetScale(Scale);
 		}
 
 		{
 			static Vector3 SliderRotation{ 0,0,0 };
-			ImGui::SliderFloat3("Rot##Dust", SliderRotation, 0.f, 360.f);
+			ImGui::SliderFloat3("Rot##Smoke", SliderRotation, 0.f, 360.f);
 			Sptransform->SetRotation(SliderRotation);
 		}
 
 		{
 			static float PlayingSpeed = _PlayingSpeed;
-			ImGui::SliderFloat("PlayingSpeed##Dust", &PlayingSpeed, 0.1f, 10.f);
+			ImGui::SliderFloat("PlayingSpeed##Smoke", &PlayingSpeed, 0.1f, 10.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
 	}
 }
 
-Dust* Dust::Create()
+Smoke* Smoke::Create()
 {
-	return new Dust{};
+	return new Smoke{};
 }
 
-void Dust::RenderInit()
+void Smoke::RenderInit()
 {
 	SetRenderEnable(true);
 
@@ -79,7 +89,7 @@ void Dust::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 }
 
-void Dust::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	//auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
 
@@ -98,11 +108,11 @@ void Dust::RenderAlphaBlendEffect(const DrawInfo& _Info)
 }
 
 
-HRESULT Dust::Ready()
+HRESULT Smoke::Ready()
 {
 	RenderInit();
 
-	m_nTag = GAMEOBJECTTAG::Eff_Dust;
+	m_nTag = GAMEOBJECTTAG::Eff_Smoke;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
@@ -118,21 +128,24 @@ HRESULT Dust::Ready()
 	return S_OK;
 };
 
-HRESULT Dust::Awake()
+HRESULT Smoke::Awake()
 {
 	return S_OK;
 }
 
-HRESULT Dust::Start()
+HRESULT Smoke::Start()
 {
 	return S_OK;
 }
 
-UINT Dust::Update(const float _fDeltaTime)
+UINT Smoke::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
+	// Reset() 호출까지 계속 재생
+
 	//
+	// + if (SMOKE_0 == _VariationIdx)
 	float cx = 8.f;	// 가로 갯수
 	float cy = 8.f; // 세로 갯수
 
@@ -162,27 +175,27 @@ UINT Dust::Update(const float _fDeltaTime)
 		Sptransform->SetBillBoard(BillMat);
 
 	//
-	//Imgui_Modify();
+	Imgui_Modify();
 
 	return 0;
 }
 
-UINT Dust::LateUpdate(const float _fDeltaTime)
+UINT Smoke::LateUpdate(const float _fDeltaTime)
 {
 	return 0;
 }
 
-void Dust::Editor()
+void Smoke::Editor()
 {
 	GameObject::Editor();
 }
 
-void Dust::OnEnable()
+void Smoke::OnEnable()
 {
 	GameObject::OnEnable();
 }
 
-void Dust::OnDisable()
+void Smoke::OnDisable()
 {
 	GameObject::OnDisable();
 }

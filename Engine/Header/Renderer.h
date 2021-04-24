@@ -65,6 +65,7 @@ private:
 	HRESULT Tonemapping()&;
 	HRESULT AlphaBlendEffectRender()&;
 	HRESULT UIRender()&;
+	HRESULT UIRenderAfterPostProcessing()&;
 	HRESULT RendererCollider()&;
 	HRESULT LightFrustumRender()&;
 	HRESULT RenderInsulatorMetal()&;
