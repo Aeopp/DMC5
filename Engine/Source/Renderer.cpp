@@ -818,33 +818,7 @@ void Renderer::RenderShadowMaps()
 
 			});
 	};
-	// auto Blur = Shaders["Blur"]->GetEffect();
-	//for (auto& DirLight : DirLights)
-	//{
-	//	DirLight->BlurShadowMap(Device, [&](FLight* light) {
-	//		D3DXVECTOR4 pixelsize(1.0f / light->GetShadowMapSize(),
-	//			1.0f / light->GetShadowMapSize(), 0, 0);
-	//		D3DXVECTOR4 TexelSize = DirLight->BlurIntencity * pixelsize;
-	//		// make it more blurry
-	//		Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-	//		Blur->SetTechnique("boxblur3x3");
-	//		Blur->SetVector("pixelSize", &pixelsize);
-	//		Blur->SetVector("texelSize", &TexelSize);
 
-	//		Blur->Begin(NULL, 0);
-	//		Blur->BeginPass(0);
-	//		{
-	//			_Quad->Render(Device);
-	//		}
-	//		Blur->EndPass();
-	//		Blur->End();
-
-	//		Device->SetRenderState(D3DRS_ZENABLE, TRUE);
-	//	});
-	//}
-
-	// point lights
-	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	shadowmap->SetBool("isPerspective", TRUE);
 	for (auto& PointLight : PointLights)
 	{
@@ -934,7 +908,7 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	// 알베도 노말 깊이 렌더타겟 한번에 초기화 . 
-	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0, 1.0f, 0);
 
 	auto& GBufferGroup = RenderEntitys[RenderProperty::Order::GBuffer];
 	DrawInfo _DrawInfo{};
@@ -1112,7 +1086,6 @@ void Renderer::DeferredShading()
 		{
 			device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
 		}
-
 
 		for (auto& PointLight : PointLights)
 		{
