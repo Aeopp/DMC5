@@ -67,11 +67,10 @@ void Renderer::ReadySky()
 	Mesh::InitializeInfo InitInfo{};
 	InitInfo.bLocalVertexLocationsStorage = false;
 
-	SkysphereMesh = Resources::Load<StaticMesh>(
-		"..\\..\\Resource\\Mesh\\Static\\Sphere.fbx", InitInfo);
+	SkysphereMesh = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Sphere.fbx", InitInfo);
 
-	SkysphereTex = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\First.dds");
-	SkysphereTex2 = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\Second.dds");
+	SkyTexMission02Sun = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\First.dds");
+	SkyTexMission02Sunset = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\Second.dds");
 }
 
 void Renderer::ReadyLights()
@@ -1309,39 +1308,43 @@ HRESULT Renderer::RenderSky()&
 
 HRESULT Renderer::RenderSkySphere()&
 {
-	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	if (CurSkysphereTex)
+	{
+		Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
+		Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+		Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+		Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
 
-	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-	Device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
-	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+		Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+		Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+		Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+		Device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
+		Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+		Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
-	Matrix SkyView = _RenderInfo.View;
-	SkyView._41 = SkyView._42 = SkyView._43 = 0.0f;
-	const Matrix ViewProj = SkyView * _RenderInfo.Projection;
+		Matrix SkyView = _RenderInfo.View;
+		SkyView._41 = SkyView._42 = SkyView._43 = 0.0f;
+		const Matrix ViewProj = SkyView * _RenderInfo.Projection;
 
-	auto Fx = Shaders["skysphere"]->GetEffect();
-	Fx->SetMatrix("matViewProj", &ViewProj);
+		auto Fx = Shaders["skysphere"]->GetEffect();
+		Fx->SetMatrix("matViewProj", &ViewProj);
 
-	float scale = { 0.026f };
-	const Matrix world = FMath::Scale(scale);
-	Fx->SetMatrix("matSkyRotation", &world);
-	Fx->SetFloat("intencity", SkyIntencity);
-	Fx->Begin(NULL, 0);
-	Fx->BeginPass(0);
-	Device->SetTexture(0u, SkysphereTex2->GetTexture());
-	const int32 Numsubset = SkysphereMesh->GetNumSubset();
-	SkysphereMesh->GetSubset(0).lock()->Render(Fx);
-	Fx->EndPass();
-	Fx->End();
-	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+		float scale = { 0.026f };
+		const Matrix world = FMath::Scale(scale);
+		Fx->SetMatrix("matSkyRotation", &world);
+		Fx->SetFloat("intencity", SkyIntencity);
+		Fx->Begin(NULL, 0);
+		Fx->BeginPass(0);
+		Device->SetTexture(0u, CurSkysphereTex->GetTexture());
+		const int32 Numsubset = SkysphereMesh->GetNumSubset();
+		SkysphereMesh->GetSubset(0).lock()->Render(Fx);
+		Fx->EndPass();
+		Fx->End();
+		Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+	}
 
 	return S_OK;
 };

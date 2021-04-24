@@ -83,6 +83,10 @@ public:
 	bool bEdit = false;
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
+public:
+	std::shared_ptr<Texture> CurSkysphereTex{};
+	std::shared_ptr<Texture> SkyTexMission02Sun{};
+	std::shared_ptr<Texture> SkyTexMission02Sunset{};
 private:
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
@@ -133,8 +137,7 @@ private:
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
 
-	std::shared_ptr<Texture> SkysphereTex{};
-	std::shared_ptr<Texture> SkysphereTex2{};
+
 	std::shared_ptr<StaticMesh> SkysphereMesh{};
 	std::shared_ptr<Texture> sky{};
 

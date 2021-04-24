@@ -57,12 +57,10 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	Renderer::GetInstance()->CurSkysphereTex = Renderer::GetInstance()->SkyTexMission02Sunset;
 	LoadMap();
 	AddGameObject<TempMap>();
-
 	
-	
-
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
