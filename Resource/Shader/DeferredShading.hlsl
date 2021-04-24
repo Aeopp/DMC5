@@ -534,7 +534,7 @@ void ps_deferred(
     // 0.3 ^ (1 / 2.2) °¨¸¶ ÆÐÅ· (³ô¾ÆÁü)
     // 0.3 ^ (2.2) °¨¸¶ ¾ðÆÑ (³·¾ÆÁü )  
     float4 albm = tex2D(albedo,  tex);
-    float metal = saturate(pow(abs(albm.a) , abs(1.0 / 2.2)));
+   float metal = saturate(pow(abs(albm.a) , abs(1.0 / 2.2)));
     
     // ¿ùµå ³ë¸» + °ÅÄ¥±â 
     

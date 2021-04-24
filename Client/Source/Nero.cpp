@@ -50,6 +50,9 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 		break;
 	case Nero::NeroCom_Cerberos:
 		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
 	case Nero::NeroCom_End:
 		break;
 	default:
@@ -205,8 +208,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	Update_Majin(_fDeltaTime);
 
 
-	if (Input::GetKeyDown(DIK_0))
-		m_bDebugButton = !m_bDebugButton;
+	//if (Input::GetKeyDown(DIK_0))
+	//	m_bDebugButton = !m_bDebugButton;
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -223,6 +226,15 @@ UINT Nero::Update(const float _fDeltaTime)
 	D3DXVec3TransformCoord(&Pos, &Pos, &matRot);
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
+
+	if (Input::GetKeyDown(DIK_7))
+	{
+		static bool bActive = false;
+		bActive = !m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->IsActive();
+		Set_Weapon_Coll(NeroCom_RedQueen, bActive);
+		bActive = !m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->IsActive();
+		Set_Weapon_Coll(NeroCom_RedQueen, bActive);
+	}
 
 
 	return 0;
@@ -462,7 +474,11 @@ void Nero::Editor()
 	if (bEdit)
 	{
 		// ������ .... 
-		ImGui::InputScalar("RotY", ImGuiDataType_Float, &m_fRotationAngle, MyButton ? &ZeroDotOne : NULL);
+		ImGui::Checkbox("KeyInput", &m_bDebugButton);
+		if (ImGui::Button("ResetAnimation"))
+		{
+			ChangeAnimation("Idle_Battle", true, ANI_IDLE_BATTLE);
+		}
 	}
 
 }
@@ -524,34 +540,6 @@ void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot
 	}
 }
 
-void Nero::SetActive_NeroComponent_Collider(NeroComponentID _eNeroComID, bool ActiveOrNot)
-{
-	switch (_eNeroComID)
-	{
-	case Nero::NeroCom_Wings:
-		break;
-	case Nero::NeroCom_LWing:
-		break;
-	case Nero::NeroCom_RWing:
-		break;
-	case Nero::NeroCom_BusterArm:
-		break;
-	case Nero::NeroCom_WireArm:
-		break;
-	case Nero::NeroCom_WIngArm_Left:
-		break;
-	case Nero::NeroCom_WingArm_Right:
-		break;
-	case Nero::NeroCom_Overture:
-		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(ActiveOrNot);
-		break;
-	case Nero::NeroCom_End:
-		break;
-	default:
-		break;
-	}
-}
-
 void Nero::SetAngleFromCamera(float _fAddAngle)
 {
 	if (m_pCamera.expired())
@@ -562,16 +550,6 @@ void Nero::SetAngleFromCamera(float _fAddAngle)
 	vRotationDegree.y = m_fRotationAngle;
 
 
-}
-
-void Nero::SetColl_Monsters(bool _AcitveOrNot)
-{
-	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
-
-	for (auto& pMonster : MonsterList)
-	{
-		pMonster.lock()->Set_Coll(_AcitveOrNot);
-	}
 }
 
 void Nero::SetAddForce(Vector3 _vJumpPos)

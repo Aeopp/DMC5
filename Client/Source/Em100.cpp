@@ -917,6 +917,7 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
 		break;
 	default:
 		break;
@@ -925,6 +926,15 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		break;
+	default:
+		break;
+	}
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)
