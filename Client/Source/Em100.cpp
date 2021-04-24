@@ -900,6 +900,10 @@ void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (!m_bCollEnable)
+		return;
+
+	m_bCollEnable = false;
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
