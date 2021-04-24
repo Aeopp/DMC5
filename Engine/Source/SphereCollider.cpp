@@ -75,16 +75,21 @@ HRESULT SphereCollider::DrawCollider(const DrawInfo& _Info)
 	D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 	D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);
 
-	D3DXMATRIX matGameObject = m_pGameObject.lock()->GetComponent<Transform>().lock()->GetRenderMatrix();
+	PxTransform actorTrans = m_pRigidActor->getGlobalPose();
 
-	D3DXVECTOR3 vObjectScale = m_pGameObject.lock()->GetComponent<Transform>().lock()->GetScale();
+	D3DXVECTOR3 vActorPos(0.f, 0.f, 0.f);
+	D3DXQUATERNION tActorRot(0.f, 0.f, 0.f, 1.f);
 
-	D3DXMATRIX matInvScale;
+	memcpy_s(&vActorPos, sizeof(D3DXVECTOR3), &actorTrans.p, sizeof(D3DXVECTOR3));
+	memcpy_s(&tActorRot, sizeof(D3DXQUATERNION), &actorTrans.q, sizeof(D3DXQUATERNION));
 
-	D3DXMatrixScaling(&matInvScale, vObjectScale.x, vObjectScale.y, vObjectScale.z);
-	D3DXMatrixInverse(&matInvScale, nullptr, &matInvScale);
+	D3DXMATRIX matActorTrans;
+	D3DXMATRIX matActorRot;
 
-	matWorld = matScale * matRot * matTrans * matInvScale * m_pGameObject.lock()->GetComponent<Transform>().lock()->GetRenderMatrix();
+	D3DXMatrixTranslation(&matActorTrans, vActorPos.x, vActorPos.y, vActorPos.z);
+	D3DXMatrixRotationQuaternion(&matActorRot, &tActorRot);
+
+	matWorld = matScale * matRot * matTrans * matActorRot * matActorTrans;
 
 	_Info.Fx->SetMatrix("World", &matWorld);
 	_Info.Fx->CommitChanges();
