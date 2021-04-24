@@ -9,7 +9,7 @@
 Camera::Camera()
     : m_fFovY(45.f)
     , m_fNear(0.1f)
-    , m_fFar(30.f)
+    , m_fFar(10.f)
     , m_fSensitivityMove(0.05f)
     , m_fSensitivityRot(0.2f)
     , m_fSensitivityWheel(0.005f)

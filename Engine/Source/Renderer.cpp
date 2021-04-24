@@ -480,7 +480,6 @@ HRESULT Renderer::Render()&
 		return OptRender();
 	}
 
-
 	RenderReady();
 	RenderBegin();
 
@@ -489,7 +488,6 @@ HRESULT Renderer::Render()&
 	EnableDepthBias();
 	// 기하 패스
 	RenderGBuffer();
-
 	// 디퍼드 렌더링 .
 	DeferredShading();
 
@@ -503,23 +501,31 @@ HRESULT Renderer::Render()&
 	}
 
 	// RenderInsulatorMetal();
-	RenderMeasureLuminance();
-	const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
-	AdaptLuminance(DeltaTime);
-	BrightPass();
-	DownSample();
-	Stars();
-	Bloom();
-	LensFlare();
-	// 백버퍼로 백업 . 
-	Device->SetRenderTarget(0, BackBuffer);
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	// 테스트 
-	ToneMap();
-	
-	// Tonemapping();
+
 	AlphaBlendEffectRender();
 	UIRender();
+
+	{
+	    // 테스트 끝나면 주석 풀기
+	    RenderMeasureLuminance();
+	    const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
+	    AdaptLuminance(DeltaTime);
+	    BrightPass();
+	    DownSample();
+	    Stars();
+	    Bloom();
+	    LensFlare();
+	    // 백버퍼로 백업 . 
+	    Device->SetRenderTarget(0, BackBuffer);
+	    Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	    // 테스트 
+	     ToneMap();
+	    //  여기 까지 ..... 
+	}
+
+	// Tonemapping();
+	//AlphaBlendEffectRender();
+	//UIRender();
 
 	ResetState();
 	RenderTargetDebugRender();
@@ -607,6 +613,7 @@ void Renderer::Editor()&
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
+		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
 		ImGui::SliderFloat("ao", &ao,0.0f,1.f );
@@ -839,6 +846,9 @@ void Renderer::RenderShadowMaps()
 		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
 		PtlightSphere.Radius = PointLight->GetFarPlane();
 		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
+		PtlightSphere.Radius = PointLight->GetPointRadius();
+		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
+
 		if (PointLight->GetShadowMapSize() <= 0) continue;
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
@@ -1092,7 +1102,11 @@ void Renderer::DeferredShading()
 		// 여기서부터 ..
 		// point lights
 		// 현재 버그 ... 
-		device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		if (bPtLightScrRtTest)
+		{
+			device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		}
+			
 
 		for (auto& PointLight : PointLights)
 		{
@@ -1110,8 +1124,8 @@ void Renderer::DeferredShading()
 			
 			}*/
 
-
 			if (false == CameraFrustum->IsIn(PtLtSp))continue;
+
 			clipplanes.x = PointLight->GetNearPlane();
 			clipplanes.y = PointLight->GetFarPlane();
 			RECT scissorrect;
@@ -1141,7 +1155,10 @@ void Renderer::DeferredShading()
 			_Quad->Render(Device);
 		}
 
-		device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+		if (bPtLightScrRtTest)
+		{
+			device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+		}
 	}
 
 	deferred->EndPass();
@@ -1426,6 +1443,13 @@ HRESULT Renderer::Tonemapping()&
 HRESULT Renderer::AlphaBlendEffectRender()&
 {
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	DWORD ZEnable, ZWrite;
+
+	Device->GetRenderState(D3DRS_ZENABLE, &ZEnable);
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE , FALSE);
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
@@ -1438,7 +1462,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
-		
+
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
@@ -1456,6 +1480,10 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			Fx->End();
 		}
 	}
+
+	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+
 	return S_OK;
 }
 HRESULT Renderer::UIRender()&

@@ -57,9 +57,10 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	//AddGameObject<TempMap>();
+	LoadMap();
+	AddGameObject<TempMap>();
 
-	//LoadMap();
+	
 	
 
 	//AddGameObject<Glint>();
