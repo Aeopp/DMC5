@@ -22,7 +22,7 @@
 USING(ENGINE)
 IMPLEMENT_SINGLETON(Renderer)
 
-Renderer::Renderer(){}
+Renderer::Renderer() {}
 
 void Renderer::Free()
 {
@@ -126,7 +126,7 @@ void Renderer::ReadyLights()
 	// PointLights[0]->CreateShadowMap(Device, 512);
 	/*PointLights[1]->CreateShadowMap(Device, 512);
 	PointLights[2]->CreateShadowMap(Device, 512);*/
-	
+
 	// PointLights[0]->SetProjectionParameters(0, 0, 0.1f, 10.0f);
 	/*PointLights[1]->SetProjectionParameters(0, 0, 0.1f, 10.0f);
 	PointLights[2]->SetProjectionParameters(0, 0, 0.1f, 10.0f);*/
@@ -136,22 +136,22 @@ void Renderer::ReadyRenderTargets()
 {
 	static const Vector2 RenderTargetDebugRenderSize{ 80.f,80.f };
 
-	 const  float InitX =
+	const  float InitX =
 		g_nWndCX / -2.f + (RenderTargetDebugRenderSize.x);
-	 const  float InitY =
-		 g_nWndCY / +2.f - (RenderTargetDebugRenderSize.y);
+	const  float InitY =
+		g_nWndCY / +2.f - (RenderTargetDebugRenderSize.y);
 
-	 const float YOffset = -RenderTargetDebugRenderSize.y *2.f ;
-	 const float XOffset = RenderTargetDebugRenderSize.x * 2.f;
-	 const float Interval = 5.f;
+	const float YOffset = -RenderTargetDebugRenderSize.y * 2.f;
+	const float XOffset = RenderTargetDebugRenderSize.x * 2.f;
+	const float Interval = 5.f;
 
 	{
-		auto& SceneTarget = RenderTargets["SceneTarget"] = 
+		auto& SceneTarget = RenderTargets["SceneTarget"] =
 			std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo;
 		InitInfo.Width = g_nWndCX;
-		InitInfo.Height = g_nWndCY ;
+		InitInfo.Height = g_nWndCY;
 		InitInfo.Levels = 1;
 		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
 		InitInfo.Format = D3DFMT_A16B16G16R16F;
@@ -166,15 +166,15 @@ void Renderer::ReadyRenderTargets()
 		auto& ALBM = RenderTargets["ALBM"] = std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo;
-		InitInfo.Width = g_nWndCX ;
-		InitInfo.Height = g_nWndCY ;
+		InitInfo.Width = g_nWndCX;
+		InitInfo.Height = g_nWndCY;
 		InitInfo.Levels = 1;
 		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
 		InitInfo.Format = D3DFMT_A8R8G8B8;
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		ALBM->Initialize(InitInfo);
 		ALBM->DebugBufferInitialize(
-			{ InitX,InitY + (YOffset  *1.f ) + Interval },
+			{ InitX,InitY + (YOffset * 1.f) + Interval },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -183,7 +183,7 @@ void Renderer::ReadyRenderTargets()
 
 
 		RenderTarget::Info InitInfo;
-		InitInfo.Width = g_nWndCX; 
+		InitInfo.Width = g_nWndCX;
 		InitInfo.Height = g_nWndCY;
 		InitInfo.Levels = 1;
 		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
@@ -199,7 +199,7 @@ void Renderer::ReadyRenderTargets()
 		auto& Depth = RenderTargets["Depth"] = std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo;
-		InitInfo.Width = g_nWndCX; 
+		InitInfo.Width = g_nWndCX;
 		InitInfo.Height = g_nWndCY;
 		InitInfo.Levels = 1;
 		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
@@ -212,7 +212,7 @@ void Renderer::ReadyRenderTargets()
 	}
 
 	{
-		auto& avgluminance = RenderTargets["avgluminance"] = 
+		auto& avgluminance = RenderTargets["avgluminance"] =
 			std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo{};
@@ -224,7 +224,7 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		avgluminance->Initialize(InitInfo);
 		avgluminance->DebugBufferInitialize(
-			{ InitX + (XOffset* 1.f ) + Interval ,InitY  + Interval },
+			{ InitX + (XOffset * 1.f) + Interval ,InitY + Interval },
 			RenderTargetDebugRenderSize);
 
 		for (int32 i = 1; i < 4; ++i)
@@ -238,7 +238,7 @@ void Renderer::ReadyRenderTargets()
 			std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo{};
-		InitInfo.Width  = 1;
+		InitInfo.Width = 1;
 		InitInfo.Height = 1;
 		InitInfo.Levels = 0;
 		InitInfo.Usages = 0;
@@ -269,7 +269,7 @@ void Renderer::ReadyRenderTargets()
 
 	{
 		auto& starresult = RenderTargets["starresult"] =
-			std::make_shared<RenderTarget >(); 
+			std::make_shared<RenderTarget >();
 		RenderTarget::Info InitInfo{};
 		InitInfo.Width = g_nWndCX / 4;
 		InitInfo.Height = g_nWndCY / 4;
@@ -279,7 +279,7 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		starresult->Initialize(InitInfo);
 		starresult->DebugBufferInitialize(
-			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 3.f) + Interval } ,
+			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 3.f) + Interval },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -373,7 +373,7 @@ void Renderer::ReadyRenderTargets()
 			lensflaretargets->DebugBufferInitialize
 			(
 				{ InitX + (XOffset * 6) + Interval,
-				  InitY + (YOffset * i) + ( i > 0 ? Interval : 0 ) },
+				  InitY + (YOffset * i) + (i > 0 ? Interval : 0) },
 				RenderTargetDebugRenderSize
 			);
 		}
@@ -381,7 +381,7 @@ void Renderer::ReadyRenderTargets()
 		{
 			const std::string key = "afterimagetargets" + std::to_string(i);
 
-			auto& afterimagetargets = RenderTargets[key] = 
+			auto& afterimagetargets = RenderTargets[key] =
 				std::make_shared<RenderTarget>();
 
 			RenderTarget::Info InitInfo{};
@@ -394,9 +394,9 @@ void Renderer::ReadyRenderTargets()
 			afterimagetargets->Initialize(InitInfo);
 			afterimagetargets->DebugBufferInitialize
 			(
-				{     InitX + (XOffset * 6) + Interval,
-					  InitY + (YOffset * (i+2)) + (i > 0 ? Interval : 0) },
-						RenderTargetDebugRenderSize
+				{ InitX + (XOffset * 6) + Interval,
+					  InitY + (YOffset * (i + 2)) + (i > 0 ? Interval : 0) },
+				RenderTargetDebugRenderSize
 			);
 		}
 	}
@@ -450,20 +450,20 @@ void Renderer::Push(const std::weak_ptr<GameObject>& _RenderEntity)&
 		if (_SharedObject->IsRenderEnable())
 		{
 			if (
-				std::shared_ptr<RenderInterface> _SharedRenderEntity 
-						= std::dynamic_pointer_cast<RenderInterface>(_SharedObject);
+				std::shared_ptr<RenderInterface> _SharedRenderEntity
+				= std::dynamic_pointer_cast<RenderInterface>(_SharedObject);
 				_SharedRenderEntity)
 			{
 				if (false == _SharedRenderEntity->GetRenderProp().bRender)return;
 
 				const auto& _EntityRenderProp = _SharedRenderEntity->GetRenderProp();
 
-				for (const auto& [_EntityOrder,ShaderKeyCallMap] : _EntityRenderProp.RenderOrders)
+				for (const auto& [_EntityOrder, ShaderKeyCallMap] : _EntityRenderProp.RenderOrders)
 				{
-					for (const auto& [ShaderKey,Call]: ShaderKeyCallMap)
+					for (const auto& [ShaderKey, Call] : ShaderKeyCallMap)
 					{
 						RenderEntitys[_EntityOrder][ShaderKey].push_back(
-								RenderEntityType{ _SharedRenderEntity.get(), Call });
+							RenderEntityType{ _SharedRenderEntity.get(), Call });
 						RenderEntitySet.insert(_SharedRenderEntity.get());
 					}
 				}
@@ -483,6 +483,7 @@ HRESULT Renderer::Render()&
 	RenderReady();
 	RenderBegin();
 
+
 	//  쉐도우 패스 
 	RenderShadowMaps();
 	EnableDepthBias();
@@ -500,27 +501,28 @@ HRESULT Renderer::Render()&
 		RenderSkySphere();
 	}
 
-	// RenderInsulatorMetal();
 
 	AlphaBlendEffectRender();
 	UIRender();
+	// RenderInsulatorMetal();
 
 	{
-	    // 테스트 끝나면 주석 풀기
-	    RenderMeasureLuminance();
-	    const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
-	    AdaptLuminance(DeltaTime);
-	    BrightPass();
-	    DownSample();
-	    Stars();
-	    Bloom();
-	    LensFlare();
-	    // 백버퍼로 백업 . 
-	    Device->SetRenderTarget(0, BackBuffer);
-	    Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	    // 테스트 
-	     ToneMap();
-	    //  여기 까지 ..... 
+		// 테스트 끝나면 주석 풀기
+		RenderMeasureLuminance();
+		const float DeltaTime = TimeSystem::GetInstance()->DeltaTime();
+		AdaptLuminance(DeltaTime);
+		BrightPass();
+		DownSample();
+		Stars();
+		Bloom();
+		LensFlare();
+		// 백버퍼로 백업 . 
+		Device->SetRenderTarget(0, BackBuffer);
+		Device->SetDepthStencilSurface(BackBufferZBuffer);
+		Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+		// 테스트 
+		ToneMap();
+		//  여기 까지 ..... 
 	}
 
 	// Tonemapping();
@@ -539,6 +541,7 @@ HRESULT Renderer::Render()&
 	RenderEnd();
 	Device->Present(NULL, NULL, NULL, NULL);
 	BackBuffer->Release();
+	BackBufferZBuffer->Release();
 
 	return S_OK;
 }
@@ -549,6 +552,7 @@ HRESULT Renderer::OptRender()&
 	EnableDepthBias();
 	// 기하 패스
 	Device->SetRenderTarget(0, BackBuffer);
+	Device->SetDepthStencilSurface(BackBufferZBuffer);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 
 	RenderGBuffer();
@@ -616,20 +620,20 @@ void Renderer::Editor()&
 		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
-		ImGui::SliderFloat("ao", &ao,0.0f,1.f );
+		ImGui::SliderFloat("ao", &ao, 0.0f, 1.f);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
-		ImGui::SliderFloat("FogDistance",  &FogDistance, 0.0f, 1000.f);
+		ImGui::SliderFloat("FogDistance", &FogDistance, 0.0f, 1000.f);
 		ImGui::ColorEdit3("FogColor", FogColor);
-		
+
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
-		
+
 		{
-			ImGui::InputScalar("SlpoeScaleDepthBias", ImGuiDataType_Float, &SlpoeScaleDepthBias, DepthBiasButton ? &ZeroDotOne : NULL,nullptr,
+			ImGui::InputScalar("SlpoeScaleDepthBias", ImGuiDataType_Float, &SlpoeScaleDepthBias, DepthBiasButton ? &ZeroDotOne : NULL, nullptr,
 				"%1.7f");
 			ImGui::InputScalar("DepthBias", ImGuiDataType_Float, &DepthBias, DepthBiasButton ? &ZeroDotOne : NULL
-			,nullptr, "%1.7f");
+				, nullptr, "%1.7f");
 		}
 
 		if (ImGui::CollapsingHeader("AdaptLuminance"))
@@ -644,7 +648,7 @@ void Renderer::Editor()&
 				adaptedluminance_var = def_adaptedluminance_var;
 			}
 		}
-		
+
 		// ImGui::SliderFloat("ShadowMin", &ShadowMin, 0.0f, 1.0f);
 
 		if (ImGui::CollapsingHeader("Add Light"))
@@ -709,9 +713,10 @@ void Renderer::RenderBegin()&
 {
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
-	Device->Clear(0, nullptr, 
+	Device->GetDepthStencilSurface(&BackBufferZBuffer);
+	/*Device->Clear(0, nullptr,
 		D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
-		0xff00ff00, 1.0f, 0);
+		0xff00ff00, 1.0f, 0);*/
 };
 
 //   등록코드수정 
@@ -740,10 +745,10 @@ void Renderer::RenderEnd()&
 
 	for (auto iter = DirLights.begin(); iter != DirLights.end(); )
 	{
-		if(iter->get()->bRemove)
+		if (iter->get()->bRemove)
 			iter = DirLights.erase(iter);
-		else 
-			++iter; 
+		else
+			++iter;
 	}
 	for (auto iter = PointLights.begin(); iter != PointLights.end(); )
 	{
@@ -782,11 +787,11 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetBool("isPerspective", FALSE);
 
 			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
-			
+
 			// 렌더 시작 ... 
 			DrawInfo _DrawInfo{};
 			_DrawInfo._Device = Device;
-			CurShadowFrustum->Make(light->viewinv, light->proj); 
+			CurShadowFrustum->Make(light->viewinv, light->proj);
 			_DrawInfo._Frustum = CurShadowFrustum.get();
 			_DrawInfo.BySituation.reset();
 			for (auto& [ShaderKey, EntityArr] : RenderEntitys[RenderProperty::Order::Shadow])
@@ -862,7 +867,7 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("lightPos", &light->GetPosition());
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
-			Device->Clear(0, 
+			Device->Clear(0,
 				NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
@@ -871,7 +876,7 @@ void Renderer::RenderShadowMaps()
 			_DrawInfo._Device = Device;
 			_DrawInfo._Frustum = CurShadowFrustum.get();
 			// 여기까지 했음 . 내일 화이팅
-			for (auto& [ShaderKey, EntityArr] : 
+			for (auto& [ShaderKey, EntityArr] :
 				RenderEntitys[RenderProperty::Order::Shadow])
 			{
 				auto Fx = Shaders[ShaderKey]->GetEffect();
@@ -891,7 +896,7 @@ void Renderer::RenderShadowMaps()
 				}
 				Fx->End();
 			}
-		});
+			});
 	}
 
 	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -912,14 +917,14 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
 	}
-	
 
-	device->SetSamplerState (0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState (0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState (0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState (0, D3DSAMP_MAXANISOTROPY, 4);
-	device->SetSamplerState (0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	device->SetSamplerState (0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+
+	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
+	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -935,15 +940,15 @@ void Renderer::RenderGBuffer()
 	_DrawInfo.BySituation.reset();
 	_DrawInfo._Device = Device;
 	_DrawInfo._Frustum = CameraFrustum.get();
-	for (auto&  [ ShaderKey , Entitys ] : GBufferGroup)
+	for (auto& [ShaderKey, Entitys] : GBufferGroup)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("matViewProj", &_RenderInfo.ViewProjection);
 		_DrawInfo.Fx = Fx;
-		for (auto&  [ Entity ,Call ] : Entitys)
+		for (auto& [Entity, Call] : Entitys)
 		{
-			UINT Passes{ 0u }; 
-			Fx->Begin(&Passes, NULL); 
+			UINT Passes{ 0u };
+			Fx->Begin(&Passes, NULL);
 			for (int32 i = 0; i < Passes; ++i)
 			{
 				_DrawInfo.PassIndex = i;
@@ -997,7 +1002,7 @@ void Renderer::DeferredShading()
 
 	auto scenesurface = RenderTargets["SceneTarget"]->GetSurface();
 	auto albedo = RenderTargets["ALBM"]->GetTexture();
-	auto normals= RenderTargets["NRMR"]->GetTexture();
+	auto normals = RenderTargets["NRMR"]->GetTexture();
 	auto depth = RenderTargets["Depth"]->GetTexture();
 
 	auto deferred = Shaders["DeferredShading"]->GetEffect();
@@ -1052,12 +1057,12 @@ void Renderer::DeferredShading()
 	device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
 	device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-	
+
 	deferred->SetTechnique("deferred");
 	deferred->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjectionInverse);
 	deferred->SetVector("pixelSize", &pixelsize);
 	deferred->SetVector("eyePos", &_RenderInfo.Eye);
-	
+
 
 	deferred->Begin(NULL, 0);
 	deferred->BeginPass(0);
@@ -1080,12 +1085,12 @@ void Renderer::DeferredShading()
 				deferred->SetFloat("lightRadius", DirLight->GetPointRadius());
 				deferred->SetFloat("specularPower", DirLight->specularPower);
 				deferred->SetFloat("shadowmin", DirLight->shadowmin);
-				deferred->SetFloat("ShadowDepthBias",DirLight->shadowdepthbias);
+				deferred->SetFloat("ShadowDepthBias", DirLight->shadowdepthbias);
 				deferred->SetFloat("ShadowDepthMapHeight", DirLight->GetShadowMapSize());
 				deferred->SetFloat("ShadowDepthMapWidth", DirLight->GetShadowMapSize());
 				deferred->SetFloat("ao", ao);
 				Vector3 LightDirection = DirLight->GetDirection();
-				deferred->SetFloatArray("LightDirection", LightDirection,3);
+				deferred->SetFloatArray("LightDirection", LightDirection, 3);
 				deferred->SetFloatArray("Lradiance", DirLight->Lradiance, 3);
 				deferred->SetFloat("sinAngularRadius", DirLight->sinAngularRadius);
 				deferred->SetFloat("cosAngularRadius", DirLight->cosAngularRadius);
@@ -1106,7 +1111,7 @@ void Renderer::DeferredShading()
 		{
 			device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
 		}
-			
+
 
 		for (auto& PointLight : PointLights)
 		{
@@ -1121,7 +1126,7 @@ void Renderer::DeferredShading()
 			}
 			else
 			{
-			
+
 			}*/
 
 			if (false == CameraFrustum->IsIn(PtLtSp))continue;
@@ -1142,8 +1147,8 @@ void Renderer::DeferredShading()
 			deferred->SetFloat("cosAngularRadius", PointLight->cosAngularRadius);
 			deferred->SetFloat("shadowmin", PointLight->shadowmin);
 			deferred->SetFloat("ShadowDepthBias", PointLight->shadowdepthbias);
-			deferred->SetFloat("ShadowDepthMapHeight",PointLight->GetShadowMapSize());
-			deferred->SetFloat("ShadowDepthMapWidth",PointLight->GetShadowMapSize());
+			deferred->SetFloat("ShadowDepthMapHeight", PointLight->GetShadowMapSize());
+			deferred->SetFloat("ShadowDepthMapWidth", PointLight->GetShadowMapSize());
 			deferred->SetFloatArray("Lradiance", PointLight->Lradiance, 3);
 			deferred->SetBool("IsPoint", true);
 			deferred->SetVector("clipPlanes", &clipplanes);
@@ -1164,7 +1169,7 @@ void Renderer::DeferredShading()
 	deferred->EndPass();
 	deferred->End();
 
-	device->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE);
+	device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	// 0 , 1 ( 알베도 , 노말 감마보정 꺼주기 )
 	device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
 	device->SetSamplerState(1, D3DSAMP_SRGBTEXTURE, FALSE);
@@ -1219,7 +1224,7 @@ HRESULT Renderer::RenderDebug()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		auto DebugColor = Vector4(0.7f, 0.0f, 0.3f, 0.5f);
-		Fx->SetVector("DebugColor", &DebugColor); 
+		Fx->SetVector("DebugColor", &DebugColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		_DrawInfo.Fx = Fx;
 		UINT Passes{ 0u };
@@ -1228,13 +1233,13 @@ HRESULT Renderer::RenderDebug()&
 		{
 			_DrawInfo.PassIndex = i;
 			Fx->BeginPass(i);
-			for (auto& [_Entity,Call]: _EntityArr)
+			for (auto& [_Entity, Call] : _EntityArr)
 			{
 				Call(_DrawInfo);
 			}
 			Fx->EndPass();
 		}
-		Fx->End(); 
+		Fx->End();
 	}
 	return S_OK;
 };
@@ -1242,7 +1247,7 @@ HRESULT Renderer::RenderDebug()&
 
 HRESULT Renderer::RenderDebugBone()&
 {
-	if (g_bDebugBoneToRoot ==false)return S_OK;
+	if (g_bDebugBoneToRoot == false)return S_OK;
 
 	auto& _Order = RenderEntitys[RenderProperty::Order::DebugBone];
 	DrawInfo _DrawInfo{};
@@ -1253,7 +1258,7 @@ HRESULT Renderer::RenderDebugBone()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		_DrawInfo.Fx = Fx;
-		Vector4 DebugColor {0.3f,0.7f,0.1f,0.5f};
+		Vector4 DebugColor{ 0.3f,0.7f,0.1f,0.5f };
 		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
 		const Matrix ViewProjection = _RenderInfo.ViewProjection;
 		Fx->SetVector("DebugColor", &DebugColor);
@@ -1265,7 +1270,7 @@ HRESULT Renderer::RenderDebugBone()&
 		{
 			Fx->BeginPass(i);
 			_DrawInfo.PassIndex = i;
-			for (auto& [Entity ,Call]: _EntityArr)
+			for (auto& [Entity, Call] : _EntityArr)
 			{
 				Call(_DrawInfo);
 			}
@@ -1371,18 +1376,18 @@ HRESULT Renderer::RenderSkySphere()&
 HRESULT Renderer::RenderEnvironment()&
 {
 	// Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-	Device->SetRenderState(D3DRS_SRGBWRITEENABLE,  FALSE);
-	Device->SetRenderState(D3DRS_ZENABLE,			FALSE);
+	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
 
 	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	Device->SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-	Device->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-	Device->SetRenderState(    D3DRS_CULLMODE, D3DCULL_CCW);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-	
+
 	Matrix Skyview = _RenderInfo.View;
 	Skyview._41 = Skyview._42 = Skyview._43 = 0.0f;
 
@@ -1393,7 +1398,7 @@ HRESULT Renderer::RenderEnvironment()&
 
 	static float EnvironmentScale = 2.f;
 
-	const Matrix rotation = FMath::Rotation(Vector3{0,0,0});
+	const Matrix rotation = FMath::Rotation(Vector3{ 0,0,0 });
 	const Matrix world = FMath::Scale(EnvironmentScale);
 
 	Fx->SetMatrix("matSkyRotation", &rotation);
@@ -1413,7 +1418,7 @@ HRESULT Renderer::Tonemapping()&
 {
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	Device->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
-	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
@@ -1442,14 +1447,15 @@ HRESULT Renderer::Tonemapping()&
 
 HRESULT Renderer::AlphaBlendEffectRender()&
 {
-	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	DWORD ZEnable, ZWrite;
+	DWORD ZEnable, ZWrite, AlphaEnable;
 
 	Device->GetRenderState(D3DRS_ZENABLE, &ZEnable);
 	Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &AlphaEnable);
 
-	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-	Device->SetRenderState(D3DRS_ZWRITEENABLE , FALSE);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
@@ -1480,14 +1486,28 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			Fx->End();
 		}
 	}
-
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 
 	return S_OK;
-}
+};
+
 HRESULT Renderer::UIRender()&
 {
+	DWORD ZEnable, ZWrite, AlphaEnable;
+
+	Device->GetRenderState(D3DRS_ZENABLE, &ZEnable);
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &AlphaEnable);
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+
 	auto& _Group = RenderEntitys[RenderProperty::Order::UI];
 	DrawInfo _DrawInfo{};
 	_DrawInfo.BySituation.reset();
@@ -1505,7 +1525,9 @@ HRESULT Renderer::UIRender()&
 			Fx->End();
 		}
 	}
-
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
+	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 	return S_OK;
 }
 HRESULT Renderer::RendererCollider()&
@@ -1521,7 +1543,7 @@ HRESULT Renderer::RendererCollider()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		_DrawInfo.Fx = Fx;
-		Vector4 DebugColor{ 255.f/255.f,240.f /255.f,140.f/255.f,0.5f };
+		Vector4 DebugColor{ 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.5f };
 		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
 		Fx->SetVector("DebugColor", &DebugColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
@@ -1607,19 +1629,19 @@ HRESULT Renderer::RenderInsulatorMetal()&
 		Device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 	}
 
-	Vector2 pixelSize{}; 
+	Vector2 pixelSize{};
 	pixelSize.x = 1.f / (float)g_nWndCX;
 	pixelSize.y = -1.f / (float)g_nWndCY;
 
-	auto Fx = Shaders["InsulatorMetal"]->GetEffect(); 
-	Fx->Begin(nullptr,0);
+	auto Fx = Shaders["InsulatorMetal"]->GetEffect();
+	Fx->Begin(nullptr, 0);
 	Fx->BeginPass(0);
 	Fx->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjectionInverse);
-	Fx->SetVector("eyePos", &_RenderInfo.Eye); 
+	Fx->SetVector("eyePos", &_RenderInfo.Eye);
 	Fx->SetFloatArray("pixelSize", pixelSize, 2);
 	_Quad->Render(Device, 1.f, 1.f, Fx);
-	Fx->CommitChanges(); 
-	Fx->EndPass(); 
+	Fx->CommitChanges();
+	Fx->EndPass();
 	Fx->End();
 
 	// 컬링 다시 켜기 . 
@@ -1649,14 +1671,14 @@ HRESULT Renderer::RenderMeasureLuminance()
 	viewport.X = 0.0f;
 	viewport.Y = 0.0f;
 	Vector4 pixelsize{ 0, 0, 0, 1 };
-	Vector4 texelsize{0,0,0,1};
+	Vector4 texelsize{ 0,0,0,1 };
 
 	for (int i = 0; i < 4; ++i)
 	{
 		viewport.Width = 64 >> (i * 2);
 		viewport.Height = 64 >> (i * 2);
 
-		pixelsize.x =  1.0f / (float)viewport.Width;
+		pixelsize.x = 1.0f / (float)viewport.Width;
 		pixelsize.y = -1.0f / (float)viewport.Height;
 
 		auto measureeffect =
@@ -1664,11 +1686,11 @@ HRESULT Renderer::RenderMeasureLuminance()
 
 		if (i == 0)
 		{
-			texelsize.x = 1.0f / 
-					(float)_RenderInfo.Viewport.Width;
-			texelsize.y = 1.0f / 
-					(float)_RenderInfo.Viewport.Height;
-	
+			texelsize.x = 1.0f /
+				(float)_RenderInfo.Viewport.Width;
+			texelsize.y = 1.0f /
+				(float)_RenderInfo.Viewport.Height;
+
 			measureeffect->SetTechnique("avgluminital");
 
 			Device->SetTexture(0,
@@ -1682,7 +1704,7 @@ HRESULT Renderer::RenderMeasureLuminance()
 				1.0f / (float)(64 >> (2 * (i - 1)));
 
 			measureeffect->SetTechnique("avglumfinal");
-			Device->SetTexture(0, 
+			Device->SetTexture(0,
 				RenderTargets["avgluminance"]->GetTexture());
 		}
 		else
@@ -1691,15 +1713,15 @@ HRESULT Renderer::RenderMeasureLuminance()
 			texelsize.y = 1.0f / (float)(64 >> (2 * (i - 1)));
 
 			measureeffect->SetTechnique("avglumiterative");
-			Device->SetTexture(0, 
+			Device->SetTexture(0,
 				RenderTargets["avgluminance"]->GetTexture());
 		}
 
 		measureeffect->SetInt("prevLevel", (i - 1) * 2);
 		measureeffect->SetVector("pixelSize", &pixelsize);
 		measureeffect->SetVector("texelSize", &texelsize);
-		
-		Device->SetRenderTarget(0, 
+
+		Device->SetRenderTarget(0,
 			RenderTargets["avgluminance"]->GetSurface(i));
 		Device->SetViewport(&viewport);
 
@@ -1720,9 +1742,9 @@ HRESULT Renderer::RenderMeasureLuminance()
 	);
 
 	auto& avglumsystemmem = RenderTargets["avglumsystemmem"];
-	auto * avglumsystemmem_tex = avglumsystemmem->GetTexture();
+	auto* avglumsystemmem_tex = avglumsystemmem->GetTexture();
 	avglumsystemmem_tex->LockRect
-				(0, &rect, NULL, D3DLOCK_READONLY);
+	(0, &rect, NULL, D3DLOCK_READONLY);
 	{
 		averageluminance =
 			((Math::Float16*)rect.pBits)->operator float();
@@ -1739,11 +1761,11 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 		(averageluminance - adaptedluminance) *
 		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] * DeltaTime));
 
-	float two_ad_EV = adaptedluminance * 
+	float two_ad_EV = adaptedluminance *
 		(adaptedluminance_var[2] / adaptedluminance_var[3]);
 
 	exposure = 1.0f / (adaptedluminance_var[4] * two_ad_EV) *
-					adaptedluminance_var[5];
+		adaptedluminance_var[5];
 
 	return S_OK;
 }
@@ -1764,7 +1786,7 @@ HRESULT Renderer::BrightPass()&
 
 	// 여기서 샘플링 .
 
-	Device->SetRenderTarget(0, 
+	Device->SetRenderTarget(0,
 		RenderTargets["dsampletargets0"]->GetSurface());
 	Device->SetViewport(&viewport);
 
@@ -1773,25 +1795,25 @@ HRESULT Renderer::BrightPass()&
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	
+
 	auto hdreffects = Shaders["hdreffects"]->GetEffect();
 	hdreffects->SetTechnique("brightpass");
 	hdreffects->SetVector("pixelSize", &pixelsize);
-	hdreffects->SetFloat("exposure", exposure); 
+	hdreffects->SetFloat("exposure", exposure);
 
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
 
 	{
-		Device->SetTexture(0, 
+		Device->SetTexture(0,
 			RenderTargets["SceneTarget"]->GetTexture());
-		_Quad->Render(Device,1.f,1.f,hdreffects);
+		_Quad->Render(Device, 1.f, 1.f, hdreffects);
 	}
 
 	hdreffects->EndPass();
 	hdreffects->End();
 	std::string idxstr = std::to_string(currentafterimage);
-	Device->SetRenderTarget(0, 
+	Device->SetRenderTarget(0,
 		RenderTargets["afterimagetargets" + idxstr]->GetSurface(0));
 
 	if (drawafterimage)
@@ -1835,15 +1857,15 @@ HRESULT Renderer::DownSample()
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	
+
 	auto hdreffects = Shaders["hdreffects"]->GetEffect();
 	hdreffects->SetTechnique("downsample");
 
-	hdreffects->Begin(NULL, 0); 
+	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
 
-	Vector4 texelsize{0.f,0.f,0.f ,0.f};
-	Vector4 pixelsize{ 0.f,0.f,0.f,1.f};
+	Vector4 texelsize{ 0.f,0.f,0.f ,0.f };
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f };
 	{
 		for (int i = 1; i < 5; ++i)
 		{
@@ -1861,7 +1883,7 @@ HRESULT Renderer::DownSample()
 			hdreffects->CommitChanges();
 
 			std::string idxstr = std::to_string(i);
-			Device->SetRenderTarget(0, 
+			Device->SetRenderTarget(0,
 				RenderTargets["dsampletargets" + idxstr]->GetSurface(0));
 			idxstr = std::to_string(i - 1);
 
@@ -1876,7 +1898,7 @@ HRESULT Renderer::DownSample()
 
 	hdreffects->EndPass();
 	hdreffects->End();
-	
+
 
 
 	return S_OK;
@@ -1904,7 +1926,7 @@ HRESULT Renderer::Stars()
 	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
-	Device->SetSamplerState(0, D3DSAMP_ADDRESSV , D3DTADDRESS_BORDER);
+	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
 
 	auto hdreffects = Shaders["hdreffects"]->GetEffect();
 	hdreffects->SetTechnique("star");
@@ -1923,21 +1945,21 @@ HRESULT Renderer::Stars()
 				hdreffects->SetInt("starPass", j);
 				hdreffects->CommitChanges();
 
-				std::string idxstr = std::to_string(i) + 
-										std::to_string(j % 2);
+				std::string idxstr = std::to_string(i) +
+					std::to_string(j % 2);
 
 				Device->SetRenderTarget(0,
 					RenderTargets["startargets" + idxstr]->GetSurface(0));
-				
-				auto* _Tex = j==0 ? 
+
+				auto* _Tex = j == 0 ?
 					RenderTargets["dsampletargets1"]->GetTexture() :
 					RenderTargets[
 						"startargets" + std::to_string(i)
-							+ std::to_string(1 - j % 2 )]->GetTexture();
+							+ std::to_string(1 - j % 2)]->GetTexture();
 
-				Device->SetTexture(0, _Tex);
+						Device->SetTexture(0, _Tex);
 
-				_Quad->Render(Device, 1.f, 1.f, hdreffects);
+						_Quad->Render(Device, 1.f, 1.f, hdreffects);
 			}
 
 		}
@@ -1953,36 +1975,36 @@ HRESULT Renderer::Stars()
 		Device->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 		Device->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 	}
-	
+
 	hdreffects->SetTechnique("starcombine");
 
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
 	{
-		Device->SetRenderTarget(0, 
+		Device->SetRenderTarget(0,
 			RenderTargets["starresult"]->GetSurface(0));
 
 		Device->SetTexture(0,
-			RenderTargets["startargets" + 
-			std::to_string(0) + 
+			RenderTargets["startargets" +
+			std::to_string(0) +
 			std::to_string(0)]
-			->GetTexture() );
+			->GetTexture());
 
 		Device->SetTexture(1,
-			RenderTargets["startargets" + 
-			std::to_string(1) + 
+			RenderTargets["startargets" +
+			std::to_string(1) +
 			std::to_string(0)]
 			->GetTexture());
 
 		Device->SetTexture(2,
-			RenderTargets["startargets" + 
-			std::to_string(2) + 
+			RenderTargets["startargets" +
+			std::to_string(2) +
 			std::to_string(0)]
 			->GetTexture());
 
 		Device->SetTexture(3,
 			RenderTargets["startargets" +
-			std::to_string(3) + 
+			std::to_string(3) +
 			std::to_string(0)]
 			->GetTexture());
 
@@ -2009,10 +2031,10 @@ HRESULT Renderer::Bloom()
 	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
 	Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
-	
+
 	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
 
-	Vector4 pixelsize{0.f,0.f,0.f,1.f};
+	Vector4 pixelsize{ 0.f,0.f,0.f,1.f };
 	Vector4 texelsize{ 0.f,0.f,0.f ,0.f };
 	hdreffects->SetTechnique("blur");
 	hdreffects->Begin(NULL, 0);
@@ -2037,7 +2059,7 @@ HRESULT Renderer::Bloom()
 
 			Device->SetRenderTarget(0,
 				RenderTargets[
-					"blurtargets"+std::to_string(i)]->GetSurface(0));
+					"blurtargets" + std::to_string(i)]->GetSurface(0));
 			Device->SetTexture(0,
 				RenderTargets[
 					"dsampletargets" + std::to_string(i)]->GetTexture());
@@ -2046,7 +2068,7 @@ HRESULT Renderer::Bloom()
 			// 세로 방향
 			hdreffects->SetInt("blurDirection", 1);
 			hdreffects->CommitChanges();
-			
+
 			Device->SetRenderTarget(0,
 				RenderTargets["dsampletargets" + std::to_string(i)]
 				->GetSurface(0));
@@ -2089,8 +2111,8 @@ HRESULT Renderer::Bloom()
 		Device->SetRenderTarget(0,
 			RenderTargets["bloomresult"]->GetSurface(0));
 		Device->SetViewport(&viewport);
-		
-		Device->SetTexture(0, 
+
+		Device->SetTexture(0,
 			RenderTargets["dsampletargets0"]->GetTexture());
 		Device->SetTexture(1,
 			RenderTargets["dsampletargets1"]->GetTexture());
@@ -2140,7 +2162,7 @@ HRESULT Renderer::LensFlare()
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
 	{
-		Device->SetRenderTarget(0, 
+		Device->SetRenderTarget(0,
 			RenderTargets["lensflaretargets0"]->GetSurface(0));
 		Device->SetViewport(&viewport);
 
@@ -2192,7 +2214,7 @@ HRESULT Renderer::ToneMap()
 	auto* hdreffects = Shaders["hdreffects"]->GetEffect();
 	hdreffects->SetTechnique("tonemap");
 	hdreffects->SetVector("pixelSize", &pixelsize);
-	hdreffects->SetFloat("exposure", exposure); 
+	hdreffects->SetFloat("exposure", exposure);
 	hdreffects->SetMatrix("matViewProjInv", &_RenderInfo.ViewProjectionInverse);
 	hdreffects->SetFloatArray("eyepos", _RenderInfo.Eye, 3u);
 	hdreffects->SetFloatArray("fogcolor", FogColor, 3u);
@@ -2264,7 +2286,7 @@ void Renderer::LightSave(std::filesystem::path path)
 		{
 			Writer.Key("sinAngularRadius");
 			Writer.Double(_Light->sinAngularRadius);
-			
+
 			Writer.Key("cosAngularRadius");
 			Writer.Double(_Light->cosAngularRadius);
 
@@ -2309,7 +2331,7 @@ void Renderer::LightSave(std::filesystem::path path)
 			Writer.Double(_Light->Direction.y);
 			Writer.Double(_Light->Direction.z);
 			Writer.EndArray();
-			
+
 			Writer.Key("Lradiance");
 			Writer.StartArray();
 			Writer.Double(_Light->Lradiance.x);
@@ -2369,7 +2391,7 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 		PRINT_LOG(L"Warning!", L"Animation Parse Error!");
 		return;
 	}
-	
+
 	const Value& LightData = _Document["LightDataArray"];
 	// if (LightData.IsArray())
 	{
