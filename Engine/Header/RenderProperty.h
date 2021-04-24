@@ -18,6 +18,11 @@ struct ENGINE_DLL DrawInfo
 	std::any BySituation{};
 };
 
+struct ENGINE_DLL EffectInfo
+{
+	float SoftParticleDepthBiasScale = 0.0f;
+};
+
 struct ENGINE_DLL RenderProperty
 {
 public : 

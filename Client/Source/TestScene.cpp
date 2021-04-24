@@ -48,28 +48,23 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
-	//AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<Nero>();
-	AddGameObject<Em100>();
+	//AddGameObject<Nero>();
+	//AddGameObject<Em100>();
     //AddGameObject<Car>();
 
-	
 	LoadMap();
 	AddGameObject<TempMap>();
-		//LoadMap();
-	//AddGameObject<TempMap>();
 
-	
-	
 
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
+	AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<Dust>();
+	AddGameObject<Dust>();
 	AddGameObject<QliphothBlock>();
 
 	// 수정필요
@@ -84,8 +79,9 @@ HRESULT TestScene::LoadScene()
 	_Renderer->ao = 0.01f;
 	_Renderer->SkyIntencity = 0.111f;
 	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
 	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
+	_Renderer->SoftParticleDepthScale = 200.f;
 
 	return S_OK;
 }

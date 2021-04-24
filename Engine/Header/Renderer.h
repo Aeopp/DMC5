@@ -88,6 +88,7 @@ public:
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
 
+	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
 	float   SkyIntencity = 0.111f;
 	float   SkysphereScale = 0.078f;

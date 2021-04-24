@@ -82,6 +82,8 @@ void QliphothBlock::RenderInit()
 
 void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
+
 	auto WeakSubset = _BaseMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
@@ -93,13 +95,16 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.2f);
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
+			// 깊이스케일 조절 하고 싶으면 바인드 .
+			 // Fx -> ???????? RefEffInfo.SoftParticleDepthBiasScale 
+
 			for (int i = 0; i < 3; ++i)
 			{
 				Matrix Rot;
 				D3DXMatrixRotationZ(&Rot, D3DXToRadian(45.f * i));
 				Rot *= _RenderUpdateInfo.World;
 				_Info.Fx->SetMatrix("World", &Rot);
-
+				
 				SharedSubset->Render(_Info.Fx);
 			}
 		}
@@ -107,6 +112,8 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		{
 
 		}
+
+		// 깊이스케일 조절 했으면 원래대로 복구 . 해주세요 ~  
 	}
 }
 

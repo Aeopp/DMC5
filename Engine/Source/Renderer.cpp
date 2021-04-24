@@ -613,6 +613,8 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
+		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
+		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
@@ -1441,13 +1443,18 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	DrawInfo _DrawInfo{};
-	_DrawInfo.BySituation.reset();
+	EffectInfo _EffInfo{};
+	_EffInfo.SoftParticleDepthBiasScale = SoftParticleDepthScale;
+	_DrawInfo.BySituation = _EffInfo;
 	_DrawInfo._Device = Device;
 	_DrawInfo._Frustum = CameraFrustum.get();
 	for (auto& [ShaderKey, Entitys] : _Group)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
+		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
+		Fx->SetFloat("SoftParticleDepthScale",SoftParticleDepthScale);
 
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)

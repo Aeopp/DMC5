@@ -112,7 +112,7 @@ PsOut PsMain0(PsIn In)
              
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
 
-    Out.Color = float4(0.4f, 0.2f, 0.2f, (MskSample.b - 0.5f) * 2.f);
+    Out.Color = float4(0.4f, 0.2f, 0.2f, saturate((MskSample.b - 0.5f) * 2.f));
     
     return Out;
 };
@@ -139,7 +139,7 @@ PsOut PsMain1(PsIn In)
              
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
 
-    Out.Color = float4(0.6f, 0.4f, 0.4f, (MskSample.g - 0.5f) * 2.f);
+    Out.Color = float4(0.6f, 0.4f, 0.4f, saturate((MskSample.g - 0.5f) * 2.f));
 
     return Out;
 };

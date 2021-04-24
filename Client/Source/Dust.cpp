@@ -81,6 +81,8 @@ void Dust::RenderInit()
 
 void Dust::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	//auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
+
 	auto WeakSubset = _PlaneMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
@@ -160,7 +162,7 @@ UINT Dust::Update(const float _fDeltaTime)
 		Sptransform->SetBillBoard(BillMat);
 
 	//
-	//Imgui_Modify();
+	Imgui_Modify();
 
 	return 0;
 }
