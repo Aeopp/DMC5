@@ -41,6 +41,7 @@ enum GAMEOBJECTTAG
 	Eff_Liquid,
 	Eff_AppearGroundMonster,
 	Eff_Dust,
+	Eff_QliphothBlock,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,

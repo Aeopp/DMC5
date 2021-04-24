@@ -19,6 +19,7 @@
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
 #include "Dust.h"
+#include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -47,13 +48,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	// AddGameObject<MainCamera>();
+	//AddGameObject<MainCamera>();
 	AddGameObject<Camera>();
 
-	// AddGameObject<Nero>();
-	// AddGameObject<BtlPanel>();
-	// AddGameObject<Em100>();
-// 	AddGameObject<Car>();
+	//AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
+	//AddGameObject<Em100>();
+	//AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	LoadMap();
@@ -65,10 +66,11 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
-	//AddGameObject<AppearGroundMonster>();
+	AddGameObject<AppearGroundMonster>();
 	//AddGameObject<Dust>();
+	//AddGameObject<QliphothBlock>();
 
-	// ���� �ʿ�
+	// 수정필요
 	//AddGameObject<DashImpact>();
 
 	return S_OK;
