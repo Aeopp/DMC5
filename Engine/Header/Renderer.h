@@ -87,15 +87,20 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
+
+	float   ao = 0.010f;
+	float   SkyIntencity = 0.111f;
+	float   SkysphereScale = 0.078f;
+	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
+	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };
 private:
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
 	float FogDistance = 100.f;
-	float ao = 0.012f;
 	float SlpoeScaleDepthBias = 0.0f;
 	float DepthBias = 0.0f;
 	float DefaultDepthBias = 0.0f;
-	float SkyIntencity = 1.f;
+	
 	static const inline std::array <float, 6> def_adaptedluminance_var
 	{
 		0.98f,

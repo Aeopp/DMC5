@@ -623,7 +623,11 @@ void Renderer::Editor()&
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
 		ImGui::SliderFloat("FogDistance", &FogDistance, 0.0f, 1000.f);
+		ImGui::SliderFloat("SkySphereScale", &SkysphereScale, 0.f, 10.f);
+		ImGui::SliderFloat3("SkySphereRot", SkysphereRot, -360.f, 360.f);
+		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
 		ImGui::ColorEdit3("FogColor", FogColor);
+
 
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
@@ -1331,9 +1335,8 @@ HRESULT Renderer::RenderSkySphere()&
 		auto Fx = Shaders["skysphere"]->GetEffect();
 		Fx->SetMatrix("matViewProj", &ViewProj);
 
-		float scale = { 0.026f };
-		const Matrix world = FMath::Scale(scale);
-		Fx->SetMatrix("matSkyRotation", &world);
+		const Matrix World = FMath::WorldMatrix(SkysphereScale, FMath::ToRadian( SkysphereRot ) , SkysphereLoc);
+		Fx->SetMatrix("matSkyRotation", &World);
 		Fx->SetFloat("intencity", SkyIntencity);
 		Fx->Begin(NULL, 0);
 		Fx->BeginPass(0);
