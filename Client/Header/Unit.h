@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 class Unit abstract :
-    public GameObject
+ public GameObject
 {
 protected:
 	explicit Unit();

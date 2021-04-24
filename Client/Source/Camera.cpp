@@ -9,11 +9,11 @@
 Camera::Camera()
     : m_fFovY(45.f)
     , m_fNear(0.1f)
-    , m_fFar(30.f)
-    , m_fSensitivityMove(0.001f)
-    , m_fSensitivityRot(0.2f)
-    , m_fSensitivityWheel(0.001f)
-    , m_fDistance(5.f)
+    , m_fFar(10000.f)
+    , m_fSensitivityMove(0.005f)
+    , m_fSensitivityRot(0.1f)
+    , m_fSensitivityWheel(0.005f)
+    , m_fDistance(10.f)
 {
     D3DXMatrixIdentity(&m_matView);
     D3DXMatrixIdentity(&m_matProjection);
@@ -159,17 +159,19 @@ void Camera::MoveCamera()
         {
 
         }
+
+		LONG lWheel = 0;
+		if (lWheel = Input::GetMouseMove(DIM_Z))
+		{
+			D3DXVECTOR3 vLook = m_pTransform.lock()->GetLook();
+
+			D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
+
+			m_pTransform.lock()->SetPosition(vPosition + vLook * lWheel * m_fSensitivityWheel);
+		}
     }
 
-    LONG lWheel = 0;
-    if (lWheel = Input::GetMouseMove(DIM_Z))
-    {
-        D3DXVECTOR3 vLook = m_pTransform.lock()->GetLook();
 
-        D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
-
-        m_pTransform.lock()->SetPosition(vPosition + vLook * lWheel * m_fSensitivityWheel);
-    }
 }
 
 void Camera::UpdateCamera()

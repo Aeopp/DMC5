@@ -4,9 +4,9 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-#include "TestObject.h"
 #include <filesystem>
 #include "Em0000_Weapon.h"
+#include "Nero.h"
 
 void Em0000::Free()
 {
@@ -235,7 +235,7 @@ HRESULT Em0000::Ready()
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.0005,0.0005,0.0005 });
+	InitTransform.lock()->SetScale({ 0.05f,0.05f,0.05f });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -251,7 +251,7 @@ HRESULT Em0000::Ready()
 HRESULT Em0000::Awake()
 {
 	Unit::Awake();
-	//m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
+	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
 
@@ -267,10 +267,8 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetGravity(false);
-
-	
-
+	m_pCollider.lock()->SetGravity(true);
+		
 	m_pCollider.lock()->SetRadius(0.7f);
 	m_pCollider.lock()->SetHeight(1.7f);
 	m_pCollider.lock()->SetCenter({ 0.f,1.3f,-0.3f });
@@ -289,11 +287,6 @@ UINT Em0000::Update(const float _fDeltaTime)
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
-	
-
-	//ENGINE::AnimNotify _Notify{};
-	////return true 면 이제 호출 안함, false면 저 루프 돌떄 계속 호출.
-	//_Notify.Event[0.5] = [this]() {  AttackStart();  return false; };
 
 	const float Length = FMath::Length(DeltaPos);
 	D3DXMATRIX matRot;
@@ -301,7 +294,6 @@ UINT Em0000::Update(const float _fDeltaTime)
 	D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 
 	D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
-	//DeltaPos = FMath::RotationVecNormal(DeltaPos, Axis, FMath::ToRadian(90.f)) * Length;
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
@@ -377,6 +369,10 @@ void Em0000::OnDisable()
 }
 
 void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
@@ -487,7 +483,6 @@ void Em0000::RenderInit()
 			RenderDebugSK(_Info);
 		}
 	} };
-
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
@@ -497,14 +492,19 @@ void Em0000::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
+
+
 	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};
+	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em0000\\Em0000.fbx", _InitInfo);
-	PushEditEntity(m_pMesh.get());
+
+	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em0000\\Ani");
 	m_pMesh->EnableToRootMatricies();
-	//몬스터 초기상태 idle
-	m_pMesh->PlayAnimation("idle", true);
+	PushEditEntity(m_pMesh.get());
+	//몬스터 초기상태 Idle
+	m_pMesh->PlayAnimation("Idle", true);
 }
 
 void Em0000::Rotate(const float _fDeltaTime)

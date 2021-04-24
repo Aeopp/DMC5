@@ -36,6 +36,7 @@ public:
 	virtual void    OnDisable() override PURE;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
+	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
@@ -45,6 +46,7 @@ protected:
 
 	bool	m_bIng = false;
 	bool	m_bHit = false;
+	bool	m_bDown = false;
 
 	//플레이어 방향 회전하기 용
 	bool	m_bInteraction = false;;

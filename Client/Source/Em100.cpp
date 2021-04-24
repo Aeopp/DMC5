@@ -9,6 +9,7 @@
 #include "Em100Hand.h"
 #include "Nero.h"
 #include "RedQueen.h"
+#include "NeroFSM.h"
 
 void Em100::Free()
 {
@@ -39,7 +40,7 @@ void Em100::Fight(const float _fDeltaTime)
 	//}
 
 	//몬스터 움직이는 방향 정해주는 놈
-	if (fDir >= 3.f)
+	if (fDir >= 0.3f)
 	{
 		int iRandom = FMath::Random<int>(1, 6);
 		if (m_bMove && m_bIng == false)
@@ -293,10 +294,11 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->IsAnimationEnd())
-			{	
+			if (m_pCollider.lock()->IsGround() && m_pMesh->CurPlayAnimInfo.Name == "Hit_Air")
+			{
 				m_eState = Hit_End;
 				m_bIng = false;
+				m_bDown = true;
 			}
 		}
 		break;
@@ -309,13 +311,16 @@ void Em100::State_Change(const float _fDeltaTime)
 		}
 		break;
 	case Em100::Downword_Down_StandUp:
-		if (m_bHit == true)
+		if (m_bDown == true)
 		{
 			m_pMesh->PlayAnimation("Downword_Down_StandUp", false, {}, 1.f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Downword_Down_StandUp" && m_pMesh->IsAnimationEnd())
 			{
+				//쳐맞아서 넘어진다음에 일어나는 모션이 끝남
+				//그렇다는건 이제 맞지도않고, 다음 행동 해도 되고(m_bing == false), 넘어진 것도 끝났음.
 				m_bHit = false;
 				m_bIng = false;
+				m_bDown = false;
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
@@ -328,6 +333,15 @@ void Em100::State_Change(const float _fDeltaTime)
 					m_eState = Idle4;
 			}
 		}
+		break;
+	case Em100::Downword_Damage:
+		if (m_bDown && m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Downword_Damage", false, {}, 1.f, 10.f);
+			m_bHit = false;
+		}
+		if (m_pMesh->CurPlayAnimInfo.Name == "Downword_Damage" && m_pMesh->IsAnimationEnd())
+			m_eState = Downword_Down_StandUp;
 		break;
 	case Em100::Walk_Front_End:
 		if (m_bIng == true)
@@ -358,7 +372,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			Update_Angle(_fDeltaTime);
 			m_bInteraction = true;
 
-			if (fDir <= 3.f)
+			if (fDir <= 0.3f)
 			{
 				m_eState = Walk_Front_End;
 			}
@@ -479,7 +493,6 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bHit)
 		{
 			m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
-
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_bHit = false;
@@ -559,8 +572,8 @@ HRESULT Em100::Ready()
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
 
-	m_fPower = 300.f;
-	m_vPower = D3DXVECTOR3(0.f, 0.5f, 0.8f);
+	m_fPower = 100.f;
+	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
 	return S_OK;
 }
 
@@ -595,6 +608,12 @@ HRESULT Em100::Awake()
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
+
+	
+	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_MiddleF1");
+	
+
+	
 
 	return S_OK;
 }
@@ -654,8 +673,58 @@ UINT Em100::Update(const float _fDeltaTime)
 	}
 
 
+	if (Input::GetKeyDown(DIK_R))
+	{
+		BT_INFO Test;
+		Test.eAttackType = Attack_KnocBack;
+		Hit(Test);
 
+	}
+	//if (Input::GetKeyDown(DIK_Q))
+	//{
+	//	BT_INFO Test;
+	//	Test.eAttackType = Attack_Front;
+	//	Hit(Test);
+
+	//}
+	/*if (Input::GetKeyDown(DIK_W))
+	{
+		BT_INFO Test;
+		Test.eAttackType = Attack_L;
+		Hit(Test);
+
+	}
+	if (Input::GetKeyDown(DIK_E))
+	{
+		BT_INFO Test;
+		Test.eAttackType = Attack_R;
+		Hit(Test);
+
+	}
+	if (Input::GetKey(DIK_TAB))
+	{
+		BT_INFO Test;
+		Test.eAttackType = Attack_Buster_Start;
+		Hit(Test);
+	}*/
 	//cout << m_BattleInfo.iHp << endl;
+
+	
+	if (m_eState == Hit_Buster_Start)
+	{
+		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
+		m_Result = (*m_pPlayerBone * m_PlayerWorld);
+		m_pTransform.lock()->SetWorldMatrix(m_Result);
+	}
+	if (m_pPlayer.lock()->Get_CurAnimationIndex() ==Nero::ANI_BUSTER_STRIKE_COMMON
+		&& m_pPlayer.lock()->Get_PlayingTime() >= 0.6f)
+	{
+		m_eState = Hit_Buster_End;
+		D3DXVECTOR3 vRot(0.f, 0.f, 0.f);
+		m_pTransform.lock()->SetRotation(vRot);
+	}
+
+
 
 	return 0;
 }
@@ -698,69 +767,113 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	
-	switch (_BattleInfo.eAttackType)
+	if (m_bDown==false)
 	{
-	case ATTACKTYPE::Attack_L:
-		m_eState = Hit_L;
-		m_bHit = true;
-		break;
-	case ATTACKTYPE::Attack_R:
-		m_eState = Hit_R;
-		m_bHit = true;
-		break;
-	case ATTACKTYPE::Attack_Front:
-		m_eState = Hit_Front;
-		m_bHit = true;
-		break;
-	case ATTACKTYPE::Attack_KnocBack:
-	{
-		m_eState = Hit_KnocBack;
-		m_bHit = true;
-		Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-		D3DXVec3Normalize(&vDir, &vDir);
+		switch (_BattleInfo.eAttackType)
+		{
+		case ATTACKTYPE::Attack_L:
+			m_eState = Hit_L;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_R:
+			m_eState = Hit_R;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_Front:
+			m_eState = Hit_Front;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_KnocBack:
+		{
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
+			D3DXVec3Normalize(&vDir, &vDir);
 
-		Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
-		D3DXVec3Normalize(&vLook, &vLook);
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+			D3DXVec3Normalize(&vLook, &vLook);
 
-		
-		m_vPower += -vLook;
 
-		m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+			m_vPower += -vLook;
 
-		m_vPower.x = 0.f;
-		m_vPower.y = 0.5f;
-		m_vPower.z = 0.8f;
-		break;
+			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.y = 1.f;
+			m_vPower.z = 0.5f;
+			break;
+		}
+		case ATTACKTYPE::Attack_Back:
+			break;
+		case ATTACKTYPE::Attack_Buster_Start:
+			m_eState = Hit_Buster_Start;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_Buster_Loop:
+			m_eState = Hit_Buster_Loop;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_Buster_End:
+			m_eState = Hit_Buster_End;
+			m_bHit = true;
+			break;
+		default:
+			m_bIng = true;
+			break;
+		}
 	}
-	case ATTACKTYPE::Attack_Back:
-		break;
-	case ATTACKTYPE::Attack_Buster_Start:
-		m_eState = Hit_Buster_Start;
-		m_bHit = true;
-		break;
-	case ATTACKTYPE::Attack_Buster_Loop:
-		m_eState = Hit_Buster_Loop;
-		m_bHit = true;
-		break;
-	case ATTACKTYPE::Attack_Buster_End:
-		m_eState = Hit_Buster_End;
-		m_bHit = true;
-		break;
-	default:
-		m_bIng = true;
-		break;
+	else
+	{
+		switch (_BattleInfo.eAttackType)
+		{
+		case ATTACKTYPE::Attack_KnocBack:
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_Buster_Start:
+			m_eState = Hit_Buster_Start;
+			m_bHit = true;
+			break;
+		default:
+			m_eState = Downword_Damage;
+			m_bHit = true;
+			break;
+		}
+
+
+		//넘어졌을때 맞는
+		/*if (_BattleInfo.eAttackType == Attack_KnocBack)
+		{
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+		}
+		else
+		{
+			m_eState = Downword_Damage;
+			m_bHit = true;
+		}*/
 	}
 	
-	
+}
+
+void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
+{
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	m_bHit = true;
+	m_eState = Hit_Buster_Start;
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	static int i = 0;
+	std::cout << _pOther.lock()->m_nTag << std::endl;
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
 		break;
@@ -769,17 +882,6 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
-	static int j = 0;
-	switch (_pOther.lock()->m_nTag)
-	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-		++j;
-		cout << "뿌직!" << j << endl;
-		//Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	default:
-		break;
-	}
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)
