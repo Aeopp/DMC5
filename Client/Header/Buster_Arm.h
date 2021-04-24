@@ -50,7 +50,7 @@ private:
 	std::weak_ptr<Nero>					  m_pNero;
 	std::weak_ptr<SphereCollider> m_pCollider;
 
-	bool								m_bIsRender;
+	bool								  m_bIsRender;
 };
 
 

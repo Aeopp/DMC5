@@ -131,5 +131,11 @@ void Em100Hand::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
+
+	RenderInterface::Initialize(_InitRenderProp);
+}
+
+void Em100Hand::RenderReady()
+{
 }
 
