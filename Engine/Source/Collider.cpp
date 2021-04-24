@@ -47,6 +47,10 @@ HRESULT Collider::DrawCollider(const DrawInfo& _Info)
 
 void Collider::Editor()
 {
+	bool bActive = m_bActive;
+	if (ImGui::Checkbox("Active", &bActive))
+		SetActive(bActive);
+
 	bool bTrigger = m_bTrigger;
 	if (ImGui::Checkbox("Trigger", &bTrigger))
 		SetTrigger(bTrigger);
@@ -140,7 +144,12 @@ void Collider::CreateRigidActor()
 {
 	//기존에 사용중인 Actor가 있다면 해제. ==> Scene에서 제거 추가 수정 필요.
 	if (nullptr != m_pRigidActor)
+	{
+		if (m_pRigidActor->getScene())
+			m_pRigidActor->getScene()->removeActor(*m_pRigidActor);
+
 		PX_RELEASE(m_pRigidActor);
+	}
 
 	//Collider가 부착된 게임오브젝트의 Transform으로 Actor위치 설정.
 	std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
