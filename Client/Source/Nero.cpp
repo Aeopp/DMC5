@@ -35,38 +35,77 @@ void Nero::Free()
 	m_pFSM = nullptr;
 }
 
-void Nero::Set_RQ_State(UINT _StateIndex)
-{
-	m_pRedQueen.lock()->SetWeaponState(_StateIndex);
-}
-
 void Nero::Set_PlayingTime(float NewTime)
 {
 	m_pMesh->SetPlayingTime(NewTime);
 }
 
-void Nero::Set_RQ_Coll(bool _ActiveOrNot)
+
+void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 {
-	m_pRedQueen.lock()->Set_Coll(_ActiveOrNot);
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
+{
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetAttType(_eAttDir);
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex)
+{
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetWeaponState(_StateIndex);
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
 void Nero::CreateOvertureEff(EffDircetion eDir)
 {
 	m_pEffOverture.lock()->PlayStart();
-	Matrix World = /**(m_pMesh->GetNodeToRoot("R_MiddleF3_SS")) **/ m_pTransform.lock()->GetWorldMatrix();
+	Matrix World = m_pTransform.lock()->GetWorldMatrix();
 	Vector3 Pos,Rot;
 	memcpy(&Pos, World.m[3], sizeof(Vector3));
 	switch (eDir)
 	{
 	case EffDircetion::EffDir_Front:
-		Pos += (m_pTransform.lock()->GetLook()) * -2.5f;
-		Pos.y += 0.8f;
+		Pos += (m_pTransform.lock()->GetLook()) * -0.25f;
+		Pos.y += 0.08f;
 		Rot = { 0.f,0.f,0.f };
 		break;
 	case EffDircetion::EffDir_Up:
 		Rot = { 90.f,180.f,0.f };
-		Pos += (m_pTransform.lock()->GetLook()) * -0.8f;
-		Pos.y += 2.3f;
+		Pos += (m_pTransform.lock()->GetLook()) * -0.08f;
+		Pos.y += 0.23f;
 		break;
 	case EffDircetion::EffDir_Down:
 		Rot = { -90.f,180.f,0.f };
@@ -101,7 +140,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{0.f, 5.f, 0.f});
+	m_pTransform.lock()->SetPosition(Vector3{-3.5f, 0.f, 5.5f});
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -133,8 +172,9 @@ HRESULT Nero::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
-	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.8f, 0.f));
-	m_pCollider.lock()->SetRadius(0.4f);
+	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.08f, 0.f));
+	m_pCollider.lock()->SetRadius(0.04f);
+	m_pCollider.lock()->SetHeight(0.1f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
@@ -289,7 +329,7 @@ void Nero::RenderShadowSK(const DrawInfo& _Info)
 
 void Nero::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 
@@ -395,9 +435,9 @@ void Nero::Update_Majin(float _fDeltaTime)
 	if (m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
 	{
 		m_IsMajin = false;
-		SetActive_Wings(false);
-		SetActive_WingArm_Left(false);
-		SetActive_WingArm_Right(false);
+		SetActive_NeroComponent(NeroCom_Wings, false);
+		SetActive_NeroComponent(NeroCom_WIngArm_Left, false);
+		SetActive_NeroComponent(NeroCom_WingArm_Right, false);
 	}
 
 }
@@ -447,40 +487,69 @@ Matrix* Nero::Get_BoneMatrixPtr(std::string _BoneName)
 	return m_pMesh->GetToRootMatrixPtr(_BoneName);;
 }
 
-void Nero::SetActive_Wings(bool ActiveOrNot)
+
+void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot)
 {
-	m_pLWing.lock()->SetActive(ActiveOrNot);
-	m_pRWing.lock()->SetActive(ActiveOrNot);
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_Wings:
+		m_pLWing.lock()->SetActive(ActiveOrNot);
+		m_pRWing.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_LWing:
+		m_pLWing.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_RWing:
+		m_pRWing.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_WireArm:
+		m_pWireArm.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_WIngArm_Left:
+		m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_WingArm_Right:
+		m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
-void Nero::SetActive_Wing_Left(bool ActiveOrNot)
+void Nero::SetActive_NeroComponent_Collider(NeroComponentID _eNeroComID, bool ActiveOrNot)
 {
-	m_pLWing.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_Wing_Right(bool ActiveOrNot)
-{
-	m_pRWing.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_Buster_Arm(bool ActiveOrNot)
-{
-	m_pBusterArm.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_Wire_Arm(bool ActiveOrNot)
-{
-	m_pWireArm.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_WingArm_Right(bool ActiveOrNot)
-{
-	m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
-}
-
-void Nero::SetActive_WingArm_Left(bool ActiveOrNot)
-{
-	m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_Wings:
+		break;
+	case Nero::NeroCom_LWing:
+		break;
+	case Nero::NeroCom_RWing:
+		break;
+	case Nero::NeroCom_BusterArm:
+		break;
+	case Nero::NeroCom_WireArm:
+		break;
+	case Nero::NeroCom_WIngArm_Left:
+		break;
+	case Nero::NeroCom_WingArm_Right:
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
 void Nero::SetAngleFromCamera(float _fAddAngle)
@@ -505,17 +574,22 @@ void Nero::SetColl_Monsters(bool _AcitveOrNot)
 	}
 }
 
+void Nero::SetAddForce(Vector3 _vJumpPos)
+{
+	m_pCollider.lock()->AddForce(_vJumpPos);
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
 	std::weak_ptr<Monster> LockOnMonster;
 	if (0 == MonsterList.size())
 		return;
-	//ù��°�� �ִ¾ֶ� �Ÿ� �˻�
+
 	Vector3 Dir = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float Distance = D3DXVec3Length(&Dir);
 	LockOnMonster = MonsterList.begin()->lock();
-	//���� ���鼭 �ֵ��̶� �Ÿ� �˻�
+
 	for (auto& pMonster : MonsterList)
 	{
 		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
@@ -546,17 +620,17 @@ void Nero::CheckAutoRotate()
 
 		if (vCross.y > 0)
 			fRadian *= -1;
-		m_fAngle += -D3DXToDegree(fRadian);
+		m_fAngle += -D3DXToDegree(fRadian) + vRotationDegree.y;
 		vDegree.y = m_fAngle;
-		vRotationDegree.y = 0;
+		vRotationDegree.y = m_fRotationAngle = 0;
 		Reset_RootRotation();
 	}
 
 }
 
-void Nero::Set_RQ_AttType(ATTACKTYPE _eAttDir)
+bool Nero::CheckIsGround()
 {
-	m_pRedQueen.lock()->SetAttType(_eAttDir);
+	return m_pCollider.lock()->IsGround();
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)
@@ -641,33 +715,37 @@ void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, co
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
 }
 
-void Nero::ChangeAnimationIndex(const UINT AnimationIndex)
+void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
-	m_iPreAnimationIndex = m_iCurAnimationIndex;
-	m_iCurAnimationIndex = AnimationIndex;
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_WireArm:
+		m_pWireArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_WIngArm_Left:
+		m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_WingArm_Right:
+		m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_RedQueen:
+		break;
+	case Nero::NeroCom_Cerberos:
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
 }
 
 void Nero::ChangeWeapon(UINT _iWeaponIndex)
 {
 	m_iCurWeaponIndex = _iWeaponIndex;
-}
-void Nero::Change_BusterArm_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_WireArm_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pWireArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_WingArm_Left_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_WingArm_Right_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
-}
-void Nero::Change_Overture_Animation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
-{
-	m_pOverture.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 }

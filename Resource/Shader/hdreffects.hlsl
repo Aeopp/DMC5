@@ -8,9 +8,15 @@ uniform sampler2D blurtarget2 : register(s2);
 uniform sampler2D blurtarget3 : register(s3);
 uniform sampler2D blurtarget4 : register(s4);
 
+uniform sampler2D depth : register(s5);
+uniform float4x4  matViewProjInv;
+uniform float3 eyepos;
+uniform float3 fogcolor;
+
 uniform float2 pixelSize;
 uniform float2 texelSize;
-uniform float exposure;
+uniform float  exposure;
+uniform float fogdistance;
 
 uniform int blurDirection;
 uniform int starDirection;
@@ -262,7 +268,12 @@ void ps_tonemap(
     float4 star = tex2D(blurtarget2, tex);
     float4 ghost = tex2D(blurtarget3, tex);
     float4 afterimg = tex2D(blurtarget4, tex);
-
+    float4 depthsample = tex2D(depth, tex);
+    
+    float4 wpos = (tex.x * 2.f - 1.f, 1-2 * tex.y , depthsample.r, 1.f);
+    wpos = mul(wpos, matViewProjInv);
+    wpos /= wpos.w;
+    
     float3 lincolor = FilmicTonemap(scene.rgb * exposure);
     float3 invlinwhite = 1.0f / FilmicTonemap(float3(W, W, W));
 
@@ -273,6 +284,7 @@ void ps_tonemap(
     float vignette = 1 - dot(tex, tex);
 
     color.rgb *= vignette * vignette * vignette;
+    
     color.a = 1.0f;
 }
 

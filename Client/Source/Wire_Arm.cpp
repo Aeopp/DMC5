@@ -83,7 +83,7 @@ void Wire_Arm::OnEnable()
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3],sizeof(Vector3));
 
 	Vector3 PlayeUp = m_pNero.lock()->GetComponent<Transform>().lock()->GetUp();
-	NeroWorld._42 += PlayeUp.y * -1.2;
+	NeroWorld._42 += PlayeUp.y * -0.12f;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
@@ -270,7 +270,7 @@ void Wire_Arm::RenderShadowSK(const DrawInfo& _Info)
 
 void Wire_Arm::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 

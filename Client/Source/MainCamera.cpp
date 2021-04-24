@@ -31,7 +31,7 @@ HRESULT MainCamera::Ready()
 {
 	m_fFovY = D3DXToRadian(45.f);
 	m_fAspect = float(float(g_nWndCX) / float(g_nWndCY));
-	m_fNear = 0.1f;
+	m_fNear = 0.05f;
 	m_fFar = 500.f;
 
 
@@ -48,7 +48,7 @@ HRESULT MainCamera::Ready()
 	m_fRotX = -17.1f;
 	m_fFloatingAmount = 0.16f;
 
-	m_fDecreaseFactor = 0.5f;
+	m_fDecreaseFactor = 0.6f;
 	m_fIncreaseFactor = 0.07f;
 
 	return S_OK;
@@ -122,7 +122,7 @@ void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
 {
 	if (m_fDistanceToTarget <= _GoalDis)
 	{
-		m_fDecreaseFactor = 0.5f;
+		m_fDecreaseFactor = 0.6f;
 		return;
 	}
 	if (m_fDecreaseFactor >= 0.02f)
@@ -138,7 +138,7 @@ void MainCamera::IncreaseDistance(float _GoalDis, float _fDeltaTime)
 		m_fIncreaseFactor = 0.07f;
 		return;
 	}
-	m_fDecreaseFactor = 0.5f;
+	m_fDecreaseFactor = 0.6f;
 	m_fIncreaseFactor += 0.005f;
 	m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
 }
@@ -207,10 +207,10 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	{
 		//m_fDistanceToTarget -= dwMouseMove / 100.f;
 	}
-	if (m_fRotX <= -37.f)
-		m_fRotX = -37.f;
-	if (m_fRotX >= 10.f)
-		m_fRotX = 10.f;
+	if (m_fRotX <= -50.f)
+		m_fRotX = -50.f;
+	if (m_fRotX >= 15.f)
+		m_fRotX = 15.f;
 
 
 	Vector3 vLook = { 0.f, 0.f ,1.f };

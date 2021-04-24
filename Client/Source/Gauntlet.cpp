@@ -97,7 +97,7 @@ void Gauntlet::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
 	}
 }
 
@@ -144,7 +144,7 @@ void Gauntlet::RenderShadowSK(const DrawInfo& _Info)
 
 void Gauntlet::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 

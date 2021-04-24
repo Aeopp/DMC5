@@ -191,6 +191,7 @@
     <ClInclude Include="..\Header\NeroState.h" />
     <ClInclude Include="..\Header\Nero_LWing.h" />
     <ClInclude Include="..\Header\Nero_RWing.h" />
+    <ClInclude Include="..\Header\QliphothBlock.h" />
     <ClInclude Include="..\Header\RedQueen.h" />
     <ClInclude Include="..\Header\TempMap.h" />
     <ClInclude Include="..\Header\TestAnimationObject.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="..\Source\NeroState.cpp" />
     <ClCompile Include="..\Source\Nero_LWing.cpp" />
     <ClCompile Include="..\Source\Nero_RWing.cpp" />
+    <ClCompile Include="..\Source\QliphothBlock.cpp" />
     <ClCompile Include="..\Source\RedQueen.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
     <ClCompile Include="..\Source\TestAnimationObject.cpp" />

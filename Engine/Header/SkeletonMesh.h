@@ -37,7 +37,7 @@ public:
 	virtual std::string GetName() override;
 	void BindVTF(ID3DXEffect * Fx)&;
 public:
-	void UpdateToRootMatricies();
+	void    UpdateToRootMatricies();
 	bool    IsAnimationEnd();
 	void    EnableToRootMatricies();
 	void    DisableToRootMatricies();
@@ -118,6 +118,13 @@ private:
 	static inline std::string NormallyRootMotionRotationName =
 		"NULL_ROTATION";
 private:
+	std::shared_ptr<std::set<std::filesystem::path>>
+		LoadAnimationFromDirectoryPathSet{};
+	std::shared_ptr<std::set<std::filesystem::path>>
+		LoadAnimationPathSet{};
+	std::shared_ptr<std::set<std::filesystem::path>>
+		AnimationDataLoadFromJsonTablePathSet{};
+
 	std::string RootMotionScaleName = NormallyRootMotionScaleName;
 	std::string RootMotionRotationName = NormallyRootMotionRotationName;
 	std::string RootMotionTransitionName = NormallyRootMotionTransitionName;

@@ -35,8 +35,9 @@ private:
 	void    ReadyRenderInfo();
 	void    ReadyFrustum();
 	void    ReadyQuad();
-public:	
+public:
 	HRESULT Render()&;
+	HRESULT OptRender()&;
 	void    Editor()&;
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;
@@ -83,6 +84,9 @@ public:
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 private:
+	bool bPtLightScrRtTest = false;
+	Vector3 FogColor{ 0.5f,0.5f,0.5f };
+	float FogDistance = 100.f;
 	float ao = 0.012f;
 	float SlpoeScaleDepthBias = 0.0f;
 	float DepthBias = 0.0f;
@@ -110,6 +114,8 @@ private:
 
 	float exposure = 1.f;
 	IDirect3DSurface9* BackBuffer{ nullptr };
+	IDirect3DSurface9* BackBufferZBuffer{ nullptr };
+
 	std::shared_ptr<Frustum> CameraFrustum{};
 	std::shared_ptr<Frustum> CurShadowFrustum{};
 	LPDIRECT3DDEVICE9	Device{ nullptr };
@@ -152,10 +158,10 @@ private:
 	LPDIRECT3DCUBETEXTURE9	environment = nullptr;		// HDR environment
 	LPDIRECT3DCUBETEXTURE9	irradiance1 = nullptr;		// preintegrated diffuse irradiance
 	LPDIRECT3DCUBETEXTURE9	irradiance2 = nullptr;		// preintegrated specular irradiance
-	LPDIRECT3DTEXTURE9		brdfLUT     = nullptr;		// preintegrated BRDF lookup texture
+	LPDIRECT3DTEXTURE9		brdfLUT = nullptr;		// preintegrated BRDF lookup texture
 
 	Vector4 MoonLightTarget{0,0,0,1};
-	
+
 	float DXScreenQuadVerticesFFP[24] = {
 		// NOTE: viewport must be added
 		-0.5f, -0.5f, 0, 1,		0, 1,

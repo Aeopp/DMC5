@@ -99,6 +99,7 @@ static void GlobalVariableSetup()
 	g_bDebugRender = false;
 	g_bRenderEdit = false;
 	g_bTime = false;
+	g_bOptRender = false;
 
 	ID3DXBuffer* SphereMeshAdjacency{ nullptr };
 	D3DXCreateSphere(g_pDevice, 0.00001f, 8, 8, &g_pSphereMesh, &SphereMeshAdjacency);
@@ -235,8 +236,9 @@ static void GlobalVariableEditor()
 		ImGui::Checkbox("Edit", &g_bEditMode);
 		ImGui::Checkbox("Debug", &g_bDebugMode);	
 		ImGui::Checkbox("Time", &g_bTime);
+		ImGui::Checkbox("OptmizeRender", &g_bOptRender);
 		if (g_bDebugMode)
-		{
+		{			
 			ImGui::Checkbox("CollisionVisible", &g_bCollisionVisible);
 			ImGui::Checkbox("Render", &g_bDebugRender);
 			ImGui::Checkbox("RenderBoneToRoot", &g_bDebugBoneToRoot);
@@ -278,11 +280,13 @@ HRESULT CoreSystem::UpdateEngine(const float Delta)
 	Editor();
 
 	m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
+
 	if (FAILED(m_pRenderer.lock()->Render()))
 	{
-		PRINT_LOG(TEXT("Error"),TEXT("Failed to Renderer Render."));
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to Renderer Render."));
 		return E_FAIL;
 	}
+	
 
 	
 	return S_OK;

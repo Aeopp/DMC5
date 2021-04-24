@@ -7,13 +7,17 @@
 #include <fstream>
 #include <ostream>
 
-
 USING(ENGINE)
 
 SkeletonMesh::SkeletonMesh(LPDIRECT3DDEVICE9 const _pDevice)
 	: StaticMesh(_pDevice)
 {
-
+	LoadAnimationFromDirectoryPathSet = 
+		std::make_shared<std::set<std::filesystem::path>>();
+	LoadAnimationPathSet = 
+		std::make_shared<std::set<std::filesystem::path>>();
+	AnimationDataLoadFromJsonTablePathSet = 
+		std::make_shared<std::set<std::filesystem::path>>();
 }
 
 SkeletonMesh::SkeletonMesh(const SkeletonMesh& _rOther)
@@ -32,7 +36,13 @@ SkeletonMesh::SkeletonMesh(const SkeletonMesh& _rOther)
 	bRootMotionTransition{ _rOther.bRootMotionTransition },
 	RootMotionDeltaFactor{ _rOther.RootMotionDeltaFactor },
 	tOffset{ _rOther .tOffset} ,
-	EulerOffset  { _rOther.EulerOffset }
+	EulerOffset  { _rOther.EulerOffset } ,
+	LoadAnimationFromDirectoryPathSet
+		{ _rOther.LoadAnimationFromDirectoryPathSet } ,
+	LoadAnimationPathSet
+		{ _rOther.LoadAnimationPathSet } ,
+	AnimationDataLoadFromJsonTablePathSet{
+		_rOther.AnimationDataLoadFromJsonTablePathSet }
 {
 	BoneSkinningMatries.resize(_rOther.BoneSkinningMatries.size());
 }
@@ -427,8 +437,17 @@ void SkeletonMesh::AnimationSave(
 
 void SkeletonMesh::AnimationDataLoadFromJsonTable(
 	const std::filesystem::path& FullPath)&
-{
+{	
 	using namespace rapidjson;
+
+	if (AnimationDataLoadFromJsonTablePathSet->contains(FullPath))
+	{
+		return;
+	}
+	else
+	{
+		AnimationDataLoadFromJsonTablePathSet->insert(FullPath);
+	}
 
 	std::filesystem::path AnimPath = FullPath;
 	AnimPath.replace_extension("Animation");
@@ -1444,8 +1463,17 @@ Quaternion SkeletonMesh::CalcRootMotionDeltaQuat(std::optional<float> bTimeBeyon
 
 void SkeletonMesh::LoadAnimation(const std::filesystem::path& FilePath)&
 {
-	auto AiImporter = Assimp::Importer{};
+	if (LoadAnimationPathSet->contains(FilePath))
+	{
+		return;
+	}
+	else
+	{
+		LoadAnimationPathSet->insert(FilePath);
+	}
 
+	auto AiImporter = Assimp::Importer{};
+	
 	const aiScene* const AiScene = AiImporter.ReadFile(
 		FilePath.string(),
 		aiProcess_MakeLeftHanded |
@@ -1603,6 +1631,15 @@ void SkeletonMesh::LoadAnimationFromDirectory(
 	const std::filesystem::path& Directory)&
 {
 	if (false == std::filesystem::is_directory(Directory))return;
+
+	if (LoadAnimationFromDirectoryPathSet->contains(Directory))
+	{
+		return;
+	}
+	else
+	{
+		LoadAnimationFromDirectoryPathSet->insert(Directory);
+	}
 
 	std::filesystem::directory_iterator itr(Directory);
 	while (itr != std::filesystem::end(itr)) {

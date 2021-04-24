@@ -19,10 +19,12 @@
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
 #include "Dust.h"
+#include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+
 
 #include <iostream>
 #include <fstream>
@@ -50,23 +52,25 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
 	AddGameObject<Em100>();
- 	//AddGameObject<Car>();
+	//AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//LoadMap();
 	//AddGameObject<TempMap>();
 
-	LoadMap();
 	
-	AddGameObject<BtlPanel>();
+	
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
 	//AddGameObject<Dust>();
+	//AddGameObject<QliphothBlock>();
 
-	// ¼öÁ¤ ÇÊ¿ä
+	// ìˆ˜ì •í•„ìš”
 	//AddGameObject<DashImpact>();
 
 	return S_OK;
@@ -82,6 +86,8 @@ HRESULT TestScene::Awake()
 	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
 	Physics::AddActor(UniqueID, *pPlane);
+
+	return S_OK;
 }
 
 HRESULT TestScene::Start()

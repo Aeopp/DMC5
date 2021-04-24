@@ -441,6 +441,9 @@
     <ClInclude Include="..\Header\FileHelper.h">
       <Filter>98.UnLabeld</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
+      <Filter>04.HLSL\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">

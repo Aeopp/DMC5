@@ -42,6 +42,9 @@ HRESULT Collider::ReadyCollider()
 
 HRESULT Collider::DrawCollider(const DrawInfo& _Info)
 {
+	if (false == m_bActive)
+		return E_FAIL;
+
 	return S_OK;
 }
 

@@ -123,7 +123,7 @@ HRESULT OvertureHand::Ready()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	auto InitTransform =  GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01f, 0.01f, 0.01f });
+	InitTransform.lock()->SetScale({ 0.001f, 0.001f, 0.001f });
 
 	_HandMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\wp00_010_0000.fbx");
 	_LightningTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\lightning.dds");
