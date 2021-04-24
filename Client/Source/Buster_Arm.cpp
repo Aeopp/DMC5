@@ -62,6 +62,18 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
+	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
+	std::optional<Matrix> R_HandLocal = m_pNero.lock()->Get_BoneMatrix_ByName("root");
+	Matrix R_HandWorld = *R_HandLocal * NeroWorld;
+
+	memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
+
+	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
+	NeroWorld._41 += PlayerLook.x * -0.05f;
+	NeroWorld._43 += PlayerLook.z * -0.05f;
+
+	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
+
 	if (m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);

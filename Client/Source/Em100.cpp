@@ -716,8 +716,8 @@ UINT Em100::Update(const float _fDeltaTime)
 		m_Result = (*m_pPlayerBone * m_PlayerWorld);
 		m_pTransform.lock()->SetWorldMatrix(m_Result);
 	}
-	else if (m_pPlayer.lock()->Get_CurAnimationIndex() ==NeroFSM::BUSTER_STRIKE_COMMON
-		&& m_pPlayer.lock()->Get_PlayingTime() >= 0.9f)
+	if (m_pPlayer.lock()->Get_CurAnimationIndex() ==Nero::ANI_BUSTER_STRIKE_COMMON
+		&& m_pPlayer.lock()->Get_PlayingTime() >= 0.6f)
 	{
 		m_eState = Hit_Buster_End;
 		D3DXVECTOR3 vRot(0.f, 0.f, 0.f);
@@ -882,17 +882,6 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
-	static int j = 0;
-	switch (_pOther.lock()->m_nTag)
-	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-		++j;
-		cout << "ปัม๗!" << j << endl;
-		//Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	default:
-		break;
-	}
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)
