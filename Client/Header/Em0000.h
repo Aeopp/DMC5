@@ -25,6 +25,10 @@ private:
 		Hit_Front,
 		Hit_L,
 		Hit_R,
+		Hit_KnocBack,
+		Hit_Buster_Start,
+		Hit_Buster_Loop,
+		Hit_Buster_End,
 		Move_Front_End,
 		Move_Front_Loop,
 		Move_Front_Start,
@@ -77,6 +81,9 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+
 private:
 	//몬스터 상태
 	Em0000_State	m_eState =State_END;		

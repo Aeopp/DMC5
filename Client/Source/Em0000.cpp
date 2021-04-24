@@ -235,7 +235,7 @@ HRESULT Em0000::Ready()
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.05f,0.05f,0.05f });
+	InitTransform.lock()->SetScale({ 0.005f,0.005f,0.005f });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -244,6 +244,7 @@ HRESULT Em0000::Ready()
 
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
+	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
 
 	return S_OK;
 }
@@ -370,6 +371,61 @@ void Em0000::OnDisable()
 
 void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	if (m_bDown == false)
+	{
+		switch (_BattleInfo.eAttackType)
+		{
+		case ATTACKTYPE::Attack_L:
+			m_eState = Hit_L;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_R:
+			m_eState = Hit_R;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_Front:
+			m_eState = Hit_Front;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_KnocBack:
+		{
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = 1.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+
+			break;
+		}
+		case ATTACKTYPE::Attack_Back:
+			break;
+		case ATTACKTYPE::Attack_Buster_Start:
+			m_eState = Hit_Buster_Start;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_Buster_Loop:
+			m_eState = Hit_Buster_Loop;
+			m_bHit = true;
+			break;
+		case ATTACKTYPE::Attack_Buster_End:
+			m_eState = Hit_Buster_End;
+			m_bHit = true;
+			break;
+		}
+	}
+
 }
 
 void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
@@ -557,4 +613,20 @@ void Em0000::Update_Angle()
 		m_fAngleSpeed = fabs(m_fAngleSpeed);
 	else
 		m_fAngleSpeed = -fabs(m_fAngleSpeed);
+}
+
+void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	default:
+		break;
+	}
+
 }

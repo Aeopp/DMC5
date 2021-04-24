@@ -21,7 +21,8 @@ private:
 		Dead,
 		Hit_Air,
 		Hit_Back,
-		Hit_End,
+		Hit_End_Front,
+		Hit_End_Back,
 		Hit_Finish,
 		Hit_Front,
 		Hit_L,
@@ -113,8 +114,7 @@ private:
 
 	float		m_fAngleTime = 0.f;
 
-	float		m_fPower = 0.f;
-	D3DXVECTOR3 m_vPower;
+
 	//////////버스터 용////////////////
 	Matrix*								  m_pPlayerBone;
 	Matrix								  m_PlayerWorld;

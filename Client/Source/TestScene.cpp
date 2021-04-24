@@ -52,7 +52,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
-	AddGameObject<Em100>();
+	AddGameObject<Em0000>();
     //AddGameObject<Car>();
 
 	Renderer::GetInstance()->LightLoad("..\\..\\Resource\\LightData\\Light.json");
