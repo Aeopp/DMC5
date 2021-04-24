@@ -60,14 +60,14 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 		//락온
 		if (Input::GetKey(DIK_Q))
 		{
-			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
 		}
 		else if (Input::GetKey(DIK_W))
 		{
 			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				if(Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE_EX);
 				else
@@ -75,7 +75,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				if (Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3);
 				else
@@ -87,7 +87,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_UP);
 			}
 		}
@@ -95,22 +95,22 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 		{
 			if (Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND);
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_HR_EX_START);
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_DOWN);
 			}
 			else if (Input::GetKey(DIK_SPACE))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pNero.lock()->Set_JumpDir(Nero::Back);
 				m_pFSM->ChangeState(NeroFSM::JUMP_START);
 
@@ -122,7 +122,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 			if (Input::GetKey(DIK_SPACE))
 			{
 				//왼쪽 구르기
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_L);
 			}
 		}
@@ -131,7 +131,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 			if (Input::GetKey(DIK_SPACE))
 			{
 				// 오른쪽 구르기
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_R);
 			}
 		}
@@ -139,7 +139,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 
 	else if (Input::GetMouseDown(DIM_L))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		switch (_nIndex)
 		{
 		case NeroFSM::ATT1:
@@ -190,13 +190,13 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 	}
 	else if (Input::GetMouseDown(DIM_M))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT);
 	}
 	else if (Input::GetKeyDown(DIK_SPACE))
 	{
 		//점프
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pNero.lock()->Set_JumpDir(Nero::Basic);
 		m_pFSM->ChangeState(NeroFSM::JUMP_START);
 	}
@@ -208,7 +208,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 
 	else if (Input::GetKey(DIK_Q))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::BUSTER_START);
 	}
 
@@ -216,9 +216,9 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 	{
 		//변신게이지 있는지 체크
 		float TDTGauge = m_pNero.lock()->Get_TDTGauge();
-		if (0.3 <= TDTGauge)
+		if (0.3f <= TDTGauge)
 		{
-			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::TO_MAJIN);
 		}
 	}
@@ -231,7 +231,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 		}
 		else if (Input::GetKey(DIK_SPACE))
 		{
-			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pNero.lock()->Set_JumpDir(Nero::Front);
 			m_pFSM->ChangeState(NeroFSM::JUMP_START);
 
@@ -288,14 +288,14 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 		//락온
 		if (Input::GetKey(DIK_Q))
 		{
-			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
 		}
 		else if(Input::GetKey(DIK_W))
 		{
 			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				if (Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE_EX);
 				else
@@ -303,7 +303,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				if (Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3);
 				else
@@ -315,7 +315,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_UP);
 			}
 		}
@@ -323,22 +323,22 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 		{
 			if (Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND);
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_HR_EX_START);
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_DOWN);
 			}
 			else if (Input::GetKey(DIK_SPACE))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pNero.lock()->Set_JumpDir(Nero::Back);
 				m_pFSM->ChangeState(NeroFSM::JUMP_START);
 
@@ -350,7 +350,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 			if (Input::GetKey(DIK_SPACE))
 			{
 				//왼쪽 구르기
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_L);
 			}
 		}
@@ -359,7 +359,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 			if (Input::GetKey(DIK_SPACE))
 			{
 				// 오른쪽 구르기
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_R);
 			}
 		}
@@ -367,18 +367,18 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 
 	else if (Input::GetMouseDown(DIM_L))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		m_pFSM->ChangeState(NeroFSM::ATT1_DASH);
 	}
 	else if (Input::GetMouseDown(DIM_M))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT);
 	}
 	else if (Input::GetKeyDown(DIK_SPACE))
 	{
 		//점프
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pNero.lock()->Set_JumpDir(Nero::Front);
 		m_pFSM->ChangeState(NeroFSM::JUMP_START);
 	}
@@ -390,14 +390,14 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 
 	else if (Input::GetKey(DIK_Q))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::BUSTER_START);
 	}
 
 	else if (Input::GetKey(DIK_F))
 	{
 		//변신게이지 있는지 체크
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::TO_MAJIN);
 	}
 
@@ -539,19 +539,19 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 		//락온
 		if (Input::GetKey(DIK_Q))
 		{
-			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL_AIR);
 		}
 		else if (Input::GetKey(DIK_W))
 		{
 			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_CALIBER_START);
 			}
 			else if (Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_START);
 			}
 			else if (Input::GetMouse(DIM_R))
@@ -561,7 +561,7 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 			else if (Input::GetMouse(DIM_M))
 			{
 				//오버츄어 공중에서 위로
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_AIR_UP);
 			}
 		}
@@ -570,7 +570,7 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 			if (Input::GetMouse(DIM_L))
 			{
 				//게이지 따라서 분기
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				if(Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_SPLIT_EX_START);
 				else
@@ -585,13 +585,13 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 			else if (Input::GetMouse(DIM_M))
 			{
 				//오버추어 공중에서 아래로
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_AIR_DOWN);
 			}
 			else if (0 < JumpCount && Input::GetKey(DIK_SPACE))
 			{
 				//뒤로 2단 점프
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pNero.lock()->Set_JumpDir(Nero::Back);
 				m_pFSM->ChangeState(NeroFSM::JUMP_TWICE);
 			}
@@ -600,7 +600,7 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 
 	else if (Input::GetMouseDown(DIM_L))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		switch (_nIndex)
 		{
 		case NeroFSM::AIR_COMBOA1:
@@ -621,13 +621,13 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 	else if (Input::GetMouseDown(DIM_M))
 	{
 		//오버추어 앞으로
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_AIR);
 	}
 	else if (0 < JumpCount && Input::GetKeyDown(DIK_SPACE))
 	{
 		//제자리 2단 점프
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pNero.lock()->Set_JumpDir(Nero::Basic);
 		m_pFSM->ChangeState(NeroFSM::JUMP_TWICE);
 	}
@@ -644,7 +644,7 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 	}
 	else if (Input::GetKey(DIK_S))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		if (0 < JumpCount && Input::GetKey(DIK_SPACE))
 		{
 			//앞으로 2단 점프
@@ -668,17 +668,20 @@ HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 	return S_OK;
 }
 
-void NeroState::ActiveColl_RedQueen(bool _ActiveOrNot)
-{
-	m_pNero.lock()->Set_RQ_Coll(_ActiveOrNot);
-}
-
 void NeroState::ActiveColl_Monsters(bool _ActiveOrNot)
 {
 	if (m_bActiveColl == _ActiveOrNot)
 		return;
 	m_bActiveColl = _ActiveOrNot;
 	m_pNero.lock()->SetColl_Monsters(_ActiveOrNot);
+}
+
+void NeroState::ActiveColl_RedQueen(bool _ActiveOrNot)
+{
+	if (m_bActiveColl_RedQueen == _ActiveOrNot)
+		return;
+	m_bActiveColl_RedQueen = _ActiveOrNot;
+	m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_RedQueen, _ActiveOrNot);
 }
 
 
@@ -850,7 +853,6 @@ HRESULT Idle::StateEnter()
 		m_pNero.lock()->ChangeAnimation("Idle_Battle", true, Nero::ANI_IDLE_BATTLE);
 		break;
 	default:
-		//m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
 		m_pNero.lock()->ChangeAnimation("Idle_Normal", true,Nero::ANI_IDLE_NORMAL);
 		break;
 	}
@@ -1072,7 +1074,6 @@ Jump_Fly_Loop* Jump_Fly_Loop::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 HRESULT Jump_Fly_Loop::StateEnter()
 {
 	m_pNero.lock()->StopAnimation();
-	//m_pNero.lock()->ChangeAnimationIndex(Nero::ANI_JUMP_LOOP);
 	return S_OK;
 }
 
@@ -1199,6 +1200,9 @@ HRESULT Jump_Front_Landing::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
+	if (0.65f <= fCurAnimationTime)
+		NeroState::KeyInput_Idle(NeroFSM::JUMP_LANDING);
+
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		UINT  iCurWeaponIndex = m_pNero.lock()->Get_CurWeaponIndex();
@@ -1310,6 +1314,11 @@ HRESULT RunStartLeft::StateEnter()
 		if (Nero::Dir_Left != NeroPreDir)
 			m_pNero.lock()->SetRotationAngle(-90.f);
 		break;
+	case Nero::ANI_COMBOD4:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		if (Nero::Dir_Left != NeroPreDir)
+			m_pNero.lock()->SetRotationAngle(-90.f);
+		break;
 	case Nero::ANI_RUNSTOP:
 		if (Nero::Dir_Left == NeroPreDir)
 		{
@@ -1382,6 +1391,28 @@ HRESULT RunStartLeft::StateEnter()
 			m_pNero.lock()->SetRotationAngle(-90.f);
 		break;
 	case Nero::ANI_DASHSTOP:
+		if (Nero::Dir_Left == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+			m_pNero.lock()->SetRotationAngle(-90.f);
+		}
+		break;
+	case Nero::ANI_JUMP_FRONT_LANDING:
+		if (Nero::Dir_Left == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+			m_pNero.lock()->SetRotationAngle(-90.f);
+		}
+		break;
+	case Nero::ANI_JUMP_LANDING:
 		if (Nero::Dir_Left == NeroPreDir)
 		{
 			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
@@ -1526,6 +1557,11 @@ HRESULT RunStartRight::StateEnter()
 		if (Nero::Dir_Right != NeroPreDir)
 			m_pNero.lock()->SetRotationAngle(90.f);
 		break;
+	case Nero::ANI_COMBOD4:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		if (Nero::Dir_Right != NeroPreDir)
+			m_pNero.lock()->SetRotationAngle(90.f);
+		break;
 	case Nero::ANI_RUNSTOP:
 		if (Nero::Dir_Right == NeroPreDir)
 		{
@@ -1598,6 +1634,28 @@ HRESULT RunStartRight::StateEnter()
 			m_pNero.lock()->SetRotationAngle(90.f);
 		break;
 	case Nero::ANI_DASHSTOP:
+		if (Nero::Dir_Right == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+			m_pNero.lock()->SetRotationAngle(90.f);
+		}
+		break;
+	case Nero::ANI_JUMP_FRONT_LANDING:
+		if (Nero::Dir_Right == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+			m_pNero.lock()->SetRotationAngle(90.f);
+		}
+		break;
+	case Nero::ANI_JUMP_LANDING:
 		if (Nero::Dir_Right == NeroPreDir)
 		{
 			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
@@ -1743,6 +1801,11 @@ HRESULT RunStart180::StateEnter()
 		if (Nero::Dir_Back != NeroPreDir)
 			m_pNero.lock()->SetRotationAngle(180.f);
 		break;
+	case Nero::ANI_COMBOD4:
+		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		if (Nero::Dir_Back != NeroPreDir)
+			m_pNero.lock()->SetRotationAngle(180.f);
+		break;
 	case Nero::ANI_RUNSTOP:
 		if (Nero::Dir_Back == NeroPreDir)
 		{
@@ -1815,6 +1878,28 @@ HRESULT RunStart180::StateEnter()
 			m_pNero.lock()->SetRotationAngle(180.f);
 		break;
 	case Nero::ANI_DASHSTOP:
+		if (Nero::Dir_Back == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+			m_pNero.lock()->SetRotationAngle(180.f);
+		}
+		break;
+	case Nero::ANI_JUMP_FRONT_LANDING:
+		if (Nero::Dir_Back == NeroPreDir)
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		}
+		else
+		{
+			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+			m_pNero.lock()->SetRotationAngle(180.f);
+		}
+		break;
+	case Nero::ANI_JUMP_LANDING:
 		if (Nero::Dir_Back == NeroPreDir)
 		{
 			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
@@ -2018,6 +2103,12 @@ HRESULT RunStartFront::StateEnter()
 	case Nero::ANI_DASHSTOP:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
 		break;
+	case Nero::ANI_JUMP_LANDING:
+		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		break;
+	case Nero::ANI_JUMP_FRONT_LANDING:
+		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		break;
 	default:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
 		break;
@@ -2041,7 +2132,7 @@ HRESULT RunStartFront::StateUpdate(const float _fDeltaTime)
 	m_pNero.lock()->SetAngleFromCamera();
 	if (Input::GetKey(DIK_W))
 	{
-		if (0.2 >= fCurAnimationTime)
+		if (0.2f >= fCurAnimationTime)
 			m_pNero.lock()->IncreaseDistance(MaxDistance, _fDeltaTime);
 		if (m_pNero.lock()->IsAnimationEnd())
 		{
@@ -2115,18 +2206,18 @@ HRESULT RunStop::StateUpdate(const float _fDeltaTime)
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT CurWeaponIndex = m_pNero.lock()->Get_CurWeaponIndex();
 	m_pNero.lock()->DecreaseDistance(OGDistance, _fDeltaTime);
-	if (0.5 <= fCurrAnimationTime)
+	if (0.5f <= fCurrAnimationTime)
 	{
 		switch (CurWeaponIndex)
 		{
 		case Nero::RQ:
-			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			break;
 		case Nero::Cbs:
 			break;
 		}
 	}
-	if (0.57 <= fCurrAnimationTime)
+	if (0.57f <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Idle(NeroFSM::RUNSTOP);
 	}
@@ -2248,14 +2339,14 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		//락온
 		if (Input::GetKey(DIK_Q))
 		{
-			m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
 		}
 		else if (Input::GetKey(DIK_W))
 		{
 			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				if (Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE_EX);
 				else
@@ -2263,7 +2354,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 			}
 			else if (Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				if (Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3);
 				else
@@ -2275,7 +2366,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_UP);
 			}
 		}
@@ -2283,22 +2374,22 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		{
 			if (Input::GetMouse(DIM_L))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND);
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_HR_EX_START);
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_DOWN);
 			}
 			else if (Input::GetKey(DIK_SPACE))
 			{
-				m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pNero.lock()->Set_JumpDir(Nero::Back);
 				m_pFSM->ChangeState(NeroFSM::JUMP_START);
 
@@ -2309,18 +2400,18 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 
 	else if (Input::GetMouseDown(DIM_L))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		m_pFSM->ChangeState(NeroFSM::ATT1_DASH);
 	}
 	else if (Input::GetMouseDown(DIM_M))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT);
 	}
 	else if (Input::GetKeyDown(DIK_SPACE))
 	{
 		//점프
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pNero.lock()->Set_JumpDir(Nero::Front);
 		m_pFSM->ChangeState(NeroFSM::JUMP_START);
 	}
@@ -2332,14 +2423,14 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 
 	else if (Input::GetKey(DIK_Q))
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::BUSTER_START);
 	}
 
 	else if (Input::GetKey(DIK_F))
 	{
 		//변신게이지 있는지 체크
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::TO_MAJIN);
 	}
 
@@ -2348,13 +2439,13 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		if (Input::GetKey(DIK_A))
 		{
 			//왼쪽으로 45도 회전 // 점차 누적시켜서 45도 완성
-			m_fGradient = FMath::Lerp(m_fGradient, -60.f, float(_fDeltaTime * 7.f));
+			m_fGradient = FMath::Lerp(m_fGradient, -60.f, _fDeltaTime * 7.0);
 			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
 		}
 		else if (Input::GetKey(DIK_D))
 		{
 			//오른쪽으로 45도 회전
-			m_fGradient = FMath::Lerp(m_fGradient, 60.f, float(_fDeltaTime * 7.f));
+			m_fGradient = FMath::Lerp(m_fGradient, 60.f, _fDeltaTime * 7.0);
 			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
 		}
 		else if (Input::GetKey(DIK_S))
@@ -2365,7 +2456,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		}
 		else
 		{
-			m_fGradient = FMath::Lerp(m_fGradient, 0.f, float(_fDeltaTime * 7.f));
+			m_fGradient = FMath::Lerp(m_fGradient, 0.f, _fDeltaTime * 7.0);
 			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
 		}
 	}
@@ -2374,13 +2465,13 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		if (Input::GetKey(DIK_A))
 		{
 			//왼쪽으로 45도 회전 // 점차 누적시켜서 45도 완성
-			m_fGradient = FMath::Lerp(m_fGradient, -60.f, float(_fDeltaTime * 7.f));
+			m_fGradient = FMath::Lerp(m_fGradient, -60.f, _fDeltaTime * 7.0);
 			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
 		}
 		else if (Input::GetKey(DIK_D))
 		{
 			//오른쪽으로 45도 회전
-			m_fGradient = FMath::Lerp(m_fGradient, 60.f, float(_fDeltaTime * 7.f));
+			m_fGradient = FMath::Lerp(m_fGradient, 60.f, _fDeltaTime * 7.f);
 			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
 		}
 		else if (Input::GetKey(DIK_W))
@@ -2391,7 +2482,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		}
 		else
 		{
-			m_fGradient = FMath::Lerp(m_fGradient, 0.f, float(_fDeltaTime * 7.f));
+			m_fGradient = FMath::Lerp(m_fGradient, 0.f, _fDeltaTime * 7.f);
 			m_pNero.lock()->SetAngleFromCamera(m_fGradient);
 		}
 	}
@@ -2437,7 +2528,7 @@ HRESULT DashStop::StateUpdate(const float _fDeltaTime)
 
 	m_pNero.lock()->DecreaseDistance(OGDistance, _fDeltaTime);
 
-	if (0.58 <= fCurAnimationTime)
+	if (0.58f <= fCurAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::DASHSTOP);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -3255,10 +3346,8 @@ HRESULT Wire_Pull::StateEnter()
 
 	//몬스터 위치에 따라서 분기
 	m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull", false, Nero::ANI_WIRE_SNATCH_PULL);
-	//m_pNero.lock()->SetActive_Wire_Arm(true);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WireArm, true);
-	m_pNero.lock()->Change_WireArm_Animation("Wire_Arm_Start31", false);
-	//NeroState::ResetAnimation()
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WireArm,"Wire_Arm_Start31", false);
 	return S_OK;
 }
 
@@ -3276,7 +3365,7 @@ HRESULT Wire_Pull::StateUpdate(const float _fDeltaTime)
 
 	//Up 0.33에 키입력
 
-	if (0.38 <= fCurAnimationTime)
+	if (0.38f <= fCurAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::WIRE_SNATCH_PULL);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -3468,11 +3557,10 @@ HRESULT Wire_Pull_Air::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air", false, Nero::ANI_WIRE_SNATCH_PULL_AIR);
 
-	NeroState::ResetAnimation(0.96, Nero::ANI_WIRE_SNATCH_PULL_AIR);
+	NeroState::ResetAnimation(0.96f, Nero::ANI_WIRE_SNATCH_PULL_AIR);
 
-	//m_pNero.lock()->SetActive_Wire_Arm(true);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WireArm, true);
-	m_pNero.lock()->Change_WireArm_Animation("Wire_Arm_Start31", false);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WireArm,"Wire_Arm_Start31", false);
 	return S_OK;
 }
 
@@ -3576,16 +3664,14 @@ HRESULT BT_Att1::StateEnter()
 	NeroState::StateEnter();
 	//달리고있었으면 대쉬 ComboA로 가야됨
 	m_pNero.lock()->ChangeAnimation("ComboA1", false,Nero::ANI_COMBOA1);
-	m_pNero.lock()->Set_RQ_State(Nero::WS_Battle);
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_Front);
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Front);
 	
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboA1", false);
 	}
-	NeroState::ActiveColl_Monsters(true);
 	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
@@ -3593,7 +3679,6 @@ HRESULT BT_Att1::StateEnter()
 HRESULT BT_Att1::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
@@ -3601,6 +3686,12 @@ HRESULT BT_Att1::StateUpdate(const float _fDeltaTime)
 {
 	//현재 애니메이션 프레임 위치
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.16f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.21f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
 
 	if (0.26f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 	{
@@ -3631,14 +3722,12 @@ HRESULT BT_Att2::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA2", false,Nero::ANI_COMBOA2);
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_R);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen,ATTACKTYPE::Attack_R);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboA2", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboA2", false);
 	}
-	NeroState::ActiveColl_Monsters(true);
 	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
@@ -3646,13 +3735,18 @@ HRESULT BT_Att2::StateEnter()
 HRESULT BT_Att2::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
 HRESULT BT_Att2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.135f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
 
 	if (0.26f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 	{
@@ -3684,14 +3778,12 @@ HRESULT BT_Att3::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA3", false, Nero::ANI_COMBOA3);
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_L);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen,ATTACKTYPE::Attack_L);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboA3", false);
 	}
-	NeroState::ActiveColl_Monsters(true);
 	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
@@ -3699,7 +3791,6 @@ HRESULT BT_Att3::StateEnter()
 HRESULT BT_Att3::StateExit()
 {
 	NeroState::StateExit();
-	NeroState::ActiveColl_Monsters(false);
 	return S_OK;
 }
 
@@ -3707,9 +3798,15 @@ HRESULT BT_Att3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.68 <= fCurrAnimationTime)
+	if (0.16f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.23f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.68f <= fCurrAnimationTime)
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 	}
 
 	if (0.26f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
@@ -3742,14 +3839,12 @@ HRESULT BT_Att4::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA4", false, Nero::ANI_COMBOA4);
-	m_pNero.lock()->Set_RQ_AttType(ATTACKTYPE::Attack_KnocBack);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen,ATTACKTYPE::Attack_KnocBack);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA4", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboA4", false);
 	}
-	NeroState::ActiveColl_Monsters(true);
 	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
@@ -3757,7 +3852,6 @@ HRESULT BT_Att4::StateEnter()
 HRESULT BT_Att4::StateExit()
 {
 	NeroState::StateExit();
-	
 	return S_OK;
 }
 
@@ -3765,15 +3859,18 @@ HRESULT BT_Att4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if(0.35 <= fCurrAnimationTime)
-		NeroState::ActiveColl_Monsters(false);
+	if (0.16f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.23f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
 		
-	if (0.44 <= fCurrAnimationTime)
+	if (0.44f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::IDLE);
 
-	if (0.8 <= fCurrAnimationTime)
+	if (0.8f <= fCurrAnimationTime)
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 	}
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -3843,6 +3940,13 @@ HRESULT BT_Att_ComboC_R_to_L::StateExit()
 HRESULT BT_Att_ComboC_R_to_L::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.02f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.09f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
@@ -3889,6 +3993,13 @@ HRESULT BT_Att_ComboC_L_to_R::StateExit()
 HRESULT BT_Att_ComboC_L_to_R::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.034f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
@@ -3925,9 +4036,8 @@ HRESULT BT_Att_ComboC_1::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboC2", false);
 	}
 	return S_OK;
 }
@@ -3941,6 +4051,13 @@ HRESULT BT_Att_ComboC_1::StateExit()
 HRESULT BT_Att_ComboC_1::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.18f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.22f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.4f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
@@ -3976,9 +4093,8 @@ HRESULT BT_Att_ComboC_2::StateEnter()
 	m_pNero.lock()->ChangeAnimation("ComboC2", false, Nero::ANI_COMBOC2);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboC2", false);
 	}
 	return S_OK;
 }
@@ -3992,6 +4108,13 @@ HRESULT BT_Att_ComboC_2::StateExit()
 HRESULT BT_Att_ComboC_2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.048f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
@@ -4028,9 +4151,8 @@ HRESULT BT_Att_ComboC_3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboC3", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboC3", false);
 	}
 	return S_OK;
 }
@@ -4044,6 +4166,13 @@ HRESULT BT_Att_ComboC_3::StateExit()
 HRESULT BT_Att_ComboC_3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.048f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
@@ -4079,13 +4208,12 @@ HRESULT BT_Att_ComboC_4::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboC2", false);
 
 		//얘는 타이밍에 맞춰서 켜야됨
 		//m_pNero.lock()->SetActive_WingArm_Right(true);
-		//m_pNero.lock()->Change_WingArm_Right_Animation("ComboC4", false);
+		//m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboC4", false);
 	}
 
 	return S_OK;
@@ -4101,7 +4229,19 @@ HRESULT BT_Att_ComboC_4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.65 <= fCurrAnimationTime)
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.135f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.3f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.35f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.65f <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Idle(NeroFSM::IDLE);
 	}
@@ -4134,13 +4274,11 @@ HRESULT BT_Att_ComboD_1::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboD1", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboD1", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD1", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboD1", false);
 	}
 	return S_OK;
 }
@@ -4154,6 +4292,13 @@ HRESULT BT_Att_ComboD_1::StateExit()
 HRESULT BT_Att_ComboD_1::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.07f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.15f <= fCurrAnimationTime && fCurrAnimationTime <= 0.3f)
@@ -4190,9 +4335,8 @@ HRESULT BT_Att_ComboD_2::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD2", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboD2", false);
 	}
 	return S_OK;
 }
@@ -4206,6 +4350,13 @@ HRESULT BT_Att_ComboD_2::StateExit()
 HRESULT BT_Att_ComboD_2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.06f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.14f <= fCurrAnimationTime && fCurrAnimationTime <= 0.22f)
@@ -4242,9 +4393,8 @@ HRESULT BT_Att_ComboD_3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD3", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboD3", false);
 	}
 	return S_OK;
 }
@@ -4258,6 +4408,13 @@ HRESULT BT_Att_ComboD_3::StateExit()
 HRESULT BT_Att_ComboD_3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.07f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (Input::GetMouseDown(DIM_L))
 	{
 		if (0.19f <= fCurrAnimationTime && fCurrAnimationTime <= 0.27f)
@@ -4294,9 +4451,8 @@ HRESULT BT_Att_ComboD_4::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD4", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboD4", false);
 	}
 	return S_OK;
 }
@@ -4310,9 +4466,16 @@ HRESULT BT_Att_ComboD_4::StateExit()
 HRESULT BT_Att_ComboD_4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_L))
-	{
 
+	if (0.055f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.6f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Idle(NeroFSM::IDLE);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -4352,9 +4515,8 @@ HRESULT BT_Air_Att1::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD1", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboD1", false);
 	}
 
 	return S_OK;
@@ -4371,10 +4533,17 @@ HRESULT BT_Air_Att1::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT  CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 
-	if(0.8 <= fCurrAnimationTime)
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+	if (0.24f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
 
-	if (0.3f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
+	if (0.32f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+
+	if(0.8f <= fCurrAnimationTime)
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+
+	if (0.36f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
 	{
 		NeroState::KeyInput_Jump(NeroFSM::AIR_COMBOA1);
 	}
@@ -4415,9 +4584,8 @@ HRESULT BT_Air_Att2::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA3", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboA3", false);
 	}
 	return S_OK;
 }
@@ -4432,8 +4600,14 @@ HRESULT BT_Air_Att2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.85 <= fCurrAnimationTime)
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+	if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.3f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.85f <= fCurrAnimationTime)
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 
 
 	if (0.27f <= fCurrAnimationTime && fCurrAnimationTime <= 0.42f)
@@ -4484,9 +4658,8 @@ HRESULT BT_Air_Att3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboC2", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboC2", false);
 	}
 
 	return S_OK;
@@ -4502,10 +4675,16 @@ HRESULT BT_Air_Att3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.78 <= fCurAnimationTime)
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+	if (0.19f <= fCurAnimationTime)
+		ActiveColl_RedQueen(true);
 
-	if (0.57 <= fCurAnimationTime && fCurAnimationTime <= 0.9)
+	if (0.3f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.78f <= fCurAnimationTime)
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+
+	if (0.57f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::AIR_COMBOA3);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -4535,9 +4714,8 @@ HRESULT BT_Air_ComboB::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("ComboD1", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboD1", false);
 	}
 
 	return S_OK;
@@ -4553,15 +4731,26 @@ HRESULT BT_Air_ComboB::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.1 <= fCurAnimationTime && 0.2 <= fCurAnimationTime && m_pNero.lock()->Get_IsMajinMode())
+	if (0.13f <= fCurAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.21f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.29f <= fCurAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.47f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.1f <= fCurAnimationTime && 0.2f <= fCurAnimationTime && m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboD1", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboD1", false);
 	}
 
-	if (0.82 <= fCurAnimationTime)
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+	if (0.82f <= fCurAnimationTime)
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 
 	if (0.58f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::AIR_COMBOA3);
@@ -4622,13 +4811,13 @@ Skill_Split* Skill_Split::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 HRESULT Skill_Split::StateEnter()
 {
 	NeroState::StateEnter();
+	m_bActiveColl_RedQueen = false;
 	m_pNero.lock()->ChangeAnimation("Split_Start", false, Nero::ANI_SPLIT_START);
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_Start", false);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
@@ -4636,6 +4825,7 @@ HRESULT Skill_Split::StateEnter()
 
 HRESULT Skill_Split::StateExit()
 {
+	ActiveColl_RedQueen(true);
 	return S_OK;
 }
 
@@ -4671,11 +4861,9 @@ HRESULT Skill_Split_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_Loop", true);
 	}
-	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -4717,15 +4905,14 @@ Skill_Split_Landing* Skill_Split_Landing::Create(FSMBase* const _pFSM, const UIN
 HRESULT Skill_Split_Landing::StateEnter()
 {
 	NeroState::StateEnter();
+	m_bActiveColl_RedQueen = true;
 	m_pNero.lock()->ChangeAnimation("Split_Landing", false, Nero::ANI_SPLIT_LANDING);
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Split_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_End", false);
 	}
-	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -4739,7 +4926,10 @@ HRESULT Skill_Split_Landing::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.37 <= fCurAnimationTime)
+	if (0.2f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.37f <= fCurAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_SPLIT_END);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -4768,9 +4958,8 @@ HRESULT Skill_Float_Ground::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Hr_Ground", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Hr_Ground", false);
 	}
 
 	return S_OK;
@@ -4786,7 +4975,13 @@ HRESULT Skill_Float_Ground::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.45 <= fCurrAnimationTime)
+	if (0.11f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.17f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.45f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_FLOAT_GROUND);
 
 	if(m_pNero.lock()->IsAnimationEnd())
@@ -4812,6 +5007,10 @@ Skill_Float_Ground_Ex3* Skill_Float_Ground_Ex3::Create(FSMBase* const _pFSM, con
 
 HRESULT Skill_Float_Ground_Ex3::StateEnter()
 {
+	NeroState::StateEnter();
+	m_bActiveColl_RedQueen = false;
+	ActiveColl_RedQueen(true);
+
 	return S_OK;
 }
 
@@ -4822,6 +5021,17 @@ HRESULT Skill_Float_Ground_Ex3::StateExit()
 
 HRESULT Skill_Float_Ground_Ex3::StateUpdate(const float _fDeltaTime)
 {
+	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.34f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.6f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	return S_OK;
 }
 
@@ -4841,6 +5051,10 @@ Skill_Float_Ground_Finish* Skill_Float_Ground_Finish::Create(FSMBase* const _pFS
 
 HRESULT Skill_Float_Ground_Finish::StateEnter()
 {
+	NeroState::StateEnter();
+	m_bActiveColl_RedQueen = false;
+	ActiveColl_RedQueen(true);
+
 	return S_OK;
 }
 
@@ -4851,6 +5065,11 @@ HRESULT Skill_Float_Ground_Finish::StateExit()
 
 HRESULT Skill_Float_Ground_Finish::StateUpdate(const float _fDeltaTime)
 {
+	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	return S_OK;
 }
 
@@ -4882,9 +5101,8 @@ HRESULT Skill_Shuffle::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Shuffle", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Shuffle", false);
 	}
 	return S_OK;
 }
@@ -4899,7 +5117,13 @@ HRESULT Skill_Shuffle::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.55 <= fCurrAnimationTime)
+	if (0.23f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.28f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.55f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_SHUFFLE);
 
 	if(m_pNero.lock()->IsAnimationEnd())
@@ -4929,15 +5153,12 @@ HRESULT Skill_Streak::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_Start", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Start", false);
 	}
-	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -4981,14 +5202,15 @@ HRESULT Skill_Streak_Ex3::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_Start", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Start", false);
 	}
+	m_bActiveColl_RedQueen = false;
+	ActiveColl_RedQueen(true);
+
 
 	return S_OK;
 }
@@ -5031,15 +5253,12 @@ HRESULT Skill_Streak_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_Loop", true);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Loop", true);
 	}
-	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -5078,15 +5297,15 @@ HRESULT Skill_Streak_End::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_End", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_End", false);
 	}
-	//m_pNero.lock()->SetAngleFromCamera();
+	m_bActiveColl_RedQueen = false;
+	ActiveColl_RedQueen(true);
+
 	return S_OK;
 }
 
@@ -5099,7 +5318,11 @@ HRESULT Skill_Streak_End::StateExit()
 HRESULT Skill_Streak_End::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (0.5 <= fCurrAnimationTime)
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.5f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_STREAK_END);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
@@ -5127,13 +5350,11 @@ HRESULT Skill_Streak_Ex3_Rush::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_Loop", true);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Loop", true);
 	}
 
 	return S_OK;
@@ -5150,7 +5371,7 @@ HRESULT Skill_Streak_Ex3_Rush::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if(0.65 <= fCurrAnimationTime)
+	if(0.65f <= fCurrAnimationTime)
 		m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3_ROLL_LOOP);
 
 	return S_OK;
@@ -5218,15 +5439,13 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_End", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_End", false);
 	}
-
+	m_bActiveColl_RedQueen = true;
 
 	return S_OK;
 }
@@ -5241,6 +5460,9 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateExit()
 HRESULT Skill_Streak_Ex3_Roll_End::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.1f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
 
 	if(m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
@@ -5511,7 +5733,7 @@ HRESULT Overture_Shoot::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot", false, Nero::ANI_OVERTURE_SHOOT);
-	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Overture,"Shoot_Front", false);
 	m_pNero.lock()->CreateOvertureEff();
 	return S_OK;
 }
@@ -5526,7 +5748,7 @@ HRESULT Overture_Shoot::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.6 <= fCurrAnimationTime)
+	if (0.6f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::OVERTURE_SHOOT);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -5554,7 +5776,7 @@ HRESULT Overture_Shoot_Up::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Up", false, Nero::ANI_OVERTURE_SHOOT_UP);
-	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Overture,"Shoot_Front", false);
 	m_pNero.lock()->CreateOvertureEff(Nero::EffDir_Up);
 	return S_OK;
 }
@@ -5569,7 +5791,7 @@ HRESULT Overture_Shoot_Up::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.53 <= fCurrAnimationTime)
+	if (0.53f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::OVERTURE_SHOOT_UP);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -5596,7 +5818,7 @@ HRESULT Overture_Shoot_Down::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Down", false, Nero::ANI_OVERTURE_SHOOT_DOWN);
-	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Overture,"Shoot_Front", false);
 
 	return S_OK;
 }
@@ -5611,7 +5833,7 @@ HRESULT Overture_Shoot_Down::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.5 <= fCurrAnimationTime)
+	if (0.5f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::OVERTURE_SHOOT_DOWN);
 
 	if(m_pNero.lock()->IsAnimationEnd())
@@ -5639,8 +5861,8 @@ HRESULT Overture_Shoot_Air::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air", false, Nero::ANI_OVERTURE_SHOOT_AIR);
-	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR);
-	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	NeroState::ResetAnimation(0.96f, Nero::ANI_OVERTURE_SHOOT_AIR);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Overture,"Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5654,7 +5876,7 @@ HRESULT Overture_Shoot_Air::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.65 <= fCurAnimationTime && fCurAnimationTime <= 0.9)
+	if (0.65f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::OVERTURE_SHOOT_AIR);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
@@ -5680,8 +5902,8 @@ HRESULT Overture_Shoot_Air_Up::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air_Up", false, Nero::ANI_OVERTURE_SHOOT_AIR_UP);
-	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR_UP);
-	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	NeroState::ResetAnimation(0.96f, Nero::ANI_OVERTURE_SHOOT_AIR_UP);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Overture,"Shoot_Front", false);
 	return S_OK;
 }
 
@@ -5695,7 +5917,7 @@ HRESULT Overture_Shoot_Air_Up::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.65 <= fCurAnimationTime && fCurAnimationTime <= 0.9)
+	if (0.65f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::OVERTURE_SHOOT_AIR_UP);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
@@ -5721,8 +5943,8 @@ HRESULT Overture_Shoot_Air_Down::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Overture_Shoot_Air_Down", false, Nero::ANI_OVERTURE_SHOOT_AIR_DOWN);
-	NeroState::ResetAnimation(0.96, Nero::ANI_OVERTURE_SHOOT_AIR_DOWN);
-	m_pNero.lock()->Change_Overture_Animation("Shoot_Front", false);
+	NeroState::ResetAnimation(0.96f, Nero::ANI_OVERTURE_SHOOT_AIR_DOWN);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Overture,"Shoot_Front", false);
 
 	return S_OK;
 }
@@ -5737,7 +5959,7 @@ HRESULT Overture_Shoot_Air_Down::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.65 <= fCurAnimationTime && fCurAnimationTime <= 0.9)
+	if (0.65f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::OVERTURE_SHOOT_AIR_DOWN);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
@@ -5819,7 +6041,7 @@ HRESULT Cbs_ComboA1::StateUpdate(const float _fDeltaTime)
 
 	if (Input::GetMouseDown(DIM_L))
 	{
-		if (0.27 <= fCurrAnimationTime && fCurrAnimationTime <= 0.37)
+		if (0.27f <= fCurrAnimationTime && fCurrAnimationTime <= 0.37f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA2);
 	}
 	else if(m_pNero.lock()->IsAnimationEnd())
@@ -5862,7 +6084,7 @@ HRESULT Cbs_ComboA2::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouseDown(DIM_L))
 	{
-		if (0.28 <= fCurrAnimationTime && fCurrAnimationTime <= 0.38)
+		if (0.28f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA3);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
@@ -5905,7 +6127,7 @@ HRESULT Cbs_ComboA3::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouseDown(DIM_L))
 	{
-		if (0.3 <= fCurrAnimationTime && fCurrAnimationTime <= 0.4)
+		if (0.3f <= fCurrAnimationTime && fCurrAnimationTime <= 0.4f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA4);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
@@ -5948,7 +6170,7 @@ HRESULT Cbs_ComboA4::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouseDown(DIM_L))
 	{
-		if (0.28 <= fCurrAnimationTime && fCurrAnimationTime <= 0.38)
+		if (0.28f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA5);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
@@ -5991,7 +6213,7 @@ HRESULT Cbs_ComboA5::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouseDown(DIM_L))
 	{
-		if (0.8 <= fCurrAnimationTime && Input::GetMouseDown(DIM_L))
+		if (0.8f <= fCurrAnimationTime && Input::GetMouseDown(DIM_L))
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA1);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
@@ -6232,7 +6454,7 @@ HRESULT Cbs_SKill_Revolver_Loop::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	//얘는 그냥 땅에 닿으면 멈추는걸로 바꿔야됨
-	if (m_iLoopCount <= 0 && 0.96 <= fCurrAnimationTime)
+	if (m_iLoopCount <= 0 && 0.96f <= fCurrAnimationTime)
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_REVOLVER_END);
 	}
@@ -7196,13 +7418,11 @@ HRESULT ComboA_Dash::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA1_Dash", false, Nero::ANI_COMBOA1_DASH);
-	//m_pNero.lock()->SetAngleFromCamera();
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("ComboA1", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboA1", false);
 	}
 	return S_OK;
 }
@@ -7217,6 +7437,12 @@ HRESULT ComboA_Dash::StateExit()
 HRESULT ComboA_Dash::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.13f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
 
 	if (0.18f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 	{
@@ -7253,13 +7479,11 @@ HRESULT Skill_Caliber::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_Start", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Start", false);
 	}
 
 	return S_OK;
@@ -7304,16 +7528,15 @@ HRESULT Skill_Caliber_End::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Caliber_End", false, Nero::ANI_CALIBER_END);
-
+	m_bActiveColl_RedQueen = false;
+	NeroState::ActiveColl_RedQueen(true);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_End", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_End", false);
 	}
 
 	return S_OK;
@@ -7330,8 +7553,11 @@ HRESULT Skill_Caliber_End::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.8 <= fCurAnimationTime)
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+	if (0.19f <= fCurAnimationTime)
+		NeroState::ActiveColl_RedQueen(false);
+
+	if (0.8f <= fCurAnimationTime)
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen,Nero::WS_Idle);
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -7361,6 +7587,9 @@ HRESULT Hr_Air::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Hr_Air", false, Nero::ANI_HR_AIR);
+	m_bActiveColl_RedQueen = false;
+	ActiveColl_RedQueen(true);
+
 
 	return S_OK;
 }
@@ -7376,9 +7605,12 @@ HRESULT Hr_Air::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.83 <= fCurAnimationTime)
+	if (0.5f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.83f <= fCurAnimationTime)
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		NeroState::KeyInput_Jump(NeroFSM::SKILL_HR_AIR);
 	}
 
@@ -7413,9 +7645,8 @@ HRESULT Hr_Ex_Start::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Hr_Ground", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Hr_Ground", false);
 	}
 
 	return S_OK;
@@ -7514,12 +7745,18 @@ HRESULT Hr_Ex_Air_Roll_Start::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Hr_Ex_Air_Roll_Start", false, Nero::ANI_HR_EX_AIR_ROLL_START);
 	m_pNero.lock()->Use_ExGauge(1);
+	m_bActiveColl_RedQueen = false;
+	ActiveColl_RedQueen(true);
+
+
 	return S_OK;
 }
 
 HRESULT Hr_Ex_Air_Roll_Start::StateExit()
 {
 	NeroState::StateExit();
+
+	//ActiveColl_RedQueen(false);
 
 	return S_OK;
 }
@@ -7598,6 +7835,9 @@ HRESULT Hr_Ex_Air_Roll_End::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Hr_Ex_Air_Roll_End", false, Nero::ANI_HR_EX_AIR_ROLL_END);
+	m_bActiveColl_RedQueen = false;
+	ActiveColl_RedQueen(true);
+
 
 	return S_OK;
 }
@@ -7613,9 +7853,12 @@ HRESULT Hr_Ex_Air_Roll_End::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.83 <= fCurAnimationTime)
+	if (0.5f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.83f <= fCurAnimationTime)
 	{
-		m_pNero.lock()->Set_RQ_State(Nero::WS_Idle);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		KeyInput_Jump(NeroFSM::SKILL_HR_EX_AIR_ROLL_END);
 	}
 
@@ -7649,17 +7892,17 @@ HRESULT Skill_Split_Ex::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_Start", false);
 	}
-
+	m_bActiveColl_RedQueen = false;
 	return S_OK;
 }
 
 HRESULT Skill_Split_Ex::StateExit()
 {
 	NeroState::StateExit();
+	ActiveColl_RedQueen(true);
 
 	return S_OK;
 }
@@ -7697,9 +7940,8 @@ HRESULT Skill_Split_Ex_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Split_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_Loop", true);
 	}
 
 	return S_OK;
@@ -7747,11 +7989,10 @@ HRESULT Skill_Split_Ex_Landing::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Split_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_End", false);
 	}
-
+	m_bActiveColl_RedQueen = true;
 	return S_OK;
 }
 
@@ -7766,7 +8007,10 @@ HRESULT Skill_Split_Ex_Landing::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.37 <= fCurAnimationTime)
+	if (0.16f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.37f <= fCurAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_SPLIT_EX_END);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7795,17 +8039,16 @@ Air_Dive_Slash_Start* Air_Dive_Slash_Start::Create(FSMBase* const _pFSM, const U
 HRESULT Air_Dive_Slash_Start::StateEnter()
 {
 	NeroState::StateEnter();
+	m_bActiveColl_RedQueen = false;
 	m_pNero.lock()->ChangeAnimation("Air_Dive_Slash_Start", false, Nero::ANI_AIR_DIVE_SLASH_START);
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_Start", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Start", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Start", false);
 	}
 
 	return S_OK;
@@ -7814,6 +8057,9 @@ HRESULT Air_Dive_Slash_Start::StateEnter()
 HRESULT Air_Dive_Slash_Start::StateExit()
 {
 	NeroState::StateExit();
+
+	ActiveColl_RedQueen(true);
+
 
 	return S_OK;
 }
@@ -7851,13 +8097,11 @@ HRESULT Air_Dive_Slash_Loop::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_Loop", true);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_Loop", true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Loop", true);
 	}
 
 	return S_OK;
@@ -7905,17 +8149,15 @@ Air_Dive_Slash_End* Air_Dive_Slash_End::Create(FSMBase* const _pFSM, const UINT 
 HRESULT Air_Dive_Slash_End::StateEnter()
 {
 	NeroState::StateEnter();
+	m_bActiveColl_RedQueen = true;
 	m_pNero.lock()->ChangeAnimation("Air_Dive_Slash_Finish", false, Nero::ANI_AIR_DIVE_SLASH_FINISH);
-
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Streak_End", false);
 
-		//m_pNero.lock()->SetActive_WingArm_Right(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WingArm_Right, true);
-		m_pNero.lock()->Change_WingArm_Right_Animation("Streak_End", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_End", false);
 	}
 
 	return S_OK;
@@ -7932,7 +8174,10 @@ HRESULT Air_Dive_Slash_End::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.53 <= fCurAnimationTime)
+	if (0.16f <= fCurAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.53f <= fCurAnimationTime)
 	{
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_AIR_DIVE_SLASH_END);
 	}
@@ -7968,11 +8213,9 @@ HRESULT Skill_Shuffle_Ex::StateEnter()
 
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
-		//m_pNero.lock()->SetActive_WingArm_Left(true);
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
-		m_pNero.lock()->Change_WingArm_Left_Animation("Shuffle_Ex", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Shuffle_Ex", false);
 	}
-	//m_pNero.lock()->SetAngleFromCamera();
 	return S_OK;
 }
 
@@ -7984,6 +8227,20 @@ HRESULT Skill_Shuffle_Ex::StateExit()
 
 HRESULT Skill_Shuffle_Ex::StateUpdate(const float _fDeltaTime)
 {
+	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.2f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.28f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
+	if (0.4f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(true);
+
+	if (0.44f <= fCurrAnimationTime)
+		ActiveColl_RedQueen(false);
+
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
@@ -8049,7 +8306,7 @@ HRESULT Buster_Start::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Buster_Start", false, Nero::ANI_BUSTER_START);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_BusterArm, true);
-	m_pNero.lock()->Change_BusterArm_Animation("Buster_Catch", false);
+	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm,"Buster_Catch", false);
 	return S_OK;
 }
 
@@ -8063,6 +8320,8 @@ HRESULT Buster_Start::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::IDLE);
 
 	return S_OK;
 }
@@ -8086,7 +8345,6 @@ HRESULT To_Majin::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("To_Majin", false, Nero::ANI_BUSTER_START);
-	//m_pNero.lock()->SetActive_Wings(true);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Wings, true);
 
 	m_pNero.lock()->Change_To_MajinMode();

@@ -6,6 +6,15 @@
 #include "Renderer.h"
 
 
+// test
+//#include "Glint.h"
+//#include "OvertureHand.h"
+//#include "Liquid.h"
+//#include "Dust.h"
+#include "AppearGroundMonster.h"
+//#include "QliphothBlock.h"
+
+
 void BtlPanel::Free()
 {
 	SafeDeleteArray(_UIDescs);
@@ -1919,6 +1928,16 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F4))
 	{
 		AddExGauge(0.333f);
+
+		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->PlayStart(40.f);
+		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(true);
+		//static uint32 idx = Liquid::MAX_VARIATION_IDX;
+		//++idx;
+		//if (idx >= Liquid::MAX_VARIATION_IDX)
+		//	idx = 0u;
+		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetVariationIdx((Liquid::VARIATION)idx);
+		std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->PlayStart();
+		//std::static_pointer_cast<Dust>(FindGameObjectWithTag(Eff_Dust).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
@@ -1928,6 +1947,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
 		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
 		//std::static_pointer_cast<Dust>(FindGameObjectWithTag(Eff_Dust).lock())->Reset();		
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
@@ -1988,56 +2008,57 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 
 void BtlPanel::Imgui_ModifyUI(UI_DESC_ID _ID)
 {
+	if (!g_bEditMode)return;
 	ImGui::Text("----- BtlPanel : %d -----", _ID);
 
 	Vector3 Position = _UIDescs[_ID].Pos;
-	ImGui::InputFloat3("Position", Position);
+	ImGui::InputFloat3("Position##BtlPanel", Position);
 	_UIDescs[_ID].Pos = Position;
 
 	Vector3 Scale = _UIDescs[_ID].Scale;
-	ImGui::InputFloat3("Scale", Scale);
+	ImGui::InputFloat3("Scale##BtlPanel", Scale);
 	_UIDescs[_ID].Scale = Scale;
 
 	Vector3 Rot = _Rot;
-	ImGui::InputFloat3("Rot", Rot);
+	ImGui::InputFloat3("Rot##BtlPanel", Rot);
 	_Rot = Rot;
 
 	Vector2 MinTexUV = _MinTexUV;
-	ImGui::InputFloat2("MinTexUV", MinTexUV);
+	ImGui::InputFloat2("MinTexUV##BtlPanel", MinTexUV);
 	_MinTexUV = MinTexUV;
 
 	Vector2 MaxTexUV = _MaxTexUV;
-	ImGui::InputFloat2("MaxTexUV", MaxTexUV);
+	ImGui::InputFloat2("MaxTexUV##BtlPanel", MaxTexUV);
 	_MaxTexUV = MaxTexUV;
 	
 	ImGui::Text("Global Option");
 
 	Vector3 Vector = _LightDir;
-	ImGui::SliderFloat3("LightVec", Vector, -1.f, 1.f);
+	ImGui::SliderFloat3("LightVec##BtlPanel", Vector, -1.f, 1.f);
 	_LightDir = Vector;
 
 	float HPGlassDirt = _HPGlassDirt;
-	ImGui::SliderFloat("GlassDirt", &HPGlassDirt, 0.f, 1.f);
+	ImGui::SliderFloat("GlassDirt##BtlPanel", &HPGlassDirt, 0.f, 1.f);
 	_HPGlassDirt = HPGlassDirt;
 
 	int HPGaugeCount = _HPGaugeCount;
-	ImGui::SliderInt("HPGaugeCount", &HPGaugeCount, 1, 10);
+	ImGui::SliderInt("HPGaugeCount##BtlPanel", &HPGaugeCount, 1, 10);
 	_HPGaugeCount = HPGaugeCount;
 
 	Vector3 TargetPos = _TargetPos;
-	ImGui::SliderFloat3("TargetPos", TargetPos, -10.f, 10.f);
+	ImGui::SliderFloat3("TargetPos##BtlPanel", TargetPos, -10.f, 10.f);
 	_TargetPos = TargetPos;
 
 	float RankScore = _RankScore;
-	ImGui::SliderFloat("RankScore", &RankScore, 0.f, 699.999f);
+	ImGui::SliderFloat("RankScore##BtlPanel", &RankScore, 0.f, 699.999f);
 	_RankScore = RankScore;
 
 	Vector2 InputUIOffset = _InputUIOffset;
-	ImGui::SliderFloat2("InputUIOffset", InputUIOffset, 0, 1000);
+	ImGui::SliderFloat2("InputUIOffset##BtlPanel", InputUIOffset, 0, 1000);
 	_InputUIOffset = InputUIOffset;
 
 	float ExGauge = _ExGauge;
-	ImGui::SliderFloat("ExGauge", &ExGauge, 0.f, 3.f);
+	ImGui::SliderFloat("ExGauge##BtlPanel", &ExGauge, 0.f, 3.f);
 	_ExGauge = ExGauge;
 
 	ImGui::Text("----- BtlPanel End -----");

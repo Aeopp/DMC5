@@ -32,7 +32,7 @@ Camera* Camera::Create()
 
 HRESULT Camera::Ready()
 {
-    m_pTransform.lock()->SetPosition(D3DXVECTOR3(0.f, 10.f, 0.f));
+    m_pTransform.lock()->SetPosition(D3DXVECTOR3(0.f, 1.f, 0.f));
     m_pTransform.lock()->SetRotation(D3DXVECTOR3(45.f, 0.f, 0.f));
 
     return S_OK;
@@ -187,6 +187,8 @@ void Camera::UpdateCamera()
 
 void Camera::ShowCameraInfo()
 {
+    if (false==g_bEditMode)return;
+
     ImGui::InputFloat("FovY", &m_fFovY);
     ImGui::InputFloat("Near", &m_fNear);
     ImGui::InputFloat("Far", &m_fFar);

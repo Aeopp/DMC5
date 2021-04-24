@@ -21,7 +21,6 @@ uniform float  lightIlluminance = 1.5f; // lux
 uniform float  lightRadius = 5.0f; // meter
 uniform float  specularPower = 80.0f;
 
-
 uniform float4 eyePos;
 uniform float2 pixelSize;
 uniform float2 clipPlanes;
@@ -278,14 +277,19 @@ in float3 wpos)
     
     // 포인트 라인트용 모먼트 
     float ShadowFactor = 1.f;
+    
+    
     if (ShadowDepthMapHeight > 0)
     {
-        float2 moments = texCUBE(cubeShadowMap, -L).xy;
+        if (distance < (clipPlanes.y - -clipPlanes.x)) 
+        {
+            float2 moments = texCUBE(cubeShadowMap, -L).xy;
 
-        float z = distance;
-        float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-        float shadow = ShadowVariance(moments, d);
-        ShadowFactor = saturate(shadow + shadowmin);
+            float z = distance;
+            float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
+            float shadow = ShadowVariance(moments, d);
+            ShadowFactor = saturate(shadow + shadowmin);
+        }
     }
     
     // 
@@ -300,8 +304,12 @@ in float3 wpos)
     
     // Origin 
     // Lo = (kD * albedo / PI + specular) * radiance * NdotL;
+
+    // 1000 - 300 ;    
     
-    Lo = (kD * albedo / PI + specular) * lightFlux * radiance * NdotL * ShadowFactor;
+    float radius_att = saturate((lightRadius - distance) / lightRadius);
+    
+    Lo = (kD * albedo / PI + specular) * lightFlux * radiance * radius_att* NdotL * ShadowFactor;
     
     return Lo;
 };

@@ -557,7 +557,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 200;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ 2.f, 5.f, 0.f });
+	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -607,9 +607,9 @@ HRESULT Em100::Awake()
 
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-
 	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
+	
 	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_MiddleF1");
 	
 
@@ -874,6 +874,21 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	default:
+		break;
+	}
+}
+
+void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+	static int j = 0;
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		++j;
+		cout << "뿌직!" << j << endl;
+		//Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
 		break;

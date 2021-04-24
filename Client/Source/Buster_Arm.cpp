@@ -45,6 +45,7 @@ HRESULT Buster_Arm::Awake()
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.05f });
 	m_pCollider.lock()->SetRadius(0.05f);
+	m_pCollider.lock()->SetActive(false);
 	PushEditEntity(m_pCollider.lock().get());
 
 	return S_OK;
@@ -87,8 +88,8 @@ void Buster_Arm::OnEnable()
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
 
 	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
-	NeroWorld._41 += PlayerLook.x * -0.05;
-	NeroWorld._43 += PlayerLook.z * -0.05;
+	NeroWorld._41 += PlayerLook.x * -0.05f;
+	NeroWorld._43 += PlayerLook.z * -0.05f;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
@@ -255,7 +256,7 @@ void Buster_Arm::RenderShadowSK(const DrawInfo& _Info)
 
 void Buster_Arm::RenderDebugBone(const DrawInfo& _Info)
 {
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
+	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 

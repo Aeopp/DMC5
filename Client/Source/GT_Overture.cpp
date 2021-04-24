@@ -40,6 +40,7 @@ HRESULT GT_Overture::Awake()
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetCenter({ 0.f,0.08f,0.f });
 	m_pCollider.lock()->SetRadius(0.07f);
+	m_pCollider.lock()->SetActive(false);
 	PushEditEntity(m_pCollider.lock().get());
 	return S_OK;
 }
