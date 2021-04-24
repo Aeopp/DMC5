@@ -1952,9 +1952,9 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
 
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
-		////SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		////AccumulateTDTGauge(0.3f);
-		////ChangeWeaponUI(Nero::WeaponList::RQ);
+		SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
+		AccumulateTDTGauge(0.3f);
+		ChangeWeaponUI(Nero::WeaponList::RQ);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{

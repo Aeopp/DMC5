@@ -161,7 +161,7 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 	//	_SliceAmount = 1.f - _AccumulateTime * 0.6f;
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

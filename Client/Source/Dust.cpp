@@ -162,7 +162,7 @@ UINT Dust::Update(const float _fDeltaTime)
 		Sptransform->SetBillBoard(BillMat);
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }
