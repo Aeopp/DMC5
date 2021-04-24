@@ -934,7 +934,7 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	// 알베도 노말 깊이 렌더타겟 한번에 초기화 . 
-	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0, 1.0f, 0);
 
 	auto& GBufferGroup = RenderEntitys[RenderProperty::Order::GBuffer];
 	DrawInfo _DrawInfo{};
