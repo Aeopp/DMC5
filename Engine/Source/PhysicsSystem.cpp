@@ -206,7 +206,7 @@ HRESULT PhysicsSystem::CreateScene(const UINT _nSceneID)
 
 	//Scene Description
 	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.f, -9.81f, 0.f);
+	sceneDesc.gravity = physx::PxVec3(0.f, -4.905f, 0.f);
 	sceneDesc.cpuDispatcher = m_pDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
 
@@ -304,6 +304,22 @@ physx::PxMaterial* PhysicsSystem::GetDefaultMaterial()
 PxCooking* PhysicsSystem::GetCooking()
 {
 	return m_pCooking;
+}
+
+void PhysicsSystem::SetGravity(PxVec3 _vGravity)
+{
+	if (nullptr == m_pScene)
+		return;
+
+	m_pScene->setGravity(_vGravity);
+}
+
+D3DXVECTOR3 PhysicsSystem::GetGravity()
+{
+	if (nullptr == m_pScene)
+		return D3DXVECTOR3(0.f, 0.f, 0.f);
+	PxVec3 vGravity = m_pScene->getGravity();
+	return D3DXVECTOR3(vGravity.x, vGravity.y, vGravity.z);
 }
 
 void PhysicsSystem::AddActor(const UINT _nSceneID, physx::PxActor& _rActor)

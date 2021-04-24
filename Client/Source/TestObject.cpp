@@ -106,7 +106,7 @@ void TestObject::RenderInit()
 	// 스태틱 메쉬 로딩
 
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx");
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -191,18 +191,18 @@ HRESULT TestObject::Ready()
 
 HRESULT TestObject::Awake()
 {
-	auto pCollider = AddComponent<CapsuleCollider>();
-	pCollider.lock()->ReadyCollider();
-	pCollider.lock()->SetRigid(true);
-	pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
-	pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+	//auto pCollider = AddComponent<CapsuleCollider>();
+	//pCollider.lock()->ReadyCollider();
+	//pCollider.lock()->SetRigid(true);
+	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
 	//pCollider.lock()->SetRadius(100.f);
 	//pCollider.lock()->SetHeight(200.f);
-	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/2.f,100.f,0.f });
+	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,-1.f,0.f });
 
-	PushEditEntity(pCollider.lock().get());
+	//PushEditEntity(pCollider.lock().get());
 	return S_OK;
 }
 

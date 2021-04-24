@@ -219,6 +219,29 @@ void Em100::State_Change(const float _fDeltaTime)
 		break;
 	case Em100::Hit_Air:
 		break;
+	case Em100::Hit_Air_Start:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Air_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_Air_Loop;
+		}
+		break;
+	case Em100::Hit_Air_Loop:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Air_Loop", true, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Loop" && m_pCollider.lock()->IsGround())
+			{
+				if (fDot < 0)
+					m_eState = Hit_End_Front;
+				else
+					m_eState = Hit_End_Back;
+				m_bDown = true;
+			}
+
+		}
 	case Em100::Hit_Back:
 		break;
 	case Em100::Hit_Finish:
@@ -703,43 +726,6 @@ UINT Em100::Update(const float _fDeltaTime)
 		State_Change(_fDeltaTime);
 	}
 
-
-	if (Input::GetKeyDown(DIK_R))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_KnocBack;
-		Hit(Test);
-
-	}
-	//if (Input::GetKeyDown(DIK_Q))
-	//{
-	//	BT_INFO Test;
-	//	Test.eAttackType = Attack_Front;
-	//	Hit(Test);
-
-	//}
-	/*if (Input::GetKeyDown(DIK_W))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_L;
-		Hit(Test);
-
-	}
-	if (Input::GetKeyDown(DIK_E))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_R;
-		Hit(Test);
-
-	}
-	if (Input::GetKey(DIK_TAB))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_Buster_Start;
-		Hit(Test);
-	}*/
-	//cout << m_BattleInfo.iHp << endl;
-
 	
 	if (m_eState == Hit_Buster_Start)
 	{
@@ -813,9 +799,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		{
 			m_eState = Hit_KnocBack;
 			m_bHit = true;
-			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-			D3DXVec3Normalize(&vDir, &vDir);
-
+	
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
@@ -835,13 +819,19 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			m_eState = Hit_Buster_Start;
 			m_bHit = true;
 			break;
-		case ATTACKTYPE::Attack_Buster_Loop:
-			m_eState = Hit_Buster_Loop;
+		case ATTACKTYPE::Attack_Air_Start:
+		{
+			m_eState = Hit_Air_Start;
 			m_bHit = true;
+
+			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
+			D3DXVec3Normalize(&vLook, &vLook);
+			Vector3	vDir(vLook.x * 0.05f, 1.5f, vLook.z * 0.05f);
+
+			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
-		case ATTACKTYPE::Attack_Buster_End:
-			m_eState = Hit_Buster_End;
-			m_bHit = true;
+		}
+		case ATTACKTYPE::Attack_Air:
 			break;
 		default:
 			m_bIng = true;

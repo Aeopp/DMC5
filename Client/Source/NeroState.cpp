@@ -1019,7 +1019,7 @@ HRESULT Jump_Basic::StateEnter()
 	{
 	case Nero::Basic:
 		m_pNero.lock()->ChangeAnimation("Jump", false, Nero::ANI_JUMP);
-		m_pNero.lock()->SetAddForce({ 0.f,300.f,0.f });
+		m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
 		break;
 	case Nero::Front:
 		m_pNero.lock()->ChangeAnimation("Jump_Front", false, Nero::ANI_JUMP_FRONT);
