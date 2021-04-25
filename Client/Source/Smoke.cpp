@@ -46,7 +46,7 @@ void Smoke::Imgui_Modify()
 
 		{
 			static float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.1f, 1.f);
+			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.001f, 0.1f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 			SetScale(Scale);
 		}
@@ -93,7 +93,7 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	//auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
 
-	auto WeakSubset = _PlaneMesh->GetSubset(0u);
+	auto WeakSubset = _SmokeMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
@@ -115,9 +115,10 @@ HRESULT Smoke::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_Smoke;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
+	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });	// _SmokeMesh 원점이 중앙이 아니라 스케일 늘리면 x축 이동도 필요
 	
-	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+	//_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+	_SmokeMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_enviroment_smoke00_03.fbx");
 
 	_SmokeALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_smoke_00_0016_alpg.tga");
 

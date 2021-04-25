@@ -1946,20 +1946,20 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
-
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
 		AccumulateTDTGauge(0.3f);
 		ChangeWeaponUI(Nero::WeaponList::RQ);
+
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
-		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->Reset();
-
 		ConsumeTDTGauge(0.5f);
 		ChangeWeaponUI(Nero::WeaponList::Cbs);
+
+		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->Reset();
 	}
 	////////////////////////////
 

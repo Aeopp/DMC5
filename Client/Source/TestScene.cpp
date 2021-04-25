@@ -66,7 +66,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<QliphothBlock>();
+	AddGameObject<QliphothBlock>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
