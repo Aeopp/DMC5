@@ -54,14 +54,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	//AddGameObject<Em100>();
-	AddGameObject<Em0000>();
+	AddGameObject<Em100>();
+	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
-	LoadMap();
-	AddGameObject<TempMap>();
-
-	AddGameObject<BtlPanel>();
+	//LoadMap();
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
