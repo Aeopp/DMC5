@@ -116,7 +116,28 @@ void Collider::SetActive(const bool _bActive)
 	if (false == _bActive)
 		Physics::RemoveActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 	else
+	{
 		Physics::AddActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
+		std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
+		//Transform에 변화가 있었는지 확인
+		if (true == pTransform.expired())
+			return;
+		if (nullptr == m_pRigidActor)
+			return;
+
+
+		D3DXVECTOR3		vPosition = pTransform.lock()->GetPosition();
+		D3DXQUATERNION	tQuaternion = pTransform.lock()->GetQuaternion();
+
+		PxVec3 pxPos;
+		PxQuat pxQuat;
+
+		memcpy_s(&pxPos, sizeof(D3DXVECTOR3), &vPosition, sizeof(D3DXVECTOR3));
+		memcpy_s(&pxQuat, sizeof(D3DXQUATERNION), &tQuaternion, sizeof(D3DXQUATERNION));
+
+		m_pRigidActor->setGlobalPose(physx::PxTransform(pxPos, pxQuat));
+
+	}
 }
 
 void Collider::ReadySimulate()

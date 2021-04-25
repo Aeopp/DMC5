@@ -661,8 +661,8 @@ PsOut PsMain_TDTGauge0(PsIn In)
     float2 newUV = In.UV;
     newUV.y += _AccumulationTexV;
  
-    Out.Color.rgb = Shade * (float3(0.149f, 0.145f, 0.208f) - 0.15f * float3(NRMRSample.aaa));
-    Out.Color.a = (ATOSSample.r + ATOSSample.b) * (1.f - tex2D(ATOS0, newUV).a * 0.8f);
+    Out.Color.rgb = Shade * saturate((float3(0.149f, 0.145f, 0.208f) - 0.15f * float3(NRMRSample.aaa)));
+    Out.Color.a = (ATOSSample.r + ATOSSample.b) * (1.f - saturate(tex2D(ATOS0, newUV).a * 0.8f));
     
     return Out;
 };
@@ -693,7 +693,7 @@ PsOut PsMain_TDTGauge1(PsIn_Clip In)
     if (0.01f > _EmissivePower)
     {
         // º¯½Å X
-        Out.Color.rgb = Shade * (float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa);
+        Out.Color.rgb = Shade * saturate((float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa));
     }
     else
     {

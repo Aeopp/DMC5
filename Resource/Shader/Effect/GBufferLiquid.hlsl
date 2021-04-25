@@ -7,7 +7,9 @@ uniform matrix matViewProj;
 
 uniform float2 uv = { 1, 1 };
 
-uniform float3 extraColor = { 1.f, 1.f, 1.f };
+uniform float3 extraColor = { 0.f, 0.f, 0.f };
+
+uniform float magicNumber = 1.f;
 
 void vs_gbuffer_tbn(
 	in out float4 pos : POSITION,
@@ -63,7 +65,8 @@ void ps_gbuffer_tbn(
     
     float3 n = normalize(mul(tbn, tnorm));
 
-    color0 = saturate(float4(tex2D(baseColor, tex).rgb + extraColor, 1.f));
+    float4 albm = tex2D(baseColor, tex);
+    color0 = saturate(float4((albm.rgb + extraColor) * magicNumber, albm.a));
     color1 = float4(n * 0.5f + 0.5f, normap_sample.w);
     color2 = float4(zw.x / zw.y, 0, 0, 0);
 };

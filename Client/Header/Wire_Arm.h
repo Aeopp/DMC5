@@ -4,6 +4,7 @@
 #include "Unit.h"
 #include "RenderInterface.h"
 class Nero;
+class Wire_Arm_Grab;
 class Wire_Arm : public Unit,
 	public ENGINE::RenderInterface
 {
@@ -21,6 +22,10 @@ public:
 	virtual UINT LateUpdate(const float _fDeltaTime) override;
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
+public:
+	//Ãæµ¹
+	virtual void OnTriggerEnter(std::weak_ptr<GameObject> _pOther) override;
+	virtual void OnTriggerExit(std::weak_ptr<GameObject> _pOther) override;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
@@ -44,9 +49,12 @@ public:
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;
+	std::weak_ptr<Wire_Arm_Grab>		  m_pWireArmGrab;
 	std::weak_ptr<SphereCollider> m_pCollider;
 
 	bool								m_bIsRender;
+	Matrix*								m_pBoneMatrix;
+	Matrix								m_MyRenderMatrix;
 };
 
 

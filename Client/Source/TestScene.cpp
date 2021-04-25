@@ -52,19 +52,18 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Camera>();
 
 	AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
 	AddGameObject<Em100>();
-    //AddGameObject<Car>();
+
+	//AddGameObject<Car>();
 
 	
 	//LoadMap();
 	//AddGameObject<TempMap>();
-		//LoadMap();
-	//AddGameObject<TempMap>();
 
 	
 	
 
-	AddGameObject<BtlPanel>();
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
@@ -81,7 +80,7 @@ HRESULT TestScene::LoadScene()
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.01f;
+	_Renderer->ao = 0.01f; 
 	_Renderer->SkyIntencity = 0.111f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 

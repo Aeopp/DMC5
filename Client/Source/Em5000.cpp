@@ -675,11 +675,6 @@ UINT Em5000::Update(const float _fDeltaTime)
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{			 
-		 D3DXQUATERNION tTemp;
-		 D3DXQuaternionRotationYawPitchRoll(&tTemp, D3DXToRadian(0.f), D3DXToRadian(90.f), D3DXToRadian(0.f));
-
-		 //std::cout << DeltaQuat.x << "\t" << DeltaQuat.z << std::endl;
-		 D3DXQUATERNION tTest = { DeltaQuat.x, DeltaQuat.z, DeltaQuat.y, DeltaQuat.w };
 		 D3DXQUATERNION tResult = SpTransform->GetQuaternion() * DeltaQuat;
 		 SpTransform->SetQuaternion(tResult);
 

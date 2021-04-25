@@ -40,13 +40,14 @@ enum GAMEOBJECTTAG
 	Eff_OvertureHand,
 	Eff_Liquid,
 	Eff_AppearGroundMonster,
-	Eff_Dust,
+	Eff_Smoke,
 	Eff_QliphothBlock,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,
 	TAG_BusterArm_Right,
 	TAG_WireArm,
+	TAG_WireArm_Grab,
 	Overture,
 	Tag_END
 };

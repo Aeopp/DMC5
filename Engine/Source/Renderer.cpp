@@ -526,7 +526,7 @@ HRESULT Renderer::Render()&
 
 	// Tonemapping();
 	//AlphaBlendEffectRender();
-	//UIRender();
+	UIRenderAfterPostProcessing();
 
 	ResetState();
 	RenderTargetDebugRender();
@@ -613,6 +613,8 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
+		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
+		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
@@ -1441,13 +1443,18 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	DrawInfo _DrawInfo{};
-	_DrawInfo.BySituation.reset();
+	EffectInfo _EffInfo{};
+	_EffInfo.SoftParticleDepthBiasScale = SoftParticleDepthScale;
+	_DrawInfo.BySituation = _EffInfo;
 	_DrawInfo._Device = Device;
 	_DrawInfo._Frustum = CameraFrustum.get();
 	for (auto& [ShaderKey, Entitys] : _Group)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
+		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
+		Fx->SetFloat("SoftParticleDepthScale",SoftParticleDepthScale);
 
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
@@ -1492,6 +1499,7 @@ HRESULT Renderer::UIRender()&
 	DrawInfo _DrawInfo{};
 	_DrawInfo.BySituation.reset();
 	_DrawInfo._Device = Device;
+	_DrawInfo.IsAfterPostProcessing = false;
 	for (auto& [ShaderKey, Entitys] : _Group)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
@@ -1510,6 +1518,46 @@ HRESULT Renderer::UIRender()&
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 	return S_OK;
 }
+
+HRESULT Renderer::UIRenderAfterPostProcessing()&
+{
+	DWORD ZEnable, ZWrite, AlphaEnable;
+
+	Device->GetRenderState(D3DRS_ZENABLE, &ZEnable);
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &AlphaEnable);
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+
+	auto& _Group = RenderEntitys[RenderProperty::Order::UI];
+	DrawInfo _DrawInfo{};
+	_DrawInfo.BySituation.reset();
+	_DrawInfo._Device = Device;
+	_DrawInfo.IsAfterPostProcessing = true;
+	for (auto& [ShaderKey, Entitys] : _Group)
+	{
+		auto Fx = Shaders[ShaderKey]->GetEffect();
+		Fx->SetMatrix("Ortho", &_RenderInfo.Ortho);
+		_DrawInfo.Fx = Fx;
+		for (auto& [Entity, Call] : Entitys)
+		{
+			UINT Passes{ 0u };
+			Fx->Begin(&Passes, NULL);
+			Call(_DrawInfo);
+			Fx->End();
+		}
+	}
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
+	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+	return S_OK;
+}
+
 HRESULT Renderer::RendererCollider()&
 {
 	if (g_bRenderCollider == false)return S_OK;

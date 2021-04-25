@@ -65,6 +65,10 @@ public:
 	PxPhysics*	GetPxPhysics();
 	PxMaterial* GetDefaultMaterial();
 	PxCooking*	GetCooking();
+
+	//중력값 설정 임시 함수
+	void SetGravity(PxVec3 _vGravity);
+	D3DXVECTOR3 GetGravity();
 };
 END
 #endif // !__PHYSICS_SYSTEM_H__

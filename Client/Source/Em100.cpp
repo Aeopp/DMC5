@@ -100,6 +100,9 @@ void Em100::State_Change(const float _fDeltaTime)
 {
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
+	Vector3	 vLook = m_pTransform.lock()->GetLook();
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+
 	switch (m_eState)
 	{
 	case Em100::Air_End:
@@ -216,6 +219,29 @@ void Em100::State_Change(const float _fDeltaTime)
 		break;
 	case Em100::Hit_Air:
 		break;
+	case Em100::Hit_Air_Start:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Air_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_Air_Loop;
+		}
+		break;
+	case Em100::Hit_Air_Loop:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Air_Loop", true, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Loop" && m_pCollider.lock()->IsGround())
+			{
+				if (fDot < 0)
+					m_eState = Hit_End_Front;
+				else
+					m_eState = Hit_End_Back;
+				m_bDown = true;
+			}
+
+		}
 	case Em100::Hit_Back:
 		break;
 	case Em100::Hit_Finish:
@@ -296,17 +322,28 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
 			if (m_pCollider.lock()->IsGround() && m_pMesh->CurPlayAnimInfo.Name == "Hit_Air")
 			{
-				m_eState = Hit_End;
+				if (fDot < 0)
+					m_eState = Hit_End_Front;
+				else
+					m_eState = Hit_End_Back;
 				m_bIng = false;
 				m_bDown = true;
 			}
 		}
 		break;
-	case Em100::Hit_End:
+	case Em100::Hit_End_Front:
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Hit_End", false, {}, 1.2f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
+				m_eState = Downword_Down_StandUp;
+		}
+		break;
+	case Em100::Hit_End_Back:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Blown_Front_Landing", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Front_Landing" && m_pMesh->IsAnimationEnd())
 				m_eState = Downword_Down_StandUp;
 		}
 		break;
@@ -487,28 +524,36 @@ void Em100::State_Change(const float _fDeltaTime)
 
 	case Em100::Hit_Buster_Start:
 		if (m_bHit)
+		{
 			m_pMesh->PlayAnimation("Slam_Damage_fall_loop", true, {}, 1.f, 20.f, true);
+
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_BUSTER_STRIKE_COMMON
+				&&m_pPlayer.lock()->Get_PlayingTime() >= 0.4f)
+			{
+				m_eState = Hit_Buster_End;
+				Vector3 vRot(0.f, 0.f, 0.f);
+				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vPos = m_pTransform.lock()->GetPosition();
+
+				m_pTransform.lock()->SetRotation(vRot);
+				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
+
+				m_pCollider.lock()->SetRigid(true);
+			}
+		}
 		break;
 	case Em100::Hit_Buster_End:
 		if (m_bHit)
 		{
-			m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
-			{
-				m_bHit = false;
-				m_bIng = false;
-				
-				int iRandom = FMath::Random<int>(1, 4);
+			if (fDot < 0)
+				m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
+			else
+				m_pMesh->PlayAnimation("Blown_Front_Landing", false, {}, 1.f, 20.f, true);
 
-				if (iRandom == 1)
-					m_eState = Idle;
-				else if (iRandom == 2)
-					m_eState = Idle2;
-				else if (iRandom == 3)
-					m_eState = Idle3;
-				else if (iRandom == 4)
-					m_eState = Idle4;
-			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
+				m_eState = Downword_Down_StandUp;
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Front_Landing" && m_pMesh->IsAnimationEnd())
+				m_eState = Downword_Down_StandUp;
 		}
 		break;
 	}
@@ -636,16 +681,25 @@ UINT Em100::Update(const float _fDeltaTime)
 	//_Notify.Event[0.5] = [this]() {  AttackStart();  return false; };
 
 	const float Length = FMath::Length(DeltaPos);
-	D3DXMATRIX matRot;
-	D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
-	D3DXMatrixRotationQuaternion(&matRot, &tQuat);
+	//D3DXMATRIX matRot;
+	//D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
+	//D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 
-	D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
+	//D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
 	
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
+		D3DXQUATERNION tResult = SpTransform->GetQuaternion() * DeltaQuat;
+		SpTransform->SetQuaternion(tResult);
+
+		D3DXMATRIX matRot;
+		D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
+		D3DXMatrixRotationQuaternion(&matRot, &tQuat);
+
+		D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
+
 		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
 
@@ -672,56 +726,14 @@ UINT Em100::Update(const float _fDeltaTime)
 		State_Change(_fDeltaTime);
 	}
 
-
-	if (Input::GetKeyDown(DIK_R))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_KnocBack;
-		Hit(Test);
-
-	}
-	//if (Input::GetKeyDown(DIK_Q))
-	//{
-	//	BT_INFO Test;
-	//	Test.eAttackType = Attack_Front;
-	//	Hit(Test);
-
-	//}
-	/*if (Input::GetKeyDown(DIK_W))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_L;
-		Hit(Test);
-
-	}
-	if (Input::GetKeyDown(DIK_E))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_R;
-		Hit(Test);
-
-	}
-	if (Input::GetKey(DIK_TAB))
-	{
-		BT_INFO Test;
-		Test.eAttackType = Attack_Buster_Start;
-		Hit(Test);
-	}*/
-	//cout << m_BattleInfo.iHp << endl;
-
 	
 	if (m_eState == Hit_Buster_Start)
 	{
 		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
 		m_Result = (*m_pPlayerBone * m_PlayerWorld);
 		m_pTransform.lock()->SetWorldMatrix(m_Result);
-	}
-	if (m_pPlayer.lock()->Get_CurAnimationIndex() ==Nero::ANI_BUSTER_STRIKE_COMMON
-		&& m_pPlayer.lock()->Get_PlayingTime() >= 0.6f)
-	{
-		m_eState = Hit_Buster_End;
-		D3DXVECTOR3 vRot(0.f, 0.f, 0.f);
-		m_pTransform.lock()->SetRotation(vRot);
+
+		m_pCollider.lock()->SetRigid(false);
 	}
 
 
@@ -787,20 +799,18 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		{
 			m_eState = Hit_KnocBack;
 			m_bHit = true;
-			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-			D3DXVec3Normalize(&vDir, &vDir);
-
+	
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
-			D3DXVec3Normalize(&vLook, &vLook);
-
 
 			m_vPower += -vLook;
+			m_vPower.y = 1.f;
 
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
 			m_vPower.x = 0.f;
-			m_vPower.y = 1.f;
-			m_vPower.z = 0.5f;
+			m_vPower.z = 0.f;
+
 			break;
 		}
 		case ATTACKTYPE::Attack_Back:
@@ -809,13 +819,19 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			m_eState = Hit_Buster_Start;
 			m_bHit = true;
 			break;
-		case ATTACKTYPE::Attack_Buster_Loop:
-			m_eState = Hit_Buster_Loop;
+		case ATTACKTYPE::Attack_Air_Start:
+		{
+			m_eState = Hit_Air_Start;
 			m_bHit = true;
+
+			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
+			D3DXVec3Normalize(&vLook, &vLook);
+			Vector3	vDir(vLook.x * 0.05f, 1.5f, vLook.z * 0.05f);
+
+			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
-		case ATTACKTYPE::Attack_Buster_End:
-			m_eState = Hit_Buster_End;
-			m_bHit = true;
+		}
+		case ATTACKTYPE::Attack_Air:
 			break;
 		default:
 			m_bIng = true;
@@ -827,9 +843,26 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		switch (_BattleInfo.eAttackType)
 		{
 		case ATTACKTYPE::Attack_KnocBack:
+		{
 			m_eState = Hit_KnocBack;
+
+			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = 1.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+
 			m_bHit = true;
 			break;
+		}
 		case ATTACKTYPE::Attack_Buster_Start:
 			m_eState = Hit_Buster_Start;
 			m_bHit = true;
@@ -861,11 +894,16 @@ void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;
+	m_bDown = true;
 	m_eState = Hit_Buster_Start;
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (!m_bCollEnable)
+		return;
+
+	m_bCollEnable = false;
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
@@ -873,6 +911,7 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
 		break;
 	default:
 		break;
@@ -881,6 +920,15 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		break;
+	default:
+		break;
+	}
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)

@@ -301,6 +301,7 @@ public:
 	std::optional<Matrix> Get_BoneMatrix_ByName(std::string _BoneName);
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
+	Matrix Get_NeroBoneWorldMatrix(std::string _BoneName);
 	bool Get_IsMajinMode() { return m_IsMajin; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
@@ -309,10 +310,8 @@ public:
 
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot);
-	void SetActive_NeroComponent_Collider(NeroComponentID _eNeroComID, bool ActiveOrNot);
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
-	void SetColl_Monsters(bool _AcitveOrNot);
 	void SetAddForce(Vector3 _vJumpPos);
 public:
 	void CheckAutoRotate();

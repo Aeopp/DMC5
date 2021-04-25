@@ -272,7 +272,7 @@
     <ClInclude Include="..\Header\Liquid.h">
       <Filter>02.GameObject\Effect\Liquid</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Dust.h">
+    <ClInclude Include="..\Header\Smoke.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\MainCamera.h">
@@ -290,6 +290,7 @@
     <ClInclude Include="..\Header\QliphothBlock.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -425,7 +426,7 @@
     <ClCompile Include="..\Source\AppearGroundMonster.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Dust.cpp">
+    <ClCompile Include="..\Source\Smoke.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\MainCamera.cpp">
@@ -460,6 +461,7 @@
     <ClCompile Include="..\Source\QliphothBlock.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

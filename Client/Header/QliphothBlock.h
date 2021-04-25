@@ -5,12 +5,8 @@
 class QliphothBlock final : public Effect
 {
 private:
-	std::shared_ptr<ENGINE::StaticMesh> _Pipe0Mesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _BaseMesh{};
 	
-	std::shared_ptr<ENGINE::Texture> _QliphothALB0Tex{};
-	std::shared_ptr<ENGINE::Texture> _QliphothNRMR0Tex{};	// perfection
-	std::shared_ptr<ENGINE::Texture> _QliphothNRMR1Tex{};	// liquid
-
 	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
 
 	float _SliceAmount = 0.f;
