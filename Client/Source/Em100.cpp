@@ -117,11 +117,12 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
 
 			for (int i = 2; i < 0; ++i)
+			{
 				m_pHand[i].lock()->Set_Coll(true);
-
+				m_pHand[i].lock()->Set_AttackType(Attack_Front);
+			}
 			Update_Angle();
 			m_bInteraction = true;
-			m_BattleInfo.eAttackType = Attack_Front;
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
 				{
@@ -149,13 +150,15 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_D", false, {}, 1.f, 50.f, true);
-			m_BattleInfo.eAttackType = Attack_Front;
 
 			Update_Angle();
 			m_bInteraction = true;
 
-			for(int i = 2; i < 0; ++i)
+			for (int i = 2; i < 0; ++i)
+			{
 				m_pHand[i].lock()->Set_Coll(true);
+				m_pHand[i].lock()->Set_AttackType(Attack_Front);
+			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->IsAnimationEnd())
 			{
@@ -182,13 +185,14 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 20.f, true);
-			m_BattleInfo.eAttackType = Attack_KnocBack;
-
 			Update_Angle();
 			m_bInteraction = true;
 			
 			for (int i = 2; i < 0; ++i)
+			{
 				m_pHand[i].lock()->Set_Coll(true);
+				m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->IsAnimationEnd())
 			{

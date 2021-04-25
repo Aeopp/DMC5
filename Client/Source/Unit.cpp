@@ -75,3 +75,8 @@ void Unit::Set_Coll(const bool _bColl)
 {
 	m_bCollEnable = _bColl;
 }
+
+void Unit::Set_AttackType(ATTACKTYPE _Type)
+{
+	m_BattleInfo.eAttackType = _Type;
+}

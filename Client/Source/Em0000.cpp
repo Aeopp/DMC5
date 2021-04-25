@@ -103,11 +103,15 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
+			m_pWeapon.lock()->Set_Coll(true);
+			m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
+
+				m_pWeapon.lock()->Set_Coll(false);
 			}
 		}
 		break;
@@ -118,11 +122,16 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
+			m_pWeapon.lock()->Set_Coll(true);
+			m_pWeapon.lock()->Set_AttackType(Attack_Front);
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
+
+				m_pWeapon.lock()->Set_Coll(false);
 			}
 		}
 		break;
@@ -134,17 +143,17 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f, true);
 
+			m_pWeapon.lock()->Set_Coll(true);
+			m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.95f)
 			{
 				m_bIng = false;
 				m_bAttack = false;
 				m_eState = idle;
+
+				m_pWeapon.lock()->Set_Coll(false);
 			}
 		}
-		break;
-	case Em0000::Buster_End:
-		break;
-	case Em0000::Buster_Start:
 		break;
 	case Em0000::Dead:
 		break;
@@ -335,6 +344,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 		{
 			Update_Angle();
 			Set_Rotate();
+			m_bDown = false;
 			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
 
 			if (m_bSnatch == false)
@@ -344,6 +354,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Hit_Snatch_End:
 		if (m_bHit)
 		{
+			m_bDown = false;
 			Update_Angle();
 			Set_Rotate();
 			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
@@ -352,7 +363,37 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 		}
 		break;
-	case Em0000::State_END:
+	case Em0000::Hit_Buster_Start:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 20.f, true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_START
+				&& m_pPlayer.lock()->IsAnimationEnd())
+			{
+				m_eState = Hit_Buster_End;
+
+				Vector3 vRot(0.f, 0.f, 0.f);
+				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vPos = m_pTransform.lock()->GetPosition();
+
+				m_pTransform.lock()->SetRotation(vRot);
+				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
+
+				m_pCollider.lock()->SetRigid(true);
+
+			}
+		}
+		break;
+	case Em0000::Hit_Buster_End:
+		if (m_bHit)
+		{
+			m_pMesh->PlayAnimation("Buster_End", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_End" && m_pMesh->IsAnimationEnd())
+				m_eState = Prone_Getup;
+		}
 		break;
 	default:
 		break;
@@ -418,6 +459,11 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetRadius(0.06f);
 	m_pCollider.lock()->SetHeight(0.17f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.03f });
+
+
+	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Waist");
+	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_Hand");
+	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Chest");
 	return S_OK;
 }
 
@@ -474,18 +520,12 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 	if (m_eState == Hit_Buster_Start)
 	{
-		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
-		m_Result = (*m_pPlayerBone * m_PlayerWorld);
-		m_pTransform.lock()->SetWorldMatrix(m_Result);
-
-		m_pCollider.lock()->SetRigid(false);
+		//m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
+		//m_Result = (*m_pPlayerBone * m_PlayerWorld);
+		//m_pTransform.lock()->SetWorldMatrix(m_Result);
 	}
 
-
-
 	Rotate(_fDeltaTime);
-
-
 	return 0;
 }
 
@@ -675,6 +715,14 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	m_bHit = true;
+	m_bDown = true;
+	m_pCollider.lock()->SetRigid(false);
+
+	m_eState = Hit_Buster_Start;
+	
 }
 
 void Em0000::Snatch(BT_INFO _BattleInfo, void* pArg)
@@ -872,6 +920,38 @@ void Em0000::Update_Angle()
 void Em0000::Set_Rotate()
 {
 	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fRadian), 0.f });
+}
+
+void Em0000::Test()
+{
+	Vector3 vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+	Vector3 vDir = vPlayerPos - vMyPos;
+	vDir.y = 0;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	float fRadian = acosf(fDot);
+
+	Vector3	vCross;
+	D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+	if (vCross.y < 0)
+		fRadian *= -1;
+
+	m_fRadian = fRadian;
+	m_fAccuangle = 0.f;
+
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
+
+	if (m_fRadian > 0)
+		m_fAngleSpeed = fabs(m_fAngleSpeed);
+	else
+		m_fAngleSpeed = -fabs(m_fAngleSpeed);
 }
 
 void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

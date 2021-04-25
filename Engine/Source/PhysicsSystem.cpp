@@ -100,7 +100,10 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 #endif
 
 	//Physics
-	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, physx::PxTolerancesScale(), true, m_pPVD);
+	PxTolerancesScale TolerancesScale;
+	TolerancesScale.length = 100.f;
+	TolerancesScale.speed = 10.f;
+	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, TolerancesScale, true, m_pPVD);
 	if (nullptr == m_pPhysics)
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to PxCreatePhysics"));
