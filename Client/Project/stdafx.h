@@ -48,6 +48,7 @@ enum GAMEOBJECTTAG
 	TAG_RedQueen,
 	TAG_BusterArm_Right,
 	TAG_WireArm,
+	TAG_WireArm_Grab,
 	Overture,
 	Tag_END
 };

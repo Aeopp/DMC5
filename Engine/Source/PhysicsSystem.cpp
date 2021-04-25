@@ -172,6 +172,64 @@ void PhysicsSystem::FetchResults(const bool _bBlock)
 
 	while (false == (m_pScene->fetchResults(true)));
 
+	//Callback 호출
+	for (auto& rPair : m_listCallback)
+	{
+		if (false == rPair.bTrigger)
+		{
+			switch (rPair.ePairFlag)
+			{
+			case PxPairFlag::Enum::eNOTIFY_TOUCH_FOUND:
+				if (rPair.pFirst.lock() && rPair.pSecond.lock())
+				{
+					rPair.pFirst.lock()->OnCollisionEnter(rPair.pSecond);
+					rPair.pSecond.lock()->OnCollisionEnter(rPair.pFirst);
+				}
+				break;
+			case PxPairFlag::Enum::eNOTIFY_TOUCH_PERSISTS:
+				if (rPair.pFirst.lock() && rPair.pSecond.lock())
+				{
+					rPair.pFirst.lock()->OnCollisionStay(rPair.pSecond);
+					rPair.pSecond.lock()->OnCollisionStay(rPair.pFirst);
+				}
+				break;
+			case PxPairFlag::Enum::eNOTIFY_TOUCH_LOST:
+				if (rPair.pFirst.lock() && rPair.pSecond.lock())
+				{
+					rPair.pFirst.lock()->OnCollisionExit(rPair.pSecond);
+					rPair.pSecond.lock()->OnCollisionExit(rPair.pFirst);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			switch (rPair.ePairFlag)
+			{
+			case PxPairFlag::Enum::eNOTIFY_TOUCH_FOUND:
+				if (rPair.pFirst.lock() && rPair.pSecond.lock())
+				{
+					rPair.pFirst.lock()->OnTriggerEnter(rPair.pSecond);
+					rPair.pSecond.lock()->OnTriggerEnter(rPair.pFirst);
+				}
+				break;
+			case PxPairFlag::Enum::eNOTIFY_TOUCH_LOST:
+				if (rPair.pFirst.lock() && rPair.pSecond.lock())
+				{
+					rPair.pFirst.lock()->OnTriggerExit(rPair.pSecond);
+					rPair.pSecond.lock()->OnTriggerExit(rPair.pFirst);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+
+	m_listCallback.clear();
 	//Simulation 결과로 Actor에 설정된 globalPose를 Transform에 적용.
 	PxU32		nNumActors = 0;
 	PxActor** ppActors = nullptr;
@@ -346,4 +404,9 @@ void PhysicsSystem::RemoveActor(const UINT _nSceneID, physx::PxActor& _rActor)
 	}
 
 	iterFind->second->removeActor(_rActor);
+}
+
+void PhysicsSystem::AddCallbackPair(const COLLISIONPAIR _tCollsionPair)
+{
+	m_listCallback.emplace_back(_tCollsionPair);
 }

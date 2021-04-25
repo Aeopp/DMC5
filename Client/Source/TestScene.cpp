@@ -19,7 +19,7 @@
 #include "Glint.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-#include "Smoke.h"
+#include "Dust.h"
 #include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
@@ -81,9 +81,8 @@ HRESULT TestScene::LoadScene()
 	_Renderer->ao = 0.01f; 
 	_Renderer->SkyIntencity = 0.111f;
 	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
+	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 
 	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
-	_Renderer->SoftParticleDepthScale = 1.f;
 
 	return S_OK;
 }

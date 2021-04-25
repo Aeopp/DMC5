@@ -62,6 +62,9 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 	case Nero::NeroCom_BusterArm:
 		m_pBusterArm.lock()->SetActive(_ActiveOrNot);
 		break;
+	case Nero::NeroCom_WireArm:
+		m_pWireArm.lock()->SetActive(_ActiveOrNot);
+		break;
 	case Nero::NeroCom_End:
 		break;
 	default:
@@ -510,6 +513,11 @@ optional<Matrix> Nero::Get_BoneMatrix_ByName(std::string _BoneName)
 Matrix* Nero::Get_BoneMatrixPtr(std::string _BoneName)
 {
 	return m_pMesh->GetToRootMatrixPtr(_BoneName);;
+}
+
+Matrix Nero::Get_NeroBoneWorldMatrix(std::string _BoneName)
+{
+	return *m_pMesh->GetNodeToRoot(_BoneName) * m_pTransform.lock()->GetWorldMatrix();
 }
 
 

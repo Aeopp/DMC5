@@ -302,6 +302,7 @@
     <ClInclude Include="..\Header\Em1000Hand.h">
       <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -478,6 +479,7 @@
     <ClCompile Include="..\Source\Em1000Hand.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
