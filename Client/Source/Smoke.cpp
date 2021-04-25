@@ -39,14 +39,14 @@ void Smoke::Imgui_Modify()
 		ImGui::Text("Eff_Smoke");
 
 		{
-			static Vector3 SliderPosition = Sptransform->GetPosition();
-			ImGui::SliderFloat3("Pos##Smoke", SliderPosition, -10.f, 10.f);
-			Sptransform->SetPosition(SliderPosition);
+			static Vector3 Position = Sptransform->GetPosition();
+			ImGui::InputFloat3("Pos##Smoke", Position);
+			Sptransform->SetPosition(Position);
 		}
 
 		{
 			static float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.001f, 0.1f);
+			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.01f, 0.3f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 			SetScale(Scale);
 		}
@@ -161,22 +161,23 @@ UINT Smoke::Update(const float _fDeltaTime)
 	_SmokeMaxTexUV.x = _SmokeMinTexUV.x + 1.f / cx;
 	_SmokeMaxTexUV.y = _SmokeMinTexUV.y + 1.f / cy;
 
-	Matrix TempMat, BillMat;
-	TempMat = Renderer::GetInstance()->_RenderInfo.View;
-	D3DXMatrixIdentity(&BillMat);
-	BillMat._11 = TempMat._11;
-	BillMat._13 = TempMat._13;
-	BillMat._31 = TempMat._31;
-	BillMat._33 = TempMat._33;
-	D3DXMatrixInverse(&BillMat, 0, &BillMat);
-	//BillMat._42 = -1.2f;
+	// y축 빌보드
+	//Matrix TempMat, BillMat;
+	//TempMat = Renderer::GetInstance()->_RenderInfo.View;
+	//D3DXMatrixIdentity(&BillMat);
+	//BillMat._11 = TempMat._11;
+	//BillMat._13 = TempMat._13;
+	//BillMat._31 = TempMat._31;
+	//BillMat._33 = TempMat._33;
+	//D3DXMatrixInverse(&BillMat, 0, &BillMat);
+	////BillMat._42 = -1.2f;
 
-	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
-		Sptransform)
-		Sptransform->SetBillBoard(BillMat);
+	//if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+	//	Sptransform)
+	//	Sptransform->SetBillBoard(BillMat);
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }
