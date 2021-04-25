@@ -1,15 +1,10 @@
 #include "stdafx.h"
 #include "Camera.h"
 
-
-//#include "TestObject.h"
-//#include "Em100.h"
-//#include "BtlPanel.h"
-
 Camera::Camera()
     : m_fFovY(45.f)
     , m_fNear(0.1f)
-    , m_fFar(10000.f)
+    , m_fFar(20.f)
     , m_fSensitivityMove(0.005f)
     , m_fSensitivityRot(0.1f)
     , m_fSensitivityWheel(0.005f)
@@ -40,13 +35,6 @@ HRESULT Camera::Ready()
 
 HRESULT Camera::Awake()
 {
- 	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-
-    //m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(BTLPANEL).lock());
-
-
-	//m_pEm100 = std::static_pointer_cast<Em100>(FindGameObjectWithTag(Monster100).lock());
-	//m_pEm100Trans = m_pEm100.lock()->GetComponent<ENGINE::Transform>();
     return S_OK;
 }
 
@@ -60,7 +48,6 @@ UINT Camera::Update(const float _fDeltaTime)
     ShowCameraInfo();
     MoveCamera();
     UpdateCamera();
-
 
 
     //////LockOn////////////////
@@ -91,7 +78,6 @@ UINT Camera::LateUpdate(const float _fDeltaTime)
         ++m_iTest;
     if (Input::GetKeyDown(DIK_Y))
         --m_iTest;*/
-
 
     return 0;
 }
@@ -182,7 +168,6 @@ void Camera::UpdateCamera()
 
     g_pDevice->SetTransform(D3DTS_VIEW, &m_matView);
     g_pDevice->SetTransform(D3DTS_PROJECTION, &m_matProjection);
-
 }
 
 void Camera::ShowCameraInfo()

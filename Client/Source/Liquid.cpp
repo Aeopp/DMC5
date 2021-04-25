@@ -57,6 +57,12 @@ void Liquid::Imgui_Modify()
 			ImGui::SliderFloat("PlayingSpeed##Liquid", &PlayingSpeed, 1.f, 50.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
+
+		//{
+		//	static float MagicNumber = _MagicNumber;
+		//	ImGui::SliderFloat("MagicNumber##Liquid", &MagicNumber, 0.f, 1.f);
+		//	_MagicNumber = MagicNumber;
+		//}
 	}
 }
 
@@ -83,14 +89,14 @@ void Liquid::RenderGBuffer(const DrawInfo& _Info)
 	if (MAX_VARIATION_IDX <= _VariationIdx)
 		return;
 
-	const Matrix World = _RenderUpdateInfo.World;
-	_Info.Fx->SetMatrix("matWorld", &World);
+	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
 	// blood
-	_ExtraColor = Vector3(1.f, 0.f, 0.f);
+	_ExtraColor = Vector3(0.55f, 0.f, 0.f);
 	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
 	_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
+	_Info.Fx->SetFloat("magicNumber", 0.5f);
 	//
 	
 	// meat

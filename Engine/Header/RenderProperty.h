@@ -16,6 +16,12 @@ struct ENGINE_DLL DrawInfo
 	uint32 PassIndex{ 0u };
 	Frustum* _Frustum{ nullptr };
 	std::any BySituation{};
+	bool IsAfterPostProcessing = false;	// 나중에 그리는 UI 위해 추가. 더 좋은 방법 있으면 알려 좀 주쇼.
+};
+
+struct ENGINE_DLL EffectInfo
+{
+	float SoftParticleDepthBiasScale = 0.0f;
 };
 
 struct ENGINE_DLL RenderProperty
