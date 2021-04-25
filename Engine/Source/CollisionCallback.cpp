@@ -48,11 +48,12 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		{
 			if (((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround == false)
 			{
-				for (UINT i = 0; i < nCount; ++i)
+				for (UINT j = 0; j < nCount; ++j)
 				{
-					if (contactPointBuffer[i].normal.y >= 0.9f)
+					if (contactPointBuffer[j].normal.y >= 0.9f)
 					{
-						((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround = true;
+						PxActor* pActor = pairs[i].shapes[0]->getActor();
+						((LPPXUSERDATA)(pActor->userData))->bIsGround = true;
 						break;
 					}
 				}
@@ -65,9 +66,9 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 				if(0 == nCount)
 					((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround = false;
 
-				for (UINT i = 0; i < nCount; ++i)
+				for (UINT j = 0; j < nCount; ++j)
 				{
-					if (contactPointBuffer[i].normal.y >= 0.9f)
+					if (contactPointBuffer[j].normal.y >= 0.9f)
 					{
 						((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround = false;
 						break;

@@ -53,12 +53,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em100>();
+	AddGameObject<Em0000>();
 
 	//AddGameObject<Car>();
 
 	//LoadMap();
-	//AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 	//AddGameObject<Smoke>().lock()->PlayStart();
 
 
@@ -90,12 +90,12 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	if (nullptr != pPlane)
+	/*if (nullptr != pPlane)
 		return S_OK;
 
 	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
-	Physics::AddActor(UniqueID, *pPlane);
+	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
 }
