@@ -5751,6 +5751,9 @@ HRESULT Overture_Shoot::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
+	if(0.2f <= fCurrAnimationTime)
+		m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_Overture, false);
+
 	if (0.6f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::OVERTURE_SHOOT);
 
@@ -5796,6 +5799,9 @@ HRESULT Overture_Shoot_Up::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
+	if (0.2f <= fCurrAnimationTime)
+		m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_Overture, false);
+
 	if (0.53f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::OVERTURE_SHOOT_UP);
 
@@ -5838,6 +5844,9 @@ HRESULT Overture_Shoot_Down::StateExit()
 HRESULT Overture_Shoot_Down::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.2f <= fCurrAnimationTime)
+		m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_Overture, false);
 
 	if (0.5f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::OVERTURE_SHOOT_DOWN);
@@ -5884,6 +5893,9 @@ HRESULT Overture_Shoot_Air::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
+	if (0.2f <= fCurAnimationTime)
+		m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_Overture, false);
+
 	if (0.65f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::OVERTURE_SHOOT_AIR);
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -5927,6 +5939,9 @@ HRESULT Overture_Shoot_Air_Up::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
+	if (0.2f <= fCurAnimationTime)
+		m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_Overture, false);
+
 	if (0.65f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::OVERTURE_SHOOT_AIR_UP);
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -5969,6 +5984,9 @@ HRESULT Overture_Shoot_Air_Down::StateExit()
 HRESULT Overture_Shoot_Air_Down::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.2f <= fCurAnimationTime)
+		m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_Overture, false);
 
 	if (0.65f <= fCurAnimationTime && fCurAnimationTime <= 0.9f)
 		NeroState::KeyInput_Jump(NeroFSM::OVERTURE_SHOOT_AIR_DOWN);
