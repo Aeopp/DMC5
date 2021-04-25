@@ -6,6 +6,7 @@
 #include "Wire_Arm.h"
 
 Wire_Arm_Grab::Wire_Arm_Grab()
+	:m_bIsRender(false)
 {
 	m_nTag = TAG_WireArm_Grab;
 	m_vDir = {0.f,0.f,0.f};
@@ -42,7 +43,7 @@ HRESULT Wire_Arm_Grab::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(0.1f);
+	m_pCollider.lock()->SetRadius(0.08f);
 	PushEditEntity(m_pCollider.lock().get());
 
 
@@ -62,6 +63,9 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
+	if(!m_pGrabedMonster.expired())
+		m_pGrabedMonster.lock()->GetComponent<Transform>().lock()->Translate(m_vDir * 0.06f);
+
 	m_pTransform.lock()->Translate(m_vDir * 0.07f);
 
 	if (m_pMesh->IsAnimationEnd())
@@ -70,6 +74,7 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	}
 	if (0.8 <= m_pMesh->PlayingTime())
 	{
+		//¾Ö´Ï¸ÞÀÌ¼Ç ÆÈÀÌ ÂÍ ³ô¾Æ¼­ ³»·ÁÁà¾ßµÊ
 		m_pTransform.lock()->Translate({0.f,-0.01f,0.f});
 	}
 
@@ -122,6 +127,12 @@ void Wire_Arm_Grab::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 
 void Wire_Arm_Grab::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+}
+
+void Wire_Arm_Grab::SetGrabedMonster(std::weak_ptr<GameObject> _GrabedMonster)
+{
+	if (!_GrabedMonster.expired())
+		m_pGrabedMonster = _GrabedMonster;
 }
 
 void Wire_Arm_Grab::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)

@@ -134,6 +134,7 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		MyPos.y -= 0.2f;
 		m_pWireArmGrab.lock()->GetComponent<Transform>().lock()->SetPosition(MyPos);
 		m_pWireArmGrab.lock()->SetActive(true);
+		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
 		_RenderProperty.bRender = m_bIsRender = false;
 	}
 		break;

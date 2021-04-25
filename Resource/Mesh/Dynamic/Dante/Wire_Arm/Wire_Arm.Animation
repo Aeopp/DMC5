@@ -7,7 +7,7 @@
         "AnimInfoTable": [
             {
                 "Name": "Wire_Arm_End_Long",
-                "Acceleration": 0.4259999990463257,
+                "Acceleration": 0.7,
                 "TransitionTime": 0.009999999776482582
             },
             {

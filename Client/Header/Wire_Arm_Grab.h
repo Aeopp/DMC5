@@ -27,6 +27,8 @@ public:
 	virtual void OnTriggerExit(std::weak_ptr<GameObject> _pOther) override;
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
+	void SetGrabedMonster(std::weak_ptr<GameObject> _GrabedMonster);
+public:
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
 public:
 	virtual std::string GetName() override;
@@ -48,9 +50,12 @@ private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;
 	std::weak_ptr<SphereCollider> m_pCollider;
+	std::weak_ptr<GameObject>		m_pGrabedMonster;
 
 	bool								m_bIsRender;
 	Vector3	m_vDir;
+
+
 };
 
 
