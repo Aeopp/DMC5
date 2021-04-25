@@ -50,6 +50,7 @@ HRESULT TestScene::LoadScene()
 {
 	//AddGameObject<Camera>();
 
+	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	AddGameObject<Em100>();

@@ -833,6 +833,26 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		}
 		case ATTACKTYPE::Attack_Air:
 			break;
+		case ATTACKTYPE::Attack_Homerun:
+		{
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = 2.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_fPower = 180.f;
+			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+			m_fPower = 100.f;
+
+			break;
+		}
 		default:
 			m_bIng = true;
 			break;
@@ -845,9 +865,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		case ATTACKTYPE::Attack_KnocBack:
 		{
 			m_eState = Hit_KnocBack;
-
-			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-			D3DXVec3Normalize(&vDir, &vDir);
+			m_bHit = true;
 
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
@@ -860,13 +878,44 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
 
-			m_bHit = true;
 			break;
 		}
 		case ATTACKTYPE::Attack_Buster_Start:
 			m_eState = Hit_Buster_Start;
 			m_bHit = true;
 			break;
+		case ATTACKTYPE::Attack_Air_Start:
+		{
+			m_eState = Hit_Air_Start;
+			m_bHit = true;
+
+			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
+			D3DXVec3Normalize(&vLook, &vLook);
+			Vector3	vDir(vLook.x * 0.05f, 1.5f, vLook.z * 0.05f);
+
+			m_pCollider.lock()->AddForce(vDir * m_fPower);
+			break;
+		}
+		case ATTACKTYPE::Attack_Homerun:
+		{
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = 2.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_fPower = 180.f;
+			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+			m_fPower = 100.f;
+
+			break;
+		}
 		default:
 			m_eState = Downword_Damage;
 			m_bHit = true;

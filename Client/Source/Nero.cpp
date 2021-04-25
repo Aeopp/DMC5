@@ -59,6 +59,9 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
 		break;
+	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->SetActive(_ActiveOrNot);
+		break;
 	case Nero::NeroCom_End:
 		break;
 	default:
