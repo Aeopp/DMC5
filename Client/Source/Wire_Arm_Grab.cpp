@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Subset.h"
 #include "Wire_Arm.h"
+#include "Monster.h"
 
 Wire_Arm_Grab::Wire_Arm_Grab()
 	:m_bIsRender(false)
@@ -72,11 +73,6 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	{
 		SetActive(false);
 	}
-	if (0.8 <= m_pMesh->PlayingTime())
-	{
-		//¾Ö´Ï¸ÞÀÌ¼Ç ÆÈÀÌ ÂÍ ³ô¾Æ¼­ ³»·ÁÁà¾ßµÊ
-		m_pTransform.lock()->Translate({0.f,-0.01f,0.f});
-	}
 
 	return 0;
 }
@@ -102,6 +98,7 @@ void Wire_Arm_Grab::OnEnable()
 	D3DXVec3Normalize(&m_vDir, &m_vDir);
 
 	m_pTransform.lock()->SetQuaternion(m_pNero.lock()->GetComponent<Transform>().lock()->GetQuaternion());
+	static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(true);
 }
 
 void Wire_Arm_Grab::OnDisable()
@@ -117,7 +114,8 @@ void Wire_Arm_Grab::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	{
 		m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
 		m_pMesh->ContinueAnimation();
-		m_vDir = { 0.f,0.f,0.f };
+		m_vDir = { 0.f,-0.01f,0.f };
+		static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(false);
 	}
 }
 

@@ -34,6 +34,7 @@ enum GAMEOBJECTTAG
 	Monster101,
 	Monster0000,
 	Monster5000,
+	Monster1000,
 	MonsterWeapon,
 	UI_BtlPanel,
 	Eff_Glint,
