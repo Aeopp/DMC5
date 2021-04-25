@@ -580,9 +580,9 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 1.f;
+			m_vPower.y = 2.f;
 
-			m_fPower = 100.f;
+			m_fPower = 180.f;
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
@@ -642,8 +642,8 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 1.5f;
-			m_fPower = 100.f;
+			m_vPower.y = 2.f;
+			m_fPower = 180.f;
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
@@ -808,7 +808,7 @@ void Em0000::RenderInit()
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em0000\\Em0000.fbx", _InitInfo);
 
 	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em0000\\Ani");
-	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.Animation");
+	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em0000\\Em0000.Animation");
 
 
 	m_pMesh->EnableToRootMatricies();
@@ -876,6 +876,12 @@ void Em0000::Set_Rotate()
 
 void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (!m_bCollEnable)
+		return;
+
+	m_bCollEnable = false;
+
+
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
