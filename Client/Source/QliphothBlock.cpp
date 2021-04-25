@@ -120,6 +120,8 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 			// 깊이스케일 조절 했으면 원래대로 복구 . 해주세요 ~  
 		}
+
+		return;
 	}
 	else if (1 == _Info.PassIndex)
 	{
@@ -145,6 +147,8 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 			// 깊이스케일 조절 했으면 원래대로 복구 . 해주세요 ~  
 		}
+
+		return;
 	}
 }
 

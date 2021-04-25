@@ -814,7 +814,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		pBlood->SetVariationIdx(Liquid::VARIATION::BLOOD_0);	// 0 6 7 이 자연스러운듯?
 		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
 		pBlood->SetScale(0.01f);
-		//pBlood->SetRotation()
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
 		pBlood->PlayStart(40.f);
 	}
 	/*----------------*/

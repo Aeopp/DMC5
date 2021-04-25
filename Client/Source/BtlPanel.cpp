@@ -1942,6 +1942,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
 		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->SetLoop(true);
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{

@@ -63,8 +63,8 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
-	//AddGameObject<QliphothBlock>();
 	//AddGameObject<Liquid>();
+	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
 
 
@@ -83,7 +83,7 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 
 	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
 
-	// TempMap 안개
+	// Stage2 안개
 	if (auto pSmoke = AddGameObject<Smoke>().lock();
 		pSmoke)
 	{
