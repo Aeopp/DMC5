@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Subset.h"
 #include "Wire_Arm.h"
+#include "Monster.h"
 
 Wire_Arm_Grab::Wire_Arm_Grab()
 	:m_bIsRender(false)
@@ -86,6 +87,7 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 		m_pMesh->ContinueAnimation();
 		m_vDir = { 0.f, 0.f,0.f };
 		m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
+		static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(false);
 	}
 
 	return 0;
@@ -114,6 +116,7 @@ void Wire_Arm_Grab::OnEnable()
 	m_pTransform.lock()->SetQuaternion(m_pNero.lock()->GetComponent<Transform>().lock()->GetQuaternion());
 
 	m_bPlayOnce = true;
+	static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(true);
 }
 
 void Wire_Arm_Grab::OnDisable()
@@ -197,7 +200,7 @@ void Wire_Arm_Grab::Editor()
 	Unit::Editor();
 	if (bEdit)
 	{
-		// ¿¡µðÅÍ .... 
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ .... 
 	}
 }
 
@@ -205,9 +208,9 @@ void Wire_Arm_Grab::RenderInit()
 {
 	SetRenderEnable(true);
 
-	// ·»´õ ¼Ó¼º ÀüÃ¼ ÃÊ±âÈ­ 
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½ï¿½Ã¼ ï¿½Ê±ï¿½È­ 
 	ENGINE::RenderProperty _InitRenderProp;
-	// ÀÌ°ªÀ» ·±Å¸ÀÓ¿¡ ¹Ù²Ù¸é ·»´õ¸¦ ÄÑ°í ²ø¼ö ÀÖÀ½. 
+	// ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ó¿ï¿½ ï¿½Ù²Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. 
 	_InitRenderProp.bRender = m_bIsRender;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
@@ -256,9 +259,9 @@ void Wire_Arm_Grab::RenderInit()
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
 
-	// ½ºÄÌ·¹Åæ ¸Þ½¬ ·Îµù ... 
+	// ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ ï¿½Îµï¿½ ... 
 	Mesh::InitializeInfo _InitInfo{};
-	// ¹öÅØ½º Á¤Á¡ Á¤º¸°¡ CPU ¿¡¼­µµ ÇÊ¿ä ÇÑ°¡ ? 
+	// ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CPU ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½Ñ°ï¿½ ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\Wire_Arm.fbx");
 	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\Wire_Arm.Animation");

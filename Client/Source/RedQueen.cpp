@@ -130,7 +130,7 @@ std::string RedQueen::GetName()
 
 void RedQueen::RenderReady()
 {
-	// bRender ²ô¸é ·»´õ È£Ãâ ¾ÈµÊ .
+	// bRender ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½ ï¿½Èµï¿½ .
 
 
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
@@ -209,13 +209,13 @@ void RedQueen::RenderDebugSK(const DrawInfo& _Info)
 
 void RedQueen::RenderInit()
 {
-	// ·»´õ¸¦ ¼öÇàÇØ¾ßÇÏ´Â ¿ÀºêÁ§Æ®¶ó°í (·»´õ·¯¿¡ µî·Ï °¡´É) ¾Ë¸².
-	// ·»´õ ÀÎÅÍÆäÀÌ½º »ó¼Ó¹ÞÁö ¾Ê¾Ò´Ù¸é Å°Áö¸¶¼¼¿ä.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½Ë¸ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ ï¿½Ê¾Ò´Ù¸ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	SetRenderEnable(true);
 
-	// ·»´õ ¼Ó¼º ÀüÃ¼ ÃÊ±âÈ­ 
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½ï¿½Ã¼ ï¿½Ê±ï¿½È­ 
 	ENGINE::RenderProperty _InitRenderProp;
-	// ÀÌ°ªÀ» ·±Å¸ÀÓ¿¡ ¹Ù²Ù¸é ·»´õ¸¦ ÄÑ°í ²ø¼ö ÀÖÀ½. 
+	// ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ó¿ï¿½ ï¿½Ù²Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. 
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
@@ -264,9 +264,9 @@ void RedQueen::RenderInit()
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
 
-	// ½ºÄÌ·¹Åæ ¸Þ½¬ ·Îµù ... 
+	// ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ ï¿½Îµï¿½ ... 
 	Mesh::InitializeInfo _InitInfo{};
-	// ¹öÅØ½º Á¤Á¡ Á¤º¸°¡ CPU ¿¡¼­µµ ÇÊ¿ä ÇÑ°¡ ? 
+	// ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CPU ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½Ñ°ï¿½ ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Static\\RedQueen\\RedQueen.fbx", _InitInfo);

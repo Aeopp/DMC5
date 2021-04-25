@@ -58,7 +58,7 @@ HRESULT Scene::Start()
 {
 	if (0 == m_Loop[ACTIVE][LOOP_START].size())
 		return S_OK;
-
+	m_bOnLoop = true;
 	for (m_LoopIter = m_Loop[ACTIVE][LOOP_START].begin(); m_LoopIter != m_Loop[ACTIVE][LOOP_START].end(); ++m_LoopIter)
 	{
 		if ((*m_LoopIter).expired())
@@ -72,13 +72,14 @@ HRESULT Scene::Start()
 			return E_FAIL;
 		}
 	}
-
+	m_bOnLoop = false;
 	m_Loop[ACTIVE][LOOP_START].clear();
 	return S_OK;
 }
 
 HRESULT Scene::Update(const float _fDeltaTime)
 {
+	m_bOnLoop = true;
 	for (m_LoopIter = m_Loop[ACTIVE][LOOP_UPDATE].begin(); m_LoopIter != m_Loop[ACTIVE][LOOP_UPDATE].end(); )
 	{
 		if ((*m_LoopIter).expired())
@@ -89,11 +90,13 @@ HRESULT Scene::Update(const float _fDeltaTime)
 		(*m_LoopIter).lock()->Update(_fDeltaTime);
 		++m_LoopIter;
 	}
+	m_bOnLoop = false;
 	return S_OK;
 }
 
 HRESULT Scene::LateUpdate(const float _fDeltaTime)
 {
+	m_bOnLoop = true;
 	for (m_LoopIter = m_Loop[ACTIVE][LOOP_UPDATE].begin(); m_LoopIter != m_Loop[ACTIVE][LOOP_UPDATE].end(); )
 	{
 		if ((*m_LoopIter).expired())
@@ -105,6 +108,7 @@ HRESULT Scene::LateUpdate(const float _fDeltaTime)
 
 		++m_LoopIter;
 	}
+	m_bOnLoop = false;
 	return S_OK;
 }
 
@@ -228,7 +232,8 @@ void Scene::SetActive(std::weak_ptr<GameObject> const _pGameObject, const bool _
 			m_Loop[nDestIdx][nLoopIdx].emplace_back(*iterFind);
 			
 			//활성화 상태인 객체를 비활성화 상태로 변경하는 경우.
-			//만약 객체가 현재 Loop 진행 중인 경우라면 m_LoopIter를 이전 노드로 옮긴 뒤 목록에서 제거한다.
+			//만약 객체가 현재 Loop 진행 중인 경우라면 m_LoopIter를 이전 노드로 옮긴 뒤 목록에서 제거한다ssssssssssssssssw.
+			if(m_bOnLoop)
 			if ((false == _bActive) && (_pGameObject.lock() == (*m_LoopIter).lock()) && m_LoopIter == iterFind)
 				--m_LoopIter;
 			//nSrcIdx에서 제거

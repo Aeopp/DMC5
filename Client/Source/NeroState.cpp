@@ -5096,7 +5096,7 @@ HRESULT Skill_Shuffle::StateEnter()
 
 	
 	m_pNero.lock()->ChangeAnimation("Shuffle", false, Nero::ANI_SHUFFLE);
-	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_KnocBack);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Homerun);
 	//게이지 있을때
 	//m_pNero.lock()->ChangeAnimation("Shuffle_Ex", false, Nero::ANI_SHUFFLE_EX);
 

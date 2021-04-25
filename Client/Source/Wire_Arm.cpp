@@ -136,6 +136,7 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
 		m_pWireArmGrab.lock()->SetActive(true);
 		_RenderProperty.bRender = m_bIsRender = false;
+		SetActive(false);
 	}
 		break;
 	case GAMEOBJECTTAG::Monster0000:

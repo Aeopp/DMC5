@@ -1,16 +1,15 @@
-#ifndef Em100_h__
-#define Em100_h__
+#ifndef Em1000_h__
+#define Em1000_h__
 
 #include "Monster.h"
 
 
 class RedQueen;
-class Em100Hand;
 class Nero;
-class Em100 final : public Monster
+class Em1000 final : public Monster
 {
 private:
-	enum Em100_State
+	enum Em1000_State
 	{
 		Air_End,
 		Air_Loop,
@@ -49,20 +48,18 @@ private:
 		Hit_Buster_End,
 		Downword_Down_StandUp,
 		Downword_Damage,
-		Hit_Snatch_Start,
-		Hit_Snatch_End,
 		State_END
 	};
 
 private:
-	explicit Em100() = default;
-	virtual ~Em100() = default;
+	explicit Em1000() = default;
+	virtual ~Em1000() = default;
 
 	virtual void Free() override;
 	virtual std::string GetName() override;
 
 public:
-	static Em100* Create();
+	static Em1000* Create();
 public:
 	virtual void Fight(const float _fDeltaTime)override;
 	virtual void State_Change(const float _fDeltaTime)override;
@@ -92,12 +89,11 @@ public:
 	void RenderInit();
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
+	virtual void Update_Angle(const float _fDeltaTime, bool _bTest = false);
 	virtual void Update_Angle()override;
-
-	void		Set_Rotate();
 private:
 	//몬스터 상태
-	Em100_State	m_eState =State_END;		
+	Em1000_State	m_eState =State_END;		
 	//Player 받아옴.
 	std::weak_ptr<Nero>					m_pPlayer;
 	std::weak_ptr<ENGINE::Transform>	m_pPlayerTrans;
@@ -116,7 +112,6 @@ private:
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
 
-	weak_ptr<Em100Hand>		m_pHand[2];
 	weak_ptr<CapsuleCollider> m_pCollider;
 
 	float		m_fAngleTime = 0.f;
@@ -131,4 +126,4 @@ private:
 
 };
 
-#endif // Em100_h__
+#endif // Em1000_h__

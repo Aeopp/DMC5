@@ -17,6 +17,7 @@ private:
 	LOOPPOOL			m_Loop[ACTIVE_END][LOOP_END];
 	LOOPPOOL::iterator	m_LoopIter;
 
+	bool				m_bOnLoop;
 protected:
 	explicit Scene();
 	virtual ~Scene() = default;

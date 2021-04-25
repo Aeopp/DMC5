@@ -5,6 +5,7 @@
 
 class Em0000Weapon;
 class Nero;
+class RedQueen;
 class Em0000 final : public Monster
 {
 private:
@@ -29,6 +30,14 @@ private:
 		Hit_Buster_Start,
 		Hit_Buster_Loop,
 		Hit_Buster_End,
+		Hit_End_Front,
+		Hit_End_Back,
+		Hit_Air_Start,
+		Hit_Air_Loop,
+		Hit_Snatch_Start,
+		Hit_Snatch_End,
+		Lie_Getup,//뒤로넘어졌을떄 일어나기
+		Prone_Getup, // 앞으로넘어졌을때 일어나기
 		Move_Front_End,
 		Move_Front_Loop,
 		Move_Front_Start,
@@ -36,11 +45,7 @@ private:
 		Stun_End,
 		Stun_Start,
 		idle,
-		Snatch_Start,
-		Snatch_End,
-		Air_Start,
-		Air_Loop,
-		Air_End,
+		Downword_Damage,
 		State_END
 	};
 
@@ -72,6 +77,7 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -81,6 +87,7 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
+	void		Set_Rotate();
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 
@@ -90,6 +97,7 @@ private:
 	//TestPlayer 받아옴.
 	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
 	std::weak_ptr<Nero>				 m_pPlayer;
+	std::weak_ptr<RedQueen>			 m_pRedQueen;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;
@@ -107,6 +115,14 @@ private:
 	
 	weak_ptr<Em0000Weapon>    m_pWeapon;
 	weak_ptr<CapsuleCollider> m_pCollider;
+
+
+	//////////버스터 용////////////////
+	Matrix* m_pPlayerBone;
+	Matrix								  m_PlayerWorld;
+	Matrix								  m_Result;
+	Matrix								  m_TempMatrix;
+	////////////////
 };
 
 #endif // Em0000_h__

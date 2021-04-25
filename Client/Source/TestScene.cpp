@@ -13,6 +13,7 @@
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
+#include "Em1000.h"
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
@@ -48,34 +49,31 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<MainCamera>();
 	//AddGameObject<Camera>();
 
+	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em100>();
 	AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
-	
 	//LoadMap();
-	//AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
+	//AddGameObject<Smoke>().lock()->PlayStart();
 
-	
-	
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<Dust>();
 	//AddGameObject<QliphothBlock>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
 
 
-
+	
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
@@ -93,12 +91,12 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	if (nullptr != pPlane)
+	/*if (nullptr != pPlane)
 		return S_OK;
 
 	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
-	Physics::AddActor(UniqueID, *pPlane);
+	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
 }
