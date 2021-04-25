@@ -40,7 +40,7 @@ enum GAMEOBJECTTAG
 	Eff_OvertureHand,
 	Eff_Liquid,
 	Eff_AppearGroundMonster,
-	Eff_Dust,
+	Eff_Smoke,
 	Eff_QliphothBlock,
 	ThrowCar,
 	TAG_Camera,

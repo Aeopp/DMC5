@@ -18,7 +18,7 @@
 #include "Glint.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-#include "Dust.h"
+#include "Smoke.h"
 #include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
@@ -57,18 +57,15 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Car>();
 
-	
-	//LoadMap();
-	//AddGameObject<TempMap>();
+	LoadMap();
+	AddGameObject<TempMap>();
+	AddGameObject<Smoke>().lock()->PlayStart();
 
-	
-	
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<Dust>();
 	//AddGameObject<QliphothBlock>();
 
 	// 수정필요
@@ -83,8 +80,9 @@ HRESULT TestScene::LoadScene()
 	_Renderer->ao = 0.01f; 
 	_Renderer->SkyIntencity = 0.111f;
 	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
 	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
+	_Renderer->SoftParticleDepthScale = 1.f;
 
 	return S_OK;
 }

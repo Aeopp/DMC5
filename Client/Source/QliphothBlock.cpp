@@ -82,18 +82,38 @@ void QliphothBlock::RenderInit()
 
 void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	auto WeakSubset = _Pipe0Mesh->GetSubset(0u);
+	auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
+
+	auto WeakSubset = _BaseMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
-		_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
-		_Info.Fx->SetTexture("ALB0Map", _QliphothALB0Tex->GetTexture());
-		_Info.Fx->SetTexture("NRMR0Map", _QliphothNRMR0Tex->GetTexture());
-		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
-		// + 빛방향
-		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
+		if (0 == _Info.PassIndex)
+		{
+			_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+			_Info.Fx->SetFloat("_AccumulationTexU", _AccumulateTime * 0.2f);
+			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.2f);
+			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
-		SharedSubset->Render(_Info.Fx);
+			// 깊이스케일 조절 하고 싶으면 바인드 .
+			 // Fx -> ???????? RefEffInfo.SoftParticleDepthBiasScale 
+
+			for (int i = 0; i < 3; ++i)
+			{
+				Matrix Rot;
+				D3DXMatrixRotationZ(&Rot, D3DXToRadian(45.f * i));
+				Rot *= _RenderUpdateInfo.World;
+				_Info.Fx->SetMatrix("World", &Rot);
+				
+				SharedSubset->Render(_Info.Fx);
+			}
+		}
+		else if (1 == _Info.PassIndex)
+		{
+
+		}
+
+		// 깊이스케일 조절 했으면 원래대로 복구 . 해주세요 ~  
 	}
 }
 
@@ -105,13 +125,9 @@ HRESULT QliphothBlock::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_QliphothBlock;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
+	InitTransform.lock()->SetScale({ 0.05f, 0.05f, 0.05f });
 	
-	_Pipe0Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
-
-	_QliphothALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\em5100_10_ALBA.tga");
-	_QliphothNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\qliphoth_perfection_01_NRMR.tga");
-	_QliphothNRMR1Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\em5100_Liquid_NRMR.tga");
+	_BaseMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_props_sm7001_001_00.fbx");
 
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
@@ -145,7 +161,7 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 	//	_SliceAmount = 1.f - _AccumulateTime * 0.6f;
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

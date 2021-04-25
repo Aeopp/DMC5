@@ -272,7 +272,7 @@
     <ClInclude Include="..\Header\Liquid.h">
       <Filter>02.GameObject\Effect\Liquid</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Dust.h">
+    <ClInclude Include="..\Header\Smoke.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\MainCamera.h">
@@ -425,7 +425,7 @@
     <ClCompile Include="..\Source\AppearGroundMonster.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Dust.cpp">
+    <ClCompile Include="..\Source\Smoke.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\MainCamera.cpp">
