@@ -76,6 +76,7 @@ private:
 	HRESULT Bloom();
 	HRESULT LensFlare();
 	HRESULT ToneMap();
+	HRESULT RenderEmissive();
 private:
 	void EnableDepthBias()&;
 	void DisableDepthBias()&;

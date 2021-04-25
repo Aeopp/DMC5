@@ -531,8 +531,8 @@ void ps_deferred(
 {
     // 감마 보정은 Device 세팅을 조절해서 결정 !
     // 알베도 + 메탈
-    // 0.3 ^ (1 / 2.2) 감마 패킹 (높아짐)
-    // 0.3 ^ (2.2) 감마 언팩 (낮아짐 )  
+    // 0.3 ^ (1 / 2.2) 감마 패킹 ( 높아짐 )
+    // 0.3 ^ (2.2) 감마 언팩 ( 낮아짐 )  
     float4 albm = tex2D(albedo,  tex);
    float metal = saturate(pow(abs(albm.a) , abs(1.0 / 2.2)));
     

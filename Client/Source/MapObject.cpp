@@ -95,15 +95,32 @@ void MapObject::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+
+	if (bEmissive == false)
 	{
-		{"gbuffer_ds",
-		[this](const DrawInfo& _Info)
-			{
-				RenderGBuffer(_Info);
-			}
-		},
-	};
+		_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+		{
+			{"gbuffer_ds",
+			[this](const DrawInfo& _Info)
+				{
+					RenderGBuffer(_Info);
+				}
+			},
+		};
+	}
+	else
+	{
+		_InitRenderProp.RenderOrders[RenderProperty::Order::Emissive] =
+		{
+			{"Emissive",
+			[this](const DrawInfo& _Info)
+				{
+					RenderEmissive(_Info);
+				}
+			},
+		};
+	}
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
 		=
 	{
@@ -171,6 +188,28 @@ void MapObject::RenderShadow(const DrawInfo& _Info)
 	};
 }
 
+void MapObject::RenderEmissive(const DrawInfo& _Info)
+{
+	const Matrix World = _RenderUpdateInfo.World;
+	_Info.Fx->SetMatrix("matWorld", &World);
+	_Info.Fx->SetFloat("EmissivePower", EmissivePower);
+	const uint32 Numsubset = m_pStaticMesh->GetNumSubset();
+	for (uint32 i = 0; i < Numsubset; ++i)
+	{
+		if (auto SpSubset = m_pStaticMesh->GetSubset(i).lock();
+			SpSubset)
+		{
+			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+			{
+				continue;
+			}
+
+			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
+			SpSubset->Render(_Info.Fx);
+		};
+	};
+}
+
 void MapObject::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
@@ -193,9 +232,24 @@ void MapObject::RenderDebug(const DrawInfo& _Info)
 }
 #pragma endregion
 
-void MapObject::SetUp(const TSTRING _sMesh, const D3DXVECTOR3& _vScale, const D3DXVECTOR3& _vRotation, const D3DXVECTOR3 _vPosition)
+void MapObject::SetUp(
+	const TSTRING _sMesh, 
+	const D3DXVECTOR3& _vScale,
+	const D3DXVECTOR3& _vRotation, 
+	const D3DXVECTOR3 _vPosition)
 {
 	m_pStaticMesh = Resources::Load<ENGINE::StaticMesh>(_sMesh);
+
+	{
+		filesystem::path sFileName = _sMesh;
+		sFileName = sFileName.filename();
+
+		if (sFileName == "electornicbillboard.fbx")
+		{
+			bEmissive = true;
+		};
+	}
+
 
 	D3DXVECTOR3 vScale = _vScale * GScale;
 	D3DXVECTOR3 vPos = _vPosition * GScale;

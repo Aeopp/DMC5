@@ -34,6 +34,8 @@ public :
 
 		Shadow,
 
+		Emissive,
+
 		AlphaBlendEffect,
 		UI,
 

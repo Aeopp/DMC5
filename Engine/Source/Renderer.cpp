@@ -516,7 +516,7 @@ HRESULT Renderer::Render()&
 		RenderSkySphere();
 	}
 
-
+	RenderEmissive();
 	AlphaBlendEffectRender();
 	UIRender();
 	// RenderInsulatorMetal();
@@ -914,7 +914,6 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
 		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
-		device->SetRenderTarget(3, RenderTargets["Emissive"]->GetSurface());
 	}
 
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -1004,7 +1003,6 @@ void Renderer::DeferredShading()
 	auto albedo = RenderTargets["ALBM"]->GetTexture();
 	auto normals = RenderTargets["NRMR"]->GetTexture();
 	auto depth = RenderTargets["Depth"]->GetTexture();
-	auto emissive = RenderTargets["Emissive"]->GetTexture(); 
 
 	auto deferred = Shaders["DeferredShading"]->GetEffect();
 
@@ -1054,7 +1052,6 @@ void Renderer::DeferredShading()
 	device->SetTexture(0, albedo);
 	device->SetTexture(1, normals);
 	device->SetTexture(2, depth);
-	device->SetTexture(5, emissive);
 
 	device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
@@ -2244,6 +2241,55 @@ HRESULT Renderer::ToneMap()
 	}
 	hdreffects->EndPass();
 	hdreffects->End();
+
+	return S_OK;
+}
+HRESULT Renderer::RenderEmissive()
+{
+	DWORD ZEnable, ZWrite, AlphaEnable;
+
+	Device->GetRenderState(D3DRS_ZENABLE, &ZEnable);
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &AlphaEnable);
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	auto& _Group = RenderEntitys[RenderProperty::Order::Emissive];
+	DrawInfo _DrawInfo{};
+	_DrawInfo.BySituation.reset();
+	_DrawInfo._Device = Device;
+	_DrawInfo._Frustum = CameraFrustum.get();
+	for (auto& [ShaderKey, Entitys] : _Group)
+	{
+		auto Fx = Shaders[ShaderKey]->GetEffect();
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		Device->SetRenderTarget(1u, RenderTargets["Depth"]->GetSurface(0));
+
+		_DrawInfo.Fx = Fx;
+		for (auto& [Entity, Call] : Entitys)
+		{
+			UINT Passes{ 0u };
+			Fx->Begin(&Passes, NULL);
+			for (int32 i = 0; i < Passes; ++i)
+			{
+				_DrawInfo.PassIndex = i;
+				Fx->BeginPass(i);
+				{
+					Call(_DrawInfo);
+				}
+				Fx->EndPass();
+			}
+			Fx->End();
+		}
+	}
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
+	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 
 	return S_OK;
 };
