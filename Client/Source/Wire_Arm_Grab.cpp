@@ -43,7 +43,8 @@ HRESULT Wire_Arm_Grab::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(0.08f);
+	m_pCollider.lock()->SetRadius(0.11f);
+	m_pCollider.lock()->SetCenter({ 0.f,0.1f,0.f });
 	PushEditEntity(m_pCollider.lock().get());
 
 
@@ -63,8 +64,14 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
+	
+
+	Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	Vector3 vLength = NeroPos - m_pTransform.lock()->GetPosition();
+	float fLength = D3DXVec3Length(&vLength);
+
 	if(!m_pGrabedMonster.expired())
-		m_pGrabedMonster.lock()->GetComponent<Transform>().lock()->Translate(m_vDir * 0.06f);
+		m_pGrabedMonster.lock()->GetComponent<Transform>().lock()->Translate(m_vDir * 0.07f);
 
 	m_pTransform.lock()->Translate(m_vDir * 0.07f);
 
@@ -72,10 +79,13 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	{
 		SetActive(false);
 	}
-	if (0.8 <= m_pMesh->PlayingTime())
+	if (0.17f >= fLength && m_bPlayOnce)
 	{
-		//¾Ö´Ï¸ÞÀÌ¼Ç ÆÈÀÌ ÂÍ ³ô¾Æ¼­ ³»·ÁÁà¾ßµÊ
-		m_pTransform.lock()->Translate({0.f,-0.01f,0.f});
+		m_bPlayOnce = false;
+		m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
+		m_pMesh->ContinueAnimation();
+		m_vDir = { 0.f, 0.f,0.f };
+		m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
 	}
 
 	return 0;
@@ -102,23 +112,26 @@ void Wire_Arm_Grab::OnEnable()
 	D3DXVec3Normalize(&m_vDir, &m_vDir);
 
 	m_pTransform.lock()->SetQuaternion(m_pNero.lock()->GetComponent<Transform>().lock()->GetQuaternion());
+
+	m_bPlayOnce = true;
 }
 
 void Wire_Arm_Grab::OnDisable()
 {
 	Unit::OnDisable();
 	_RenderProperty.bRender = false;
+	m_bPlayOnce = false;
 }
 
 void Wire_Arm_Grab::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	UINT ObjTag = _pOther.lock()->m_nTag;
-	if (GAMEOBJECTTAG::Player == ObjTag)
-	{
-		m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
-		m_pMesh->ContinueAnimation();
-		m_vDir = { 0.f,0.f,0.f };
-	}
+	//UINT ObjTag = _pOther.lock()->m_nTag;
+	//if (GAMEOBJECTTAG::Player == ObjTag)
+	//{
+	//	m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
+	//	m_pMesh->ContinueAnimation();
+	//	m_vDir = { 0.f,-0.01f,0.f };
+	//}
 }
 
 void Wire_Arm_Grab::OnTriggerExit(std::weak_ptr<GameObject> _pOther)

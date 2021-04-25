@@ -290,7 +290,9 @@
     <ClInclude Include="..\Header\QliphothBlock.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
+    <ClInclude Include="..\Header\Wire_Arm_Grab.h">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -461,7 +463,9 @@
     <ClCompile Include="..\Source\QliphothBlock.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
+    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

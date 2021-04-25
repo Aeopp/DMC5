@@ -53,6 +53,7 @@ private:
 	std::weak_ptr<GameObject>		m_pGrabedMonster;
 
 	bool								m_bIsRender;
+	bool								m_bPlayOnce = false;
 	Vector3	m_vDir;
 
 

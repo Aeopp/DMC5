@@ -8575,6 +8575,8 @@ em0000_Buster_Start* em0000_Buster_Start::Create(FSMBase* const _pFSM, const UIN
 HRESULT em0000_Buster_Start::StateEnter()
 {
 	NeroState::StateEnter();
+	m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_BusterArm, true);
+	m_pNero.lock()->ChangeAnimation("em0000_Buster_Start", false,Nero::ANI_EM0000_BUSTER_START);
 	return S_OK;
 }
 
@@ -8586,6 +8588,8 @@ HRESULT em0000_Buster_Start::StateExit()
 
 HRESULT em0000_Buster_Start::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::EM0000_BUSTER_FINISH);
 	return S_OK;
 }
 
@@ -8606,6 +8610,7 @@ em0000_Buster_Finish* em0000_Buster_Finish::Create(FSMBase* const _pFSM, const U
 HRESULT em0000_Buster_Finish::StateEnter()
 {
 	NeroState::StateEnter();
+	m_pNero.lock()->ChangeAnimation("em0000_Buster_Finish", false, Nero::ANI_EM0000_BUSTER_FINISH);
 	return S_OK;
 }
 
@@ -8617,6 +8622,8 @@ HRESULT em0000_Buster_Finish::StateExit()
 
 HRESULT em0000_Buster_Finish::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
 }
 

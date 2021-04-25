@@ -51,7 +51,7 @@ HRESULT RedQueen::Awake()
 	m_pCollider.lock()->SetTrigger(true);
 
 	m_pCollider.lock()->SetRadius(0.01f);
-	m_pCollider.lock()->SetHeight(0.08f);
+	m_pCollider.lock()->SetHeight(0.11f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.05f, 0.f });
 
 	m_pCollider.lock()->SetActive(false);

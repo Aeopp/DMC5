@@ -882,7 +882,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		}
 		else
 		{
-			m_eState = Downword_Damage;
+			m_eState = Downword_Damage; 
 			m_bHit = true;
 		}*/
 	}
@@ -907,6 +907,7 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+		cout << "응애 응애!! " << endl;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
@@ -923,6 +924,8 @@ void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+
+		cout << "뿌직" << endl;
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		break;
