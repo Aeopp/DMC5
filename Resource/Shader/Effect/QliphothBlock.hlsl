@@ -28,7 +28,7 @@ sampler ALP0 = sampler_state
     minfilter = anisotropic;
     magfilter = anisotropic;
     mipfilter = anisotropic;
-    sRGBTexture = true;
+    sRGBTexture = false;
     MaxAnisotropy = 4;
 };
 

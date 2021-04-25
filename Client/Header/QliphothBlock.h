@@ -11,7 +11,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _BaseInnerTex{};
 	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
 
-	float _SliceAmount = 0.f;
+	float _SliceAmount = 1.f;
+	bool _IsAlive = false;
 
 private:
 	explicit QliphothBlock() = default;
@@ -35,6 +36,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	virtual void Reset() override;
+	virtual void	PlayStart(const float PlayingSpeed = 1.f) override;
+	virtual void	Reset() override;
 };
 #endif // !__EFF_QLIPHOTH_BLOCK_H__

@@ -60,13 +60,13 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TempMap>();
 	AddGameObject<Smoke>().lock()->PlayStart();
 
-
 	AddGameObject<BtlPanel>();
+
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
-	AddGameObject<QliphothBlock>();
+	//AddGameObject<QliphothBlock>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();

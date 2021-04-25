@@ -16,11 +16,15 @@ std::string QliphothBlock::GetName()
 	return "QliphothBlock";
 };
 
+void QliphothBlock::PlayStart(const float PlayingSpeed)
+{
+	Effect::PlayStart(PlayingSpeed);
+	_IsAlive = true;
+}
+
 void QliphothBlock::Reset()
 {
-	_SliceAmount = 0.f;
-
-	Effect::Reset();
+	_IsAlive = false;
 }
 
 void QliphothBlock::Imgui_Modify()
@@ -54,11 +58,11 @@ void QliphothBlock::Imgui_Modify()
 			_PlayingSpeed = PlayingSpeed;
 		}
 
-		{
-			static float SliceAmount = _SliceAmount;
-			ImGui::SliderFloat("SliceAmount##QliphothBlock", &SliceAmount, 0.f, 1.f);
-			_SliceAmount = SliceAmount;
-		}
+		//{
+		//	static float SliceAmount = _SliceAmount;
+		//	ImGui::SliderFloat("SliceAmount##QliphothBlock", &SliceAmount, 0.f, 1.f);
+		//	_SliceAmount = SliceAmount;
+		//}
 	}
 }
 
@@ -182,15 +186,31 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 	Effect::Update(_fDeltaTime);
 
 	//
-	//if (5.f < _AccumulateTime)
-	//	Reset();
-	//else if (4.f < _AccumulateTime)
-	//	_SliceAmount =  (_AccumulateTime - 4.f) * 0.6f;
-	//else
-	//	_SliceAmount = 1.f - _AccumulateTime * 0.6f;
+	if (_IsPlaying)
+	{
+		if (_IsAlive)
+		{
+			if (0.f < _SliceAmount)
+			{
+				_SliceAmount -= _fDeltaTime * 1.f;
+				if (0.f > _SliceAmount)
+					_SliceAmount = 0.f;
+			}
+		}
+		else
+		{
+			_SliceAmount += _fDeltaTime * 1.f;
+			if (1.f <= _SliceAmount)
+			{
+				_SliceAmount = 1.f;
+
+				Effect::Reset();
+			}
+		}
+	}
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

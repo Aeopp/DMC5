@@ -16,7 +16,7 @@ sampler ALB0 = sampler_state
     minfilter = anisotropic;
     magfilter = anisotropic;
     mipfilter = anisotropic;
-    sRGBTexture = true;
+    sRGBTexture = false;
     MaxAnisotropy = 4;
 };
 
@@ -51,7 +51,7 @@ sampler Noise = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = true;
+    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -146,7 +146,7 @@ technique Default
         destblend = invsrcalpha;
         //zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();

@@ -12,7 +12,7 @@ sampler ALB0 = sampler_state
     minfilter = anisotropic;
     magfilter = anisotropic;
     mipfilter = anisotropic;
-    sRGBTexture = true;
+    sRGBTexture = false;
     MaxAnisotropy = 4;
 };
 
@@ -143,7 +143,7 @@ technique Default
 		destblend = invsrcalpha;
         //zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_White();
@@ -155,7 +155,7 @@ technique Default
         destblend = invsrcalpha;
         //zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Lightning();
         pixelshader = compile ps_3_0 PsMain_Lightning();
