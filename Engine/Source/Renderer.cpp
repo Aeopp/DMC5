@@ -207,6 +207,22 @@ void Renderer::ReadyRenderTargets()
 		Depth->Initialize(InitInfo);
 		Depth->DebugBufferInitialize(
 			{ InitX,InitY + (YOffset * 3.f) + Interval },
+			RenderTargetDebugRenderSize   );
+	}
+
+	{
+		auto& Emissive = RenderTargets["Emissive"] = std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX;
+		InitInfo.Height = g_nWndCY;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A16B16G16R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+		Emissive->Initialize(InitInfo);
+		Emissive->DebugBufferInitialize(
+			{ InitX,InitY + (YOffset * 99999.f) + Interval },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -898,6 +914,7 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
 		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
+		device->SetRenderTarget(3, RenderTargets["Emissive"]->GetSurface());
 	}
 
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -914,7 +931,8 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	// 알베도 노말 깊이 렌더타겟 한번에 초기화 . 
-	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
+	device->Clear(0, NULL, 
+		D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
 		0xffffffff, 1.0f, 0);
 
 	auto& GBufferGroup = RenderEntitys[RenderProperty::Order::GBuffer];
@@ -986,6 +1004,7 @@ void Renderer::DeferredShading()
 	auto albedo = RenderTargets["ALBM"]->GetTexture();
 	auto normals = RenderTargets["NRMR"]->GetTexture();
 	auto depth = RenderTargets["Depth"]->GetTexture();
+	auto emissive = RenderTargets["Emissive"]->GetTexture(); 
 
 	auto deferred = Shaders["DeferredShading"]->GetEffect();
 
@@ -1035,6 +1054,7 @@ void Renderer::DeferredShading()
 	device->SetTexture(0, albedo);
 	device->SetTexture(1, normals);
 	device->SetTexture(2, depth);
+	device->SetTexture(5, emissive);
 
 	device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
@@ -1532,7 +1552,7 @@ HRESULT Renderer::RendererCollider()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		_DrawInfo.Fx = Fx;
-		Vector4 DebugColor{ 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.5f };
+		Vector4 DebugColor{ 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.1f };
 		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
 		Fx->SetVector("DebugColor", &DebugColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
