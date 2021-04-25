@@ -876,11 +876,12 @@ void Renderer::RenderShadowMaps()
 				}
 				Fx->End();
 			}
-			});
-	}
+		});
+	};
 
 	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-}
+};
+
 void Renderer::RenderGBuffer()
 {
 	auto* const device = Device;
@@ -898,7 +899,6 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
 	}
 
-
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
@@ -913,7 +913,8 @@ void Renderer::RenderGBuffer()
 	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
 	// 알베도 노말 깊이 렌더타겟 한번에 초기화 . 
-	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0, 1.0f, 0);
+	device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
+		0xffffffff, 1.0f, 0);
 
 	auto& GBufferGroup = RenderEntitys[RenderProperty::Order::GBuffer];
 	DrawInfo _DrawInfo{};
