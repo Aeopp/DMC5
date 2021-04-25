@@ -11,7 +11,6 @@ public:
 	{
 		IDLE,
 		IDLE_START,
-		IDLE_BATTLE,
 		ATT1,
 		ATT2,
 		ATT3,
@@ -25,6 +24,10 @@ public:
 		DASHLOOP,
 		DASHSTOP,
 		DASHTURN,
+		JOGLOOP,
+		JOGSTOP,
+		JOG_TURN_180,
+		JOG_TURN_180L,
 		ATT_COMBO_C_R,
 		ATT_COMBO_C_L,
 		ATT_COMBO_C1,
