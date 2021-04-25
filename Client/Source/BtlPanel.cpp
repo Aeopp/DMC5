@@ -770,7 +770,7 @@ void BtlPanel::SetTargetCursorActive(bool IsActive)
 {
 	if (IsActive)
 		_TargetCursorAlpha = 0.f;
-	else
+	else if (!IsActive && _UIDescs[TARGET_CURSOR].Using)
 		_TargetCursorAlpha = 1.f;
 
 	_UIDescs[TARGET_CURSOR].Using = IsActive;
