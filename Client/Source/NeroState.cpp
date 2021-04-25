@@ -1051,8 +1051,8 @@ HRESULT Jump_Basic::StateUpdate(const float _fDeltaTime)
 	{
 		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
 	}
-	if(m_pNero.lock()->CheckIsGround())
-		m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
+	//if(m_pNero.lock()->CheckIsGround())
+	//	m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
 	KeyInput_Jump();
 	return S_OK;
 }

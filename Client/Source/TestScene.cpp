@@ -56,8 +56,8 @@ HRESULT TestScene::LoadScene()
     //AddGameObject<Car>();
 
 	
-	LoadMap();
-	AddGameObject<TempMap>();
+	//LoadMap();
+	//AddGameObject<TempMap>();
 		//LoadMap();
 	//AddGameObject<TempMap>();
 

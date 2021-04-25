@@ -176,6 +176,7 @@ void Collider::CreateRigidActor()
 	//Collider 컴포넌트가 해제되도 userData가 사라지면 안됨 -> FetchResult에서 nullptr 접근으로 터짐.
 	//=> Component 해제시 리지드 액터의 userdata를 nullptr로 변경 해서 확인.
 	m_UserData.pCollider = std::static_pointer_cast<Collider>(m_pThis);
+	m_UserData.bIsGround = false;
 
 	m_pRigidActor->userData = (void*)&m_UserData;
 	//Shape 연결
@@ -324,7 +325,10 @@ void Collider::SetGravity(const bool _bActive)
 		return;
 
 	if (true == m_bRigid && false == _bActive)
+	{
 		m_pRigidActor->is<PxRigidDynamic>()->clearForce();
+		m_pRigidActor->is<PxRigidDynamic>()->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
+	}
 
 	m_pRigidActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !_bActive);
 }
@@ -334,12 +338,8 @@ bool Collider::IsGround()
 	if (false == m_bRigid)
 		return false;
 
-	PxVec3 vVelocity = m_pRigidActor->is<PxRigidDynamic>()->getLinearVelocity();
 
-	if (fabs(vVelocity.y) > 0.0001)
-		return false;
-
-	return true;
+	return 	m_UserData.bIsGround;
 }
 
 void Collider::AddForce(const D3DXVECTOR3 _vForce)

@@ -105,6 +105,7 @@ typedef struct tagTextureDesc
 typedef struct _tagPxUserData
 {
 	std::weak_ptr<class Collider> pCollider;
+	bool bIsGround;
 }PXUSERDATA, *LPPXUSERDATA;
 
 

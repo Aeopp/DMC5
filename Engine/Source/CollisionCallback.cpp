@@ -1,6 +1,8 @@
 #include "CollisionCallback.h"
 #include "Collider.h"
 #include "GameObject.h"
+#include "PhysicsSystem.h"
+
 #ifdef _DEBUG
 #include <iostream>
 using namespace std;
@@ -39,29 +41,81 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 		if (nullptr == pUserData[0] || nullptr == pUserData[1])
 			continue;
 
+		PxContactPairPoint* contactPointBuffer = new PxContactPairPoint[16];
+
+		UINT nCount = pairs[i].extractContacts(contactPointBuffer, 16);
+		if (physx::PxPairFlag::eNOTIFY_TOUCH_FOUND == pairs[i].events || physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS == pairs[i].events)
+		{
+			if (((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround == false)
+			{
+				for (UINT i = 0; i < nCount; ++i)
+				{
+					if (contactPointBuffer[i].normal.y >= 0.9f)
+					{
+						((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround = true;
+						break;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround == true)
+			{
+				if(0 == nCount)
+					((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround = false;
+
+				for (UINT i = 0; i < nCount; ++i)
+				{
+					if (contactPointBuffer[i].normal.y >= 0.9f)
+					{
+						((LPPXUSERDATA)(pairs[i].shapes[0]->getActor()->userData))->bIsGround = false;
+						break;
+					}
+				}
+			}
+		}
+
+		delete[] contactPointBuffer;
+
 		pCollider[0] = pUserData[0]->pCollider;
 		pCollider[1] = pUserData[1]->pCollider;
+		
+		PhysicsSystem::COLLISIONPAIR tCollisionPair;
+
+		tCollisionPair.bTrigger = false;
+
 
 		if (physx::PxPairFlag::eNOTIFY_TOUCH_FOUND == pairs[i].events)
 		{
-			if(false == pCollider[0].expired())
-				pCollider[0].lock()->GetGameObject().lock()->OnCollisionEnter(pCollider[1].lock()->GetGameObject());
-			if (false == pCollider[1].expired())
-				pCollider[1].lock()->GetGameObject().lock()->OnCollisionEnter(pCollider[0].lock()->GetGameObject());
+			if (false == pCollider[0].expired() && false == pCollider[1].expired())
+			{
+				tCollisionPair.ePairFlag = physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+				tCollisionPair.pFirst = pCollider[0].lock()->GetGameObject();
+				tCollisionPair.pSecond = pCollider[1].lock()->GetGameObject();
+				PhysicsSystem::GetInstance()->AddCallbackPair(tCollisionPair);
+			}
+
 		}
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS == pairs[i].events)
 		{
-			if (false == pCollider[0].expired())
-				pCollider[0].lock()->GetGameObject().lock()->OnCollisionStay(pCollider[1].lock()->GetGameObject());
-			if (false == pCollider[1].expired())
-				pCollider[1].lock()->GetGameObject().lock()->OnCollisionStay(pCollider[0].lock()->GetGameObject());
+			if (false == pCollider[0].expired() && false == pCollider[1].expired())
+			{
+				tCollisionPair.ePairFlag = physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
+				tCollisionPair.pFirst = pCollider[0].lock()->GetGameObject();
+				tCollisionPair.pSecond = pCollider[1].lock()->GetGameObject();
+				PhysicsSystem::GetInstance()->AddCallbackPair(tCollisionPair);
+			}
 		}
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_LOST == pairs[i].events)
 		{
-			if (false == pCollider[0].expired())
-				pCollider[0].lock()->GetGameObject().lock()->OnCollisionExit(pCollider[1].lock()->GetGameObject());
-			if (false == pCollider[1].expired())
-				pCollider[1].lock()->GetGameObject().lock()->OnCollisionExit(pCollider[0].lock()->GetGameObject());
+			if (false == pCollider[0].expired() && false == pCollider[1].expired())
+			{
+				tCollisionPair.ePairFlag = physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
+				tCollisionPair.pFirst = pCollider[0].lock()->GetGameObject();
+				tCollisionPair.pSecond = pCollider[1].lock()->GetGameObject();
+				PhysicsSystem::GetInstance()->AddCallbackPair(tCollisionPair);
+			}
 		}
 	}
 }
@@ -83,19 +137,29 @@ void CollisionCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 coun
 		pCollider[0] = pUserData[0]->pCollider;
 		pCollider[1] = pUserData[1]->pCollider;
 
+		PhysicsSystem::COLLISIONPAIR tCollisionPair;
+
+		tCollisionPair.bTrigger = true;
+
 		if (physx::PxPairFlag::eNOTIFY_TOUCH_FOUND == pairs[i].status)
 		{
-			if (false == pCollider[0].expired())
-				pCollider[0].lock()->GetGameObject().lock()->OnTriggerEnter(pCollider[1].lock()->GetGameObject());
-			if (false == pCollider[1].expired())
-				pCollider[1].lock()->GetGameObject().lock()->OnTriggerEnter(pCollider[0].lock()->GetGameObject());
+			if (false == pCollider[0].expired() && false == pCollider[1].expired())
+			{
+				tCollisionPair.ePairFlag = physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+				tCollisionPair.pFirst = pCollider[0].lock()->GetGameObject();
+				tCollisionPair.pSecond = pCollider[1].lock()->GetGameObject();
+				PhysicsSystem::GetInstance()->AddCallbackPair(tCollisionPair);
+			}
 		}
 		else if (physx::PxPairFlag::eNOTIFY_TOUCH_LOST == pairs[i].status)
 		{
-			if (false == pCollider[0].expired())
-				pCollider[0].lock()->GetGameObject().lock()->OnTriggerExit(pCollider[1].lock()->GetGameObject());
-			if (false == pCollider[1].expired())
-				pCollider[1].lock()->GetGameObject().lock()->OnTriggerExit(pCollider[0].lock()->GetGameObject());
+			if (false == pCollider[0].expired() && false == pCollider[1].expired())
+			{
+				tCollisionPair.ePairFlag = physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
+				tCollisionPair.pFirst = pCollider[0].lock()->GetGameObject();
+				tCollisionPair.pSecond = pCollider[1].lock()->GetGameObject();
+				PhysicsSystem::GetInstance()->AddCallbackPair(tCollisionPair);
+			}
 		}
 	}
 }
