@@ -60,13 +60,13 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TempMap>();
 
 
-	AddGameObject<BtlPanel>();
-	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
-	AddGameObject<Liquid>();
-	//AddGameObject<AppearGroundMonster>();
-	AddGameObject<Dust>();
-	AddGameObject<QliphothBlock>();
+	//AddGameObject<BtlPanel>();
+	////AddGameObject<Glint>();
+	////AddGameObject<OvertureHand>();
+	//AddGameObject<Liquid>();
+	////AddGameObject<AppearGroundMonster>();
+	//AddGameObject<Dust>();
+	//AddGameObject<QliphothBlock>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
@@ -77,8 +77,8 @@ HRESULT TestScene::LoadScene()
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.01f; 
-	_Renderer->SkyIntencity = 0.111f;
+	_Renderer->ao = 0.00002; 
+	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
 	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 

@@ -622,6 +622,7 @@ void Renderer::Editor()&
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
 		ImGui::SliderFloat("ao", &ao, 0.0f, 1.f);
+		ImGui::InputFloat("In ao", &ao, 0.0f, 1.f);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
 		ImGui::SliderFloat("FogDistance", &FogDistance, 0.0f, 1000.f);

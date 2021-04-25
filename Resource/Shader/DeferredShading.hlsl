@@ -212,8 +212,8 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
+    Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor + (lightColor *albedo * ao);
     
-    Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor + (lightColor * ao);
     return Lo;
 }
 
@@ -309,7 +309,7 @@ in float3 wpos)
     
     float radius_att = saturate((lightRadius - distance) / lightRadius);
     
-    Lo = (kD * albedo / PI + specular) * lightFlux * radiance * radius_att* NdotL * ShadowFactor;
+    Lo = (kD * albedo / PI + specular) *lightColor * lightFlux * radiance * radius_att* NdotL * ShadowFactor;
     
     return Lo;
 };
