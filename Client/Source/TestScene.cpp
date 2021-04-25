@@ -59,6 +59,30 @@ HRESULT TestScene::LoadScene()
 	LoadMap();
 	AddGameObject<TempMap>();
 
+	AddGameObject<BtlPanel>();
+
+	//AddGameObject<Glint>();
+	//AddGameObject<OvertureHand>();
+	//AddGameObject<Liquid>();
+	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<QliphothBlock>();
+
+	// 수정필요
+	//AddGameObject<DashImpact>();
+
+
+
+	// 렌더러 씬 맵 특성에 맞춘 세팅
+	auto _Renderer = Renderer::GetInstance();
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+	_Renderer->ao = 0.01f; 
+	_Renderer->SkyIntencity = 0.111f;
+	_Renderer->SkysphereScale = 0.078f;
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
+	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
+	_Renderer->SoftParticleDepthScale = 1.f;
+
 	// TempMap 안개
 	if (auto pSmoke = AddGameObject<Smoke>().lock();
 		pSmoke)
@@ -92,31 +116,6 @@ HRESULT TestScene::LoadScene()
 		pSmoke->SetPosition(Vector3(-20.f, -6.f, -30.f));
 		pSmoke->PlayStart(10.f);
 	}
-
-
-	AddGameObject<BtlPanel>();
-
-	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
-	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<QliphothBlock>();
-
-	// 수정필요
-	//AddGameObject<DashImpact>();
-
-
-
-	// 렌더러 씬 맵 특성에 맞춘 세팅
-	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.01f; 
-	_Renderer->SkyIntencity = 0.111f;
-	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
-	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
-	_Renderer->SoftParticleDepthScale = 1.f;
 
 	return S_OK;
 }

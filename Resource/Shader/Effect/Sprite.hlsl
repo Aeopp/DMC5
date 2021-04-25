@@ -8,6 +8,8 @@ float2 _MinTexUV = float2(0.f, 0.f);
 float2 _MaxTexUV = float2(1.f, 1.f);
 float _SliceAmount = 0.f;
 
+float3 _MagicNumber = float3(1.f, 1.f, 1.f);
+
 
 texture ALB0Map;
 sampler ALB0 = sampler_state
@@ -114,8 +116,7 @@ PsOut PsMain(PsIn In)
     PsOut Out = (PsOut) 0;
 
     Out.Color = tex2D(ALB0, In.UV);
-    Out.Color.rgb *= 0.05f;
-    //Out.Color.a *= 0.8f;
+    Out.Color.rgb *= _MagicNumber;
     
     //// 소프트 파티클 계산 .... 
     //// NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
