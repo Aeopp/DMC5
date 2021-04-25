@@ -19,7 +19,6 @@
 #include "Glint.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-#include "Dust.h"
 #include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
@@ -54,7 +53,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em0000>();
+	AddGameObject<Em100>();
 
 	//AddGameObject<Car>();
 

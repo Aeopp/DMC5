@@ -61,6 +61,7 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 
 	// ·»´õ¸µ ÇÔ¼ö....
 	void RenderGBufferSK(const DrawInfo& _Info);

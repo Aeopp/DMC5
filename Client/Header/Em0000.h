@@ -34,6 +34,8 @@ private:
 		Hit_End_Back,
 		Hit_Air_Start,
 		Hit_Air_Loop,
+		Hit_Snatch_Start,
+		Hit_Snatch_End,
 		Lie_Getup,//뒤로넘어졌을떄 일어나기
 		Prone_Getup, // 앞으로넘어졌을때 일어나기
 		Move_Front_End,
@@ -43,8 +45,6 @@ private:
 		Stun_End,
 		Stun_Start,
 		idle,
-		Snatch_Start,
-		Snatch_End,
 		Downword_Damage,
 		State_END
 	};
@@ -77,6 +77,7 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -86,6 +87,7 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
+	void		Set_Rotate();
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 

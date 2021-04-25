@@ -77,6 +77,7 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);

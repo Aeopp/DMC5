@@ -330,9 +330,27 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
 		break;
-	case Em0000::Snatch_Start:
+	case Em0000::Hit_Snatch_Start:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_bSnatch == false)
+				m_eState = Hit_Snatch_End;
+		}
 		break;
-	case Em0000::Snatch_End:
+	case Em0000::Hit_Snatch_End:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Snatch_End" && m_pMesh->IsAnimationEnd())
+				m_eState = idle;
+		}
 		break;
 	case Em0000::State_END:
 		break;
@@ -659,6 +677,12 @@ void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
+void Em0000::Snatch(BT_INFO _BattleInfo, void* pArg)
+{
+	m_bHit = true;
+	m_eState = Hit_Snatch_Start;
+}
+
 void Em0000::RenderGBufferSK(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
@@ -845,6 +869,11 @@ void Em0000::Update_Angle()
 		m_fAngleSpeed = -fabs(m_fAngleSpeed);
 }
 
+void Em0000::Set_Rotate()
+{
+	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fRadian), 0.f });
+}
+
 void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	switch (_pOther.lock()->m_nTag)
@@ -855,6 +884,8 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
+	case GAMEOBJECTTAG::TAG_WireArm:
+		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 	default:
 		break;
 	}

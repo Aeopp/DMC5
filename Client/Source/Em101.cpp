@@ -414,3 +414,7 @@ void Em101::Hit(BT_INFO _BattleInfo, void* pArg)
 void Em101::Buster(BT_INFO _BattleInfo, void* pArg)
 {
 }
+
+void Em101::Snatch(BT_INFO _BattleInfo, void* pArg)
+{
+}

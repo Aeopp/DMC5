@@ -296,6 +296,10 @@ void Em1000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
+void Em1000::Snatch(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
 void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (!m_bCollEnable)
