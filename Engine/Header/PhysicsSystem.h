@@ -5,9 +5,19 @@
 BEGIN(ENGINE)
 USING(physx)
 class CollisionCallback;
+class GameObject;
 class PhysicsSystem final : public Object
 {
 	DECLARE_SINGLETON(PhysicsSystem)
+public:	
+	typedef struct tagCollisionPair
+	{
+		bool						bTrigger;
+		physx::PxPairFlag::Enum		ePairFlag;
+		std::weak_ptr<GameObject>	pFirst;
+		std::weak_ptr<GameObject>	pSecond;
+	}COLLISIONPAIR, * LPCOLLISIONPAIR;
+
 private:
 	PxFoundation* m_pFoundation;
 	PxDefaultAllocator		m_Allocator;
@@ -33,6 +43,8 @@ private:
 	//std::vector<PxActor*>	m_vecRemove;
 	//std::vector<PxActor*>	m_vecRelease;
 
+	std::list<COLLISIONPAIR> m_listCallback;
+
 private:
 	explicit PhysicsSystem();
 	virtual ~PhysicsSystem() = default;
@@ -49,6 +61,7 @@ public:
 	void AddActor(const UINT _nSceneID, physx::PxActor& _rActor);
 	void RemoveActor(const UINT _nSceneID, physx::PxActor& _rActor);
 	
+	void AddCallbackPair(const COLLISIONPAIR _tCollsionPair);
 	PxPhysics*	GetPxPhysics();
 	PxMaterial* GetDefaultMaterial();
 	PxCooking*	GetCooking();

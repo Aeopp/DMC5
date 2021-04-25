@@ -10,6 +10,8 @@ Buster_Arm::Buster_Arm()
 	:m_bIsRender(false)
 {
 	m_nTag = TAG_BusterArm_Right;
+
+	m_BattleInfo.iAttack = 20;
 }
 
 void Buster_Arm::Free()
@@ -141,6 +143,7 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case Monster101:
 		break;
 	case Monster0000:
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM0000_BUSTER_START);
 		break;
 	case Monster5000:
 		break;

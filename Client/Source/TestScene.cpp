@@ -13,6 +13,7 @@
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
+#include "Em1000.h"
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
@@ -48,12 +49,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<MainCamera>();
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
-	//AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
 	//AddGameObject<Em100>();
-
+	AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
 	LoadMap();
@@ -71,7 +73,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<DashImpact>();
 
 
-
+	
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
@@ -79,9 +81,8 @@ HRESULT TestScene::LoadScene()
 	_Renderer->ao = 0.01f; 
 	_Renderer->SkyIntencity = 0.111f;
 	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
+	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 
 	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
-	_Renderer->SoftParticleDepthScale = 1.f;
 
 	// TempMap 안개
 	if (auto pSmoke = AddGameObject<Smoke>().lock();

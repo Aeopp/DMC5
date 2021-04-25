@@ -25,6 +25,7 @@ enum ATTACKTYPE
 	Attack_Down,
 	Attack_Stun,
 	Attack_KnocBack, //뒹구르르
+	Attack_Homerun,  //진짜 홈런
 	Attack_Hard, //으으윽
 	Attack_Air_Start, //올라가기 시작
 	Attack_Air,	//올라가있을때

@@ -25,4 +25,7 @@ void Monster::RenderReady()
 	}
 }
 
-
+void Monster::Set_Snatch(bool _bSnatch)
+{
+	m_bSnatch = _bSnatch;
+}

@@ -34,6 +34,7 @@ enum GAMEOBJECTTAG
 	Monster101,
 	Monster0000,
 	Monster5000,
+	Monster1000,
 	MonsterWeapon,
 	UI_BtlPanel,
 	Eff_Glint,
@@ -47,6 +48,7 @@ enum GAMEOBJECTTAG
 	TAG_RedQueen,
 	TAG_BusterArm_Right,
 	TAG_WireArm,
+	TAG_WireArm_Grab,
 	Overture,
 	Tag_END
 };

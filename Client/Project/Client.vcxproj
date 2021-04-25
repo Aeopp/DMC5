@@ -162,6 +162,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
+    <ClInclude Include="..\Header\Em1000.h" />
+    <ClInclude Include="..\Header\Em1000Hand.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -202,6 +204,7 @@
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
+    <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -213,6 +216,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\Em1000.cpp" />
+    <ClCompile Include="..\Source\Em1000Hand.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
@@ -253,6 +258,7 @@
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
+    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
