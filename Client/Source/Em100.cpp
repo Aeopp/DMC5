@@ -240,7 +240,6 @@ void Em100::State_Change(const float _fDeltaTime)
 					m_eState = Hit_End_Back;
 				m_bDown = true;
 			}
-
 		}
 	case Em100::Hit_Back:
 		break;
@@ -927,7 +926,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		/*if (_BattleInfo.eAttackType == Attack_KnocBack)
 		{
 			m_eState = Hit_KnocBack;
-			m_bHit = true;
+			m_bHit = true;wsA
 		}
 		else
 		{

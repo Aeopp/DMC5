@@ -13,6 +13,7 @@
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
+#include "Em1000.h"
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
@@ -53,13 +54,13 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em100>();
+	AddGameObject<Em0000>();
 
 	//AddGameObject<Car>();
 
-	LoadMap();
-	AddGameObject<TempMap>();
-	AddGameObject<Smoke>().lock()->PlayStart();
+	//LoadMap();
+	//AddGameObject<TempMap>();
+	//AddGameObject<Smoke>().lock()->PlayStart();
 
 
 	//AddGameObject<Glint>();
@@ -72,7 +73,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<DashImpact>();
 
 
-
+	
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");

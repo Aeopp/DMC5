@@ -1,66 +1,66 @@
-#ifndef Em0000_h__
-#define Em0000_h__
+#ifndef Em1000_h__
+#define Em1000_h__
 
 #include "Monster.h"
 
-class Em0000Weapon;
-class Nero;
+
 class RedQueen;
-class Em0000 final : public Monster
+class Nero;
+class Em1000 final : public Monster
 {
 private:
-	enum Em0000_State
+	enum Em1000_State
 	{
-		Attack_1,
-		Attack_2,
+		Air_End,
+		Air_Loop,
+		Air_Start,
+		Attack_A,
+		Attack_D,
 		Attack_Hard,
-		Buster_End,
-		Buster_Start,
 		Dead,
-		Guard_End,
-		Guard_Hit1,
-		Guard_Hit2,
-		Guard_Loop,
-		Guard_Start,
+		Hit_Air,
 		Hit_Back,
+		Hit_End_Front,
+		Hit_End_Back,
+		Hit_Finish,
 		Hit_Front,
 		Hit_L,
 		Hit_R,
 		Hit_KnocBack,
+		Hit_Air_Start,
+		Hit_Air_Loop,
+		Hit_Air_End,
+		Walk_Front_End,
+		Walk_Front_Loop,
+		Walk_Front_Start,
+		Walk_Left_End,
+		Walk_Left_Loop,
+		Walk_Left_Start,
+		Walk_Right_Stop,
+		Walk_Right_Loop,
+		Walk_Right_Start,
+		Idle,
+		Idle2,
+		Idle3,
+		Idle4,		
 		Hit_Buster_Start,
 		Hit_Buster_Loop,
 		Hit_Buster_End,
-		Hit_End_Front,
-		Hit_End_Back,
-		Hit_Air_Start,
-		Hit_Air_Loop,
-		Lie_Getup,//뒤로넘어졌을떄 일어나기
-		Prone_Getup, // 앞으로넘어졌을때 일어나기
-		Move_Front_End,
-		Move_Front_Loop,
-		Move_Front_Start,
-		Step_Back,
-		Stun_End,
-		Stun_Start,
-		idle,
-		Snatch_Start,
-		Snatch_End,
+		Downword_Down_StandUp,
 		Downword_Damage,
 		State_END
 	};
 
 private:
-	explicit Em0000() = default;
-	virtual ~Em0000() = default;
+	explicit Em1000() = default;
+	virtual ~Em1000() = default;
 
 	virtual void Free() override;
 	virtual std::string GetName() override;
 
 public:
-	static Em0000* Create();
+	static Em1000* Create();
 public:
-	
-
 	virtual void Fight(const float _fDeltaTime)override;
 	virtual void State_Change(const float _fDeltaTime)override;
 	virtual void Skill_CoolTime(const float _fDeltaTime)override;
@@ -77,6 +77,9 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -85,17 +88,15 @@ public:
 	void RenderInit();
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle() override;
-public:
-	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
-
+	virtual void Update_Angle(const float _fDeltaTime, bool _bTest = false);
+	virtual void Update_Angle()override;
 private:
 	//몬스터 상태
-	Em0000_State	m_eState =State_END;		
-	//TestPlayer 받아옴.
-	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<Nero>				 m_pPlayer;
-	std::weak_ptr<RedQueen>			 m_pRedQueen;
+	Em1000_State	m_eState =State_END;		
+	//Player 받아옴.
+	std::weak_ptr<Nero>					m_pPlayer;
+	std::weak_ptr<ENGINE::Transform>	m_pPlayerTrans;
+	std::weak_ptr<RedQueen>				m_pRedQueen;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;
@@ -104,23 +105,24 @@ private:
 	bool		m_bAttack = false;	
 	float		m_fAttackTime = 0.f;
 
-	//잠깐, 막기!
-	bool		m_bGuard = false;
-	float		m_fGuardTime = 0.f;
+	bool		m_bHardAttack = false;
+	float		m_fHardAttackTime = 0.f;
 
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
-	
-	weak_ptr<Em0000Weapon>    m_pWeapon;
+
 	weak_ptr<CapsuleCollider> m_pCollider;
+
+	float		m_fAngleTime = 0.f;
 
 
 	//////////버스터 용////////////////
-	Matrix* m_pPlayerBone;
+	Matrix*								  m_pPlayerBone;
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
 	////////////////
+
 };
 
-#endif // Em0000_h__
+#endif // Em1000_h__

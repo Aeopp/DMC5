@@ -1,0 +1,397 @@
+{
+    "AnimationData": {
+        "RootMotion_DeltaFactor": 1.0,
+        "Offset Euler Yaw": 0.0,
+        "Offset Euler Pitch": 0.0,
+        "Offset Euler Roll": 0.0,
+        "RootMotion_RotationName": "root",
+        "RootMotion_TransitionName": "root",
+        "AnimInfoTable": [
+            {
+                "Name": "Attack_1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Attack_Hard",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Back_Step",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blow_Up",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blow_Up_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blow_Up_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blow_off_Striaght_Line_Front_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blow_off_Striaght_Line_Front_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Back2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Back_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Back_Landing2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Back_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Back_Under",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Driling",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Driling_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Driling_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Front",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Front_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Front_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Left",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Right",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Up",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Up_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Up_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Up_Under",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Wall_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Wall_Back_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Wall_Front",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Blown_Wall_Front_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Buster_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Buster_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Buster_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Buster_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Death_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Death_Front",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Death_Left",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Death_Right",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Enter_Air_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Enter_Air_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Enter_Air_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Enter_Ground",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Guard_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Guard_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Guard_Hit1",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Guard_Hit2",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Guard_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Guard_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hir_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hir_Air_Under",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hir_Back",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hir_Front",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hir_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Hir_R",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Idle",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Lie_Death",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Lie_Down",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Lie_Getup",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Lie_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Move_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Prone_Death",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Prone_Down",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Prone_Getup",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Prone_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Repell",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Slam_Damage",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Slam_Damage_Bound",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Slam_Damage_Bound_Lie",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Slam_Damage_Landing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Slam_Damage_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Snatch_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Snatch_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Stun",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "Stun_Revive",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            }
+        ]
+    }
+}
