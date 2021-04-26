@@ -87,7 +87,7 @@ HRESULT TestScene::LoadScene()
 	{
 		pSmoke->SetScale(0.3f);
 		pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
-		pSmoke->SetPosition(Vector3(-10.f, -6.f, 30.f));
+		pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
 		pSmoke->PlayStart(10.f);
 	}
 	if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -95,7 +95,7 @@ HRESULT TestScene::LoadScene()
 	{
 		pSmoke->SetScale(0.3f);
 		pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
-		pSmoke->SetPosition(Vector3(30.f, -6.f, 10.f));
+		pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
 		pSmoke->PlayStart(10.f);
 	}
 	if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -103,7 +103,7 @@ HRESULT TestScene::LoadScene()
 	{
 		pSmoke->SetScale(0.3f);
 		pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
-		pSmoke->SetPosition(Vector3(10.f, -6.f, -25.f));
+		pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
 		pSmoke->PlayStart(10.f);
 	}
 	if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -111,7 +111,7 @@ HRESULT TestScene::LoadScene()
 	{
 		pSmoke->SetScale(0.3f);
 		pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
-		pSmoke->SetPosition(Vector3(-20.f, -6.f, -30.f));
+		pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
 		pSmoke->PlayStart(10.f);
 	}
 
