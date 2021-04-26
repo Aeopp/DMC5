@@ -56,8 +56,52 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
+	
+	for (UINT i = 0; i < 3; ++i)
+	{
+		weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
+		pEm100.lock()->SetActive(false);
+		m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
+	}
+
 	LoadMap();
 	AddGameObject<TempMap>();
+
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.015f);
+		ptr->SetRotation(Vector3(0.f, 262.286f, 0.f));
+		ptr->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+		ptr->PlayStart();
+	}
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.009f);
+		ptr->SetRotation(Vector3(0.f, 210.909f, 0.f));
+		ptr->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
+		//ptr->SetActive(false);
+		//ptr->PlayStart();
+	}
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.025f);
+		ptr->SetRotation(Vector3(0.f, 339.429f, 0.f));
+		ptr->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
+		//ptr->SetActive(false);
+		//ptr->PlayStart();
+	}
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.016f);
+		ptr->SetRotation(Vector3(0.f, 25.714f, 0.f));
+		ptr->SetPosition(Vector3(1.429f, 1.429f, 0.f));
+		//ptr->SetActive(false);
+		//ptr->PlayStart();
+	}
 
 	/*AddGameObject<Glint>();
 	AddGameObject<OvertureHand>();
@@ -78,7 +122,7 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f  }; 
-	_Renderer->SoftParticleDepthScale = 1.f;
+	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f;
 
 	// Stage2 안개
@@ -142,6 +186,44 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
+
+	if (Input::GetKeyDown(DIK_NUMPAD9))
+	{
+		for (UINT i = 0; i < m_vecEm100.size(); ++i)
+		{
+			if (m_vecEm100[i].expired())
+				continue;
+			if (m_vecEm100[i].lock()->IsActive())
+				continue;
+			
+			m_vecEm100[i].lock()->SetActive(true);
+			break;
+		}
+	}
+
+	if (Input::GetKeyDown(DIK_NUMPAD1))
+	{
+		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
+		for (auto& obj : listQliphoth)
+		{
+			//obj.lock()->SetActive(true);
+			// + 몬스터도 이때 중앙에 소환
+			obj.lock()->PlayStart();
+		}
+
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
+	}
+	if (Input::GetKeyDown(DIK_NUMPAD2))
+	{
+		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
+		for (auto& obj : listQliphoth)
+		{
+			//obj.lock()->SetActive(false);
+			// + 몬스터도 이때 중앙에 소환
+			obj.lock()->Reset();
+		}
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
+	}
 
 	return S_OK;
 }
