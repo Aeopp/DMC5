@@ -243,7 +243,8 @@ public:
 		Dir_Front,
 		Dir_Back,
 		Dir_Left,
-		Dir_Right
+		Dir_Right,
+		Dir_Front_Down
 	};
 
 	enum EffDircetion

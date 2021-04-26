@@ -227,6 +227,7 @@ UINT Nero::Update(const float _fDeltaTime)
 		m_pFSM->UpdateFSM(_fDeltaTime);
 
 	auto [Scale,Rot,Pos] =m_pMesh->Update(_fDeltaTime);
+	Pos.y = 0.f;
 
 	vAccumlatonDegree += Transform::QuaternionToEuler(Rot);
 
@@ -244,7 +245,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	else
 		SetOffLockOnMonster();
 
-
+	//테스트
+	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
 	return 0;
 }
 
@@ -267,6 +269,8 @@ void Nero::OnDisable()
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iHp;
+	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Front:
@@ -585,6 +589,13 @@ void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
 	case Nero::Dir_Left:
 		break;
 	case Nero::Dir_Right:
+		break;
+	case Nero::Dir_Front_Down:
+	{
+		Vector3 vFrontDownDir = m_pTransform.lock()->GetLook() * -1.f;
+		vFrontDownDir.y = -0.5f;
+		m_pCollider.lock()->AddForce(vFrontDownDir * _fPower);
+	}
 		break;
 	default:
 		break;

@@ -48,7 +48,7 @@ HRESULT Em0000Weapon::Ready()
 
 
 	m_pTransform = GetComponent<ENGINE::Transform>();
-
+	m_BattleInfo.iAttack = 10;
 
 
 
