@@ -8,6 +8,8 @@
 #include "Em0000_Weapon.h"
 #include "Nero.h"
 #include "RedQueen.h"
+#include "Liquid.h"
+#include "AppearGroundMonster.h"
 
 void Em0000::Free()
 {
@@ -402,8 +404,22 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = Prone_Getup;
 		}
 		break;
-	default:
+	case Em0000::Enter_Ground:
+		if (m_bEnterGround == false)
+		{
+			m_pMesh->PlayAnimation("Enter_Ground", false, {}, 1.f, 20.f, true);
+
+			Update_Angle();
+			Set_Rotate();
+			m_pAppear.lock()->PlayStart();
+			m_pAppear.lock()->SetPosition(m_pTransform.lock()->GetPosition());
+
+			m_bEnterGround = true;
+		}
+		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+			m_eState = idle;
 		break;
+
 	}
 }
 
@@ -434,7 +450,7 @@ HRESULT Em0000::Ready()
 
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
-	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
+	m_pTransform.lock()->SetPosition({ 1.5f, 0.f, 3.f });
 
 	m_fPower = 50.f;
 	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
@@ -447,7 +463,6 @@ HRESULT Em0000::Awake()
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
-
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
@@ -467,10 +482,17 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetHeight(0.17f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.03f });
 
-
 	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Waist");
 	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_Hand");
 	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("WeaponConst");
+
+	//몬스터 초기상태 Enter_Ground
+	m_eState = Enter_Ground;
+
+	////////////
+	m_pBlood = AddGameObject<Liquid>();
+	m_pAppear = AddGameObject<AppearGroundMonster>();
+	///////////
 	return S_OK;
 }
 
@@ -499,30 +521,17 @@ UINT Em0000::Update(const float _fDeltaTime)
 	{
 		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
-	//플레이어가 사라졌는지 판단
-	/*if (false == m_pPlayer.expired())
-	{
-		std::cout << "Player Dead" << std::endl;
-	}*/
 
 	if (m_bHit)
 		m_bIng = true;
 
-
-
-	if (Input::GetKeyDown(DIK_T))
-	{
-		if (m_bTest == true)
-			m_bTest = false;
-		else
-			m_bTest = true;
-	}
-
-	if (m_bTest == true)
-	{
+			
+	if (m_bEnterGround)
 		Fight(_fDeltaTime);
-		State_Change(_fDeltaTime);
-	}
+
+	State_Change(_fDeltaTime);
+
+
 
 	if (m_eState == Hit_Buster_Start)
 	{
@@ -574,6 +583,24 @@ void Em0000::OnDisable()
 void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+
+	//////////////////////////
+	if (!m_pBlood.expired())
+	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetScale(0.008f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
+	///////////////////////////////////////////////////
+
 
 	if (m_bDown == false)
 	{
@@ -876,8 +903,7 @@ void Em0000::RenderInit()
 
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
-	//몬스터 초기상태 Idle
-	m_pMesh->PlayAnimation("Idle", true);
+	
 }
 
 void Em0000::Rotate(const float _fDeltaTime)

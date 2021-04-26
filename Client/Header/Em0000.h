@@ -44,6 +44,7 @@ private:
 		Stun_Start,
 		idle,
 		Downword_Damage,
+		Enter_Ground,
 		State_END
 	};
 
@@ -123,6 +124,9 @@ private:
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
 	////////////////
+
+	weak_ptr<class Liquid>				  m_pBlood;
+	weak_ptr<class AppearGroundMonster>   m_pAppear;
 };
 
 #endif // Em0000_h__

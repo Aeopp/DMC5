@@ -131,7 +131,7 @@ private:
 	////////////////
 
 
-	/*--- «« ¿Ã∆Â∆Æ ---*/
+	/*---¿Ã∆Â∆Æ ---*/
 	weak_ptr<class Liquid> m_pBlood;
 	weak_ptr<class AppearGroundMonster>   m_pAppear;
 	/*----------------*/
