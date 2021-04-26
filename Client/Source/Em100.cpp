@@ -11,6 +11,7 @@
 #include "RedQueen.h"
 #include "NeroFSM.h"
 #include "Liquid.h"
+#include "AppearGroundMonster.h"
 
 void Em100::Free()
 {
@@ -582,6 +583,21 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 		}
 		break;
+	case Em100::Enter_Ground:
+		if (m_bEnterGround == false)
+		{
+			m_pMesh->PlayAnimation("Enter_Ground", false, {}, 1.f, 20.f, true);
+
+			Update_Angle();
+			Set_Rotate();
+			m_pAppear.lock()->PlayStart();
+			m_pAppear.lock()->SetPosition(m_pTransform.lock()->GetPosition());
+
+			m_bEnterGround = true;
+		}
+		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+			m_eState = Idle;
+		break;
 	}
 
 
@@ -628,7 +644,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 200;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -3.5f, 0.f, 3.f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -682,10 +698,14 @@ HRESULT Em100::Awake()
 
 	
 	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_MiddleF1");
+
+	//몬스터 초기상태 Idle
+	m_eState = Enter_Ground;
 	
 
 	/*--- 피 이펙트 ---*/
 	m_pBlood = AddGameObject<Liquid>();
+	m_pAppear = AddGameObject<AppearGroundMonster>();
 	/*----------------*/
 
 	return S_OK;
@@ -738,23 +758,15 @@ UINT Em100::Update(const float _fDeltaTime)
 
 
 
-	if (Input::GetKeyDown(DIK_T))
+	if (m_bEnterGround == true)
 	{
-		if (m_bTest == true)
-			m_bTest = false;
-		else
-			m_bTest = true;
-	}
-
-	if (m_bTest == true)
-	{
-		if(!m_bHit)
+		if (!m_bHit)
 			Skill_CoolTime(_fDeltaTime);
 		Fight(_fDeltaTime);
-		State_Change(_fDeltaTime);
 	}
+	State_Change(_fDeltaTime);
 
-	
+
 	if (m_eState == Hit_Buster_Start)
 	{
 		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
@@ -1158,8 +1170,7 @@ void Em100::RenderInit()
 
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
-	//몬스터 초기상태 Idle
-	m_pMesh->PlayAnimation("Idle", true);
+	
 }
 
 void Em100::Rotate(const float _fDeltaTime)
