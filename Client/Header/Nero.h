@@ -19,6 +19,7 @@ class GT_Overture;
 class GT_Rockman;
 class Monster;
 class Effect;
+class Liquid;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -243,7 +244,8 @@ public:
 		Dir_Front,
 		Dir_Back,
 		Dir_Left,
-		Dir_Right
+		Dir_Right,
+		Dir_Front_Down
 	};
 
 	enum EffDircetion
@@ -401,6 +403,7 @@ private:
 	std::weak_ptr<GT_Rockman>		m_pRockman;
 	std::weak_ptr<Effect>			m_pEffOverture;
 	std::weak_ptr<Monster>			m_pTargetMonster;
+	std::weak_ptr<Liquid>		m_pBlood;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

@@ -23,6 +23,8 @@ HRESULT Em100Hand::Ready()
 	Unit::Ready();
 	RenderInit();
 
+	m_BattleInfo.iAttack = 5;
+
 	m_nTag = MonsterWeapon;
 	
 

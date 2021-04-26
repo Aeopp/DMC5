@@ -230,12 +230,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		break;
 	case Em100::Dead:
 		if (m_bIng == true)
-		{
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Death_Front " && m_pMesh->IsAnimationEnd())
-				SetActive(false);
-		}
 		break;
 	case Em100::Hit_Air:
 		break;
@@ -654,8 +649,8 @@ HRESULT Em100::Ready()
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster100;
 
-	m_BattleInfo.iMaxHp = 200;
-	m_BattleInfo.iHp = 200;
+	m_BattleInfo.iMaxHp = 300;
+	m_BattleInfo.iHp = 300;
 	m_BattleInfo.iAttack = 20;
 
 	m_pTransform.lock()->SetPosition({ -1.5f, 0.f, 3.f });
@@ -797,6 +792,10 @@ UINT Em100::Update(const float _fDeltaTime)
 		m_eState = Dead;
 
 
+	if (m_eState == Dead
+		&& m_pMesh->IsAnimationEnd())
+		SetActive(false);
+
 	return 0;
 }
 
@@ -827,11 +826,15 @@ void Em100::Editor()
 void Em100::OnEnable()
 {
 	Unit::OnEnable();
+	_RenderProperty.bRender = true;
 }
 
 void Em100::OnDisable()
 {
 	Unit::OnDisable();
+
+	_RenderProperty.bRender = false;
+
 }
 
 void Em100::Hit(BT_INFO _BattleInfo, void* pArg)

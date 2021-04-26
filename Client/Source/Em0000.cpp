@@ -162,12 +162,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 		break;
 	case Em0000::Dead:
 		if (m_bIng == true)
-		{
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Death_Front " && m_pMesh->IsAnimationEnd())
-				SetActive(false);
-		}
 		break;
 		break;
 	case Em0000::Guard_End:
@@ -461,7 +456,7 @@ HRESULT Em0000::Ready()
 
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
-	m_pTransform.lock()->SetPosition({ 1.5f, 0.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -3.5f, 0.f, 3.f });
 
 	m_fPower = 50.f;
 	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
@@ -565,6 +560,11 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 	if (m_BattleInfo.iHp <= 0)
 		m_eState = Dead;
+
+	if (m_eState == Dead
+		&& m_pMesh->IsAnimationEnd())
+		SetActive(false);
+
 	return 0;
 }
 
@@ -588,11 +588,15 @@ void Em0000::Editor()
 void Em0000::OnEnable()
 {
 	Unit::OnEnable();
+
+	_RenderProperty.bRender = true;
 }
 
 void Em0000::OnDisable()
 {
 	Unit::OnDisable();
+
+	_RenderProperty.bRender = false;
 }
 
 void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)

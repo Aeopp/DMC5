@@ -16,6 +16,7 @@
 #include "GT_Rockman.h"
 #include "Monster.h"
 #include "OvertureHand.h"
+#include "Liquid.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -158,7 +159,8 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-3.5f, 0.f, 5.5f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 4.f, -5.02f});
+
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -171,6 +173,7 @@ HRESULT Nero::Ready()
 	m_pOverture = AddGameObject<GT_Overture>();
 	m_pEffOverture = AddGameObject<OvertureHand>();
 	//m_pRockman = AddGameObject<GT_Rockman>();
+	m_pBlood = AddGameObject<Liquid>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -230,6 +233,7 @@ UINT Nero::Update(const float _fDeltaTime)
 		m_pFSM->UpdateFSM(_fDeltaTime);
 
 	auto [Scale,Rot,Pos] =m_pMesh->Update(_fDeltaTime);
+	Pos.y = 0.f;
 
 	vAccumlatonDegree += Transform::QuaternionToEuler(Rot);
 
@@ -247,7 +251,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	else
 		SetOffLockOnMonster();
 
-
+	//테스트
+	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
 	return 0;
 }
 
@@ -269,7 +274,10 @@ void Nero::OnDisable()
 
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
-	m_BattleInfo.iHp -= _BattleInfo.iHp;
+	m_pBlood.lock()->PlayStart(40.f);
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Front:
@@ -589,6 +597,13 @@ void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
 		break;
 	case Nero::Dir_Right:
 		break;
+	case Nero::Dir_Front_Down:
+	{
+		Vector3 vFrontDownDir = m_pTransform.lock()->GetLook() * -1.f;
+		vFrontDownDir.y = -0.5f;
+		m_pCollider.lock()->AddForce(vFrontDownDir * _fPower);
+	}
+		break;
 	default:
 		break;
 	}
@@ -610,7 +625,7 @@ void Nero::SetLockOnMonster()
 
 	for (auto& pMonster : MonsterList)
 	{
-		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		Vector3 Direction = pMonster.lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 		float Temp = D3DXVec3Length(&Direction);
 		//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
 		if (Distance >= Temp)
@@ -647,7 +662,7 @@ void Nero::CheckAutoRotate()
 
 	for (auto& pMonster : MonsterList)
 	{
-		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		Vector3 Direction = pMonster.lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 		float Temp = D3DXVec3Length(&Direction);
 		if (Distance >= Temp)
 		{
@@ -691,11 +706,11 @@ bool Nero::CheckIsGround()
 void Nero::Locking()
 {
 	SetLockOnMonster();
-	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	if (m_pTargetMonster.expired())
 		return;
+	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	m_pBtlPanel.lock()->SetTargetCursor(
-		m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition(),
+		m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Waist"),
 		fHpRatio);
 	
 	

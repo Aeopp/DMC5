@@ -1031,9 +1031,11 @@ HRESULT Jump_Basic::StateEnter()
 		break;
 	case Nero::Front:
 		m_pNero.lock()->ChangeAnimation("Jump_Front", false, Nero::ANI_JUMP_FRONT);
+		m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
 		break;
 	case Nero::Back:
 		m_pNero.lock()->ChangeAnimation("Jump_Back", false, Nero::ANI_JUMP_BACK);
+		m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
 		break;
 	default:
 		break;
@@ -1136,6 +1138,9 @@ HRESULT Jump_Twice::StateEnter()
 	default:
 		break;
 	}
+	NeroState::ActiveGravity(false);
+	NeroState::ActiveGravity(true);
+	m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
 	return S_OK;
 }
 
@@ -1190,6 +1195,7 @@ HRESULT Jump_Front_Landing::StateEnter()
 	default:
 		break;
 	}
+	m_pNero.lock()->Reset_JumpCount();
 
 	return S_OK;
 }
@@ -5280,6 +5286,7 @@ HRESULT Skill_Streak_Ex3::StateEnter()
 HRESULT Skill_Streak_Ex3::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->SetAddForce_Dir(Nero::Dir_Front, 300.f);
 	return S_OK;
 }
 
@@ -5517,7 +5524,8 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateEnter()
 HRESULT Skill_Streak_Ex3_Roll_End::StateExit()
 {
 	NeroState::StateExit();
-
+	NeroState::ActiveGravity(false);
+	NeroState::ActiveGravity(true);
 	return S_OK;
 }
 
@@ -7683,7 +7691,7 @@ HRESULT Hr_Air::StateEnter()
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
 	m_bActiveColl_RedQueen = false;
 	ActiveColl_RedQueen(true);
-
+	m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
 
 	return S_OK;
 }
@@ -7852,7 +7860,7 @@ HRESULT Hr_Ex_Air_Roll_Start::StateExit()
 	NeroState::StateExit();
 
 	//ActiveColl_RedQueen(false);
-
+	m_pNero.lock()->SetAddForce({ 0.f,220.f,0.f });
 	return S_OK;
 }
 
@@ -8158,7 +8166,7 @@ HRESULT Air_Dive_Slash_Start::StateExit()
 	NeroState::StateExit();
 
 	ActiveColl_RedQueen(true);
-
+	m_pNero.lock()->SetAddForce_Dir(Nero::Dir_Front_Down, 200.f);
 
 	return S_OK;
 }
@@ -8210,6 +8218,7 @@ HRESULT Air_Dive_Slash_Loop::StateExit()
 {
 	NeroState::StateExit();
 	m_pNero.lock()->ContinueAnimiation();
+
 	return S_OK;
 }
 
@@ -8265,7 +8274,8 @@ HRESULT Air_Dive_Slash_End::StateEnter()
 HRESULT Air_Dive_Slash_End::StateExit()
 {
 	NeroState::StateExit();
-
+	NeroState::ActiveGravity(false);
+	NeroState::ActiveGravity(true);
 	return S_OK;
 }
 
