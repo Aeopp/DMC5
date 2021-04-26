@@ -5,6 +5,8 @@
 #include "RenderInterface.h"
 #include "SkeletonMesh.h"
 
+class Nero;
+class RedQueen;
 class Monster : public Unit,
 				public ENGINE::RenderInterface
 {
@@ -41,6 +43,7 @@ public:
 
 public:
 	void	Set_Snatch(bool _bSnatch);
+	void	AddRankScore(float _fRankScore);
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
 	virtual void   Update_Angle() PURE;
@@ -61,6 +64,11 @@ protected:
 	/////////////////////////////
 	float		m_fPower = 0.f;
 	D3DXVECTOR3 m_vPower;
+
+	////////////Player//
+	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
+	std::weak_ptr<Nero>				 m_pPlayer;
+	std::weak_ptr<RedQueen>			 m_pRedQueen;
 };
 
 

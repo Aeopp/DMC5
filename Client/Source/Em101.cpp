@@ -4,8 +4,8 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-#include "TestObject.h"
 #include <filesystem>
+#include "Nero.h"
 
 void Em101::Free()
 {
@@ -134,9 +134,8 @@ HRESULT Em101::Awake()
 {
 	Unit::Awake();
 
-	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-
 
 	return S_OK;
 }
@@ -172,11 +171,6 @@ UINT Em101::Update(const float _fDeltaTime)
 	{
 		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
-	//플레이어가 사라졌는지 판단
-	/*if (false == m_pPlayer.expired())
-	{
-		std::cout << "Player Dead" << std::endl;
-	}*/
 
 
 	
@@ -409,6 +403,7 @@ void Em101::Update_Angle()
 
 void Em101::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	AddRankScore(_BattleInfo.iAttack);
 }
 
 void Em101::Buster(BT_INFO _BattleInfo, void* pArg)

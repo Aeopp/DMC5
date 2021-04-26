@@ -5807,6 +5807,7 @@ HRESULT Overture_Shoot::StateEnter()
 HRESULT Overture_Shoot::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_Overture, false);
 	return S_OK;
 }
 

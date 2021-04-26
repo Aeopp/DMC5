@@ -79,6 +79,9 @@ void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
 	case Nero::NeroCom_RedQueen:
 		m_pRedQueen.lock()->SetAttType(_eAttDir);
 		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->Set_AttackType(_eAttDir);
+		break;
 	case Nero::NeroCom_Cerberos:
 		break;
 	case Nero::NeroCom_End:
@@ -688,12 +691,12 @@ bool Nero::CheckIsGround()
 void Nero::Locking()
 {
 	SetLockOnMonster();
-
+	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	if (m_pTargetMonster.expired())
 		return;
 	m_pBtlPanel.lock()->SetTargetCursor(
 		m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition(),
-		m_pTargetMonster.lock()->Get_BattleInfo().iHp);
+		fHpRatio);
 	
 	
 }
