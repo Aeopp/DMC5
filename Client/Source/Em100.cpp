@@ -219,12 +219,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		break;
 	case Em100::Dead:
 		if (m_bIng == true)
-		{
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Death_Front " && m_pMesh->IsAnimationEnd())
-				SetActive(false);
-		}
 		break;
 	case Em100::Hit_Air:
 		break;
@@ -786,6 +781,10 @@ UINT Em100::Update(const float _fDeltaTime)
 		m_eState = Dead;
 
 
+	if (m_eState == Dead
+		&& m_pMesh->IsAnimationEnd())
+		SetActive(false);
+
 	return 0;
 }
 
@@ -816,11 +815,15 @@ void Em100::Editor()
 void Em100::OnEnable()
 {
 	Unit::OnEnable();
+	_RenderProperty.bRender = true;
 }
 
 void Em100::OnDisable()
 {
 	Unit::OnDisable();
+
+	_RenderProperty.bRender = false;
+
 }
 
 void Em100::Hit(BT_INFO _BattleInfo, void* pArg)

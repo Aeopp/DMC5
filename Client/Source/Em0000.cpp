@@ -588,11 +588,15 @@ void Em0000::Editor()
 void Em0000::OnEnable()
 {
 	Unit::OnEnable();
+
+	_RenderProperty.bRender = true;
 }
 
 void Em0000::OnDisable()
 {
 	Unit::OnDisable();
+
+	_RenderProperty.bRender = false;
 }
 
 void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)

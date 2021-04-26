@@ -158,7 +158,8 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-3.5f, 0.f, 5.5f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 1.f, -5.02f});
+
 	PushEditEntity(m_pTransform.lock().get());
 
 	m_pRedQueen = AddGameObject<RedQueen>();
@@ -702,9 +703,9 @@ bool Nero::CheckIsGround()
 void Nero::Locking()
 {
 	SetLockOnMonster();
-	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	if (m_pTargetMonster.expired())
 		return;
+	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	m_pBtlPanel.lock()->SetTargetCursor(
 		m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition(),
 		fHpRatio);
