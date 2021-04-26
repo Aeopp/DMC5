@@ -638,8 +638,8 @@ HRESULT Em100::Ready()
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster100;
 
-	m_BattleInfo.iMaxHp = 200;
-	m_BattleInfo.iHp = 200;
+	m_BattleInfo.iMaxHp = 300;
+	m_BattleInfo.iHp = 300;
 	m_BattleInfo.iAttack = 20;
 
 	m_pTransform.lock()->SetPosition({ -1.5f, 0.f, 3.f });

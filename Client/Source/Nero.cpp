@@ -159,7 +159,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 1.f, -5.02f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 4.f, -5.02f});
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -625,7 +625,7 @@ void Nero::SetLockOnMonster()
 
 	for (auto& pMonster : MonsterList)
 	{
-		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		Vector3 Direction = pMonster.lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 		float Temp = D3DXVec3Length(&Direction);
 		//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
 		if (Distance >= Temp)
@@ -662,7 +662,7 @@ void Nero::CheckAutoRotate()
 
 	for (auto& pMonster : MonsterList)
 	{
-		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		Vector3 Direction = pMonster.lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 		float Temp = D3DXVec3Length(&Direction);
 		if (Distance >= Temp)
 		{

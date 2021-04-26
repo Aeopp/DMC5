@@ -162,12 +162,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 		break;
 	case Em0000::Dead:
 		if (m_bIng == true)
-		{
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Death_Front " && m_pMesh->IsAnimationEnd())
-				SetActive(false);
-		}
 		break;
 		break;
 	case Em0000::Guard_End:
@@ -565,6 +560,11 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 	if (m_BattleInfo.iHp <= 0)
 		m_eState = Dead;
+
+	if (m_eState == Dead
+		&& m_pMesh->IsAnimationEnd())
+		SetActive(false);
+
 	return 0;
 }
 

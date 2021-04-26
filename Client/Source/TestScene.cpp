@@ -57,12 +57,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Car>();
 
 	
-	for (UINT i = 0; i < 3; ++i)
-	{
-		weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
-		pEm100.lock()->SetActive(false);
-		m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
-	}
+	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
+	pEm100.lock()->SetActive(false);
+	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
+
+	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+	pEm0000.lock()->SetActive(false);
+	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
 	LoadMap();
 	AddGameObject<TempMap>();
@@ -187,21 +188,9 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-	if (Input::GetKeyDown(DIK_NUMPAD9))
-	{
-		for (UINT i = 0; i < m_vecEm100.size(); ++i)
-		{
-			if (m_vecEm100[i].expired())
-				continue;
-			if (m_vecEm100[i].lock()->IsActive())
-				continue;
-			
-			m_vecEm100[i].lock()->SetActive(true);
-			break;
-		}
-	}
 
-	if (Input::GetKeyDown(DIK_NUMPAD1))
+
+	if (Input::GetKeyDown(DIK_NUMPAD2))
 	{
 		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
 		for (auto& obj : listQliphoth)
@@ -211,9 +200,16 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 			obj.lock()->PlayStart();
 		}
 
+		m_vecEm100[0].lock()->SetActive(true);
+		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
+
+		m_vecEm0000[0].lock()->SetActive(true);
+		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
+
+
 		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
-	if (Input::GetKeyDown(DIK_NUMPAD2))
+	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
 		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
 		for (auto& obj : listQliphoth)

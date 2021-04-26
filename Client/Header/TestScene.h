@@ -7,6 +7,7 @@ private:
 	physx::PxRigidStatic* pPlane;
 
 	vector<weak_ptr<GameObject>> m_vecEm100;
+	vector<weak_ptr<GameObject>> m_vecEm0000;
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;
