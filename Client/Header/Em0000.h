@@ -14,8 +14,6 @@ private:
 		Attack_1,
 		Attack_2,
 		Attack_Hard,
-		Buster_End,
-		Buster_Start,
 		Dead,
 		Guard_End,
 		Guard_Hit1,
@@ -46,6 +44,7 @@ private:
 		Stun_Start,
 		idle,
 		Downword_Damage,
+		Enter_Ground,
 		State_END
 	};
 
@@ -87,7 +86,8 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
-	void		Set_Rotate();
+	void		 Set_Rotate();
+	void		 Test();
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 
@@ -118,11 +118,15 @@ private:
 
 
 	//////////버스터 용////////////////
-	Matrix* m_pPlayerBone;
+	Matrix*								  m_pPlayerBone;
+	Matrix								  m_PlayerBone; // 월드
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
 	////////////////
+
+	weak_ptr<class Liquid>				  m_pBlood;
+	weak_ptr<class AppearGroundMonster>   m_pAppear;
 };
 
 #endif // Em0000_h__

@@ -10,6 +10,8 @@ Buster_Arm::Buster_Arm()
 	:m_bIsRender(false)
 {
 	m_nTag = TAG_BusterArm_Right;
+
+	m_BattleInfo.iAttack = 20;
 }
 
 void Buster_Arm::Free()

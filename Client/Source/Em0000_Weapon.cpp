@@ -218,4 +218,12 @@ void Em0000Weapon::RenderShadow(const DrawInfo& _Info)
 	};
 }
 
+void Em0000Weapon::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Em0000Weapon::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+}
+
 

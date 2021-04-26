@@ -212,8 +212,8 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
+    Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor + (lightColor *albedo * ao);
     
-    Lo = (kD * albedo / PI + specular) * lightFlux * lightColor * NdotL * ShadowFactor + (lightColor * ao);
     return Lo;
 }
 
@@ -309,7 +309,7 @@ in float3 wpos)
     
     float radius_att = saturate((lightRadius - distance) / lightRadius);
     
-    Lo = (kD * albedo / PI + specular) * lightFlux * radiance * radius_att* NdotL * ShadowFactor;
+    Lo = (kD * albedo / PI + specular) *lightColor * lightFlux * radiance * radius_att* NdotL * ShadowFactor;
     
     return Lo;
 };
@@ -531,8 +531,8 @@ void ps_deferred(
 {
     // 감마 보정은 Device 세팅을 조절해서 결정 !
     // 알베도 + 메탈
-    // 0.3 ^ (1 / 2.2) 감마 패킹 (높아짐)
-    // 0.3 ^ (2.2) 감마 언팩 (낮아짐 )  
+    // 0.3 ^ (1 / 2.2) 감마 패킹 ( 높아짐 )
+    // 0.3 ^ (2.2) 감마 언팩 ( 낮아짐 )  
     float4 albm = tex2D(albedo,  tex);
    float metal = saturate(pow(abs(albm.a) , abs(1.0 / 2.2)));
     

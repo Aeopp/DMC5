@@ -8,6 +8,8 @@
 #include "Em0000_Weapon.h"
 #include "Nero.h"
 #include "RedQueen.h"
+#include "Liquid.h"
+#include "AppearGroundMonster.h"
 
 void Em0000::Free()
 {
@@ -89,6 +91,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 {
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
+
+	D3DXVec3Normalize(&vDir, &vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float    fDot = D3DXVec3Dot(&vDir, &vLook);
 
@@ -103,11 +107,15 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
+			m_pWeapon.lock()->Set_Coll(true);
+			m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
+
+				m_pWeapon.lock()->Set_Coll(false);
 			}
 		}
 		break;
@@ -118,11 +126,16 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
+			m_pWeapon.lock()->Set_Coll(true);
+			m_pWeapon.lock()->Set_AttackType(Attack_Front);
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
+
+				m_pWeapon.lock()->Set_Coll(false);
 			}
 		}
 		break;
@@ -134,17 +147,17 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f, true);
 
+			m_pWeapon.lock()->Set_Coll(true);
+			m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.95f)
 			{
 				m_bIng = false;
 				m_bAttack = false;
 				m_eState = idle;
+
+				m_pWeapon.lock()->Set_Coll(false);
 			}
 		}
-		break;
-	case Em0000::Buster_End:
-		break;
-	case Em0000::Buster_Start:
 		break;
 	case Em0000::Dead:
 		break;
@@ -227,6 +240,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Blown_Front_Landing", false, {}, 1.f, 20.f, true);
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Front_Landing" && m_pMesh->IsAnimationEnd())
 				m_eState = Prone_Getup;
 		}
@@ -335,6 +350,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 		{
 			Update_Angle();
 			Set_Rotate();
+			m_bDown = false;
 			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
 
 			if (m_bSnatch == false)
@@ -344,6 +360,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Hit_Snatch_End:
 		if (m_bHit)
 		{
+			m_bDown = false;
 			Update_Angle();
 			Set_Rotate();
 			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
@@ -352,10 +369,57 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 		}
 		break;
-	case Em0000::State_END:
+	case Em0000::Hit_Buster_Start:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 20.f, true);
+
+			m_pCollider.lock()->SetTrigger(true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_START
+				&& m_pPlayer.lock()->IsAnimationEnd())
+			{
+
+				m_eState = Hit_Buster_End;
+
+				Vector3 vRot(0.f, 0.f, 0.f);
+				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vPos = m_pTransform.lock()->GetPosition();
+
+				m_pTransform.lock()->SetRotation(vRot);
+				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
+			}
+		}
 		break;
-	default:
+	case Em0000::Hit_Buster_End:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Buster_End", false, {}, 1.f, 20.f, true);
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_End" && m_pMesh->IsAnimationEnd())
+				m_eState = Prone_Getup;
+		}
 		break;
+	case Em0000::Enter_Ground:
+		if (m_bEnterGround == false)
+		{
+			m_pMesh->PlayAnimation("Enter_Ground", false, {}, 1.f, 20.f, true);
+
+			Update_Angle();
+			Set_Rotate();
+			m_pAppear.lock()->PlayStart();
+			m_pAppear.lock()->SetPosition(m_pTransform.lock()->GetPosition());
+
+			m_bEnterGround = true;
+		}
+		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+			m_eState = idle;
+		break;
+
 	}
 }
 
@@ -386,7 +450,7 @@ HRESULT Em0000::Ready()
 
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
-	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
+	m_pTransform.lock()->SetPosition({ 1.5f, 0.f, 3.f });
 
 	m_fPower = 50.f;
 	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
@@ -399,7 +463,6 @@ HRESULT Em0000::Awake()
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
-
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
@@ -418,6 +481,18 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetRadius(0.06f);
 	m_pCollider.lock()->SetHeight(0.17f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.03f });
+
+	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Waist");
+	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_Hand");
+	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("WeaponConst");
+
+	//몬스터 초기상태 Enter_Ground
+	m_eState = Enter_Ground;
+
+	////////////
+	m_pBlood = AddGameObject<Liquid>();
+	m_pAppear = AddGameObject<AppearGroundMonster>();
+	///////////
 	return S_OK;
 }
 
@@ -446,46 +521,35 @@ UINT Em0000::Update(const float _fDeltaTime)
 	{
 		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
-	//플레이어가 사라졌는지 판단
-	/*if (false == m_pPlayer.expired())
-	{
-		std::cout << "Player Dead" << std::endl;
-	}*/
 
 	if (m_bHit)
 		m_bIng = true;
 
-
-
-	if (Input::GetKeyDown(DIK_T))
-	{
-		if (m_bTest == true)
-			m_bTest = false;
-		else
-			m_bTest = true;
-	}
-
-	if (m_bTest == true)
-	{
+			
+	if (m_bEnterGround)
 		Fight(_fDeltaTime);
-		State_Change(_fDeltaTime);
-	}
+
+	State_Change(_fDeltaTime);
+
 
 
 	if (m_eState == Hit_Buster_Start)
 	{
 		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
 		m_Result = (*m_pPlayerBone * m_PlayerWorld);
-		m_pTransform.lock()->SetWorldMatrix(m_Result);
 
-		m_pCollider.lock()->SetRigid(false);
+		Matrix Mybone = *m_pMesh->GetToRootMatrixPtr("Hip");
+		Matrix BoneResult;
+
+		D3DXMatrixTranslation(&BoneResult, Mybone._41, Mybone._42, Mybone._43);
+		D3DXMatrixInverse(&BoneResult, nullptr, &BoneResult);
+
+		m_Result = BoneResult * m_Result;
+		
+		m_pTransform.lock()->SetWorldMatrix(m_Result);
 	}
 
-
-
 	Rotate(_fDeltaTime);
-
-
 	return 0;
 }
 
@@ -519,6 +583,24 @@ void Em0000::OnDisable()
 void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+
+	//////////////////////////
+	if (!m_pBlood.expired())
+	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetScale(0.008f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
+	///////////////////////////////////////////////////
+
 
 	if (m_bDown == false)
 	{
@@ -675,6 +757,14 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	m_bHit = true;
+	m_bDown = true;
+	m_pCollider.lock()->SetRigid(false);
+
+	m_eState = Hit_Buster_Start;
+	
 }
 
 void Em0000::Snatch(BT_INFO _BattleInfo, void* pArg)
@@ -813,8 +903,7 @@ void Em0000::RenderInit()
 
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
-	//몬스터 초기상태 Idle
-	m_pMesh->PlayAnimation("Idle", true);
+	
 }
 
 void Em0000::Rotate(const float _fDeltaTime)
@@ -872,6 +961,38 @@ void Em0000::Update_Angle()
 void Em0000::Set_Rotate()
 {
 	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fRadian), 0.f });
+}
+
+void Em0000::Test()
+{
+	Vector3 vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+	Vector3 vDir = vPlayerPos - vMyPos;
+	vDir.y = 0;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	float fRadian = acosf(fDot);
+
+	Vector3	vCross;
+	D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+	if (vCross.y < 0)
+		fRadian *= -1;
+
+	m_fRadian = fRadian;
+	m_fAccuangle = 0.f;
+
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
+
+	if (m_fRadian > 0)
+		m_fAngleSpeed = fabs(m_fAngleSpeed);
+	else
+		m_fAngleSpeed = -fabs(m_fAngleSpeed);
 }
 
 void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

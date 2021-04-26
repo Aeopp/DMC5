@@ -25,8 +25,6 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-
-
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -54,35 +52,67 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em100>();
-	//AddGameObject<Em0000>();
+	/*AddGameObject<Em100>();
+	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
 	//LoadMap();
-	AddGameObject<TempMap>();
-	//AddGameObject<Smoke>().lock()->PlayStart();
+	//AddGameObject<TempMap>();
 
-
-	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
-	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<QliphothBlock>();
-
+	/*AddGameObject<Glint>();
+	AddGameObject<OvertureHand>();
+	AddGameObject<Liquid>();
+	AddGameObject<QliphothBlock>();
+	AddGameObject<AppearGroundMonster>();*/
 	// 수정필요
 	//AddGameObject<DashImpact>();
-
-
 	
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.01f; 
-	_Renderer->SkyIntencity = 0.111f;
+	_Renderer->ao = 0.0005; 
+	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f ,0.f }; 
-	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
+	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f  }; 
+	_Renderer->SoftParticleDepthScale = 1.f;
+	_Renderer->SkyRotationSpeed = 1.5f;
+
+	// Stage2 안개
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
+		pSmoke->SetPosition(Vector3(-10.f, -6.f, 30.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
+		pSmoke->SetPosition(Vector3(30.f, -6.f, 10.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
+		pSmoke->SetPosition(Vector3(10.f, -6.f, -25.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
+		pSmoke->SetPosition(Vector3(-20.f, -6.f, -30.f));
+		pSmoke->PlayStart(10.f);
+	}
 
 	return S_OK;
 }
@@ -91,12 +121,12 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	//if (nullptr != pPlane)
-	//	return S_OK;
+	if (nullptr != pPlane)
+		return S_OK;
 
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
-	//Physics::AddActor(UniqueID, *pPlane);
+	Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
