@@ -26,9 +26,6 @@ HRESULT Em100Hand::Ready()
 	m_BattleInfo.iAttack = 5;
 
 	m_nTag = MonsterWeapon;
-
-	
-	m_nTag = GAMEOBJECTTAG::MonsterWeapon;
 	
 
 	return S_OK;
@@ -106,12 +103,8 @@ void Em100Hand::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-
 	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
-	{
-		if (m_pEm100.expired())
-			return;
-	}
+		m_bCollEnable = false;
 }
 
 void Em100Hand::RenderInit()

@@ -99,10 +99,6 @@ public:
 private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
-	//Player 받아옴.
-	std::weak_ptr<Nero>					m_pPlayer;
-	std::weak_ptr<ENGINE::Transform>	m_pPlayerTrans;
-	std::weak_ptr<RedQueen>				m_pRedQueen;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;

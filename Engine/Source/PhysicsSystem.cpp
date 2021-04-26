@@ -101,7 +101,8 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 
 	//Physics
 	PxTolerancesScale TolerancesScale;
-	TolerancesScale.length = 1000.f;
+	// TolerancesScale.length = 1000.f;
+	TolerancesScale.length = 1.f;
 	TolerancesScale.speed = 10.f;
 	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, TolerancesScale, true, m_pPVD);
 	if (nullptr == m_pPhysics)
