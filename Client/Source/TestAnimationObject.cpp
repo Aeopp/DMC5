@@ -125,7 +125,8 @@ void TestAnimationObject::RenderReady()
 				const auto& _Subset = _SkeletonMesh->GetSubset(i);
 				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(
+					_RenderUpdateInfo.World, Scale.x);
 			}
 		}
 	}

@@ -28,6 +28,7 @@
 #include "Em5000.h"
 #include <iostream>
 #include <fstream>
+
 using namespace std;
 
 TestScene::TestScene()
@@ -48,19 +49,19 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 
-	/*AddGameObject<MainCamera>();
+	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();*/
+	AddGameObject<BtlPanel>();
 
 	/*AddGameObject<Em100>();
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
 	// 쉐도우 테스트
-	AddGameObject<Em5000>();
-	AddGameObject<Em5000>();
+	/*AddGameObject<Em5000>();
+	AddGameObject<Em5000>();*/
 	// 
 
 	
@@ -195,7 +196,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-	if (Input::GetKeyDown(DIK_NUMPAD2))
+	if (Input::GetKeyDown(DIK_DELETE))
 	{
 		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
 		for (auto& obj : listQliphoth)
@@ -214,7 +215,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 
 		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
-	if (Input::GetKeyDown(DIK_NUMPAD8))
+	if (Input::GetKeyDown(DIK_END))
 	{
 		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
 		for (auto& obj : listQliphoth)
