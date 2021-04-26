@@ -89,6 +89,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 {
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
+
+	D3DXVec3Normalize(&vDir, &vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float    fDot = D3DXVec3Dot(&vDir, &vLook);
 
@@ -236,6 +238,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Blown_Front_Landing", false, {}, 1.f, 20.f, true);
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Front_Landing" && m_pMesh->IsAnimationEnd())
 				m_eState = Prone_Getup;
 		}
@@ -369,9 +373,12 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			Set_Rotate();
 			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 20.f, true);
+
+			m_pCollider.lock()->SetTrigger(true);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_START
 				&& m_pPlayer.lock()->IsAnimationEnd())
 			{
+
 				m_eState = Hit_Buster_End;
 
 				Vector3 vRot(0.f, 0.f, 0.f);
@@ -380,17 +387,17 @@ void Em0000::State_Change(const float _fDeltaTime)
 
 				m_pTransform.lock()->SetRotation(vRot);
 				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
-
-				m_pCollider.lock()->SetRigid(true);
-
 			}
 		}
 		break;
 	case Em0000::Hit_Buster_End:
 		if (m_bHit)
 		{
+			Update_Angle();
+			Set_Rotate();
 			m_pMesh->PlayAnimation("Buster_End", false, {}, 1.f, 20.f, true);
-
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_End" && m_pMesh->IsAnimationEnd())
 				m_eState = Prone_Getup;
 		}
@@ -463,7 +470,7 @@ HRESULT Em0000::Awake()
 
 	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Waist");
 	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_Hand");
-	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Chest");
+	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("WeaponConst");
 	return S_OK;
 }
 
@@ -517,12 +524,20 @@ UINT Em0000::Update(const float _fDeltaTime)
 		State_Change(_fDeltaTime);
 	}
 
-
 	if (m_eState == Hit_Buster_Start)
 	{
-		//m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
-		//m_Result = (*m_pPlayerBone * m_PlayerWorld);
-		//m_pTransform.lock()->SetWorldMatrix(m_Result);
+		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
+		m_Result = (*m_pPlayerBone * m_PlayerWorld);
+
+		Matrix Mybone = *m_pMesh->GetToRootMatrixPtr("Hip");
+		Matrix BoneResult;
+
+		D3DXMatrixTranslation(&BoneResult, Mybone._41, Mybone._42, Mybone._43);
+		D3DXMatrixInverse(&BoneResult, nullptr, &BoneResult);
+
+		m_Result = BoneResult * m_Result;
+		
+		m_pTransform.lock()->SetWorldMatrix(m_Result);
 	}
 
 	Rotate(_fDeltaTime);

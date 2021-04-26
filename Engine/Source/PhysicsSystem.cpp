@@ -101,7 +101,7 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 
 	//Physics
 	PxTolerancesScale TolerancesScale;
-	TolerancesScale.length = 100.f;
+	TolerancesScale.length = 1000.f;
 	TolerancesScale.speed = 10.f;
 	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, TolerancesScale, true, m_pPVD);
 	if (nullptr == m_pPhysics)
@@ -162,7 +162,7 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 	delete[] ppActors;
 
 	//Simulation ½ÃÀÛ
-	m_pScene->simulate(1.f/60.f);
+	m_pScene->simulate(_fDeltaTime);
 
 	m_bSimulate = true;
 

@@ -63,5 +63,4 @@ protected:
 };
 
 
-
 #endif // Monster_h__
