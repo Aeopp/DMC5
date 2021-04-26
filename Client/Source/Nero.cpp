@@ -16,6 +16,7 @@
 #include "GT_Rockman.h"
 #include "Monster.h"
 #include "OvertureHand.h"
+#include "Liquid.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -171,6 +172,7 @@ HRESULT Nero::Ready()
 	m_pOverture = AddGameObject<GT_Overture>();
 	m_pEffOverture = AddGameObject<OvertureHand>();
 	//m_pRockman = AddGameObject<GT_Rockman>();
+	m_pBlood = AddGameObject<Liquid>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -271,7 +273,8 @@ void Nero::OnDisable()
 
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
-	m_BattleInfo.iHp -= _BattleInfo.iHp;
+	m_pBlood.lock()->PlayStart(40.f);
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 	switch (_BattleInfo.eAttackType)
@@ -702,11 +705,11 @@ bool Nero::CheckIsGround()
 void Nero::Locking()
 {
 	SetLockOnMonster();
-	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	if (m_pTargetMonster.expired())
 		return;
+	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	m_pBtlPanel.lock()->SetTargetCursor(
-		m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition(),
+		m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Waist"),
 		fHpRatio);
 	
 	
