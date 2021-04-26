@@ -810,10 +810,14 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 	/*--- 피 이펙트 ---*/
 	if (!m_pBlood.expired())
 	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
 		auto pBlood = m_pBlood.lock();
-		pBlood->SetVariationIdx(Liquid::VARIATION::BLOOD_0);	// 0 6 7 이 자연스러운듯?
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
 		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
-		pBlood->SetScale(0.01f);
+		pBlood->SetScale(0.008f);
 		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
 		pBlood->PlayStart(40.f);
 	}
