@@ -81,6 +81,11 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 		SetActive(false);
 	}
 
+	float fCurAnimationTime = m_pMesh->PlayingTime();
+
+	if (0.6 <= fCurAnimationTime)
+		m_bCollEnable = false;
+
 	return 0;
 }
 

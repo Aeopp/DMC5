@@ -137,7 +137,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 		}
 	}
 
-	else if (Input::GetMouseDown(DIM_L))
+	else if (Input::GetMouse(DIM_L))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		switch (_nIndex)
@@ -188,7 +188,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 			break;
 		}
 	}
-	else if (Input::GetMouseDown(DIM_M))
+	else if (Input::GetMouse(DIM_M))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT);
@@ -365,12 +365,12 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 		}
 	}
 
-	else if (Input::GetMouseDown(DIM_L))
+	else if (Input::GetMouse(DIM_L))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		m_pFSM->ChangeState(NeroFSM::ATT1_DASH);
 	}
-	else if (Input::GetMouseDown(DIM_M))
+	else if (Input::GetMouse(DIM_M))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT);
@@ -503,15 +503,15 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 		//오른쪽으로 90도 회전
 		m_pFSM->ChangeState(NeroFSM::RUNSTART_R);
 	}
-	else if (Input::GetMouseDown(DIM_L))
+	else if (Input::GetMouse(DIM_L))
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_COMBOA1);
 	}
-	else if (Input::GetMouseDown(DIM_M))
+	else if (Input::GetMouse(DIM_M))
 	{
 		m_pFSM->ChangeState(NeroFSM::POLE_COMBOA1);
 	}
-	else if (Input::GetMouseDown(DIM_R))
+	else if (Input::GetMouse(DIM_R))
 	{
 		//몬스터 위치에 따라서 업다운 프론트 결정
 		m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_STRIKE);
@@ -618,7 +618,7 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 		}
 		
 	}
-	else if (Input::GetMouseDown(DIM_M))
+	else if (Input::GetMouse(DIM_M))
 	{
 		//오버추어 앞으로
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
@@ -2073,54 +2073,70 @@ HRESULT RunStartFront::StateEnter()
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA1:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA1_END:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA2:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		break;												 
 	case Nero::ANI_IDLE_FROM_COMBOA2_END:					 
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		break;
 	case Nero::ANI_SHUFFLE:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		break;
 	case Nero::ANI_RUNSTOP:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_OVERTURE_IDLE:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_OVERTURE_SHOOT:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_OVERTURE_SHOOT_UP:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_OVERTURE_SHOOT_DOWN:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_WIRE_SNATCH_PULL:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_DASHSTOP:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_JUMP_LANDING:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_JUMP_FRONT_LANDING:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	default:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		break;
 	}
 	
@@ -2206,7 +2222,7 @@ HRESULT RunStop::StateExit()
 {
 	NeroState::StateExit();
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
-
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 	return S_OK;
 }
 
@@ -2408,12 +2424,12 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		}
 	}
 
-	else if (Input::GetMouseDown(DIM_L))
+	else if (Input::GetMouse(DIM_L))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		m_pFSM->ChangeState(NeroFSM::ATT1_DASH);
 	}
-	else if (Input::GetMouseDown(DIM_M))
+	else if (Input::GetMouse(DIM_M))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT);
@@ -3992,7 +4008,7 @@ HRESULT BT_Att_ComboC_R_to_L::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 		{
@@ -4045,7 +4061,7 @@ HRESULT BT_Att_ComboC_L_to_R::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 		{
@@ -4104,7 +4120,7 @@ HRESULT BT_Att_ComboC_1::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.4f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
 		{
@@ -4162,7 +4178,7 @@ HRESULT BT_Att_ComboC_2::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 		{
@@ -4221,7 +4237,7 @@ HRESULT BT_Att_ComboC_3::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 		{
@@ -4346,7 +4362,7 @@ HRESULT BT_Att_ComboD_1::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.15f <= fCurrAnimationTime && fCurrAnimationTime <= 0.3f)
 		{
@@ -4404,7 +4420,7 @@ HRESULT BT_Att_ComboD_2::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.14f <= fCurrAnimationTime && fCurrAnimationTime <= 0.22f)
 		{
@@ -4462,7 +4478,7 @@ HRESULT BT_Att_ComboD_3::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.19f <= fCurrAnimationTime && fCurrAnimationTime <= 0.27f)
 		{
@@ -6140,7 +6156,7 @@ HRESULT Cbs_ComboA1::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.27f <= fCurrAnimationTime && fCurrAnimationTime <= 0.37f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA2);
@@ -6183,7 +6199,7 @@ HRESULT Cbs_ComboA2::StateExit()
 HRESULT Cbs_ComboA2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.28f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA3);
@@ -6226,7 +6242,7 @@ HRESULT Cbs_ComboA3::StateExit()
 HRESULT Cbs_ComboA3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.3f <= fCurrAnimationTime && fCurrAnimationTime <= 0.4f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA4);
@@ -6269,7 +6285,7 @@ HRESULT Cbs_ComboA4::StateExit()
 HRESULT Cbs_ComboA4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.28f <= fCurrAnimationTime && fCurrAnimationTime <= 0.38f)
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA5);
@@ -6312,9 +6328,9 @@ HRESULT Cbs_ComboA5::StateExit()
 HRESULT Cbs_ComboA5::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
-		if (0.8f <= fCurrAnimationTime && Input::GetMouseDown(DIM_L))
+		if (0.8f <= fCurrAnimationTime && Input::GetMouse(DIM_L))
 			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA1);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
@@ -7083,7 +7099,7 @@ HRESULT Pole_ComboA1::StateExit()
 HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_M))
+	if (Input::GetMouse(DIM_M))
 	{
 		if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
 		{
@@ -7134,7 +7150,7 @@ HRESULT Pole_ComboA2::StateExit()
 HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_M))
+	if (Input::GetMouse(DIM_M))
 	{
 		if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
 		{
@@ -7180,7 +7196,7 @@ HRESULT Pole_ComboA3::StateExit()
 HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_M))
+	if (Input::GetMouse(DIM_M))
 	{
 		//if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
 		//{
@@ -7226,7 +7242,7 @@ HRESULT Pole_ComboB1::StateExit()
 HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_M))
+	if (Input::GetMouse(DIM_M))
 	{
 		if (0.36f <= fCurrAnimationTime && fCurrAnimationTime <= 0.46f)
 		{
@@ -7273,7 +7289,7 @@ HRESULT Pole_ComboB2::StateExit()
 HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_M))
+	if (Input::GetMouse(DIM_M))
 	{
 		if (0.39f <= fCurrAnimationTime && fCurrAnimationTime <= 0.48f)
 		{
@@ -7319,7 +7335,7 @@ HRESULT Pole_ComboB3::StateExit()
 HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_M))
+	if (Input::GetMouse(DIM_M))
 	{
 		if (0.44f <= fCurrAnimationTime && fCurrAnimationTime <= 0.53f)
 		{
@@ -7365,7 +7381,7 @@ HRESULT Pole_ComboB4::StateExit()
 HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 {
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	if (Input::GetMouseDown(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		if (0.88f <= fCurrAnimationTime)
 		{

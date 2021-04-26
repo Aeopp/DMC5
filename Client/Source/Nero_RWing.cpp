@@ -225,7 +225,7 @@ void Nero_RWing::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

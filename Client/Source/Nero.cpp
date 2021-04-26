@@ -246,13 +246,14 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
 
-	if (Input::GetKey(DIK_V))
+	if (Input::GetKey(DIK_LSHIFT))
 		Locking();
 	else
 		SetOffLockOnMonster();
 
 	//테스트
-	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
+	//if(!m_IsMajin)
+		m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
 	return 0;
 }
 
@@ -552,10 +553,10 @@ void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot
 		m_pWireArm.lock()->SetActive(ActiveOrNot);
 		break;
 	case Nero::NeroCom_WIngArm_Left:
-		m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
+		m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
 		break;
 	case Nero::NeroCom_WingArm_Right:
-		m_pWingArm_Left.lock()->SetActive(ActiveOrNot);
+		m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
 		break;
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->SetActive(ActiveOrNot);
