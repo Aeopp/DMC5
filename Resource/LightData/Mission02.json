@@ -13,12 +13,12 @@
                 1.0
             ],
             "Near": 0.000009999999747378752,
-            "Far": 10.0,
+            "Far": 8.0,
             "Projparams": [
-                25.0,
-                25.0,
+                20.0,
+                20.0,
                 0.000009999999747378752,
-                10.0
+                8.0
             ],
             "PointRadius": 0.7110946178436279,
             "Direction": [
@@ -38,7 +38,7 @@
                 0.0
             ],
             "shadowmin": 0.0,
-            "shadowdepthbias": 0.00001,
+            "shadowdepthbias": 0.000009999999747378752,
             "ShadowMapSize": 4096.0,
             "Type": "Directional"
         },
