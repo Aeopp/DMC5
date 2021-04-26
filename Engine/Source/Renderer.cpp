@@ -498,7 +498,6 @@ HRESULT Renderer::Render()&
 	RenderReady();
 	RenderBegin();
 
-
 	//  ½¦µµ¿ì ÆÐ½º 
 	RenderShadowMaps();
 	EnableDepthBias();
@@ -600,9 +599,7 @@ HRESULT Renderer::OptRender()&
 	BackBuffer->Release();
 
 	return S_OK;
-}
-;
-
+};
 
 void Renderer::Editor()&
 {
@@ -647,7 +644,6 @@ void Renderer::Editor()&
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
 		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
 		ImGui::ColorEdit3("FogColor", FogColor);
-
 
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;

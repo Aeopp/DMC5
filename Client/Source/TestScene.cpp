@@ -25,6 +25,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "Em5000.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -47,14 +48,20 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
+	/*AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
+	AddGameObject<BtlPanel>();*/
+
 	/*AddGameObject<Em100>();
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
+
+	// 쉐도우 테스트
+	AddGameObject<Em5000>();
+	AddGameObject<Em5000>();
+	// 
 
 	
 	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
@@ -187,8 +194,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
-
-
 
 	if (Input::GetKeyDown(DIK_NUMPAD2))
 	{
