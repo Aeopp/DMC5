@@ -207,6 +207,22 @@ void Renderer::ReadyRenderTargets()
 		Depth->Initialize(InitInfo);
 		Depth->DebugBufferInitialize(
 			{ InitX,InitY + (YOffset * 3.f) + Interval },
+			RenderTargetDebugRenderSize   );
+	}
+
+	{
+		auto& Emissive = RenderTargets["Emissive"] = std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX;
+		InitInfo.Height = g_nWndCY;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A16B16G16R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+		Emissive->Initialize(InitInfo);
+		Emissive->DebugBufferInitialize(
+			{ InitX,InitY + (YOffset * 99999.f) + Interval },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -500,7 +516,7 @@ HRESULT Renderer::Render()&
 		RenderSkySphere();
 	}
 
-
+	RenderEmissive();
 	AlphaBlendEffectRender();
 	UIRender();
 	// RenderInsulatorMetal();
@@ -622,12 +638,14 @@ void Renderer::Editor()&
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
 		ImGui::SliderFloat("ao", &ao, 0.0f, 1.f);
+		ImGui::InputFloat("In ao", &ao, 0.0f, 1.f);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
 		ImGui::SliderFloat("FogDistance", &FogDistance, 0.0f, 1000.f);
 		ImGui::SliderFloat("SkySphereScale", &SkysphereScale, 0.f, 10.f);
 		ImGui::SliderFloat3("SkySphereRot", SkysphereRot, -360.f, 360.f);
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
+		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
 		ImGui::ColorEdit3("FogColor", FogColor);
 
 
@@ -876,11 +894,12 @@ void Renderer::RenderShadowMaps()
 				}
 				Fx->End();
 			}
-			});
-	}
+		});
+	};
 
 	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-}
+};
+
 void Renderer::RenderGBuffer()
 {
 	auto* const device = Device;
@@ -897,7 +916,6 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
 	}
-
 
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -1336,7 +1354,8 @@ HRESULT Renderer::RenderSkySphere()&
 
 		auto Fx = Shaders["skysphere"]->GetEffect();
 		Fx->SetMatrix("matViewProj", &ViewProj);
-
+		const float Dt = TimeSystem::GetInstance()->DeltaTime();
+		SkysphereRot.y += Dt * SkyRotationSpeed;
 		const Matrix World = FMath::WorldMatrix(SkysphereScale, FMath::ToRadian( SkysphereRot ) , SkysphereLoc);
 		Fx->SetMatrix("matSkyRotation", &World);
 		Fx->SetFloat("intencity", SkyIntencity);
@@ -1571,7 +1590,7 @@ HRESULT Renderer::RendererCollider()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		_DrawInfo.Fx = Fx;
-		Vector4 DebugColor{ 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.5f };
+		Vector4 DebugColor{ 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.1f };
 		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
 		Fx->SetVector("DebugColor", &DebugColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
@@ -2263,6 +2282,55 @@ HRESULT Renderer::ToneMap()
 	}
 	hdreffects->EndPass();
 	hdreffects->End();
+
+	return S_OK;
+}
+HRESULT Renderer::RenderEmissive()
+{
+	DWORD ZEnable, ZWrite, AlphaEnable;
+
+	Device->GetRenderState(D3DRS_ZENABLE, &ZEnable);
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &ZWrite);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &AlphaEnable);
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	auto& _Group = RenderEntitys[RenderProperty::Order::Emissive];
+	DrawInfo _DrawInfo{};
+	_DrawInfo.BySituation.reset();
+	_DrawInfo._Device = Device;
+	_DrawInfo._Frustum = CameraFrustum.get();
+	for (auto& [ShaderKey, Entitys] : _Group)
+	{
+		auto Fx = Shaders[ShaderKey]->GetEffect();
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		Device->SetRenderTarget(1u, RenderTargets["Depth"]->GetSurface(0));
+
+		_DrawInfo.Fx = Fx;
+		for (auto& [Entity, Call] : Entitys)
+		{
+			UINT Passes{ 0u };
+			Fx->Begin(&Passes, NULL);
+			for (int32 i = 0; i < Passes; ++i)
+			{
+				_DrawInfo.PassIndex = i;
+				Fx->BeginPass(i);
+				{
+					Call(_DrawInfo);
+				}
+				Fx->EndPass();
+			}
+			Fx->End();
+		}
+	}
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
+	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 
 	return S_OK;
 };

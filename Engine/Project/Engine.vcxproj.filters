@@ -676,5 +676,8 @@
     <None Include="..\..\Resource\Shader\hdreffects.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\Emissive.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
   </ItemGroup>
 </Project>
