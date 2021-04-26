@@ -227,8 +227,6 @@ void Em0000Weapon::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000Weapon::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
-		m_bCollEnable = false;
 }
 
 

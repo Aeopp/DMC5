@@ -137,26 +137,27 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
 			Update_Angle();
 			m_bInteraction = true;
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->PlayingTime() >= 0.4f)
 			{
-				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
-				{
-					int iRandom = FMath::Random<int>(1, 4);
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->Set_Coll(false);
+			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
+			{
+				int iRandom = FMath::Random<int>(1, 4);
 
-					if (iRandom == 1)
-						m_eState = Idle;
-					else if (iRandom == 2)
-						m_eState = Idle2;
-					else if (iRandom == 3)
-						m_eState = Idle3;
-					else if (iRandom == 4)
-						m_eState = Idle4;
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
 
-					m_bIng = false;
-					m_bAttack = false;
-
-					for (int i = 0; i < 2; ++i)
-						m_pHand[i].lock()->Set_Coll(false);
-				}
+				m_bIng = false;
+				m_bAttack = false;
 			}
 		}
 		break;
@@ -167,6 +168,12 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			Update_Angle();
 			m_bInteraction = true;
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->PlayingTime() >= 0.4f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->Set_Coll(false);
+			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->IsAnimationEnd())
 			{
@@ -195,7 +202,11 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 20.f, true);
 			Update_Angle();
 			m_bInteraction = true;
-
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.35f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->Set_Coll(false);
+			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->IsAnimationEnd())
 			{
 				int iRandom = FMath::Random<int>(1, 4);
