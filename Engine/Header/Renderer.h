@@ -91,11 +91,13 @@ public:
 
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
+	float   SkyRotationSpeed = 0.001f;
 	float   SkyIntencity = 0.111f;
 	float   SkysphereScale = 0.078f;
 	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
 	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };
 private:
+	
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
 	float FogDistance = 100.f;

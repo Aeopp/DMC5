@@ -32,7 +32,7 @@ public:
 	void RenderShadow(const DrawInfo& _Info);
 	void RenderEmissive(const DrawInfo& _Info);
 
-	float EmissivePower = 10.f;
+	float EmissivePower = 0.05f;
 	bool bEmissive = false;
 public:
 	void SetUp(const TSTRING _sMesh, const D3DXVECTOR3& _vScale, const D3DXVECTOR3& _vRotation, const D3DXVECTOR3 _vPosition);

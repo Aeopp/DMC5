@@ -22,8 +22,6 @@ HRESULT MapObject::Ready()
 {
 	GameObject::Ready();
 
-	RenderInit();
-
 	return S_OK;
 }
 
@@ -246,7 +244,7 @@ void MapObject::SetUp(
 
 		if (sFileName == "electornicbillboard.fbx")
 		{
-			bEmissive = true;
+			bEmissive = false;
 		};
 	}
 
@@ -256,4 +254,7 @@ void MapObject::SetUp(
 	m_pTransform.lock()->SetScale(vScale);
 	m_pTransform.lock()->SetRotation(_vRotation);
 	m_pTransform.lock()->SetPosition(vPos);
+
+
+	RenderInit();
 }

@@ -1,9 +1,8 @@
 matrix ViewProjection;
 matrix matWorld;
-
+uniform sampler2D baseColor : register(s0);
 float EmissivePower = 3.f;
 
-uniform sampler2D baseColor : register(s0);
 // texture DepthMap;
 // sampler Depth = sampler_state
 //{
@@ -33,6 +32,7 @@ VsOut VsMain(VsIn In)
     Out.Position = mul(float4(In.Position.xyz, 1.f), matWorld);
     Out.UV = In.UV;
     Out.ZW = Out.Position.zw;
+    
     return Out;
 };
 

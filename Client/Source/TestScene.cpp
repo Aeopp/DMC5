@@ -71,18 +71,17 @@ HRESULT TestScene::LoadScene()
 	// 수정필요
 	//AddGameObject<DashImpact>();
 
-
-
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.00002; 
+	_Renderer->ao = 0.0005; 
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
-	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
+	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f  }; 
 	_Renderer->SoftParticleDepthScale = 1.f;
+	_Renderer->SkyRotationSpeed = 1.5f;
 
 	return S_OK;
 }

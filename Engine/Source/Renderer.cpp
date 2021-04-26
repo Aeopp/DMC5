@@ -645,6 +645,7 @@ void Renderer::Editor()&
 		ImGui::SliderFloat("SkySphereScale", &SkysphereScale, 0.f, 10.f);
 		ImGui::SliderFloat3("SkySphereRot", SkysphereRot, -360.f, 360.f);
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
+		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
 		ImGui::ColorEdit3("FogColor", FogColor);
 
 
@@ -1355,7 +1356,8 @@ HRESULT Renderer::RenderSkySphere()&
 
 		auto Fx = Shaders["skysphere"]->GetEffect();
 		Fx->SetMatrix("matViewProj", &ViewProj);
-
+		const float Dt = TimeSystem::GetInstance()->DeltaTime();
+		SkysphereRot.y += Dt * SkyRotationSpeed;
 		const Matrix World = FMath::WorldMatrix(SkysphereScale, FMath::ToRadian( SkysphereRot ) , SkysphereLoc);
 		Fx->SetMatrix("matSkyRotation", &World);
 		Fx->SetFloat("intencity", SkyIntencity);
