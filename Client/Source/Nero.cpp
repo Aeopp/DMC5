@@ -272,14 +272,17 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	case Attack_Front:
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
-	case Attack_Down:
-		break;
-	case Attack_Stun:
-		break;
-	case Attack_KnocBack:
-		break;
-	case Attack_END:
-		break;
+	//case Attack_Down:
+	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+	//	break;
+	//case Attack_Stun:
+	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+	//	break;
+	//case Attack_KnocBack:
+	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+	//	break;
+	//case Attack_END:
+	//	break;
 	default:
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
@@ -570,6 +573,24 @@ void Nero::SetAddForce(Vector3 _vJumpPos)
 	m_pCollider.lock()->AddForce(_vJumpPos);
 }
 
+void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
+{
+	switch (_eDir)
+	{
+	case Nero::Dir_Front:
+		m_pCollider.lock()->AddForce(m_pTransform.lock()->GetLook() * -1.f * _fPower);
+		break;
+	case Nero::Dir_Back:
+		break;
+	case Nero::Dir_Left:
+		break;
+	case Nero::Dir_Right:
+		break;
+	default:
+		break;
+	}
+}
+
 void Nero::SetLockOnMonster()
 {
 	if (!m_pTargetMonster.expired())
@@ -702,6 +723,8 @@ void Nero::RotateToTargetMonster()
 	vDegree.y = m_fAngle;
 	vRotationDegree.y = m_fRotationAngle = 0;
 	Reset_RootRotation();
+
+	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)

@@ -266,7 +266,7 @@ public:
 		NeroCom_RedQueen,
 		NeroCom_Cerberos,
 		NeroCom_End
-	};			
+	};	
 
 private:
 	explicit Nero();
@@ -318,9 +318,11 @@ public:
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 	void SetAddForce(Vector3 _vJumpPos);
+	void SetAddForce_Dir(NeroDirection _eDir, float _fPower);
 	void SetLockOnMonster();
 	void SetOffLockOnMonster();
 	void SetDashLoopDir();
+	void SetGravity(bool _ActiveOrNot) { m_pCollider.lock()->SetGravity(_ActiveOrNot); }
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
