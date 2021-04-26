@@ -805,7 +805,7 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetTechnique("variance");
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 			shadowmap->SetBool("isPerspective", FALSE);
-
+		
 			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			// ∑ª¥ı Ω√¿€ ... 

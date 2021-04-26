@@ -171,6 +171,7 @@ void TestAnimationObject::RenderShadowSK(const DrawInfo& _Info)
 		{
 			continue;
 		}
+
 		if (auto SpSubset = _SkeletonMesh->GetSubset(i).lock();
 			SpSubset)
 		{
