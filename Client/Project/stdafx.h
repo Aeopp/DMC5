@@ -55,4 +55,4 @@ enum GAMEOBJECTTAG
 
 #define OGDistance 0.33f
 #define MaxDistance 0.48f
-#define RotateDistance 0.45f
+#define RotateDistance 0.7f
