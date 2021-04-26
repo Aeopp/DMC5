@@ -461,7 +461,7 @@ HRESULT Em0000::Ready()
 
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
-	m_pTransform.lock()->SetPosition({ 1.5f, 0.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -3.5f, 0.f, 3.f });
 
 	m_fPower = 50.f;
 	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
