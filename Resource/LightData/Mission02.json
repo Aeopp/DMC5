@@ -38,8 +38,8 @@
                 0.0
             ],
             "shadowmin": 0.0,
-            "shadowdepthbias": 0.10000000149011612,
-            "ShadowMapSize": 2048.0,
+            "shadowdepthbias": 0.00001,
+            "ShadowMapSize": 4096.0,
             "Type": "Directional"
         },
         {

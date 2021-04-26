@@ -142,7 +142,8 @@ HRESULT TestScene::LoadScene()
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
 	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005; 
+	// _Renderer->ao = 0.0005; 
+	_Renderer->ao = 0.0000f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 

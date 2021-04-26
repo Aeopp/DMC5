@@ -837,7 +837,7 @@ void Renderer::RenderShadowMaps()
 
 			});
 	};
-
+	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	shadowmap->SetBool("isPerspective", TRUE);
 	for (auto& PointLight : PointLights)
 	{
@@ -893,7 +893,7 @@ void Renderer::RenderShadowMaps()
 		});
 	};
 
-	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	 //Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 };
 
 void Renderer::RenderGBuffer()
