@@ -56,8 +56,8 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
-	//LoadMap();
-	//AddGameObject<TempMap>();
+	LoadMap();
+	AddGameObject<TempMap>();
 
 	/*AddGameObject<Glint>();
 	AddGameObject<OvertureHand>();
@@ -125,9 +125,9 @@ HRESULT TestScene::Awake()
 	if (nullptr != pPlane)
 		return S_OK;
 
-	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
 
-	Physics::AddActor(UniqueID, *pPlane);
+	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
 }
