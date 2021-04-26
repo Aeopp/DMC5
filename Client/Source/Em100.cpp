@@ -10,6 +10,7 @@
 #include "Nero.h"
 #include "RedQueen.h"
 #include "NeroFSM.h"
+#include "Liquid.h"
 
 void Em100::Free()
 {
@@ -683,7 +684,9 @@ HRESULT Em100::Awake()
 	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_MiddleF1");
 	
 
-	
+	/*--- 피 이펙트 ---*/
+	m_pBlood = AddGameObject<Liquid>();
+	/*----------------*/
 
 	return S_OK;
 }
@@ -803,6 +806,18 @@ void Em100::OnDisable()
 void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	/*--- 피 이펙트 ---*/
+	if (!m_pBlood.expired())
+	{
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION::BLOOD_0);	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetScale(0.01f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
+	/*----------------*/
 	
 	if (m_bDown==false)
 	{

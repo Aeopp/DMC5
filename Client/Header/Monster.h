@@ -24,7 +24,7 @@ public:
 
 	std::shared_ptr<ENGINE::SkeletonMesh> Get_Mesh() { return m_pMesh; }
 	
-
+	Vector3			GetMonsterBoneWorldPos(std::string _BoneName);
 public:
 	virtual HRESULT Ready() override PURE;
 	virtual HRESULT Awake() override PURE;

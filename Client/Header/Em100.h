@@ -129,6 +129,10 @@ private:
 	Matrix								  m_TempMatrix;
 	////////////////
 
+
+	/*--- «« ¿Ã∆Â∆Æ ---*/
+	weak_ptr<class Liquid> m_pBlood;
+	/*----------------*/
 };
 
 #endif // Em100_h__

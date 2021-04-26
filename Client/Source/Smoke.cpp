@@ -39,14 +39,14 @@ void Smoke::Imgui_Modify()
 		ImGui::Text("Eff_Smoke");
 
 		{
-			static Vector3 SliderPosition = Sptransform->GetPosition();
-			ImGui::SliderFloat3("Pos##Smoke", SliderPosition, -10.f, 10.f);
-			Sptransform->SetPosition(SliderPosition);
+			static Vector3 Position = Sptransform->GetPosition();
+			ImGui::InputFloat3("Pos##Smoke", Position);
+			Sptransform->SetPosition(Position);
 		}
 
 		{
 			static float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.1f, 1.f);
+			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.01f, 0.3f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 			SetScale(Scale);
 		}
@@ -93,7 +93,7 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	//auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
 
-	auto WeakSubset = _PlaneMesh->GetSubset(0u);
+	auto WeakSubset = _SmokeMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
@@ -102,6 +102,7 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
 		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
+		_Info.Fx->SetFloatArray("_MagicNumber", Vector3(0.05f, 0.05f, 0.05f), 3u);
 
 		SharedSubset->Render(_Info.Fx);
 	}
@@ -115,9 +116,10 @@ HRESULT Smoke::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_Smoke;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
+	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });	// _SmokeMesh 원점이 중앙이 아니라 스케일 늘리면 x축 이동도 필요
 	
-	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+	//_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+	_SmokeMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_enviroment_smoke00_03.fbx");
 
 	_SmokeALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_smoke_00_0016_alpg.tga");
 
@@ -160,22 +162,23 @@ UINT Smoke::Update(const float _fDeltaTime)
 	_SmokeMaxTexUV.x = _SmokeMinTexUV.x + 1.f / cx;
 	_SmokeMaxTexUV.y = _SmokeMinTexUV.y + 1.f / cy;
 
-	Matrix TempMat, BillMat;
-	TempMat = Renderer::GetInstance()->_RenderInfo.View;
-	D3DXMatrixIdentity(&BillMat);
-	BillMat._11 = TempMat._11;
-	BillMat._13 = TempMat._13;
-	BillMat._31 = TempMat._31;
-	BillMat._33 = TempMat._33;
-	D3DXMatrixInverse(&BillMat, 0, &BillMat);
-	//BillMat._42 = -1.2f;
+	// y축 빌보드
+	//Matrix TempMat, BillMat;
+	//TempMat = Renderer::GetInstance()->_RenderInfo.View;
+	//D3DXMatrixIdentity(&BillMat);
+	//BillMat._11 = TempMat._11;
+	//BillMat._13 = TempMat._13;
+	//BillMat._31 = TempMat._31;
+	//BillMat._33 = TempMat._33;
+	//D3DXMatrixInverse(&BillMat, 0, &BillMat);
+	////BillMat._42 = -1.2f;
 
-	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
-		Sptransform)
-		Sptransform->SetBillBoard(BillMat);
+	//if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+	//	Sptransform)
+	//	Sptransform->SetBillBoard(BillMat);
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }

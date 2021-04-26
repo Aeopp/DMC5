@@ -77,7 +77,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _ExBackALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExBackALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _ExBackATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _ExBackNRMRTex->GetTexture());
 
@@ -221,7 +221,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		CurID = REDORB;
 		if (_UIDescs[CurID].Using && _ImplInfo.IsAfterPostProcessing)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _RedOrbALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
 
@@ -233,7 +233,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->EndPass();
 
 			////////////////////////////////////////////////////////////
-			_ImplInfo.Fx->SetTexture("ALB0Map", _Dummy0000Tex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _Dummy0000Tex->GetTexture());
 
 			Create_ScreenMat(CurID, ScreenMat, 1);
 
@@ -300,7 +300,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		CurID = HP_GAUGE;
 		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _HPGaugeBaseALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _HPGaugeBaseALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _HPGaugeBaseATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGaugeBaseNRMRTex->GetTexture());
 
@@ -317,7 +317,6 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ALB0Map", _HPGaugeALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _HPGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGaugeNRMRTex->GetTexture());
-
 
 			for (int i = 0; i < _HPGaugeCount; ++i)
 			{
@@ -366,7 +365,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		if (_UIDescs[CurID].Using && _ImplInfo.IsAfterPostProcessing)
 		{
 			// Å°º¸µå base
-			_ImplInfo.Fx->SetTexture("ALB0Map", _KeyBoardTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _KeyBoardTex->GetTexture());
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.3f), 2u);
 
@@ -476,7 +475,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		CurID = RANK_LETTER;
 		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _RankLetterGlintTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RankLetterGlintTex->GetTexture());
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(_RankLetter_GlintFrame.x, _RankLetter_GlintFrame.y), 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(_RankLetter_GlintFrame.z, _RankLetter_GlintFrame.w), 2u);
 
@@ -487,7 +486,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetTexture("ALB0Map", _RankLetterTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RankLetterTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_SliceAmount", _RankDissolveAmount);
 
 			Create_ScreenMat(CurID, ScreenMat, _CurRank);
@@ -505,7 +504,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		CurID = EX_GAUGE;
 		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _ExFireTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExFireTex->GetTexture());
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(_ExGauge_FireFrame.x, _ExGauge_FireFrame.y), 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(_ExGauge_FireFrame.z, _ExGauge_FireFrame.w), 2u);
 
@@ -771,7 +770,7 @@ void BtlPanel::SetTargetCursorActive(bool IsActive)
 {
 	if (IsActive)
 		_TargetCursorAlpha = 0.f;
-	else
+	else if (!IsActive && _UIDescs[TARGET_CURSOR].Using)
 		_TargetCursorAlpha = 1.f;
 
 	_UIDescs[TARGET_CURSOR].Using = IsActive;
@@ -1943,23 +1942,24 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
 		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->SetLoop(true);
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
-
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
 		AccumulateTDTGauge(0.3f);
 		ChangeWeaponUI(Nero::WeaponList::RQ);
+
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
-		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->Reset();
-
 		ConsumeTDTGauge(0.5f);
 		ChangeWeaponUI(Nero::WeaponList::Cbs);
+
+		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->Reset();
 	}
 	////////////////////////////
 
