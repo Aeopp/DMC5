@@ -3,7 +3,6 @@
 
 #include "Monster.h"
 
-class TestObject;
 class Em101 final : public Monster
 {
 private:
@@ -77,8 +76,6 @@ private:
 	//몬스터 상태
 	Em101_State	m_eState =State_END;		
 	//TestPlayer 받아옴.
-	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<TestObject>		 m_pPlayer;
 
 
 	//공격 및 이동 관련

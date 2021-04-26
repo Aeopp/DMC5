@@ -79,6 +79,9 @@ void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
 	case Nero::NeroCom_RedQueen:
 		m_pRedQueen.lock()->SetAttType(_eAttDir);
 		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->Set_AttackType(_eAttDir);
+		break;
 	case Nero::NeroCom_Cerberos:
 		break;
 	case Nero::NeroCom_End:
@@ -227,6 +230,7 @@ UINT Nero::Update(const float _fDeltaTime)
 		m_pFSM->UpdateFSM(_fDeltaTime);
 
 	auto [Scale,Rot,Pos] =m_pMesh->Update(_fDeltaTime);
+	Pos.y = 0.f;
 
 	vAccumlatonDegree += Transform::QuaternionToEuler(Rot);
 
@@ -244,7 +248,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	else
 		SetOffLockOnMonster();
 
-
+	//테스트
+	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
 	return 0;
 }
 
@@ -267,6 +272,8 @@ void Nero::OnDisable()
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iHp;
+	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Front:
@@ -586,6 +593,13 @@ void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
 		break;
 	case Nero::Dir_Right:
 		break;
+	case Nero::Dir_Front_Down:
+	{
+		Vector3 vFrontDownDir = m_pTransform.lock()->GetLook() * -1.f;
+		vFrontDownDir.y = -0.5f;
+		m_pCollider.lock()->AddForce(vFrontDownDir * _fPower);
+	}
+		break;
 	default:
 		break;
 	}
@@ -688,12 +702,12 @@ bool Nero::CheckIsGround()
 void Nero::Locking()
 {
 	SetLockOnMonster();
-
+	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	if (m_pTargetMonster.expired())
 		return;
 	m_pBtlPanel.lock()->SetTargetCursor(
 		m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition(),
-		m_pTargetMonster.lock()->Get_BattleInfo().iHp);
+		fHpRatio);
 	
 	
 }

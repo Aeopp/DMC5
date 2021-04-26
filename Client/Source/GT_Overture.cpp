@@ -5,6 +5,7 @@ GT_Overture::GT_Overture()
 {
 	m_BattleInfo.eAttackType = ATTACKTYPE::Attack_Front;
 	m_BattleInfo.iAttack = 10;
+	m_nTag = GAMEOBJECTTAG::Overture;
 }
 
 void GT_Overture::Free()
@@ -27,6 +28,7 @@ HRESULT GT_Overture::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
+
 	return S_OK;
 }
 
@@ -38,7 +40,7 @@ HRESULT GT_Overture::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetCenter({ 0.f,0.08f,0.f });
+	m_pCollider.lock()->SetCenter({ 0.f,0.02f,0.01f });
 	m_pCollider.lock()->SetRadius(0.07f);
 	m_pCollider.lock()->SetActive(false);
 	PushEditEntity(m_pCollider.lock().get());

@@ -41,6 +41,9 @@ HRESULT Em0000Weapon::Ready()
 
 	RenderInit();
 
+
+	m_nTag = MonsterWeapon;
+
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.005f,0.005f,0.005f});
@@ -48,7 +51,7 @@ HRESULT Em0000Weapon::Ready()
 
 
 	m_pTransform = GetComponent<ENGINE::Transform>();
-
+	m_BattleInfo.iAttack = 10;
 
 
 
@@ -70,8 +73,8 @@ HRESULT Em0000Weapon::Awake()
 
 	m_pCollider.lock()->SetGravity(false);
 
-	m_pCollider.lock()->SetCenter({ -0.1f,0.f,-0.17f });
-	m_pCollider.lock()->SetRadius(0.08f);
+	m_pCollider.lock()->SetCenter({ -0.1f,0.1f,-0.1f });
+	m_pCollider.lock()->SetRadius(0.15f);
 	
 
 	return S_OK;
@@ -224,6 +227,8 @@ void Em0000Weapon::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000Weapon::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
+		m_bCollEnable = false;
 }
 
 

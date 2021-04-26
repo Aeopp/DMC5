@@ -76,6 +76,12 @@ void Em100::Fight(const float _fDeltaTime)
 		{
 			m_bIng = true;
 			m_eState = Attack_Hard;
+
+			for (int i = 0; i < 2; ++i)
+			{
+				m_pHand[i].lock()->Set_Coll(true);
+				m_pHand[i].lock()->Set_AttackType(Attack_Front);
+			}
 			return;
 		}
 		if (m_bAttack && m_bIng == false)
@@ -87,11 +93,23 @@ void Em100::Fight(const float _fDeltaTime)
 			if (iRandom == 1)
 			{
 				m_eState = Attack_A;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->Set_AttackType(Attack_Front);
+				}
 				return;
 			}
 			else if (iRandom == 2)
 			{
 				m_eState = Attack_D;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->Set_AttackType(Attack_Front);
+				}
 				return;
 			}
 		}
@@ -117,12 +135,6 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
-
-			for (int i = 2; i < 0; ++i)
-			{
-				m_pHand[i].lock()->Set_Coll(true);
-				m_pHand[i].lock()->Set_AttackType(Attack_Front);
-			}
 			Update_Angle();
 			m_bInteraction = true;
 			{
@@ -142,7 +154,7 @@ void Em100::State_Change(const float _fDeltaTime)
 					m_bIng = false;
 					m_bAttack = false;
 
-					for (int i = 2; i < 0; ++i)
+					for (int i = 0; i < 2; ++i)
 						m_pHand[i].lock()->Set_Coll(false);
 				}
 			}
@@ -155,12 +167,6 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			Update_Angle();
 			m_bInteraction = true;
-
-			for (int i = 2; i < 0; ++i)
-			{
-				m_pHand[i].lock()->Set_Coll(true);
-				m_pHand[i].lock()->Set_AttackType(Attack_Front);
-			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->IsAnimationEnd())
 			{
@@ -178,7 +184,7 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_bAttack = false;
 
-				for (int i = 2; i < 0; ++i)
+				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->Set_Coll(false);
 			}
 		}
@@ -189,12 +195,6 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 20.f, true);
 			Update_Angle();
 			m_bInteraction = true;
-			
-			for (int i = 2; i < 0; ++i)
-			{
-				m_pHand[i].lock()->Set_Coll(true);
-				m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
-			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->IsAnimationEnd())
 			{
@@ -212,7 +212,7 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_bHardAttack = false;
 
-				for (int i = 2; i < 0; ++i)
+				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->Set_Coll(false);
 			}
 		}
@@ -221,6 +221,9 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Death_Front " && m_pMesh->IsAnimationEnd())
+				SetActive(false);
 		}
 		break;
 	case Em100::Hit_Air:
@@ -720,6 +723,8 @@ HRESULT Em100::Start()
 UINT Em100::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
+	
+	
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -777,6 +782,9 @@ UINT Em100::Update(const float _fDeltaTime)
 	}
 
 
+	if (m_BattleInfo.iHp <= 0.f)
+		m_eState = Dead;
+
 
 	return 0;
 }
@@ -817,6 +825,7 @@ void Em100::OnDisable()
 
 void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	/*--- 피 이펙트 ---*/
@@ -1013,12 +1022,13 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (!m_bCollEnable)
 		return;
+	if (m_eState == Dead)
+		return;
 
 	m_bCollEnable = false;
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
-		cout << "응애 응애!! " << endl;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
@@ -1026,6 +1036,12 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case GAMEOBJECTTAG::TAG_WireArm:
 		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	case GAMEOBJECTTAG::Overture:
+		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
+		m_bHit = true;
+		m_bDown = true;
+		m_eState = Hit_KnocBack;
 		break;
 	default:
 		break;

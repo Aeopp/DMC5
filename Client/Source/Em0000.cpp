@@ -55,7 +55,7 @@ void Em0000::Fight(const float _fDeltaTime)
 	/////이놈은 움직임이 한방향 밖에 없어서. 앞으로 갈지 아니면 백스탭 이후에 강한 공격할지
 	//Move가 On일때 1/4 확률로 백스텝을 하고 백스텝을 한 이후에는 바로 달려가면서 강한 공격
 
-	if (fDir >= 0.4f)
+	if (fDir >= 0.5f)
 	{
 		int iRandom = FMath::Random<int>(1, 4);
 
@@ -79,9 +79,17 @@ void Em0000::Fight(const float _fDeltaTime)
 			int iRandom = FMath::Random<int>(1, 2);
 			m_bIng = true;
 			if (iRandom == 1)
+			{
 				m_eState = Attack_1;
+				m_pWeapon.lock()->Set_Coll(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_Front);
+			}
 			else
+			{
 				m_eState = Attack_2;
+				m_pWeapon.lock()->Set_Coll(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_Front);
+			}
 		}
 	}
 
@@ -107,8 +115,6 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
-			m_pWeapon.lock()->Set_Coll(true);
-			m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.9f)
 			{
 				m_eState = idle;
@@ -125,9 +131,6 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_2", false, {}, 1.f, 50.f, true);
 			Update_Angle();
 			m_bInteraction = true;
-
-			m_pWeapon.lock()->Set_Coll(true);
-			m_pWeapon.lock()->Set_AttackType(Attack_Front);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.9f)
 			{
@@ -147,8 +150,6 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f, true);
 
-			m_pWeapon.lock()->Set_Coll(true);
-			m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.95f)
 			{
 				m_bIng = false;
@@ -160,6 +161,14 @@ void Em0000::State_Change(const float _fDeltaTime)
 		}
 		break;
 	case Em0000::Dead:
+		if (m_bIng == true)
+		{
+			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Death_Front " && m_pMesh->IsAnimationEnd())
+				SetActive(false);
+		}
+		break;
 		break;
 	case Em0000::Guard_End:
 		break;
@@ -312,7 +321,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
-			if (fDir <= 0.4f)
+			if (fDir <= 0.5f)
 				m_eState = Move_Front_End;
 		}
 		break;
@@ -334,6 +343,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 			{
 				m_eState = Attack_Hard;
 				m_bMove = false;
+				m_pWeapon.lock()->Set_Coll(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			}
 
 		}
@@ -450,7 +461,7 @@ HRESULT Em0000::Ready()
 
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
-	m_pTransform.lock()->SetPosition({ 1.5f, 0.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -3.5f, 0.f, 3.f });
 
 	m_fPower = 50.f;
 	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
@@ -550,6 +561,10 @@ UINT Em0000::Update(const float _fDeltaTime)
 	}
 
 	Rotate(_fDeltaTime);
+
+
+	if (m_BattleInfo.iHp <= 0)
+		m_eState = Dead;
 	return 0;
 }
 
@@ -582,6 +597,7 @@ void Em0000::OnDisable()
 
 void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 
@@ -999,6 +1015,8 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (!m_bCollEnable)
 		return;
+	if (m_eState == Dead)
+		return;
 
 	m_bCollEnable = false;
 
@@ -1013,6 +1031,13 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case GAMEOBJECTTAG::TAG_WireArm:
 		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	case GAMEOBJECTTAG::Overture:
+		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
+		m_bHit = true;
+		m_bDown = true;
+		m_eState = Hit_KnocBack;
+		break;
 	default:
 		break;
 	}
