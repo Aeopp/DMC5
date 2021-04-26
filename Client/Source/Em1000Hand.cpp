@@ -109,6 +109,8 @@ void Em1000Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	{
 		if (m_pEm1000.expired())
 			return;
+
+		
 	}
 }
 
