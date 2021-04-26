@@ -10,6 +10,8 @@
 #include "Nero.h"
 #include "RedQueen.h"
 #include "NeroFSM.h"
+#include "Liquid.h"
+#include "AppearGroundMonster.h"
 
 void Em100::Free()
 {
@@ -48,7 +50,7 @@ void Em100::Fight(const float _fDeltaTime)
 			m_bIng = true;
 			//플레이어 방향으로 돌게 만듬
 			m_bInteraction = true;
-			Update_Angle(_fDeltaTime);
+			Update_Angle();
 			////////////////////////////
 			if (iRandom == 1)
 			{
@@ -117,11 +119,12 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
 
 			for (int i = 2; i < 0; ++i)
+			{
 				m_pHand[i].lock()->Set_Coll(true);
-
-			Update_Angle(_fDeltaTime);
+				m_pHand[i].lock()->Set_AttackType(Attack_Front);
+			}
+			Update_Angle();
 			m_bInteraction = true;
-			m_BattleInfo.eAttackType = Attack_Front;
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
 				{
@@ -149,13 +152,15 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_D", false, {}, 1.f, 50.f, true);
-			m_BattleInfo.eAttackType = Attack_Front;
 
-			Update_Angle(_fDeltaTime);
+			Update_Angle();
 			m_bInteraction = true;
 
-			for(int i = 2; i < 0; ++i)
+			for (int i = 2; i < 0; ++i)
+			{
 				m_pHand[i].lock()->Set_Coll(true);
+				m_pHand[i].lock()->Set_AttackType(Attack_Front);
+			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->IsAnimationEnd())
 			{
@@ -182,13 +187,14 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 20.f, true);
-			m_BattleInfo.eAttackType = Attack_KnocBack;
-
-			Update_Angle(_fDeltaTime);
+			Update_Angle();
 			m_bInteraction = true;
 			
 			for (int i = 2; i < 0; ++i)
+			{
 				m_pHand[i].lock()->Set_Coll(true);
+				m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->IsAnimationEnd())
 			{
@@ -240,7 +246,6 @@ void Em100::State_Change(const float _fDeltaTime)
 					m_eState = Hit_End_Back;
 				m_bDown = true;
 			}
-
 		}
 	case Em100::Hit_Back:
 		break;
@@ -406,7 +411,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Move_C_Loop", true, {}, 1.f, 50.f, true);
-			Update_Angle(_fDeltaTime);
+			Update_Angle();
 			m_bInteraction = true;
 
 			if (fDir <= 0.3f)
@@ -556,6 +561,43 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_eState = Downword_Down_StandUp;
 		}
 		break;
+	case Em100::Hit_Snatch_Start:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_bSnatch == false)
+				m_eState = Hit_Snatch_End;
+		}
+		break;
+	case Em100::Hit_Snatch_End:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Snatch_End" && m_pMesh->IsAnimationEnd())
+				m_eState = Idle;
+		}
+		break;
+	case Em100::Enter_Ground:
+		if (m_bEnterGround == false)
+		{
+			m_pMesh->PlayAnimation("Enter_Ground", false, {}, 1.f, 20.f, true);
+
+			Update_Angle();
+			Set_Rotate();
+			m_pAppear.lock()->PlayStart();
+			m_pAppear.lock()->SetPosition(m_pTransform.lock()->GetPosition());
+
+			m_bEnterGround = true;
+		}
+		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+			m_eState = Idle;
+		break;
 	}
 
 
@@ -602,7 +644,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 200;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -3.5f, 0.f, 3.f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -656,9 +698,15 @@ HRESULT Em100::Awake()
 
 	
 	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_MiddleF1");
+
+	//몬스터 초기상태 Idle
+	m_eState = Enter_Ground;
 	
 
-	
+	/*--- 피 이펙트 ---*/
+	m_pBlood = AddGameObject<Liquid>();
+	m_pAppear = AddGameObject<AppearGroundMonster>();
+	/*----------------*/
 
 	return S_OK;
 }
@@ -710,23 +758,15 @@ UINT Em100::Update(const float _fDeltaTime)
 
 
 
-	if (Input::GetKeyDown(DIK_T))
+	if (m_bEnterGround == true)
 	{
-		if (m_bTest == true)
-			m_bTest = false;
-		else
-			m_bTest = true;
-	}
-
-	if (m_bTest == true)
-	{
-		if(!m_bHit)
+		if (!m_bHit)
 			Skill_CoolTime(_fDeltaTime);
 		Fight(_fDeltaTime);
-		State_Change(_fDeltaTime);
 	}
+	State_Change(_fDeltaTime);
 
-	
+
 	if (m_eState == Hit_Buster_Start)
 	{
 		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
@@ -778,6 +818,22 @@ void Em100::OnDisable()
 void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	/*--- 피 이펙트 ---*/
+	if (!m_pBlood.expired())
+	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetScale(0.008f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
+	/*----------------*/
 	
 	if (m_bDown==false)
 	{
@@ -833,6 +889,26 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		}
 		case ATTACKTYPE::Attack_Air:
 			break;
+		case ATTACKTYPE::Attack_Homerun:
+		{
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = 2.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_fPower = 180.f;
+			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+			m_fPower = 100.f;
+
+			break;
+		}
 		default:
 			m_bIng = true;
 			break;
@@ -845,9 +921,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		case ATTACKTYPE::Attack_KnocBack:
 		{
 			m_eState = Hit_KnocBack;
-
-			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-			D3DXVec3Normalize(&vDir, &vDir);
+			m_bHit = true;
 
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
@@ -860,13 +934,44 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
 
-			m_bHit = true;
 			break;
 		}
 		case ATTACKTYPE::Attack_Buster_Start:
 			m_eState = Hit_Buster_Start;
 			m_bHit = true;
 			break;
+		case ATTACKTYPE::Attack_Air_Start:
+		{
+			m_eState = Hit_Air_Start;
+			m_bHit = true;
+
+			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
+			D3DXVec3Normalize(&vLook, &vLook);
+			Vector3	vDir(vLook.x * 0.05f, 1.5f, vLook.z * 0.05f);
+
+			m_pCollider.lock()->AddForce(vDir * m_fPower);
+			break;
+		}
+		case ATTACKTYPE::Attack_Homerun:
+		{
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = 2.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_fPower = 180.f;
+			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+			m_fPower = 100.f;
+
+			break;
+		}
 		default:
 			m_eState = Downword_Damage;
 			m_bHit = true;
@@ -878,11 +983,11 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		/*if (_BattleInfo.eAttackType == Attack_KnocBack)
 		{
 			m_eState = Hit_KnocBack;
-			m_bHit = true;
+			m_bHit = true;wsA
 		}
 		else
 		{
-			m_eState = Downword_Damage;
+			m_eState = Downword_Damage; 
 			m_bHit = true;
 		}*/
 	}
@@ -898,6 +1003,12 @@ void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 	m_eState = Hit_Buster_Start;
 }
 
+void Em100::Snatch(BT_INFO _BattleInfo, void* pArg)
+{
+	m_bHit = true;
+	m_eState = Hit_Snatch_Start;
+}
+
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (!m_bCollEnable)
@@ -907,11 +1018,14 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+		cout << "응애 응애!! " << endl;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
+		break;
+	case GAMEOBJECTTAG::TAG_WireArm:
+		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
 		break;
@@ -923,6 +1037,8 @@ void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+
+		cout << "뿌직" << endl;
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		break;
@@ -1058,8 +1174,7 @@ void Em100::RenderInit()
 
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
-	//몬스터 초기상태 Idle
-	m_pMesh->PlayAnimation("Idle", true);
+	
 }
 
 void Em100::Rotate(const float _fDeltaTime)
@@ -1082,9 +1197,8 @@ void Em100::Rotate(const float _fDeltaTime)
 	m_fAccuangle += m_fAngleSpeed * _fDeltaTime;
 }
 
-void Em100::Update_Angle(const float _fDeltaTime, bool _bTest)
+void Em100::Update_Angle()
 {
-
 	Vector3 vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
 	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
 
@@ -1113,9 +1227,9 @@ void Em100::Update_Angle(const float _fDeltaTime, bool _bTest)
 		m_fAngleSpeed = fabs(m_fAngleSpeed);
 	else
 		m_fAngleSpeed = -fabs(m_fAngleSpeed);
-
 }
 
-void Em100::Update_Angle()
+void Em100::Set_Rotate()
 {
+	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fRadian), 0.f });
 }

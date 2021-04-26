@@ -3,9 +3,11 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+#include "Wire_Arm_Grab.h"
 
 Wire_Arm::Wire_Arm()
 	:m_bIsRender(false)
+	,m_pBoneMatrix(nullptr)
 {
 	m_nTag = TAG_WireArm;
 }
@@ -28,6 +30,8 @@ HRESULT Wire_Arm::Ready()
 	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
 	
 	PushEditEntity(m_pTransform.lock().get());
+
+	m_pWireArmGrab = AddGameObject<Wire_Arm_Grab>();
 	SetActive(false);
 
 	return S_OK;
@@ -37,11 +41,16 @@ HRESULT Wire_Arm::Awake()
 {
 	Unit::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
+
 	
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->SetRadius(0.05f);
 	PushEditEntity(m_pCollider.lock().get());
+
+	m_pBoneMatrix = m_pMesh->GetToRootMatrixPtr("R_B_Thumb1_front_ST");
+
 
 	return S_OK;
 }
@@ -56,7 +65,17 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
+	
+	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
+	Matrix CollWorld;
+	CollWorld = *m_pBoneMatrix * NeroWorld;
 
+	Vector3 PlayerRight;
+	memcpy(&PlayerRight, NeroWorld.m[0], sizeof(Vector3));
+	D3DXVec3Normalize(&PlayerRight, &PlayerRight);
+	CollWorld._41 += PlayerRight.x * -0.05f;
+	CollWorld._43 += PlayerRight.z * -0.05f;
+	m_pTransform.lock()->SetPosition({ CollWorld._41,CollWorld._42,CollWorld._43 });
 	if (m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);
@@ -75,6 +94,7 @@ void Wire_Arm::OnEnable()
 {
 	Unit::OnEnable();
 	m_bIsRender = true;
+	D3DXMatrixIdentity(&m_MyRenderMatrix);
 
 	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
 	std::optional<Matrix> R_HandLocal = m_pNero.lock()->Get_BoneMatrix_ByName("R_Hand");
@@ -85,9 +105,9 @@ void Wire_Arm::OnEnable()
 	Vector3 PlayeUp = m_pNero.lock()->GetComponent<Transform>().lock()->GetUp();
 	NeroWorld._42 += PlayeUp.y * -0.12f;
 
-	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
-
+	m_MyRenderMatrix = NeroWorld;
 	_RenderProperty.bRender = m_bIsRender;
+	m_bCollEnable = true;
 }
 
 void Wire_Arm::OnDisable()
@@ -95,7 +115,48 @@ void Wire_Arm::OnDisable()
 	Unit::OnDisable();
 	m_bIsRender = false;
 	_RenderProperty.bRender = m_bIsRender;
+	m_bCollEnable = false;
 	//m_pMesh->SetPlayingTime(0);
+}
+
+void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	if (!m_bCollEnable)
+		return;
+	m_bCollEnable = false;
+	UINT ObjTag = _pOther.lock()->m_nTag;
+
+	switch (ObjTag)
+	{
+	case GAMEOBJECTTAG::Monster100:
+	{
+		Vector3 MyPos = m_pTransform.lock()->GetPosition();
+		MyPos.y -= 0.2f;
+		m_pWireArmGrab.lock()->GetComponent<Transform>().lock()->SetPosition(MyPos);
+		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
+		m_pWireArmGrab.lock()->SetActive(true);
+		_RenderProperty.bRender = m_bIsRender = false;
+		SetActive(false);
+	}
+		break;
+	case GAMEOBJECTTAG::Monster0000:
+	{
+		Vector3 MyPos = m_pTransform.lock()->GetPosition();
+		MyPos.y -= 0.2f;
+		m_pWireArmGrab.lock()->GetComponent<Transform>().lock()->SetPosition(MyPos);
+		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
+		m_pWireArmGrab.lock()->SetActive(true);
+		_RenderProperty.bRender = m_bIsRender = false;
+	}
+	break;
+	default:
+		break;
+	}
+}
+
+void Wire_Arm::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+
 }
 
 void Wire_Arm::Hit(BT_INFO _BattleInfo, void* pArg)
@@ -129,7 +190,7 @@ void Wire_Arm::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = m_MyRenderMatrix;
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

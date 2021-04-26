@@ -740,6 +740,10 @@ void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
+void Em5000::Snatch(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
 void Em5000::RenderGBufferSK(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;

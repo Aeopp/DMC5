@@ -49,6 +49,9 @@ private:
 		Hit_Buster_End,
 		Downword_Down_StandUp,
 		Downword_Damage,
+		Hit_Snatch_Start,
+		Hit_Snatch_End,
+		Enter_Ground,
 		State_END
 	};
 
@@ -78,6 +81,7 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
@@ -89,8 +93,9 @@ public:
 	void RenderInit();
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle(const float _fDeltaTime, bool _bTest = false);
 	virtual void Update_Angle()override;
+
+	void		Set_Rotate();
 private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
@@ -125,6 +130,11 @@ private:
 	Matrix								  m_TempMatrix;
 	////////////////
 
+
+	/*--- 피 이펙트 ---*/
+	weak_ptr<class Liquid> m_pBlood;
+	weak_ptr<class AppearGroundMonster>   m_pAppear;
+	/*----------------*/
 };
 
 #endif // Em100_h__

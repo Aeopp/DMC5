@@ -12,7 +12,7 @@ sampler ALB0 = sampler_state
     minfilter = anisotropic;
     magfilter = anisotropic;
     mipfilter = anisotropic;
-    sRGBTexture = true;
+    sRGBTexture = false;
     MaxAnisotropy = 4;
 };
 
@@ -38,8 +38,14 @@ sampler Noise = sampler_state
 struct VsIn
 {
 	float4 Position : POSITION;
-    float3 Normal : NORMAL;
+    float4 Normal : NORMAL;
     float2 UV : TEXCOORD1;
+};
+
+struct VsIn_LightningParts
+{
+    float4 Position : POSITION;
+    float2 UV : TEXCOORD0;
 };
 
 struct VsOut
@@ -80,6 +86,20 @@ VsOut VsMain_Lightning(VsIn In)
     return Out;
 };
 
+VsOut VsMain_LightningParts(VsIn_LightningParts In)
+{
+    VsOut Out = (VsOut) 0;
+    
+    matrix WVP = World;
+    WVP = mul(WVP, ViewProjection);
+    
+    Out.Position = mul(float4(In.Position.xyz, 1.f), WVP);
+    Out.UV = In.UV;
+        
+    return Out;
+};
+
+
 
 struct PsIn
 {
@@ -99,14 +119,11 @@ PsOut PsMain_White(PsIn In)
     float2 NewUV = In.UV;
     NewUV.y = _TexV;
     
-    float4 AlbSample = tex2D(ALB0, NewUV);
-    float4 NoiseSample = tex2D(Noise, NewUV);
-    
-    float4 Noise = NoiseSample.rrrr;    // r,g,b 각각 다른 노이즈. 그 중 하나만 사용
-    Noise.rgb -= _SliceAmount;
-    clip(Noise);
+    float4 NoiseSample = tex2D(Noise, NewUV).rrrr; // r,g,b 각각 다른 노이즈. 그 중 하나만 사용
+    NoiseSample.rgb -= _SliceAmount;
+    clip(NoiseSample);
  
-    Out.Color = AlbSample;
+    Out.Color = tex2D(ALB0, NewUV);
     Out.Color.a *= 0.4f;    // 밝기 보정
 
     return Out;
@@ -120,15 +137,25 @@ PsOut PsMain_Lightning(PsIn In)
     float2 NewUV = In.UV;
     NewUV.y = _TexV;
     
-    float4 AlphaSample = tex2D(Alpha, NewUV);
-    float4 AlbSample = tex2D(ALB0, NewUV);
-    float4 NoiseSample = tex2D(Noise, NewUV);
-    
-    float4 Noise = NoiseSample.rrrr;
-    Noise.rgb -= _SliceAmount;
-    clip(Noise);
+    float4 NoiseSample = tex2D(Noise, NewUV).rrrr;
+    NoiseSample.rgb -= _SliceAmount;
+    clip(NoiseSample);
  
-    Out.Color = float4(AlbSample.rgb, AlphaSample.r);
+    Out.Color = float4(tex2D(ALB0, NewUV).rgb, tex2D(Alpha, NewUV).r);
+    //Out.Color = float4(In.UV.x, In.UV.y, 0.f, 1.f);
+    
+    return Out;
+};
+
+// 메시 이펙트
+PsOut PsMain_LightningParts(PsIn In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    float2 NewUV = In.UV;
+    NewUV.y = _TexV;
+   
+    Out.Color = float4(tex2D(ALB0, NewUV).rgb, tex2D(Alpha, NewUV).r);
     //Out.Color = float4(In.UV.x, In.UV.y, 0.f, 1.f);
     
     return Out;
@@ -143,7 +170,7 @@ technique Default
 		destblend = invsrcalpha;
         //zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_White();
@@ -155,9 +182,21 @@ technique Default
         destblend = invsrcalpha;
         //zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Lightning();
         pixelshader = compile ps_3_0 PsMain_Lightning();
+    }
+    pass p2
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        //zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain_LightningParts();
+        pixelshader = compile ps_3_0 PsMain_LightningParts();
     }
 };

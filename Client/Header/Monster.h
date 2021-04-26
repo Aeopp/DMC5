@@ -24,7 +24,7 @@ public:
 
 	std::shared_ptr<ENGINE::SkeletonMesh> Get_Mesh() { return m_pMesh; }
 	
-
+	Vector3			GetMonsterBoneWorldPos(std::string _BoneName);
 public:
 	virtual HRESULT Ready() override PURE;
 	virtual HRESULT Awake() override PURE;
@@ -37,7 +37,10 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 
+public:
+	void	Set_Snatch(bool _bSnatch);
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
 	virtual void   Update_Angle() PURE;
@@ -47,6 +50,8 @@ protected:
 	bool	m_bIng = false;
 	bool	m_bHit = false;
 	bool	m_bDown = false;
+	bool	m_bSnatch = true;
+	bool	m_bEnterGround = false;
 
 	//플레이어 방향 회전하기 용
 	bool	m_bInteraction = false;;
@@ -57,7 +62,6 @@ protected:
 	float		m_fPower = 0.f;
 	D3DXVECTOR3 m_vPower;
 };
-
 
 
 #endif // Monster_h__

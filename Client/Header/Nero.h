@@ -301,6 +301,7 @@ public:
 	std::optional<Matrix> Get_BoneMatrix_ByName(std::string _BoneName);
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
+	Matrix Get_NeroBoneWorldMatrix(std::string _BoneName);
 	bool Get_IsMajinMode() { return m_IsMajin; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }

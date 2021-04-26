@@ -70,8 +70,8 @@ HRESULT Em0000Weapon::Awake()
 
 	m_pCollider.lock()->SetGravity(false);
 
-	m_pCollider.lock()->SetCenter({ -1.f,0.f,-1.7f });
-	m_pCollider.lock()->SetRadius(0.8f);
+	m_pCollider.lock()->SetCenter({ -0.1f,0.f,-0.17f });
+	m_pCollider.lock()->SetRadius(0.08f);
 	
 
 	return S_OK;
@@ -216,6 +216,14 @@ void Em0000Weapon::RenderShadow(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
+}
+
+void Em0000Weapon::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Em0000Weapon::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
 }
 
 

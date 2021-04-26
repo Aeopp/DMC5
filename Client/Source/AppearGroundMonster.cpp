@@ -24,7 +24,7 @@ void AppearGroundMonster::Reset()
 	for (auto& Element : _BloodMeshVec)
 	{
 		Element.SubsetIdx = static_cast<float>(FMath::Random<int>(-20, -1));
-		D3DXMatrixScaling(&Element.ChildWorldMatrix, 0.2f, 0.2f, 0.2f);
+		D3DXMatrixScaling(&Element.ChildWorldMatrix, 0.05f, 0.05f, 0.05f);
 		Element.ChildWorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
 		Element.ChildWorldMatrix._42 = 0.001f;
 		Element.ChildWorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);
@@ -105,10 +105,11 @@ void AppearGroundMonster::RenderInit()
 void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 {
 	// blood
+	_ExtraColor = Vector3(0.55f, 0.f, 0.f);
+	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
 	_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
-	_ExtraColor = Vector3(1.f, 0.f, 0.f);
-	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
+	_Info.Fx->SetFloat("magicNumber", 0.5f);
 	//
 	
 	for (auto& Element : _BloodMeshVec)
@@ -154,7 +155,7 @@ HRESULT AppearGroundMonster::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_AppearGroundMonster;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
+	InitTransform.lock()->SetScale({ 0.075f, 0.075f, 0.075f });
 	
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 
@@ -183,7 +184,7 @@ HRESULT AppearGroundMonster::Ready()
 	_DecalBloodMsk0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_blood_env_0000_msk2.tga");
 	
 	Matrix TempMat;
-	D3DXMatrixScaling(&_DecalBloodChildWorldMatrix, 0.15f, 0.1f, 0.15f);
+	D3DXMatrixScaling(&_DecalBloodChildWorldMatrix, 0.1f, 0.1f, 0.1f);
 	D3DXMatrixRotationX(&TempMat, D3DXToRadian(-90.f));
 	_DecalBloodChildWorldMatrix *= TempMat;
 	_DecalBloodChildWorldMatrix._42 = 0.001f;
@@ -232,7 +233,7 @@ UINT AppearGroundMonster::Update(const float _fDeltaTime)
 			else
 			{
 				Element.SubsetIdx = static_cast<float>(FMath::Random<int>(-20, 0));
-				D3DXMatrixScaling(&Element.ChildWorldMatrix, 0.2f, 0.2f, 0.2f);
+				D3DXMatrixScaling(&Element.ChildWorldMatrix, 0.05f, 0.05f, 0.05f);
 				Element.ChildWorldMatrix._41 += FMath::Random<float>(-3.f, 3.f);
 				Element.ChildWorldMatrix._42 = 0.001f;
 				Element.ChildWorldMatrix._43 += FMath::Random<float>(-3.f, 3.f);

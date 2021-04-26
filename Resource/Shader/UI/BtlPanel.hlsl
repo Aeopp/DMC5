@@ -37,7 +37,7 @@ sampler Noise = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = true;
+    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -68,6 +68,19 @@ sampler ALB1 = sampler_state
     AddressV = Wrap;
 };
 
+texture ALB_NOsRGBMap;
+sampler ALB_NOsRGB = sampler_state
+{
+    texture = ALB_NOsRGBMap;
+    minfilter = anisotropic;
+    magfilter = anisotropic;
+    mipfilter = anisotropic;
+    sRGBTexture = false;
+    MaxAnisotropy = 4;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
 texture NRMR0Map;
 sampler NRMR0 = sampler_state
 {
@@ -87,7 +100,7 @@ sampler ATOS0 = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = true;
+    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -99,7 +112,7 @@ sampler Emissive0 = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = true;
+    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -326,7 +339,7 @@ PsOut PsMain_Plane(PsIn In)
 {
     PsOut Out = (PsOut) 0;
     
-    float4 ALB0Sample = tex2D(ALB0, In.UV);
+    float4 ALB0Sample = tex2D(ALB_NOsRGB, In.UV);
     float4 ATOSSample = tex2D(ATOS0, In.UV);
     float4 NRMRSample = tex2D(NRMR0, In.UV);
     
@@ -661,8 +674,8 @@ PsOut PsMain_TDTGauge0(PsIn In)
     float2 newUV = In.UV;
     newUV.y += _AccumulationTexV;
  
-    Out.Color.rgb = Shade * (float3(0.149f, 0.145f, 0.208f) - 0.15f * float3(NRMRSample.aaa));
-    Out.Color.a = (ATOSSample.r + ATOSSample.b) * (1.f - tex2D(ATOS0, newUV).a * 0.8f);
+    Out.Color.rgb = Shade * saturate((float3(0.149f, 0.145f, 0.208f) - 0.15f * float3(NRMRSample.aaa)));
+    Out.Color.a = (ATOSSample.r + ATOSSample.b) * (1.f - saturate(tex2D(ATOS0, newUV).a * 0.8f));
     
     return Out;
 };
@@ -693,7 +706,7 @@ PsOut PsMain_TDTGauge1(PsIn_Clip In)
     if (0.01f > _EmissivePower)
     {
         // º¯½Å X
-        Out.Color.rgb = Shade * (float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa);
+        Out.Color.rgb = Shade * saturate((float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa));
     }
     else
     {
@@ -748,7 +761,7 @@ PsOut PsMain_GUI(PsIn_GUI In)
 {
     PsOut Out = (PsOut) 0;
     
-    Out.Color = tex2D(ALB0, In.UV);
+    Out.Color = tex2D(ALB_NOsRGB, In.UV);
  
     return Out;
 };
@@ -761,7 +774,7 @@ PsOut PsMain_GUI_Dissolve(PsIn_GUI In)
     NoiseSample.rgb -= _SliceAmount;
     clip(NoiseSample);
     
-    Out.Color = tex2D(ALB0, In.UV);
+    Out.Color = tex2D(ALB_NOsRGB, In.UV);
 
     return Out;
 };
@@ -838,7 +851,7 @@ technique Default
 		destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_Plane();
@@ -850,7 +863,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_TargetCursor();
@@ -862,7 +875,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_TargetHP();
         pixelshader = compile ps_3_0 PsMain_TargetHP();
@@ -874,7 +887,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge0();
@@ -886,7 +899,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge1();
@@ -898,7 +911,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge2();
@@ -910,7 +923,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge3();
@@ -922,7 +935,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
         pixelshader = compile ps_3_0 PsMain_Glass();
@@ -934,7 +947,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
         pixelshader = compile ps_3_0 PsMain_Mesh();
@@ -946,7 +959,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_HPGauge0();
@@ -958,7 +971,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_TDTGauge0();
@@ -970,7 +983,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_TDTGauge1();
@@ -982,7 +995,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_GUI();
         pixelshader = compile ps_3_0 PsMain_GUI();
@@ -994,7 +1007,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_RankBack();
@@ -1006,7 +1019,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
         pixelshader = compile ps_3_0 PsMain_Mesh_Dissolve();
@@ -1018,7 +1031,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
         
         vertexshader = compile vs_3_0 VsMain_Rank();
         pixelshader = compile ps_3_0 PsMain_Rank();
@@ -1030,7 +1043,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_GUI();
         pixelshader = compile ps_3_0 PsMain_GUI_Dissolve();
@@ -1042,7 +1055,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
         pixelshader = compile ps_3_0 PsMain_ExGauge();
@@ -1054,7 +1067,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_HPGauge1();

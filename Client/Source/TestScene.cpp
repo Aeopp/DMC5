@@ -13,12 +13,13 @@
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
+#include "Em1000.h"
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-#include "Dust.h"
+#include "Smoke.h"
 #include "QliphothBlock.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
@@ -46,29 +47,26 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<MainCamera>();
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
-	//AddGameObject<Nero>();
-	//AddGameObject<Em100>();
-
+	AddGameObject<MainCamera>();
+	AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
+	/*AddGameObject<Em100>();
+	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
 	LoadMap();
 	AddGameObject<TempMap>();
 
-
-	//AddGameObject<BtlPanel>();
-	////AddGameObject<Glint>();
-	////AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
-	////AddGameObject<AppearGroundMonster>();
-	//AddGameObject<Dust>();
-	//AddGameObject<QliphothBlock>();
-
+	/*AddGameObject<Glint>();
+	AddGameObject<OvertureHand>();
+	AddGameObject<Liquid>();
+	AddGameObject<QliphothBlock>();
+	AddGameObject<AppearGroundMonster>();*/
 	// 수정필요
 	//AddGameObject<DashImpact>();
-
+	
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
@@ -81,6 +79,40 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f  }; 
 	_Renderer->SoftParticleDepthScale = 1.f;
 	_Renderer->SkyRotationSpeed = 1.5f;
+
+	// Stage2 안개
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
+		pSmoke->SetPosition(Vector3(-10.f, -6.f, 30.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
+		pSmoke->SetPosition(Vector3(30.f, -6.f, 10.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
+		pSmoke->SetPosition(Vector3(10.f, -6.f, -25.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
+		pSmoke->SetPosition(Vector3(-20.f, -6.f, -30.f));
+		pSmoke->PlayStart(10.f);
+	}
 
 	return S_OK;
 }

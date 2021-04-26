@@ -25,4 +25,14 @@ void Monster::RenderReady()
 	}
 }
 
+void Monster::Set_Snatch(bool _bSnatch)
+{
+	m_bSnatch = _bSnatch;
+}
 
+Vector3 Monster::GetMonsterBoneWorldPos(std::string _BoneName)
+{
+	Vector3 WorldPos;
+	memcpy(&WorldPos, (*m_pMesh->GetNodeToRoot(_BoneName) * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
+	return WorldPos;
+}
