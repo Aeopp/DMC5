@@ -644,7 +644,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 200;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -3.5f, 0.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -1.5f, 0.f, 3.f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 

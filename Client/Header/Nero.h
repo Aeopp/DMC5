@@ -198,6 +198,10 @@ public:
 		ANI_BUSTER_START,
 		ANI_TO_MAJIN,
 		ANI_TO_MAJIN2,
+		ANI_JOG_LOOP,
+		ANI_JOG_STOP,
+		ANI_JOG_TURN_180,
+		ANI_JOG_TURN_180_L,
 		ANI_BUSTER_AIR_CATCH,
 		ANI_BUSTER_STRIKE_COMMON,
 		ANI_BUSTER_STRIKE_COMMON_AIR,
@@ -262,7 +266,7 @@ public:
 		NeroCom_RedQueen,
 		NeroCom_Cerberos,
 		NeroCom_End
-	};			
+	};	
 
 private:
 	explicit Nero();
@@ -303,6 +307,7 @@ public:
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
 	Matrix Get_NeroBoneWorldMatrix(std::string _BoneName);
 	bool Get_IsMajinMode() { return m_IsMajin; }
+	int  GetDashLoopDir() { return m_iDashLoopDir; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
@@ -313,9 +318,16 @@ public:
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 	void SetAddForce(Vector3 _vJumpPos);
+	void SetAddForce_Dir(NeroDirection _eDir, float _fPower);
+	void SetLockOnMonster();
+	void SetOffLockOnMonster();
+	void SetDashLoopDir();
+	void SetGravity(bool _ActiveOrNot) { m_pCollider.lock()->SetGravity(_ActiveOrNot); }
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
+	void Locking();
+	void RotateToTargetMonster();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//Ä«¸Þ¶ó
@@ -388,6 +400,7 @@ private:
 	std::weak_ptr<GT_Overture>		m_pOverture;
 	std::weak_ptr<GT_Rockman>		m_pRockman;
 	std::weak_ptr<Effect>			m_pEffOverture;
+	std::weak_ptr<Monster>			m_pTargetMonster;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -404,6 +417,7 @@ private:
 	float	m_fRotationAngle = 0.f;
 
 	bool	m_IsMajin = false;
+	int		m_iDashLoopDir = 1;
 
 	//
 	D3DXVECTOR3 vDegree;

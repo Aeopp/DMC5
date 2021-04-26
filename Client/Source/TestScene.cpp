@@ -56,8 +56,8 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
-	LoadMap();
-	AddGameObject<TempMap>();
+	//LoadMap();
+	//AddGameObject<TempMap>();
 
 	/*AddGameObject<Glint>();
 	AddGameObject<OvertureHand>();

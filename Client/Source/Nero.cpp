@@ -239,14 +239,10 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
 
-	if (Input::GetKeyDown(DIK_7))
-	{
-		static bool bActive = false;
-		bActive = !m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->IsActive();
-		Set_Weapon_Coll(NeroCom_RedQueen, bActive);
-		bActive = !m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->IsActive();
-		Set_Weapon_Coll(NeroCom_RedQueen, bActive);
-	}
+	if (Input::GetKey(DIK_V))
+		Locking();
+	else
+		SetOffLockOnMonster();
 
 
 	return 0;
@@ -276,14 +272,17 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	case Attack_Front:
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
-	case Attack_Down:
-		break;
-	case Attack_Stun:
-		break;
-	case Attack_KnocBack:
-		break;
-	case Attack_END:
-		break;
+	//case Attack_Down:
+	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+	//	break;
+	//case Attack_Stun:
+	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+	//	break;
+	//case Attack_KnocBack:
+	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+	//	break;
+	//case Attack_END:
+	//	break;
 	default:
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
@@ -574,6 +573,64 @@ void Nero::SetAddForce(Vector3 _vJumpPos)
 	m_pCollider.lock()->AddForce(_vJumpPos);
 }
 
+void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
+{
+	switch (_eDir)
+	{
+	case Nero::Dir_Front:
+		m_pCollider.lock()->AddForce(m_pTransform.lock()->GetLook() * -1.f * _fPower);
+		break;
+	case Nero::Dir_Back:
+		break;
+	case Nero::Dir_Left:
+		break;
+	case Nero::Dir_Right:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::SetLockOnMonster()
+{
+	if (!m_pTargetMonster.expired())
+		return;
+
+	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
+	if (0 == MonsterList.size())
+		return;
+
+	Vector3 Dir = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+	float Distance = D3DXVec3Length(&Dir);
+	//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
+	m_pTargetMonster = MonsterList.begin()->lock();
+
+	for (auto& pMonster : MonsterList)
+	{
+		Vector3 Direction = MonsterList.begin()->lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		float Temp = D3DXVec3Length(&Direction);
+		//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
+		if (Distance >= Temp)
+		{
+			Distance = Temp;
+			m_pTargetMonster = pMonster;
+		}
+	}
+	m_pBtlPanel.lock()->SetTargetCursorActive(true);
+	//RotateToTargetMonster();
+}
+
+void Nero::SetOffLockOnMonster()
+{
+	m_pBtlPanel.lock()->SetTargetCursorActive(false);
+	m_pTargetMonster.reset();
+}
+
+void Nero::SetDashLoopDir()
+{
+	m_iDashLoopDir = m_iDashLoopDir == 1 ? -1 : 1;
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -626,6 +683,48 @@ void Nero::CheckAutoRotate()
 bool Nero::CheckIsGround()
 {
 	return m_pCollider.lock()->IsGround();
+}
+
+void Nero::Locking()
+{
+	SetLockOnMonster();
+
+	if (m_pTargetMonster.expired())
+		return;
+	m_pBtlPanel.lock()->SetTargetCursor(
+		m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition(),
+		m_pTargetMonster.lock()->Get_BattleInfo().iHp);
+	
+	
+}
+
+void Nero::RotateToTargetMonster()
+{
+	if (m_pTargetMonster.expired())
+		return;
+	Vector3 vMonsterPos = m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+	Vector3 vDir = vMonsterPos - vMyPos;
+	vDir.y = 0;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	float fRadian = acosf(fDot);
+
+	Vector3	vCross;
+	D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+	if (vCross.y > 0)
+		fRadian *= -1;
+	m_fAngle += -D3DXToDegree(fRadian) + vRotationDegree.y;
+	vDegree.y = m_fAngle;
+	vRotationDegree.y = m_fRotationAngle = 0;
+	Reset_RootRotation();
+
+	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)
