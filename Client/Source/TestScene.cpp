@@ -64,6 +64,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Liquid>();
 	AddGameObject<QliphothBlock>();
 	AddGameObject<AppearGroundMonster>();*/
+
 	// 수정필요
 	//AddGameObject<DashImpact>();
 	

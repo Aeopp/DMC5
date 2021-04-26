@@ -102,7 +102,7 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
 		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
-		_Info.Fx->SetFloatArray("_MagicNumber", Vector3(0.05f, 0.05f, 0.05f), 3u);
+		_Info.Fx->SetFloatArray("_MagicNumber", Vector3(0.00005f, 0.00005f, 0.00005f), 3u);
 
 		SharedSubset->Render(_Info.Fx);
 	}
