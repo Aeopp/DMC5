@@ -51,6 +51,7 @@ private:
 		Downword_Damage,
 		Hit_Snatch_Start,
 		Hit_Snatch_End,
+		Enter_Ground,
 		State_END
 	};
 
@@ -132,6 +133,7 @@ private:
 
 	/*--- «« ¿Ã∆Â∆Æ ---*/
 	weak_ptr<class Liquid> m_pBlood;
+	weak_ptr<class AppearGroundMonster>   m_pAppear;
 	/*----------------*/
 };
 

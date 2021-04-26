@@ -84,7 +84,7 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereLoc = { 0.f,-4.762f,0.f  }; 
 
 	// Stage2 안개
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
+	/*if (auto pSmoke = AddGameObject<Smoke>().lock();
 		pSmoke)
 	{
 		pSmoke->SetScale(0.3f);
@@ -115,7 +115,7 @@ HRESULT TestScene::LoadScene()
 		pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
 		pSmoke->SetPosition(Vector3(-20.f, -6.f, -30.f));
 		pSmoke->PlayStart(10.f);
-	}
+	}*/
 
 	return S_OK;
 }

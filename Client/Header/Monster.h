@@ -51,6 +51,7 @@ protected:
 	bool	m_bHit = false;
 	bool	m_bDown = false;
 	bool	m_bSnatch = true;
+	bool	m_bEnterGround = false;
 
 	//플레이어 방향 회전하기 용
 	bool	m_bInteraction = false;;
