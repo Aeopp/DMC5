@@ -49,11 +49,28 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	// AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
-	AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
+	AddGameObject<TestAnimationObject>();
+
+	// AddGameObject<MainCamera>();
+	 AddGameObject<Nero>();
+	 AddGameObject<BtlPanel>();
+
+	 {
+		 auto em = AddGameObject<Em100>();
+		 em.lock()->SetActive(true);
+		 em.lock()->GetComponent<Transform>().
+			 lock()->SetPosition({ -0.8f,0.02f,-0.7f });
+
+	 }
+
+	 {
+		 auto em = AddGameObject<Em100>();
+		 em.lock()->SetActive(true);
+		 em.lock()->GetComponent<Transform>().
+			 lock()->SetPosition({ 0.7f,0.02f,-1.f });
+	 }
 
 	/*AddGameObject<Em100>();
 	AddGameObject<Em0000>();*/
@@ -63,7 +80,6 @@ HRESULT TestScene::LoadScene()
 	/*AddGameObject<Em5000>();
 	AddGameObject<Em5000>();*/
 	// 
-
 	
 	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
 	pEm100.lock()->SetActive(false);
@@ -208,7 +224,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 
 		m_vecEm100[0].lock()->SetActive(true);
 		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-
+		
 		m_vecEm0000[0].lock()->SetActive(true);
 		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
 
