@@ -45,26 +45,66 @@ TestScene* TestScene::Create()
 	return pInstance;
 }
 
+
 HRESULT TestScene::LoadScene()
 {
 	AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();
-	AddGameObject<Nero>();
+	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em100>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
-	/*weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
-	pEm100.lock()->SetActive(false);
-	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
+	// Wave 1st
+	{
+		weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -0.8f, 0.02f, -0.7f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	pEm0000.lock()->SetActive(false);
-	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));*/
+		_Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.7f, 0.02f, -1.f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	LoadMap();*/
+		weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 1.f, 0.02f, -1.f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+
+		pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.5f, 0.02f,1.f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	}
+
+	// Wave 2nd
+	{
+		weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+
+		_Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
+		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+
+		weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+
+		pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	}
+
+
+	LoadMap();
 	AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
@@ -75,7 +115,7 @@ HRESULT TestScene::LoadScene()
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
-	
+
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
@@ -170,11 +210,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	if (nullptr != pPlane)
-		return S_OK;
+	/*if (nullptr != pPlane)
+		return S_OK;*/
 
-	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-	Physics::AddActor(UniqueID, *pPlane);
+		//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+		//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
@@ -190,13 +230,19 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-	if (Input::GetKeyDown(DIK_NUMPAD2))
+
+	// 여기서 임시로 트리거 처리 ???
+	if (
+		(FMath::Length
+		( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+		  < 0.1f  )   && 
+			! bfirst    )
 	{
-		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-		m_vecEm100[0].lock()->SetActive(true);
-	
-		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
-		m_vecEm0000[0].lock()->SetActive(true);
+		for (auto& spawn_entity : Wavefirst)
+		{
+			bfirst= true;
+			spawn_entity.lock()->SetActive(true);
+		}
 
 		for (int i = 1; i < 4; ++i)
 		{
@@ -207,17 +253,78 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 			}
 		}
 	}
-	if (Input::GetKeyDown(DIK_NUMPAD8))
+
+
+	if ((FMath::Length
+	(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+		< 0.1f) &&
+		!bsecond)
 	{
-		for (int i = 1; i < 4; ++i)
+		for (auto& spawn_entity : Wavesecond)
 		{
-			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-			{
-				m_vecQliphothBlock[i].lock()->Reset();
-				// + render false 된 후에 SetActive(false) 해야
-			}
+			bsecond = true;
+			spawn_entity.lock()->SetActive(true);
 		}
 	}
+
+
+	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//{
+
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->SetActive(true);
+	//			m_vecQliphothBlock[i].lock()->PlayStart();
+	//		}
+	//	}
+	//}
+
+
+	
+	if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
+	{
+		int count = Wavefirst.size();
+		for (auto& target : Wavefirst)
+		{
+			if (target.expired())
+			{
+				--count; 
+			}
+			if (count <= 0)
+			{
+				for (int i = 1; i < 4; ++i)
+				{
+					if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+					{
+						m_vecQliphothBlock[i].lock()->Reset();
+						// + render false 된 후에 SetActive(false) 해야
+					}
+				}
+			}
+		}
+		/*std::all_of(std::begin(Wavefirst), std::end(Wavefirst), 
+			[]
+		(const weak_ptr<GameObject>& target)
+			return target.experiod();
+			{});*/
+
+
+	}
+
+
+	//if (Input::GetKeyDown(DIK_NUMPAD8))
+	//{
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->Reset();
+	//			// + render false 된 후에 SetActive(false) 해야
+	//		}
+	//	}
+	//}
 
 	return S_OK;
 }

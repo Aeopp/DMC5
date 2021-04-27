@@ -600,8 +600,8 @@ UINT Em0000::Update(const float _fDeltaTime)
 	Rotate(_fDeltaTime);
 
 
-	/*if (m_BattleInfo.iHp <= 0)
-		m_eState = Dead;*/
+	if (m_BattleInfo.iHp <= 0)
+		m_eState = Dead;
 
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
