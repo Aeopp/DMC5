@@ -109,7 +109,7 @@ void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
 	_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
-	_Info.Fx->SetFloat("magicNumber", 0.5f);
+	_Info.Fx->SetFloat("brightScale", _BrightScale);
 	//
 	
 	for (auto& Element : _BloodMeshVec)
@@ -138,9 +138,17 @@ void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		Matrix World = _DecalBloodChildWorldMatrix * _RenderUpdateInfo.World;
 		_Info.Fx->SetMatrix("World", &World);
 
+		if (!Renderer::GetInstance()->GetDirLights().empty())
+		{
+			// ¤¾¤¾
+			auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
+			_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
+		}
+
 		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
 		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.01f);
 		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
 		SharedSubset->Render(_Info.Fx);
@@ -192,6 +200,8 @@ HRESULT AppearGroundMonster::Ready()
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 	_PlayingSpeed = 1.f;
+
+	_BrightScale = 0.5f;
 
 	Reset();
 

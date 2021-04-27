@@ -96,7 +96,8 @@ void Liquid::RenderGBuffer(const DrawInfo& _Info)
 	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
 	_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
-	_Info.Fx->SetFloat("magicNumber", 0.5f);
+	_Info.Fx->SetFloat("brightScale", _BrightScale);
+	//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 	//
 	
 	// meat
@@ -147,6 +148,7 @@ HRESULT Liquid::Ready()
 	_MeatNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_Meat_NRMR.tga");
 
 	_PlayingSpeed = 40.f;
+	_BrightScale = 0.5f;
 
 	SetVariationIdx(_VariationIdx);
 

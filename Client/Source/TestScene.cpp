@@ -47,13 +47,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em100>();
-	AddGameObject<Em0000>();
+	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
 	/*weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
@@ -62,7 +62,7 @@ HRESULT TestScene::LoadScene()
 
 	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
 	pEm0000.lock()->SetActive(false);
-	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));*/
 
 	LoadMap();*/
 	AddGameObject<TempMap>();
@@ -150,7 +150,7 @@ HRESULT TestScene::LoadScene()
 		ptr.lock()->SetScale(0.025f);
 		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
 		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
-		//ptr.lock()->SetActive(false);
+		ptr.lock()->SetActive(false);
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
@@ -159,7 +159,7 @@ HRESULT TestScene::LoadScene()
 		ptr.lock()->SetScale(0.016f);
 		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
 		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
-		//ptr.lock()->SetActive(false);
+		ptr.lock()->SetActive(false);
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 
@@ -190,34 +190,34 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-	//if (Input::GetKeyDown(DIK_NUMPAD2))
-	//{
-	//	m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-	//	m_vecEm100[0].lock()->SetActive(true);
-	//
-	//	m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
-	//	m_vecEm0000[0].lock()->SetActive(true);
+	if (Input::GetKeyDown(DIK_NUMPAD2))
+	{
+		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
+		m_vecEm100[0].lock()->SetActive(true);
+	
+		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
+		m_vecEm0000[0].lock()->SetActive(true);
 
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->SetActive(true);
-	//			m_vecQliphothBlock[i].lock()->PlayStart();
-	//		}
-	//	}
-	//}
-	//if (Input::GetKeyDown(DIK_NUMPAD8))
-	//{
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->Reset();
-	//			// + render false 된 후에 SetActive(false) 해야
-	//		}
-	//	}
-	//}
+		for (int i = 1; i < 4; ++i)
+		{
+			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+			{
+				m_vecQliphothBlock[i].lock()->SetActive(true);
+				m_vecQliphothBlock[i].lock()->PlayStart();
+			}
+		}
+	}
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		for (int i = 1; i < 4; ++i)
+		{
+			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+			{
+				m_vecQliphothBlock[i].lock()->Reset();
+				// + render false 된 후에 SetActive(false) 해야
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -285,7 +285,4 @@ void TestScene::LoadMap()
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
-
-
-
 }
