@@ -82,11 +82,11 @@ HRESULT TestScene::LoadScene()
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
 	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005; 
+	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
-	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f  }; 
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
 	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f;
 
@@ -174,7 +174,6 @@ HRESULT TestScene::Awake()
 	//	return S_OK;
 
 	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-
 	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
@@ -284,9 +283,9 @@ void TestScene::LoadMap()
 			vPosition.z = position[2].GetDouble();
 
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
-		}	
+		}
 	}
-	
+
 
 
 }

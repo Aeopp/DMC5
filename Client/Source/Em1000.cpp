@@ -272,32 +272,33 @@ void Em1000::OnDisable()
 void Em1000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
-	
-	
-		switch (_BattleInfo.eAttackType)
-		{
-		case ATTACKTYPE::Attack_L:
-			m_eState = Hit_L;
-			m_bHit = true;
-			break;
-		case ATTACKTYPE::Attack_R:
-			m_eState = Hit_R;
-			m_bHit = true;
-			break;
-		case ATTACKTYPE::Attack_Front:
-			m_eState = Hit_Front;
-			m_bHit = true;
-			break;
-		}
-	
-}
+
+
+	switch (_BattleInfo.eAttackType)
+	{
+	case ATTACKTYPE::Attack_L:
+		m_eState = Hit_L;
+		m_bHit = true;
+		break;
+	case ATTACKTYPE::Attack_R:
+		m_eState = Hit_R;
+		m_bHit = true;
+		break;
+	case ATTACKTYPE::Attack_Front:
+		m_eState = Hit_Front;
+		m_bHit = true;
+		break;
+	};
+};
 
 void Em1000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
+
 }
 
 void Em1000::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
+
 }
 
 void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
@@ -344,6 +345,10 @@ void Em1000::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -365,6 +370,10 @@ void Em1000::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -391,6 +400,10 @@ void Em1000::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
