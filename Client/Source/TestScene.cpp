@@ -52,12 +52,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	/*AddGameObject<Em100>();
-	AddGameObject<Em0000>();*/
+	AddGameObject<Em100>();
+	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
 	
-	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
+	/*weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
 	pEm100.lock()->SetActive(false);
 	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
 
@@ -66,7 +66,7 @@ HRESULT TestScene::LoadScene()
 	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
 	LoadMap();
-	AddGameObject<TempMap>();
+	AddGameObject<TempMap>();*/
 
 	if (auto ptr = AddGameObject<QliphothBlock>().lock();
 		ptr)
@@ -167,12 +167,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	//if (nullptr != pPlane)
-	//	return S_OK;
+	if (nullptr != pPlane)
+		return S_OK;
 
-	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-
-	Physics::AddActor(UniqueID, *pPlane);*/
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+	Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
@@ -190,25 +189,25 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 
 
 
-	if (Input::GetKeyDown(DIK_NUMPAD2))
-	{
-		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
-		for (auto& obj : listQliphoth)
-		{
-			//obj.lock()->SetActive(true);
-			// + 몬스터도 이때 중앙에 소환
-			obj.lock()->PlayStart();
-		}
+	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//{
+	//	list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
+	//	for (auto& obj : listQliphoth)
+	//	{
+	//		//obj.lock()->SetActive(true);
+	//		// + 몬스터도 이때 중앙에 소환
+	//		obj.lock()->PlayStart();
+	//	}
 
-		m_vecEm100[0].lock()->SetActive(true);
-		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
+	//	m_vecEm100[0].lock()->SetActive(true);
+	//	m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
 
-		m_vecEm0000[0].lock()->SetActive(true);
-		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
+	//	m_vecEm0000[0].lock()->SetActive(true);
+	//	m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
 
 
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
-	}
+	//	//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
+	//}
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
 		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
