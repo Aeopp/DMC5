@@ -18,6 +18,9 @@ SkeletonMesh::SkeletonMesh(LPDIRECT3DDEVICE9 const _pDevice)
 		std::make_shared<std::set<std::filesystem::path>>();
 	AnimationDataLoadFromJsonTablePathSet = 
 		std::make_shared<std::set<std::filesystem::path>>();
+	AnimIndexNameMap = std::make_shared<std::map<uint32, std::string>>();
+	AnimInfoTable = std::make_shared<std::map<std::string, AnimationInformation>>();
+	Nodes = std::make_shared< std::unordered_map<std::string, std::shared_ptr<Node>>>();
 }
 
 SkeletonMesh::SkeletonMesh(const SkeletonMesh& _rOther)
@@ -905,7 +908,7 @@ void SkeletonMesh::SetPlayingTime(float NewTime)
 	const float AnimDelta = NewTime - PlayingTime();
 	const float SetTime = NewTime * CurPlayAnimInfo.Duration;
 	CurrentAnimPrevFrameMotionTime = CurrentAnimMotionTime;
-	CurAccMotionTime =  ( CurAccMotionTime  - CurrentAnimMotionTime ) + SetTime;
+	CurAccMotionTime = (CurAccMotionTime - CurrentAnimMotionTime) + SetTime;
 	CurrentAnimMotionTime = SetTime;
 	PrevAnimPrevFrameMotionTime = PrevAnimMotionTime;
 	PrevAnimMotionTime += AnimDelta * PrevPlayAnimInfo.CalcAcceleration();
@@ -1049,16 +1052,13 @@ HRESULT SkeletonMesh::LoadMeshImplementation(
 	BoneSkinningMatries.resize(BoneTableParserInfo.size());
 
 	RootNodeName = AiScene->mRootNode->mName.C_Str();
-	Nodes = std::make_shared<std::unordered_map<std::string, std::shared_ptr<Node>>>();
 	MakeHierarchy(nullptr, AiScene->mRootNode, BoneTableParserInfo);
 
 	bHasAnimation = AiScene->HasAnimations();
 
 	if (bHasAnimation)
 	{
-		AnimIndexNameMap = std::make_shared<std::map<uint32, std::string>>();
 
-		AnimInfoTable = std::make_shared<std::map<std::string, AnimationInformation>>();
 
 		for (uint32 AnimIdx = 0u; AnimIdx < AiScene->mNumAnimations; ++AnimIdx)
 		{
@@ -1500,16 +1500,6 @@ void SkeletonMesh::LoadAnimation(const std::filesystem::path& FilePath)&
 
 	if (bHasAnimation)
 	{
-		if (!AnimIndexNameMap)
-		{
-			AnimIndexNameMap = std::make_shared<std::map<uint32, std::string>>();
-		}
-
-		if (!AnimInfoTable)
-		{
-			AnimInfoTable = std::make_shared<std::map<std::string, AnimationInformation>>();
-		};
-
 		for (uint32 AnimIdx = 0u; AnimIdx < AiScene->mNumAnimations; ++AnimIdx)
 		{
 			aiAnimation* _AiAnimation = AiScene->mAnimations[AnimIdx];

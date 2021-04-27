@@ -209,7 +209,7 @@ public:
 	std::shared_ptr<std::map<uint32, std::string>>				AnimIndexNameMap{};
 	std::shared_ptr<std::map<std::string,AnimationInformation>> AnimInfoTable{};
 	std::shared_ptr<std::unordered_map<std::string,std::shared_ptr<Node>>> Nodes{};
-	//              노드 이름과 ToRoot 매트릭스 매핑 ... 
+	//노드 이름과 ToRoot 매트릭스 매핑 ... 
 	std::optional<std::unordered_map<std::string, Matrix>> ToRoots{};
 
 	Vector3    EulerOffset{0,0,0};
