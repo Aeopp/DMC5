@@ -1470,6 +1470,26 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale",SoftParticleDepthScale);
+		
+		std::sort(std::begin(Entitys), std::end(Entitys), 
+			[EyePos = _RenderInfo.Eye](const ENGINE::Renderer::RenderEntityType& _Lhs,
+			   const ENGINE::Renderer::RenderEntityType& _Rhs)
+			{
+				const Vector3 LhsLocation =
+				{	_Lhs.first->_RenderUpdateInfo.World._41,
+					_Lhs.first->_RenderUpdateInfo.World._42 ,
+					_Lhs.first->_RenderUpdateInfo.World._43 
+				};
+
+				const Vector3 RhsLocation =
+				{   _Rhs.first->_RenderUpdateInfo.World._41,
+					_Rhs.first->_RenderUpdateInfo.World._42 ,
+					_Rhs.first->_RenderUpdateInfo.World._43
+				};
+				return FMath::LengthSq( (Vector3&)(EyePos) - LhsLocation)
+																	>
+					   FMath::LengthSq( (Vector3&)(EyePos)- RhsLocation );
+			});
 
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
