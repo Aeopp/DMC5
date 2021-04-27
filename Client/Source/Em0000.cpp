@@ -808,6 +808,7 @@ void Em0000::RenderGBufferSK(const DrawInfo& _Info)
 		{
 			continue;
 		}
+
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{

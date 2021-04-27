@@ -17,6 +17,8 @@
 #include <d3dx9.h>
 #include "StaticMesh.h"
 #include "Subset.h"
+#include <string_view>
+
 
 
 USING(ENGINE)
@@ -1463,6 +1465,42 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	_DrawInfo.BySituation = _EffInfo;
 	_DrawInfo._Device = Device;
 	_DrawInfo._Frustum = CameraFrustum.get();
+
+	using AsType = std::pair<std::string_view,
+		std::reference_wrapper<ENGINE::Renderer::RenderEntityType>>;
+
+	std::vector<AsType> AlphaSortArr;
+
+	for (auto& [ShaderKey, Entitys] : _Group)
+	{
+		for (auto& _Entity : Entitys)
+		{
+			AlphaSortArr.push_back({ ShaderKey,_Entity});
+		}
+	};
+
+	std::sort(std::begin(AlphaSortArr), std::end(AlphaSortArr),
+		[EyePos = _RenderInfo.Eye](const AsType& _Lhs ,
+								   const AsType& _Rhs)
+		{
+			const Vector3 LhsLocation
+					=
+			{		_Lhs.second.get().first->_RenderUpdateInfo.World._41,
+					_Lhs.second.get().first->_RenderUpdateInfo.World._42 ,
+					_Lhs.second.get().first->_RenderUpdateInfo.World._43
+			};
+
+			const Vector3 RhsLocation
+				=
+				{	_Rhs.second.get().first->_RenderUpdateInfo.World._41,
+					_Rhs.second.get().first->_RenderUpdateInfo.World._42 ,
+					_Rhs.second.get().first->_RenderUpdateInfo.World._43
+				};
+			return FMath::LengthSq((Vector3&)(EyePos)-LhsLocation)
+					>
+				FMath::LengthSq((Vector3&)(EyePos)-RhsLocation);
+		});
+
 	for (auto& [ShaderKey, Entitys] : _Group)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
@@ -1470,26 +1508,6 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale",SoftParticleDepthScale);
-		
-		std::sort(std::begin(Entitys), std::end(Entitys), 
-			[EyePos = _RenderInfo.Eye](const ENGINE::Renderer::RenderEntityType& _Lhs,
-			   const ENGINE::Renderer::RenderEntityType& _Rhs)
-			{
-				const Vector3 LhsLocation =
-				{	_Lhs.first->_RenderUpdateInfo.World._41,
-					_Lhs.first->_RenderUpdateInfo.World._42 ,
-					_Lhs.first->_RenderUpdateInfo.World._43 
-				};
-
-				const Vector3 RhsLocation =
-				{   _Rhs.first->_RenderUpdateInfo.World._41,
-					_Rhs.first->_RenderUpdateInfo.World._42 ,
-					_Rhs.first->_RenderUpdateInfo.World._43
-				};
-				return FMath::LengthSq( (Vector3&)(EyePos) - LhsLocation)
-																	>
-					   FMath::LengthSq( (Vector3&)(EyePos)- RhsLocation );
-			});
 
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
