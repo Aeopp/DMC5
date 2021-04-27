@@ -645,7 +645,7 @@ void Renderer::Editor()&
 		ImGui::SliderFloat3("SkySphereRot", SkysphereRot, -360.f, 360.f);
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
 		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
-		ImGui::ColorEdit3("FogColor", FogColor);
+		//ImGui::ColorEdit3("FogColor", FogColor);
 
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
@@ -1365,7 +1365,6 @@ HRESULT Renderer::RenderSkySphere()&
 		Fx->EndPass();
 		Fx->End();
 		Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
 	}
 
 	return S_OK;

@@ -47,7 +47,7 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
@@ -56,13 +56,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
-	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
+	/*weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
 	pEm100.lock()->SetActive(false);
 	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
 
 	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
 	pEm0000.lock()->SetActive(false);
-	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));*/
 
 	LoadMap();
 	AddGameObject<TempMap>();
