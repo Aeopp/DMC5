@@ -172,7 +172,7 @@ HRESULT TestScene::LoadScene()
 	{
 		ptr.lock()->SetScale(0.015f);
 		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+		ptr.lock()->SetPosition(Vector3(-5.429f, 0.486f, -5.05f));
 		ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}

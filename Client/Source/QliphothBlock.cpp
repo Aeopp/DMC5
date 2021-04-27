@@ -29,7 +29,7 @@ void QliphothBlock::RenderReady()
 		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
 		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
-		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);	// _Subset을 회전만 하기 떄문에 부모꺼 그대로 씀
 	}
 }
 
@@ -212,8 +212,9 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
-	//
-	if (_IsPlaying)
+	if (!_IsPlaying)
+		return 0;
+	else
 	{
 		if (_IsAlive)
 		{

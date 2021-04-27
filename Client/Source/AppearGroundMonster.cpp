@@ -32,7 +32,7 @@ void AppearGroundMonster::RenderReady()
 		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
 		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
-		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_DecalBloodChildWorldMatrix * _RenderUpdateInfo.World, 0.1f * Scale.x);	// 0.1 = planeÀÇ Å©±â
 	}
 }
 
@@ -171,7 +171,7 @@ void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
 		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
-		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.01f);
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.02f);
 		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
 		SharedSubset->Render(_Info.Fx);
@@ -244,6 +244,9 @@ HRESULT AppearGroundMonster::Start()
 UINT AppearGroundMonster::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
+
+	if (!_IsPlaying)
+		return 0;
 
 	//
 	if (5.f < _AccumulateTime)

@@ -165,6 +165,9 @@ UINT Smoke::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
+	if (!_IsPlaying)
+		return 0;
+
 	// Reset() 호출까지 계속 재생
 
 	//

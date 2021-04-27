@@ -229,6 +229,9 @@ UINT OvertureHand::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
+	if (!_IsPlaying)
+		return 0;
+
 	if (1.5f < _AccumulateTime)
 		Reset();
 

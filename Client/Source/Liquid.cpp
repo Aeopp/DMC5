@@ -189,6 +189,9 @@ UINT Liquid::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
+	if (!_IsPlaying)
+		return 0;
+
 	if (MAX_VARIATION_IDX <= _VariationIdx)
 		return 0;
 
