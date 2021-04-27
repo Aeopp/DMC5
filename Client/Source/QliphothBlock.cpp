@@ -101,6 +101,7 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			SharedSubset)
 		{
 			_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
 			_Info.Fx->SetFloat("_AccumulationTexU", _AccumulateTime * 0.2f);
 			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.2f);
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
@@ -131,6 +132,7 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		{
 			_Info.Fx->SetTexture("ALP0Map", _BaseInnerTex->GetTexture());
 			_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
 			_Info.Fx->SetFloat("_AccumulationTexU", _AccumulateTime * 0.075f);
 			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.075f);
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
@@ -169,6 +171,7 @@ HRESULT QliphothBlock::Ready()
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 	_PlayingSpeed = 1.f;
+	_BrightScale = 0.01f;
 
 	Reset();
 

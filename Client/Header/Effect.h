@@ -12,6 +12,9 @@ protected:
 	bool _IsPlaying = false;
 	bool _Loop = false;
 
+	float _BrightScale = 1.f;
+	float _SoftParticleDepthScale = 1.f;
+
 protected:
 	explicit Effect() = default;
 	virtual ~Effect() = default;

@@ -3,7 +3,7 @@ matrix ViewProjection;
 matrix InverseProjection;
 
 float SoftParticleDepthScale;
-float3 _BrightScale = float3(1.f, 1.f, 1.f);
+float _BrightScale = 1.f;
 
 float2 _MinTexUV = float2(0.f, 0.f);
 float2 _MaxTexUV = float2(1.f, 1.f);

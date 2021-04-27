@@ -69,6 +69,7 @@ void OvertureHand::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
 			{
 				_ImplInfo.Fx->SetTexture("ALB0Map", _LightningColorTex->GetTexture());
 				_ImplInfo.Fx->SetTexture("AlphaMap", _LightningTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", _BrightScale);
 				_ImplInfo.Fx->SetFloat("_TexV", _RandTexV0);
 
 				auto WeakSubset = _SparkBranchMesh->GetSubset(Idx);
@@ -104,6 +105,7 @@ void OvertureHand::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
 				_ImplInfo.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 				_ImplInfo.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
 				_ImplInfo.Fx->SetTexture("ALB0Map", _GlowTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", _BrightScale);
 				_ImplInfo.Fx->SetFloat("_TexV", _RandTexV1);
 				_ImplInfo.Fx->SetFloat("_SliceAmount", 1.f - _AccumulateTime * 5.f);
 
@@ -114,6 +116,7 @@ void OvertureHand::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
 				_ImplInfo.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 				_ImplInfo.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
 				_ImplInfo.Fx->SetTexture("ALB0Map", _GlowTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", _BrightScale);
 				_ImplInfo.Fx->SetFloat("_TexV", _RandTexV1);
 				_ImplInfo.Fx->SetFloat("_SliceAmount", _AccumulateTime);
 
@@ -129,6 +132,7 @@ void OvertureHand::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
 				_ImplInfo.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 				_ImplInfo.Fx->SetTexture("ALB0Map", _LightningColorTex->GetTexture());
 				_ImplInfo.Fx->SetTexture("AlphaMap", _LightningTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", _BrightScale);
 				_ImplInfo.Fx->SetFloat("_TexV", _RandTexV0);
 				_ImplInfo.Fx->SetFloat("_SliceAmount", (_AccumulateTime - 0.3f) * 0.8f);
 
@@ -178,6 +182,7 @@ HRESULT OvertureHand::Ready()
 	_SparkBranchWorldMatrix._43 += 20.f;
 
 	_PlayingSpeed = 1.f;
+	_BrightScale = 0.08f;
 
 	Reset();	// PlayStart()·Î Àç»ý
 

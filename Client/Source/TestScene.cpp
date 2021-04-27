@@ -150,7 +150,7 @@ HRESULT TestScene::LoadScene()
 		ptr.lock()->SetScale(0.025f);
 		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
 		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
-		//ptr.lock()->SetActive(false);
+		ptr.lock()->SetActive(false);
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
@@ -159,7 +159,7 @@ HRESULT TestScene::LoadScene()
 		ptr.lock()->SetScale(0.016f);
 		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
 		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
-		//ptr.lock()->SetActive(false);
+		ptr.lock()->SetActive(false);
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 
