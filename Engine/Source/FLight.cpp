@@ -73,12 +73,15 @@ FLight::FLight(
 	switch (type) {
 	case Point:
 		this->Position.w = 1;
+		Projparams.z = 1.f;
+		Projparams.w = 2.f;
+		PointRadius = 1.f;
+		lightFlux = 0.01f;
 		break;
-
 	case Directional:
 		this->Position.w = 0;
+		lightFlux = 1.f;
 		break;
-
 	case Spot:
 		// haha :)
 		this->Position.w = 0.75f;

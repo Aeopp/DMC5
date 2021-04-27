@@ -5,6 +5,7 @@
 
 #include "Nero.h"
 #include "RedQueen.h"
+#include "Subset.h"
 
 void Monster::Free()
 {
@@ -14,8 +15,7 @@ void Monster::Free()
 std::string Monster::GetName()
 {
 	return "Monster";
-}
-
+};
 
 void Monster::RenderReady()
 {
@@ -23,9 +23,25 @@ void Monster::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		if (m_pMesh)
+		{
+			const uint32  Numsubset = m_pMesh->GetNumSubset();
+			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+
+			for (uint32 i = 0; i < Numsubset; ++i)
+			{
+				const auto& _Subset = m_pMesh->GetSubset(i);
+				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(
+					_RenderUpdateInfo.World, Scale.x);
+			}
+		}
 	}
-}
+};
 
 void Monster::Set_Snatch(bool _bSnatch)
 {

@@ -112,12 +112,12 @@ public:
 	int						Currentface;
 	D3DXVECTOR3             Direction{ 0,0,0 };
 	float                   BlurIntencity;
-	float  lightFlux = 10.f;
+	float  lightFlux;
 	float  lightIlluminance = 1.5f;
 	float  specularPower = 80.f;
 	float  cosAngularRadius = 0.999989f; 
 	float  sinAngularRadius = 0.004625f;
-	float  shadowdepthbias =0.0f;
+	float  shadowdepthbias = 1e-5f;
 
 	Matrix viewinv;
 	Matrix proj;

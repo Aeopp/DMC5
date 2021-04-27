@@ -30,8 +30,22 @@ void Em0000Weapon::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
+		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		if (m_pStaticMesh)
+		{
+			const uint32  Numsubset = m_pStaticMesh->GetNumSubset();
+			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+
+			for (uint32 i = 0; i < Numsubset; ++i)
+			{
+				const auto& _Subset = m_pStaticMesh->GetSubset(i);
+				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+			}
+		}
 	}
 }
 
@@ -181,6 +195,12 @@ void Em0000Weapon::RenderDebug(const DrawInfo& _Info)
 	const uint32 Numsubset = m_pStaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false ==
+			_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
+
 		if (auto SpSubset = m_pStaticMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -199,6 +219,12 @@ void Em0000Weapon::RenderGBuffer(const DrawInfo& _Info)
 		if (auto SpSubset = m_pStaticMesh->GetSubset(i).lock();
 			SpSubset)
 		{
+			if (false ==
+				_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+			{
+				continue;
+			}
+
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
 			SpSubset->Render(_Info.Fx);
@@ -213,6 +239,12 @@ void Em0000Weapon::RenderShadow(const DrawInfo& _Info)
 	const uint32 Numsubset = m_pStaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false ==
+			_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
+
 		if (auto SpSubset = m_pStaticMesh->GetSubset(i).lock();
 			SpSubset)
 		{

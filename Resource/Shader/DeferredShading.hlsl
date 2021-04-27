@@ -34,7 +34,8 @@ bool IsPoint;
 
 float ShadowDepthMapHeight;
 float ShadowDepthMapWidth;
-float ShadowDepthBias;
+float ShadowDepthBias = 1e-5f;
+
 
 float shadowmin = 0.0f;
 
@@ -134,7 +135,7 @@ void vs_main(
 float ShadowVariance(float2 moments, float d)
 {
     float mean = moments.x;
-    float variance = max(moments.y - moments.x * moments.x, 1e-5f);
+    float variance = max(moments.y - moments.x * moments.x, ShadowDepthBias);
     float md = mean - d;
     float chebychev = variance / (variance + md * md);
 

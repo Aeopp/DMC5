@@ -17,6 +17,8 @@
 #include <d3dx9.h>
 #include "StaticMesh.h"
 #include "Subset.h"
+#include <string_view>
+
 
 
 USING(ENGINE)
@@ -498,7 +500,6 @@ HRESULT Renderer::Render()&
 	RenderReady();
 	RenderBegin();
 
-
 	//  ½¦µµ¿ì ÆÐ½º 
 	RenderShadowMaps();
 	EnableDepthBias();
@@ -600,9 +601,7 @@ HRESULT Renderer::OptRender()&
 	BackBuffer->Release();
 
 	return S_OK;
-}
-;
-
+};
 
 void Renderer::Editor()&
 {
@@ -647,7 +646,6 @@ void Renderer::Editor()&
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
 		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
 		ImGui::ColorEdit3("FogColor", FogColor);
-
 
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
@@ -809,7 +807,7 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetTechnique("variance");
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 			shadowmap->SetBool("isPerspective", FALSE);
-
+		
 			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			// ·»´õ ½ÃÀÛ ... 
@@ -841,7 +839,7 @@ void Renderer::RenderShadowMaps()
 
 			});
 	};
-
+	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	shadowmap->SetBool("isPerspective", TRUE);
 	for (auto& PointLight : PointLights)
 	{
@@ -897,7 +895,7 @@ void Renderer::RenderShadowMaps()
 		});
 	};
 
-	// Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	 //Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 };
 
 void Renderer::RenderGBuffer()
@@ -1461,13 +1459,73 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
+	
+	using AsType = std::pair<std::reference_wrapper<std::string>,
+		std::reference_wrapper<ENGINE::Renderer::RenderEntityType>>;
+
+	std::vector<AsType> AlphaSortArr;
+
+	for (auto& [ShaderKey, Entitys] : _Group)
+	{
+		for (auto& _Entity : Entitys)
+		{
+			AlphaSortArr.push_back({ ShaderKey,_Entity});
+		}
+	};
+
+	std::sort(std::begin(AlphaSortArr), std::end(AlphaSortArr),
+		[EyePos = _RenderInfo.Eye](const AsType& _Lhs ,
+								   const AsType& _Rhs)
+		{
+			const Vector3 LhsLocation
+					=
+			{		_Lhs.second.get().first->_RenderUpdateInfo.World._41,
+					_Lhs.second.get().first->_RenderUpdateInfo.World._42 ,
+					_Lhs.second.get().first->_RenderUpdateInfo.World._43
+			};
+
+			const Vector3 RhsLocation
+				=
+				{	_Rhs.second.get().first->_RenderUpdateInfo.World._41,
+					_Rhs.second.get().first->_RenderUpdateInfo.World._42 ,
+					_Rhs.second.get().first->_RenderUpdateInfo.World._43
+				};
+			return FMath::LengthSq((Vector3&)(EyePos)-LhsLocation)
+					>
+				FMath::LengthSq((Vector3&)(EyePos)-RhsLocation);
+		});
+
 	DrawInfo _DrawInfo{};
 	EffectInfo _EffInfo{};
 	_EffInfo.SoftParticleDepthBiasScale = SoftParticleDepthScale;
 	_DrawInfo.BySituation = _EffInfo;
 	_DrawInfo._Device = Device;
 	_DrawInfo._Frustum = CameraFrustum.get();
-	for (auto& [ShaderKey, Entitys] : _Group)
+
+	for (auto& [_RefStr,_RefEntity] : AlphaSortArr)
+	{
+		auto Fx = Shaders[_RefStr]->GetEffect();
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
+		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
+		Fx->SetFloat("SoftParticleDepthScale", SoftParticleDepthScale);
+		_DrawInfo.Fx = Fx;
+
+		UINT Passes{ 0u };
+		Fx->Begin(&Passes, NULL); 
+		{
+			for (int32 i = 0; i < Passes; ++i)
+			{
+				_DrawInfo.PassIndex = 0u;
+				Fx->BeginPass(i);
+				_RefEntity.get().second(_DrawInfo);
+				Fx->EndPass();
+			}
+		}
+		Fx->End();
+	}
+
+	/*for (auto& [ShaderKey, Entitys] : _Group)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
@@ -1491,7 +1549,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			}
 			Fx->End();
 		}
-	}
+	}*/
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
