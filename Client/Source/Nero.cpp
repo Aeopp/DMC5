@@ -663,6 +663,11 @@ void Nero::SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity)
 	m_pCollider.lock()->SetLinearVelocity(_vLinearVelocity);
 }
 
+void Nero::Set_GrabEnd(bool _bGrabEnd)
+{
+	m_pWireArm.lock()->Set_GrabEnd(_bGrabEnd);
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -730,10 +735,10 @@ void Nero::Locking()
 	
 }
 
-float Nero::RotateToTargetMonster()
+Nero::NeroDirection Nero::RotateToTargetMonster()
 {
 	if (m_pTargetMonster.expired())
-		return 0.f;
+		return NeroDirection::Dir_End;
 	Vector3 vMonsterPos = m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
 	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
 
@@ -764,15 +769,27 @@ float Nero::RotateToTargetMonster()
 	vLook = -m_pTransform.lock()->GetLook();
 	fDot = D3DXVec3Dot(&vNewDir, &vLook);
 	fRadian = acosf(fDot);
-	if (70.f <= D3DXToDegree(fRadian) || D3DXToDegree(fRadian) <= -70.f)
+	float fDegree = D3DXToDegree(fRadian);
+	if (80.f <= fDegree || fDegree <= -80.f)
 	{
-		if (vNewDir.y > 0.f)
-			fRadian *= -1.f;
 		m_pWireArm.lock()->Set_RadianForRotX(0.f);
 	}
 	else
+	{
+		if (vNewDir.y < 0.f)
+			fRadian *= -1.f;
 		m_pWireArm.lock()->Set_RadianForRotX(fRadian);
-	return 0.f;
+	}
+
+	if (fDegree > 15.f)
+	{
+		return NeroDirection::Dir_Down;
+	}
+	else if (fDegree < -15.f)
+	{
+		return  NeroDirection::Dir_Up;
+	}
+	return NeroDirection::Dir_Front;
 }
 
 void Nero::NeroMove(NeroDirection _eDir, float _fPower)

@@ -200,6 +200,13 @@ float Wire_Arm::Get_PlayingAccTime()
 	return m_pMesh->PlayingAccTime();
 }
 
+void Wire_Arm::Set_GrabEnd(bool _bGrabEnd)
+{
+	if (m_pWireArmGrab.expired())
+		return;
+	m_pWireArmGrab.lock()->Set_GrabEnd(_bGrabEnd);
+}
+
 void Wire_Arm::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();

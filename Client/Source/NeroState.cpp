@@ -36,6 +36,11 @@ HRESULT NeroState::StateExit()
 HRESULT NeroState::StateUpdate(const float _fDeltaTime)
 {
 	FSMState::StateUpdate(_fDeltaTime);
+
+	if (Input::GetKey(DIK_LSHIFT))
+		m_pNero.lock()->Locking();
+	else
+		m_pNero.lock()->SetOffLockOnMonster();
 	return S_OK;
 }
 
@@ -964,6 +969,7 @@ HRESULT Idle_Start::StateExit()
 
 HRESULT Idle_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT PreAnimationIndex = m_pNero.lock()->Get_PreAnimationIndex();
@@ -1086,6 +1092,7 @@ HRESULT Jump_Basic::StateExit()
 
 HRESULT Jump_Basic::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd() /* || 땅에 닿았다*/)
@@ -1126,6 +1133,7 @@ HRESULT Jump_Fly_Loop::StateExit()
 
 HRESULT Jump_Fly_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	NeroState::KeyInput_Jump();
 
 	//테스트용
@@ -1187,6 +1195,7 @@ HRESULT Jump_Twice::StateExit()
 
 HRESULT Jump_Twice::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
 	NeroState::KeyInput_Jump();
@@ -1243,6 +1252,7 @@ HRESULT Jump_Front_Landing::StateExit()
 
 HRESULT Jump_Front_Landing::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.65f <= fCurAnimationTime)
@@ -1498,6 +1508,7 @@ HRESULT RunStartLeft::StateExit()
 
 HRESULT RunStartLeft::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	m_pNero.lock()->SetAngleFromCamera();
 
 	if (Input::GetKey(DIK_A))
@@ -1741,6 +1752,7 @@ HRESULT RunStartRight::StateExit()
 
 HRESULT RunStartRight::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	m_pNero.lock()->SetAngleFromCamera();
 
 	if (Input::GetKey(DIK_D))
@@ -1983,6 +1995,7 @@ HRESULT RunStart180::StateExit()
 
 HRESULT RunStart180::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	m_pNero.lock()->SetAngleFromCamera();
 	if (Input::GetKey(DIK_S))
 	{
@@ -2049,6 +2062,7 @@ HRESULT RunLoop::StateExit()
 
 HRESULT RunLoop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	m_pNero.lock()->SetAngleFromCamera();
 	m_pNero.lock()->IncreaseDistance(MaxDistance,_fDeltaTime);
 	if (Input::GetKey(DIK_W) || Input::GetKey(DIK_S) || Input::GetKey(DIK_A) || Input::GetKey(DIK_D))
@@ -2188,6 +2202,7 @@ HRESULT RunStartFront::StateExit()
 
 HRESULT RunStartFront::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	// 시작하는 애니메니메이션이 끝났으면 Loop로 변환
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	m_pNero.lock()->SetAngleFromCamera();
@@ -2263,6 +2278,7 @@ HRESULT RunStop::StateExit()
 
 HRESULT RunStop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT CurWeaponIndex = m_pNero.lock()->Get_CurWeaponIndex();
@@ -2325,6 +2341,7 @@ HRESULT RunTurn::StateExit()
 
 HRESULT RunTurn::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -2354,6 +2371,7 @@ HRESULT RunTurn_L::StateExit()
 
 HRESULT RunTurn_L::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 #pragma endregion
@@ -2393,6 +2411,7 @@ HRESULT DashLoop::StateExit()
 
 HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	UINT Ex_Gauge = m_pNero.lock()->Get_ExGaugeCount();
 	m_pNero.lock()->IncreaseDistance(MaxDistance, _fDeltaTime);
 	if (Input::GetKey(DIK_LSHIFT))
@@ -2624,6 +2643,7 @@ HRESULT DashStop::StateExit()
 
 HRESULT DashStop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	m_pNero.lock()->DecreaseDistance(OGDistance, _fDeltaTime);
@@ -2667,6 +2687,7 @@ HRESULT DashTurn::StateExit()
 
 HRESULT DashTurn::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		//m_pNero.lock()->SetRotationAngle(180.f);
@@ -2715,6 +2736,7 @@ HRESULT WalkLoop::StateExit()
 
 HRESULT WalkLoop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -2744,6 +2766,7 @@ HRESULT WalkStart::StateExit()
 
 HRESULT WalkStart::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -2774,6 +2797,7 @@ HRESULT WalkStop::StateExit()
 
 HRESULT WalkStop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -2813,6 +2837,7 @@ HRESULT Evade_L::StateExit()
 
 HRESULT Evade_L::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	UINT CurWeaponIndex = m_pNero.lock()->Get_CurWeaponIndex();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -2856,6 +2881,7 @@ HRESULT Evade_R::StateExit()
 
 HRESULT Evade_R::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	UINT CurWeaponIndex = m_pNero.lock()->Get_CurWeaponIndex();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -2909,6 +2935,7 @@ HRESULT HitFront::StateExit()
 
 HRESULT HitFront::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
@@ -2940,6 +2967,7 @@ HRESULT HitFront_Big::StateExit()
 
 HRESULT HitFront_Big::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -2969,6 +2997,7 @@ HRESULT Hit_Air::StateExit()
 
 HRESULT Hit_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -2998,6 +3027,7 @@ HRESULT Wind_Pressure_Small::StateExit()
 
 HRESULT Wind_Pressure_Small::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3027,6 +3057,7 @@ HRESULT Wind_Pressure_Big::StateExit()
 
 HRESULT Wind_Pressure_Big::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3056,6 +3087,7 @@ HRESULT Wind_Pressure_Small_End::StateExit()
 
 HRESULT Wind_Pressure_Small_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3448,9 +3480,23 @@ HRESULT Wire_Pull::StateEnter()
 
 	//몬스터 위치에 따라서 분기
 	m_pNero.lock()->Locking();
-	m_pNero.lock()->RotateToTargetMonster();
-	//m_pNero.lock()->CheckAutoRotate();
-	m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_U", false, Nero::ANI_WIRE_SNATCH_PULL);
+	Nero::NeroDirection eDir = m_pNero.lock()->RotateToTargetMonster();
+	switch (eDir)
+	{
+	case Nero::Dir_Front:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull", false, Nero::ANI_WIRE_SNATCH_PULL);
+		break;
+	case Nero::Dir_Up:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_U", false, Nero::ANI_WIRE_SNATCH_PULL);
+		break;
+	case Nero::Dir_Down:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_D", false, Nero::ANI_WIRE_SNATCH_PULL);
+		break;
+	case Nero::Dir_End:
+		break;
+	default:
+		break;
+	}
 	m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_WireArm, true);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WireArm,"Wire_Arm_Start31", false);
 
@@ -3465,6 +3511,7 @@ HRESULT Wire_Pull::StateExit()
 
 HRESULT Wire_Pull::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	//Down 0.35에 키입력
@@ -3507,6 +3554,7 @@ HRESULT Wire_Pull_Up::StateExit()
 
 HRESULT Wire_Pull_Up::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3536,6 +3584,7 @@ HRESULT Wire_Pull_Down::StateExit()
 
 HRESULT Wire_Pull_Down::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3570,6 +3619,7 @@ HRESULT Wire_Fly_Start::StateExit()
 
 HRESULT Wire_Fly_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3604,6 +3654,7 @@ HRESULT Wire_Fly_Loop::StateExit()
 
 HRESULT Wire_Fly_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3638,6 +3689,7 @@ HRESULT Wire_Fly_End::StateExit()
 
 HRESULT Wire_Fly_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3660,10 +3712,28 @@ HRESULT Wire_Pull_Air::StateEnter()
 	NeroState::StateEnter();
 
 	//상태에 따라서 분기
+	m_pNero.lock()->Locking();
+	Nero::NeroDirection eDir = m_pNero.lock()->RotateToTargetMonster();
+	switch (eDir)
+	{
+	case Nero::Dir_Front:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air", false, Nero::ANI_WIRE_SNATCH_PULL_AIR);
+		break;
+	case Nero::Dir_Up:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air_U", false, Nero::ANI_WIRE_SNATCH_PULL_AIR_U);
+		break;
+	case Nero::Dir_Down:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air_D", false, Nero::ANI_WIRE_SNATCH_PULL_AIR_D);
+		break;
+	case Nero::Dir_End:
+		break;
+	default:
+		break;
+	}
 
-	m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air", false, Nero::ANI_WIRE_SNATCH_PULL_AIR);
+	//m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air", false, Nero::ANI_WIRE_SNATCH_PULL_AIR);
 
-	NeroState::ResetAnimation(0.96f, Nero::ANI_WIRE_SNATCH_PULL_AIR);
+	//NeroState::ResetAnimation(0.96f, Nero::ANI_WIRE_SNATCH_PULL_AIR);
 
 	m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_WireArm, true);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WireArm,"Wire_Arm_Start31", false);
@@ -3680,6 +3750,7 @@ HRESULT Wire_Pull_Air::StateExit()
 
 HRESULT Wire_Pull_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -3718,6 +3789,7 @@ HRESULT Wire_Pull_Air_Up::StateExit()
 
 HRESULT Wire_Pull_Air_Up::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3747,6 +3819,7 @@ HRESULT Wire_Pull_Air_Down::StateExit()
 
 HRESULT Wire_Pull_Air_Down::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -3796,6 +3869,7 @@ HRESULT BT_Att1::StateExit()
 
 HRESULT BT_Att1::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	//현재 애니메이션 프레임 위치
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
@@ -3853,6 +3927,7 @@ HRESULT BT_Att2::StateExit()
 
 HRESULT BT_Att2::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.135f <= fCurrAnimationTime)
@@ -3910,6 +3985,7 @@ HRESULT BT_Att3::StateExit()
 
 HRESULT BT_Att3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 
@@ -3972,6 +4048,7 @@ HRESULT BT_Att4::StateExit()
 
 HRESULT BT_Att4::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.23f <= fCurrAnimationTime)
@@ -4022,6 +4099,7 @@ HRESULT BT_Att_ComboB::StateExit()
 
 HRESULT BT_Att_ComboB::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -4056,6 +4134,7 @@ HRESULT BT_Att_ComboC_R_to_L::StateExit()
 
 HRESULT BT_Att_ComboC_R_to_L::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.09f <= fCurrAnimationTime)
@@ -4110,6 +4189,7 @@ HRESULT BT_Att_ComboC_L_to_R::StateExit()
 
 HRESULT BT_Att_ComboC_L_to_R::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -4170,6 +4250,7 @@ HRESULT BT_Att_ComboC_1::StateExit()
 
 HRESULT BT_Att_ComboC_1::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.22f <= fCurrAnimationTime)
@@ -4229,6 +4310,7 @@ HRESULT BT_Att_ComboC_2::StateExit()
 
 HRESULT BT_Att_ComboC_2::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -4288,6 +4370,7 @@ HRESULT BT_Att_ComboC_3::StateExit()
 
 HRESULT BT_Att_ComboC_3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -4350,6 +4433,7 @@ HRESULT BT_Att_ComboC_4::StateExit()
 
 HRESULT BT_Att_ComboC_4::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 
@@ -4414,6 +4498,7 @@ HRESULT BT_Att_ComboD_1::StateExit()
 
 HRESULT BT_Att_ComboD_1::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -4473,6 +4558,7 @@ HRESULT BT_Att_ComboD_2::StateExit()
 
 HRESULT BT_Att_ComboD_2::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -4532,6 +4618,7 @@ HRESULT BT_Att_ComboD_3::StateExit()
 
 HRESULT BT_Att_ComboD_3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -4591,6 +4678,7 @@ HRESULT BT_Att_ComboD_4::StateExit()
 
 HRESULT BT_Att_ComboD_4::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -4658,6 +4746,7 @@ HRESULT BT_Air_Att1::StateExit()
 
 HRESULT BT_Air_Att1::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT  CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 
@@ -4731,6 +4820,7 @@ HRESULT BT_Air_Att2::StateExit()
 
 HRESULT BT_Air_Att2::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.3f <= fCurrAnimationTime)
@@ -4810,6 +4900,7 @@ HRESULT BT_Air_Att3::StateExit()
 
 HRESULT BT_Air_Att3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.3f <= fCurAnimationTime)
@@ -4872,6 +4963,7 @@ HRESULT BT_Air_ComboB::StateExit()
 
 HRESULT BT_Air_ComboB::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (0.47f <= fCurAnimationTime)
 		ActiveColl_RedQueen(false);
@@ -4931,6 +5023,7 @@ HRESULT BT_Parrying::StateExit()
 
 HRESULT BT_Parrying::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -4979,6 +5072,7 @@ HRESULT Skill_Split::StateExit()
 
 HRESULT Skill_Split::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -5024,6 +5118,7 @@ HRESULT Skill_Split_Loop::StateExit()
 
 HRESULT Skill_Split_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	//땅에 닿았을때
 	if (m_pNero.lock()->CheckIsGround())
 		m_pFSM->ChangeState(NeroFSM::SKILL_SPLIT_END);
@@ -5074,6 +5169,7 @@ HRESULT Skill_Split_Landing::StateExit()
 
 HRESULT Skill_Split_Landing::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurAnimationTime)
@@ -5123,6 +5219,7 @@ HRESULT Skill_Float_Ground::StateExit()
 
 HRESULT Skill_Float_Ground::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.17f <= fCurrAnimationTime)
@@ -5131,7 +5228,7 @@ HRESULT Skill_Float_Ground::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (0.45f <= fCurrAnimationTime)
+	if (0.37f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_FLOAT_GROUND);
 
 	if(m_pNero.lock()->IsAnimationEnd())
@@ -5171,6 +5268,7 @@ HRESULT Skill_Float_Ground_Ex3::StateExit()
 
 HRESULT Skill_Float_Ground_Ex3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.6f <= fCurrAnimationTime)
@@ -5215,6 +5313,7 @@ HRESULT Skill_Float_Ground_Finish::StateExit()
 
 HRESULT Skill_Float_Ground_Finish::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurrAnimationTime)
@@ -5266,6 +5365,7 @@ HRESULT Skill_Shuffle::StateExit()
 
 HRESULT Skill_Shuffle::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.28f <= fCurrAnimationTime)
@@ -5323,6 +5423,7 @@ HRESULT Skill_Streak::StateExit()
 
 HRESULT Skill_Streak::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -5377,6 +5478,7 @@ HRESULT Skill_Streak_Ex3::StateExit()
 
 HRESULT Skill_Streak_Ex3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -5424,6 +5526,7 @@ HRESULT Skill_Streak_Loop::StateExit()
 
 HRESULT Skill_Streak_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	m_fLoopTime -= _fDeltaTime;
 	if (m_fLoopTime < 0.f)
 		m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_END);
@@ -5473,6 +5576,7 @@ HRESULT Skill_Streak_End::StateExit()
 
 HRESULT Skill_Streak_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -5525,6 +5629,7 @@ HRESULT Skill_Streak_Ex3_Rush::StateExit()
 
 HRESULT Skill_Streak_Ex3_Rush::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if(0.65f <= fCurrAnimationTime)
@@ -5565,6 +5670,7 @@ HRESULT Skill_Streak_Ex3_Roll_Loop::StateExit()
 
 HRESULT Skill_Streak_Ex3_Roll_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fAccTime = m_pNero.lock()->Get_PlayingAccTime();
 
 
@@ -5616,6 +5722,7 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateExit()
 
 HRESULT Skill_Streak_Ex3_Roll_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.1f <= fCurrAnimationTime)
@@ -5657,6 +5764,7 @@ HRESULT GT_Equip::StateExit()
 
 HRESULT GT_Equip::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -5686,6 +5794,7 @@ HRESULT GT_Crush_Reload::StateExit()
 
 HRESULT GT_Crush_Reload::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -5715,6 +5824,7 @@ HRESULT GT_Crush_Just::StateExit()
 
 HRESULT GT_Crush_Just::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -5744,6 +5854,7 @@ HRESULT GT_Bomb::StateExit()
 
 HRESULT GT_Bomb::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -5773,6 +5884,7 @@ HRESULT GT_PickUp::StateExit()
 
 HRESULT GT_PickUp::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -5906,6 +6018,7 @@ HRESULT Overture_Shoot::StateExit()
 
 HRESULT Overture_Shoot::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if(0.2f <= fCurrAnimationTime)
@@ -5954,6 +6067,7 @@ HRESULT Overture_Shoot_Up::StateExit()
 
 HRESULT Overture_Shoot_Up::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurrAnimationTime)
@@ -6000,6 +6114,7 @@ HRESULT Overture_Shoot_Down::StateExit()
 
 HRESULT Overture_Shoot_Down::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurrAnimationTime)
@@ -6051,6 +6166,7 @@ HRESULT Overture_Shoot_Air::StateExit()
 
 HRESULT Overture_Shoot_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurAnimationTime)
@@ -6105,6 +6221,7 @@ HRESULT Overture_Shoot_Air_Up::StateExit()
 
 HRESULT Overture_Shoot_Air_Up::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurAnimationTime)
@@ -6159,6 +6276,7 @@ HRESULT Overture_Shoot_Air_Down::StateExit()
 
 HRESULT Overture_Shoot_Air_Down::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurAnimationTime)
@@ -6247,6 +6365,7 @@ HRESULT Cbs_ComboA1::StateExit()
 
 HRESULT Cbs_ComboA1::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (Input::GetMouse(DIM_L))
@@ -6291,6 +6410,7 @@ HRESULT Cbs_ComboA2::StateExit()
 
 HRESULT Cbs_ComboA2::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_L))
 	{
@@ -6334,6 +6454,7 @@ HRESULT Cbs_ComboA3::StateExit()
 
 HRESULT Cbs_ComboA3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_L))
 	{
@@ -6377,6 +6498,7 @@ HRESULT Cbs_ComboA4::StateExit()
 
 HRESULT Cbs_ComboA4::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_L))
 	{
@@ -6420,6 +6542,7 @@ HRESULT Cbs_ComboA5::StateExit()
 
 HRESULT Cbs_ComboA5::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_L))
 	{
@@ -6471,6 +6594,7 @@ HRESULT Cbs_SKill_Crystal::StateExit()
 
 HRESULT Cbs_SKill_Crystal::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6508,6 +6632,7 @@ HRESULT Cbs_SKill_IceAge_Start::StateExit()
 
 HRESULT Cbs_SKill_IceAge_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6548,6 +6673,7 @@ HRESULT Cbs_SKill_IceAge_Loop::StateExit()
 
 HRESULT Cbs_SKill_IceAge_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	
 	m_fLoopTime -= _fDeltaTime;
@@ -6586,6 +6712,7 @@ HRESULT Cbs_SKill_IceAge_End::StateExit()
 
 HRESULT Cbs_SKill_IceAge_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6623,6 +6750,7 @@ HRESULT Cbs_SKill_Revolver_Start::StateExit()
 
 HRESULT Cbs_SKill_Revolver_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6662,6 +6790,7 @@ HRESULT Cbs_SKill_Revolver_Loop::StateExit()
 
 HRESULT Cbs_SKill_Revolver_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	//얘는 그냥 땅에 닿으면 멈추는걸로 바꿔야됨
 	if (m_iLoopCount <= 0 && 0.96f <= fCurrAnimationTime)
@@ -6704,6 +6833,7 @@ HRESULT Cbs_SKill_Revolver_End::StateExit()
 
 HRESULT Cbs_SKill_Revolver_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6742,6 +6872,7 @@ HRESULT Cbs_SKill_Swing::StateExit()
 
 HRESULT Cbs_SKill_Swing::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -6776,6 +6907,7 @@ HRESULT Middle_Cbs_BiAttack::StateExit()
 
 HRESULT Middle_Cbs_BiAttack::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6814,6 +6946,7 @@ HRESULT Middle_Cbs_BlitzAttack::StateExit()
 
 HRESULT Middle_Cbs_BlitzAttack::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6852,6 +6985,7 @@ HRESULT Middle_Cbs_Satellite::StateExit()
 
 HRESULT Middle_Cbs_Satellite::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6889,6 +7023,7 @@ HRESULT Middle_Cbs_Satellite_Air::StateExit()
 
 HRESULT Middle_Cbs_Satellite_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -6922,6 +7057,7 @@ HRESULT Middle_Cbs_Strike::StateExit()
 
 HRESULT Middle_Cbs_Strike::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -6960,6 +7096,7 @@ HRESULT Middle_Cbs_Strike_Air::StateExit()
 
 HRESULT Middle_Cbs_Strike_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -6993,6 +7130,7 @@ HRESULT Middle_Cbs_Strike_Air_Down::StateExit()
 
 HRESULT Middle_Cbs_Strike_Air_Down::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7033,6 +7171,7 @@ HRESULT Middle_Cbs_Strike_Air_Up::StateExit()
 
 HRESULT Middle_Cbs_Strike_Air_Up::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7071,6 +7210,7 @@ HRESULT Middle_Cbs_Strike_Down::StateExit()
 
 HRESULT Middle_Cbs_Strike_Down::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7109,6 +7249,7 @@ HRESULT Middle_Cbs_Strike_Up::StateExit()
 
 HRESULT Middle_Cbs_Strike_Up::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7147,6 +7288,7 @@ HRESULT Middle_Cbs_ThunderBullet::StateExit()
 
 HRESULT Middle_Cbs_ThunderBullet::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7191,6 +7333,7 @@ HRESULT Pole_ComboA1::StateExit()
 
 HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_M))
 	{
@@ -7242,6 +7385,7 @@ HRESULT Pole_ComboA2::StateExit()
 
 HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_M))
 	{
@@ -7288,6 +7432,7 @@ HRESULT Pole_ComboA3::StateExit()
 
 HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_M))
 	{
@@ -7334,6 +7479,7 @@ HRESULT Pole_ComboB1::StateExit()
 
 HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_M))
 	{
@@ -7381,6 +7527,7 @@ HRESULT Pole_ComboB2::StateExit()
 
 HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_M))
 	{
@@ -7427,6 +7574,7 @@ HRESULT Pole_ComboB3::StateExit()
 
 HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_M))
 	{
@@ -7473,6 +7621,7 @@ HRESULT Pole_ComboB4::StateExit()
 
 HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	if (Input::GetMouse(DIM_L))
 	{
@@ -7519,6 +7668,7 @@ HRESULT Pole_WhirlWind_Start::StateExit()
 
 HRESULT Pole_WhirlWind_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7560,6 +7710,7 @@ HRESULT Pole_WhirlWind_Loop::StateExit()
 
 HRESULT Pole_WhirlWind_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	m_fLoopTime -= _fDeltaTime;
 
 	if (m_fLoopTime < 0.f)
@@ -7597,6 +7748,7 @@ HRESULT Pole_WhirlWind_End::StateExit()
 
 HRESULT Pole_WhirlWind_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7646,6 +7798,7 @@ HRESULT ComboA_Dash::StateExit()
 
 HRESULT ComboA_Dash::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.2f <= fCurrAnimationTime)
@@ -7709,6 +7862,7 @@ HRESULT Skill_Caliber::StateExit()
 
 HRESULT Skill_Caliber::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	m_pNero.lock()->NeroMove(Nero::Dir_Front, 0.01f);
@@ -7764,6 +7918,7 @@ HRESULT Skill_Caliber_End::StateExit()
 
 HRESULT Skill_Caliber_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.19f <= fCurAnimationTime)
@@ -7820,6 +7975,7 @@ HRESULT Hr_Air::StateExit()
 
 HRESULT Hr_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.5f <= fCurAnimationTime)
@@ -7878,6 +8034,7 @@ HRESULT Hr_Ex_Start::StateExit()
 
 HRESULT Hr_Ex_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT Ex_Gauge = m_pNero.lock()->Get_ExGaugeCount();
 
@@ -7932,6 +8089,7 @@ HRESULT Hr_Ex_Finish::StateExit()
 
 HRESULT Hr_Ex_Finish::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -7981,6 +8139,7 @@ HRESULT Hr_Ex_Air_Roll_Start::StateExit()
 
 HRESULT Hr_Ex_Air_Roll_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -8024,6 +8183,7 @@ HRESULT Hr_Ex_Air_Roll_Loop::StateExit()
 
 HRESULT Hr_Ex_Air_Roll_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAccTime = m_pNero.lock()->Get_PlayingAccTime();
 
 	if (3.94 <= fCurrAccTime)
@@ -8069,6 +8229,7 @@ HRESULT Hr_Ex_Air_Roll_End::StateExit()
 
 HRESULT Hr_Ex_Air_Roll_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.5f <= fCurAnimationTime)
@@ -8131,6 +8292,7 @@ HRESULT Skill_Split_Ex::StateExit()
 
 HRESULT Skill_Split_Ex::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::SKILL_SPLIT_EX_LOOP);
@@ -8178,6 +8340,7 @@ HRESULT Skill_Split_Ex_Loop::StateExit()
 
 HRESULT Skill_Split_Ex_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	//땅에 닿았을때
 	if (m_pNero.lock()->CheckIsGround())
 		m_pFSM->ChangeState(NeroFSM::SKILL_SPLIT_EX_END);
@@ -8227,6 +8390,7 @@ HRESULT Skill_Split_Ex_Landing::StateExit()
 
 HRESULT Skill_Split_Ex_Landing::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.16f <= fCurAnimationTime)
@@ -8288,6 +8452,7 @@ HRESULT Air_Dive_Slash_Start::StateExit()
 
 HRESULT Air_Dive_Slash_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP);
@@ -8339,6 +8504,7 @@ HRESULT Air_Dive_Slash_Loop::StateExit()
 
 HRESULT Air_Dive_Slash_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	// 땅에 닿았을때
 	if(m_pNero.lock()->CheckIsGround())
 		m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_END);
@@ -8395,6 +8561,7 @@ HRESULT Air_Dive_Slash_End::StateExit()
 
 HRESULT Air_Dive_Slash_End::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.16f <= fCurAnimationTime)
@@ -8450,6 +8617,7 @@ HRESULT Skill_Shuffle_Ex::StateExit()
 
 HRESULT Skill_Shuffle_Ex::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.44f <= fCurrAnimationTime)
@@ -8502,6 +8670,7 @@ HRESULT Skill_Float_Ground_Ex3_Start::StateExit()
 
 HRESULT Skill_Float_Ground_Ex3_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND_EX3);
@@ -8541,6 +8710,7 @@ HRESULT Buster_Start::StateExit()
 
 HRESULT Buster_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -8584,6 +8754,7 @@ HRESULT To_Majin::StateExit()
 
 HRESULT To_Majin::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 
@@ -8620,6 +8791,7 @@ HRESULT Buster_Air_Catch::StateExit()
 
 HRESULT Buster_Air_Catch::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8652,6 +8824,7 @@ HRESULT Buster_Strike_Common::StateExit()
 
 HRESULT Buster_Strike_Common::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
@@ -8685,6 +8858,7 @@ HRESULT Buster_Strike_Common_Air::StateExit()
 
 HRESULT Buster_Strike_Common_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8716,6 +8890,7 @@ HRESULT M_Buster_Strike_Common_Start::StateExit()
 
 HRESULT M_Buster_Strike_Common_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8747,6 +8922,7 @@ HRESULT M_Buster_Strike_Common_Loop::StateExit()
 
 HRESULT M_Buster_Strike_Common_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8780,6 +8956,7 @@ HRESULT em0000_Buster_Start::StateExit()
 
 HRESULT em0000_Buster_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::EM0000_BUSTER_FINISH);
 	return S_OK;
@@ -8814,6 +8991,7 @@ HRESULT em0000_Buster_Finish::StateExit()
 
 HRESULT em0000_Buster_Finish::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::IDLE);
 	return S_OK;
@@ -8847,6 +9025,7 @@ HRESULT em0000_M_Buster::StateExit()
 
 HRESULT em0000_M_Buster::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8878,6 +9057,7 @@ HRESULT em0000_Buster_Air::StateExit()
 
 HRESULT em0000_Buster_Air::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8909,6 +9089,7 @@ HRESULT em5000_Buster_Start::StateExit()
 
 HRESULT em5000_Buster_Start::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8940,6 +9121,7 @@ HRESULT em5000_Buster_Swing::StateExit()
 
 HRESULT em5000_Buster_Swing::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -8971,6 +9153,7 @@ HRESULT em5000_Buster_Swing_Loop::StateExit()
 
 HRESULT em5000_Buster_Swing_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -9002,6 +9185,7 @@ HRESULT em5000_Buster_Finish::StateExit()
 
 HRESULT em5000_Buster_Finish::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -9035,6 +9219,7 @@ HRESULT Jog_Loop::StateExit()
 
 HRESULT Jog_Loop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	//m_pNero.lock()->SetAngleFromCamera();
 	//m_pNero.lock()->IncreaseDistance(MaxDistance, _fDeltaTime);
 	//if (Input::GetKey(DIK_W) || Input::GetKey(DIK_S) || Input::GetKey(DIK_A) || Input::GetKey(DIK_D))
@@ -9084,6 +9269,7 @@ HRESULT Jog_Stop::StateExit()
 
 HRESULT Jog_Stop::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -9116,6 +9302,7 @@ HRESULT Jog_Turn_180::StateExit()
 
 HRESULT Jog_Turn_180::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
@@ -9148,5 +9335,6 @@ HRESULT Jog_Turn_180_L::StateExit()
 
 HRESULT Jog_Turn_180_L::StateUpdate(const float _fDeltaTime)
 {
+	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }

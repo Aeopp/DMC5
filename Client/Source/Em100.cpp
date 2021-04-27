@@ -726,7 +726,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 300;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -1.5f, 0.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -4.8f, 3.2f, -4.82f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -1146,6 +1146,11 @@ void Em100::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 
 }
 
+void Em100::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	Monster::OnCollisionEnter(_pOther);
+}
+
 void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
@@ -1410,4 +1415,9 @@ void Em100::Update_Angle()
 void Em100::Set_Rotate()
 {
 	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fRadian), 0.f });
+}
+
+void Em100::SetGravity(bool _bActiveOrNot)
+{
+	m_pCollider.lock()->SetGravity(_bActiveOrNot);
 }

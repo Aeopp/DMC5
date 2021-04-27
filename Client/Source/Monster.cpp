@@ -43,6 +43,18 @@ void Monster::RenderReady()
 	}
 };
 
+void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
+	{
+		static_pointer_cast<Nero>(_pOther.lock())->Set_GrabEnd(true);
+	}
+}
+
+void Monster::SetGravity(bool _bActiveOrNot)
+{
+}
+
 void Monster::Set_Snatch(bool _bSnatch)
 {
 	m_bSnatch = _bSnatch;
