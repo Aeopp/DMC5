@@ -22,9 +22,6 @@ private:
 	Vector2 _SmokeMinTexUV = Vector2(0.f, 0.f);
 	Vector2 _SmokeMaxTexUV = Vector2(1.f, 1.f);
 
-	Vector3 _BrightScale = Vector3(1.f, 1.f, 1.f);
-	float _SoftParticleDepthScale = 1.f;
-
 private:
 	explicit Smoke() = default;
 	virtual ~Smoke() = default;
