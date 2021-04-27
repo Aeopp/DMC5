@@ -151,6 +151,12 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand">
       <UniqueIdentifier>{aec58016-38ed-47ff-950f-4e09465e4d83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSL">
+      <UniqueIdentifier>{c1db5904-e17f-408b-a212-33adf42de386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Effect">
+      <UniqueIdentifier>{ad5f0467-dbd2-4c86-89a3-0affdcc4007c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -303,6 +309,9 @@
       <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
+    <ClInclude Include="..\Header\AirHike.h">
+      <Filter>02.GameObject\Effect\Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -480,6 +489,9 @@
       <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
+    <ClCompile Include="..\Source\AirHike.cpp">
+      <Filter>02.GameObject\Effect\Weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -509,5 +521,10 @@
     <ClCompile Include="..\Source\RedQueen.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\05.RedQueen</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
+      <Filter>HLSL\Effect</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

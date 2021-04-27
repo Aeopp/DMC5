@@ -25,6 +25,8 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "AirHike.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -50,59 +52,60 @@ HRESULT TestScene::LoadScene()
 {
 	AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
+	AddGameObject<AirHike>();
+
+	// AddGameObject<MainCamera>();
+	// _Player = AddGameObject<Nero>();
+	// AddGameObject<BtlPanel>();
 	//AddGameObject<Em100>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
-	// Wave 1st
-	{
-		weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
-		_Em100.lock()->SetActive(false);
-		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -0.8f, 0.02f, -0.7f });
-		Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+	//// Wave 1st
+	//{
+	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
+	//	_Em100.lock()->SetActive(false);
+	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -0.8f, 0.02f, -0.7f });
+	//	Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-		_Em100 = AddGameObject<Em100>();
-		_Em100.lock()->SetActive(false);
-		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.7f, 0.02f, -1.f });
-		Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+	//	_Em100 = AddGameObject<Em100>();
+	//	_Em100.lock()->SetActive(false);
+	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.7f, 0.02f, -1.f });
+	//	Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-		weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-		pEm0000.lock()->SetActive(false);
-		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 1.f, 0.02f, -1.f });
-		Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+	//	pEm0000.lock()->SetActive(false);
+	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 1.f, 0.02f, -1.f });
+	//	Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
-		pEm0000 = AddGameObject<Em0000>();
-		pEm0000.lock()->SetActive(false);
-		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.5f, 0.02f,1.f });
-		Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-	}
+	//	pEm0000 = AddGameObject<Em0000>();
+	//	pEm0000.lock()->SetActive(false);
+	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.5f, 0.02f,1.f });
+	//	Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	//}
 
-	// Wave 2nd
-	{
-		weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
-		_Em100.lock()->SetActive(false);
-		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
-		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+	//// Wave 2nd
+	//{
+	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
+	//	_Em100.lock()->SetActive(false);
+	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
+	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-		_Em100 = AddGameObject<Em100>();
-		_Em100.lock()->SetActive(false);
-		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
-		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+	//	_Em100 = AddGameObject<Em100>();
+	//	_Em100.lock()->SetActive(false);
+	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
+	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-		weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-		pEm0000.lock()->SetActive(false);
-		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
-		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+	//	pEm0000.lock()->SetActive(false);
+	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
+	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
-		pEm0000 = AddGameObject<Em0000>();
-		pEm0000.lock()->SetActive(false);
-		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
-		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-	}
-
+	//	pEm0000 = AddGameObject<Em0000>();
+	//	pEm0000.lock()->SetActive(false);
+	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
+	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	//}
 
 	LoadMap();
 	AddGameObject<TempMap>();
@@ -115,7 +118,6 @@ HRESULT TestScene::LoadScene()
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
-
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
@@ -232,44 +234,17 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 
 
 	// 여기서 임시로 트리거 처리 ???
-	if (
-		(FMath::Length
-		( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
-		  < 0.1f  )   && 
-			! bfirst    )
-	{
-		for (auto& spawn_entity : Wavefirst)
-		{
-			bfirst= true;
-			spawn_entity.lock()->SetActive(true);
-		}
-
-		for (int i = 1; i < 4; ++i)
-		{
-			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-			{
-				m_vecQliphothBlock[i].lock()->SetActive(true);
-				m_vecQliphothBlock[i].lock()->PlayStart();
-			}
-		}
-	}
-
-
-	if ((FMath::Length
-	(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
-		< 0.1f) &&
-		!bsecond)
-	{
-		for (auto& spawn_entity : Wavesecond)
-		{
-			bsecond = true;
-			spawn_entity.lock()->SetActive(true);
-		}
-	}
-
-
-	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//if (
+	//	(FMath::Length
+	//	( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+	//	  < 0.1f  )   && 
+	//		! bfirst    )
 	//{
+	//	for (auto& spawn_entity : Wavefirst)
+	//	{
+	//		bfirst= true;
+	//		spawn_entity.lock()->SetActive(true);
+	//	}
 
 	//	for (int i = 1; i < 4; ++i)
 	//	{
@@ -282,36 +257,63 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//}
 
 
-	
-	if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
-	{
-		int count = Wavefirst.size();
-		for (auto& target : Wavefirst)
-		{
-			if (target.expired())
-			{
-				--count; 
-			}
-			if (count <= 0)
-			{
-				for (int i = 1; i < 4; ++i)
-				{
-					if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-					{
-						m_vecQliphothBlock[i].lock()->Reset();
-						// + render false 된 후에 SetActive(false) 해야
-					}
-				}
-			}
-		}
-		/*std::all_of(std::begin(Wavefirst), std::end(Wavefirst), 
-			[]
-		(const weak_ptr<GameObject>& target)
-			return target.experiod();
-			{});*/
+	//if ((FMath::Length
+	//(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+	//	< 0.1f) &&
+	//	!bsecond)
+	//{
+	//	for (auto& spawn_entity : Wavesecond)
+	//	{
+	//		bsecond = true;
+	//		spawn_entity.lock()->SetActive(true);
+	//	}
+	//}
 
 
-	}
+	////if (Input::GetKeyDown(DIK_NUMPAD2))
+	////{
+
+	////	for (int i = 1; i < 4; ++i)
+	////	{
+	////		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	////		{
+	////			m_vecQliphothBlock[i].lock()->SetActive(true);
+	////			m_vecQliphothBlock[i].lock()->PlayStart();
+	////		}
+	////	}
+	////}
+
+
+	//
+	//if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
+	//{
+	//	int count = Wavefirst.size();
+	//	for (auto& target : Wavefirst)
+	//	{
+	//		if (target.expired())
+	//		{
+	//			--count; 
+	//		}
+	//		if (count <= 0)
+	//		{
+	//			for (int i = 1; i < 4; ++i)
+	//			{
+	//				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//				{
+	//					m_vecQliphothBlock[i].lock()->Reset();
+	//					// + render false 된 후에 SetActive(false) 해야
+	//				}
+	//			}
+	//		}
+	//	}
+	//	/*std::all_of(std::begin(Wavefirst), std::end(Wavefirst), 
+	//		[]
+	//	(const weak_ptr<GameObject>& target)
+	//		return target.experiod();
+	//		{});*/
+
+
+	//}
 
 
 	if (Input::GetKeyDown(DIK_NUMPAD8))

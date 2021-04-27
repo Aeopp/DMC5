@@ -195,6 +195,7 @@
     <ClInclude Include="..\Header\Nero_RWing.h" />
     <ClInclude Include="..\Header\QliphothBlock.h" />
     <ClInclude Include="..\Header\RedQueen.h" />
+    <ClInclude Include="..\Header\AirHike.h" />
     <ClInclude Include="..\Header\TempMap.h" />
     <ClInclude Include="..\Header\TestAnimationObject.h" />
     <ClInclude Include="..\Header\OvertureHand.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="..\Source\Nero_RWing.cpp" />
     <ClCompile Include="..\Source\QliphothBlock.cpp" />
     <ClCompile Include="..\Source\RedQueen.cpp" />
+    <ClCompile Include="..\Source\AirHike.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
     <ClCompile Include="..\Source\TestAnimationObject.cpp" />
     <ClCompile Include="..\Source\OvertureHand.cpp" />
@@ -271,6 +273,11 @@
   <ItemGroup>
     <Image Include="Client.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
