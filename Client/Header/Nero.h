@@ -308,6 +308,7 @@ public:
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
 	Matrix Get_NeroBoneWorldMatrix(std::string _BoneName);
+	Vector3 Get_NeroBoneWorldPos(std::string _BoneName);
 	bool Get_IsMajinMode() { return m_IsMajin; }
 	int  GetDashLoopDir() { return m_iDashLoopDir; }
 public:
@@ -325,11 +326,13 @@ public:
 	void SetOffLockOnMonster();
 	void SetDashLoopDir();
 	void SetGravity(bool _ActiveOrNot) { m_pCollider.lock()->SetGravity(_ActiveOrNot); }
+	void SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
 	void Locking();
 	void RotateToTargetMonster();
+	void NeroMove(NeroDirection _eDir, float _fPower);
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//Ä«¸Þ¶ó

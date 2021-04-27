@@ -373,3 +373,8 @@ void Collider::AddForce(const D3DXVECTOR3 _vForce)
 	//m_pRigidActor->is<PxRigidDynamic>()->setLinearVelocity(vForce);
 	m_pRigidActor->is<PxRigidDynamic>()->addForce(vForce);
 }
+
+void Collider::SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity)
+{
+	m_pRigidActor->is<PxRigidDynamic>()->setLinearVelocity(PxVec3(_vLinearVelocity.x, _vLinearVelocity.y, _vLinearVelocity.z));
+}

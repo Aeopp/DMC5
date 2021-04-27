@@ -1035,6 +1035,7 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::TAG_WireArm:

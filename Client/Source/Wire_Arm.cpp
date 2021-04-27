@@ -84,7 +84,9 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 	float fCurAnimationTime = m_pMesh->PlayingTime();
 
 	if (0.6 <= fCurAnimationTime)
-		m_bCollEnable = false;
+	{
+		m_pCollider.lock()->SetActive(false);
+	}
 
 	return 0;
 }

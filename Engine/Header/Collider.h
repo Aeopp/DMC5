@@ -59,6 +59,8 @@ public:
 	bool		IsGround();
 
 	void		AddForce(const D3DXVECTOR3 _vForce);
+
+	void		SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
 };
 END
 #endif // !__COLLIDER_H__

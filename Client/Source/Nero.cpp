@@ -174,6 +174,8 @@ HRESULT Nero::Ready()
 	m_pEffOverture = AddGameObject<OvertureHand>();
 	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
+	m_pBlood.lock()->SetScale(0.007f);
+	m_pBlood.lock()->SetVariationIdx(Liquid::BLOOD_0);
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -226,8 +228,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	Update_Majin(_fDeltaTime);
 
 
-	//if (Input::GetKeyDown(DIK_0))
-	//	m_bDebugButton = !m_bDebugButton;
+	if (Input::GetKeyDown(DIK_0))
+		Hit(m_BattleInfo);
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -275,6 +277,7 @@ void Nero::OnDisable()
 
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	m_pBlood.lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	m_pBlood.lock()->PlayStart(40.f);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
@@ -531,6 +534,13 @@ Matrix Nero::Get_NeroBoneWorldMatrix(std::string _BoneName)
 	return *m_pMesh->GetNodeToRoot(_BoneName) * m_pTransform.lock()->GetWorldMatrix();
 }
 
+Vector3 Nero::Get_NeroBoneWorldPos(std::string _BoneName)
+{
+	Vector3 WorldPos;
+	memcpy(&WorldPos, (*m_pMesh->GetNodeToRoot(_BoneName) * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
+	return WorldPos;
+}
+
 
 void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot)
 {
@@ -650,6 +660,14 @@ void Nero::SetDashLoopDir()
 	m_iDashLoopDir = m_iDashLoopDir == 1 ? -1 : 1;
 }
 
+void Nero::SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity)
+{
+	if (m_pCollider.expired())
+		return;
+
+	m_pCollider.lock()->SetLinearVelocity(_vLinearVelocity);
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -744,6 +762,29 @@ void Nero::RotateToTargetMonster()
 	Reset_RootRotation();
 
 	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
+}
+
+void Nero::NeroMove(NeroDirection _eDir, float _fPower)
+{
+	switch (_eDir)
+	{
+	case Nero::Dir_Front:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetLook() * -1.f * _fPower);
+		break;
+	case Nero::Dir_Back:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetLook() * _fPower);
+		break;
+	case Nero::Dir_Left:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * -1.f * _fPower);
+		break;
+	case Nero::Dir_Right:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * _fPower);
+		break;
+	case Nero::Dir_Front_Down:
+		break;
+	default:
+		break;
+	}
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)
