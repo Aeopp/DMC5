@@ -314,17 +314,17 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	}
 
 
-	//if (Input::GetKeyDown(DIK_NUMPAD8))
-	//{
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->Reset();
-	//			// + render false 된 후에 SetActive(false) 해야
-	//		}
-	//	}
-	//}
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		for (int i = 1; i < 4; ++i)
+		{
+			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+			{
+				m_vecQliphothBlock[i].lock()->Reset();
+				// + render false 된 후에 SetActive(false) 해야
+			}
+		}
+	}
 
 	return S_OK;
 }
