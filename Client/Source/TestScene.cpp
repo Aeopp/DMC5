@@ -49,8 +49,28 @@ HRESULT TestScene::LoadScene()
 {
 	AddGameObject<Camera>();
 
-	auto q = AddGameObject<TestAnimationObject>();
-	auto q2 = AddGameObject<TestAnimationObject>();
+	{
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+		AddGameObject<TestAnimationObject>();
+	};
 
 	//AddGameObject<MainCamera>();
 	//AddGameObject<Nero>();

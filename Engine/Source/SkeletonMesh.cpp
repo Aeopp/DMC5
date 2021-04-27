@@ -27,6 +27,10 @@ SkeletonMesh::SkeletonMesh(LPDIRECT3DDEVICE9 const _pDevice)
 	RootMotionScaleName = std::make_shared<std::string>(NormallyRootMotionScaleName);
 	RootMotionRotationName = std::make_shared<std::string>(NormallyRootMotionRotationName);
 	RootMotionTransitionName = std::make_shared<std::string>(NormallyRootMotionTransitionName);
+	
+	bRootMotionScale = std::make_shared<bool>(false);
+	bRootMotionRotation = std::make_shared<bool>(false);
+	bRootMotionTransition = std::make_shared<bool>(false);
 }
 
 SkeletonMesh::SkeletonMesh(const SkeletonMesh& _rOther)
@@ -97,9 +101,9 @@ void SkeletonMesh::AnimationEditor()&
 				ImGui::TreePop();
 			}
 
-			if (ImGui::Checkbox("RootMotionScale", &bRootMotionScale))
+			if (ImGui::Checkbox("RootMotionScale", & ( *bRootMotionScale ) ))
 			{
-				if (bRootMotionScale)
+				if (*bRootMotionScale)
 				{
 					EnableScaleRootMotion(*RootMotionScaleName);
 				}
@@ -109,9 +113,9 @@ void SkeletonMesh::AnimationEditor()&
 				}
 			}
 
-			if (ImGui::Checkbox("RootMotionRotation", &bRootMotionRotation))
+			if (ImGui::Checkbox("RootMotionRotation", & (*bRootMotionRotation)))
 			{
-				if (bRootMotionRotation)
+				if (*bRootMotionRotation)
 				{
 					EnableRotationRootMotion(*RootMotionRotationName);
 				}
@@ -123,7 +127,7 @@ void SkeletonMesh::AnimationEditor()&
 
 
 			// 에디터에서 오일러로 설정하고  쿼터니언으로 바꿔서 저장.  
-			if (bRootMotionRotation)
+			if (*bRootMotionRotation)
 			{
 				ImGui::SliderFloat3("Quat Offset", *EulerOffset, -360.f, +360.f);
 				// 세이브 부터 하면0됨 !! 
@@ -133,9 +137,9 @@ void SkeletonMesh::AnimationEditor()&
 				}
 			}
 			
-			if (ImGui::Checkbox("RootMotionTransition", &bRootMotionTransition))
+			if (ImGui::Checkbox("RootMotionTransition", & (*bRootMotionTransition) ))
 			{
-				if (bRootMotionTransition)
+				if (*bRootMotionTransition)
 				{
 					EnableTransitionRootMotion(*RootMotionTransitionName);
 				}
@@ -264,7 +268,7 @@ std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::AnimationUpdateImplementa
 #pragma region ROOT_MOTION
 	std::optional<std::string> IsRootMotion;
 
-	if (bRootMotionTransition)
+	if (*bRootMotionTransition)
 	{
 		RootMotionLastCalcDeltaPos = 
 			CalcRootMotionDeltaPos(bTimeBeyondAnimation,
@@ -289,7 +293,7 @@ std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::AnimationUpdateImplementa
 	};
 
 
-	if (bRootMotionRotation)
+	if (*bRootMotionRotation)
 	{
 		RootMotionLastCalcDeltaQuat = CalcRootMotionDeltaQuat(bTimeBeyondAnimation,
 			AnimName, CurPlayAnimInfo.Duration, CurrentAnimPrevFrameMotionTime, CurrentAnimMotionTime);
@@ -312,7 +316,7 @@ std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::AnimationUpdateImplementa
 		RootMotionLastCalcDeltaQuat = { 0,0,0 ,1 };
 	}
 
-	if (bRootMotionScale)
+	if (*bRootMotionScale)
 	{
 		RootMotionLastCalcDeltaScale = CalcRootMotionDeltaScale(bTimeBeyondAnimation,
 			AnimName, CurPlayAnimInfo.Duration, CurrentAnimPrevFrameMotionTime, CurrentAnimMotionTime);
@@ -393,19 +397,19 @@ void SkeletonMesh::AnimationSave(
 		Writer.Double(EulerOffset->z);
 		
 
-		if (bRootMotionScale)
+		if (*bRootMotionScale)
 		{
 			Writer.Key("RootMotion_ScaleName");
 			Writer.String(RootMotionScaleName->c_str());
 		}
 
-		if (bRootMotionRotation)
+		if (*bRootMotionRotation)
 		{
 			Writer.Key("RootMotion_RotationName");
 			Writer.String(RootMotionRotationName->c_str());
 		}
 
-		if (bRootMotionTransition)
+		if (*bRootMotionTransition)
 		{
 			Writer.Key("RootMotion_TransitionName");
 			Writer.String(RootMotionTransitionName->c_str());
@@ -1658,7 +1662,7 @@ void SkeletonMesh::EnableScaleRootMotion(const std::string& ScalingRootName)
 				{
 					*RootMotionScaleName = NodeName;
 					_Node->RootMotionFlag.set(0, true);
-					bRootMotionScale = true;
+					*bRootMotionScale = true;
 				}
 			}
 		}
@@ -1678,7 +1682,7 @@ void SkeletonMesh::EnableRotationRootMotion(const std::string& RotationRootName)
 				{
 					*RootMotionRotationName = NodeName;
 					_Node->RootMotionFlag.set(1, true);
-					bRootMotionRotation = true;
+					*bRootMotionRotation = true;
 				}
 			}
 		}
@@ -1708,7 +1712,7 @@ void SkeletonMesh::EnableTransitionRootMotion(const std::string& TransitionRootN
 				{
 					*RootMotionTransitionName = NodeName;
 					_Node->RootMotionFlag.set(2, true);
-					bRootMotionTransition = true;
+					*bRootMotionTransition = true;
 				}
 			}
 		}
@@ -1731,7 +1735,7 @@ void SkeletonMesh::DisableScaleRootMotion()
 			}
 		}
 	}
-	bRootMotionScale = false;
+	*bRootMotionScale = false;
 }
 
 void SkeletonMesh::DisableRotationRootMotion()
@@ -1751,7 +1755,7 @@ void SkeletonMesh::DisableRotationRootMotion()
 		}
 
 	}
-	bRootMotionRotation = false;
+	*bRootMotionRotation = false;
 }
 
 void SkeletonMesh::DisableTransitionRootMotion()
@@ -1770,5 +1774,5 @@ void SkeletonMesh::DisableTransitionRootMotion()
 		}
 	}
 
-	bRootMotionTransition = false;
+	*bRootMotionTransition = false;
 }

@@ -124,9 +124,9 @@ private:
 	std::shared_ptr<std::set<std::filesystem::path>>
 		AnimationDataLoadFromJsonTablePathSet{};
 
-	std::shared_ptr<std::string> RootMotionScaleName = NormallyRootMotionScaleName;
-	std::shared_ptr<std::string> RootMotionRotationName = NormallyRootMotionRotationName;
-	std::shared_ptr<std::string> RootMotionTransitionName = NormallyRootMotionTransitionName;
+	std::shared_ptr<std::string> RootMotionScaleName{}; 
+	std::shared_ptr<std::string> RootMotionRotationName{}; 
+	std::shared_ptr<std::string> RootMotionTransitionName{};
 
 	Vector3 CalcRootMotionDeltaPos(std::optional<float> bTimeBeyondAnimation,
 									const std::string & _TargetAnimName,
@@ -166,9 +166,10 @@ public:
 
 	float DeltaTimeFactor = 1.f;
 	float RootMotionDeltaFactor = 1.f;
-	bool  bRootMotionScale = false;
-	bool  bRootMotionRotation = false;
-	bool  bRootMotionTransition = false;
+
+	std::shared_ptr<bool> bRootMotionScale{};
+	std::shared_ptr<bool> bRootMotionRotation{};
+	std::shared_ptr<bool> bRootMotionTransition{};
 
 	std::string PrevAnimName{};
 	std::string AnimName{};
