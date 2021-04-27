@@ -25,10 +25,8 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-#include "Em5000.h"
 #include <iostream>
 #include <fstream>
-
 using namespace std;
 
 TestScene::TestScene()
@@ -49,38 +47,16 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
-	AddGameObject<TestAnimationObject>();
-
-	// AddGameObject<MainCamera>();
-	 AddGameObject<Nero>();
-	 AddGameObject<BtlPanel>();
-
-	 {
-		 auto em = AddGameObject<Em100>();
-		 em.lock()->SetActive(true);
-		 em.lock()->GetComponent<Transform>().
-			 lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-
-	 }
-
-	 {
-		 auto em = AddGameObject<Em100>();
-		 em.lock()->SetActive(true);
-		 em.lock()->GetComponent<Transform>().
-			 lock()->SetPosition({ 0.7f,0.02f,-1.f });
-	 }
-
+	AddGameObject<MainCamera>();
+	AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
 	/*AddGameObject<Em100>();
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
-	// 쉐도우 테스트
-	/*AddGameObject<Em5000>();
-	AddGameObject<Em5000>();*/
-	// 
-	
+
 	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
 	pEm100.lock()->SetActive(false);
 	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
@@ -136,18 +112,17 @@ HRESULT TestScene::LoadScene()
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
-	
+
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
 	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	// _Renderer->ao = 0.0005; 
-	_Renderer->ao = 0.0000f;
+	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f }; 
-	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f  }; 
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
 	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f;
 
@@ -196,7 +171,6 @@ HRESULT TestScene::Awake()
 	//	return S_OK;
 
 	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-
 	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
@@ -213,7 +187,9 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-	if (Input::GetKeyDown(DIK_DELETE))
+
+
+	if (Input::GetKeyDown(DIK_NUMPAD2))
 	{
 		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
 		for (auto& obj : listQliphoth)
@@ -225,14 +201,14 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 
 		m_vecEm100[0].lock()->SetActive(true);
 		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-		
+
 		m_vecEm0000[0].lock()->SetActive(true);
 		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
 
 
 		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
-	if (Input::GetKeyDown(DIK_END))
+	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
 		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
 		for (auto& obj : listQliphoth)
@@ -308,9 +284,9 @@ void TestScene::LoadMap()
 			vPosition.z = position[2].GetDouble();
 
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
-		}	
+		}
 	}
-	
+
 
 
 }
