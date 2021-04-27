@@ -8,6 +8,8 @@ private:
 
 	vector<weak_ptr<GameObject>> m_vecEm100;
 	vector<weak_ptr<GameObject>> m_vecEm0000;
+	vector<weak_ptr<class Effect>> m_vecQliphothBlock;
+
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;

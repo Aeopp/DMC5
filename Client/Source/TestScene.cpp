@@ -47,72 +47,36 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
-	AddGameObject<Nero>();
+	//AddGameObject<MainCamera>();
+	//AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	/*AddGameObject<Em100>();
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
-	
-	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
-	pEm100.lock()->SetActive(false);
-	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
+	//weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
+	//pEm100.lock()->SetActive(false);
+	//m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
 
-	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	pEm0000.lock()->SetActive(false);
-	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	//weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+	//pEm0000.lock()->SetActive(false);
+	//m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
 	LoadMap();
 	AddGameObject<TempMap>();
 
-	if (auto ptr = AddGameObject<QliphothBlock>().lock();
-		ptr)
-	{
-		ptr->SetScale(0.015f);
-		ptr->SetRotation(Vector3(0.f, 262.286f, 0.f));
-		ptr->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
-		ptr->PlayStart();
-	}
-	if (auto ptr = AddGameObject<QliphothBlock>().lock();
-		ptr)
-	{
-		ptr->SetScale(0.009f);
-		ptr->SetRotation(Vector3(0.f, 210.909f, 0.f));
-		ptr->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
-		//ptr->SetActive(false);
-		//ptr->PlayStart();
-	}
-	if (auto ptr = AddGameObject<QliphothBlock>().lock();
-		ptr)
-	{
-		ptr->SetScale(0.025f);
-		ptr->SetRotation(Vector3(0.f, 339.429f, 0.f));
-		ptr->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
-		//ptr->SetActive(false);
-		//ptr->PlayStart();
-	}
-	if (auto ptr = AddGameObject<QliphothBlock>().lock();
-		ptr)
-	{
-		ptr->SetScale(0.016f);
-		ptr->SetRotation(Vector3(0.f, 25.714f, 0.f));
-		ptr->SetPosition(Vector3(1.429f, 1.429f, 0.f));
-		//ptr->SetActive(false);
-		//ptr->PlayStart();
-	}
-
-	/*AddGameObject<Glint>();
+	//AddGameObject<Glint>();
 	AddGameObject<OvertureHand>();
-	AddGameObject<Liquid>();
-	AddGameObject<QliphothBlock>();
-	AddGameObject<AppearGroundMonster>();*/
+	//AddGameObject<Liquid>();
+	//AddGameObject<QliphothBlock>();
+	//AddGameObject<AppearGroundMonster>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
 	
+
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
@@ -160,6 +124,45 @@ HRESULT TestScene::LoadScene()
 		pSmoke->PlayStart(10.f);
 	}
 
+	// Stage2 길막
+	m_vecQliphothBlock.reserve(4);
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.015f);
+		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+		ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.009f);
+		ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.025f);
+		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
+		//ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.016f);
+		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
+		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
+		//ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+
 	return S_OK;
 }
 
@@ -188,37 +191,33 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-
-
 	if (Input::GetKeyDown(DIK_NUMPAD2))
 	{
-		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
-		for (auto& obj : listQliphoth)
+		//m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
+		//m_vecEm100[0].lock()->SetActive(true);
+	
+		//m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
+		//m_vecEm0000[0].lock()->SetActive(true);
+
+		for (int i = 1; i < 4; ++i)
 		{
-			//obj.lock()->SetActive(true);
-			// + 몬스터도 이때 중앙에 소환
-			obj.lock()->PlayStart();
+			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+			{
+				m_vecQliphothBlock[i].lock()->SetActive(true);
+				m_vecQliphothBlock[i].lock()->PlayStart();
+			}
 		}
-
-		m_vecEm100[0].lock()->SetActive(true);
-		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-
-		m_vecEm0000[0].lock()->SetActive(true);
-		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
-
-
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
-		list<weak_ptr<QliphothBlock>> listQliphoth = FindGameObjectsWithType<QliphothBlock>();
-		for (auto& obj : listQliphoth)
+		for (int i = 1; i < 4; ++i)
 		{
-			//obj.lock()->SetActive(false);
-			// + 몬스터도 이때 중앙에 소환
-			obj.lock()->Reset();
+			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+			{
+				m_vecQliphothBlock[i].lock()->Reset();
+				// + render false 된 후에 SetActive(false) 해야
+			}
 		}
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectsWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
 
 	return S_OK;

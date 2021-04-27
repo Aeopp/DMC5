@@ -1474,7 +1474,6 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale",SoftParticleDepthScale);
-
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
