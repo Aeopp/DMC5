@@ -1518,7 +1518,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		{
 			for (int32 i = 0; i < Passes; ++i)
 			{
-				_DrawInfo.PassIndex = 0u;
+				_DrawInfo.PassIndex = i;
 				Fx->BeginPass(i);
 				_RefEntity->second(_DrawInfo);
 				Fx->EndPass();
