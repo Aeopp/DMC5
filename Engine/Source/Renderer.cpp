@@ -1460,8 +1460,8 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	
-	using AsType = std::pair<std::reference_wrapper<std::string>,
-		std::reference_wrapper<ENGINE::Renderer::RenderEntityType>>;
+	using AsType = std::pair<const std::string*,
+		ENGINE::Renderer::RenderEntityType*>;
 
 	std::vector<AsType> AlphaSortArr;
 
@@ -1469,30 +1469,32 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	{
 		for (auto& _Entity : Entitys)
 		{
-			AlphaSortArr.push_back({ ShaderKey,_Entity});
+			AlphaSortArr.push_back(AsType{ &ShaderKey,&_Entity } );
 		}
 	};
 
 	std::sort(std::begin(AlphaSortArr), std::end(AlphaSortArr),
-		[EyePos = _RenderInfo.Eye](const AsType& _Lhs ,
+		[EyePos = _RenderInfo.Eye](const AsType& _Lhs,
 								   const AsType& _Rhs)
 		{
 			const Vector3 LhsLocation
-					=
-			{		_Lhs.second.get().first->_RenderUpdateInfo.World._41,
-					_Lhs.second.get().first->_RenderUpdateInfo.World._42 ,
-					_Lhs.second.get().first->_RenderUpdateInfo.World._43
-			};
+				=
+				{		
+					_Lhs.second->first->_RenderUpdateInfo.World._41,
+					_Lhs.second->first->_RenderUpdateInfo.World._42,
+					_Lhs.second->first->_RenderUpdateInfo.World._43
+				};
 
 			const Vector3 RhsLocation
 				=
-				{	_Rhs.second.get().first->_RenderUpdateInfo.World._41,
-					_Rhs.second.get().first->_RenderUpdateInfo.World._42 ,
-					_Rhs.second.get().first->_RenderUpdateInfo.World._43
+				{	_Rhs.second->first->_RenderUpdateInfo.World._41,
+					_Rhs.second->first->_RenderUpdateInfo.World._42,
+					_Rhs.second->first->_RenderUpdateInfo.World._43
 				};
-			return FMath::LengthSq((Vector3&)(EyePos)-LhsLocation)
+
+			return FMath::LengthSq((Vector3&)(EyePos)-LhsLocation) 
 					>
-				FMath::LengthSq((Vector3&)(EyePos)-RhsLocation);
+					FMath::LengthSq((Vector3&)(EyePos)-RhsLocation);
 		});
 
 	DrawInfo _DrawInfo{};
@@ -1504,7 +1506,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 
 	for (auto& [_RefStr,_RefEntity] : AlphaSortArr)
 	{
-		auto Fx = Shaders[_RefStr]->GetEffect();
+		auto Fx = Shaders[*_RefStr]->GetEffect();
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
@@ -1518,12 +1520,15 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			{
 				_DrawInfo.PassIndex = 0u;
 				Fx->BeginPass(i);
-				_RefEntity.get().second(_DrawInfo);
+				_RefEntity->second(_DrawInfo);
 				Fx->EndPass();
 			}
 		}
 		Fx->End();
 	}
+
+	AlphaSortArr.clear();
+	AlphaSortArr.shrink_to_fit();
 
 	/*for (auto& [ShaderKey, Entitys] : _Group)
 	{
@@ -1532,7 +1537,6 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale",SoftParticleDepthScale);
-
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
@@ -1550,6 +1554,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			Fx->End();
 		}
 	}*/
+
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);

@@ -49,4 +49,5 @@ public :
 	std::map<Order,std::map<std::string, CallType>> RenderOrders{};
 };  
 END
+
 #endif // !__RENDERPROPERTY_H__

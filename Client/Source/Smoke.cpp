@@ -98,11 +98,11 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		SharedSubset)
 	{
 		_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
-
 		_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
+		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
+		_Info.Fx->SetFloatArray("_BrightScale", _BrightScale, 3u);
 		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
-		_Info.Fx->SetFloatArray("_MagicNumber", Vector3(0.00005f, 0.00005f, 0.00005f), 3u);
 
 		SharedSubset->Render(_Info.Fx);
 	}
@@ -122,6 +122,8 @@ HRESULT Smoke::Ready()
 	_SmokeMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_enviroment_smoke00_03.fbx");
 
 	_SmokeALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_smoke_00_0016_alpg.tga");
+
+	_BrightScale = Vector3(0.00005f, 0.00005f, 0.00005f);
 
 	_PlayingSpeed = 1.f;
 
@@ -172,7 +174,7 @@ UINT Smoke::Update(const float _fDeltaTime)
 	//BillMat._33 = TempMat._33;
 	//D3DXMatrixInverse(&BillMat, 0, &BillMat);
 	////BillMat._42 = -1.2f;
-
+	//
 	//if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 	//	Sptransform)
 	//	Sptransform->SetBillBoard(BillMat);
