@@ -1365,7 +1365,6 @@ HRESULT Renderer::RenderSkySphere()&
 		Fx->EndPass();
 		Fx->End();
 		Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
 	}
 
 	return S_OK;
