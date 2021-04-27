@@ -47,28 +47,28 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
-	//AddGameObject<MainCamera>();
-	//AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	/*AddGameObject<Em100>();
 	AddGameObject<Em0000>();*/
 	//AddGameObject<Car>();
 
-	//weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
-	//pEm100.lock()->SetActive(false);
-	//m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
+	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
+	pEm100.lock()->SetActive(false);
+	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
 
-	//weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	//pEm0000.lock()->SetActive(false);
-	//m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+	pEm0000.lock()->SetActive(false);
+	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
 	LoadMap();
 	AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
-	AddGameObject<OvertureHand>();
+	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
@@ -192,11 +192,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 
 	if (Input::GetKeyDown(DIK_NUMPAD2))
 	{
-		//m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-		//m_vecEm100[0].lock()->SetActive(true);
+		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
+		m_vecEm100[0].lock()->SetActive(true);
 	
-		//m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
-		//m_vecEm0000[0].lock()->SetActive(true);
+		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
+		m_vecEm0000[0].lock()->SetActive(true);
 
 		for (int i = 1; i < 4; ++i)
 		{
