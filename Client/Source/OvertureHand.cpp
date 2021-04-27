@@ -182,7 +182,7 @@ HRESULT OvertureHand::Ready()
 	_SparkBranchWorldMatrix._43 += 20.f;
 
 	_PlayingSpeed = 1.f;
-	_BrightScale = 0.08f;
+	_BrightScale = 0.04f;
 
 	Reset();	// PlayStart()·Î Àç»ý
 
