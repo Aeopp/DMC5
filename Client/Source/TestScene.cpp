@@ -49,10 +49,10 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em100>();
 	//AddGameObject<Em0000>();
