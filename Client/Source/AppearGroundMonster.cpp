@@ -17,7 +17,24 @@ void AppearGroundMonster::Free()
 std::string AppearGroundMonster::GetName()
 {
 	return "AppearGroundMonster";
-};
+}
+
+void AppearGroundMonster::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _PlaneMesh->GetSubset(0);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+	}
+}
 
 void AppearGroundMonster::Reset()
 {
@@ -104,6 +121,9 @@ void AppearGroundMonster::RenderInit()
 
 void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
 	// blood
 	_ExtraColor = Vector3(0.55f, 0.f, 0.f);
 	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
@@ -131,6 +151,9 @@ void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 
 void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
 	auto WeakSubset = _PlaneMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)

@@ -29,6 +29,23 @@ void Glint::Reset()
 	Effect::Reset();
 }
 
+void Glint::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _PlaneMesh->GetSubset(0);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+	}
+}
+
 void Glint::Imgui_Modify()
 {
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
@@ -62,8 +79,11 @@ Glint* Glint::Create()
 }
 
 
-void Glint::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
+void Glint::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+	
 	auto WeakSubset_Plane = _PlaneMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset_Plane.lock();
 		SharedSubset)
@@ -72,11 +92,11 @@ void Glint::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
 		{
 			if (_SliceAmount[i] < 1.f)
 			{
-				_ImplInfo.Fx->SetMatrix("World", &_WorldMatrix[i]);
-				_ImplInfo.Fx->SetFloat("_SliceAmount", _SliceAmount[i]);
-				_ImplInfo.Fx->SetTexture("BaseMap", _GlintTex->GetTexture());
+				_Info.Fx->SetMatrix("World", &_WorldMatrix[i]);
+				_Info.Fx->SetFloat("_SliceAmount", _SliceAmount[i]);
+				_Info.Fx->SetTexture("BaseMap", _GlintTex->GetTexture());
 				
-				SharedSubset->Render(_ImplInfo.Fx);
+				SharedSubset->Render(_Info.Fx);
 			}
 		}
 	}
