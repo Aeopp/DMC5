@@ -8,6 +8,7 @@
 Wire_Arm::Wire_Arm()
 	:m_bIsRender(false)
 	,m_pBoneMatrix(nullptr)
+	,m_fRadianForRotX(0.f)
 {
 	m_nTag = TAG_WireArm;
 }
@@ -65,17 +66,22 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
+
+	Matrix TestRotX;
+	D3DXMatrixRotationX(&TestRotX, m_fRadianForRotX);
 	
 	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
 	Matrix CollWorld;
-	CollWorld = *m_pBoneMatrix * NeroWorld;
+	CollWorld = *m_pBoneMatrix * TestRotX * NeroWorld;
 
-	Vector3 PlayerRight;
+	Vector3 PlayerRight,FinalPos;
 	memcpy(&PlayerRight, NeroWorld.m[0], sizeof(Vector3));
 	D3DXVec3Normalize(&PlayerRight, &PlayerRight);
 	CollWorld._41 += PlayerRight.x * -0.05f;
 	CollWorld._43 += PlayerRight.z * -0.05f;
-	m_pTransform.lock()->SetPosition({ CollWorld._41,CollWorld._42,CollWorld._43 });
+	memcpy(&FinalPos, CollWorld.m[3], sizeof(Vector3));
+	//D3DXVec3TransformNormal(&FinalPos, &FinalPos, &TestRotX);
+	m_pTransform.lock()->SetPosition(FinalPos);
 	if (m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);
@@ -112,7 +118,10 @@ void Wire_Arm::OnEnable()
 	Vector3 PlayeUp = m_pNero.lock()->GetComponent<Transform>().lock()->GetUp();
 	NeroWorld._42 += PlayeUp.y * -0.12f;
 
-	m_MyRenderMatrix = NeroWorld;
+	Matrix RotX;
+	D3DXMatrixRotationX(&RotX, m_fRadianForRotX);
+
+	m_MyRenderMatrix = RotX * NeroWorld;
 	_RenderProperty.bRender = m_bIsRender;
 	m_bCollEnable = true;
 }
@@ -142,6 +151,7 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_pWireArmGrab.lock()->GetComponent<Transform>().lock()->SetPosition(MyPos);
 		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
 		m_pWireArmGrab.lock()->SetActive(true);
+		m_pWireArmGrab.lock()->Set_RadianForRotX(m_fRadianForRotX);
 		_RenderProperty.bRender = m_bIsRender = false;
 		SetActive(false);
 	}

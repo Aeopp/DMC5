@@ -55,6 +55,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 {
 	UINT Ex_Gauge = m_pNero.lock()->Get_ExGaugeCount();
 	UINT Nero_Pre_Dir = m_pNero.lock()->Get_PreDirIndex();
+
 	if (Input::GetKey(DIK_LSHIFT))
 	{
 		//락온
@@ -62,16 +63,18 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 		{
 			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
+			return S_OK;
 		}
 		else if (Input::GetKey(DIK_W))
 		{
 			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-				if(Ex_Gauge > 0)
+				if (Ex_Gauge > 0)
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE_EX);
 				else
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_L))
 			{
@@ -80,15 +83,17 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3);
 				else
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
-				
+
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_UP);
+				return S_OK;
 			}
 		}
 		else if (Input::GetKey(DIK_S))
@@ -97,16 +102,19 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_HR_EX_START);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_DOWN);
+				return S_OK;
 			}
 			else if (Input::GetKey(DIK_SPACE))
 			{
@@ -124,6 +132,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 				//왼쪽 구르기
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_L);
+				return S_OK;
 			}
 		}
 		else if (Input::GetKey(DIK_D))
@@ -133,6 +142,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 				// 오른쪽 구르기
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_R);
+				return S_OK;
 			}
 		}
 	}
@@ -273,6 +283,11 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 			m_pFSM->ChangeState(NeroFSM::RUNSTART_R);
 	}
 
+	if (Input::GetKey(DIK_LSHIFT))
+		m_pNero.lock()->Locking();
+	else
+		m_pNero.lock()->SetOffLockOnMonster();
+
 	return S_OK;
 }
 
@@ -286,8 +301,9 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 		{
 			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
+			return S_OK;
 		}
-		else if(Input::GetKey(DIK_W))
+		else if (Input::GetKey(DIK_W))
 		{
 			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
 			{
@@ -296,6 +312,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE_EX);
 				else
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_L))
 			{
@@ -304,6 +321,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3);
 				else
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
@@ -313,6 +331,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_UP);
+				return S_OK;
 			}
 		}
 		else if (Input::GetKey(DIK_S))
@@ -321,16 +340,19 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_HR_EX_START);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_DOWN);
+				return S_OK;
 			}
 			else if (Input::GetKey(DIK_SPACE))
 			{
@@ -348,6 +370,7 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 				//왼쪽 구르기
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_L);
+				return S_OK;
 			}
 		}
 		else if (Input::GetKey(DIK_D))
@@ -357,11 +380,12 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 				// 오른쪽 구르기
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::EVADE_R);
+				return S_OK;
 			}
 		}
 	}
 
-	else if (Input::GetMouse(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		m_pFSM->ChangeState(NeroFSM::ATT1_DASH);
@@ -413,6 +437,11 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 	{
 		//오른쪽으로 90도 회전
 	}
+
+	if (Input::GetKey(DIK_LSHIFT))
+		m_pNero.lock()->Locking();
+	else
+		m_pNero.lock()->SetOffLockOnMonster();
 
 	return S_OK;
 }
@@ -2373,6 +2402,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		{
 			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
+			return S_OK;
 		}
 		else if (Input::GetKey(DIK_W))
 		{
@@ -2383,6 +2413,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE_EX);
 				else
 					m_pFSM->ChangeState(NeroFSM::SKILL_SHUFFLE);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_L))
 			{
@@ -2391,6 +2422,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_EX3);
 				else
 					m_pFSM->ChangeState(NeroFSM::SKILL_STREAK);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
@@ -2400,6 +2432,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_UP);
+				return S_OK;
 			}
 		}
 		else if (Input::GetKey(DIK_S))
@@ -2408,16 +2441,19 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_FLOAT_GROUND);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 				m_pFSM->ChangeState(NeroFSM::SKILL_HR_EX_START);
+				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
 				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 				m_pFSM->ChangeState(NeroFSM::OVERTURE_SHOOT_DOWN);
+				return S_OK;
 			}
 			else if (Input::GetKey(DIK_SPACE))
 			{
@@ -2430,7 +2466,7 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		}
 	}
 
-	else if (Input::GetMouse(DIM_L))
+	if (Input::GetMouse(DIM_L))
 	{
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 		m_pFSM->ChangeState(NeroFSM::ATT1_DASH);
@@ -2550,6 +2586,11 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 		m_pFSM->ChangeState(NeroFSM::DASHSTOP);
 		m_pNero.lock()->SetAngleFromCamera();
 	}
+
+	if (Input::GetKey(DIK_LSHIFT))
+		m_pNero.lock()->Locking();
+	else
+		m_pNero.lock()->SetOffLockOnMonster();
 	return S_OK;
 }
 
@@ -3406,8 +3447,10 @@ HRESULT Wire_Pull::StateEnter()
 	NeroState::StateEnter();
 
 	//몬스터 위치에 따라서 분기
+	m_pNero.lock()->Locking();
 	m_pNero.lock()->RotateToTargetMonster();
-	m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull", false, Nero::ANI_WIRE_SNATCH_PULL);
+	//m_pNero.lock()->CheckAutoRotate();
+	m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_U", false, Nero::ANI_WIRE_SNATCH_PULL);
 	m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_WireArm, true);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WireArm,"Wire_Arm_Start31", false);
 

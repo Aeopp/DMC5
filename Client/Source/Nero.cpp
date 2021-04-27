@@ -159,7 +159,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 4.f, -5.02f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 3.f, -5.02f});
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -247,11 +247,6 @@ UINT Nero::Update(const float _fDeltaTime)
 	D3DXVec3TransformCoord(&Pos, &Pos, &matRot);
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
-
-	if (Input::GetKey(DIK_LSHIFT))
-		Locking();
-	else
-		SetOffLockOnMonster();
 
 	//테스트
 	//if(!m_IsMajin)
@@ -735,16 +730,18 @@ void Nero::Locking()
 	
 }
 
-void Nero::RotateToTargetMonster()
+float Nero::RotateToTargetMonster()
 {
 	if (m_pTargetMonster.expired())
-		return;
+		return 0.f;
 	Vector3 vMonsterPos = m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
 	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
 
-	Vector3 vDir = vMonsterPos - vMyPos;
+	Vector3 vDir, vNewDir;
+	vDir = vNewDir = vMonsterPos - vMyPos;
 	vDir.y = 0;
 	D3DXVec3Normalize(&vDir, &vDir);
+	D3DXVec3Normalize(&vNewDir, &vNewDir);
 
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
@@ -762,6 +759,20 @@ void Nero::RotateToTargetMonster()
 	Reset_RootRotation();
 
 	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
+	//와이어팔 회전할 각도 구해주는곳
+	
+	vLook = -m_pTransform.lock()->GetLook();
+	fDot = D3DXVec3Dot(&vNewDir, &vLook);
+	fRadian = acosf(fDot);
+	if (70.f <= D3DXToDegree(fRadian) || D3DXToDegree(fRadian) <= -70.f)
+	{
+		if (vNewDir.y > 0.f)
+			fRadian *= -1.f;
+		m_pWireArm.lock()->Set_RadianForRotX(0.f);
+	}
+	else
+		m_pWireArm.lock()->Set_RadianForRotX(fRadian);
+	return 0.f;
 }
 
 void Nero::NeroMove(NeroDirection _eDir, float _fPower)

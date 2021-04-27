@@ -331,7 +331,7 @@ public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
 	void Locking();
-	void RotateToTargetMonster();
+	float RotateToTargetMonster();
 	void NeroMove(NeroDirection _eDir, float _fPower);
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }

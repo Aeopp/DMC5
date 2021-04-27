@@ -86,7 +86,10 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 		m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
 		m_pMesh->ContinueAnimation();
 		m_vDir = { 0.f, 0.f,0.f };
-		m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
+		//m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
+		Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+		NeroPos += m_pNero.lock()->GetComponent<Transform>().lock()->GetRight() * -0.05f;
+		m_pTransform.lock()->SetPosition(NeroPos);
 		static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(false);
 	}
 
@@ -113,7 +116,10 @@ void Wire_Arm_Grab::OnEnable()
 	m_vDir = NeroPos - m_pTransform.lock()->GetPosition();
 	D3DXVec3Normalize(&m_vDir, &m_vDir);
 
+	Vector3 RotX = { D3DXToDegree(m_fRadianForRotX),0.f,0.f };
+
 	m_pTransform.lock()->SetQuaternion(m_pNero.lock()->GetComponent<Transform>().lock()->GetQuaternion());
+	m_pTransform.lock()->Rotate(RotX);
 
 	m_bPlayOnce = true;
 	static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(true);
