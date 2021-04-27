@@ -59,6 +59,10 @@ public:
 	bool		IsGround();
 
 	void		AddForce(const D3DXVECTOR3 _vForce);
+
+	float		GetContactOffset();
+
+	void		SetContactOffset(const float _fOffset);
 };
 END
 #endif // !__COLLIDER_H__

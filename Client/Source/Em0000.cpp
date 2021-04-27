@@ -275,6 +275,19 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = Prone_Getup;
 		}
 		break;
+	case Em0000::Hit_Air:
+		if (m_bHit && m_bAir == true)
+		{
+			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->PlayingTime() >= 0.9f)
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+		}
+		break;
+		break;
 	case Em0000::Prone_Getup:
 		if (m_bDown == true)
 		{
@@ -302,6 +315,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Hit_Air_Start:
 		if (m_bHit == true)
 		{
+			m_bAir = true;
 			m_pMesh->PlayAnimation("Blown_Back", false, {}, 1.f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Back" && m_pMesh->IsAnimationEnd())
@@ -319,6 +333,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				else
 					m_eState = Hit_End_Back;
 				m_bDown = true;
+				m_bAir = false;
 			}
 		}
 	case Em0000::Move_Front_End:
@@ -510,7 +525,7 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 		
-	m_pCollider.lock()->SetRadius(0.06f);
+	m_pCollider.lock()->SetRadius(0.04f);
 	m_pCollider.lock()->SetHeight(0.17f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.03f });
 
@@ -585,8 +600,8 @@ UINT Em0000::Update(const float _fDeltaTime)
 	Rotate(_fDeltaTime);
 
 
-	if (m_BattleInfo.iHp <= 0)
-		m_eState = Dead;
+	/*if (m_BattleInfo.iHp <= 0)
+		m_eState = Dead;*/
 
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
@@ -730,7 +745,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.12f, 2.5f, vLook.z * 0.12f);
+			Vector3	vDir(vLook.x * 0.12f, 3.3f, vLook.z * 0.12f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -790,7 +805,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.12f, 2.5f, vLook.z * 0.12f);
+			Vector3	vDir(vLook.x * 0.12f, 3.3f, vLook.z * 0.12f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -820,6 +835,63 @@ void Em0000::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
+}
+
+void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
+{
+	AddRankScore(_BattleInfo.iAttack);
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	m_pCollider.lock()->SetGravity(false);
+
+	/*--- 피 이펙트 ---*/
+	if (!m_pBlood.expired())
+	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetScale(0.008f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
+	/*----------------*/
+
+	switch (_BattleInfo.eAttackType)
+	{
+	case ATTACKTYPE::Attack_Down:
+	{
+		m_eState = Hit_KnocBack;
+		m_bHit = true;
+
+		Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+		m_vPower += -vLook;
+		m_vPower.y = -2.f;
+
+		m_fPower = 200.f;
+
+		D3DXVec3Normalize(&m_vPower, &m_vPower);
+		m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+		m_vPower.x = 0.f;
+		m_vPower.z = 0.f;
+		m_fPower = 100.f;
+
+	}
+	break;
+	/*case ATTACKTYPE::Attack_Split:
+		m_eState = Hit_Split_Start;
+		m_bHit = true;
+		break;*/
+	default:
+		m_eState = Hit_Air;
+		m_bHit = true;
+		break;
+	}
 }
 
 void Em0000::RenderGBufferSK(const DrawInfo& _Info)
@@ -1070,7 +1142,11 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());

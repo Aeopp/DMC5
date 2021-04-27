@@ -43,7 +43,7 @@ private:
 		Idle,
 		Idle2,
 		Idle3,
-		Idle4,		
+		Idle4,
 		Hit_Buster_Start,
 		Hit_Buster_Loop,
 		Hit_Buster_End,
@@ -51,6 +51,8 @@ private:
 		Downword_Damage,
 		Hit_Snatch_Start,
 		Hit_Snatch_End,
+		Hit_Split_Start,
+		Hit_Split_End,
 		Enter_Ground,
 		State_END
 	};
@@ -82,6 +84,7 @@ public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	void		 Air_Hit(BT_INFO _BattleInfo, void* pArg = nullptr);
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
@@ -124,6 +127,7 @@ private:
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
+	Matrix* m_pRedQueenBone;
 	////////////////
 
 

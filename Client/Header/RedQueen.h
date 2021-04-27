@@ -44,6 +44,8 @@ public:
 
 	virtual void Editor()override;
 
+	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
+
 private:
 	std::weak_ptr<Nero>					m_pNero;
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;

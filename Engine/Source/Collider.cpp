@@ -66,6 +66,16 @@ void Collider::Editor()
 	if (ImGui::Checkbox("Gravity", &bGravity))
 		SetGravity(bGravity);
 
+	if (m_pShape)
+	{
+		float fRestOffset = m_pShape->getRestOffset();
+		if (ImGui::InputFloat("Rest Offset", &fRestOffset));
+
+		float fContactOffset = m_pShape->getContactOffset();
+		if (ImGui::InputFloat("Contact Offset", &fContactOffset))
+			SetContactOffset(fContactOffset);
+	}
+
 	ImGui::Text("Freeze");
 	ImGui::Text("Position");
 	ImGui::SameLine();
@@ -372,4 +382,24 @@ void Collider::AddForce(const D3DXVECTOR3 _vForce)
 
 	//m_pRigidActor->is<PxRigidDynamic>()->setLinearVelocity(vForce);
 	m_pRigidActor->is<PxRigidDynamic>()->addForce(vForce);
+}
+
+float Collider::GetContactOffset()
+{
+	if (nullptr == m_pShape)
+		return -0.0f;
+	return m_pShape->getContactOffset();
+}
+
+void Collider::SetContactOffset(const float _fOffset)
+{
+	if (nullptr == m_pShape)
+		return;
+
+	PxReal restOffset = m_pShape->getRestOffset();
+
+	if (restOffset > _fOffset || 0 > _fOffset)
+		return;
+
+	m_pShape->setContactOffset(_fOffset);
 }

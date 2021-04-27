@@ -52,11 +52,11 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em100>();
-	//AddGameObject<Em0000>();
+	//AddGameObject<Em100>();
+	AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
-	weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
+	/*weak_ptr<Em100> pEm100 = AddGameObject<Em100>();
 	pEm100.lock()->SetActive(false);
 	m_vecEm100.push_back(static_pointer_cast<GameObject>(pEm100.lock()));
 
@@ -64,7 +64,7 @@ HRESULT TestScene::LoadScene()
 	pEm0000.lock()->SetActive(false);
 	m_vecEm0000.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
-	LoadMap();
+	LoadMap();*/
 	AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
@@ -190,34 +190,34 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-	if (Input::GetKeyDown(DIK_NUMPAD2))
-	{
-		m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
-		m_vecEm100[0].lock()->SetActive(true);
-	
-		m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
-		m_vecEm0000[0].lock()->SetActive(true);
+	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//{
+	//	m_vecEm100[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -0.8f,0.02f,-0.7f });
+	//	m_vecEm100[0].lock()->SetActive(true);
+	//
+	//	m_vecEm0000[0].lock()->GetComponent<Transform>().lock()->SetPosition({ 0.7f,0.02f,-1.f });
+	//	m_vecEm0000[0].lock()->SetActive(true);
 
-		for (int i = 1; i < 4; ++i)
-		{
-			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-			{
-				m_vecQliphothBlock[i].lock()->SetActive(true);
-				m_vecQliphothBlock[i].lock()->PlayStart();
-			}
-		}
-	}
-	if (Input::GetKeyDown(DIK_NUMPAD8))
-	{
-		for (int i = 1; i < 4; ++i)
-		{
-			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-			{
-				m_vecQliphothBlock[i].lock()->Reset();
-				// + render false 된 후에 SetActive(false) 해야
-			}
-		}
-	}
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->SetActive(true);
+	//			m_vecQliphothBlock[i].lock()->PlayStart();
+	//		}
+	//	}
+	//}
+	//if (Input::GetKeyDown(DIK_NUMPAD8))
+	//{
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->Reset();
+	//			// + render false 된 후에 SetActive(false) 해야
+	//		}
+	//	}
+	//}
 
 	return S_OK;
 }

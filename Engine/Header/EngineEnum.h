@@ -32,6 +32,7 @@ enum ATTACKTYPE
 	Attack_Buster_Start,
 	Attack_Buster_Loop,
 	Attack_Buster_End,
+	Attack_Split,
 	Attack_END
 };
 
