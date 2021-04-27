@@ -68,7 +68,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
-	AddGameObject<OvertureHand>();
+	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
