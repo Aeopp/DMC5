@@ -1459,14 +1459,8 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
-	DrawInfo _DrawInfo{};
-	EffectInfo _EffInfo{};
-	_EffInfo.SoftParticleDepthBiasScale = SoftParticleDepthScale;
-	_DrawInfo.BySituation = _EffInfo;
-	_DrawInfo._Device = Device;
-	_DrawInfo._Frustum = CameraFrustum.get();
-
-	using AsType = std::pair<std::string_view,
+	
+	using AsType = std::pair<std::reference_wrapper<std::string>,
 		std::reference_wrapper<ENGINE::Renderer::RenderEntityType>>;
 
 	std::vector<AsType> AlphaSortArr;
@@ -1501,7 +1495,37 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 				FMath::LengthSq((Vector3&)(EyePos)-RhsLocation);
 		});
 
-	for (auto& [ShaderKey, Entitys] : _Group)
+	DrawInfo _DrawInfo{};
+	EffectInfo _EffInfo{};
+	_EffInfo.SoftParticleDepthBiasScale = SoftParticleDepthScale;
+	_DrawInfo.BySituation = _EffInfo;
+	_DrawInfo._Device = Device;
+	_DrawInfo._Frustum = CameraFrustum.get();
+
+	for (auto& [_RefStr,_RefEntity] : AlphaSortArr)
+	{
+		auto Fx = Shaders[_RefStr]->GetEffect();
+		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
+		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
+		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
+		Fx->SetFloat("SoftParticleDepthScale", SoftParticleDepthScale);
+		_DrawInfo.Fx = Fx;
+
+		UINT Passes{ 0u };
+		Fx->Begin(&Passes, NULL); 
+		{
+			for (int32 i = 0; i < Passes; ++i)
+			{
+				_DrawInfo.PassIndex = 0u;
+				Fx->BeginPass(i);
+				_RefEntity.get().second(_DrawInfo);
+				Fx->EndPass();
+			}
+		}
+		Fx->End();
+	}
+
+	/*for (auto& [ShaderKey, Entitys] : _Group)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
@@ -1525,7 +1549,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			}
 			Fx->End();
 		}
-	}
+	}*/
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
