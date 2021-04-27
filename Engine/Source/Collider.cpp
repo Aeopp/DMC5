@@ -20,7 +20,7 @@ Collider::Collider(std::weak_ptr<GameObject> const _pGameObject)
 
 void Collider::Free()
 {
-	//Scene¿¡¼­ Actor Á¦°Å
+	//Sceneï¿½ï¿½ï¿½ï¿½ Actor ï¿½ï¿½ï¿½ï¿½
 	Physics::RemoveActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 	//
 	if (nullptr != m_pRigidActor)
@@ -35,7 +35,7 @@ HRESULT Collider::ReadyCollider()
 {
 	CreateRigidActor();
 
-	//Scene¿¡ Actor Ãß°¡.
+	//Sceneï¿½ï¿½ Actor ï¿½ß°ï¿½.
 	Physics::AddActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 	return S_OK;
 }
@@ -65,6 +65,16 @@ void Collider::Editor()
 	bool bGravity = m_bGravity;
 	if (ImGui::Checkbox("Gravity", &bGravity))
 		SetGravity(bGravity);
+
+	if (m_pShape)
+	{
+		float fRestOffset = m_pShape->getRestOffset();
+		if (ImGui::InputFloat("Rest Offset", &fRestOffset));
+
+		float fContactOffset = m_pShape->getContactOffset();
+		if (ImGui::InputFloat("Contact Offset", &fContactOffset))
+			SetContactOffset(fContactOffset);
+	}
 
 	ImGui::Text("Freeze");
 	ImGui::Text("Position");
@@ -119,7 +129,7 @@ void Collider::SetActive(const bool _bActive)
 	{
 		Physics::AddActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 		std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
-		//Transform¿¡ º¯È­°¡ ÀÖ¾ú´ÂÁö È®ÀÎ
+		//Transformï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 		if (true == pTransform.expired())
 			return;
 		if (nullptr == m_pRigidActor)
@@ -143,7 +153,7 @@ void Collider::SetActive(const bool _bActive)
 void Collider::ReadySimulate()
 {
 	std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
-	//Transform¿¡ º¯È­°¡ ÀÖ¾ú´ÂÁö È®ÀÎ
+	//Transformï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 	if (true == pTransform.expired())
 		return;
 	if (false == pTransform.lock()->IsUpdated())
@@ -166,7 +176,7 @@ void Collider::ReadySimulate()
 
 void Collider::CreateRigidActor()
 {
-	//±âÁ¸¿¡ »ç¿ëÁßÀÎ Actor°¡ ÀÖ´Ù¸é ÇØÁ¦. ==> Scene¿¡¼­ Á¦°Å Ãß°¡ ¼öÁ¤ ÇÊ¿ä.
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Actorï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½. ==> Sceneï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½.
 	if (nullptr != m_pRigidActor)
 	{
 		if (m_pRigidActor->getScene())
@@ -175,7 +185,7 @@ void Collider::CreateRigidActor()
 		PX_RELEASE(m_pRigidActor);
 	}
 
-	//Collider°¡ ºÎÂøµÈ °ÔÀÓ¿ÀºêÁ§Æ®ÀÇ TransformÀ¸·Î ActorÀ§Ä¡ ¼³Á¤.
+	//Colliderï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Transformï¿½ï¿½ï¿½ï¿½ Actorï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½.
 	std::weak_ptr<Transform> pTransform = m_pGameObject.lock()->GetComponent<Transform>();
 
 	D3DXVECTOR3		vPosition = pTransform.lock()->GetPosition();
@@ -187,20 +197,20 @@ void Collider::CreateRigidActor()
 	memcpy_s(&pxPos, sizeof(D3DXVECTOR3), &vPosition, sizeof(D3DXVECTOR3));
 	memcpy_s(&pxQuat, sizeof(D3DXQUATERNION), &tQuaternion, sizeof(D3DXQUATERNION));
 
-	//RigidActor »ý¼º
+	//RigidActor ï¿½ï¿½ï¿½ï¿½
 	if (m_bRigid)
 		m_pRigidActor = Physics::GetPxPhysics()->createRigidDynamic(physx::PxTransform(pxPos, pxQuat));
 	else
 		m_pRigidActor = Physics::GetPxPhysics()->createRigidStatic(physx::PxTransform(pxPos, pxQuat));
 
-	//UserData ¼³Á¤.
-	//Collider ÄÄÆ÷³ÍÆ®°¡ ÇØÁ¦µÇµµ userData°¡ »ç¶óÁö¸é ¾ÈµÊ -> FetchResult¿¡¼­ nullptr Á¢±ÙÀ¸·Î ÅÍÁü.
-	//=> Component ÇØÁ¦½Ã ¸®Áöµå ¾×ÅÍÀÇ userdata¸¦ nullptr·Î º¯°æ ÇØ¼­ È®ÀÎ.
+	//UserData ï¿½ï¿½ï¿½ï¿½.
+	//Collider ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½ userDataï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Èµï¿½ -> FetchResultï¿½ï¿½ï¿½ï¿½ nullptr ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+	//=> Component ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ userdataï¿½ï¿½ nullptrï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¼ï¿½ È®ï¿½ï¿½.
 	m_UserData.pCollider = std::static_pointer_cast<Collider>(m_pThis);
 	m_UserData.bIsGround = false;
 
 	m_pRigidActor->userData = (void*)&m_UserData;
-	//Shape ¿¬°á
+	//Shape ï¿½ï¿½ï¿½ï¿½
 	m_pRigidActor->attachShape(*m_pShape);
 }
 
@@ -216,26 +226,26 @@ void Collider::SetRigid(const bool _bRigid)
 
 	m_bRigid = _bRigid;
 
-	//Scene¿¡¼­ ActorÁ¦°Å
+	//Sceneï¿½ï¿½ï¿½ï¿½ Actorï¿½ï¿½ï¿½ï¿½
 	if (m_bActive)
 		Physics::RemoveActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 
-	//RigidActor »ý¼º
+	//RigidActor ï¿½ï¿½ï¿½ï¿½
 	CreateRigidActor();
 
-	//Scene¿¡ »õ·Î¿î ActorÃß°¡
+	//Sceneï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ Actorï¿½ß°ï¿½
 	if (m_bActive)
 		Physics::AddActor(m_pGameObject.lock()->GetSceneID(), *m_pRigidActor);
 
 	if (true == _bRigid)
 	{
 		PxRigidDynamic* pRigidDynamic = m_pRigidActor->is<PxRigidDynamic>();
-		//LockFlag ¼³Á¤
+		//LockFlag ï¿½ï¿½ï¿½ï¿½
 		for (UINT i = 0; i < 6; ++i)
 		{
 			pRigidDynamic->setRigidDynamicLockFlag((PxRigidDynamicLockFlag::Enum)pow(2, i), m_bLock[i]);
 		}
-		//Áß·Â ¼³Á¤
+		//ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½
 		pRigidDynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !m_bGravity);
 	}
 }
@@ -377,4 +387,23 @@ void Collider::AddForce(const D3DXVECTOR3 _vForce)
 void Collider::SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity)
 {
 	m_pRigidActor->is<PxRigidDynamic>()->setLinearVelocity(PxVec3(_vLinearVelocity.x, _vLinearVelocity.y, _vLinearVelocity.z));
+}
+float Collider::GetContactOffset()
+{
+	if (nullptr == m_pShape)
+		return -0.0f;
+	return m_pShape->getContactOffset();
+}
+
+void Collider::SetContactOffset(const float _fOffset)
+{
+	if (nullptr == m_pShape)
+		return;
+
+	PxReal restOffset = m_pShape->getRestOffset();
+
+	if (restOffset > _fOffset || 0 > _fOffset)
+		return;
+
+	m_pShape->setContactOffset(_fOffset);
 }

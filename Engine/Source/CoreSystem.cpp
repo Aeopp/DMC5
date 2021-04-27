@@ -317,12 +317,12 @@ void CoreSystem::Editor()
 		}
 
 
-		ImGui::Begin("Log");
-		//for (const auto& CurLog : g_Logs)
-		//{
-		//	ImGui::Text(CurLog.c_str());
-		//}
-		ImGui::End();
+		//ImGui::Begin("Log");
+		////for (const auto& CurLog : g_Logs)
+		////{
+		////	ImGui::Text(CurLog.c_str());
+		////}
+		//ImGui::End();
 	}
 
 	if (!g_Logs.empty())

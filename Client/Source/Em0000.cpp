@@ -76,20 +76,20 @@ void Em0000::Fight(const float _fDeltaTime)
 	{
 		if (m_bAttack && m_bIng == false)
 		{
-			int iRandom = FMath::Random<int>(1, 2);
+			int iRandom = FMath::Random<int>(1, 3);
 			m_bIng = true;
 			if (iRandom == 1)
 			{
 				m_eState = Attack_1;
 				m_pWeapon.lock()->Set_Coll(true);
-				m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			}
-			else
+			else if (iRandom == 2)
 			{
 				m_eState = Attack_2;
 				m_pWeapon.lock()->Set_Coll(true);
-				m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			}
+			else
+				m_eState = Step_Back;
 		}
 	}
 
@@ -120,8 +120,15 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
-
 				m_pWeapon.lock()->Set_Coll(false);
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.5f)
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			}
 		}
 		break;
@@ -137,9 +144,17 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
-
 				m_pWeapon.lock()->Set_Coll(false);
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.5f)
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_Front);
+			}
+
 		}
 		break;
 	case Em0000::Attack_Hard:
@@ -150,13 +165,23 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.95f)
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.9f)
 			{
+				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = idle;
-
 				m_pWeapon.lock()->Set_Coll(false);
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.35f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			}
 		}
 		break;
@@ -250,6 +275,19 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = Prone_Getup;
 		}
 		break;
+	case Em0000::Hit_Air:
+		if (m_bHit && m_bAir == true)
+		{
+			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Air" && m_pMesh->PlayingTime() >= 0.9f)
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+		}
+		break;
+		break;
 	case Em0000::Prone_Getup:
 		if (m_bDown == true)
 		{
@@ -277,6 +315,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Hit_Air_Start:
 		if (m_bHit == true)
 		{
+			m_bAir = true;
 			m_pMesh->PlayAnimation("Blown_Back", false, {}, 1.f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Back" && m_pMesh->IsAnimationEnd())
@@ -294,6 +333,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				else
 					m_eState = Hit_End_Back;
 				m_bDown = true;
+				m_bAir = false;
 			}
 		}
 	case Em0000::Move_Front_End:
@@ -332,6 +372,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Step_Back:
 		if (m_bIng == true)
 		{
+			Update_Angle();
+			Set_Rotate();
 			m_pMesh->PlayAnimation("Back_Step", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Back_Step" && m_pMesh->PlayingTime() >= 0.9f)
@@ -339,7 +381,6 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = Attack_Hard;
 				m_bMove = false;
 				m_pWeapon.lock()->Set_Coll(true);
-				m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			}
 
 		}
@@ -484,7 +525,7 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 		
-	m_pCollider.lock()->SetRadius(0.06f);
+	m_pCollider.lock()->SetRadius(0.04f);
 	m_pCollider.lock()->SetHeight(0.17f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.03f });
 
@@ -499,6 +540,7 @@ HRESULT Em0000::Awake()
 	m_pBlood = AddGameObject<Liquid>();
 	m_pAppear = AddGameObject<AppearGroundMonster>();
 	///////////
+
 	return S_OK;
 }
 
@@ -563,8 +605,10 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
-		SetActive(false);
-
+	{
+		Destroy(m_pWeapon);
+		Destroy(m_pGameObject);
+	}
 	return 0;
 }
 
@@ -701,7 +745,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.12f, 2.5f, vLook.z * 0.12f);
+			Vector3	vDir(vLook.x * 0.12f, 3.3f, vLook.z * 0.12f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -761,7 +805,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.12f, 2.5f, vLook.z * 0.12f);
+			Vector3	vDir(vLook.x * 0.12f, 3.3f, vLook.z * 0.12f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -793,6 +837,63 @@ void Em0000::Snatch(BT_INFO _BattleInfo, void* pArg)
 	m_eState = Hit_Snatch_Start;
 }
 
+void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
+{
+	AddRankScore(_BattleInfo.iAttack);
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	m_pCollider.lock()->SetGravity(false);
+
+	/*--- 피 이펙트 ---*/
+	if (!m_pBlood.expired())
+	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetScale(0.008f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
+	/*----------------*/
+
+	switch (_BattleInfo.eAttackType)
+	{
+	case ATTACKTYPE::Attack_Down:
+	{
+		m_eState = Hit_KnocBack;
+		m_bHit = true;
+
+		Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+		m_vPower += -vLook;
+		m_vPower.y = -2.f;
+
+		m_fPower = 200.f;
+
+		D3DXVec3Normalize(&m_vPower, &m_vPower);
+		m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+		m_vPower.x = 0.f;
+		m_vPower.z = 0.f;
+		m_fPower = 100.f;
+
+	}
+	break;
+	/*case ATTACKTYPE::Attack_Split:
+		m_eState = Hit_Split_Start;
+		m_bHit = true;
+		break;*/
+	default:
+		m_eState = Hit_Air;
+		m_bHit = true;
+		break;
+	}
+}
+
 void Em0000::RenderGBufferSK(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
@@ -804,6 +905,11 @@ void Em0000::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
+
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -825,6 +931,10 @@ void Em0000::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -851,6 +961,10 @@ void Em0000::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -1028,7 +1142,11 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);

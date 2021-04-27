@@ -103,8 +103,6 @@ void Em100Hand::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em100Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
-		m_bCollEnable = false;
 }
 
 void Em100Hand::RenderInit()

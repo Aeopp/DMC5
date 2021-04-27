@@ -34,6 +34,7 @@ private:
 		Hit_Air_Loop,
 		Hit_Snatch_Start,
 		Hit_Snatch_End,
+		Hit_Air,
 		Lie_Getup,//뒤로넘어졌을떄 일어나기
 		Prone_Getup, // 앞으로넘어졌을때 일어나기
 		Move_Front_End,
@@ -77,6 +78,7 @@ public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	void		 Air_Hit(BT_INFO _BattleInfo, void* pArg = nullptr);
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);

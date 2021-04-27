@@ -139,5 +139,6 @@ void Em1000Hand::RenderInit()
 
 void Em1000Hand::RenderReady()
 {
+
 }
 

@@ -13,12 +13,12 @@
                 1.0
             ],
             "Near": 0.000009999999747378752,
-            "Far": 10.0,
+            "Far": 8.0,
             "Projparams": [
-                25.0,
-                25.0,
+                20.0,
+                20.0,
                 0.000009999999747378752,
-                10.0
+                8.0
             ],
             "PointRadius": 0.7110946178436279,
             "Direction": [
@@ -38,8 +38,8 @@
                 0.0
             ],
             "shadowmin": 0.0,
-            "shadowdepthbias": 0.10000000149011612,
-            "ShadowMapSize": 2048.0,
+            "shadowdepthbias": 0.000009999999747378752,
+            "ShadowMapSize": 4096.0,
             "Type": "Directional"
         },
         {
@@ -810,15 +810,15 @@
                 1.0,
                 1.0
             ],
-            "Near": 0.10000000149011612,
-            "Far": 2.5,
+            "Near": 1.0,
+            "Far": 1.5,
             "Projparams": [
                 0.0,
                 0.0,
-                0.10000000149011612,
-                2.5
+                1.0,
+                1.5
             ],
-            "PointRadius": 2.5,
+            "PointRadius": 2.041872262954712,
             "Direction": [
                 0.0,
                 0.0,
@@ -836,8 +836,8 @@
                 1.0
             ],
             "shadowmin": 0.0,
-            "shadowdepthbias": 0.0,
-            "ShadowMapSize": 512.0,
+            "shadowdepthbias": 0.009999999776482582,
+            "ShadowMapSize": 1024.0,
             "Type": "Point"
         }
     ]

@@ -25,7 +25,7 @@ protected:
 protected:
 	explicit Collider(std::weak_ptr<GameObject> const _pGameObject);
 	virtual ~Collider() = default;
-	// ComponentÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// Componentï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	virtual void Free() PURE;
 protected:
 	virtual HRESULT ReadyCollider()							PURE;
@@ -61,6 +61,9 @@ public:
 	void		AddForce(const D3DXVECTOR3 _vForce);
 
 	void		SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
+	float		GetContactOffset();
+
+	void		SetContactOffset(const float _fOffset);
 };
 END
 #endif // !__COLLIDER_H__
