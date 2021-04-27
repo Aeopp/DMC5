@@ -42,7 +42,7 @@ void Em100::Fight(const float _fDeltaTime)
 	//}
 
 	//몬스터 움직이는 방향 정해주는 놈
-	if (fDir >= 0.3f)
+	if (fDir >= 0.35f)
 	{
 		int iRandom = FMath::Random<int>(1, 6);
 		if (m_bMove && m_bIng == false)
@@ -76,12 +76,8 @@ void Em100::Fight(const float _fDeltaTime)
 		{
 			m_bIng = true;
 			m_eState = Attack_Hard;
-
 			for (int i = 0; i < 2; ++i)
-			{
 				m_pHand[i].lock()->Set_Coll(true);
-				m_pHand[i].lock()->Set_AttackType(Attack_Front);
-			}
 			return;
 		}
 		if (m_bAttack && m_bIng == false)
@@ -93,23 +89,15 @@ void Em100::Fight(const float _fDeltaTime)
 			if (iRandom == 1)
 			{
 				m_eState = Attack_A;
-
 				for (int i = 0; i < 2; ++i)
-				{
 					m_pHand[i].lock()->Set_Coll(true);
-					m_pHand[i].lock()->Set_AttackType(Attack_Front);
-				}
 				return;
 			}
 			else if (iRandom == 2)
 			{
 				m_eState = Attack_D;
-
 				for (int i = 0; i < 2; ++i)
-				{
 					m_pHand[i].lock()->Set_Coll(true);
-					m_pHand[i].lock()->Set_AttackType(Attack_Front);
-				}
 				return;
 			}
 		}
@@ -137,25 +125,40 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_A", false, {}, 1.f, 50.f, true);
 			Update_Angle();
 			m_bInteraction = true;
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
 			{
-				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->IsAnimationEnd())
+				int iRandom = FMath::Random<int>(1, 4);
+
+				if (iRandom == 1)
+					m_eState = Idle;
+				else if (iRandom == 2)
+					m_eState = Idle2;
+				else if (iRandom == 3)
+					m_eState = Idle3;
+				else if (iRandom == 4)
+					m_eState = Idle4;
+
+				m_bIng = false;
+				m_bAttack = false;
+
+				for (int i = 0; i < 2; ++i)
 				{
-					int iRandom = FMath::Random<int>(1, 4);
-
-					if (iRandom == 1)
-						m_eState = Idle;
-					else if (iRandom == 2)
-						m_eState = Idle2;
-					else if (iRandom == 3)
-						m_eState = Idle3;
-					else if (iRandom == 4)
-						m_eState = Idle4;
-
-					m_bIng = false;
-					m_bAttack = false;
-
-					for (int i = 0; i < 2; ++i)
-						m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->PlayingTime() >= 0.5f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_A" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_Front);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 				}
 			}
 		}
@@ -164,7 +167,6 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_D", false, {}, 1.f, 50.f, true);
-
 			Update_Angle();
 			m_bInteraction = true;
 
@@ -185,14 +187,30 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_bAttack = false;
 
 				for (int i = 0; i < 2; ++i)
+				{
 					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->PlayingTime() >= 0.5f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_D" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_Front);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
 	case Em100::Attack_Hard:
 		if (m_bIng == true)
 		{
-			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f, true);
 			Update_Angle();
 			m_bInteraction = true;
 
@@ -210,10 +228,26 @@ void Em100::State_Change(const float _fDeltaTime)
 					m_eState = Idle4;
 
 				m_bIng = false;
-				m_bHardAttack = false;
+				m_bAttack = false;
 
 				for (int i = 0; i < 2; ++i)
+				{
 					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.5f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_Front);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -412,7 +446,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
-			if (fDir <= 0.3f)
+			if (fDir <= 0.35f)
 			{
 				m_eState = Walk_Front_End;
 			}
@@ -564,8 +598,8 @@ void Em100::State_Change(const float _fDeltaTime)
 		{
 			Update_Angle();
 			Set_Rotate();
+			m_bDown = false;
 			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
-
 			if (m_bSnatch == false)
 				m_eState = Hit_Snatch_End;
 		}
@@ -575,6 +609,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		{
 			Update_Angle();
 			Set_Rotate();
+			m_bDown = false;
 			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Snatch_End" && m_pMesh->IsAnimationEnd())
@@ -782,7 +817,11 @@ UINT Em100::Update(const float _fDeltaTime)
 
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
-		SetActive(false);
+	{
+		for (int i = 0; i < 2; ++i)
+			Destroy(m_pHand[i]);
+		Destroy(m_pGameObject);
+	}
 
 	return 0;
 }

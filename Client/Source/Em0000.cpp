@@ -76,20 +76,20 @@ void Em0000::Fight(const float _fDeltaTime)
 	{
 		if (m_bAttack && m_bIng == false)
 		{
-			int iRandom = FMath::Random<int>(1, 2);
+			int iRandom = FMath::Random<int>(1, 3);
 			m_bIng = true;
 			if (iRandom == 1)
 			{
 				m_eState = Attack_1;
 				m_pWeapon.lock()->Set_Coll(true);
-				m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			}
-			else
+			else if (iRandom == 2)
 			{
 				m_eState = Attack_2;
 				m_pWeapon.lock()->Set_Coll(true);
-				m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			}
+			else
+				m_eState = Step_Back;
 		}
 	}
 
@@ -120,8 +120,15 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
-
 				m_pWeapon.lock()->Set_Coll(false);
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.5f)
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_Front);
 			}
 		}
 		break;
@@ -137,9 +144,17 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
-
 				m_pWeapon.lock()->Set_Coll(false);
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.5f)
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_Front);
+			}
+
 		}
 		break;
 	case Em0000::Attack_Hard:
@@ -150,13 +165,23 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_pMesh->PlayAnimation("Attack_Hard", false, {}, 1.f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.95f)
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.9f)
 			{
+				m_eState = idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = idle;
-
 				m_pWeapon.lock()->Set_Coll(false);
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.35f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			}
 		}
 		break;
@@ -332,6 +357,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Step_Back:
 		if (m_bIng == true)
 		{
+			Update_Angle();
+			Set_Rotate();
 			m_pMesh->PlayAnimation("Back_Step", false, {}, 1.f, 50.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Back_Step" && m_pMesh->PlayingTime() >= 0.9f)
@@ -339,7 +366,6 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = Attack_Hard;
 				m_bMove = false;
 				m_pWeapon.lock()->Set_Coll(true);
-				m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			}
 
 		}
@@ -499,6 +525,7 @@ HRESULT Em0000::Awake()
 	m_pBlood = AddGameObject<Liquid>();
 	m_pAppear = AddGameObject<AppearGroundMonster>();
 	///////////
+
 	return S_OK;
 }
 
@@ -563,8 +590,10 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
-		SetActive(false);
-
+	{
+		Destroy(m_pWeapon);
+		Destroy(m_pGameObject);
+	}
 	return 0;
 }
 
