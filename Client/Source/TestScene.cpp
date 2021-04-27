@@ -52,7 +52,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em100>();
+	//AddGameObject<Em100>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 
@@ -285,7 +285,4 @@ void TestScene::LoadMap()
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
-
-
-
 }
