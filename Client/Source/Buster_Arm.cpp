@@ -134,11 +134,21 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	if (nullptr == dynamic_pointer_cast<Monster>(_pOther.lock()))
 		return;
 	UINT MonsterTag = _pOther.lock()->m_nTag;
-	
+	UINT CurNeroAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	switch (MonsterTag)
 	{
 	case Monster100:
-		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON);
+		switch (CurNeroAnimationIndex)
+		{
+		case Nero::ANI_BUSTER_START:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON);
+			break;
+		case Nero::ANI_BUSTER_AIR_CATCH:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON_AIR);
+			break;
+		default:
+			break;
+		}
 		break;
 	case Monster101:
 		break;

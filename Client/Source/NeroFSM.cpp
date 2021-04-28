@@ -74,7 +74,7 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(Skill_Float_Ground_Ex3::Create(this, SKILL_FLOAT_GROUND_EX3, m_pNero));
 	m_vecState.emplace_back(Skill_Float_Ground_Ex3_Start::Create(this, SKILL_FLOAT_GROUND_EX3_START, m_pNero));
 	m_vecState.emplace_back(Skill_Float_Ground_Finish::Create(this, SKILL_FLOAT_GROUND_FINISH, m_pNero));
-
+	
 	m_vecState.emplace_back(Skill_Shuffle::Create(this, SKILL_SHUFFLE, m_pNero));
 	m_vecState.emplace_back(Skill_Shuffle_Ex::Create(this, SKILL_SHUFFLE_EX, m_pNero));
 #pragma region GT

@@ -127,7 +127,7 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 		Pos.y += 0.23f;
 		break;
 	case EffDircetion::EffDir_Down:
-		Rot = { -90.f,180.f,0.f };
+		Rot = { -90.f,0.f,0.f };
 		break;
 	default:
 		break;
@@ -902,6 +902,7 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 	switch (_eNeroComID)
 	{
 	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->SetActive(true);
 		m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WireArm:

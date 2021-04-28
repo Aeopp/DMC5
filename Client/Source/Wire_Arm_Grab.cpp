@@ -65,9 +65,9 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
+	Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
 	if (!m_bGrabEnd)
 	{
-		Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
 		Vector3 vLength = NeroPos - m_pTransform.lock()->GetPosition();
 		float fLength = D3DXVec3Length(&vLength);
 
@@ -76,6 +76,8 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 
 		m_pTransform.lock()->Translate(m_vDir * 0.06f);
 	}
+	else
+		m_pTransform.lock()->SetPosition(NeroPos);
 
 	if ("Wire_Arm_End_Long" == m_pMesh->AnimName && m_pMesh->IsAnimationEnd())
 	{
@@ -88,12 +90,12 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 		//m_pMesh->ContinueAnimation();
 		m_vDir = { 0.f, 0.f,0.f };
 		//m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
-		Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
 		//NeroPos += m_pNero.lock()->GetComponent<Transform>().lock()->GetRight() * -0.05f;
 		m_pTransform.lock()->SetPosition(NeroPos);
 		m_pGrabedMonster.lock()->Set_Snatch(false);
 		//m_pGrabedMonster.lock()->SetGravity(true);
 	}
+
 
 	return 0;
 }
