@@ -20,6 +20,8 @@ sampler WaveMask = sampler_state
     sRGBTexture = false;
 };
 
+
+
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV : TEXCOORD0)
 {
@@ -27,7 +29,8 @@ void VsMain(in out float4 Position : POSITION0,
     Position = mul(Position, ViewProjection);
 };
 
-void PsMain(out float4 Color : COLOR0,
+void PsMain(out float4 Color : COLOR0, 
+            out float4 Color1 : COLOR1 ,
             in float2 UV : TEXCOORD0)
 {
     UV.y = (UV.y + (1.f - Progress) + UV_VOffset);
@@ -36,7 +39,9 @@ void PsMain(out float4 Color : COLOR0,
     
     Color = _Color;
     Color.rgb *= Intencity * exposure_corr;
-    Color.a = tex2D(WaveMask, UV).r * _Color.a;
+    float4 Wave = tex2D(WaveMask, UV).r;
+    Color.a = Wave .x* _Color.a;
+    Color1.rgba = Wave;
 };
 
 technique Default

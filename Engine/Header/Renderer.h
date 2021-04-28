@@ -35,6 +35,7 @@ private:
 	void    ReadyRenderInfo();
 	void    ReadyFrustum();
 	void    ReadyQuad();
+	void    ReadyTextures();
 public:
 	HRESULT Render()&;
 	HRESULT OptRender()&;
@@ -55,6 +56,8 @@ private:
 	void RenderEntityClear()&;
 private:
 	void ResetState()&;
+private:
+	void ClearDistortion()&;
 private:
 	HRESULT RenderDebug()&;
 	HRESULT RenderDebugBone()&;
@@ -80,7 +83,7 @@ private:
 	HRESULT ToneMap();
 	HRESULT RenderEmissive();
 	HRESULT RenderUV();
-	HRESULT RenderDistortion();
+	HRESULT BlendDistortion();
 private:
 	void EnableDepthBias()&;
 	void DisableDepthBias()&;
@@ -92,7 +95,8 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
-	float exposure = 1.f;
+	float   DistortionIntencity = 0.05f;
+	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
 	float   SkyRotationSpeed = 0.001f;
@@ -143,13 +147,14 @@ private:
 		std::unordered_map<std::string,
 		std::vector<RenderEntityType>>>
 		RenderEntitys{};
+
+	std::shared_ptr<Texture> DistortionTex{};
 	std::set<RenderInterface* > RenderEntitySet{};
 	std::shared_ptr<Quad> _Quad;
 	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
 	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
-
 
 	std::shared_ptr<StaticMesh> SkysphereMesh{};
 	std::shared_ptr<Texture> sky{};

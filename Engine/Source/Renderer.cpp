@@ -42,6 +42,7 @@ HRESULT Renderer::ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice)
 	ReadyFrustum();
 	ReadyQuad();
 	ReadySky();
+	ReadyTextures();
 
 	TestShaderInit();
 	return S_OK;
@@ -476,6 +477,11 @@ void Renderer::ReadyQuad()
 	_Quad->Initialize(Device);
 }
 
+void Renderer::ReadyTextures()
+{
+	DistortionTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\water_new_height.png");
+}
+
 void Renderer::Push(const std::weak_ptr<GameObject>& _RenderEntity)&
 {
 	if (auto _SharedObject = _RenderEntity.lock();
@@ -517,6 +523,7 @@ HRESULT Renderer::Render()&
 	RenderReady();
 	RenderBegin();
 
+	ClearDistortion();
 	//  쉐도우 패스 
 	RenderShadowMaps();
 	EnableDepthBias();
@@ -536,9 +543,9 @@ HRESULT Renderer::Render()&
 
 	RenderEmissive();
 	AlphaBlendEffectRender();
+	BlendDistortion();
 	UIRender();
 	// RenderInsulatorMetal();
-
 	{
 		// 테스트 끝나면 주석 풀기
 		RenderMeasureLuminance();
@@ -645,6 +652,9 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
+
+		ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 1.f,
+			"%3.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
 		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
@@ -775,6 +785,14 @@ void Renderer::ResetState()&
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	Device->SetViewport(&_RenderInfo.Viewport);
+};
+
+void Renderer::ClearDistortion()&
+{
+	Device->SetRenderTarget(0u, RenderTargets["Distortion"]->GetSurface(0));
+	// Device->Clear(0u, nullptr, D3DCLEAR_TARGET, 0xffffffff, 1.0f, 0);
+	 Device->Clear(0u, nullptr, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0);
+	Device->SetRenderTarget(0u, nullptr);
 };
 
 void Renderer::RenderEnd()&
@@ -929,6 +947,8 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
 		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
+		device->SetRenderTarget(3, RenderTargets["Distortion"]->GetSurface());
+		// 왜곡도 클리어 . 
 	}
 
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -1473,6 +1493,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
+	Device->SetRenderTarget(1u, RenderTargets["Distortion"]->GetSurface(0));
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	
 	using AsType = std::pair<const std::string*,
@@ -1572,6 +1593,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 
+	Device->SetRenderTarget(1u, nullptr);
 	return S_OK;
 };
 
@@ -2413,12 +2435,50 @@ HRESULT Renderer::RenderEmissive()
 
 HRESULT Renderer::RenderUV()
 {
-
 	return S_OK;
 };
 
-HRESULT Renderer::RenderDistortion()
+HRESULT Renderer::BlendDistortion()
 {
+	DWORD zwrite, zenable, alphablendenable, srcblend, destblend;
+	Device->GetRenderState(D3DRS_ZWRITEENABLE,&zwrite);
+	Device->GetRenderState(D3DRS_ZENABLE, &zenable);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &alphablendenable);
+	Device->GetRenderState(D3DRS_SRCBLEND,&srcblend);
+	Device->GetRenderState(D3DRS_DESTBLEND, &destblend);
+
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
+	Vector4 PixelSize{ 0.f,0.f,0.f,1.f };
+	
+	PixelSize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
+	PixelSize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
+
+	Device->SetRenderTarget(0u, RenderTargets["SceneTarget"]->GetSurface(0));
+	auto Fx = Shaders["Distortion"]->GetEffect();
+	Fx->SetVector("PixelSize", &PixelSize);
+
+	Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
+	Fx->SetFloat("Intencity", DistortionIntencity);
+
+	Fx->Begin(nullptr,0);
+	Fx->BeginPass(0);
+	Fx->SetTexture("SceneMap",RenderTargets["SceneTarget"]->GetTexture());
+	// Fx->SetTexture("DistortionMap", DistortionTex->GetTexture());
+	Fx->SetTexture("DistortionMap", RenderTargets["Distortion"]->GetTexture());
+	_Quad->Render(Device, 1.f, 1.f, Fx);
+	Fx->EndPass();
+	Fx->End();
+
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, zwrite);
+	Device->SetRenderState(D3DRS_ZENABLE, zenable);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, alphablendenable);
+	Device->SetRenderState(D3DRS_SRCBLEND, srcblend);
+	Device->SetRenderState(D3DRS_DESTBLEND, destblend);
 
 	return S_OK;
 };
