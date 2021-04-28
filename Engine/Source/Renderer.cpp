@@ -2449,7 +2449,7 @@ HRESULT Renderer::BlendDistortion()
 
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
