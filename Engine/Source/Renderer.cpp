@@ -1510,7 +1510,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale", SoftParticleDepthScale);
-		Fx->SetFloat("exposure", exposure);
+		Fx->SetFloat("exposure_corr",1.f/(exposure *0.002f));
 		_DrawInfo.Fx = Fx;
 
 		UINT Passes{ 0u };
@@ -2394,6 +2394,11 @@ HRESULT Renderer::RenderEmissive()
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+
+	return S_OK;
+}
+HRESULT Renderer::RenderUV()
+{
 
 	return S_OK;
 };

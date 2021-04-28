@@ -79,6 +79,7 @@ private:
 	HRESULT LensFlare();
 	HRESULT ToneMap();
 	HRESULT RenderEmissive();
+	HRESULT RenderUV();
 private:
 	void EnableDepthBias()&;
 	void DisableDepthBias()&;
@@ -90,7 +91,7 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
-
+	float exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
 	float   SkyRotationSpeed = 0.001f;
@@ -127,7 +128,7 @@ private:
 	// 0 으로 세팅되면 미정의 동작 . 
 	float adaptedluminance = 0.1f;
 
-	float exposure = 1.f;
+
 	IDirect3DSurface9* BackBuffer{ nullptr };
 	IDirect3DSurface9* BackBufferZBuffer{ nullptr };
 

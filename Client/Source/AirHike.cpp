@@ -30,6 +30,8 @@ void AirHike::RenderReady()
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
+		const float CurScale = FMath::Lerp(StartScale, FinalScale, Sin);
+		GetComponent<Transform>().lock()->SetScale({ CurScale ,CurScale ,CurScale });
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (_StaticMesh)
 		{
@@ -113,56 +115,39 @@ void AirHike::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
 		L"..\\..\\Resource\\Mesh\\Static\\Effect\\AirHike\\AirHike.fbx");
+
+	_GradBlue = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Grad\\Blue.png");
+
 	PushEditEntity(_StaticMesh.get());
 };
 
-void AirHike::RenderGBuffer(const DrawInfo& _Info)
+
+
+void AirHike::PlayStart(const std::optional<Vector3>& Location)
 {
-	const Matrix World = _RenderUpdateInfo.World;
-	_Info.Fx->SetMatrix("matWorld", &World);
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
-	for (uint32 i = 0; i < Numsubset; ++i)
+	if (Location)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
-			SpSubset)
-		{
-			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-			{
-				continue;
-			}
+		GetComponent<Transform>().lock()->SetPosition(Location.value());
+	}
 
-			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
-			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
-			SpSubset->Render(_Info.Fx);
-		};
-	};
-}
-void AirHike::RenderShadow(const DrawInfo& _Info)
+	T = 0.0f;
+	_RenderProperty.bRender = true;
+};
+
+void AirHike::PlayEnd()
 {
-	const Matrix World = _RenderUpdateInfo.World;
-	_Info.Fx->SetMatrix("matWorld", &World);
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
-	for (uint32 i = 0; i < Numsubset; ++i)
-	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
-			SpSubset)
-		{
-			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-			{
-				continue;
-			}
-
-			SpSubset->Render(_Info.Fx);
-		};
-	};
+	_RenderProperty.bRender = false;
+	T = 0.0f;
 }
-
 void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
+	const float CurIntencity = FMath::Lerp(StartIntencity, FinalIntencity, Sin);
+	const Vector4 CurColor = FMath::Lerp(CurColor, FinalColor, Sin);
 	_Info.Fx->SetMatrix("matWorld", &World);
-	_Info.Fx->SetVector("InnerColor", &InnerColor);
-	_Info.Fx->SetVector("OuterColor", &OuterColor);
+	_Info.Fx->SetVector("CurColor", &CurColor);
+	_Info.Fx->SetFloat("Intencity", CurIntencity);
+	_Info.Fx->SetTexture("GradMap", _GradBlue->GetTexture());
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -220,7 +205,7 @@ HRESULT AirHike::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,-1.f,0.f });
+	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,0.5f,0.5f });
 	return S_OK;
 }
 
@@ -234,7 +219,12 @@ HRESULT AirHike::Start()
 UINT AirHike::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-
+	T += _fDeltaTime * Speed;
+	Sin = std::sinf(T);
+	if (T >  ( FMath::PI) ) 
+	{
+		PlayEnd();
+	}
 	return 0;
 }
 
@@ -251,7 +241,20 @@ void AirHike::Editor()
 
 	if (bEdit)
 	{
+		if (ImGui::SmallButton("Play"))
+		{
+			PlayStart();
+		}
 
+		ImGui::SliderFloat("Speed", &Speed, 0.f, 10.f, "%2.6f", 0.000001f);
+	
+		ImGui::SliderFloat("StartIntencity", &StartIntencity, 0.f, 10.f, "%2.6f", 0.000001f);
+		ImGui::SliderFloat("StartScale", &StartScale, 0.f, 1.f, "%2.6f", 0.000001f);
+		ImGui::ColorEdit4("StartColor", StartColor);
+
+		ImGui::SliderFloat("FinalIntencity", &FinalIntencity, 0.f, 10.f, "%2.6f", 0.000001f);
+		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", 0.000001f);
+		ImGui::ColorEdit4("FinalColor", FinalColor);
 	}
 }
 
@@ -265,3 +268,4 @@ void AirHike::OnDisable()
 {
 	GameObject::OnDisable();
 }
+

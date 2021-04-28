@@ -1,28 +1,36 @@
 matrix matWorld;
 matrix ViewProjection;
 
-uniform float exposure = 1.f;
+vector CurColor;
+uniform float Intencity;
+uniform float exposure_corr;
 
-vector InnerColor;
-vector OuterColor;
+texture GradMap;
+sampler Grad = sampler_state
+{
+    texture = GradMap;
+    minfilter = anisotropic;
+    magfilter = anisotropic;
+    mipfilter = anisotropic;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = true;
+    MaxAnisotropy = 8;
+};
 
 void VsMain(in out float4 Position : POSITION0,
-            in out float2 UV :       TEXCOORD0 )
+            in out float2 UV : TEXCOORD0)
 {
     Position = mul(Position, matWorld);
     Position = mul(Position, ViewProjection);
-}
+};
 
-void PsMain(out float4 Color : COLOR0 ,
-in  float2 UV : TEXCOORD0)
+void PsMain(out float4 Color : COLOR0,
+            in float2 UV : TEXCOORD0)
 {
-    Color = InnerColor;
-    Color.b = smoothstep(InnerColor.b, OuterColor.b, UV.x);
-    Color.a  = smoothstep(InnerColor.a , OuterColor.a, UV.x);
-  //   Color = OuterColor;
-    Color.rgb *= 0.1f;
- //  Color.rg *= (1.f / (exposure * exposure) );
-}
+    Color = CurColor;
+    Color.rgb *= Intencity * exposure_corr;
+};
 
 technique Default
 {
@@ -39,3 +47,4 @@ technique Default
         pixelshader = compile ps_3_0 PsMain();
     }
 };
+
