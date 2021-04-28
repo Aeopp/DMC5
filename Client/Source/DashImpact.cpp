@@ -161,3 +161,7 @@ void DashImpact::OnDisable()
 void DashImpact::Reset()
 {
 }
+
+void DashImpact::RenderReady()
+{
+}

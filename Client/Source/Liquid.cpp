@@ -17,7 +17,24 @@ void Liquid::Free()
 std::string Liquid::GetName()
 {
 	return "Liquid";
-};
+}
+
+void Liquid::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _LiquidMeshVec[_VariationIdx].first->GetSubset(_SubsetIdx);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+	}
+}
 
 void Liquid::Reset()
 {
@@ -87,6 +104,9 @@ void Liquid::RenderInit()
 void Liquid::RenderGBuffer(const DrawInfo& _Info)
 {
 	if (MAX_VARIATION_IDX <= _VariationIdx)
+		return;
+
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
 		return;
 
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
@@ -168,6 +188,9 @@ HRESULT Liquid::Start()
 UINT Liquid::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
+
+	if (!_IsPlaying)
+		return 0;
 
 	if (MAX_VARIATION_IDX <= _VariationIdx)
 		return 0;

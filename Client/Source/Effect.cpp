@@ -16,21 +16,6 @@ std::string Effect::GetName()
 	return "Effect";
 }
 
-
-void Effect::RenderReady()
-{
-	if (!_IsPlaying)
-		return;
-
-	auto _WeakTransform = GetComponent<ENGINE::Transform>();
-	if (auto _SpTransform = _WeakTransform.lock();
-		_SpTransform)
-	{
-		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-	}
-}
-
 void Effect::Reset()
 {
 	// 자식은 Effect::Reset()을 반드시 호출
