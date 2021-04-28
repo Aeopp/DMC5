@@ -55,7 +55,7 @@ void Em0000::Fight(const float _fDeltaTime)
 	/////이놈은 움직임이 한방향 밖에 없어서. 앞으로 갈지 아니면 백스탭 이후에 강한 공격할지
 	//Move가 On일때 1/4 확률로 백스텝을 하고 백스텝을 한 이후에는 바로 달려가면서 강한 공격
 
-	if (fDir >= 0.5f)
+	if (fDir >= 0.6f)
 	{
 		int iRandom = FMath::Random<int>(1, 4);
 
@@ -254,6 +254,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 
 				m_bIng = false;
 				m_bDown = true;
+				m_bAir = false;
 			}
 		}
 		break;
@@ -336,6 +337,44 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bAir = false;
 			}
 		}
+		break;
+	case Em0000::Hit_Split_Start:
+		if (m_bHit && m_bAir == true)
+		{
+			m_pMesh->PlayAnimation("Slam_Damage_Loop", true, {}, 1.f, 20.f, true);
+
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_SPLIT_LANDING
+				&& m_pCollider.lock()->IsGround())
+			{
+				m_eState = Hit_Split_End;
+				Vector3 vRot(0.f, 0.f, 0.f);
+				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vPos = m_pTransform.lock()->GetPosition();
+
+				m_pTransform.lock()->SetRotation(vRot);
+				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
+
+				m_pCollider.lock()->SetGravity(true);
+				m_bAir = false;
+				m_bDown = true;
+			}
+		}
+		break;
+	case Em0000::Hit_Split_End:
+		if (m_bHit)
+		{
+			if (m_pCollider.lock()->IsGround() && m_pMesh->CurPlayAnimInfo.Name == "Slam_Damage_Loop")
+			{
+				if (fDot < 0)
+					m_eState = Hit_End_Front;
+				else
+					m_eState = Hit_End_Back;
+
+				m_bDown = true;
+				m_bAir = false;
+			}
+		}
+		break;
 	case Em0000::Move_Front_End:
 		if (m_bIng == true)
 		{
@@ -356,7 +395,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 
-			if (fDir <= 0.5f)
+			if (fDir <= 0.6f)
 				m_eState = Move_Front_End;
 		}
 		break;
@@ -482,8 +521,8 @@ HRESULT Em0000::Ready()
 	RenderInit();
 
 
-	m_BattleInfo.iMaxHp = 300;
-	m_BattleInfo.iHp = 300;
+	m_BattleInfo.iMaxHp = 200;
+	m_BattleInfo.iHp = 200;
 	m_BattleInfo.iAttack = 20;
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -525,7 +564,7 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 		
-	m_pCollider.lock()->SetRadius(0.04f);
+	m_pCollider.lock()->SetRadius(0.06f);
 	m_pCollider.lock()->SetHeight(0.17f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.03f });
 
@@ -596,12 +635,18 @@ UINT Em0000::Update(const float _fDeltaTime)
 		
 		m_pTransform.lock()->SetWorldMatrix(m_Result);
 	}
+	if (m_eState == Hit_Split_Start)
+	{
+		Vector3 vRedQueenPos = m_pRedQueen.lock()->GetRedQueenBoneWorldPos("_001");
+		m_pTransform.lock()->SetPosition(vRedQueenPos);
+	}
+
 
 	Rotate(_fDeltaTime);
 
 
-	if (m_BattleInfo.iHp <= 0)
-		m_eState = Dead;
+	//if (m_BattleInfo.iHp <= 0)
+	//	m_eState = Dead;
 
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
@@ -842,6 +887,7 @@ void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
+	
 	m_pCollider.lock()->SetGravity(false);
 
 	/*--- 피 이펙트 ---*/
@@ -879,14 +925,37 @@ void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 
 		m_vPower.x = 0.f;
 		m_vPower.z = 0.f;
-		m_fPower = 100.f;
-
+		m_fPower = 50.f;
+		m_pCollider.lock()->SetGravity(true);
 	}
 	break;
-	/*case ATTACKTYPE::Attack_Split:
+	case ATTACKTYPE::Attack_KnocBack:
+	{
+		m_eState = Hit_KnocBack;
+		m_bHit = true;
+
+		Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+		m_vPower += -vLook;
+
+		D3DXVec3Normalize(&m_vPower, &m_vPower);
+		m_vPower.x *= 1.4f;
+		m_vPower.z *= 1.4;
+		m_vPower.y = 0.1f;
+
+		m_fPower = 100.f;
+		m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+		m_pCollider.lock()->SetGravity(true);
+		m_vPower.x = 0.f;
+		m_vPower.z = 0.f;
+		m_fPower = 50.f;
+	}
+		break;
+	case ATTACKTYPE::Attack_Split:
 		m_eState = Hit_Split_Start;
 		m_bHit = true;
-		break;*/
+		break;
 	default:
 		m_eState = Hit_Air;
 		m_bHit = true;
@@ -1165,4 +1234,40 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	}
 
+}
+
+void Em0000::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+	if (!m_bCollEnable)
+		return;
+	if (m_eState == Dead)
+		return;
+
+	m_bCollEnable = false;
+
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
+		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	case GAMEOBJECTTAG::TAG_WireArm:
+		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	case GAMEOBJECTTAG::Overture:
+		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
+		m_bHit = true;
+		m_bDown = true;
+		m_eState = Hit_KnocBack;
+		break;
+	default:
+		break;
+	}
 }

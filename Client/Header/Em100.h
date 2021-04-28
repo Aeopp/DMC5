@@ -52,7 +52,6 @@ private:
 		Hit_Snatch_Start,
 		Hit_Snatch_End,
 		Hit_Split_Start,
-		Hit_Split_End,
 		Enter_Ground,
 		State_END
 	};
@@ -127,7 +126,6 @@ private:
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
-	Matrix* m_pRedQueenBone;
 	////////////////
 
 
