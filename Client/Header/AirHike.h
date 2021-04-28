@@ -29,6 +29,7 @@ private:
 	float T = 0.0f;
 	float Sin{};
 
+	int Step = 0u;
 	bool bMagicCircle = false;
 	bool bWave = false;
 private:

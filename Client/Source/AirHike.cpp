@@ -6,7 +6,6 @@
 #include "Renderer.h"
 #include <iostream>
 
-
 void AirHike::Free()
 {
 	GameObject::Free();
