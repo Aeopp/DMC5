@@ -14,7 +14,24 @@ void QliphothBlock::Free()
 std::string QliphothBlock::GetName()
 {
 	return "QliphothBlock";
-};
+}
+
+void QliphothBlock::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _BaseMesh->GetSubset(0);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);	// _Subset을 회전만 하기 떄문에 부모꺼 그대로 씀
+	}
+}
 
 void QliphothBlock::PlayStart(const float PlayingSpeed)
 {
@@ -92,6 +109,9 @@ void QliphothBlock::RenderInit()
 
 void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
 	//auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
 
 	if (0 == _Info.PassIndex)
@@ -192,8 +212,9 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
-	//
-	if (_IsPlaying)
+	if (!_IsPlaying)
+		return 0;
+	else
 	{
 		if (_IsAlive)
 		{

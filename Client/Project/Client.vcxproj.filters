@@ -302,7 +302,9 @@
     <ClInclude Include="..\Header\Em1000Hand.h">
       <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
+    <ClInclude Include="..\Header\Wire_Arm_Grab.h">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -453,7 +455,6 @@
     <ClCompile Include="..\Source\Buster_Arm.cpp" />
     <ClCompile Include="..\Source\FSMBase.cpp" />
     <ClCompile Include="..\Source\FSMState.cpp" />
-    <ClCompile Include="..\Source\NeroFSM.cpp" />
     <ClCompile Include="..\Source\NeroState.cpp" />
     <ClCompile Include="..\Source\Nero_LWing.cpp" />
     <ClCompile Include="..\Source\Nero_RWing.cpp" />
@@ -479,7 +480,12 @@
     <ClCompile Include="..\Source\Em1000Hand.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
+    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroFSM.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

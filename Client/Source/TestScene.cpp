@@ -25,6 +25,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -228,46 +229,18 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-
-	// 여기서 임시로 트리거 처리 ???
-	if (
-		(FMath::Length
-		( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
-		  < 0.1f  )   && 
-			! bfirst    )
-	{
-		for (auto& spawn_entity : Wavefirst)
-		{
-			bfirst= true;
-			spawn_entity.lock()->SetActive(true);
-		}
-
-		for (int i = 1; i < 4; ++i)
-		{
-			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-			{
-				m_vecQliphothBlock[i].lock()->SetActive(true);
-				m_vecQliphothBlock[i].lock()->PlayStart();
-			}
-		}
-	}
-
-
-	if ((FMath::Length
-	(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
-		< 0.1f) &&
-		!bsecond)
-	{
-		for (auto& spawn_entity : Wavesecond)
-		{
-			bsecond = true;
-			spawn_entity.lock()->SetActive(true);
-		}
-	}
-
-
-	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//// 여기서 임시로 트리거 처리 ???
+	//if (
+	//	(FMath::Length
+	//	( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+	//	  < 0.1f  )   && 
+	//		! bfirst    )
 	//{
+	//	for (auto& spawn_entity : Wavefirst)
+	//	{
+	//		bfirst= true;
+	//		spawn_entity.lock()->SetActive(true);
+	//	}
 
 	//	for (int i = 1; i < 4; ++i)
 	//	{
@@ -279,38 +252,52 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	}
 	//}
 
+	//if ((FMath::Length
+	//(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+	//	< 0.1f) &&
+	//	!bsecond)
+	//{
+	//	for (auto& spawn_entity : Wavesecond)
+	//	{
+	//		bsecond = true;
+	//		spawn_entity.lock()->SetActive(true);
+	//	}
+	//}
 
-	
-	if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
+	//if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
+	//{
+	//	int count = Wavefirst.size();
+	//	for (auto& target : Wavefirst)
+	//	{
+	//		if (target.expired())
+	//		{
+	//			--count; 
+	//		}
+	//		if (count <= 0)
+	//		{
+	//			for (int i = 1; i < 4; ++i)
+	//			{
+	//				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//				{
+	//					m_vecQliphothBlock[i].lock()->Reset();
+	//					// + render false 된 후에 SetActive(false) 해야
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+
+	if (Input::GetKeyDown(DIK_NUMPAD2))
 	{
-		int count = Wavefirst.size();
-		for (auto& target : Wavefirst)
+		for (int i = 1; i < 4; ++i)
 		{
-			if (target.expired())
+			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
 			{
-				--count; 
-			}
-			if (count <= 0)
-			{
-				for (int i = 1; i < 4; ++i)
-				{
-					if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-					{
-						m_vecQliphothBlock[i].lock()->Reset();
-						// + render false 된 후에 SetActive(false) 해야
-					}
-				}
+				m_vecQliphothBlock[i].lock()->SetActive(true);
+				m_vecQliphothBlock[i].lock()->PlayStart();
 			}
 		}
-		/*std::all_of(std::begin(Wavefirst), std::end(Wavefirst), 
-			[]
-		(const weak_ptr<GameObject>& target)
-			return target.experiod();
-			{});*/
-
-
 	}
-
 
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{

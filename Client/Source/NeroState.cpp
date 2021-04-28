@@ -7858,7 +7858,7 @@ HRESULT Skill_Caliber::StateEnter()
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_Start", false);
 	}
 	NeroState::ActiveGravity(false);
-	m_pNero.lock()->SetAddForce_Dir(Nero::Dir_Front, 3.f);
+	//m_pNero.lock()->SetAddForce_Dir(Nero::Dir_Front, 3.f);
 	return S_OK;
 }
 
@@ -8436,7 +8436,7 @@ HRESULT Air_Dive_Slash_Start::StateEnter()
 	NeroState::StateEnter();
 	m_bActiveColl_RedQueen = false;
 	m_pNero.lock()->ChangeAnimation("Air_Dive_Slash_Start", false, Nero::ANI_AIR_DIVE_SLASH_START);
-	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Front);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_KnocBack);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);

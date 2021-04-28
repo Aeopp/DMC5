@@ -24,7 +24,24 @@ void Smoke::Free()
 std::string Smoke::GetName()
 {
 	return "Smoke";
-};
+}
+
+void Smoke::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _SmokeMesh->GetSubset(0);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+	}
+}
 
 void Smoke::Reset()
 {
@@ -91,6 +108,9 @@ void Smoke::RenderInit()
 
 void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
 	//auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
 
 	auto WeakSubset = _SmokeMesh->GetSubset(0u);
@@ -144,6 +164,9 @@ HRESULT Smoke::Start()
 UINT Smoke::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
+
+	if (!_IsPlaying)
+		return 0;
 
 	// Reset() 호출까지 계속 재생
 

@@ -34,6 +34,8 @@ private:
 		Hit_Air_Loop,
 		Hit_Snatch_Start,
 		Hit_Snatch_End,
+		Hit_Split_Start,
+		Hit_Split_End,
 		Hit_Air,
 		Lie_Getup,//뒤로넘어졌을떄 일어나기
 		Prone_Getup, // 앞으로넘어졌을때 일어나기
@@ -92,6 +94,7 @@ public:
 	void		 Test();
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 
 private:
 	//몬스터 상태
