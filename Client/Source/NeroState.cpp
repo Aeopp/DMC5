@@ -668,6 +668,11 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 		//m_pNero.lock()->ChangeWeapon(Nero::Cbs);
 		//m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 	}
+	else if (Input::GetKey(DIK_Q))
+	{
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+		m_pFSM->ChangeState(NeroFSM::BUSTER_AIR_CATCH);
+	}
 	else if (Input::GetKey(DIK_W))
 	{
 		//m_pNero.lock()->NeroMove(Nero::Dir_Front, 0.01f);
@@ -2116,9 +2121,11 @@ HRESULT RunStartFront::StateEnter()
 	{
 	case Nero::ANI_IDLE_NORMAL:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_IDLE_BATTLE:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false,Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA1:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
@@ -2130,6 +2137,7 @@ HRESULT RunStartFront::StateEnter()
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA1_END:
 		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		break;
 	case Nero::ANI_IDLE_FROM_COMBOA2:
 		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
@@ -5058,6 +5066,7 @@ HRESULT Skill_Split::StateEnter()
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_Start", false);
 	}
 	//m_pNero.lock()->SetAngleFromCamera();
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 	NeroState::ActiveGravity(false);
 	return S_OK;
 }
@@ -8779,7 +8788,7 @@ HRESULT Buster_Air_Catch::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Buster_Air_Catch", false, Nero::ANI_BUSTER_AIR_CATCH);
-
+	NeroState::ActiveGravity(false);
 	return S_OK;
 }
 
