@@ -92,7 +92,7 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 		//NeroPos += m_pNero.lock()->GetComponent<Transform>().lock()->GetRight() * -0.05f;
 		m_pTransform.lock()->SetPosition(NeroPos);
 		m_pGrabedMonster.lock()->Set_Snatch(false);
-		m_pGrabedMonster.lock()->SetGravity(true);
+		//m_pGrabedMonster.lock()->SetGravity(true);
 	}
 
 	return 0;
@@ -127,7 +127,7 @@ void Wire_Arm_Grab::OnEnable()
 
 	m_bPlayOnce = true;
 	m_pGrabedMonster.lock()->Set_Snatch(true);
-	m_pGrabedMonster.lock()->SetGravity(false);
+	//m_pGrabedMonster.lock()->SetGravity(false);
 }
 
 void Wire_Arm_Grab::OnDisable()
