@@ -26,6 +26,7 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "AirHike.h"
+#include "CircleWave.h"
 
 #include <iostream>
 #include <fstream>
@@ -53,6 +54,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Camera>();
 
 	AddGameObject<AirHike>();
+	AddGameObject<CircleWave>();
 
 	// AddGameObject<MainCamera>();
 	// _Player = AddGameObject<Nero>();
@@ -107,7 +109,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//LoadMap();
+	LoadMap();
 	//AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();

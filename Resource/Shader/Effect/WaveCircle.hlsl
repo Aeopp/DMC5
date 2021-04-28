@@ -6,6 +6,8 @@ uniform float Intencity;
 uniform vector _Color;
 uniform float exposure_corr;
 
+uniform float UV_VOffset;
+
 texture WaveMaskMap;
 sampler WaveMask = sampler_state
 {
@@ -28,11 +30,13 @@ void VsMain(in out float4 Position : POSITION0,
 void PsMain(out float4 Color : COLOR0,
             in float2 UV : TEXCOORD0)
 {
-    UV.y += (1.f - Progress);
+    UV.y = (UV.y + (1.f - Progress) + UV_VOffset);
+    
+    clip(UV.y > 1.5f  ?  -1 : 1);
     
     Color = _Color;
     Color.rgb *= Intencity * exposure_corr;
-    Color.a = tex2D(WaveMask, UV).r;
+    Color.a = tex2D(WaveMask, UV).r * _Color.a;
 };
 
 technique Default

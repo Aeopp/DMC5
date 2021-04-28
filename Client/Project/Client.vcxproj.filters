@@ -312,6 +312,9 @@
     <ClInclude Include="..\Header\AirHike.h">
       <Filter>02.GameObject\Effect\Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\CircleWave.h">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -492,6 +495,9 @@
     <ClCompile Include="..\Source\AirHike.cpp">
       <Filter>02.GameObject\Effect\Weapon</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CircleWave.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -523,11 +529,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
-      <Filter>HLSL\Effect</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl">
-      <Filter>HLSL\Effect</Filter>
-    </FxCompile>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl" />
   </ItemGroup>
 </Project>

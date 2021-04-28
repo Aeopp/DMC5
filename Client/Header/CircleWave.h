@@ -1,35 +1,36 @@
-#ifndef __AIRHIKE_H_
-#define __AIRHIKE_H_
+#ifndef __CIRCLEWAVE_H_
+#define __CIRCLEWAVE_H_
 #include "GameObject.h"
 #include "RenderInterface.h"
 #include <optional>
 
-class AirHike : public ENGINE::GameObject,
+class CircleWave : public ENGINE::GameObject,
 				public ENGINE::RenderInterface
 {
 private:
-	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
+	std::shared_ptr<ENGINE::Texture> _WaveMask{};
+	std::shared_ptr<ENGINE::StaticMesh> _WaveCircle{};
 
-	// Sin Graph
-	Vector4 StartColor{ 1.f ,1.f,1.f,1.f };
-	float   StartIntencity{ 0.12916f };
-	float   StartScale{ 0.005170f };
+	float WaveIntencity = 0.0f;
+	float WaveScale = 0.00299f;
+	float WaveSpeed = 0.9f;
 
-	Vector4 FinalColor{  123.f/255.f,123.f/255.f,210.f/255.f,0.f};
-	float   FinalIntencity{ 0.082540f};
-	float   FinalScale{ 0.008031f};
-	float Speed = 5.5f;
-
+	float MinAlpha = 0.5f;
+	float EndT = 1.f;
 	float T = 0.0f;
+	float UV_VOffset = 0.512480f;
 	float Sin{};
+
+	Vector4 _Color = { 1.f,1.f,1.f,1.f};
+
 private:
-	explicit AirHike() = default;
-	virtual ~AirHike() = default;
+	explicit CircleWave() = default;
+	virtual ~CircleWave() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
 public:
-	static AirHike* Create();
+	static CircleWave* Create();
 public:
 	virtual void    RenderReady()                          override;
 public:
@@ -48,7 +49,6 @@ private:
 	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);
-	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderWaveCircle(const DrawInfo& _Info);
 };
 #endif //
