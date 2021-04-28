@@ -80,6 +80,7 @@ private:
 	HRESULT ToneMap();
 	HRESULT RenderEmissive();
 	HRESULT RenderUV();
+	HRESULT RenderDistortion();
 private:
 	void EnableDepthBias()&;
 	void DisableDepthBias()&;

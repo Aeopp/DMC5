@@ -213,6 +213,23 @@ void Renderer::ReadyRenderTargets()
 	}
 
 	{
+		auto& Distortion = RenderTargets["Distortion"] = std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX;
+		InitInfo.Height = g_nWndCY;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A8R8G8B8;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+
+		Distortion->Initialize(InitInfo);
+		Distortion->DebugBufferInitialize(
+			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
+			RenderTargetDebugRenderSize);
+	}
+
+	{
 		auto& Emissive = RenderTargets["Emissive"] = std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo{};
@@ -224,7 +241,7 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		Emissive->Initialize(InitInfo);
 		Emissive->DebugBufferInitialize(
-			{ InitX,InitY + (YOffset * 99999.f) + Interval },
+			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -863,8 +880,7 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("lightPos", &light->GetPosition());
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
-			Device->Clear(0,
-				NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			Device->Clear(0,NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
 			// ·»´õ ½ÃÀÛ ... 
@@ -2393,8 +2409,15 @@ HRESULT Renderer::RenderEmissive()
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 
 	return S_OK;
-}
+};
+
 HRESULT Renderer::RenderUV()
+{
+
+	return S_OK;
+};
+
+HRESULT Renderer::RenderDistortion()
 {
 
 	return S_OK;
