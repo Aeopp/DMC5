@@ -50,6 +50,7 @@ private:
 		Downword_Down_StandUp,
 		Downword_Damage,
 		Hit_Snatch_Start,
+		Hit_Air_Snatch_Start,
 		Hit_Snatch_End,
 		Hit_Split_Start,
 		Enter_Ground,
