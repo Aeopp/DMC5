@@ -947,7 +947,6 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
 		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
-		device->SetRenderTarget(3, RenderTargets["Distortion"]->GetSurface());
 		// ¿Ö°îµµ Å¬¸®¾î . 
 	}
 
@@ -2450,8 +2449,8 @@ HRESULT Renderer::BlendDistortion()
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
-	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	Vector4 PixelSize{ 0.f,0.f,0.f,1.f };
 	
@@ -2468,8 +2467,8 @@ HRESULT Renderer::BlendDistortion()
 	Fx->Begin(nullptr,0);
 	Fx->BeginPass(0);
 	Fx->SetTexture("SceneMap",RenderTargets["SceneTarget"]->GetTexture());
-	// Fx->SetTexture("DistortionMap", DistortionTex->GetTexture());
-	Fx->SetTexture("DistortionMap", RenderTargets["Distortion"]->GetTexture());
+	Fx->SetTexture("DistortionMap", DistortionTex->GetTexture());
+	// Fx->SetTexture("DistortionMap", RenderTargets["Distortion"]->GetTexture());
 	_Quad->Render(Device, 1.f, 1.f, Fx);
 	Fx->EndPass();
 	Fx->End();

@@ -8,9 +8,9 @@ texture SceneMap;
 sampler Scene= sampler_state
 {
     texture = SceneMap;
-    minfilter = point;
-    magfilter = point;
-    mipfilter = point;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
     addressu = wrap;
     addressv = wrap;
     sRGBTexture = false;
@@ -44,7 +44,7 @@ out float4 Color : COLOR0)
     float2 Trans = UV.xy;
     Trans.x += Time;
     float4 Noise = tex2D(Distortion, Trans);
-    // clip(Noise.x-0.000001f);
+    clip(Noise.x-0.000001f);
     
     Noise.xy = Noise.xy * 2.f - 1.f;
     // 오리지날씬의 UV 를 흔들어 주기 위한 계산
@@ -52,6 +52,7 @@ out float4 Color : COLOR0)
     UV = UV + Noise.xy * Intencity;
     float4 Orig = tex2D(Scene, UV);
     Color = Orig;
+    Color.a = Noise.a;
 };
 
 technique brightpass
