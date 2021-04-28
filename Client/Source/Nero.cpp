@@ -770,7 +770,7 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	fDot = D3DXVec3Dot(&vNewDir, &vLook);
 	fRadian = acosf(fDot);
 	float fDegree = D3DXToDegree(fRadian);
-	if (80.f <= fDegree || fDegree <= -80.f)
+	if (85.f <= fDegree || fDegree <= -85.f)
 	{
 		m_pWireArm.lock()->Set_RadianForRotX(0.f);
 	}
@@ -781,11 +781,11 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 		m_pWireArm.lock()->Set_RadianForRotX(fRadian);
 	}
 
-	if (fDegree > 15.f)
+	if (fDegree > 5.f)
 	{
 		return NeroDirection::Dir_Down;
 	}
-	else if (fDegree < -15.f)
+	else if (fDegree < -5.f)
 	{
 		return  NeroDirection::Dir_Up;
 	}

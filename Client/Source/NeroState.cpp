@@ -1260,7 +1260,7 @@ HRESULT Jump_Front_Landing::StateUpdate(const float _fDeltaTime)
 	NeroState::StateUpdate(_fDeltaTime);
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
-	if (0.65f <= fCurAnimationTime)
+	if (0.6f <= fCurAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::JUMP_LANDING);
 
 	if (m_pNero.lock()->IsAnimationEnd())
@@ -4153,13 +4153,9 @@ HRESULT BT_Att_ComboC_R_to_L::StateUpdate(const float _fDeltaTime)
 	else if (0.02f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(true);
 
-
-	if (Input::GetMouse(DIM_L))
+	if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 	{
-		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_C4);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_C4);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -4208,13 +4204,9 @@ HRESULT BT_Att_ComboC_L_to_R::StateUpdate(const float _fDeltaTime)
 	else if (0.034f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(true);
 
-
-	if (Input::GetMouse(DIM_L))
+	if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 	{
-		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_C3);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_C3);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -4270,12 +4262,9 @@ HRESULT BT_Att_ComboC_1::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouse(DIM_L))
+	if (0.4f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
 	{
-		if (0.4f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_C2);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_C2);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -4330,12 +4319,9 @@ HRESULT BT_Att_ComboC_2::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouse(DIM_L))
+	if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 	{
-		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_C_L);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_C_L);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -4389,13 +4375,9 @@ HRESULT BT_Att_ComboC_3::StateUpdate(const float _fDeltaTime)
 	else if (0.048f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(true);
 
-
-	if (Input::GetMouse(DIM_L))
+	if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
 	{
-		if (0.22f <= fCurrAnimationTime && fCurrAnimationTime <= 0.35f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_C_R);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_C_R);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -4518,12 +4500,9 @@ HRESULT BT_Att_ComboD_1::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouse(DIM_L))
+	if (0.15f <= fCurrAnimationTime && fCurrAnimationTime <= 0.3f)
 	{
-		if (0.15f <= fCurrAnimationTime && fCurrAnimationTime <= 0.3f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_D2);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_D2);
 	}
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -4578,13 +4557,12 @@ HRESULT BT_Att_ComboD_2::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouse(DIM_L))
+
+	if (0.14f <= fCurrAnimationTime && fCurrAnimationTime <= 0.22f)
 	{
-		if (0.14f <= fCurrAnimationTime && fCurrAnimationTime <= 0.22f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_D3);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_D3);
 	}
+
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::IDLE);
@@ -4638,13 +4616,11 @@ HRESULT BT_Att_ComboD_3::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (Input::GetMouse(DIM_L))
+	if (0.19f <= fCurrAnimationTime && fCurrAnimationTime <= 0.27f)
 	{
-		if (0.19f <= fCurrAnimationTime && fCurrAnimationTime <= 0.27f)
-		{
-			m_pFSM->ChangeState(NeroFSM::ATT_COMBO_D4);
-		}
+		NeroState::KeyInput_Idle(NeroFSM::ATT_COMBO_D4);
 	}
+	
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::IDLE);
@@ -4698,7 +4674,7 @@ HRESULT BT_Att_ComboD_4::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (0.6f <= fCurrAnimationTime)
+	if (0.3f <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Idle(NeroFSM::IDLE);
 	}
@@ -5219,7 +5195,7 @@ HRESULT Skill_Float_Ground::StateEnter()
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WIngArm_Left, true);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Hr_Ground", false);
 	}
-
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 	return S_OK;
 }
 
@@ -5240,7 +5216,7 @@ HRESULT Skill_Float_Ground::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 
 
-	if (0.37f <= fCurrAnimationTime)
+	if (0.26f <= fCurrAnimationTime)
 		NeroState::KeyInput_Idle(NeroFSM::SKILL_FLOAT_GROUND);
 
 	if(m_pNero.lock()->IsAnimationEnd())
