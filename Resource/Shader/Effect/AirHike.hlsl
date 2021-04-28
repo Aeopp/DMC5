@@ -5,19 +5,6 @@ vector CurColor;
 uniform float Intencity;
 uniform float exposure_corr;
 
-texture GradMap;
-sampler Grad = sampler_state
-{
-    texture = GradMap;
-    minfilter = anisotropic;
-    magfilter = anisotropic;
-    mipfilter = anisotropic;
-    AddressU = wrap;
-    AddressV = wrap;
-    sRGBTexture = true;
-    MaxAnisotropy = 8;
-};
-
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV : TEXCOORD0)
 {

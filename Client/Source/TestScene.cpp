@@ -107,8 +107,8 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	LoadMap();
-	AddGameObject<TempMap>();
+	//LoadMap();
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
@@ -132,78 +132,78 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f;
 
-	// Stage2 안개
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
-		pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
-		pSmoke->PlayStart(10.f);
-	}
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
-		pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
-		pSmoke->PlayStart(10.f);
-	}
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
-		pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
-		pSmoke->PlayStart(10.f);
-	}
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
-		pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
-		pSmoke->PlayStart(10.f);
-	}
+	//// Stage2 안개
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
+	//	pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
+	//	pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
+	//	pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
+	//	pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
 
-	// Stage2 길막
-	m_vecQliphothBlock.reserve(4);
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.015f);
-		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
-		ptr.lock()->PlayStart();
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.009f);
-		ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
-		ptr.lock()->SetActive(false);
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.025f);
-		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
-		ptr.lock()->SetActive(false);
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.016f);
-		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
-		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
-		ptr.lock()->SetActive(false);
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
+	//// Stage2 길막
+	//m_vecQliphothBlock.reserve(4);
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.015f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+	//	ptr.lock()->PlayStart();
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.009f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
+	//	ptr.lock()->SetActive(false);
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.025f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
+	//	ptr.lock()->SetActive(false);
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.016f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
+	//	ptr.lock()->SetActive(false);
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
 
 	return S_OK;
 }

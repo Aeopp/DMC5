@@ -526,5 +526,8 @@
     <FxCompile Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
       <Filter>HLSL\Effect</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl">
+      <Filter>HLSL\Effect</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

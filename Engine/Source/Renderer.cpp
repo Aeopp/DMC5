@@ -1527,9 +1527,6 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->End();
 	}
 
-	AlphaSortArr.clear();
-	AlphaSortArr.shrink_to_fit();
-
 	/*for (auto& [ShaderKey, Entitys] : _Group)
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
