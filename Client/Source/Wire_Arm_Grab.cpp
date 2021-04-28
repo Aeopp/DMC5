@@ -94,6 +94,7 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 		m_pTransform.lock()->SetPosition(NeroPos);
 		m_pGrabedMonster.lock()->Set_Snatch(false);
 		//m_pGrabedMonster.lock()->SetGravity(true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Wire_Snatch_End", false);
 	}
 
 

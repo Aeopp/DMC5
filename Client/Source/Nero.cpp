@@ -25,6 +25,7 @@ Nero::Nero()
 	, m_fRedQueenGage(0.f)
 	, m_iCurDirIndex(Dir_Front)
 	, m_iPreDirIndex(Dir_Front)
+	, m_IsMajin(false)
 {
 	m_nTag = Player;
 	m_BattleInfo.iMaxHp = 100;
@@ -912,6 +913,7 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 		m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WingArm_Right:
+		m_pWingArm_Right.lock()->SetActive(true);
 		m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_Overture:

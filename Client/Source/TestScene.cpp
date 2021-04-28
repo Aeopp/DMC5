@@ -52,7 +52,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em100>();
+	//AddGameObject<Em100>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
 

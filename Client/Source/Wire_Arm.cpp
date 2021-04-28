@@ -85,6 +85,7 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 	if (m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Wire_Snatch_End", false);
 	}
 
 	float fCurAnimationTime = m_pMesh->PlayingTime();

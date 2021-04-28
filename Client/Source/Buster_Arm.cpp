@@ -71,8 +71,8 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
 
 	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
-	NeroWorld._41 += PlayerLook.x * -0.05f;
-	NeroWorld._43 += PlayerLook.z * -0.05f;
+	NeroWorld._41 += PlayerLook.x * -0.02f;
+	NeroWorld._43 += PlayerLook.z * -0.02f;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
@@ -102,8 +102,8 @@ void Buster_Arm::OnEnable()
 	memcpy(NeroWorld.m[3], R_HandWorld.m[3], sizeof(Vector3));
 
 	Vector3 PlayerLook = m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
-	NeroWorld._41 += PlayerLook.x * -0.05f;
-	NeroWorld._43 += PlayerLook.z * -0.05f;
+	NeroWorld._41 += PlayerLook.x * -0.02f;
+	NeroWorld._43 += PlayerLook.z * -0.02f;
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
@@ -153,9 +153,20 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case Monster101:
 		break;
 	case Monster0000:
-		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM0000_BUSTER_START);
+		switch (CurNeroAnimationIndex)
+		{
+		case Nero::ANI_BUSTER_START:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM0000_BUSTER_START);
+			break;
+		case Nero::ANI_BUSTER_AIR_CATCH:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM0000_BUSTER_AIR);
+			break;
+		default:
+			break;
+		}
 		break;
 	case Monster5000:
+		//그로기 상태일때만
 		break;
 	default:
 		break;

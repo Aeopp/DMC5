@@ -3501,13 +3501,14 @@ HRESULT Wire_Pull::StateEnter()
 		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_D", false, Nero::ANI_WIRE_SNATCH_PULL);
 		break;
 	case Nero::Dir_End:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull", false, Nero::ANI_WIRE_SNATCH_PULL);
 		break;
 	default:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull", false, Nero::ANI_WIRE_SNATCH_PULL);
 		break;
 	}
 	m_pNero.lock()->Set_Weapon_Coll(Nero::NeroCom_WireArm, true);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WireArm,"Wire_Arm_Start31", false);
-
 	return S_OK;
 }
 
@@ -3734,6 +3735,7 @@ HRESULT Wire_Pull_Air::StateEnter()
 		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air_D", false, Nero::ANI_WIRE_SNATCH_PULL_AIR_D);
 		break;
 	case Nero::Dir_End:
+		m_pNero.lock()->ChangeAnimation("Wire_Snatch_Pull_Air", false, Nero::ANI_WIRE_SNATCH_PULL_AIR);
 		break;
 	default:
 		break;
@@ -8873,7 +8875,10 @@ HRESULT Buster_Strike_Common_Air::StateUpdate(const float _fDeltaTime)
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.85f <= fCurAnimationTime)
+	{
 		NeroState::ActiveGravity(true);
+		NeroState::KeyInput_Jump();
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
@@ -9065,18 +9070,34 @@ em0000_Buster_Air* em0000_Buster_Air::Create(FSMBase* const _pFSM, const UINT _n
 HRESULT em0000_Buster_Air::StateEnter()
 {
 	NeroState::StateEnter();
+	m_pNero.lock()->ChangeAnimation("em0000_Buster_Air", false, Nero::ANI_EM0000_BUSTER_AIR);
+	NeroState::ActiveGravity(false);
 	return S_OK;
 }
 
 HRESULT em0000_Buster_Air::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::ActiveGravity(true);
 	return S_OK;
 }
 
 HRESULT em0000_Buster_Air::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
+
+	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.85f <= fCurAnimationTime)
+	{
+		NeroState::ActiveGravity(true);
+		NeroState::KeyInput_Jump();
+	}
+
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
+	NeroState::IsGround();
+
 	return S_OK;
 }
 
