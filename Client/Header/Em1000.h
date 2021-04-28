@@ -6,48 +6,24 @@
 
 class RedQueen;
 class Nero;
+class Em1000Hand;
 class Em1000 final : public Monster
 {
 private:
 	enum Em1000_State
 	{
-		Air_End,
-		Air_Loop,
-		Air_Start,
-		Attack_A,
-		Attack_D,
-		Attack_Hard,
-		Dead,
-		Hit_Air,
-		Hit_Back,
-		Hit_End_Front,
-		Hit_End_Back,
-		Hit_Finish,
-		Hit_Front,
-		Hit_L,
-		Hit_R,
-		Hit_KnocBack,
-		Hit_Air_Start,
-		Hit_Air_Loop,
-		Hit_Air_End,
-		Walk_Front_End,
-		Walk_Front_Loop,
-		Walk_Front_Start,
-		Walk_Left_End,
-		Walk_Left_Loop,
-		Walk_Left_Start,
-		Walk_Right_Stop,
-		Walk_Right_Loop,
-		Walk_Right_Start,
-		Idle,
-		Idle2,
-		Idle3,
-		Idle4,		
-		Hit_Buster_Start,
-		Hit_Buster_Loop,
-		Hit_Buster_End,
-		Downword_Down_StandUp,
-		Downword_Damage,
+		Idle_Floor,
+		Idle_Wall,
+		Attack_Ready_Floor,
+		Attack_Ready_Wall,
+		Enter_Ground_Floor,
+		Enter_Ground_Wall,
+		Hit_Floor,
+		Hit_Wall,
+		Attack_Floor,
+		Attack_Wall,
+		Dead_Floor,
+		Dead_Wall,		
 		State_END
 	};
 
@@ -103,16 +79,13 @@ private:
 	bool		m_bAttack = false;	
 	float		m_fAttackTime = 0.f;
 
-	bool		m_bHardAttack = false;
-	float		m_fHardAttackTime = 0.f;
-
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
 
 	weak_ptr<CapsuleCollider> m_pCollider;
+	weak_ptr<Em1000Hand>	  m_pHand;
 
 	float		m_fAngleTime = 0.f;
-
 
 	//////////버스터 용////////////////
 	Matrix*								  m_pPlayerBone;

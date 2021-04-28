@@ -425,3 +425,13 @@ void Em101::Buster(BT_INFO _BattleInfo, void* pArg)
 void Em101::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 }
+
+void Em101::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	Monster::OnCollisionEnter(_pOther);
+}
+
+void Em101::SetGravity(bool _bActiveOrNot)
+{
+	//m_pCollider.lock()->SetGravity(_bActiveOrNot);
+}

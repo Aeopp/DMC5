@@ -25,6 +25,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "Em1000.h"
 
 #include <iostream>
 #include <fstream>
@@ -287,17 +288,17 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	}
 	//}
 
-	if (Input::GetKeyDown(DIK_NUMPAD2))
-	{
-		for (int i = 1; i < 4; ++i)
-		{
-			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-			{
-				m_vecQliphothBlock[i].lock()->SetActive(true);
-				m_vecQliphothBlock[i].lock()->PlayStart();
-			}
-		}
-	}
+	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//{
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->SetActive(true);
+	//			m_vecQliphothBlock[i].lock()->PlayStart();
+	//		}
+	//	}
+	//}
 
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{

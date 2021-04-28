@@ -9,6 +9,7 @@
 #include "Nero.h"
 #include "RedQueen.h"
 #include "NeroFSM.h"
+#include "Em1000Hand.h"
 
 void Em1000::Free()
 {
@@ -31,73 +32,87 @@ void Em1000::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	//if (m_BattleInfo.iHp <= 0.f)
-	//{
-	//	m_eState = Dead;
-	//	m_bIng = true;
-	//	return;
-	//}
-
-	//몬스터 움직이는 방향 정해주는 놈
-	if (fDir >= 0.3f)
+	if (fDir <= 0.6f)
 	{
-		int iRandom = FMath::Random<int>(1, 6);
-		if (m_bMove && m_bIng == false)
-		{
-			m_bIng = true;
-			//플레이어 방향으로 돌게 만듬
-			m_bInteraction = true;
-			Update_Angle(_fDeltaTime);
-			////////////////////////////
-			if (iRandom == 1)
-			{
-				m_eState = Walk_Left_Start;
-				return;
-			}
-			else if (iRandom == 2)
-			{
-				m_eState = Walk_Right_Start;
-				return;
-			}
-			else
-			{
-				m_eState = Walk_Front_Start;
-				return;
-			}
-		}
-	}
-	//플레이어랑 어느정도 가까워 졌으면 공격.	
-	else
-	{
-		if (m_bHardAttack && m_bIng == false)
-		{
-			m_bIng = true;
-			m_eState = Attack_Hard;
-			return;
-		}
 		if (m_bAttack && m_bIng == false)
 		{
-			//체력이50% 이상일땐 Attack_A, Attack_D 둘중 하나 이거 두개는 그냥 넉백 히트
-			//50%보다 떨어지면 Attack_Hard 추가해서 플레이어 넘어트리는 공격 추가
-			int iRandom = FMath::Random<int>(1, 2);
 			m_bIng = true;
-			if (iRandom == 1)
-			{
-				m_eState = Attack_A;
-				return;
-			}
-			else if (iRandom == 2)
-			{
-				m_eState = Attack_D;
-				return;
-			}
+			m_eState = Attack_Ready_Floor;
+			m_pHand.lock()->Set_Coll(true);
 		}
 	}
 }
 
 void Em1000::State_Change(const float _fDeltaTime)
 {
-	
+	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+	float	 fDir = D3DXVec3Length(&vDir);
+	Vector3	 vLook = m_pTransform.lock()->GetLook();
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+
+	switch (m_eState)
+	{
+	case Em1000::Idle_Floor:
+		m_pMesh->PlayAnimation("Idle_Floor", true, {}, 1.f, 20.f, true);
+		m_BattleInfo.eAttackType = Attack_END;
+		break;
+	case Em1000::Idle_Wall:
+		break;
+	case Em1000::Attack_Ready_Floor:
+		if (m_bIng)
+		{
+			m_pMesh->PlayAnimation("Attack_Ready_Floor", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Ready_Floor" && m_pMesh->IsAnimationEnd())
+				m_eState = Attack_Floor;
+		}
+		break;
+	case Em1000::Attack_Ready_Wall:
+		break;
+	case Em1000::Enter_Ground_Floor:
+		break;
+	case Em1000::Enter_Ground_Wall:
+		break;
+	case Em1000::Hit_Floor:
+		if (m_bHit)
+		{
+			m_pMesh->PlayAnimation("Hit_Floor", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Floor" && m_pMesh->IsAnimationEnd())
+			{
+				m_bIng = false;
+				m_bHit = false;
+				m_eState = Idle_Floor;
+			}
+		}
+		break;
+	case Em1000::Hit_Wall:
+		break;
+	case Em1000::Attack_Floor:
+		if (m_bIng)
+		{
+			m_pMesh->PlayAnimation("Attack_Floor", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Floor" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle_Floor;
+				m_bIng = false;
+				m_bAttack = false;
+			}
+		}
+		break;
+	case Em1000::Attack_Wall:
+		break;
+	case Em1000::Dead_Floor:
+		break;
+	case Em1000::Dead_Wall:
+		break;
+	case Em1000::State_END:
+		break;
+	default:
+		break;
+	}
 }
 
 void Em1000::Skill_CoolTime(const float _fDeltaTime)
@@ -123,12 +138,12 @@ HRESULT Em1000::Ready()
 	m_BattleInfo.iHp = 200;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -3.5f, 1.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -4.8f, -0.2f, -4.82f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
+	InitTransform.lock()->SetScale({ 0.0005,0.0005,0.0005 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -137,9 +152,6 @@ HRESULT Em1000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-
-	m_fPower = 100.f;
-	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
 	return S_OK;
 }
 
@@ -155,9 +167,12 @@ HRESULT Em1000::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
 
 	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetGravity(true);
+	m_pCollider.lock()->SetGravity(false);
 
 	m_pCollider.lock()->SetRadius(0.08f);
 	m_pCollider.lock()->SetHeight(0.15f);
@@ -167,6 +182,11 @@ HRESULT Em1000::Awake()
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 
+	m_pHand = AddGameObject<Em1000Hand>();
+	m_pHand.lock()->m_pEm1000 = static_pointer_cast<Em1000>(m_pGameObject.lock());
+	m_pHand.lock()->m_pEm1000Mesh = m_pMesh;
+
+	m_eState = Idle_Floor;
 
 	return S_OK;
 }
@@ -273,22 +293,8 @@ void Em1000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
-
-	switch (_BattleInfo.eAttackType)
-	{
-	case ATTACKTYPE::Attack_L:
-		m_eState = Hit_L;
-		m_bHit = true;
-		break;
-	case ATTACKTYPE::Attack_R:
-		m_eState = Hit_R;
-		m_bHit = true;
-		break;
-	case ATTACKTYPE::Attack_Front:
-		m_eState = Hit_Front;
-		m_bHit = true;
-		break;
-	};
+	m_bHit = true;
+	m_eState = Hit_Floor;
 };
 
 void Em1000::Buster(BT_INFO _BattleInfo, void* pArg)
@@ -305,16 +311,21 @@ void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (!m_bCollEnable)
 		return;
+	if (m_eState == Dead_Floor || m_eState == Dead_Wall)
+		return;
 
 	m_bCollEnable = false;
-	switch (_pOther.lock()->m_nTag)	
+	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pHand.lock()->m_pCollider.lock()->SetActive(false);
 		break;
-	case GAMEOBJECTTAG::TAG_BusterArm_Right:
-		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
+	case GAMEOBJECTTAG::Overture:
+		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
+		m_bHit = true;
+		m_bDown = true;
+		m_eState = Hit_Floor;
 		break;
 	default:
 		break;
@@ -323,11 +334,23 @@ void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em1000::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
+	if (!m_bCollEnable)
+		return;
+	if (m_eState == Dead_Floor || m_eState == Dead_Wall)
+		return;
+
+	m_bCollEnable = false;
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pHand.lock()->m_pCollider.lock()->SetActive(false);
 		break;
-	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+	case GAMEOBJECTTAG::Overture:
+		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
+		m_bHit = true;
+		m_bDown = true;
+		m_eState = Hit_Floor;
 		break;
 	default:
 		break;
@@ -467,7 +490,10 @@ void Em1000::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
-	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\Em1000.fbx", _InitInfo);
+	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\test.fbx", _InitInfo);
+
+	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\Ani");
+	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\Em1000.Animation");
 
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
