@@ -37,7 +37,7 @@ HRESULT Em1000Hand::Awake()
 	Unit::Awake();
 
 
-	m_pParentBone = m_pEm1000Mesh.lock()->GetToRootMatrixPtr(m_bLeft ? "L_Hand" : "R_Hand");
+	m_pParentBone = m_pEm1000Mesh.lock()->GetToRootMatrixPtr("Needle01");
 	m_pEm1000Trans = m_pEm1000.lock()->GetComponent<ENGINE::Transform>();
 
 	m_pCollider = AddComponent<SphereCollider>();
@@ -46,16 +46,7 @@ HRESULT Em1000Hand::Awake()
 
 	m_pCollider.lock()->SetTrigger(true);
 
-	if (m_bLeft)
-	{
-		m_pCollider.lock()->SetRadius(0.04f);
-		m_pCollider.lock()->SetCenter({ 0.04, 0.f, 0.0f });
-	}
-	else
-	{
-		m_pCollider.lock()->SetRadius(0.04f);
-		m_pCollider.lock()->SetCenter({ -0.04, 0.f, 0.01f });
-	}
+	m_pCollider.lock()->SetRadius(0.04f);
 	return S_OK;
 }
 

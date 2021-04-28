@@ -61,7 +61,10 @@ public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
-
+public:
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void SetGravity(bool _bActiveOrNot);
+public: 
 	// ·»´õ¸µ ÇÔ¼ö....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);

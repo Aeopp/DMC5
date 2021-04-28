@@ -319,8 +319,11 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_bAir = true;
 			m_pMesh->PlayAnimation("Blown_Back", false, {}, 1.f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Back" && m_pMesh->IsAnimationEnd())
+			if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Back" && m_pMesh->PlayingTime() >= 0.8f)
+			{
 				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
 		}
 		break;
 	case Em0000::Hit_Air_Loop:
@@ -439,7 +442,14 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_bDown = false;
 			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
 
-			if (m_bSnatch == false)
+			if (m_pPlayer.lock()->GetComponent<ENGINE::CapsuleCollider>().lock()->IsGround() == false
+				&& m_bSnatch == false)
+			{
+				m_bAir = true;
+				m_pCollider.lock()->SetGravity(false);
+				m_eState = Hit_Air_Start;
+			}
+			else if (m_bSnatch == false)
 				m_eState = Hit_Snatch_End;
 		}
 		break;
@@ -536,9 +546,9 @@ HRESULT Em0000::Ready()
 
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
-	m_pTransform.lock()->SetPosition({ -3.5f, 0.f, 3.f });
+	m_pTransform.lock()->SetPosition({ -4.8f, 1.2f, -4.82f });
 
-	m_fPower = 50.f;
+	m_fPower = 100.f;
 	m_vPower = D3DXVECTOR3(0.f, 1.f, 0.5f);
 	return S_OK;
 }
@@ -731,17 +741,17 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 		{
 			m_eState = Hit_KnocBack;
 			m_bHit = true;
-			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-			D3DXVec3Normalize(&vDir, &vDir);
 
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
 			m_vPower.y = 1.f;
+			m_fPower = 50.f;
 
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
+			m_fPower = 100.f;
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
 
@@ -765,21 +775,17 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 		{
 			m_eState = Hit_KnocBack;
 			m_bHit = true;
-			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-			D3DXVec3Normalize(&vDir, &vDir);
 
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 2.f;
+			m_vPower.y = 1.5f;
 
-			m_fPower = 180.f;
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
-			m_fPower = 50.f;
 
 			break;
 		}
@@ -790,7 +796,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.12f, 3.3f, vLook.z * 0.12f);
+			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -814,10 +820,12 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			m_vPower += -vLook;
 			m_vPower.y = 1.f;
+			m_fPower = 50.f;
 
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
-			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
 
+			m_fPower = 100.f;
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
 
@@ -827,20 +835,18 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 		{
 			m_eState = Hit_KnocBack;
 			m_bHit = true;
-			Vector3 vDir = m_pTransform.lock()->GetPosition() - m_pPlayerTrans.lock()->GetPosition();
-			D3DXVec3Normalize(&vDir, &vDir);
 
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 2.f;
-			m_fPower = 180.f;
+			m_vPower.y = 1.5f;
+
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
-			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
 
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
-			m_fPower = 50.f;
+
 			break;
 		}
 		case ATTACKTYPE::Attack_Air_Start:
@@ -850,9 +856,9 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.12f, 3.3f, vLook.z * 0.12f);
+			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
 
-			m_pCollider.lock()->AddForce(vDir * m_fPower);
+			m_pCollider.lock()->AddForce(vDir* m_fPower);
 			break;
 		}
 		default:
@@ -925,7 +931,7 @@ void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 
 		m_vPower.x = 0.f;
 		m_vPower.z = 0.f;
-		m_fPower = 50.f;
+		m_fPower = 100.f;
 		m_pCollider.lock()->SetGravity(true);
 	}
 	break;
@@ -939,17 +945,17 @@ void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 		m_vPower += -vLook;
 
 		D3DXVec3Normalize(&m_vPower, &m_vPower);
+		m_fPower = 120.f;
 		m_vPower.x *= 1.4f;
 		m_vPower.z *= 1.4;
 		m_vPower.y = 0.1f;
 
-		m_fPower = 100.f;
 		m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
 		m_pCollider.lock()->SetGravity(true);
 		m_vPower.x = 0.f;
 		m_vPower.z = 0.f;
-		m_fPower = 50.f;
+		m_fPower = 100.f;
 	}
 		break;
 	case ATTACKTYPE::Attack_Split:
@@ -1270,4 +1276,14 @@ void Em0000::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+}
+
+void Em0000::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	Monster::OnCollisionEnter(_pOther);
+}
+
+void Em0000::SetGravity(bool _bActiveOrNot)
+{
+	m_pCollider.lock()->SetGravity(_bActiveOrNot);
 }

@@ -96,6 +96,9 @@ public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	SetGravity(bool _bActiveOrNot);
+
 private:
 	//몬스터 상태
 	Em0000_State	m_eState =State_END;		

@@ -100,7 +100,7 @@ public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle()override;
 
-	void		Set_Rotate();
+	void		 Set_Rotate();
 	virtual void SetGravity(bool _bActiveOrNot);
 private:
 	//몬스터 상태

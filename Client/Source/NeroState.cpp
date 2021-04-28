@@ -1073,15 +1073,15 @@ HRESULT Jump_Basic::StateEnter()
 	{
 	case Nero::Basic:
 		m_pNero.lock()->ChangeAnimation("Jump", false, Nero::ANI_JUMP);
-		m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
+		m_pNero.lock()->SetAddForce({ 0.f,100.f,0.f });
 		break;
 	case Nero::Front:
 		m_pNero.lock()->ChangeAnimation("Jump_Front", false, Nero::ANI_JUMP_FRONT);
-		m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
+		m_pNero.lock()->SetAddForce({ 0.f,100.f,0.f });
 		break;
 	case Nero::Back:
 		m_pNero.lock()->ChangeAnimation("Jump_Back", false, Nero::ANI_JUMP_BACK);
-		m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
+		m_pNero.lock()->SetAddForce({ 0.f,100.f,0.f });
 		break;
 	default:
 		break;
@@ -1188,7 +1188,7 @@ HRESULT Jump_Twice::StateEnter()
 	}
 	NeroState::ActiveGravity(false);
 	NeroState::ActiveGravity(true);
-	m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
+	m_pNero.lock()->SetAddForce({ 0.f,100.f,0.f });
 	return S_OK;
 }
 
@@ -7970,7 +7970,7 @@ HRESULT Hr_Air::StateEnter()
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
 	m_bActiveColl_RedQueen = false;
 	ActiveColl_RedQueen(true);
-	m_pNero.lock()->SetAddForce({ 0.f,150.f,0.f });
+	m_pNero.lock()->SetAddForce({ 0.f,100.f,0.f });
 
 	return S_OK;
 }
