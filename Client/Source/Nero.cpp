@@ -25,6 +25,7 @@ Nero::Nero()
 	, m_fRedQueenGage(0.f)
 	, m_iCurDirIndex(Dir_Front)
 	, m_iPreDirIndex(Dir_Front)
+	, m_IsMajin(false)
 {
 	m_nTag = Player;
 	m_BattleInfo.iMaxHp = 100;
@@ -127,7 +128,7 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 		Pos.y += 0.23f;
 		break;
 	case EffDircetion::EffDir_Down:
-		Rot = { -90.f,180.f,0.f };
+		Rot = { -90.f,0.f,0.f };
 		break;
 	default:
 		break;
@@ -159,7 +160,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 1.f, -5.02f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 3.f, -5.02f});
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -770,7 +771,7 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	fDot = D3DXVec3Dot(&vNewDir, &vLook);
 	fRadian = acosf(fDot);
 	float fDegree = D3DXToDegree(fRadian);
-	if (80.f <= fDegree || fDegree <= -80.f)
+	if (85.f <= fDegree || fDegree <= -85.f)
 	{
 		m_pWireArm.lock()->Set_RadianForRotX(0.f);
 	}
@@ -781,11 +782,11 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 		m_pWireArm.lock()->Set_RadianForRotX(fRadian);
 	}
 
-	if (fDegree > 15.f)
+	if (fDegree > 5.f)
 	{
 		return NeroDirection::Dir_Down;
 	}
-	else if (fDegree < -15.f)
+	else if (fDegree < -5.f)
 	{
 		return  NeroDirection::Dir_Up;
 	}
@@ -902,6 +903,7 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 	switch (_eNeroComID)
 	{
 	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->SetActive(true);
 		m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WireArm:
@@ -911,6 +913,7 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 		m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WingArm_Right:
+		m_pWingArm_Right.lock()->SetActive(true);
 		m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_Overture:
