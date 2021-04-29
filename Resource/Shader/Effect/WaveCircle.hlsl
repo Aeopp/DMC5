@@ -6,6 +6,8 @@ uniform float Intencity;
 uniform vector _Color;
 uniform float exposure_corr;
 
+uniform bool bWaveDistortion;
+
 uniform float UV_VOffset;
 
 texture WaveMaskMap;
@@ -36,12 +38,20 @@ void PsMain(out float4 Color : COLOR0,
     UV.y = (UV.y + (1.f - Progress) + UV_VOffset);
     
     clip(UV.y > 1.5f  ?  -1 : 1);
-    
+
     Color = _Color;
     Color.rgb *= Intencity * exposure_corr;
     float4 Wave = tex2D(WaveMask, UV).r;
-    Color.a = Wave .x* _Color.a;
-    Color1.rgba = Wave;
+    Color.a = Wave.x * _Color.a;
+    
+    if (bWaveDistortion)
+    {
+        Color1.rgba = Wave;
+    }
+    else
+    {
+        Color1.rgba = float4(0, 0, 0, 0);
+    }
 };
 
 technique Default

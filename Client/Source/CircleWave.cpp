@@ -144,12 +144,18 @@ void CircleWave::RenderWaveCircle(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("matWorld", &World);
-	_Info.Fx->SetTexture("WaveMaskMap", _WaveMask->GetTexture());
+	
 	_Color.w =  (  FMath::Clamp(   ( EndT-T ) /EndT +MinAlpha  ,0.0f,1.f));
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("Intencity", WaveIntencity);
 	_Info.Fx->SetFloat("Progress", T);
 	_Info.Fx->SetFloat("UV_VOffset", UV_VOffset);
+	_Info.Fx->SetBool("bWaveDistortion", bWaveDistortion);
+
+	if (bWaveDistortion)
+	{
+		_Info.Fx->SetTexture("WaveMaskMap", _WaveMask->GetTexture());
+	}
 
 	const uint32 Numsubset = _WaveCircle->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
@@ -255,10 +261,9 @@ void CircleWave::Editor()
 		}
 
 		ImGui::Text("T : %2.6f", T);
-		ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f",
-			_Color.x,_Color.y,_Color.z,_Color.w);
+		ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f",_Color.x,_Color.y,_Color.z,_Color.w);
 
-		
+			ImGui::Checkbox("bWaveDistortion", &bWaveDistortion);
 			ImGui::SliderFloat("WaveScale", &WaveScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 			ImGui::SliderFloat("WaveSpeed", &WaveSpeed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 			ImGui::SliderFloat("WaveIntencity", &WaveIntencity, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);

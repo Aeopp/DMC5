@@ -47,8 +47,7 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-}
-
+};
 
 HRESULT TestScene::LoadScene()
 {

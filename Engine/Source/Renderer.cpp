@@ -525,7 +525,11 @@ HRESULT Renderer::Render()&
 	RenderReady();
 	RenderBegin();
 
-	ClearDistortion();
+	if (bDistortion)
+	{
+		ClearDistortion();
+	}
+
 	//  ½¦µµ¿ì ÆÐ½º 
 	RenderShadowMaps();
 	EnableDepthBias();
@@ -545,7 +549,10 @@ HRESULT Renderer::Render()&
 
 	RenderEmissive();
 	AlphaBlendEffectRender();
-	BlendDistortion();
+	if (bDistortion)
+	{
+		BlendDistortion();
+	}
 	UIRender();
 	// RenderInsulatorMetal();
 	{
@@ -661,6 +668,7 @@ void Renderer::Editor()&
 		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
+		ImGui::Checkbox("Distortion", &bDistortion);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);

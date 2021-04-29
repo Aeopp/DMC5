@@ -47,6 +47,7 @@ public:
 	void PlayStart(const std::optional<Vector3> & Location = std::nullopt);
 private:
 	void PlayEnd();
+	bool bWaveDistortion{ false };
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderWaveCircle(const DrawInfo& _Info);
