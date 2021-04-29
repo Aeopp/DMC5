@@ -545,7 +545,7 @@ HRESULT Renderer::Render()&
 
 	RenderEmissive();
 	AlphaBlendEffectRender();
-	BlendDistortion();
+	// BlendDistortion();
 	UIRender();
 	// RenderInsulatorMetal();
 	{
