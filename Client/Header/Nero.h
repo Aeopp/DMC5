@@ -20,6 +20,9 @@ class GT_Rockman;
 class Monster;
 class Effect;
 class Liquid;
+class Cbs_Short;
+class Cbs_Middle;
+class Cbs_Long;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -269,7 +272,10 @@ public:
 		NeroCom_WingArm_Right,
 		NeroCom_Overture,
 		NeroCom_RedQueen,
-		NeroCom_Cerberos,
+		NeroCom_Cbs_Short,
+		NeroCom_Cbs_Middle,
+		NeroCom_Cbs_Long,
+		NeroCom_All_Weapon,
 		NeroCom_End
 	};	
 
@@ -314,6 +320,7 @@ public:
 	Vector3 Get_NeroBoneWorldPos(std::string _BoneName);
 	bool Get_IsMajinMode() { return m_IsMajin; }
 	int  GetDashLoopDir() { return m_iDashLoopDir; }
+	std::string GetAniname() { return m_pMesh->AnimName; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
@@ -331,6 +338,7 @@ public:
 	void SetGravity(bool _ActiveOrNot) { m_pCollider.lock()->SetGravity(_ActiveOrNot); }
 	void SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
 	void Set_GrabEnd(bool _bGrabEnd);
+	void SetCbsIdle();
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
@@ -368,7 +376,7 @@ public:
 	void Change_To_MajinMode() { m_IsMajin = true; }
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
-	void ChangeWeapon(UINT _iWeaponIndex);
+	void ChangeWeapon(NeroComponentID _iWeaponIndex);
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -411,6 +419,9 @@ private:
 	std::weak_ptr<Effect>			m_pEffOverture;
 	std::weak_ptr<Monster>			m_pTargetMonster;
 	std::weak_ptr<Liquid>		m_pBlood;
+	std::weak_ptr<Cbs_Short>		m_pCbsShort;
+	std::weak_ptr<Cbs_Middle>		m_pCbsMiddle;
+	std::weak_ptr<Cbs_Long>			m_pCbsLong;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

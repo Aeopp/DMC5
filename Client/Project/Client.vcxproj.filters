@@ -305,6 +305,9 @@
     <ClInclude Include="..\Header\Wire_Arm_Grab.h">
       <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Cbs_Short.h" />
+    <ClInclude Include="..\Header\Cbs_Middle.h" />
+    <ClInclude Include="..\Header\Cbs_Long.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -486,6 +489,9 @@
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Cbs_Short.cpp" />
+    <ClCompile Include="..\Source\Cbs_Middle.cpp" />
+    <ClCompile Include="..\Source\Cbs_Long.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

@@ -33,7 +33,7 @@ HRESULT RedQueen::Ready()
 
 	m_vecParentMat.reserve(2);
 
-	_RenderProperty.bRender = true;
+	_RenderProperty.bRender = false;
 	
 	
 	return S_OK;
@@ -218,7 +218,7 @@ void RedQueen::RenderInit()
 	// ���� �Ӽ� ��ü �ʱ�ȭ 
 	ENGINE::RenderProperty _InitRenderProp;
 	// �̰��� ��Ÿ�ӿ� �ٲٸ� ������ �Ѱ� ���� ����. 
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = false;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
 		{"gbuffer_dsSK",

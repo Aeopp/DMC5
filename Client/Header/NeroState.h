@@ -34,9 +34,11 @@ protected:
 	void ActiveColl_Monsters(bool _ActiveOrNot);
 	void ActiveColl_RedQueen(bool _ActiveOrNot);
 	void ActiveGravity(bool _ActiveOrNot);
+	void SetCbsIdle();
 	void IsGround();
 	//static inline bool m_bActive_Gravity = true; // 스테이트 클래스 공통적으로 쓸 그래비티 함수;
 	static bool m_bActive_Gravity;
+	static bool m_bCbsIdle;
 };
 
 class Idle : public NeroState

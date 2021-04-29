@@ -50,6 +50,9 @@ enum GAMEOBJECTTAG
 	TAG_WireArm,
 	TAG_WireArm_Grab,
 	Overture,
+	Tag_Cbs_Short,
+	Tag_Cbs_Middle,
+	Tag_Cbs_Long,
 	Tag_END
 };
 
