@@ -64,7 +64,7 @@ void CircleWave::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = false;
-	
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
 	{

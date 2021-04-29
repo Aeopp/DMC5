@@ -175,6 +175,7 @@
     <ClCompile Include="..\Source\DxHelper.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Source\Trail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
@@ -444,6 +445,7 @@
     <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
       <Filter>04.HLSL\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Client\Header\Trail.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">

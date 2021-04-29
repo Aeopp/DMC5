@@ -305,6 +305,12 @@
     <ClInclude Include="..\Header\Wire_Arm_Grab.h">
       <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\CircleWave.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\AirHike.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -486,6 +492,12 @@
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CircleWave.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AirHike.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -515,5 +527,10 @@
     <ClCompile Include="..\Source\RedQueen.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\05.RedQueen</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Trail.hlsl" />
   </ItemGroup>
 </Project>
