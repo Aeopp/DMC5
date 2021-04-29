@@ -11,8 +11,8 @@ sampler Scene= sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    addressu = wrap;
-    addressv = wrap;
+    addressu = clamp;
+    addressv = clamp;
     sRGBTexture = false;
 };
 
@@ -42,7 +42,7 @@ out float4 Color : COLOR0)
     //uv trans
     // 0.001f 은 테스트로 넣어준 값이며, tick, timer 등의 값으로 교체하면 됩니다.
     float2 Trans = UV.xy;
-    Trans.x += Time;
+    // Trans.x += Time;
     float4 Noise = tex2D(Distortion, Trans);
     clip(Noise.x-0.000001f);
     

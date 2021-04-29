@@ -99,6 +99,11 @@ public:
 	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
+
+	Vector4 DistortionColor { 246.f/255.f,10.f/255.f,10.f/255.f,1.f };
+	float   SkyNoisewrap = 8.173007f;
+	float   SkyTimecorr  = 0.304011f;
+	bool    SkyDistortion = true;
 	float   SkyRotationSpeed = 0.001f;
 	float   SkyIntencity = 0.111f;
 	float   SkysphereScale = 0.078f;
@@ -156,8 +161,10 @@ private:
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
 
+	std::shared_ptr<Texture> SkyNoiseMap{};
 	std::shared_ptr<StaticMesh> SkysphereMesh{};
 	std::shared_ptr<Texture> sky{};
+	
 
 	// 쉐이더 테스트 시작 ....
 	bool TestShaderInit();

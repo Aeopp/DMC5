@@ -51,14 +51,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
-
+	 AddGameObject<Camera>();
 	AddGameObject<AirHike>();
 	AddGameObject<CircleWave>();
 
-	// AddGameObject<MainCamera>();
-	// _Player = AddGameObject<Nero>();
-	// AddGameObject<BtlPanel>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();*/
 	//AddGameObject<Em100>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Car>();
@@ -110,7 +109,7 @@ HRESULT TestScene::LoadScene()
 	//}
 
 	LoadMap();
-	//AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
