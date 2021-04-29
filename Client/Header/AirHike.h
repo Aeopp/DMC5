@@ -8,14 +8,15 @@ class AirHike : public ENGINE::GameObject,
 				public ENGINE::RenderInterface
 {
 private:
+	// MagicTexture.tga
 	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
-
+	std::shared_ptr<ENGINE::Texture> _MagicTexture{};
 	// Sin Graph
 	Vector4 StartColor{ 1.f ,1.f,1.f,1.f };
 	float   StartIntencity{ 0.12916f };
 	float   StartScale{ 0.005170f };
 
-	Vector4 FinalColor{  123.f/255.f,123.f/255.f,210.f/255.f,0.f};
+	Vector4 FinalColor{ 100.f /255.f,100.f/255.f,255.f/255.f,0.f};
 	float   FinalIntencity{ 0.082540f};
 	float   FinalScale{ 0.008031f};
 	float Speed = 5.5f;
@@ -49,6 +50,5 @@ private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
-	void RenderWaveCircle(const DrawInfo& _Info);
 };
 #endif //

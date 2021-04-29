@@ -107,8 +107,10 @@ void AirHike::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
-			(L"..\\..\\Resource\\Mesh\\Static\\Effect\\AirHike\\AirHike.fbx" , _InitInfo);
-	
+			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx" , _InitInfo);
+
+	_MagicTexture = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\MagicTexture.tga");
+
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -136,15 +138,18 @@ void AirHike::PlayEnd()
 
 void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	
 	const Matrix World = _RenderUpdateInfo.World;
 	const float CurIntencity = FMath::Lerp(StartIntencity, FinalIntencity, Sin);
 	const Vector4 CurColor = FMath::Lerp(StartColor, FinalColor, Sin);
-	_Info.Fx->SetMatrix("matWorld", &World);
-	_Info.Fx->SetVector("CurColor", &CurColor);
-	_Info.Fx->SetFloat("Intencity", CurIntencity);
-
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+
+	if (Numsubset > 0)
+	{
+		_Info.Fx->SetMatrix("matWorld", &World);
+		_Info.Fx->SetVector("CurColor", &CurColor);
+		_Info.Fx->SetFloat("Intencity", CurIntencity);
+		_Info.Fx->SetTexture("MagicMap", _MagicTexture->GetTexture());
+	}
 
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{

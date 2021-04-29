@@ -59,7 +59,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	AddGameObject<CircleWave>();
 	AddGameObject<AirHike>();
-	AddGameObject<Trail>();
+	// AddGameObject<Trail>();
 
 	//AddGameObject<Car>();
 
