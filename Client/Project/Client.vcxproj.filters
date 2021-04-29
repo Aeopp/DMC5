@@ -151,6 +151,9 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand">
       <UniqueIdentifier>{aec58016-38ed-47ff-950f-4e09465e4d83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSL">
+      <UniqueIdentifier>{e13bf1f5-8efb-4c56-8983-99e10ca933ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -309,6 +312,9 @@
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\AirHike.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Trail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -498,6 +504,9 @@
     <ClCompile Include="..\Source\AirHike.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Trail.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -529,8 +538,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\Trail.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\Trail.hlsl">
+      <Filter>HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

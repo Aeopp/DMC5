@@ -243,6 +243,8 @@ void AirHike::Editor()
 
 	if (bEdit)
 	{
+		const std::string ChildName = GetName() + "_Play";
+		ImGui::BeginChild(ChildName.c_str()); 
 		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart();
@@ -250,14 +252,16 @@ void AirHike::Editor()
 
 		ImGui::Text("T : %2.6f", T);
 		ImGui::SliderFloat("Speed", &Speed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-	
+
 		ImGui::SliderFloat("StartIntencity", &StartIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("StartScale", &StartScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit4("StartColor", StartColor);
 
 		ImGui::SliderFloat("FinalIntencity", &FinalIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::ColorEdit4("FinalColor", FinalColor);     
+		ImGui::ColorEdit4("FinalColor", FinalColor);
+		ImGui::EndChild();
+		
 	}
 }
 

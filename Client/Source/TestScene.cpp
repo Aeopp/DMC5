@@ -27,8 +27,8 @@
 #include "MapObject.h"
 #include "AirHike.h"
 #include "CircleWave.h"
+#include "Trail.h"
 #include "Em1000.h"
-
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -59,6 +59,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	AddGameObject<CircleWave>();
 	AddGameObject<AirHike>();
+	AddGameObject<Trail>();
 
 	//AddGameObject<Car>();
 

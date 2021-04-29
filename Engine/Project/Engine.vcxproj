@@ -172,7 +172,6 @@ call Engine.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Client\Header\Trail.h" />
     <ClInclude Include="..\..\Reference\Header\imgui\imconfig.h" />
     <ClInclude Include="..\..\Reference\Header\imgui\imgui.h" />
     <ClInclude Include="..\..\Reference\Header\imgui\imgui_impl_dx9.h" />
@@ -253,7 +252,6 @@ call Engine.bat</Command>
     <ClInclude Include="..\Header\_3Dmath.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Client\Source\Trail.cpp" />
     <ClCompile Include="..\Source\AnimationBlendInfo.cpp" />
     <ClCompile Include="..\Source\AnimationInformation.cpp" />
     <ClCompile Include="..\Source\AnimationTrack.cpp" />
