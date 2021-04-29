@@ -164,6 +164,8 @@
     <ClInclude Include="..\Header\Application.h" />
     <ClInclude Include="..\Header\Em1000.h" />
     <ClInclude Include="..\Header\Em1000Hand.h" />
+    <ClInclude Include="..\Header\Em200.h" />
+    <ClInclude Include="..\Header\Em200Hand.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -179,7 +181,6 @@
     <ClInclude Include="..\Header\Em0000.h" />
     <ClInclude Include="..\Header\Em0000_Weapon.h" />
     <ClInclude Include="..\Header\Em100.h" />
-    <ClInclude Include="..\Header\Em101.h" />
     <ClInclude Include="..\Header\Em5000.h" />
     <ClInclude Include="..\Header\FSMBase.h" />
     <ClInclude Include="..\Header\FSMState.h" />
@@ -218,6 +219,8 @@
     <ClCompile Include="..\Source\Application.cpp" />
     <ClCompile Include="..\Source\Em1000.cpp" />
     <ClCompile Include="..\Source\Em1000Hand.cpp" />
+    <ClCompile Include="..\Source\Em200.cpp" />
+    <ClCompile Include="..\Source\Em200Hand.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
@@ -233,7 +236,6 @@
     <ClCompile Include="..\Source\Em0000.cpp" />
     <ClCompile Include="..\Source\Em0000_Weapon.cpp" />
     <ClCompile Include="..\Source\Em100.cpp" />
-    <ClCompile Include="..\Source\Em101.cpp" />
     <ClCompile Include="..\Source\Em5000.cpp" />
     <ClCompile Include="..\Source\FSMBase.cpp" />
     <ClCompile Include="..\Source\FSMState.cpp" />

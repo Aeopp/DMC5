@@ -606,7 +606,7 @@ HRESULT Em5000::Ready()
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.015,0.015,0.015 });
+	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -616,7 +616,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ 10.f, 5.f, 0.f});
+	m_pTransform.lock()->SetPosition({ -0.2f, 1.f, -0.5f });
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -641,13 +641,16 @@ HRESULT Em5000::Awake()
 		m_pHand[i].lock()->m_pEm5000Mesh = m_pMesh;
 		m_pHand[i].lock()->m_bLeft = (bool)i;
 	}
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
-	m_pCollider.lock()->SetRigid(false);
-	m_pCollider.lock()->SetGravity(false);
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
 	
-	m_pCollider.lock()->SetRadius(6.f);
-	m_pCollider.lock()->SetHeight(8.f);
-	m_pCollider.lock()->SetCenter({ 0.f,6.f,-2.f });
+	m_pCollider.lock()->SetRadius(0.4f);
+	m_pCollider.lock()->SetHeight(0.4f);
+	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
 
 	return S_OK;
 }
@@ -683,7 +686,9 @@ UINT Em5000::Update(const float _fDeltaTime)
 		 D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 		 D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
 
-		 SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
+		 SpTransform->Translate(DeltaPos * SpTransform->GetScale().x);
+
+		 //SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
 	//플레이어가 사라졌는지 판단
 	/*if (false == m_pPlayer.expired())

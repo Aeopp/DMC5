@@ -9,6 +9,7 @@ private:
 
 	// 임시 트리거 
 	std::weak_ptr<class Nero> _Player{};
+	std::weak_ptr<class Em1000> _Em1000{};
 	std::vector<weak_ptr<GameObject>> Wavefirst{};
 	Vector3 WavefirstTriggerPos { -0.47842f , 0.02297f ,-2.57254f};
 	bool bfirst = false;

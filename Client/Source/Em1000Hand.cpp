@@ -46,7 +46,7 @@ HRESULT Em1000Hand::Awake()
 
 	m_pCollider.lock()->SetTrigger(true);
 
-	m_pCollider.lock()->SetRadius(0.04f);
+	m_pCollider.lock()->SetRadius(0.06f);
 	return S_OK;
 }
 

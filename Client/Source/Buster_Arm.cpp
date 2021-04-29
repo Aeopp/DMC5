@@ -150,8 +150,6 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			break;
 		}
 		break;
-	case Monster101:
-		break;
 	case Monster0000:
 		switch (CurNeroAnimationIndex)
 		{

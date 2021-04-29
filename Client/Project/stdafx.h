@@ -31,7 +31,7 @@ enum GAMEOBJECTTAG
 {
 	Player = 1,
 	Monster100,
-	Monster101,
+	Monster200,
 	Monster0000,
 	Monster5000,
 	Monster1000,

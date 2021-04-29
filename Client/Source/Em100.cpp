@@ -34,12 +34,13 @@ void Em100::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	//if (m_BattleInfo.iHp <= 0.f)
-	//{
-	//	m_eState = Dead;
-	//	m_bIng = true;
-	//	return;
-	//}
+	if (m_BattleInfo.iHp <= 0.f)
+	{
+		m_eState = Dead;
+		m_bIng = true;
+	}
+
+
 
 	//몬스터 움직이는 방향 정해주는 놈
 	if (fDir >= 0.5f)
@@ -647,6 +648,49 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_eState = Downword_Down_StandUp;
 		}
 		break;
+	case Em100::Hit_Air_Buster_Start:
+		if (m_bHit)
+		{
+			m_pCollider.lock()->SetGravity(false);
+			m_pCollider.lock()->SetTrigger(true);
+
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_BUSTER_STRIKE_COMMON_AIR &&
+				m_pPlayer.lock()->Get_PlayingTime() >= 0.5f)
+			{
+				m_eState = Hit_Air_Buster_End;
+
+				Vector3 vRot(0.f, 0.f, 0.f);
+				m_pTransform.lock()->SetRotation(vRot);
+				m_pCollider.lock()->SetGravity(true);
+			}
+		}
+		break;
+	case Em100::Hit_Air_Buster_End:
+		if (m_bHit)
+		{
+			m_eState = Hit_KnocBack;
+
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = -2.f;
+
+			m_fPower = 200.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+			m_fPower = 100.f;
+		}
+		break;
 	case Em100::Hit_Split_Start:
 		if (m_bHit && m_bAir == true)
 		{
@@ -675,6 +719,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			Set_Rotate();
 			m_bDown = false;
+			m_bAir = false;
 			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
 
 			if (m_pPlayer.lock()->GetComponent<ENGINE::CapsuleCollider>().lock()->IsGround() == false
@@ -811,7 +856,7 @@ HRESULT Em100::Awake()
 	m_pCollider.lock()->SetGravity(true);
 
 	m_pCollider.lock()->SetRadius(0.07f);
-	m_pCollider.lock()->SetHeight(0.15f);
+	m_pCollider.lock()->SetHeight(0.12f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
 
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
@@ -889,7 +934,7 @@ UINT Em100::Update(const float _fDeltaTime)
 	State_Change(_fDeltaTime);
 
 
-	if (m_eState == Hit_Buster_Start)
+	if (m_eState == Hit_Buster_Start || m_eState == Hit_Air_Buster_Start)
 	{
 		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
 		m_Result = (*m_pPlayerBone * m_PlayerWorld);
@@ -904,8 +949,6 @@ UINT Em100::Update(const float _fDeltaTime)
 	}
 
 
-	/*if (m_BattleInfo.iHp <= 0.f)
-		m_eState = Dead;*/
 
 
 	if (m_eState == Dead
@@ -1027,7 +1070,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
+			Vector3	vDir(vLook.x * 0.08f, 1.f, vLook.z * 0.08f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -1042,11 +1085,11 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 1.5f;
+			m_vPower.y = 2.f;
 
 
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
-			m_fPower = 100.f;
+			m_fPower = 120.f;
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
 			m_vPower.x = 0.f;
@@ -1094,7 +1137,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
+			Vector3	vDir(vLook.x * 0.08f, 1.f, vLook.z * 0.08f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -1107,10 +1150,10 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 1.5f;
+			m_vPower.y = 2.f;
 
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
-			m_fPower = 100.f;
+			m_fPower = 120.f;
 			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
 
 			m_vPower.x = 0.f;
@@ -1222,7 +1265,11 @@ void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 
 	m_bHit = true;
 	m_bDown = true;
-	m_eState = Hit_Buster_Start;
+
+	if (m_bAir)
+		m_eState = Hit_Air_Buster_Start;
+	else
+		m_eState = Hit_Buster_Start;
 }
 
 void Em100::Snatch(BT_INFO _BattleInfo, void* pArg)

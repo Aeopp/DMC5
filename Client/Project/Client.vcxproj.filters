@@ -112,9 +112,6 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\00.Em100\00.Hand">
       <UniqueIdentifier>{3848d087-87ec-4bc2-8f96-dedbfe780217}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\01.Unit\02.Monster\01.Em101">
-      <UniqueIdentifier>{7bc9598d-78ac-4f39-b931-83b51179adf3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\01.Unit\02.Monster\02.Em0000">
       <UniqueIdentifier>{713e754a-60d1-45f6-8821-e4e8ea31c584}</UniqueIdentifier>
     </Filter>
@@ -150,6 +147,12 @@
     </Filter>
     <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand">
       <UniqueIdentifier>{aec58016-38ed-47ff-950f-4e09465e4d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\01.Em200">
+      <UniqueIdentifier>{7bc9598d-78ac-4f39-b931-83b51179adf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand">
+      <UniqueIdentifier>{40f58fc8-669a-4317-8223-c57f12e0cb60}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +200,6 @@
     </ClInclude>
     <ClInclude Include="..\Header\Em100.h">
       <Filter>02.GameObject\01.Unit\02.Monster\00.Em100</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Em101.h">
-      <Filter>02.GameObject\01.Unit\02.Monster\01.Em101</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em0000.h">
       <Filter>02.GameObject\01.Unit\02.Monster\02.Em0000</Filter>
@@ -305,6 +305,12 @@
     <ClInclude Include="..\Header\Wire_Arm_Grab.h">
       <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Em200.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em200Hand.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -358,9 +364,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\Monster.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Em101.cpp">
-      <Filter>02.GameObject\01.Unit\02.Monster\01.Em101</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em0000.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\02.Em0000</Filter>
@@ -485,6 +488,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em200.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em200Hand.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

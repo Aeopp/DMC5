@@ -9,7 +9,7 @@
 #include "Nero.h"
 #include "RedQueen.h"
 #include "Em100.h"
-#include "Em101.h"
+#include "Em200.h"
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
@@ -53,8 +53,9 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	//_Em1000 = AddGameObject<Em1000>();
+	//_Em1000.lock()->Set_Wall(false);
+	AddGameObject<Em5000>();
 	//AddGameObject<Car>();
 
 	//// Wave 1st
@@ -213,8 +214,8 @@ HRESULT TestScene::Awake()
 	/*if (nullptr != pPlane)
 		return S_OK;*/
 
-		//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-		//Physics::AddActor(UniqueID, *pPlane);
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
