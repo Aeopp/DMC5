@@ -52,6 +52,7 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	// AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
