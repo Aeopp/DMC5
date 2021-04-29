@@ -5,10 +5,29 @@
 #include "TextureType.h"
 #include "Renderer.h"
 #include <iostream>
+#include "GraphicSystem.h"
+
+Trail::Trail()
+{
+
+}
 
 void Trail::Free()
 {
 	GameObject::Free();
+
+	if (VtxBuffer)
+	{
+		VtxBuffer->Release();
+	}
+	if (IdxBuffer)
+	{
+		IdxBuffer->Release();
+	}
+	if (VtxDecl)
+	{
+		VtxDecl->Release();
+	}
 };
 
 std::string Trail::GetName()
@@ -54,7 +73,7 @@ void Trail::RenderReady()
 void Trail::RenderInit()
 {
 	m_nTag = Eff_Trail;
-	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
+	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
 
@@ -99,16 +118,32 @@ void Trail::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 
+	VtxSize = sizeof(Vector3) + (sizeof(float) * 2) + (sizeof(float) * 2);
+	VtxCnt = 10;
+	TriCnt = 8;
+	IdxSize = sizeof(uint32);
+	IdxFmt = D3DFMT_INDEX32;
+	Device = GraphicSystem::GetInstance()->GetDevice();
+
+	D3DVERTEXELEMENT9 Decl[] =
+	{
+		{ 0, 0,   D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 }  ,
+		{ 0, 12,  D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 }  ,
+		{ 0, 20,  D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 }	 ,
+		D3DDECL_END()
+	};
+	Device->CreateVertexDeclaration(Decl, &VtxDecl);
+	Device->CreateVertexBuffer(VtxSize * VtxCnt, 0, NULL, D3DPOOL_MANAGED, &VtxBuffer, nullptr);
+	Device->CreateIndexBuffer(IdxSize * TriCnt, 0, IdxFmt, D3DPOOL_MANAGED, &IdxBuffer, nullptr);
+
+
 	// 
 	// 스태틱 메쉬 로딩
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
-
 	_WaveCircle = Resources::Load < ENGINE::StaticMesh >
 		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _InitInfo);
-
 	_WaveMask = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_wp01_007_0000_01_00_MSK4.tga");
-
 	PushEditEntity(_WaveCircle.get());
 };
 

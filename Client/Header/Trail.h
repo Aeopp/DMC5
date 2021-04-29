@@ -5,9 +5,20 @@
 #include <optional>
 
 class Trail : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+			  public ENGINE::RenderInterface
 {
 private:
+	IDirect3DVertexBuffer9* VtxBuffer{nullptr};
+	IDirect3DIndexBuffer9*  IdxBuffer{ nullptr };
+	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
+	IDirect3DDevice9* Device{ nullptr };
+	uint32 VtxSize;
+	uint32 VtxCnt;
+	uint32 TriCnt;
+	uint32 IdxSize;
+	uint32 FvF{};
+	D3DFORMAT IdxFmt;
+
 	std::shared_ptr<ENGINE::Texture> _WaveMask{};
 	std::shared_ptr<ENGINE::StaticMesh> _WaveCircle{};
 
@@ -24,7 +35,7 @@ private:
 	Vector4 _Color = { 1.f,1.f,1.f,1.f };
 
 private:
-	explicit Trail() = default;
+	explicit Trail()  ;
 	virtual ~Trail() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
