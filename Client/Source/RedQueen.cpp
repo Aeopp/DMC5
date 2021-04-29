@@ -285,3 +285,10 @@ Matrix* RedQueen::Get_BoneMatrixPtr(std::string _BoneName)
 {
 	return m_pMesh->GetToRootMatrixPtr(_BoneName);;
 }
+
+Vector3 RedQueen::GetRedQueenBoneWorldPos(std::string _BoneName)
+{
+	Vector3 WorldPos;
+	memcpy(&WorldPos, (*m_pMesh->GetNodeToRoot(_BoneName) * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
+	return WorldPos;
+}

@@ -25,6 +25,7 @@ Nero::Nero()
 	, m_fRedQueenGage(0.f)
 	, m_iCurDirIndex(Dir_Front)
 	, m_iPreDirIndex(Dir_Front)
+	, m_IsMajin(false)
 {
 	m_nTag = Player;
 	m_BattleInfo.iMaxHp = 100;
@@ -127,7 +128,7 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 		Pos.y += 0.23f;
 		break;
 	case EffDircetion::EffDir_Down:
-		Rot = { -90.f,180.f,0.f };
+		Rot = { -90.f,0.f,0.f };
 		break;
 	default:
 		break;
@@ -159,7 +160,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 4.f, -5.02f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 3.f, -5.02f});
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -247,11 +248,6 @@ UINT Nero::Update(const float _fDeltaTime)
 	D3DXVec3TransformCoord(&Pos, &Pos, &matRot);
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
-
-	if (Input::GetKey(DIK_LSHIFT))
-		Locking();
-	else
-		SetOffLockOnMonster();
 
 	//테스트
 	//if(!m_IsMajin)
@@ -668,6 +664,11 @@ void Nero::SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity)
 	m_pCollider.lock()->SetLinearVelocity(_vLinearVelocity);
 }
 
+void Nero::Set_GrabEnd(bool _bGrabEnd)
+{
+	m_pWireArm.lock()->Set_GrabEnd(_bGrabEnd);
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -735,16 +736,18 @@ void Nero::Locking()
 	
 }
 
-void Nero::RotateToTargetMonster()
+Nero::NeroDirection Nero::RotateToTargetMonster()
 {
 	if (m_pTargetMonster.expired())
-		return;
+		return NeroDirection::Dir_End;
 	Vector3 vMonsterPos = m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
 	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
 
-	Vector3 vDir = vMonsterPos - vMyPos;
+	Vector3 vDir, vNewDir;
+	vDir = vNewDir = vMonsterPos - vMyPos;
 	vDir.y = 0;
 	D3DXVec3Normalize(&vDir, &vDir);
+	D3DXVec3Normalize(&vNewDir, &vNewDir);
 
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
@@ -762,6 +765,32 @@ void Nero::RotateToTargetMonster()
 	Reset_RootRotation();
 
 	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
+	//와이어팔 회전할 각도 구해주는곳
+	
+	vLook = -m_pTransform.lock()->GetLook();
+	fDot = D3DXVec3Dot(&vNewDir, &vLook);
+	fRadian = acosf(fDot);
+	float fDegree = D3DXToDegree(fRadian);
+	if (85.f <= fDegree || fDegree <= -85.f)
+	{
+		m_pWireArm.lock()->Set_RadianForRotX(0.f);
+	}
+	else
+	{
+		if (vNewDir.y < 0.f)
+			fRadian *= -1.f;
+		m_pWireArm.lock()->Set_RadianForRotX(fRadian);
+	}
+
+	if (fDegree > 5.f)
+	{
+		return NeroDirection::Dir_Down;
+	}
+	else if (fDegree < -5.f)
+	{
+		return  NeroDirection::Dir_Up;
+	}
+	return NeroDirection::Dir_Front;
 }
 
 void Nero::NeroMove(NeroDirection _eDir, float _fPower)
@@ -874,6 +903,7 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 	switch (_eNeroComID)
 	{
 	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->SetActive(true);
 		m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WireArm:
@@ -883,6 +913,7 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 		m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WingArm_Right:
+		m_pWingArm_Right.lock()->SetActive(true);
 		m_pWingArm_Right.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_Overture:

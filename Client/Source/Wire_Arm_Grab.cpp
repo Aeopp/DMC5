@@ -65,30 +65,38 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
-	
-
 	Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
-	Vector3 vLength = NeroPos - m_pTransform.lock()->GetPosition();
-	float fLength = D3DXVec3Length(&vLength);
+	if (!m_bGrabEnd)
+	{
+		Vector3 vLength = NeroPos - m_pTransform.lock()->GetPosition();
+		float fLength = D3DXVec3Length(&vLength);
 
-	if(!m_pGrabedMonster.expired())
-		m_pGrabedMonster.lock()->GetComponent<Transform>().lock()->Translate(m_vDir * 0.07f);
+		if (!m_pGrabedMonster.expired())
+			m_pGrabedMonster.lock()->GetComponent<Transform>().lock()->Translate(m_vDir * 0.06f);
 
-	m_pTransform.lock()->Translate(m_vDir * 0.07f);
+		m_pTransform.lock()->Translate(m_vDir * 0.06f);
+	}
+	else
+		m_pTransform.lock()->SetPosition(NeroPos);
 
-	if (m_pMesh->IsAnimationEnd())
+	if ("Wire_Arm_End_Long" == m_pMesh->AnimName && m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);
 	}
-	if (0.17f >= fLength && m_bPlayOnce)
+	if (m_bGrabEnd && m_bPlayOnce)
 	{
 		m_bPlayOnce = false;
 		m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
-		m_pMesh->ContinueAnimation();
+		//m_pMesh->ContinueAnimation();
 		m_vDir = { 0.f, 0.f,0.f };
-		m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
-		static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(false);
+		//m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
+		//NeroPos += m_pNero.lock()->GetComponent<Transform>().lock()->GetRight() * -0.05f;
+		m_pTransform.lock()->SetPosition(NeroPos);
+		m_pGrabedMonster.lock()->Set_Snatch(false);
+		//m_pGrabedMonster.lock()->SetGravity(true);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Wire_Snatch_End", false);
 	}
+
 
 	return 0;
 }
@@ -103,20 +111,26 @@ void Wire_Arm_Grab::OnEnable()
 {
 	Unit::OnEnable();
 	_RenderProperty.bRender = true;
+	m_bGrabEnd = false;
 
-	m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
-	m_pMesh->SetPlayingTime(0.05f);
-	m_pMesh->StopAnimation();
+	//m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
+	//m_pMesh->SetPlayingTime(0.05f);
+	//m_pMesh->StopAnimation();
+	m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
 
 	Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
 	NeroPos += m_pNero.lock()->GetComponent<Transform>().lock()->GetRight() * -0.05f;
 	m_vDir = NeroPos - m_pTransform.lock()->GetPosition();
 	D3DXVec3Normalize(&m_vDir, &m_vDir);
 
+	Vector3 RotX = { D3DXToDegree(m_fRadianForRotX),0.f,0.f };
+
 	m_pTransform.lock()->SetQuaternion(m_pNero.lock()->GetComponent<Transform>().lock()->GetQuaternion());
+	m_pTransform.lock()->Rotate(RotX);
 
 	m_bPlayOnce = true;
-	static_pointer_cast<Monster>(m_pGrabedMonster.lock())->Set_Snatch(true);
+	m_pGrabedMonster.lock()->Set_Snatch(true);
+	//m_pGrabedMonster.lock()->SetGravity(false);
 }
 
 void Wire_Arm_Grab::OnDisable()
@@ -148,7 +162,7 @@ void Wire_Arm_Grab::Hit(BT_INFO _BattleInfo, void* pArg)
 void Wire_Arm_Grab::SetGrabedMonster(std::weak_ptr<GameObject> _GrabedMonster)
 {
 	if (!_GrabedMonster.expired())
-		m_pGrabedMonster = _GrabedMonster;
+		m_pGrabedMonster = static_pointer_cast<Monster>(_GrabedMonster.lock());
 }
 
 void Wire_Arm_Grab::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)

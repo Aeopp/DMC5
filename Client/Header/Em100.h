@@ -50,9 +50,9 @@ private:
 		Downword_Down_StandUp,
 		Downword_Damage,
 		Hit_Snatch_Start,
+		Hit_Air_Snatch_Start,
 		Hit_Snatch_End,
 		Hit_Split_Start,
-		Hit_Split_End,
 		Enter_Ground,
 		State_END
 	};
@@ -86,6 +86,9 @@ public:
 	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	void		 Air_Hit(BT_INFO _BattleInfo, void* pArg = nullptr);
 public:
+	//형의 부하가 추가함
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 	// 렌더링 함수....
@@ -98,7 +101,8 @@ public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle()override;
 
-	void		Set_Rotate();
+	void		 Set_Rotate();
+	virtual void SetGravity(bool _bActiveOrNot);
 private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
@@ -127,7 +131,6 @@ private:
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
-	Matrix* m_pRedQueenBone;
 	////////////////
 
 

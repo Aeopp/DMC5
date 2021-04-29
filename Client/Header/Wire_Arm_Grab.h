@@ -4,6 +4,7 @@
 #include "Unit.h"
 #include "RenderInterface.h"
 class Nero;
+class Monster;
 class Wire_Arm_Grab : public Unit,
 	public ENGINE::RenderInterface
 {
@@ -34,6 +35,10 @@ public:
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
+
+public:
+	void Set_RadianForRotX(float _fRadian) { m_fRadianForRotX = _fRadian; }
+	void Set_GrabEnd(bool _bGrabEnd) { m_bGrabEnd = _bGrabEnd; }
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
@@ -50,13 +55,14 @@ private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;
 	std::weak_ptr<SphereCollider> m_pCollider;
-	std::weak_ptr<GameObject>		m_pGrabedMonster;
+	std::weak_ptr<Monster>		m_pGrabedMonster;
 
 	bool								m_bIsRender;
 	bool								m_bPlayOnce = false;
+	bool								m_bGrabEnd = false;
 	Vector3	m_vDir;
 
-
+	float								m_fRadianForRotX;
 };
 
 

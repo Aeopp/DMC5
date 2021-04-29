@@ -20,8 +20,8 @@ protected:
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override PURE;
 	virtual std::string GetName() override PURE;
-public:
-	virtual void    RenderReady() override;
+	// RenderInterface를 통해 상속됨
+	virtual void    RenderReady() override PURE;	// 각자의 bounding sphere 생성해야
 public:
 	virtual HRESULT Ready() override PURE;
 	virtual HRESULT Awake() override PURE;

@@ -53,10 +53,20 @@ UINT WingArm_Right::Update(const float _fDeltaTime)
 
 	float fCurAnimationTime = m_pMesh->PlayingTime();
 
-	if (0.52 <= fCurAnimationTime && !m_bLoop)
+	if ("Wire_Snatch_End" == m_pMesh->AnimName)
+	{
+		if (m_pMesh->IsAnimationEnd())
+		{
+			SetActive(false);
+			if (m_pNero.lock()->Get_IsMajinMode())
+				m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
+		}
+	}
+	else if (0.52 <= fCurAnimationTime && !m_bLoop)
 	{
 		SetActive(false);
-		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
+		if(m_pNero.lock()->Get_IsMajinMode())
+			m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
 	}
 
 	return 0;
@@ -92,7 +102,7 @@ void WingArm_Right::OnEnable()
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
 
-	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, false);
 }
 
 void WingArm_Right::OnDisable()

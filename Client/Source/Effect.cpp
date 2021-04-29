@@ -14,20 +14,6 @@ void Effect::Free()
 std::string Effect::GetName()
 {
 	return "Effect";
-};
-
-void Effect::RenderReady()
-{
-	if (!_IsPlaying)
-		return;
-
-	auto _WeakTransform = GetComponent<ENGINE::Transform>();
-	if (auto _SpTransform = _WeakTransform.lock();
-		_SpTransform)
-	{
-		_RenderProperty.bRender = true;
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-	}
 }
 
 void Effect::Reset()

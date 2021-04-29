@@ -6,62 +6,62 @@
         "Offset Euler Roll": 0.0,
         "AnimInfoTable": [
             {
-                "Name": "ComboA2",
-                "Acceleration": 0.56,
+                "Name": "Attack_Floor",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboC3",
-                "Acceleration": 0.56,
+                "Name": "Attack_Ready_Floor",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboC4",
-                "Acceleration": 0.56,
+                "Name": "Attack_Ready_Wall",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboD1",
-                "Acceleration": 0.56,
+                "Name": "Attack_Wall",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboD2",
-                "Acceleration": 0.56,
+                "Name": "Enter_Ground_Floor",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboD3",
-                "Acceleration": 0.56,
+                "Name": "Enter_Ground_Wall",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "ComboD4",
-                "Acceleration": 0.56,
+                "Name": "Hit_Floor",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "Shuffle",
-                "Acceleration": 0.56,
+                "Name": "Hit_Heavy_Floor",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "Streak_End",
-                "Acceleration": 0.65,
+                "Name": "Hit_Heavy_Wall",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "Streak_Loop",
-                "Acceleration": 0.56,
+                "Name": "Hit_Wall",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "Streak_Start",
-                "Acceleration": 0.56,
+                "Name": "Idle_Floor",
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             },
             {
-                "Name": "Wire_Snatch_End",
+                "Name": "Idle_Wall",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             }

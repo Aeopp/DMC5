@@ -115,7 +115,7 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, m_pPhysics->getTolerancesScale());
 
 	//Default Material
-	m_pDefaultMaterial = m_pPhysics->createMaterial(1.f, 1.f, 0.f);
+	m_pDefaultMaterial = m_pPhysics->createMaterial(0.7f, 0.7f, 0.f);
 	
 	m_pDispatcher = PxDefaultCpuDispatcherCreate(2);
 
@@ -268,7 +268,7 @@ HRESULT PhysicsSystem::CreateScene(const UINT _nSceneID)
 
 	//Scene Description
 	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.f, -5.45f, 0.f);
+	sceneDesc.gravity = physx::PxVec3(0.f, -4.45f, 0.f);
 	sceneDesc.cpuDispatcher = m_pDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
 

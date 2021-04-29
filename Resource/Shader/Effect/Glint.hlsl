@@ -1,7 +1,7 @@
 matrix World;
 matrix ViewProjection;
-//float3 LightDirection = float3(0, -1, 0);
 
+float _BrightScale = 1.f;
 float _SliceAmount = 0.f;
 
 texture BaseMap;
@@ -60,6 +60,7 @@ PsOut PsMain(PsIn In)
     float4 BaseSample = tex2D(Base, In.UV);
 
     Out.Color = BaseSample;
+    Out.Color.rgb *= _BrightScale;
     Out.Color.a *= (1.f - _SliceAmount) * 0.5f;
     
     return Out;

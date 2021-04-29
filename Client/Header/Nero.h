@@ -245,7 +245,10 @@ public:
 		Dir_Back,
 		Dir_Left,
 		Dir_Right,
-		Dir_Front_Down
+		Dir_Front_Down,
+		Dir_Up,
+		Dir_Down,
+		Dir_End
 	};
 
 	enum EffDircetion
@@ -327,11 +330,12 @@ public:
 	void SetDashLoopDir();
 	void SetGravity(bool _ActiveOrNot) { m_pCollider.lock()->SetGravity(_ActiveOrNot); }
 	void SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
+	void Set_GrabEnd(bool _bGrabEnd);
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
 	void Locking();
-	void RotateToTargetMonster();
+	NeroDirection RotateToTargetMonster();
 	void NeroMove(NeroDirection _eDir, float _fPower);
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }

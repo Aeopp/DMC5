@@ -42,6 +42,11 @@ public:
 	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 
 public:
+	//형의 부하가 추가함
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+public:
+	//형의 부하가 추가함
+	virtual void	SetGravity(bool _bActiveOrNot);
 	void	Set_Snatch(bool _bSnatch);
 	void	AddRankScore(float _fRankScore);
 protected:
