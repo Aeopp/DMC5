@@ -49,7 +49,7 @@ out float4 Color : COLOR0)
     Noise.xy = Noise.xy * 2.f - 1.f;
     // 오리지날씬의 UV 를 흔들어 주기 위한 계산
     // 0.05 이 값 부분이 커질수록 UV 편차가 더욱 심해집니다.
-    UV = UV + Noise.xy * Intencity;
+    UV = UV + (Noise.xy * Intencity);
     float4 Orig = tex2D(Scene, UV);
     Color = Orig;
     Color.a = Noise.a;

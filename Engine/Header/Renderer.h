@@ -99,8 +99,10 @@ public:
 	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
-
+	
+	
 	Vector4 DistortionColor { 246.f/255.f,10.f/255.f,10.f/255.f,1.f };
+	float   SkyDistortionIntencity = 1.f;
 	float   SkyNoisewrap = 8.173007f;
 	float   SkyTimecorr  = 0.304011f;
 	bool    SkyDistortion = true;

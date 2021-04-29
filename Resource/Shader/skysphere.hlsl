@@ -3,6 +3,7 @@ uniform bool Distortion;
 uniform float noisewrap;
 uniform float timecorr;
 uniform vector DistortionColor;
+uniform float DistortionIntencity;
 
 texture SkyMap;
 sampler Sky = sampler_state
@@ -54,9 +55,10 @@ void ps_main(
     color.rgb *= intencity;
     if (Distortion)
     {
-        float2 noiseuv = tex * noisewrap + (Time * timecorr);
+        float2 noiseuv = (tex * noisewrap)+(Time * timecorr);
         float4 NoiseSample = tex2D(Noise, noiseuv);
         color1 = NoiseSample;
+        
         color.rgba *= DistortionColor;
     }
 }

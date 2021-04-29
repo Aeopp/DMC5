@@ -676,6 +676,7 @@ void Renderer::Editor()&
 			ImGui::SliderFloat("SkyNoisewrap", &SkyNoisewrap, 0.0f, 20.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);;
 			ImGui::SliderFloat("SkyTimecorr", &SkyTimecorr, 0.0f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 			ImGui::ColorEdit4("DistortionColor", DistortionColor);
+			ImGui::SliderFloat("SkyDistortionIntencity ", &SkyDistortionIntencity, 0.0f, 100.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 			ImGui::EndChild();
 		}
 
@@ -1403,7 +1404,11 @@ HRESULT Renderer::RenderSkySphere()&
 		auto Fx = Shaders["skysphere"]->GetEffect();
 		Fx->SetMatrix("matViewProj", &ViewProj);
 		const float Dt = TimeSystem::GetInstance()->DeltaTime();
-		SkysphereRot.y += Dt * SkyRotationSpeed;
+		if (!SkyDistortion)
+		{
+			SkysphereRot.y += Dt * SkyRotationSpeed;
+		}
+		
 		const Matrix World = FMath::WorldMatrix(SkysphereScale, FMath::ToRadian( SkysphereRot ) , SkysphereLoc);
 		Fx->SetMatrix("matSkyRotation", &World);
 		Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
@@ -1415,6 +1420,7 @@ HRESULT Renderer::RenderSkySphere()&
 			Fx->SetFloat("timecorr", SkyTimecorr);
 			Fx->SetVector("DistortionColor", &DistortionColor);
 			Fx->SetTexture("NoiseMap", SkyNoiseMap->GetTexture());
+			Fx->SetFloat("DistortionIntencity", SkyDistortionIntencity);
 		}
 		Fx->SetTexture("SkyMap", CurSkysphereTex->GetTexture());
 		Fx->Begin(NULL, 0);
