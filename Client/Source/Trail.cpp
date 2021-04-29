@@ -1,62 +1,59 @@
 #include "stdafx.h"
-#include "..\Header\AirHike.h"
+#include "..\Header\Trail.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
 #include <iostream>
 
-void AirHike::Free()
+void Trail::Free()
 {
 	GameObject::Free();
 };
 
-std::string AirHike::GetName()
+std::string Trail::GetName()
 {
-	return "AirHike";
+	return "Trail";
 };
 
-AirHike* AirHike::Create()
+Trail* Trail::Create()
 {
-	return new AirHike{};
+	return new Trail{};
 };
 
-void AirHike::RenderReady()
+void Trail::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
 
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		
-			const float CurScale = FMath::Lerp(StartScale, FinalScale, Sin);
-			if (auto SpTransform = GetComponent<Transform>().lock();
-				SpTransform)
+			auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			if (SpTransform)
 			{
-				SpTransform->SetScale({ CurScale ,CurScale ,CurScale });
-				SpTransform->SetRotation({ 0,0,0 });
+				SpTransform->SetScale({ WaveScale,WaveScale ,WaveScale });
+				SpTransform->SetRotation({ 90.f,0.f,0.f });
 				_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-				if (_StaticMesh)
+				if (_WaveCircle)
 				{
-					const uint32  Numsubset = _StaticMesh->GetNumSubset();
+					const uint32  Numsubset = _WaveCircle->GetNumSubset();
 					_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
 
 					for (uint32 i = 0; i < Numsubset; ++i)
 					{
-						const auto& _Subset = _StaticMesh->GetSubset(i);
+						const auto& _Subset = _WaveCircle->GetSubset(i);
 						const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-						_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, CurScale);
+						_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, WaveScale);
 					}
 				}
 			}
-		
 	}
 };
 
-void AirHike::RenderInit()
+void Trail::RenderInit()
 {
-	m_nTag  = Eff_AirHike;
+	m_nTag = Eff_Trail;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -78,23 +75,24 @@ void AirHike::RenderInit()
 		}
 	} };
 
+	/// <summary>
+	/// DrawCollider
+	/// </summary>
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
-		{"Collider" ,
-		[this](const DrawInfo& _Info)
-		{
-			DrawCollider(_Info);
+			{"Collider" ,[this](const DrawInfo& _Info)
+			{
+				DrawCollider(_Info);
+			}
 		}
-	} };
+	};
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		
-		{"AirHike",
-		[this](const DrawInfo& _Info)
+		{"WaveCircle",[this](const DrawInfo& _Info)
 			{
-				this->RenderAlphaBlendEffect(_Info);
+				this->RenderWaveCircle(_Info);
 			}
 		}
 	};
@@ -106,49 +104,52 @@ void AirHike::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
-	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
-			(L"..\\..\\Resource\\Mesh\\Static\\Effect\\AirHike\\AirHike.fbx" , _InitInfo);
-	
-	PushEditEntity(_StaticMesh.get());
+	_WaveCircle = Resources::Load < ENGINE::StaticMesh >
+			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx" , _InitInfo);
+
+	_WaveMask = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_wp01_007_0000_01_00_MSK4.tga");
+
+	PushEditEntity(_WaveCircle.get());
 };
 
-
-
-void AirHike::PlayStart(const std::optional<Vector3>& Location)
+void CircleWave::PlayStart(const std::optional<Vector3>& Location)
 {
 	if (Location)
 	{
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
 	}
 
-	
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 };
 
-void AirHike::PlayEnd()
+void CircleWave::PlayEnd()
 {
-
 	_RenderProperty.bRender = false;
-		T = 0.0f;
-
+	T = 0.0f;
 };
 
-void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void CircleWave::RenderWaveCircle(const DrawInfo& _Info)
 {
-	
 	const Matrix World = _RenderUpdateInfo.World;
-	const float CurIntencity = FMath::Lerp(StartIntencity, FinalIntencity, Sin);
-	const Vector4 CurColor = FMath::Lerp(StartColor, FinalColor, Sin);
 	_Info.Fx->SetMatrix("matWorld", &World);
-	_Info.Fx->SetVector("CurColor", &CurColor);
-	_Info.Fx->SetFloat("Intencity", CurIntencity);
+	
+	_Color.w =  (  FMath::Clamp(   ( EndT-T ) /EndT +MinAlpha  ,0.0f,1.f));
+	_Info.Fx->SetVector("_Color", &_Color);
+	_Info.Fx->SetFloat("Intencity", WaveIntencity);
+	_Info.Fx->SetFloat("Progress", T);
+	_Info.Fx->SetFloat("UV_VOffset", UV_VOffset);
+	_Info.Fx->SetBool("bWaveDistortion", bWaveDistortion);
 
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	if (bWaveDistortion)
+	{
+		_Info.Fx->SetTexture("WaveMaskMap", _WaveMask->GetTexture());
+	}
 
+	const uint32 Numsubset = _WaveCircle->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = _WaveCircle->GetSubset(i).lock();
 			SpSubset)
 		{
 			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
@@ -162,15 +163,15 @@ void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
 }
 
 
-void AirHike::RenderDebug(const DrawInfo& _Info)
+void CircleWave::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
 
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	const uint32 Numsubset = _WaveCircle->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = _WaveCircle->GetSubset(i).lock();
 			SpSubset)
 		{
 			if (false ==
@@ -186,7 +187,7 @@ void AirHike::RenderDebug(const DrawInfo& _Info)
 };
 
 
-HRESULT AirHike::Ready()
+HRESULT CircleWave::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
@@ -198,7 +199,7 @@ HRESULT AirHike::Ready()
 	return S_OK;
 };
 
-HRESULT AirHike::Awake()
+HRESULT CircleWave::Awake()
 {
 	GameObject::Awake();
 
@@ -206,23 +207,23 @@ HRESULT AirHike::Awake()
 	return S_OK;
 }
 
-HRESULT AirHike::Start()
+HRESULT CircleWave::Start()
 {
 	GameObject::Start();
 
 	return S_OK;
 }
 
-UINT AirHike::Update(const float _fDeltaTime)
+UINT CircleWave::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
-	T += _fDeltaTime * Speed;
+	T += _fDeltaTime * WaveSpeed;
 	Sin = std::sinf(T);
 
 	// 끝날 쯔음 .
-	if (T >= FMath::PI / 2.f)
+	if (T >= EndT)
 	{
 		PlayEnd();
 	};
@@ -230,14 +231,14 @@ UINT AirHike::Update(const float _fDeltaTime)
 	return 0;
 }
 
-UINT AirHike::LateUpdate(const float _fDeltaTime)
+UINT CircleWave::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
 
 	return 0;
 }
 
-void AirHike::Editor()
+void CircleWave::Editor()
 {
 	GameObject::Editor();
 
@@ -249,25 +250,25 @@ void AirHike::Editor()
 		}
 
 		ImGui::Text("T : %2.6f", T);
-		ImGui::SliderFloat("Speed", &Speed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-	
-		ImGui::SliderFloat("StartIntencity", &StartIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("StartScale", &StartScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::ColorEdit4("StartColor", StartColor);
+		ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f",_Color.x,_Color.y,_Color.z,_Color.w);
 
-		ImGui::SliderFloat("FinalIntencity", &FinalIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::ColorEdit4("FinalColor", FinalColor);     
+			ImGui::Checkbox("bWaveDistortion", &bWaveDistortion);
+			ImGui::SliderFloat("WaveScale", &WaveScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("WaveSpeed", &WaveSpeed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("WaveIntencity", &WaveIntencity, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("MinAlpha", &MinAlpha, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("UV_VOffset", &UV_VOffset, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("EndT", &EndT, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 	}
 }
 
 
-void AirHike::OnEnable()
+void CircleWave::OnEnable()
 {
 	GameObject::OnEnable();
 }
 
-void AirHike::OnDisable()
+void CircleWave::OnDisable()
 {
 	GameObject::OnDisable();
 }

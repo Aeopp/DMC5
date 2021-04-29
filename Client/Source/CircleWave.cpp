@@ -53,7 +53,7 @@ void CircleWave::RenderReady()
 
 void CircleWave::RenderInit()
 {
-	m_nTag = Player;
+	m_nTag = Eff_CircleWave;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -81,18 +81,7 @@ void CircleWave::RenderInit()
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
-		{"Debug" ,
-		[this](const DrawInfo& _Info)
-		{
-			DrawCollider(_Info);
-		}
-	} };
-
-
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
-		=
-	{
-			{"Debug" ,[this](const DrawInfo& _Info)
+			{"Collider" ,[this](const DrawInfo& _Info)
 			{
 				DrawCollider(_Info);
 			}
