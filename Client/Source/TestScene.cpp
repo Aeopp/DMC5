@@ -53,13 +53,13 @@ HRESULT TestScene::LoadScene()
 {
 	AddGameObject<Camera>();
 	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
-	//AddGameObject<BtlPanel>();
+	_Player = AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	AddGameObject<CircleWave>();
 	AddGameObject<AirHike>();
-	// AddGameObject<Trail>();
+	AddGameObject<Trail>();
 
 	//AddGameObject<Car>();
 
@@ -255,6 +255,12 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	if (auto _Dante = FindGameObjectWithTag(Player).lock();
+		_Dante)
+	{
+		_Dante->GetComponent<Transform>().lock()->
+			SetPosition({ 0.f,0.02f,0.f });
+	};
 	//cout << "SceneUpdate" << endl;
 
 	//// 여기서 임시로 트리거 처리 ???
