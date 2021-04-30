@@ -7,7 +7,23 @@ class TestObject : public ENGINE::GameObject ,
 				   public ENGINE::RenderInterface				
 {
 private:
-	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
+	typedef struct tagClothBone
+	{
+		D3DXVECTOR3		vPos;
+		string			sName;
+		tagClothBone*	pParent;
+		D3DXMATRIX		matToRoot;	//월드
+		D3DXMATRIX		matLocal;	//부모에 상대적인 행렬
+		Node*			pNode;
+	}CLOTHBONE, * LPCLOTHBONE;
+
+	vector<LPCLOTHBONE> m_vecClothBone;
+	vector<PxU32>		m_vecIndices;
+	vector<PxClothParticle>		m_vecClothParticle;
+
+	PxCloth* pCloth;
+private:
+	std::shared_ptr<ENGINE::SkeletonMesh> m_pSkeletonMesh;
 private:
 	explicit TestObject() = default;
 	virtual ~TestObject() = default;

@@ -226,6 +226,60 @@ UINT Nero::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
 
+#pragma region CLOTH_TEST
+
+
+	PxClothParticleData* data = pCloth->lockParticleData(PxDataAccessFlag::eREADABLE);
+
+	for (UINT nIdx = 0; nIdx < m_vecClothParticle.size(); ++nIdx)
+		m_vecClothParticle[nIdx].pos = data->particles[nIdx].pos;
+
+	data->unlock();
+
+	for (UINT i = 0; i < m_vecClothBone.size(); ++i)
+	{
+		memcpy_s(m_vecClothBone[i]->matToRoot.m[3], sizeof(D3DXVECTOR3), &m_vecClothParticle[i].pos, sizeof(D3DXVECTOR3));
+		
+		if (nullptr == m_vecClothBone[i]->pParent)
+			continue;
+
+		D3DXMATRIX matInv = m_vecClothBone[i]->pParent->matToRoot;
+
+		D3DXMatrixInverse(&matInv, nullptr, &matInv);
+
+		m_vecClothBone[i]->matLocal = m_vecClothBone[i]->matToRoot * matInv;
+
+		m_vecClothBone[i]->pNode->ClothTrans = m_vecClothBone[i]->matLocal;
+	}
+
+	D3DXVECTOR3 vLook = m_pTransform.lock()->GetLook();
+	//pCloth->setParticleAccelerations(PxVec4(vLook.x, vLook.y, vLook.z, 1.f));
+	pCloth->setWindVelocity(PxVec3(vLook.x, vLook.y, vLook.z) * 1000.f);
+	//for (UINT nIdx = 0; nIdx < m_vecClothParticle.size(); ++nIdx)
+	//{
+	//	pCloth->setParticleAccelerations()
+	//	m_vecClothParticle[nIdx].pos = data->particles[nIdx].pos;
+	//}
+
+	D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
+	D3DXQUATERNION tQuaternion = m_pTransform.lock()->GetQuaternion();
+	PxTransform targetPose;
+
+	Node* pNode = m_pMesh->GetNode("Chest");
+
+	D3DXMATRIX matChest = pNode->Transform;
+
+	D3DXQUATERNION tChestQuat;
+	D3DXVECTOR3 vChestScale;
+	D3DXVECTOR3 vChestPos;
+
+	D3DXMatrixDecompose(&vChestScale, &tChestQuat, &vChestPos, &matChest);
+
+	targetPose.p = PxVec3(vPosition.x * 1000, vPosition.y * 1000, vPosition.z * 1000);
+	targetPose.q = PxQuat(tChestQuat.x, tChestQuat.y, tChestQuat.z, tChestQuat.w);
+	
+	pCloth->setTargetPose(targetPose);
+#pragma endregion
 	Update_Majin(_fDeltaTime);
 
 
@@ -453,6 +507,106 @@ void Nero::RenderInit()
 
 	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Animation");
 	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Player.Animation");
+
+#pragma region CLOTH_TEST
+	Node* pNode = m_pMesh->GetNode("CoatCloth_00_04");
+
+	LPCLOTHBONE pCurr = nullptr;
+	LPCLOTHBONE pNext = nullptr;
+
+	int nIndex = 0;
+	float fInvMass = 0;
+	while (true)
+	{
+		pNext = new CLOTHBONE;
+
+
+		pNext->pParent = pCurr;
+
+		pNext->sName = pNode->Name;
+		pNext->matLocal = pNode->Transform;
+		pNext->matToRoot = pNode->ToRoot;
+		pNext->pNode = pNode;
+
+		pNext->vPos.x = pNext->matToRoot.m[3][0];
+		pNext->vPos.y = pNext->matToRoot.m[3][1];
+		pNext->vPos.z = pNext->matToRoot.m[3][2];
+
+
+		m_vecClothParticle.push_back(PxClothParticle(PxVec3(pNext->vPos.x, pNext->vPos.y, pNext->vPos.z), fInvMass));
+		m_vecClothBone.push_back(pNext);
+
+		pCurr = pNext;
+
+		if (0 == pNode->Childrens.size())
+		{
+			nIndex++;
+			string sNextRootNode = "CoatCloth_0";
+			char szBuf[16] = {};
+
+			_itoa_s(nIndex, szBuf, 10);
+			sNextRootNode += szBuf;
+
+			if (7 == nIndex)
+				sNextRootNode += "_04";
+			else
+				sNextRootNode += "_01";
+
+			pNode = m_pMesh->GetNode(sNextRootNode);
+
+			if (nullptr == pNode)
+				break;
+
+			pCurr = nullptr;
+			pNext = nullptr;
+			fInvMass = 0.f;
+			continue;
+		}
+
+		//fInvMass = 1.f;
+		fInvMass += 0.25f;
+		pNode = pNode->Childrens[0];
+	}
+
+	PxClothMeshDesc meshDesc;
+
+	meshDesc.setToDefault();
+
+	meshDesc.points.count = m_vecClothParticle.size();
+	meshDesc.points.stride = sizeof(PxClothParticle);
+	meshDesc.points.data = m_vecClothParticle.data();
+
+	//meshDesc quad data 설정
+	for (UINT nCoulmn = 0; nCoulmn < 7; nCoulmn++)
+	{
+		for (UINT nRow = 0; nRow < 4; nRow++)
+		{
+			m_vecIndices.push_back(nCoulmn * 5 + nRow);
+			m_vecIndices.push_back(nCoulmn * 5 + nRow + 5);
+			m_vecIndices.push_back(nCoulmn * 5 + nRow + 5 + 1);
+			m_vecIndices.push_back(nCoulmn * 5 + nRow + 1);
+		}
+	}
+
+	meshDesc.quads.count = 28;
+	meshDesc.quads.stride = sizeof(PxU32) * 4;
+	meshDesc.quads.data = m_vecIndices.data();
+
+	PxClothFabric* pFabric = PxClothFabricCreate(*Physics::GetPxPhysics(), meshDesc, PxVec3(0.f, -9.8f *2.f, 0.f));
+
+	//
+	//if (false == meshDesc.isValid())
+	//{
+	//	return;
+	//}
+
+	PxTransform pose = PxTransform(PxIdentity);
+	pCloth = Physics::GetPxPhysics()->createCloth(pose, *pFabric, m_vecClothParticle.data(), PxClothFlag::eSCENE_COLLISION);
+
+
+	Physics::AddActor(GetSceneID(), *pCloth);
+#pragma endregion
+
 
 	m_pMesh->EnableToRootMatricies();
 

@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -86,19 +86,7 @@ public:
 	\param[out] adjacencyIndices Returned 3 triangle adjacency triangle indices (0xFFFFFFFF if no adjacency).
 
 	\note This function will flip the triangle normal whenever triGeom.scale.hasNegativeDeterminant() is true.
-	\note TriangleIndex is an index used in internal format, which does have an index out of the bounds in last row.
-			To traverse all tri indices in the HF, the following code can be applied:
-			for (PxU32 row = 0; row < (nbRows - 1); row++)
-			{
-				for (PxU32 col = 0; col < (nbCols - 1); col++)
-				{
-					for (PxU32 k = 0; k < 2; k++)
-					{ 
-						const PxU32 triIndex = 2 * (row*nbCols + col) + k; 
-						....
-					}
-				}
-			}
+
 	@see PxTriangle PxTriangleFlags PxTriangleID findOverlapHeightField()
 	*/
 	PX_PHYSX_COMMON_API static void getTriangle(const PxHeightFieldGeometry& hfGeom, const PxTransform& transform, PxTriangleID triangleIndex, PxTriangle& triangle, PxU32* vertexIndices=NULL, PxU32* adjacencyIndices=NULL);

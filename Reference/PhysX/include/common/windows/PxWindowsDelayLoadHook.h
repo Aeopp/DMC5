@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -32,6 +32,7 @@
 #define PX_PHYSICS_DELAY_LOAD_HOOK
 
 #include "foundation/PxPreprocessor.h"
+#include "foundation/windows/PxWindowsFoundationDelayLoadHook.h"
 #include "common/PxPhysXCommonConfig.h"
 
 /** \addtogroup foundation
@@ -45,24 +46,33 @@ namespace physx
 	/**
  	\brief PxDelayLoadHook
 
-	This is a helper class for delay loading the PhysXCommon dll and PhysXFoundation dll. 
-	If a PhysXCommon dll or PhysXFoundation dll with a non-default file name needs to be loaded, 
+	This is a helper class for delay loading the PhysXCommon dll, PxFoundation dll and PxPvdSDK dll. 
+	If a PhysXCommon dll, PxFoundation dll or PxPvdSDK dll with a non-default file name needs to be loaded, 
 	PxDelayLoadHook can be sub-classed to provide the custom filenames.
 
 	Once the names are set, the instance must be set for use by PhysX.dll using PxSetPhysXDelayLoadHook(), 
 	PhysXCooking.dll using PxSetPhysXCookingDelayLoadHook()	or by PhysXCommon.dll using PxSetPhysXCommonDelayLoadHook().
 
+	\note Foundation names are set through the base class PxFoundationDelayLoadHook.
+
 	@see PxSetPhysXDelayLoadHook(), PxSetPhysXCookingDelayLoadHook(), PxSetPhysXCommonDelayLoadHook()
+	@see PxFoundationDelayLoadHook
  	*/
-	class PxDelayLoadHook
+	class PxDelayLoadHook: public PxFoundationDelayLoadHook
 	{
 	public:
 		PxDelayLoadHook() {}
 		virtual ~PxDelayLoadHook() {}
 
-		virtual const char* getPhysXFoundationDllName() const = 0;
-		
+		virtual const char* getPhysXCommonDEBUGDllName() const = 0;
+		virtual const char* getPhysXCommonCHECKEDDllName() const = 0;
+		virtual const char* getPhysXCommonPROFILEDllName() const = 0;
 		virtual const char* getPhysXCommonDllName() const = 0;
+
+		virtual const char* getPxPvdSDKDEBUGDllName() const = 0;
+		virtual const char* getPxPvdSDKCHECKEDDllName() const = 0;
+		virtual const char* getPxPvdSDKPROFILEDllName() const = 0;
+		virtual const char* getPxPvdSDKDllName() const = 0;
 
 	protected:
 	private:

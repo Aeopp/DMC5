@@ -99,7 +99,7 @@ HRESULT CapsuleCollider::DrawCollider(const DrawInfo& _Info)
 	//Draw Cylinder
 	D3DXMATRIX matScale, matRot, matTrans, matWorld;
 
-	D3DXMatrixScaling(&matScale, m_fHeight, m_fRadius * 2.f, m_fRadius * 2.f);
+	D3DXMatrixScaling(&matScale, (m_fHeight + m_fRadius * 2.f) * 0.5f, m_fRadius * 2.f, m_fRadius * 2.f);
 	D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 	D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);
 

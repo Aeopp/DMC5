@@ -6,6 +6,8 @@
 #include "Renderer.h"
 #include <iostream>
 
+#include "PhysicsSystem.h"
+
 void TestObject::Free()
 {
 	GameObject::Free();
@@ -30,14 +32,14 @@ void TestObject::RenderReady()
 		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-		if (_StaticMesh)
+		if (m_pSkeletonMesh)
 		{
-			const uint32  Numsubset = _StaticMesh->GetNumSubset();  
+			const uint32  Numsubset = m_pSkeletonMesh->GetNumSubset();
 			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
 
 			for (uint32 i = 0; i < Numsubset ;  ++i)
 			{
-				const auto& _Subset = _StaticMesh->GetSubset(i); 
+				const auto& _Subset = m_pSkeletonMesh->GetSubset(i);
 				const auto& _CurBS =_Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
 				_RenderUpdateInfo.SubsetCullingSphere[i]= _CurBS.Transform(_RenderUpdateInfo.World, Scale.x); 
@@ -105,19 +107,18 @@ void TestObject::RenderInit()
 	// 
 	// 스태틱 메쉬 로딩
 
-	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-	PushEditEntity(_StaticMesh.get());
+	m_pSkeletonMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Player.fbx");
+	PushEditEntity(m_pSkeletonMesh.get());
 };
 
 void TestObject::RenderGBuffer(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("matWorld", &World);
-	const uint32 Numsubset =_StaticMesh->GetNumSubset();
+	const uint32 Numsubset = m_pSkeletonMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = m_pSkeletonMesh->GetSubset(i).lock();
 			SpSubset)
 		{
 			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
@@ -136,10 +137,10 @@ void TestObject::RenderShadow(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("matWorld", &World);
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	const uint32 Numsubset = m_pSkeletonMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = m_pSkeletonMesh->GetSubset(i).lock();
 			SpSubset)
 		{
 			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
@@ -157,10 +158,10 @@ void TestObject::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	const uint32 Numsubset = m_pSkeletonMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = m_pSkeletonMesh->GetSubset(i).lock();
 			SpSubset)
 		{
 			if (false == 
@@ -178,31 +179,110 @@ void TestObject::RenderDebug(const DrawInfo& _Info)
 
 HRESULT TestObject::Ready()
 {
-	// 트랜스폼 초기화 .. 
-	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,10.f,0.f });
-
-	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
-	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
+	//
+	Node* pNode = m_pSkeletonMesh->GetNode("CoatCloth_00_04");
+
+	LPCLOTHBONE pCurr = nullptr;
+	LPCLOTHBONE pNext = nullptr;
+
+	int nIndex = 0;
+	float fInvMass = 0;
+	while (true)
+	{
+		pNext = new CLOTHBONE;
+
+		if (nullptr != pCurr)
+			pNext->pParent = pCurr;
+
+		pNext->sName		= pNode->Name;
+		pNext->matLocal		= pNode->Transform;
+		pNext->matToRoot	= pNode->ToRoot;
+		pNext->pNode		= pNode;
+		
+		pNext->vPos.x = pNext->matToRoot.m[3][0];
+		pNext->vPos.y = pNext->matToRoot.m[3][1];
+		pNext->vPos.z = pNext->matToRoot.m[3][2];
+
+
+		m_vecClothParticle.push_back(PxClothParticle(PxVec3(pNext->vPos.x, pNext->vPos.y, pNext->vPos.z), fInvMass));
+		m_vecClothBone.push_back(pNext);
+
+		pCurr = pNext;
+
+		if (0 == pNode->Childrens.size())
+		{
+			nIndex++;
+			string sNextRootNode = "CoatCloth_0";
+			char szBuf[16] = {};
+
+			_itoa_s(nIndex, szBuf, 10);
+			sNextRootNode += szBuf;
+
+			if (7 == nIndex)
+				sNextRootNode += "_04";
+			else
+				sNextRootNode += "_01";
+
+			pNode = m_pSkeletonMesh->GetNode(sNextRootNode);
+
+			if (nullptr == pNode)
+				break;
+
+			pCurr = nullptr;
+			pNext = nullptr;
+			fInvMass = 0.f;
+			continue;
+		}
+
+		fInvMass = 1.f;
+		//fInvMass += 0.25f;
+		pNode = pNode->Childrens[0];
+	}
+
+	PxClothMeshDesc meshDesc;
+
+	meshDesc.setToDefault();
+
+	meshDesc.points.count = m_vecClothParticle.size();
+	meshDesc.points.stride = sizeof(PxClothParticle);
+	meshDesc.points.data = m_vecClothParticle.data();
+
+	//meshDesc quad data 설정
+	for (UINT nCoulmn = 0; nCoulmn < 7; nCoulmn++)
+	{
+		for (UINT nRow = 0; nRow < 4; nRow++)
+		{
+			m_vecIndices.push_back(nCoulmn * 5 + nRow);
+			m_vecIndices.push_back(nCoulmn * 5 + nRow + 5);
+			m_vecIndices.push_back(nCoulmn * 5 + nRow + 5 + 1);
+			m_vecIndices.push_back(nCoulmn * 5 + nRow + 1);
+		}
+	}
+
+	meshDesc.quads.count = 28;
+	meshDesc.quads.stride = sizeof(PxU32) * 4;	
+	meshDesc.quads.data = m_vecIndices.data();
+	
+	PxClothFabric* pFabric = PxClothFabricCreate(*Physics::GetPxPhysics(), meshDesc, PxVec3(0.f, -4.5f, 0.f));
+
+	//
+	if (false == meshDesc.isValid())
+	{
+		return E_FAIL;
+	}
+
+	PxTransform pose = PxTransform(PxIdentity);
+	pCloth = Physics::GetPxPhysics()->createCloth(pose, *pFabric, m_vecClothParticle.data(), PxClothFlags());
+
+
+	Physics::AddActor(GetSceneID(), *pCloth);
+
 	return S_OK;
 };
 
 HRESULT TestObject::Awake()
 {
-	//auto pCollider = AddComponent<CapsuleCollider>();
-	//pCollider.lock()->ReadyCollider();
-	//pCollider.lock()->SetRigid(true);
-	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
-	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-
-	//pCollider.lock()->SetRadius(100.f);
-	//pCollider.lock()->SetHeight(200.f);
-	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,-1.f,0.f });
-
-	//PushEditEntity(pCollider.lock().get());
 	return S_OK;
 }
 
@@ -214,20 +294,15 @@ HRESULT TestObject::Start()
 UINT TestObject::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-	Vector3 vDir = m_pTransform.lock()->GetLook();
 
-	D3DXVec3Normalize(&vDir, &vDir);
-	if (Input::GetKey(DIK_W))
-		m_pTransform.lock()->Translate(vDir * _fDeltaTime * 10.f);
-	if (Input::GetKey(DIK_S))
-		m_pTransform.lock()->Translate(-vDir * _fDeltaTime * 10.f);
-	if (Input::GetKey(DIK_A))
-		m_pTransform.lock()->Rotate({ 0.f, D3DXToRadian(180 * -_fDeltaTime * 50.f), 0.f });
-	if (Input::GetKey(DIK_D))
-		m_pTransform.lock()->Rotate({ 0.f, D3DXToRadian(180 * _fDeltaTime * 50.f), 0.f });
-		
-	std::cout << m_pTransform.lock()->GetPosition().y << std::endl;
-	
+	if (Input::GetKey(DIK_I))
+	{
+		PxTransform pose = pCloth->getGlobalPose();
+
+		pose.p += PxVec3(1.f, 0.f, 0.f);
+
+		pCloth->setTargetPose(pose);
+	}
 	return 0;
 }
 

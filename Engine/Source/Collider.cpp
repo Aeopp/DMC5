@@ -3,6 +3,9 @@
 #include "GameObject.h"
 #include "Transform.h"
 
+#include <iostream>
+using namespace std;
+
 USING(ENGINE)
 
 Collider::Collider(std::weak_ptr<GameObject> const _pGameObject)
@@ -243,11 +246,13 @@ void Collider::SetTrigger(const bool _bTrigger)
 
 	if (m_bTrigger)
 	{
+		m_pShape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 		m_pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 		m_pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
 	else
 	{
+		m_pShape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 		m_pShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 		m_pShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, true);
 	}
@@ -345,11 +350,44 @@ void Collider::SetGravity(const bool _bActive)
 
 bool Collider::IsGround()
 {
-	if (false == m_bRigid)
-		return false;
+	//if (false == m_bRigid)
+		//return false;
 
 
-	return 	m_UserData.bIsGround;
+	PxScene* pScene = m_pRigidActor->getScene();
+
+	PxTransform actorTrans = m_pRigidActor->getGlobalPose();
+
+	m_pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+
+	PxRaycastBuffer rayCastBuf;
+	if (pScene->raycast(actorTrans.p, PxVec3(0.f, -1.f, 0.f), 1000, rayCastBuf))
+	{
+		//cout << rayCastBuf.block.distance << endl;
+		cout << rayCastBuf.block.distance << endl;
+
+		if (rayCastBuf.block.shape->getGeometryType() == PxGeometryType::eTRIANGLEMESH)
+			cout << "Triangle" << endl;
+
+		PxVec3 vHitPos = rayCastBuf.block.position;
+		PxVec3 vDistance = vHitPos - actorTrans.p;
+
+		cout << "Magnitude : " << vDistance.magnitude() << endl;
+		if (rayCastBuf.block.distance < 0.2f)
+		{
+			if (rayCastBuf.block.actor == m_pRigidActor)
+			{
+				cout << "!!!!!!!!!!" << endl;
+			}
+			return true;
+		}
+	}
+
+	m_pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+
+	return false;
+
+	//return 	m_UserData.bIsGround;
 }
 
 void Collider::AddForce(const D3DXVECTOR3 _vForce)

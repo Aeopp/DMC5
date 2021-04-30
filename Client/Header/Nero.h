@@ -435,6 +435,22 @@ private:
 	D3DXVECTOR3 vAccumlatonDegree;
 
 	
+	/*******************/
+	typedef struct tagClothBone
+	{
+		D3DXVECTOR3		vPos;
+		string			sName;
+		tagClothBone* pParent;
+		D3DXMATRIX		matToRoot;	//월드
+		D3DXMATRIX		matLocal;	//부모에 상대적인 행렬
+		Node* pNode;
+	}CLOTHBONE, * LPCLOTHBONE;
+
+	vector<LPCLOTHBONE> m_vecClothBone;
+	vector<PxU32>		m_vecIndices;
+	vector<PxClothParticle>		m_vecClothParticle;
+
+	PxCloth* pCloth;
 };
 
 

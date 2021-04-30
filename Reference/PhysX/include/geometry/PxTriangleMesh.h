@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -68,7 +68,8 @@ struct PxMeshMidPhase
 		eBVH33 = 0,		//!< Default midphase mesh structure, as used up to PhysX 3.3
 		eBVH34 = 1,		//!< New midphase mesh structure, introduced in PhysX 3.4
 
-		eLAST
+		eINVALID = 2,	//!< Invalid mesh midphase
+		eLAST = eINVALID
 	};
 };
 

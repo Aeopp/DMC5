@@ -28,7 +28,7 @@ public:
 	int32 Index{ -1 };
 	std::bitset<3> RootMotionFlag{};
 
-	
+	std::optional<Matrix> ClothTrans{};
 
 
 	inline bool IsBone() { return Index >=0; };

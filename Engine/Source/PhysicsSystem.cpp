@@ -79,7 +79,7 @@ void PhysicsSystem::Free()
 HRESULT PhysicsSystem::ReadyPhysicsSystem()
 {
 	//Foundation
-	m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
+	m_pFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, m_Allocator, m_ErrorCallback);
 
 	if (nullptr == m_pFoundation)
 	{

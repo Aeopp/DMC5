@@ -50,12 +50,15 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	//AddGameObject<Camera>();
+	//AddGameObject<TestObject>();
 	AddGameObject<MainCamera>();
+
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//_Em1000 = AddGameObject<Em1000>();
 	//_Em1000.lock()->Set_Wall(false);
-	AddGameObject<Em5000>();
+	//AddGameObject<Em5000>();
 	//AddGameObject<Car>();
 
 	//// Wave 1st
@@ -106,7 +109,7 @@ HRESULT TestScene::LoadScene()
 
 
 	//LoadMap();
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
@@ -211,11 +214,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	/*if (nullptr != pPlane)
-		return S_OK;*/
+	if (nullptr != pPlane)
+		return S_OK;
 
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-	//Physics::AddActor(UniqueID, *pPlane);
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+	Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
