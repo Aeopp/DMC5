@@ -1,19 +1,13 @@
 matrix matWorld;
 matrix ViewProjection;
-
-uniform float Progress;
-uniform float Intencity;
+uniform float DistortionIntencity;
+uniform float exposure;
 uniform vector _Color;
-uniform float exposure_corr;
 
-uniform bool bWaveDistortion;
-
-uniform float UV_VOffset;
-
-texture WaveMaskMap;
-sampler WaveMask = sampler_state
+texture TrailMap;
+sampler Trail = sampler_state
 {
-    texture = WaveMaskMap;
+    texture = TrailMap;
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
@@ -23,9 +17,9 @@ sampler WaveMask = sampler_state
 };
 
 
-
 void VsMain(in out float4 Position : POSITION0,
-            in out float2 UV : TEXCOORD0)
+            in out float2 UV0 : TEXCOORD0,
+            in out float2 UV1 : TEXCOORD1)
 {
     Position = mul(Position, matWorld);
     Position = mul(Position, ViewProjection);
@@ -33,25 +27,17 @@ void VsMain(in out float4 Position : POSITION0,
 
 void PsMain(out float4 Color : COLOR0, 
             out float4 Color1 : COLOR1 ,
-            in float2 UV : TEXCOORD0)
+            in float2 UV0 : TEXCOORD0 ,
+            in float2 UV1 : TEXCOORD1)
 {
-    UV.y = (UV.y + (1.f - Progress) + UV_VOffset);
+    // Color = float4(1.0f, 0.0f, 0.0f, 0.5f);
+    Color = tex2D(Trail, UV0);
+    Color.a = Color.r;
+    Color *= _Color;
+    Color.rgb *= exposure * 0.002f;    
+    Color1 = tex2D(Trail, UV1);
     
-    clip(UV.y > 1.5f  ?  -1 : 1);
-
-    Color = _Color;
-    Color.rgb *= Intencity * exposure_corr;
-    float4 Wave = tex2D(WaveMask, UV).r;
-    Color.a = Wave.x * _Color.a;
-    
-    if (bWaveDistortion)
-    {
-        Color1.rgba = Wave;
-    }
-    else
-    {
-        Color1.rgba = float4(0, 0, 0, 0);
-    }
+    Color1.rgb *= DistortionIntencity;
 };
 
 technique Default
@@ -64,9 +50,10 @@ technique Default
         //zenable = false;
         zwriteenable = false;
         sRGBWRITEENABLE = false;
-
+        cullmode = none;
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();
     }
 };
+
 

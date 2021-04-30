@@ -91,13 +91,13 @@ void Trail::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
-	_Desc.VtxCnt = 102;
+	_Desc.VtxCnt = 12;
 	// ¹Ýµå½Ã Â¦¼ö·Î ¸ÅÄª . 
-	_Desc.TriCnt = 100;
+	_Desc.TriCnt = 10;
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
-	_Desc.UpdateCycle = 0.01f;
-	_Desc.DrawTriCnt = 30;
+	_Desc.UpdateCycle = 0.0f;
+	_Desc.DrawTriCnt = 10;
 
 
 
@@ -117,6 +117,9 @@ void Trail::RenderInit()
 	(_Desc.IdxSize* _Desc.TriCnt
 		, 0, _Desc.IdxFmt, 
 		D3DPOOL_MANAGED, &IdxBuffer, nullptr);
+	TrailMap = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
+
 };
 
 void Trail::PlayStart(const std::optional<Vector3>& Location)
@@ -139,6 +142,16 @@ void Trail::PlayEnd()
 
 void Trail::RenderTrail(const DrawInfo& _Info)
 {
+	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
+	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
+	_Info.Fx->SetVector("_Color", &_Color);
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity); 
+	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
+	Device->SetVertexDeclaration(VtxDecl);
+	Device->SetIndices(IdxBuffer);
+	_Info.Fx->CommitChanges();
+	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
+
 	// const Matrix World = _RenderUpdateInfo.World;
 	/*_Info.Fx->SetMatrix("matWorld", &World);
 
@@ -235,10 +248,8 @@ UINT Trail::Update(const float _fDeltaTime)
 		0 ¡ç 2
 		*/
 
-
 		 Vertex::Index32* IdxPtr{ nullptr };
 		IdxBuffer->Lock(0, 0, (void**)&IdxPtr, 0);
-
 		_IdxLog.resize(_Desc.TriCnt);
 		for (uint32 i = 0; i < _Desc.TriCnt; i += 2)
 		{
@@ -254,6 +265,7 @@ UINT Trail::Update(const float _fDeltaTime)
 
 			_IdxLog[i + 1] = IdxPtr[i + 1];
 		}
+
 		IdxBuffer->Unlock();
 
 
@@ -304,11 +316,11 @@ UINT Trail::Update(const float _fDeltaTime)
 
 		for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 		{
-			VtxPtr[i + 1].UV0 = { (float)i / ((float)_Desc.NewVtxCnt - 2),0.f };
-			VtxPtr[i].UV0 = { (float)i / ((float)_Desc.NewVtxCnt - 2) ,1.f };
-
-			VtxPtr[i + 1].UV1= { (float)i / ((float)_Desc.NewVtxCnt - 2),0.f };
+			VtxPtr[i + 1].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2),0.f };
 			VtxPtr[i].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2) ,1.f };
+
+			VtxPtr[i + 1].UV0 = {  ( (float)i / ((float)_Desc.NewVtxCnt - 2) ) * UV0Multiply,0.f };
+			VtxPtr[i].UV0 = { ( (float)i / ((float)_Desc.NewVtxCnt - 2 ) )* UV0Multiply ,1.f };
 		}
 
 		_Desc.NewVtxCnt += 2;
@@ -358,11 +370,15 @@ void Trail::Editor()
 				}
 			}
 
-			ImGui::SliderFloat3("LowOffset", LowOffset, -100.f, 100.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat3("HighOffset", HighOffset, -100.f, 100.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
+			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
+			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
-			
+			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+			ImGui::ColorEdit4("Color", _Color);
+			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");
+			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);
+
 	/*		ImGui::Text("T : %2.6f", T);
 			ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f", _Color.x, _Color.y, _Color.z, _Color.w);
 

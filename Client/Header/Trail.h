@@ -28,13 +28,16 @@ private:
 	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
 	IDirect3DDevice9* Device{ nullptr };
 
-	Vector3 LowOffset{ 0.f,0.f,-33.f};
+	std::shared_ptr<Texture> TrailMap{};
+	Vector3 LowOffset{ 0.f,0.f,21.f};
 	Vector3 HighOffset{ 0.f,0.f,-100.f };
 
+	Vector4 _Color{ 1.f,1.f,1.f,1.f };
 	std::vector<Vertex::Index32> _IdxLog{};
 	std::vector<Vertex::TrailVertex> _VtxLog{};
-
-
+	float DistortionIntencity = 0.002f;
+	float UV0Multiply = 1.f;
+	float CurveT = 0.5f;
 	TrailDesc _Desc{};
 	/*uint32 IdxSize;
 	D3DFORMAT IdxFmt;*/
