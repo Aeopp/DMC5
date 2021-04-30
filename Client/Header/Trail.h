@@ -13,8 +13,7 @@ struct TrailDesc
 	uint32 IdxSize{};
 	D3DFORMAT IdxFmt{};
 
-
-
+	int32 DrawTriCnt;
 	uint32 NewVtxCnt;
 	float UpdateCycle;
 	float CurUpdateCycle;
@@ -29,8 +28,8 @@ private:
 	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
 	IDirect3DDevice9* Device{ nullptr };
 
-	Vector3 LowOffset{ 0.f,0.f,0.f};
-	Vector3 HighOffset{ 0.f,0.f,0.f };
+	Vector3 LowOffset{ 0.f,0.f,-33.f};
+	Vector3 HighOffset{ 0.f,0.f,-100.f };
 
 	std::vector<Vertex::Index32> _IdxLog{};
 	std::vector<Vertex::TrailVertex> _VtxLog{};

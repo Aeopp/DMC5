@@ -91,13 +91,18 @@ void Trail::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
-	_Desc.VtxCnt = 10;
+	_Desc.VtxCnt = 102;
 	// ¹Ýµå½Ã Â¦¼ö·Î ¸ÅÄª . 
-	_Desc.TriCnt = 8;
+	_Desc.TriCnt = 100;
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
+	_Desc.UpdateCycle = 0.01f;
+	_Desc.DrawTriCnt = 30;
+
+
+
 	_Desc.NewVtxCnt = 0;
-	_Desc.UpdateCycle = 0.05f;
+	
 
 	Device = g_pDevice;
 
@@ -172,7 +177,7 @@ void Trail::RenderDebug(const DrawInfo& _Info)
 	Device->SetVertexDeclaration(VtxDecl);
 	Device->SetIndices(IdxBuffer);
 	_Info.Fx->CommitChanges();
-	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.TriCnt);
+	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
 };
 
 
@@ -282,7 +287,6 @@ UINT Trail::Update(const float _fDeltaTime)
 				const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 				auto Low = RQ->Get_BoneMatrixPtr("_000") ;
-
 				const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
 
 				auto High = RQ->Get_BoneMatrixPtr("_001");
@@ -357,7 +361,7 @@ void Trail::Editor()
 			ImGui::SliderFloat3("LowOffset", LowOffset, -100.f, 100.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SliderFloat3("HighOffset", HighOffset, -100.f, 100.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
-
+			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 			
 	/*		ImGui::Text("T : %2.6f", T);
 			ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f", _Color.x, _Color.y, _Color.z, _Color.w);

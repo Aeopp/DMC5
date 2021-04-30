@@ -65,7 +65,7 @@ float TimeSystem::AccTime()
 
 float TimeSystem::DeltaTime()
 {
-	return m_fDeltaTime;
+	return m_fDeltaTime * Slowly;
 }
 
 
