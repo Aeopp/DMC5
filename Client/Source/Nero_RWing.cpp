@@ -23,6 +23,20 @@ HRESULT Nero_RWing::Ready()
 {
 	RenderInit();
 
+	m_NRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing\\pl0010_06_WingArm_NRMR.tga");
+	m_ATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing\\pl0010_06_WingArm_ATOS.tga");
+	m_GradationTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\grad.png");
+	m_ClothAuraALBTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_cloth_aura00_00_00_ALBA.tga");
+	
+	D3DXMatrixScaling(&m_AuraOffsetMatrix, 0.4f, 0.8f, 0.55f);
+	Matrix Temp;
+	D3DXMatrixRotationX(&Temp, D3DXToRadian(-10.f));
+	m_AuraOffsetMatrix *= Temp;
+	D3DXMatrixRotationY(&Temp, D3DXToRadian(-130.f));
+	m_AuraOffsetMatrix *= Temp;
+	D3DXMatrixRotationZ(&Temp, D3DXToRadian(25.f));
+	m_AuraOffsetMatrix *= Temp;
+
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -34,7 +48,10 @@ HRESULT Nero_RWing::Ready()
 HRESULT Nero_RWing::Awake()
 {
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-	m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Shoulder");
+	
+	if (!m_pNero.expired())
+		m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Shoulder");
+	
 	return S_OK;
 }
 
@@ -49,19 +66,34 @@ UINT Nero_RWing::Update(const float _fDeltaTime)
 	m_pMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {});
 	m_pMesh->UpdateToRootMatricies();
 	m_pMesh->VTFUpdate();
+
+	//
+	m_fAccTime += _fDeltaTime;
+	m_WingCloth01Matrix = (*m_pMesh->GetNodeToRoot("R_WingCloth01_end") * m_pTransform.lock()->GetRenderMatrix());
+	m_AuraWorldMatrix = m_AuraOffsetMatrix * m_WingCloth01Matrix;
+
+	m_AuraMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {});
+	m_AuraMesh->UpdateToRootMatricies();
+	m_AuraMesh->VTFUpdate();
+	//
+
 	return 0;
 }
 
 UINT Nero_RWing::LateUpdate(const float _fDeltaTime)
 {
-	Matrix								ParentWorldMatrix, FinalWorld;
+	Matrix	ParentWorldMatrix, FinalWorld;
 
-	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
-
-	if (nullptr != m_pParentBoneMat)
+	if (auto pNero = m_pNero.lock();
+		pNero)
 	{
-		FinalWorld = *m_pParentBoneMat * ParentWorldMatrix;
-		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+		ParentWorldMatrix = pNero->Get_NeroWorldMatrix();
+
+		if (nullptr != m_pParentBoneMat)
+		{
+			FinalWorld = *m_pParentBoneMat * ParentWorldMatrix;
+			m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+		}
 	}
 
 	//m_pTransform.lock()->UpdateTransform();
@@ -91,24 +123,24 @@ void Nero_RWing::RenderInit()
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = m_bIsRender;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"gbuffer_dsSK",
+		{"NeroWingSK",
 		[this](const DrawInfo& _Info)
 			{
-				RenderGBufferSK(_Info);
+				RenderAlphaBlendEffect(_Info);
 			}
 		},
 	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"ShadowSK" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadowSK(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+	//	=
+	//{
+	//	{"ShadowSK" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderShadowSK(_Info);
+	//	}
+	//} };
 	_InitRenderProp.RenderOrders[RenderProperty::Order::DebugBone]
 		=
 	{
@@ -137,6 +169,60 @@ void Nero_RWing::RenderInit()
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing\\Wing_Right.fbx");
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
+
+	m_AuraMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_cloth_aura00_00.fbx");
+	m_AuraMesh->EnableToRootMatricies();
+	PushEditEntity(m_AuraMesh.get());
+}
+
+void Nero_RWing::RenderAlphaBlendEffect(const DrawInfo& _Info)
+{
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
+	if (0 == _Info.PassIndex)
+	{
+		auto WeakSubset = m_AuraMesh->GetSubset(0u);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
+		{
+			_Info.Fx->SetMatrix("World", &m_AuraWorldMatrix);
+			_Info.Fx->SetTexture("GradationMap", m_ClothAuraALBTex->GetTexture());
+			_Info.Fx->SetFloat("_BrightScale", 0.015f);
+			_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_AccumulationTexV", m_fAccTime * 0.2f);
+
+			SharedSubset->Render(_Info.Fx);
+		}
+	}
+	else if (1 == _Info.PassIndex)
+	{
+		m_pMesh->BindVTF(_Info.Fx);
+
+		auto WeakSubset = m_pMesh->GetSubset(0u);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
+		{
+			const Matrix World = _RenderUpdateInfo.World;
+			_Info.Fx->SetMatrix("World", &World);
+
+			if (!Renderer::GetInstance()->GetDirLights().empty())
+			{
+				// ㅎㅎ
+				auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
+				_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
+			}
+
+			_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
+			_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());
+			_Info.Fx->SetTexture("GradationMap", m_GradationTex->GetTexture());
+			_Info.Fx->SetFloat("_BrightScale", 0.04f);
+			_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_AccumulationTexV", m_fAccTime * 0.6f);
+
+			SharedSubset->Render(_Info.Fx);
+		}
+	}
 }
 
 void Nero_RWing::RenderGBufferSK(const DrawInfo& _Info)
@@ -254,8 +340,11 @@ void Nero_RWing::Editor()
 		{
 			m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr(BoneName);
 		}
-	}
 
+		//static Vector3 Rot{ 0.f, 0.f, 0.f };
+		//ImGui::SliderFloat3("Rot##RWing", Rot, 0.1f, 10.f);
+		//m_AuraRot = Rot;
+	}
 }
 
 std::string Nero_RWing::GetName()

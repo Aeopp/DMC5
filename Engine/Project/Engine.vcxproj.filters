@@ -444,6 +444,9 @@
     <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
       <Filter>04.HLSL\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingSK.hlsl">
+      <Filter>04.HLSL\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">

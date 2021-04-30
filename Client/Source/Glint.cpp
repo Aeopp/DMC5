@@ -129,7 +129,7 @@ HRESULT Glint::Ready()
 	_GlintTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Light\\tex_capcom_light_glint_0017_alpg.tga");
 
 	_PlayingSpeed = 3.5f;
-	_BrightScale = 0.03f;
+	_BrightScale = 0.025f;
 
 	Reset();	// PlayStart()·Î Àç»ý
 
