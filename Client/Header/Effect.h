@@ -14,7 +14,6 @@ protected:
 
 	float _BrightScale = 1.f;
 	float _SoftParticleDepthScale = 1.f;
-
 protected:
 	explicit Effect() = default;
 	virtual ~Effect() = default;

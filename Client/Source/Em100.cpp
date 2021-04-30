@@ -273,8 +273,40 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_bAir = true;
 			m_pMesh->PlayAnimation("Air_Start", false, {}, 1.f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->IsAnimationEnd())
+			m_pCollider.lock()->AddForce({ 0.f, 1.8f,0.f });
+
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && 
+				m_pMesh->PlayingTime()>=0.1f&&m_pCollider.lock()->IsGround() )
+			{
 				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->PlayingTime()>=0.8f)
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+
+		}
+		break;
+	case Em100::Hit_Air_Snatch_Start:
+		if (m_bHit == true)
+		{
+			m_bAir = true;
+			m_pMesh->PlayAnimation("Air_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" &&
+				m_pMesh->PlayingTime() >= 0.1f && m_pCollider.lock()->IsGround())
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->PlayingTime() >= 0.8f)
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
 
 		}
 		break;
@@ -282,6 +314,9 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Air_Loop", true, {}, 1.f, 20.f, true);
+
+			m_pCollider.lock()->AddForce({ 0.f, 1.8f,0.f });
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Loop" && m_pCollider.lock()->IsGround())
 			{
 				if (fDot < 0)
@@ -560,18 +595,22 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
+		m_bHit = false;
 		break;
 	case Em100::Idle2:
 		m_pMesh->PlayAnimation("Idle2", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
+		m_bHit = false;
 		break;
 	case Em100::Idle3:
 		m_pMesh->PlayAnimation("Idle3", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
+		m_bHit = false;
 		break;
 	case Em100::Idle4:
 		m_pMesh->PlayAnimation("Idle4", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
+		m_bHit = false;
 		break;
 
 	case Em100::Hit_Buster_Start:
@@ -637,7 +676,15 @@ void Em100::State_Change(const float _fDeltaTime)
 			Set_Rotate();
 			m_bDown = false;
 			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
-			if (m_bSnatch == false)
+
+			if (m_pPlayer.lock()->GetComponent<ENGINE::CapsuleCollider>().lock()->IsGround() == false
+				 && m_bSnatch == false)
+			{
+				m_bAir = true;
+				m_pCollider.lock()->SetGravity(false);
+				m_eState = Hit_Air_Snatch_Start;
+			}
+			else if (m_bSnatch == false)
 				m_eState = Hit_Snatch_End;
 		}
 		break;
@@ -649,8 +696,14 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_bDown = false;
 			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
 
+			if (m_pCollider.lock()->IsGround())
+				m_bAir = false;
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Snatch_End" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Idle;
+				m_bHit = false;
+			}
 		}
 		break;
 	case Em100::Enter_Ground:
@@ -714,7 +767,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 150;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -4.8f, 3.2f, -4.82f });
+	m_pTransform.lock()->SetPosition({ -4.8f, 1.2f, -4.82f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -950,10 +1003,12 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			m_vPower += -vLook;
 			m_vPower.y = 1.f;
+			m_fPower = 50.f;
 
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
+			m_fPower = 100.f;
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
 
@@ -972,7 +1027,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.05f, 1.65f, vLook.z * 0.05f);
+			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -987,10 +1042,11 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 2.f;
+			m_vPower.y = 1.5f;
+
 
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
-			m_fPower = 180.f;
+			m_fPower = 100.f;
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
 			m_vPower.x = 0.f;
@@ -1017,10 +1073,11 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			m_vPower += -vLook;
 			m_vPower.y = 1.f;
-
+			m_fPower = 50.f;
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
 			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
+			m_fPower = 100.f;
 			m_vPower.x = 0.f;
 			m_vPower.z = 0.f;
 
@@ -1037,7 +1094,7 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.05f, 1.65f, vLook.z * 0.05f);
+			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -1050,10 +1107,10 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 			m_vPower += -vLook;
-			m_vPower.y = 2.f;
+			m_vPower.y = 1.5f;
 
 			D3DXVec3Normalize(&m_vPower, &m_vPower);
-			m_fPower = 180.f;
+			m_fPower = 100.f;
 			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
 
 			m_vPower.x = 0.f;
@@ -1129,6 +1186,7 @@ void Em100::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 		m_vPower += -vLook;
 
 		D3DXVec3Normalize(&m_vPower, &m_vPower);
+		m_fPower = 120.f;
 		m_vPower.x *= 1.4f;
 		m_vPower.z *= 1.4f;
 		m_vPower.y = 0.1f;
@@ -1138,6 +1196,7 @@ void Em100::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 		m_pCollider.lock()->SetGravity(true);
 		m_vPower.x = 0.f;
 		m_vPower.z = 0.f;
+		m_fPower = 100.f;
 	}
 		break;
 	case ATTACKTYPE::Attack_Split:
@@ -1170,6 +1229,7 @@ void Em100::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
+
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

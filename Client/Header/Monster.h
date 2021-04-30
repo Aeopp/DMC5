@@ -46,7 +46,7 @@ public:
 	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
 public:
 	//형의 부하가 추가함
-	virtual void SetGravity(bool _bActiveOrNot);
+	virtual void	SetGravity(bool _bActiveOrNot);
 	void	Set_Snatch(bool _bSnatch);
 	void	AddRankScore(float _fRankScore);
 protected:

@@ -42,7 +42,7 @@ public:
 	Matrix								  m_ParentWorld;
 	Matrix								  m_Result;
 		
-	bool								  m_bLeft;
+	bool								  m_bFloor;
 	 
 	weak_ptr<SphereCollider>		 	  m_pCollider;
 

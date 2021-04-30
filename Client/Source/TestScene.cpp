@@ -25,6 +25,9 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "AirHike.h"
+#include "CircleWave.h"
+#include "Em1000.h"
 
 #include <iostream>
 #include <fstream>
@@ -44,163 +47,187 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-}
-
+};
 
 HRESULT TestScene::LoadScene()
 {
+	// AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em100>();
-	//AddGameObject<Em0000>();
+	AddGameObject<Em0000>();
+	AddGameObject<Em1000>();
+	AddGameObject<CircleWave>();
+	AddGameObject<AirHike>();
+
 	//AddGameObject<Car>();
 
 	//// Wave 1st
-	//{
-	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -0.8f, 0.02f, -0.7f });
-	//	Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+	{
+		weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -0.8f, 0.02f, -0.7f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	//	_Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.7f, 0.02f, -1.f });
-	//	Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+		_Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.7f, 0.02f, -1.f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 1.f, 0.02f, -1.f });
-	//	Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+		weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 1.f, 0.02f, -1.f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
-	//	pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.5f, 0.02f,1.f });
-	//	Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-	//}
+		pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.5f, 0.02f,1.f });
+		Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	}
 
 	//// Wave 2nd
-	//{
-	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+	{
+		weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	//	_Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+		_Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
+		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+		weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 
-	//	pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-	//}
+		pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	}
 
+	//// Wave 2nd
+	{
+		weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	//LoadMap();
+		_Em100 = AddGameObject<Em100>();
+		_Em100.lock()->SetActive(false);
+		_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
+		Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+
+		weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+
+		pEm0000 = AddGameObject<Em0000>();
+		pEm0000.lock()->SetActive(false);
+		pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
+		Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
+	}
+
+	LoadMap();
 	AddGameObject<TempMap>();
 
-	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
-	//AddGameObject<QliphothBlock>();
-	//AddGameObject<AppearGroundMonster>();
+	AddGameObject<Glint>();
+	AddGameObject<OvertureHand>();
+	AddGameObject<Liquid>();
+	AddGameObject<QliphothBlock>();
+	AddGameObject<AppearGroundMonster>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
 
-
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	//_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	//_Renderer->ao = 0.0005;
-	//_Renderer->SkyIntencity = 0.005f;
-	//_Renderer->SkysphereScale = 0.078f;
-	//_Renderer->SkysphereRot = { 0.f,0.f,0.f };
-	//_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
-	//_Renderer->SoftParticleDepthScale = 0.7f;
-	//_Renderer->SkyRotationSpeed = 1.5f;
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	 // _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+	_Renderer->ao = 0.0005;
+	_Renderer->SkyIntencity = 0.005f;
+	_Renderer->SkysphereScale = 0.078f;
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
+	_Renderer->SoftParticleDepthScale = 0.7f;
+	_Renderer->SkyRotationSpeed = 1.5f;
 
-	//// Stage2 안개
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
-	//	pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
-	//	pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
-	//	pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
-	//	pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
+	// Stage2 안개
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
+		pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
+		pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
+		pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
+		pSmoke->PlayStart(10.f);
+	}
+	if (auto pSmoke = AddGameObject<Smoke>().lock();
+		pSmoke)
+	{
+		pSmoke->SetScale(0.3f);
+		pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
+		pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
+		pSmoke->PlayStart(10.f);
+	}
 
-	//// Stage2 길막
-	//m_vecQliphothBlock.reserve(4);
-	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-	//	!ptr.expired())
-	//{
-	//	ptr.lock()->SetScale(0.015f);
-	//	ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
-	//	ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
-	//	ptr.lock()->PlayStart();
-	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	//}
-	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-	//	!ptr.expired())
-	//{
-	//	ptr.lock()->SetScale(0.009f);
-	//	ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
-	//	ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
-	//	ptr.lock()->SetActive(false);
-	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	//}
-	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-	//	!ptr.expired())
-	//{
-	//	ptr.lock()->SetScale(0.025f);
-	//	ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
-	//	ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
-	//	ptr.lock()->SetActive(false);
-	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	//}
-	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-	//	!ptr.expired())
-	//{
-	//	ptr.lock()->SetScale(0.016f);
-	//	ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
-	//	ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
-	//	ptr.lock()->SetActive(false);
-	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	//}
+	// Stage2 길막
+	m_vecQliphothBlock.reserve(4);
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.015f);
+		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+		ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.009f);
+		ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.025f);
+		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.016f);
+		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
+		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
 
 	return S_OK;
 }
@@ -230,62 +257,62 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//cout << "SceneUpdate" << endl;
 
 	//// 여기서 임시로 트리거 처리 ???
-	//if (
-	//	(FMath::Length
-	//	( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
-	//	  < 0.1f  )   && 
-	//		! bfirst    )
-	//{
-	//	for (auto& spawn_entity : Wavefirst)
-	//	{
-	//		bfirst= true;
-	//		spawn_entity.lock()->SetActive(true);
-	//	}
+	if (
+		(FMath::Length
+		( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+		  < 0.1f  )   && 
+			! bfirst    )
+	{
+		for (auto& spawn_entity : Wavefirst)
+		{
+			bfirst= true;
+			spawn_entity.lock()->SetActive(true);
+		}
 
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->SetActive(true);
-	//			m_vecQliphothBlock[i].lock()->PlayStart();
-	//		}
-	//	}
-	//}
+		for (int i = 1; i < 4; ++i)
+		{
+			if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+			{
+				m_vecQliphothBlock[i].lock()->SetActive(true);
+				m_vecQliphothBlock[i].lock()->PlayStart();
+			}
+		}
+	}
 
-	//if ((FMath::Length
-	//(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
-	//	< 0.1f) &&
-	//	!bsecond)
-	//{
-	//	for (auto& spawn_entity : Wavesecond)
-	//	{
-	//		bsecond = true;
-	//		spawn_entity.lock()->SetActive(true);
-	//	}
-	//}
+	if ((FMath::Length
+	(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+		< 0.1f) &&
+		!bsecond)
+	{
+		for (auto& spawn_entity : Wavesecond)
+		{
+			bsecond = true;
+			spawn_entity.lock()->SetActive(true);
+		}
+	}
 
-	//if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
-	//{
-	//	int count = Wavefirst.size();
-	//	for (auto& target : Wavefirst)
-	//	{
-	//		if (target.expired())
-	//		{
-	//			--count; 
-	//		}
-	//		if (count <= 0)
-	//		{
-	//			for (int i = 1; i < 4; ++i)
-	//			{
-	//				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//				{
-	//					m_vecQliphothBlock[i].lock()->Reset();
-	//					// + render false 된 후에 SetActive(false) 해야
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+	if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
+	{
+		int count = Wavefirst.size();
+		for (auto& target : Wavefirst)
+		{
+			if (target.expired())
+			{
+				--count; 
+			}
+			if (count <= 0)
+			{
+				for (int i = 1; i < 4; ++i)
+				{
+					if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+					{
+						m_vecQliphothBlock[i].lock()->Reset();
+						// + render false 된 후에 SetActive(false) 해야
+					}
+				}
+			}
+		}
+	}
 
 	if (Input::GetKeyDown(DIK_NUMPAD2))
 	{

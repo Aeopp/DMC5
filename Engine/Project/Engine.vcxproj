@@ -156,6 +156,7 @@ call Engine.bat</Command>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(ProjectDir)..\Source\imgui\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -471,6 +472,11 @@ call Engine.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Emissive.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Distortion.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

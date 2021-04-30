@@ -19,7 +19,7 @@ std::string Effect::GetName()
 void Effect::Reset()
 {
 	// 자식은 Effect::Reset()을 반드시 호출
-	
+
 	if (!_Loop)
 	{
 		RenderInterface::_RenderProperty.bRender = false;

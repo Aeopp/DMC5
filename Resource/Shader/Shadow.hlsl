@@ -1,4 +1,3 @@
-
 uniform matrix matWorld;
 uniform matrix matViewProj;
 
