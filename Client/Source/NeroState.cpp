@@ -7,6 +7,7 @@
 
 bool NeroState::m_bActive_Gravity = true;
 bool NeroState::m_bCbsIdle = false;
+UINT NeroState::m_iNeroCurWeaponIndex = Nero::NeroCom_Cbs_Short;
 NeroState::NeroState(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
 	:FSMState(_pFSM,_nIndex)
 	, m_pNero(_pNero)
@@ -634,24 +635,227 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 	}
 	else if (Input::GetKey(DIK_W))
 	{
-		//m_pFSM->ChangeState(NeroFSM::RUNSTART);
+		m_pFSM->ChangeState(NeroFSM::RUNSTART);
 	}
 	else if (Input::GetKey(DIK_S))
 	{
-		//180도 회전
-		//m_pFSM->ChangeState(NeroFSM::RUNSTART_180);
+	m_pFSM->ChangeState(NeroFSM::RUNSTART_180);
 	}
 
 
 	else if (Input::GetKey(DIK_A))
 	{
-		//왼쪽으로 90도 회전
-		//m_pFSM->ChangeState(NeroFSM::RUNSTART_L);
+	m_pFSM->ChangeState(NeroFSM::RUNSTART_L);
 	}
 	else if (Input::GetKey(DIK_D))
 	{
-		//오른쪽으로 90도 회전
-		//m_pFSM->ChangeState(NeroFSM::RUNSTART_R);
+	m_pFSM->ChangeState(NeroFSM::RUNSTART_R);
+	}
+	else if (Input::GetKeyDown(DIK_LCONTROL))
+	{
+		//삼절곤에서 검으로 변환
+		//m_pNero.lock()->ChangeWeapon(Nero::RQ);
+		//m_pFSM->ChangeState(NeroFSM::IDLE);
+	}
+	return S_OK;
+}
+
+HRESULT NeroState::KeyInput_Cbs_Run(const int _nIndex)
+{
+	if (Input::GetKey(DIK_LSHIFT))
+	{
+		//락온
+		if (Input::GetKey(DIK_Q))
+		{
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, Nero::WS_Idle);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Long, Nero::WS_Idle);
+			m_pFSM->ChangeState(NeroFSM::WIRE_SNATCH_PULL);
+			return S_OK;
+		}
+		else if (Input::GetKey(DIK_W))
+		{
+			if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_L))
+			{
+				m_pFSM->ChangeState(NeroFSM::CBS_ICEAGE_START);
+				return S_OK;
+			}
+			else if (Input::GetMouse(DIM_L))
+			{
+				//앞으로 돌아버리는거
+				m_pFSM->ChangeState(NeroFSM::CBS_REVOLVER_START);
+				return S_OK;
+			}
+			else if (Input::GetMouse(DIM_R))
+			{
+				//땅 꽝 찍는거
+				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_BLITZATTACK);
+				return S_OK;
+			}
+			else if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_M))
+			{
+				//앞으로 나가면서 미친연속공격
+				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_BI_ATTACK);
+				return S_OK;
+			}
+			else if (Input::GetMouse(DIM_M))
+			{
+				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_SATELLITE);
+				return S_OK;
+			}
+		}
+		else if (Input::GetKey(DIK_S))
+		{
+			//락온한 상태로 뒤로
+			if (Input::GetMouse(DIM_L))
+			{
+				m_pFSM->ChangeState(NeroFSM::CBS_CRYSTAL);
+				return S_OK;
+			}
+			else if (Input::GetMouse(DIM_R))
+			{
+				//총알 발사
+				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_THUNDERBULLET);
+				return S_OK;
+			}
+			else if (Input::GetMouse(DIM_M))
+			{
+				m_pFSM->ChangeState(NeroFSM::POLE_WHIRLWIND_START);
+				return S_OK;
+			}
+			else if (Input::GetKey(DIK_SPACE))
+			{
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Long, Nero::WS_Idle);
+				m_pNero.lock()->Set_JumpDir(Nero::Back);
+				m_pFSM->ChangeState(NeroFSM::JUMP_START);
+
+				return S_OK;
+			}
+		}
+		else if (Input::GetKey(DIK_A))
+		{
+			if (Input::GetKey(DIK_SPACE))
+			{
+				//왼쪽 구르기
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Long, Nero::WS_Idle);
+				m_pFSM->ChangeState(NeroFSM::EVADE_L);
+				return S_OK;
+			}
+		}
+		else if (Input::GetKey(DIK_D))
+		{
+			if (Input::GetKey(DIK_SPACE))
+			{
+				// 오른쪽 구르기
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, Nero::WS_Idle);
+				m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Long, Nero::WS_Idle);
+				m_pFSM->ChangeState(NeroFSM::EVADE_R);
+				return S_OK;
+			}
+		}
+	}
+	else if (Input::GetMouse(DIM_L))
+	{
+		switch (_nIndex)
+		{
+		case NeroFSM::CBS_COMBOA1:
+			break;
+		case NeroFSM::CBS_COMBOA2:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::CBS_COMBOA3:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::CBS_COMBOA4:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::CBS_COMBOA5:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		default:
+			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA1);
+			break;
+		}
+		return S_OK;
+	}
+	else if (Input::GetMouse(DIM_M))
+	{
+		switch (_nIndex)
+		{
+		case NeroFSM::POLE_COMBOA1:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::POLE_COMBOA2:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::POLE_COMBOA3:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::POLE_COMBOB1:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::POLE_COMBOB2:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::POLE_COMBOB3:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		case NeroFSM::POLE_COMBOB4:
+			m_pFSM->ChangeState(_nIndex);
+			break;
+		default:
+			m_pFSM->ChangeState(NeroFSM::POLE_COMBOA1);
+			break;
+		}
+		return S_OK;
+	}
+	else if (Input::GetMouse(DIM_R))
+	{
+		//몬스터 위치에 따라서 업다운 프론트 결정
+		m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_STRIKE);
+		return S_OK;
+	}
+
+	else if (Input::GetKeyDown(DIK_SPACE))
+	{
+		//점프
+	}
+	else if (Input::GetKey(DIK_Q))
+	{
+		m_pFSM->ChangeState(NeroFSM::BUSTER_START);
+	}
+
+	else if (Input::GetKey(DIK_F))
+	{
+		//변신게이지 있는지 체크
+		float TDTGauge = m_pNero.lock()->Get_TDTGauge();
+		if (0.3f <= TDTGauge)
+		{
+			m_pFSM->ChangeState(NeroFSM::TO_MAJIN);
+		}
+	}
+	else if (Input::GetKey(DIK_W))
+	{
+		m_pNero.lock()->SetAngleFromCamera();
+	}
+	else if (Input::GetKey(DIK_S))
+	{
+
+	}
+
+
+	else if (Input::GetKey(DIK_A))
+	{
+
+	}
+	else if (Input::GetKey(DIK_D))
+	{
+
 	}
 	else if (Input::GetKeyDown(DIK_LCONTROL))
 	{
@@ -1425,192 +1629,207 @@ HRESULT RunStartLeft::StateEnter()
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
 	
 
-
-	switch (CurAnimationIndex)
+	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
-	case Nero::ANI_IDLE_NORMAL:
+		switch (CurAnimationIndex)
+		{
+		case Nero::ANI_IDLE_NORMAL:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_IDLE_BATTLE:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_END:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_END:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_SHUFFLE:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_COMBOD4:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_RUNSTOP:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_IDLE:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_UP:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_DOWN:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_WIRE_SNATCH_PULL:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_COMBOA4:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Left != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			break;
+		case Nero::ANI_DASHSTOP:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_JUMP_FRONT_LANDING:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		case Nero::ANI_JUMP_LANDING:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		default:
+			if (Nero::Dir_Left == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+				m_pNero.lock()->SetRotationAngle(-90.f);
+			}
+			break;
+		}
+	}
+	else
+	{
+		NeroState::SetCbsIdle();
 		if (Nero::Dir_Left == NeroPreDir)
 		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->ChangeAnimation("Cbs_RunStartFront", false, Nero::ANI_CBS_RUNSTART0);
 		}
 		else
 		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
+			m_pNero.lock()->ChangeAnimation("Cbs_RunStart270", false, Nero::ANI_CBS_RUNSTART270);
 			m_pNero.lock()->SetRotationAngle(-90.f);
 		}
-		break;
-	case Nero::ANI_IDLE_BATTLE:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_END:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2_END:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_SHUFFLE:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_COMBOD4:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_RUNSTOP:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_IDLE:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_UP:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_DOWN:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_WIRE_SNATCH_PULL:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_COMBOA4:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Left != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		break;
-	case Nero::ANI_DASHSTOP:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_JUMP_FRONT_LANDING:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	case Nero::ANI_JUMP_LANDING:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
-	default:
-		if (Nero::Dir_Left == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart270", false, Nero::ANI_RUNSTART270);
-			m_pNero.lock()->SetRotationAngle(-90.f);
-		}
-		break;
 	}
 
 	if (Nero::Dir_Left != NeroPreDir)
@@ -1642,7 +1861,10 @@ HRESULT RunStartLeft::StateUpdate(const float _fDeltaTime)
 	}
 	else
 	{
-		m_pFSM->ChangeState(NeroFSM::IDLE);
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 		m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	}
 	return S_OK;
@@ -1669,192 +1891,207 @@ HRESULT RunStartRight::StateEnter()
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
 
 
-
-	switch (CurAnimationIndex)
+	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
-	case Nero::ANI_IDLE_NORMAL:
+		switch (CurAnimationIndex)
+		{
+		case Nero::ANI_IDLE_NORMAL:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_IDLE_BATTLE:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_END:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_END:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_SHUFFLE:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_COMBOD4:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_RUNSTOP:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_IDLE:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_UP:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_DOWN:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_WIRE_SNATCH_PULL:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_COMBOA4:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Right != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(90.f);
+			break;
+		case Nero::ANI_DASHSTOP:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_JUMP_FRONT_LANDING:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		case Nero::ANI_JUMP_LANDING:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		default:
+			if (Nero::Dir_Right == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+				m_pNero.lock()->SetRotationAngle(90.f);
+			}
+			break;
+		}
+	}
+	else
+	{
+		NeroState::SetCbsIdle();
 		if (Nero::Dir_Right == NeroPreDir)
 		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->ChangeAnimation("Cbs_RunStartFront", false, Nero::ANI_CBS_RUNSTART0);
 		}
 		else
 		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
+			m_pNero.lock()->ChangeAnimation("Cbs_RunStart90", false, Nero::ANI_CBS_RUNSTART90);
 			m_pNero.lock()->SetRotationAngle(90.f);
 		}
-		break;
-	case Nero::ANI_IDLE_BATTLE:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_END:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2_END:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_SHUFFLE:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_COMBOD4:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_RUNSTOP:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_IDLE:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_UP:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_DOWN:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_WIRE_SNATCH_PULL:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_COMBOA4:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Right != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(90.f);
-		break;
-	case Nero::ANI_DASHSTOP:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_JUMP_FRONT_LANDING:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	case Nero::ANI_JUMP_LANDING:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
-	default:
-		if (Nero::Dir_Right == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart90", false, Nero::ANI_RUNSTART90);
-			m_pNero.lock()->SetRotationAngle(90.f);
-		}
-		break;
 	}
 
 	if (Nero::Dir_Right != NeroPreDir)
@@ -1886,7 +2123,10 @@ HRESULT RunStartRight::StateUpdate(const float _fDeltaTime)
 	}
 	else
 	{
-		m_pFSM->ChangeState(NeroFSM::IDLE);
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 		m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	}
 
@@ -1914,192 +2154,207 @@ HRESULT RunStart180::StateEnter()
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
 
 
-
-	switch (CurAnimationIndex)
+	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
-	case Nero::ANI_IDLE_NORMAL:
+		switch (CurAnimationIndex)
+		{
+		case Nero::ANI_IDLE_NORMAL:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_IDLE_BATTLE:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_END:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_END:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_SHUFFLE:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_COMBOD4:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_RUNSTOP:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_IDLE:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_UP:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_DOWN:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_WIRE_SNATCH_PULL:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_COMBOA4:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			if (Nero::Dir_Back != NeroPreDir)
+				m_pNero.lock()->SetRotationAngle(180.f);
+			break;
+		case Nero::ANI_DASHSTOP:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_JUMP_FRONT_LANDING:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		case Nero::ANI_JUMP_LANDING:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		default:
+			if (Nero::Dir_Back == NeroPreDir)
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			}
+			else
+			{
+				m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+				m_pNero.lock()->SetRotationAngle(180.f);
+			}
+			break;
+		}
+	}
+	else
+	{
+	NeroState::SetCbsIdle();
 		if (Nero::Dir_Back == NeroPreDir)
 		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->ChangeAnimation("Cbs_RunStartStart", false, Nero::ANI_CBS_RUNSTART0);
 		}
 		else
 		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
+			m_pNero.lock()->ChangeAnimation("Cbs_RunStart180", false, Nero::ANI_CBS_RUNSTART180);
 			m_pNero.lock()->SetRotationAngle(180.f);
 		}
-		break;
-	case Nero::ANI_IDLE_BATTLE:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_END:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2_END:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_SHUFFLE:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_COMBOD4:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_RUNSTOP:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_IDLE:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_UP:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_DOWN:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_WIRE_SNATCH_PULL:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_COMBOA4:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		if (Nero::Dir_Back != NeroPreDir)
-			m_pNero.lock()->SetRotationAngle(180.f);
-		break;
-	case Nero::ANI_DASHSTOP:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_JUMP_FRONT_LANDING:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	case Nero::ANI_JUMP_LANDING:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
-	default:
-		if (Nero::Dir_Back == NeroPreDir)
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		}
-		else
-		{
-			m_pNero.lock()->ChangeAnimation("RunStart180", false, Nero::ANI_RUNSTART180);
-			m_pNero.lock()->SetRotationAngle(180.f);
-		}
-		break;
 	}
 
 	if (Nero::Dir_Back != NeroPreDir)
@@ -2128,7 +2383,10 @@ HRESULT RunStart180::StateUpdate(const float _fDeltaTime)
 	}
 	else
 	{
-		m_pFSM->ChangeState(NeroFSM::IDLE);
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 		m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	}
 	return S_OK;
@@ -2155,19 +2413,23 @@ HRESULT RunLoop::StateEnter()
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 
-
-	switch (CurAnimationIndex)
+	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
-	case Nero::ANI_RUNSTART_FROM_COMBOA1:
-		m_pNero.lock()->ChangeAnimation("RunLoop_From_ComboA1", true, Nero::ANI_RUNLOOP_FROM_COMBOA1);
-		break;
-	case Nero::ANI_RUNSTART_FROM_COMBOA2:
-		m_pNero.lock()->ChangeAnimation("RunLoop_From_ComboA1", true, Nero::ANI_RUNLOOP_FROM_COMBOA1);
-		break;
-	default:
-		m_pNero.lock()->ChangeAnimation("RunLoop", true, Nero::ANI_RUNLOOP);
-		break;
+		switch (CurAnimationIndex)
+		{
+		case Nero::ANI_RUNSTART_FROM_COMBOA1:
+			m_pNero.lock()->ChangeAnimation("RunLoop_From_ComboA1", true, Nero::ANI_RUNLOOP_FROM_COMBOA1);
+			break;
+		case Nero::ANI_RUNSTART_FROM_COMBOA2:
+			m_pNero.lock()->ChangeAnimation("RunLoop_From_ComboA1", true, Nero::ANI_RUNLOOP_FROM_COMBOA1);
+			break;
+		default:
+			m_pNero.lock()->ChangeAnimation("RunLoop", true, Nero::ANI_RUNLOOP);
+			break;
+		}
 	}
+	else
+		m_pNero.lock()->ChangeAnimation("Cbs_RunLoop", true, Nero::ANI_CBS_RUNLOOP);
 
 	
 
@@ -2192,11 +2454,16 @@ HRESULT RunLoop::StateUpdate(const float _fDeltaTime)
 		//키입력이 특정 시간이 넘었다
 		//-> 그러면 대쉬 루프로 변환하고
 		//칼들고 달리고있었으면 칼 집어넣고
-		KeyInput_Run(NeroFSM::RUNLOOP);
-		m_fRequireTimeForDash += _fDeltaTime;
-		if (m_fRequireTimeForDash >= 1.2f 
-			&& Nero::ANI_RUNLOOP == m_pNero.lock()->Get_CurAnimationIndex())
-			m_pFSM->ChangeState(NeroFSM::DASHLOOP);
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+		{
+			KeyInput_Run(NeroFSM::RUNLOOP);
+			m_fRequireTimeForDash += _fDeltaTime;
+			if (m_fRequireTimeForDash >= 1.2f
+				&& Nero::ANI_RUNLOOP == m_pNero.lock()->Get_CurAnimationIndex())
+				m_pFSM->ChangeState(NeroFSM::DASHLOOP);
+		}
+		else
+			KeyInput_Cbs_Run();
 	}
 	else
 	{
@@ -2233,85 +2500,93 @@ HRESULT RunStartFront::StateEnter()
 	m_pNero.lock()->SetAngleFromCamera();
 
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
-
-	switch (CurAnimationIndex)
+	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
-	case Nero::ANI_IDLE_NORMAL:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_IDLE_BATTLE:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false,Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA1_END:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-		break;
-	case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-		break;												 
-	case Nero::ANI_IDLE_FROM_COMBOA2_END:					 
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-		break;
-	case Nero::ANI_SHUFFLE:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-		break;
-	case Nero::ANI_RUNSTOP:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_OVERTURE_IDLE:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_OVERTURE_SHOOT:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_UP:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_OVERTURE_SHOOT_DOWN:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_WIRE_SNATCH_PULL:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_DASHSTOP:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_JUMP_LANDING:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	case Nero::ANI_JUMP_FRONT_LANDING:
-		m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-		break;
-	default:
-		m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-		break;
+		switch (CurAnimationIndex)
+		{
+		case Nero::ANI_IDLE_NORMAL:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_IDLE_BATTLE:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA1_END:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_LOOP:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+			break;
+		case Nero::ANI_IDLE_FROM_COMBOA2_END:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+			break;
+		case Nero::ANI_SHUFFLE:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA2", false, Nero::ANI_RUNSTART_FROM_COMBOA2);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+			break;
+		case Nero::ANI_RUNSTOP:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_OVERTURE_IDLE:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_OVERTURE_SHOOT:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_UP:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_OVERTURE_SHOOT_DOWN:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_WIRE_SNATCH_PULL:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_DASHSTOP:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_JUMP_LANDING:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		case Nero::ANI_JUMP_FRONT_LANDING:
+			m_pNero.lock()->ChangeAnimation("RunStart0", false, Nero::ANI_RUNSTART0);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+			break;
+		default:
+			m_pNero.lock()->ChangeAnimation("RunStart_From_ComboA1", false, Nero::ANI_RUNSTART_FROM_COMBOA1);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+			break;
+		}
+	}
+	else
+	{
+		//단테 달리기로 바꾸기
+		NeroState::SetCbsIdle();
+		m_pNero.lock()->ChangeAnimation("Cbs_RunStartFront", false, Nero::ANI_CBS_RUNSTART0);
 	}
 	
 
@@ -2342,7 +2617,10 @@ HRESULT RunStartFront::StateUpdate(const float _fDeltaTime)
 	}
 	else
 	{
-		m_pFSM->ChangeState(NeroFSM::IDLE);
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 	}
 
 	return S_OK;
@@ -2368,10 +2646,10 @@ HRESULT RunStop::StateEnter()
 	//상태에 따라서
 	UINT CurWeaponIndex = m_pNero.lock()->Get_CurWeaponIndex();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
-	switch (CurWeaponIndex)
+
+	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
-	case Nero::NeroCom_RedQueen:
-		if(Nero::ANI_RUNLOOP_FROM_COMBOA1 == CurAnimationIndex)
+		if (Nero::ANI_RUNLOOP_FROM_COMBOA1 == CurAnimationIndex)
 			m_pNero.lock()->ChangeAnimation("Idle_From_ComboA1_End", false, Nero::ANI_IDLE_FROM_COMBOA1_END);
 		else if (Nero::ANI_RUNSTART_FROM_COMBOA1 == CurAnimationIndex)
 		{
@@ -2383,17 +2661,9 @@ HRESULT RunStop::StateEnter()
 		}
 		else
 			m_pNero.lock()->ChangeAnimation("RunStop", false, Nero::ANI_RUNSTOP);
-		break;
-	case Nero::NeroCom_Cbs_Short:
-		m_pNero.lock()->ChangeAnimation("Cbs_RunStop", false, Nero::ANI_CBS_RUNSTOP);
-		break;
-	case Nero::NeroCom_Cbs_Middle:
-		m_pNero.lock()->ChangeAnimation("Cbs_RunStop", false, Nero::ANI_CBS_RUNSTOP);
-		break;
-	case Nero::NeroCom_Cbs_Long:
-		m_pNero.lock()->ChangeAnimation("Cbs_RunStop", false, Nero::ANI_CBS_RUNSTOP);
-		break;
 	}
+	else
+		m_pNero.lock()->ChangeAnimation("Cbs_RunStop", false, Nero::ANI_CBS_RUNSTOP);
 	
 
 	return S_OK;
@@ -2412,39 +2682,26 @@ HRESULT RunStop::StateUpdate(const float _fDeltaTime)
 	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
-	UINT CurWeaponIndex = m_pNero.lock()->Get_CurWeaponIndex();
 	m_pNero.lock()->DecreaseDistance(OGDistance, _fDeltaTime);
-	if (0.5f <= fCurrAnimationTime)
+	if (0.5f <= fCurrAnimationTime && Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
-		switch (CurWeaponIndex)
-		{
-		case Nero::NeroCom_RedQueen:
-			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
-			break;
-		case Nero::NeroCom_Cbs_Short:
-			break;
-		case Nero::NeroCom_Cbs_Middle:
-			break;
-		case Nero::NeroCom_Cbs_Long:
-			break;
-		}
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 	}
 	if (0.57f <= fCurrAnimationTime)
 	{
-		NeroState::KeyInput_Idle(NeroFSM::RUNSTOP);
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			NeroState::KeyInput_Idle(NeroFSM::RUNSTOP);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 	}
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
-		float fCurrAnimationTime2 = m_pNero.lock()->Get_PlayingTime();
-		switch (CurWeaponIndex)
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 		{
-		case Nero::RQ:
 			m_pFSM->ChangeState(NeroFSM::IDLE);
-			break;
-		case Nero::Cbs:
-			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
-			break;
 		}
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 	}
 
 	return S_OK;
@@ -6439,7 +6696,7 @@ HRESULT Cbs_Idle::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Cbs_Idle", true, Nero::ANI_CBS_IDLE);
-	NeroState::SetCbsIdle();
+	m_pNero.lock()->SetCbsIdle();
 	return S_OK;
 }
 
@@ -6590,7 +6847,10 @@ HRESULT Cbs_ComboA3::StateUpdate(const float _fDeltaTime)
 	if (0.3f <= fCurrAnimationTime && fCurrAnimationTime <= 0.4f)
 		NeroState::KeyInput_Cbs_Idle(NeroFSM::CBS_COMBOA4);
 	else if (m_pNero.lock()->IsAnimationEnd())
+	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
 
 	if (0.81f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
@@ -6642,7 +6902,10 @@ HRESULT Cbs_ComboA4::StateUpdate(const float _fDeltaTime)
 		NeroState::KeyInput_Cbs_Idle(NeroFSM::CBS_COMBOA5);
 
 	else if (m_pNero.lock()->IsAnimationEnd())
+	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
 
 	if (0.81f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
@@ -6701,7 +6964,10 @@ HRESULT Cbs_ComboA5::StateUpdate(const float _fDeltaTime)
 	if (0.83f <= fCurrAnimationTime)
 		NeroState::KeyInput_Cbs_Idle();
 	else if (m_pNero.lock()->IsAnimationEnd())
+	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
 
 	return S_OK;
 }
@@ -7021,6 +7287,9 @@ HRESULT Cbs_SKill_Swing::StateExit()
 HRESULT Cbs_SKill_Swing::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
+
+	if (m_pNero.lock()->IsAnimationEnd())
+		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 	return S_OK;
 }
 
@@ -7469,7 +7738,7 @@ HRESULT Pole_ComboA1::StateEnter()
 {
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Pole_ComboA1", false, Nero::ANI_POLE_COMBOA1);
-
+	m_pNero.lock()->ChangeWeapon(Nero::NeroCom_Cbs_Long);
 	return S_OK;
 }
 
@@ -7483,6 +7752,7 @@ HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
 	if (Input::GetMouse(DIM_M))
 	{
 		if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
@@ -7499,7 +7769,12 @@ HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
+	if (0.71 <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.45 <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA1_End", false, {}, true);
 	return S_OK;
 }
 
@@ -7545,7 +7820,13 @@ HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
+
+	if (0.72 <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.36 <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA2_End", false, {}, true);
 
 	return S_OK;
 }
@@ -7592,7 +7873,13 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
+
+	if (0.72 <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.53 <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA3_End", false, {}, true);
 
 	return S_OK;
 }
@@ -7639,7 +7926,13 @@ HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
+
+	if (0.83 <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.53 <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB1_End", false, {}, true);
 
 	return S_OK;
 }
@@ -7687,7 +7980,13 @@ HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
+
+	if (0.76 <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.59 <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB2_End", false, {}, true);
 
 	return S_OK;
 }
@@ -7734,7 +8033,13 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
+
+	if (0.83 <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.53 <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB3_End", false, {}, true);
 
 	return S_OK;
 }
@@ -7781,7 +8086,13 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
+
+	if (0.81 <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.55 <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB4_End", false, {}, true);
 
 	return S_OK;
 }
@@ -7900,7 +8211,15 @@ HRESULT Pole_WhirlWind_End::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (m_pNero.lock()->IsAnimationEnd())
+	{
 		m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
+
+	if (0.8f <= fCurrAnimationTime)
+		NeroState::SetCbsIdle();
+	else if (0.6f <= fCurrAnimationTime)
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_Flame_WhirlWInd_Club_Finish", false, {}, true);
 
 	return S_OK;
 }

@@ -69,24 +69,6 @@ UINT Cbs_Short::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
-	if (Input::GetKey(DIK_Y))
-	{
-		m_vecParentMat[1] = m_pNero.lock()->Get_BoneMatrixPtr("R_WeaponHand");
-	}
-	if(Input::GetKey(DIK_U))
-		m_vecParentMat[1] = m_pNero.lock()->Get_BoneMatrixPtr("L_WeaponHand");
-	if (Input::GetKey(DIK_I))
-		m_vecParentMat[1] = m_pNero.lock()->Get_BoneMatrixPtr("WeaponConst");
-
-	//if (Input::GetKey(DIK_Y))
-	//{
-	//	m_vTest = m_pNero.lock()->Get_NeroBoneWorldPos("R_WeaponHand");
-	//}
-	//if (Input::GetKey(DIK_U))
-	//	m_vTest = m_pNero.lock()->Get_NeroBoneWorldPos("L_WeaponHand");
-	//if (Input::GetKey(DIK_I))
-	//	m_vTest = m_pNero.lock()->Get_NeroBoneWorldPos("WeaponConst");
-
 	return 0;
 }
 
@@ -246,7 +228,7 @@ void Cbs_Short::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Cerberos\\Cbs_Short.fbx");
-	//m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\Wire_Arm.Animation");
+	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Cerberos\\Cbs_Short_Ani");
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
 }

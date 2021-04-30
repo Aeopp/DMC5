@@ -700,7 +700,7 @@ void Nero::SetCbsIdle()
 	m_pCbsMiddle.lock()->SetActive(false);
 	m_pCbsShort.lock()->SetActive(true);
 	m_pCbsShort.lock()->SetWeaponState(Nero::WS_Idle);
-	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true, {},true);
+	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
 }
 
 void Nero::CheckAutoRotate()
@@ -932,7 +932,7 @@ void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, co
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
 }
 
-void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify, const bool bOverlap)
 {
 	switch (_eNeroComID)
 	{
@@ -957,11 +957,11 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 		break;
 	case Nero::NeroCom_Cbs_Short:
 		ChangeWeapon(Nero::NeroCom_Cbs_Short);
-		m_pCbsShort.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		m_pCbsShort.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify, bOverlap);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
 		ChangeWeapon(Nero::NeroCom_Cbs_Middle);
-		m_pCbsMiddle.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		m_pCbsMiddle.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify, bOverlap);
 		break;
 	case Nero::NeroCom_End:
 		break;

@@ -30,7 +30,7 @@ HRESULT Cbs_Long::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
-	SetActive(false);
+	//SetActive(false);
 	return S_OK;
 }
 
@@ -69,6 +69,7 @@ UINT Cbs_Long::Update(const float _fDeltaTime)
 	m_pMesh->UpdateToRootMatricies();
 	m_pMesh->VTFUpdate();
 
+	SetActive(true);
 	return 0;
 }
 
@@ -80,9 +81,11 @@ UINT Cbs_Long::LateUpdate(const float _fDeltaTime)
 
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
 
+	Matrix RotX;
+	D3DXMatrixRotationX(&RotX, D3DXToRadian(-90));
 	if (nullptr != m_pParentMat)
 	{
-		FinalWorld = *m_pParentMat * ParentWorldMatrix;
+		FinalWorld = RotX * *m_pParentMat * ParentWorldMatrix;
 		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
 	}
 
@@ -128,6 +131,10 @@ void Cbs_Long::RenderReady()
 
 void Cbs_Long::Editor()
 {
+	Unit::Editor();
+	if (bEdit)
+	{
+	}
 }
 
 void Cbs_Long::RenderInit()
@@ -137,7 +144,7 @@ void Cbs_Long::RenderInit()
 
 	ENGINE::RenderProperty _InitRenderProp;
 
-	_InitRenderProp.bRender = false;
+	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
 		{"gbuffer_dsSK",

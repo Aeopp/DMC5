@@ -27,7 +27,7 @@ public:
 	virtual void OnTriggerExit(std::weak_ptr<GameObject> _pOther) override;
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 public:
 	virtual std::string GetName() override;
 	float Get_PlayingTime();

@@ -30,7 +30,7 @@ HRESULT Cbs_Middle::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
-	SetActive(false);
+	//SetActive(false);
 
 	return S_OK;
 }
@@ -110,9 +110,9 @@ void Cbs_Middle::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
-void Cbs_Middle::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+void Cbs_Middle::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify,const bool bOverlap)
 {
-	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
+	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify,1.f,1.f,bOverlap);
 }
 
 std::string Cbs_Middle::GetName()
@@ -218,7 +218,7 @@ void Cbs_Middle::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Cerberos\\Cbs_Middle.fbx");
-	//m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\Wire_Arm.Animation");
+	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Cerberos\\Cbs_Middle_Ani");
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
 }

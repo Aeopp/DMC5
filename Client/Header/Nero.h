@@ -219,6 +219,12 @@ public:
 		ANI_EM5000_BUSTER_SWING,
 		ANI_EM5000_BUSTER_SWING_LOOP,
 		ANI_EM5000_BUSTER_FINISH,
+		ANI_CBS_RUNLOOP,
+		ANI_CBS_RUNSTART90,
+		ANI_CBS_RUNSTART180,
+		ANI_CBS_RUNSTART270,
+		ANI_CBS_RUNSTART0,
+		ANI_CBS_DASH,
 		ANI_END
 	};
 
@@ -375,7 +381,7 @@ public:
 	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
-	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
 public:
 	virtual HRESULT Ready() override;

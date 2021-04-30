@@ -167,7 +167,10 @@ private:
 inline float FMath::MaxScala(const Vector3& Lhs)
 {
 	return (std::max)({ Lhs.x,Lhs.y,Lhs.z });
-}
+};
+
+
+
 inline void FMath::DebugPrintMatrix(const Matrix& _Matrix)
 {
 	for (uint32 Row = 0u; Row < 4u; ++Row)
