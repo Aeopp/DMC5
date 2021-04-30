@@ -28,6 +28,14 @@ private:
 	IDirect3DIndexBuffer9*  IdxBuffer{ nullptr };
 	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
 	IDirect3DDevice9* Device{ nullptr };
+
+	Vector3 LowOffset{ 0.f,0.f,0.f};
+	Vector3 HighOffset{ 0.f,0.f,0.f };
+
+	std::vector<Vertex::Index32> _IdxLog{};
+	std::vector<Vertex::TrailVertex> _VtxLog{};
+
+
 	TrailDesc _Desc{};
 	/*uint32 IdxSize;
 	D3DFORMAT IdxFmt;*/

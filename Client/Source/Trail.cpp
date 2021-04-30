@@ -92,11 +92,12 @@ void Trail::RenderInit()
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = 10;
+	// 반드시 짝수로 매칭 . 
 	_Desc.TriCnt = 8;
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 	_Desc.NewVtxCnt = 0;
-	_Desc.UpdateCycle = 0.2f;
+	_Desc.UpdateCycle = 0.05f;
 
 	Device = g_pDevice;
 
@@ -213,11 +214,10 @@ UINT Trail::Update(const float _fDeltaTime)
 	 if (_Desc.CurUpdateCycle < 0.0f)
 	// if(true ) 
 	{
-		_Desc.CurUpdateCycle += _Desc.UpdateCycle;
-
+		 _Desc.CurUpdateCycle += _Desc.UpdateCycle;
 		/*
-		1 3 5 7 9 .......
-		0 2 4 8 10 .....
+		1 3 5 7 9 11.......
+		0 2 4 6 8 10 .....
 
 		1번 삼각형
 		1 →  3
@@ -230,32 +230,46 @@ UINT Trail::Update(const float _fDeltaTime)
 		0 ← 2
 		*/
 
-		Vertex::Index32* IdxPtr{ nullptr };
+
+		 Vertex::Index32* IdxPtr{ nullptr };
 		IdxBuffer->Lock(0, 0, (void**)&IdxPtr, 0);
+
+		_IdxLog.resize(_Desc.TriCnt);
 		for (uint32 i = 0; i < _Desc.TriCnt; i += 2)
 		{
 			IdxPtr[i]._0 = i;
 			IdxPtr[i]._1 = i + 1;
 			IdxPtr[i]._2 = i + 3;
 
+			_IdxLog[i] = IdxPtr[i];
+
 			IdxPtr[i + 1]._0 = i;
-			IdxPtr[i + 1]._0 = i + 3;
-			IdxPtr[i + 1]._0 = i + 2;
+			IdxPtr[i + 1]._1 = i + 3;
+			IdxPtr[i + 1]._2 = i + 2;
+
+			_IdxLog[i + 1] = IdxPtr[i + 1];
 		}
 		IdxBuffer->Unlock();
+
+
 
 		Vertex::TrailVertex* VtxPtr{};
 		VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
 		// 최대 버텍스 카운트를 초과한 경우 .
-		if (_Desc.NewVtxCnt >= _Desc.VtxCnt)
+
+		if (_Desc.NewVtxCnt > _Desc.VtxCnt)
 		{
 			static constexpr uint32 RemoveCount = 2;
 			_Desc.NewVtxCnt -= RemoveCount;
+			_VtxLog.resize(_Desc.NewVtxCnt);
 
 			for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 			{
 				VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
 				VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
+
+				_VtxLog[i].Location = VtxPtr[i].Location;
+				_VtxLog[i + 1].Location = VtxPtr[i + 1].Location;
 			}
 		}
 
@@ -265,17 +279,18 @@ UINT Trail::Update(const float _fDeltaTime)
 			if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
 				RQ)
 			{
-				static const Vector3 Identity{ 1.f,1.f,1.f };
+				const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
 
-				auto Low = RQ->Get_BoneMatrixPtr("_000");
-				const Vector3 LowPos = FMath::Mul(Identity, *Low);
+				auto Low = RQ->Get_BoneMatrixPtr("_000") ;
+
+				const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
 
 				auto High = RQ->Get_BoneMatrixPtr("_001");
-				const Vector3 HighPos = FMath::Mul(Identity, *High);
+				const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
 
 				VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
 				VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
-				_RenderUpdateInfo.World = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
+				_RenderUpdateInfo.World = FMath::Identity();
 			}
 		};
 
@@ -321,6 +336,29 @@ void Trail::Editor()
 				PlayStart();
 			}
 
+			if (_VtxLog.empty() == false)
+			{
+				for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+				{
+					ImGui::Text("Vtx %d : %9.6f %9.6f %9.6f", i,
+						_VtxLog[i].Location.x, _VtxLog[i].Location.y, _VtxLog[i].Location.z);
+				}
+			}
+			
+			if (_IdxLog.empty() == false)
+			{
+				for (int32 i = 0; i < _Desc.TriCnt; ++i)
+				{
+					ImGui::Text("Idx %d : %d %d %d", i,
+						_IdxLog[i]._0, _IdxLog[i]._1, _IdxLog[i]._2);
+				}
+			}
+
+			ImGui::SliderFloat3("LowOffset", LowOffset, -100.f, 100.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat3("HighOffset", HighOffset, -100.f, 100.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f", ImGuiSliderFlags_Logarithmic);
+
+			
 	/*		ImGui::Text("T : %2.6f", T);
 			ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f", _Color.x, _Color.y, _Color.z, _Color.w);
 
