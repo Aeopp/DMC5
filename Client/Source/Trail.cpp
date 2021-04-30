@@ -310,6 +310,10 @@ UINT Trail::Update(const float _fDeltaTime)
 			}
 		};
 
+
+
+
+
 		// 여기서 위치 대입 (월드까지 적용해서 대입하거나 쉐이더에서 월드 곱하거나)
 		// VtxPtr[_Desc.NewVtxCnt].Location   = ? 
 		// VtxPtr[_Desc.NewVtxCnt+1].Location = ?;
@@ -324,6 +328,19 @@ UINT Trail::Update(const float _fDeltaTime)
 		}
 
 		_Desc.NewVtxCnt += 2;
+
+		// 곡선 보간 .....
+		for (int32 i = 0; i < _Desc.NewVtxCnt; ++i)
+		{
+			Vector3 VtxPt{}; 
+			D3DXVec3CatmullRom(
+				&VtxPt,
+				&VtxPtr[i - 1].Location,
+				&VtxPtr[i].Location,
+				&VtxPtr[i + 1].Location,
+				&VtxPtr[i + 2].Location,
+				CurveT);
+		}
 
 		VtxBuffer->Unlock();
 	}
