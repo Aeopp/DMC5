@@ -370,6 +370,7 @@
     <ClInclude Include="..\Header\Em5300Rain.h">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Trail.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -571,6 +572,7 @@
     <ClCompile Include="..\Source\Em5300Rain.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Trail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

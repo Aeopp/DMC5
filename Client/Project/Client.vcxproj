@@ -296,7 +296,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
-      <FileType>Document</FileType>
+      <FileType>HLSL</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>

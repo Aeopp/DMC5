@@ -7,7 +7,7 @@
 
 bool NeroState::m_bActive_Gravity = true;
 bool NeroState::m_bCbsIdle = false;
-UINT NeroState::m_iNeroCurWeaponIndex = Nero::NeroCom_Cbs_Short;
+UINT NeroState::m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 NeroState::NeroState(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
 	:FSMState(_pFSM,_nIndex)
 	, m_pNero(_pNero)

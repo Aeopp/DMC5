@@ -23,7 +23,7 @@
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
-	, m_iCurWeaponIndex(NeroCom_Cbs_Short)
+	, m_iCurWeaponIndex(NeroCom_RedQueen)
 	, m_iJumpDirIndex(Basic)
 	, m_fRedQueenGage(0.f)
 	, m_iCurDirIndex(Dir_Front)
@@ -215,7 +215,7 @@ HRESULT Nero::Ready()
 HRESULT Nero::Awake()
 {
 	Unit::Awake();
-	m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+	m_pFSM->ChangeState(NeroFSM::IDLE);
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();

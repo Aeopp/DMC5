@@ -11,6 +11,9 @@ private:
 	// MagicTexture.tga
 	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
 	std::shared_ptr<ENGINE::Texture> _MagicTexture{};
+	std::shared_ptr<ENGINE::Texture> _MagicAlb{};
+	std::shared_ptr<ENGINE::Texture> _MagicMsk{};
+
 	// Sin Graph
 	Vector4 StartColor{ 1.f ,1.f,1.f,1.f };
 	float   StartIntencity{ 0.12916f };

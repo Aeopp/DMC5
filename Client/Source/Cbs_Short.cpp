@@ -31,6 +31,8 @@ HRESULT Cbs_Short::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
+	SetActive(false);
+
 	return S_OK;
 }
 
