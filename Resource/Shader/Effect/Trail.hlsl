@@ -1,8 +1,27 @@
 matrix matWorld;
 matrix ViewProjection;
 uniform float DistortionIntencity;
-uniform float exposure;
+uniform float exposure_corr;
 uniform vector _Color;
+uniform float ColorIntencity;
+
+uniform float SpriteXStart;
+uniform float SpriteXEnd;
+uniform float SpriteYStart;
+uniform float SpriteYEnd;
+
+
+texture SpriteMap;
+sampler Sprite = sampler_state
+{
+    texture = SpriteMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = true;
+};
 
 texture TrailMap;
 sampler Trail = sampler_state
@@ -34,10 +53,17 @@ void PsMain(out float4 Color : COLOR0,
     UV0.x = 1.0f - UV0.x;
     UV1.x = 1.0f - UV1.x;
     
-    Color = tex2D(Trail, UV0);
+    UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
+    UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
+
+    Color = tex2D(Sprite, UV0);
     Color *= _Color;
-    Color.rgb *= 10.f * exposure * 0.002f;    
+    Color.rgb *= ColorIntencity;
+    Color.rgb *= exposure_corr;
+    
     Color1 = tex2D(Trail, UV1);    
+    Color.rgba *= Color1.rgba;
+    
     Color1.rgb *= DistortionIntencity;
 };
 

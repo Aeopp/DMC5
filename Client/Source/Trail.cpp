@@ -120,6 +120,11 @@ void Trail::RenderInit()
 	TrailMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
 
+	FireSpriteMap = Resources::Load<Texture >(
+		  "..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
+
+	SpriteCol = 8;
+	SpriteRow = 8;
 };
 
 void Trail::PlayStart(const std::optional<Vector3>& Location)
@@ -144,8 +149,17 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
+	_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
 	_Info.Fx->SetVector("_Color", &_Color);
-	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity); 
+	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+	_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / SpriteCol);
+	_Info.Fx->SetFloat("SpriteXEnd",  ( SpriteColIdx + 1)/ SpriteCol);
+	_Info.Fx->SetFloat("SpriteYStart",SpriteRowIdx/ SpriteRow );
+	_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
+
+	
 	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
 	Device->SetVertexDeclaration(VtxDecl);
 	Device->SetIndices(IdxBuffer);
@@ -228,11 +242,27 @@ UINT Trail::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
-	_Desc.CurUpdateCycle -= _fDeltaTime;
-	 if (_Desc.CurUpdateCycle < 0.0f)
-	// if(true ) 
+	_Desc.CurVtxUpdateCycle -= _fDeltaTime;
+
+	SpriteCurUpdateCycle -= _fDeltaTime;
+	if (SpriteCurUpdateCycle < 0.0f)
 	{
-		 _Desc.CurUpdateCycle += _Desc.UpdateCycle;
+		++SpriteColIdx;
+		if (SpriteColIdx >= SpriteCol)
+		{
+			SpriteColIdx = 0;
+			++SpriteRowIdx;
+			if (SpriteRowIdx >= SpriteRow)
+			{
+				SpriteRowIdx = 0;
+			}
+		}
+		SpriteCurUpdateCycle += 0.05f;
+	}
+
+	if (_Desc.CurVtxUpdateCycle < 0.0f)
+	{
+		 _Desc.CurVtxUpdateCycle += _Desc.UpdateCycle;
 		/*
 		1 3 5 7 9 11.......
 		0 2 4 6 8 10 .....
@@ -250,20 +280,20 @@ UINT Trail::Update(const float _fDeltaTime)
 
 		 Vertex::Index32* IdxPtr{ nullptr };
 		IdxBuffer->Lock(0, 0, (void**)&IdxPtr, 0);
-		_IdxLog.resize(_Desc.TriCnt);
+		// _IdxLog.resize(_Desc.TriCnt);
 		for (uint32 i = 0; i < _Desc.TriCnt; i += 2)
 		{
 			IdxPtr[i]._0 = i;
 			IdxPtr[i]._1 = i + 1;
 			IdxPtr[i]._2 = i + 3;
 
-			_IdxLog[i] = IdxPtr[i];
+			// _IdxLog[i] = IdxPtr[i];
 
 			IdxPtr[i + 1]._0 = i;
 			IdxPtr[i + 1]._1 = i + 3;
 			IdxPtr[i + 1]._2 = i + 2;
 
-			_IdxLog[i + 1] = IdxPtr[i + 1];
+		 //	_IdxLog[i + 1] = IdxPtr[i + 1];
 		}
 
 		IdxBuffer->Unlock();
@@ -278,15 +308,15 @@ UINT Trail::Update(const float _fDeltaTime)
 		{
 			static constexpr uint32 RemoveCount = 2;
 			_Desc.NewVtxCnt -= RemoveCount;
-			_VtxLog.resize(_Desc.NewVtxCnt);
+		// 	_VtxLog.resize(_Desc.NewVtxCnt);
 
 			for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 			{
 				VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
 				VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
 
-				_VtxLog[i].Location = VtxPtr[i].Location;
-				_VtxLog[i + 1].Location = VtxPtr[i + 1].Location;
+				/*_VtxLog[i].Location = VtxPtr[i].Location;
+				_VtxLog[i + 1].Location = VtxPtr[i + 1].Location;*/
 			}
 		}
 
@@ -309,10 +339,6 @@ UINT Trail::Update(const float _fDeltaTime)
 				_RenderUpdateInfo.World = FMath::Identity();
 			}
 		};
-
-		// 여기서 위치 대입 (월드까지 적용해서 대입하거나 쉐이더에서 월드 곱하거나)
-		// VtxPtr[_Desc.NewVtxCnt].Location   = ? 
-		// VtxPtr[_Desc.NewVtxCnt+1].Location = ?;
 
 		for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 		{
@@ -392,24 +418,13 @@ void Trail::Editor()
 			{
 				PlayStart();
 			}
+			if (ImGui::SmallButton("PlayEnd"))
+			{
+				PlayEnd();
+			}
 
-			if (_VtxLog.empty() == false)
-			{
-				for (int32 i = 0; i < _Desc.VtxCnt; ++i)
-				{
-					ImGui::Text("Vtx %d : %9.6f %9.6f %9.6f", i,
-						_VtxLog[i].Location.x, _VtxLog[i].Location.y, _VtxLog[i].Location.z);
-				}
-			}
-			
-			if (_IdxLog.empty() == false)
-			{
-				for (int32 i = 0; i < _Desc.TriCnt; ++i)
-				{
-					ImGui::Text("Idx %d : %d %d %d", i,
-						_IdxLog[i]._0, _IdxLog[i]._1, _IdxLog[i]._2);
-				}
-			}
+			ImGui::Text("Cur Col Idx : %d", (int32)SpriteColIdx);
+			ImGui::Text("Cur Row Idx : %d", (int32)SpriteRowIdx);
 
 			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
@@ -417,21 +432,10 @@ void Trail::Editor()
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
-
+			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");
 			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);
-
-	/*		ImGui::Text("T : %2.6f", T);
-			ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f", _Color.x, _Color.y, _Color.z, _Color.w);
-
-			ImGui::Checkbox("bWaveDistortion", &bWaveDistortion);
-			ImGui::SliderFloat("WaveScale", &WaveScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("WaveSpeed", &WaveSpeed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("WaveIntencity", &WaveIntencity, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("MinAlpha", &MinAlpha, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("UV_VOffset", &UV_VOffset, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("EndT", &EndT, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);*/
 		}
 		ImGui::EndChild();
 	}
