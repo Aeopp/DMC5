@@ -34,6 +34,7 @@ enum GAMEOBJECTTAG
 	Monster200,
 	Monster0000,
 	Monster5000,
+	Monster5300,
 	Monster1000,
 	MonsterWeapon,
 	UI_BtlPanel,

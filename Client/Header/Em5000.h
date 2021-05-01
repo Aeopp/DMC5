@@ -94,8 +94,11 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
+	void		 Set_Rotate();
 
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
 
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	void		 Turn();
 	void		 Turn_To_Car();
 	void		 Update_Angle_ToCar();
@@ -141,6 +144,7 @@ private:
 	bool		m_bTest = false;
 	std::weak_ptr<Em5000Hand>	m_pHand[2];
 	std::weak_ptr<ENGINE::CapsuleCollider> m_pCollider;
+	weak_ptr<class Liquid> m_pBlood;
 
 };
 

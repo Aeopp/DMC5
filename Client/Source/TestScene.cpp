@@ -26,6 +26,7 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "Em1000.h"
+#include "Em5300.h"
 
 #include <iostream>
 #include <fstream>
@@ -55,8 +56,10 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 	//_Em1000 = AddGameObject<Em1000>();
 	//_Em1000.lock()->Set_Wall(false);
-	AddGameObject<Em5000>();
+	AddGameObject<Em5300>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Car>();
+	//AddGameObject<Em100>();
 
 	//// Wave 1st
 	//{
@@ -165,7 +168,7 @@ HRESULT TestScene::LoadScene()
 	//	pSmoke->PlayStart(10.f);
 	//}
 
-	//// Stage2 길막
+	// Stage2 길막
 	//m_vecQliphothBlock.reserve(4);
 	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
 	//	!ptr.expired())
@@ -214,7 +217,7 @@ HRESULT TestScene::Awake()
 	/*if (nullptr != pPlane)
 		return S_OK;*/
 
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
 	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;

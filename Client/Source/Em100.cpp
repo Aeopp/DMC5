@@ -34,11 +34,11 @@ void Em100::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	if (m_BattleInfo.iHp <= 0.f)
+	/*if (m_BattleInfo.iHp <= 0.f)
 	{
 		m_eState = Dead;
 		m_bIng = true;
-	}
+	}*/
 
 
 

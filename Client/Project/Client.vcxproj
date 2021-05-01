@@ -166,6 +166,10 @@
     <ClInclude Include="..\Header\Em1000Hand.h" />
     <ClInclude Include="..\Header\Em200.h" />
     <ClInclude Include="..\Header\Em200Hand.h" />
+    <ClInclude Include="..\Header\Em5300.h" />
+    <ClInclude Include="..\Header\Em5300Missile.h" />
+    <ClInclude Include="..\Header\Em5300Rain.h" />
+    <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -221,6 +225,10 @@
     <ClCompile Include="..\Source\Em1000Hand.cpp" />
     <ClCompile Include="..\Source\Em200.cpp" />
     <ClCompile Include="..\Source\Em200Hand.cpp" />
+    <ClCompile Include="..\Source\Em5300.cpp" />
+    <ClCompile Include="..\Source\Em5300Missile.cpp" />
+    <ClCompile Include="..\Source\Em5300Rain.cpp" />
+    <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />

@@ -118,6 +118,15 @@ public:
 		Vector3& IntersectPointLhs,
 		Vector3& IntersectPointRhs);
 
+	static inline Vector3 BezierCurve(const Vector3& Start,
+		const Vector3& CP0, const Vector3& CP1,
+		const Vector3& End,const float t);
+
+	static inline Vector3 BezierCurve(const Vector3& Start,
+		const Vector3& CP0,
+		const Vector3& End, const float t);
+
+
 	static inline bool IsRayToSphere(
 		const Ray& Lhs, const Sphere& Rhs,
 		float& t0, float& t1, Vector3& OutIntersectPoint);
@@ -243,6 +252,23 @@ auto& FMath::GetGenerator()
 	return gen;
 };
 
+
+inline Vector3 FMath::BezierCurve
+(   const Vector3& Start,
+	const Vector3& CP0,
+	const Vector3& End, const float t)
+{
+	return FMath::Lerp(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, End, t), t);
+};
+
+inline Vector3 FMath::BezierCurve(
+	const Vector3& Start,
+	const Vector3& CP0, const Vector3& CP1,
+	const Vector3& End,
+	const float t)
+{
+	return BezierCurve(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, CP1, t), FMath::Lerp(CP1, End, t), t);
+};
 
 
 inline Vector2 FMath::ScreenCoordToNDC(const float x, const float y,
@@ -513,13 +539,13 @@ Matrix FMath::WorldMatrix(
 	const Vector3& Scale, const Vector3& Rotation, const Vector3& Location)
 {
 	return FMath::Scale(Scale) * FMath::Rotation(Rotation) * FMath::Translation(Location);
-}
+};
 
 template<typename _Ty>
 inline _Ty FMath::Lerp(const _Ty& Lhs, const _Ty& Rhs, const double t)
 {
 	return Lhs + t * (Rhs - Lhs);
-}
+};
 
 inline Quaternion FMath::SLerp(
 	const  Quaternion& Lhs,

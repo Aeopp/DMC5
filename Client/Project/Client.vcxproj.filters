@@ -154,6 +154,21 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand">
       <UniqueIdentifier>{40f58fc8-669a-4317-8223-c57f12e0cb60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300">
+      <UniqueIdentifier>{23e32db9-0a9f-4310-8475-f20a0fcb6eb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\00.Zako">
+      <UniqueIdentifier>{d0171c98-637c-432c-bc84-1b5ce8a1deab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\01.Rush">
+      <UniqueIdentifier>{15603b03-2209-4816-8c71-1734e0e63408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\02.Missile">
+      <UniqueIdentifier>{a85dc6bf-5b15-43c2-9b20-a11eff265365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain">
+      <UniqueIdentifier>{6656c183-0125-4959-81d9-39d99a9fd3c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -310,6 +325,18 @@
     </ClInclude>
     <ClInclude Include="..\Header\Em200Hand.h">
       <Filter>02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300Rush.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\01.Rush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300Missile.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\02.Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300Rain.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -494,6 +521,18 @@
     </ClCompile>
     <ClCompile Include="..\Source\Em200Hand.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300Rush.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\01.Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300Missile.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\02.Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300Rain.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
