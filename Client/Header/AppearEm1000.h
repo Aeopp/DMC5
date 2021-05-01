@@ -21,9 +21,9 @@ private:
 	Matrix _DustSpriteChildWorldMatrix = Matrix();
 	Vector2 _DustMinTexUV = Vector2(0.f, 0.f);
 	Vector2 _DustMaxTexUV = Vector2(1.f, 1.f);
+	bool _DustNextSpriteStart = false;
 
 	float _SliceAmount = 0.f;	// _DustSpurtTex
-	Vector3 _ExtraColor = Vector3(1.f, 1.f, 1.f);	// 알베도에 곱할 색
 
 private:
 	explicit AppearEm1000() = default;

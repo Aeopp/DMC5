@@ -23,6 +23,7 @@
 #include "QliphothBlock.h"
 #include "StoneDebrisMulti.h"
 #include "AppearEm1000.h"
+#include "StoneDebris.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -141,7 +142,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
 	//AddGameObject<StoneDebrisMulti>();
-	//AddGameObject<AppearEm1000>();
+	//if (auto p = AddGameObject<AppearEm1000>().lock();
+	//	p)
+	//{
+	//	p->SetLoop(true);
+	//	p->PlayStart(1.f);
+	//}
+	AddGameObject<StoneDebris>().lock()->PlayStart();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();

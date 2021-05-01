@@ -40,6 +40,7 @@ void AppearEm1000::Reset()
 	_SliceAmount = 0.f;
 	_DustMinTexUV = Vector2(0.f, 0.f);
 	_DustMaxTexUV = Vector2(0.f, 0.f);
+	_DustNextSpriteStart = false;
 
 	Effect::Reset();
 }
@@ -152,14 +153,17 @@ void AppearEm1000::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)
 		{
-			const Matrix World = _DustSpriteChildWorldMatrix * _RenderUpdateInfo.World;
+			Matrix Temp;
+			D3DXMatrixScaling(&Temp, 0.5f, 0.5f, 0.5f);
+			Temp._42 -= 0.12f;
+			const Matrix World = Temp * _DustSpriteChildWorldMatrix * _RenderUpdateInfo.World;
 			_Info.Fx->SetMatrix("World", &World);
 
 			_Info.Fx->SetTexture("ALB0Map", _DustMultiTex->GetTexture());
 			_Info.Fx->SetBool("_UsingNoise", false);
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
-			_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
+			_Info.Fx->SetFloatArray("_ExtraColor", Vector3(0.349f, 0.302f, 0.27f), 3u);
 			_Info.Fx->SetFloatArray("_MinTexUV", _DustMinTexUV, 2u);
 			_Info.Fx->SetFloatArray("_MaxTexUV", _DustMaxTexUV, 2u);
 
@@ -181,7 +185,7 @@ void AppearEm1000::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			_Info.Fx->SetBool("_UsingNoise", false);
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
-			_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
+			_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 			_Info.Fx->SetFloatArray("_MinTexUV", _DustMinTexUV, 2u);
 			_Info.Fx->SetFloatArray("_MaxTexUV", _DustMaxTexUV, 2u);
 
@@ -204,7 +208,7 @@ HRESULT AppearEm1000::Ready()
 	_DebrisALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_debris_stone00_ALBM.tga");
 	_DebrisNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_debris_stone00_NRMR.tga");
 	_DustMultiTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_dust_multiple_0009_alpg.tga");
-	_DustSpurtTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_dust_spurt_0001_alpg.tga");
+	_DustSpurtTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_impact_directional_0000_alpg.tga");
 
 	D3DXMatrixScaling(&_DebrisChildWorldMatrix, 0.0008f, 0.0008f, 0.0008f);
 	Matrix Temp;
@@ -214,8 +218,6 @@ HRESULT AppearEm1000::Ready()
 
 	D3DXMatrixScaling(&_DustSpriteChildWorldMatrix, 0.003f, 0.003f, 0.003f);
 	_DustSpriteChildWorldMatrix._42 += 0.1f;
-
-	_ExtraColor = Vector3(0.168f, 0.114f, 0.016f);
 
 	_PlayingSpeed = 1.f;
 	_BrightScale = 0.002f;
@@ -247,9 +249,30 @@ UINT AppearEm1000::Update(const float _fDeltaTime)
 	else if (2.f < _AccumulateTime)
 	{
 		_DebrisSubsetIdx += _PlayingSpeed * 50.f * _fDeltaTime;
-		_SliceAmount += 2.f * _fDeltaTime;
-		_DustMinTexUV = Vector2(0.f, 0.f);
-		_DustMaxTexUV = Vector2(1.f, 1.f);
+		_SliceAmount += 0.1f * _fDeltaTime;
+
+		// sprite
+		if (!_DustNextSpriteStart)
+		{
+			_DustSpriteIdx = 0.f;
+			_DustNextSpriteStart = true;
+		}
+
+		_DustSpriteIdx += _PlayingSpeed * 40.f * _fDeltaTime;
+
+		float cx = 8.f;	// °¡·Î °¹¼ö
+		float cy = 8.f; // ¼¼·Î °¹¼ö
+
+		if (cx * cy >= _DustSpriteIdx)
+		{
+			int Frame = static_cast<int>(_DustSpriteIdx);
+			int w = Frame % static_cast<int>(cx);
+			int h = Frame / static_cast<int>(cx);
+			_DustMinTexUV.x = 1.f / cx * static_cast<float>(w);
+			_DustMinTexUV.y = 1.f / cy * static_cast<float>(h);
+			_DustMaxTexUV.x = _DustMinTexUV.x + 1.f / cx;
+			_DustMaxTexUV.y = _DustMinTexUV.y + 1.f / cy;
+		}
 	}
 	else
 	{

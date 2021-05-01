@@ -198,6 +198,7 @@
     <ClInclude Include="..\Header\QliphothBlock.h" />
     <ClInclude Include="..\Header\RedQueen.h" />
     <ClInclude Include="..\Header\AirHike.h" />
+    <ClInclude Include="..\Header\StoneDebris.h" />
     <ClInclude Include="..\Header\StoneDebrisMulti.h" />
     <ClInclude Include="..\Header\TempMap.h" />
     <ClInclude Include="..\Header\TestAnimationObject.h" />
@@ -256,6 +257,7 @@
     <ClCompile Include="..\Source\QliphothBlock.cpp" />
     <ClCompile Include="..\Source\RedQueen.cpp" />
     <ClCompile Include="..\Source\AirHike.cpp" />
+    <ClCompile Include="..\Source\StoneDebris.cpp" />
     <ClCompile Include="..\Source\StoneDebrisMulti.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
     <ClCompile Include="..\Source\TestAnimationObject.cpp" />
