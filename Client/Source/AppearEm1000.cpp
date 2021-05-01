@@ -29,7 +29,7 @@ void AppearEm1000::RenderReady()
 		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
 		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
-		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_DebrisChildWorldMatrix * _RenderUpdateInfo.World, 0.0003f * Scale.x);
 	}
 }
 
