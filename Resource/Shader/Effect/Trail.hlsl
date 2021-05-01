@@ -62,8 +62,6 @@ void PsMain(out float4 Color : COLOR0,
     Color.rgb *= exposure_corr;
     
     Color1 = tex2D(Trail, UV1);    
-    Color.rgba *= Color1.rgba;
-    
     Color1.rgb *= DistortionIntencity;
 };
 

@@ -37,22 +37,21 @@ private:
 	float SpriteColIdx = 0.f;
 
 	float SpriteCurUpdateCycle = 0.0f;
-	float SpriteUpdateCycle = 0.05f;
+	float SpriteUpdateCycle = 0.1f;
 
 	Vector3 LowOffset{ 0.f,0.f,21.f};
 	Vector3 HighOffset{ 0.f,0.f,-100.f };
 
 	Vector4 _Color{ 1.f,1.f,1.f,1.f};
-	/*std::vector<Vertex::Index32> _IdxLog{};
-	std::vector<Vertex::TrailVertex> _VtxLog{};*/
 	float DistortionIntencity = 0.01f;
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
-	float ColorIntencity = 1.f; 
-	float SpriteUpdateTime = 0.0f;
-
+	float ColorIntencity = 1.f;
 	TrailDesc _Desc{};
 	float     T = 0.0f;
+
+	std::vector<Vertex::Index32> _IdxLog{};
+	std::vector<Vertex::TrailVertex> _VtxLog{};
 private:
 	explicit Trail()  ;
 	virtual ~Trail() = default;
@@ -77,6 +76,12 @@ public:
 	void PlayStart(const std::optional<Vector3>& Location = std::nullopt);
 	void PlayEnd();
 private:
+	void SpriteUpdate(const float DeltaTime);
+	void BufferUpdate(const float DeltaTime);
+	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
+	void VtxUVCalc(Vertex::TrailVertex* const VtxPtr);
+	void VertexBufUpdate();
+	void IndexBufUpdate();
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);

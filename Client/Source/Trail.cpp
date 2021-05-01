@@ -43,7 +43,8 @@ Trail* Trail::Create()
 
 void Trail::RenderReady()
 {
-
+	// 이미 버텍스 자체가 월드 위치임 . 
+	_RenderUpdateInfo.World = FMath::Identity();
 };
 
 void Trail::RenderInit()
@@ -87,22 +88,20 @@ void Trail::RenderInit()
 			}
 		}
 	};
-
 	RenderInterface::Initialize(_InitRenderProp);
 
+	const int32 TriCnt = 50;
+
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
-	_Desc.VtxCnt = 26;
+	_Desc.VtxCnt = TriCnt+2;
 	// 반드시 짝수로 매칭 . 
-	_Desc.TriCnt = 24;
+	_Desc.TriCnt = TriCnt;
+	_Desc.DrawTriCnt = TriCnt;
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
+
 	_Desc.UpdateCycle = 0.0f;
-	_Desc.DrawTriCnt = 24;
-
-
-
 	_Desc.NewVtxCnt = 0;
-	
 
 	Device = g_pDevice;
 
@@ -117,6 +116,7 @@ void Trail::RenderInit()
 	(_Desc.IdxSize* _Desc.TriCnt
 		, 0, _Desc.IdxFmt, 
 		D3DPOOL_MANAGED, &IdxBuffer, nullptr);
+
 	TrailMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
 
@@ -134,15 +134,23 @@ void Trail::PlayStart(const std::optional<Vector3>& Location)
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
 	}
 
+	Vertex::TrailVertex* VtxPtr{nullptr};
+	VtxBuffer->Lock(0, 0, (void**)&VtxPtr, NULL);
+	ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
+	VtxBuffer->Unlock();
+
+	_RenderProperty.bRender = true;
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
-	_RenderProperty.bRender = true;
+	_Desc.UpdateCycle = _Desc.CurVtxUpdateCycle;
+	SpriteCurUpdateCycle = SpriteUpdateCycle;
+	SpriteRowIdx = 0;
+	SpriteColIdx = 0;
 };
 
 void Trail::PlayEnd()
 {
 	_RenderProperty.bRender = false;
-	T = 0.0f;
 };
 
 void Trail::RenderTrail(const DrawInfo& _Info)
@@ -158,43 +166,193 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("SpriteXEnd",  ( SpriteColIdx + 1)/ SpriteCol);
 	_Info.Fx->SetFloat("SpriteYStart",SpriteRowIdx/ SpriteRow );
 	_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
-
 	
 	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
 	Device->SetVertexDeclaration(VtxDecl);
 	Device->SetIndices(IdxBuffer);
 	_Info.Fx->CommitChanges();
 	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
-
-	// const Matrix World = _RenderUpdateInfo.World;
-	/*_Info.Fx->SetMatrix("matWorld", &World);
-
-	_Color.w = (FMath::Clamp((EndT - T) / EndT + MinAlpha, 0.0f, 1.f));
-	_Info.Fx->SetVector("_Color", &_Color);
-	_Info.Fx->SetFloat("Intencity", WaveIntencity);
-	_Info.Fx->SetFloat("Progress", T);
-	_Info.Fx->SetFloat("UV_VOffset", UV_VOffset);
-	_Info.Fx->SetBool("bWaveDistortion", bWaveDistortion);
-
-	if (bWaveDistortion)
+}
+void Trail::SpriteUpdate(const float DeltaTime)
+{
+	SpriteCurUpdateCycle -= DeltaTime;
+	if (SpriteCurUpdateCycle < 0.0f)
 	{
-		_Info.Fx->SetTexture("WaveMaskMap", _WaveMask->GetTexture());
+		++SpriteColIdx;
+		if (SpriteColIdx >= SpriteCol)
+		{
+			SpriteColIdx = 0;
+			++SpriteRowIdx;
+			if (SpriteRowIdx >= SpriteRow)
+			{
+				SpriteRowIdx = 0;
+			}
+		}
+		SpriteCurUpdateCycle += 0.05f;
+	}
+}
+void Trail::BufferUpdate(const float DeltaTime)
+{
+	_Desc.CurVtxUpdateCycle -= DeltaTime;
+
+	if (_Desc.CurVtxUpdateCycle < 0.0f)
+	{
+		_Desc.CurVtxUpdateCycle += _Desc.UpdateCycle;
+
+		IndexBufUpdate();
+		VertexBufUpdate();
+	}
+}
+void Trail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr)
+{
+	// 곡선 보간 .....
+	for (int32 i = 0; i < _Desc.NewVtxCnt; i += 2)
+	{
+		{
+			Vector3 VtxPt{};
+
+			const int32 p0 = std::clamp<int32>(i - 2, 0, _Desc.NewVtxCnt - 1);
+			const int32 p1 = std::clamp<int32>(i, 0, _Desc.NewVtxCnt - 1);
+			const int32 p2 = std::clamp<int32>(i + 2, 0, _Desc.NewVtxCnt - 1);
+			const int32 p3 = std::clamp<int32>(i + 4, 0, _Desc.NewVtxCnt - 1);
+
+			D3DXVec3CatmullRom(
+				&VtxPt,
+				&VtxPtr[p0].Location,
+				&VtxPtr[p1].Location,
+				&VtxPtr[p2].Location,
+				&VtxPtr[p3].Location,
+				CurveT);
+
+			VtxPtr[i].Location = VtxPt;
+		}
+
+		{
+			Vector3 VtxPt{};
+
+			const int32 p0 = std::clamp<int32>((i + 1) - 2, 0, _Desc.NewVtxCnt - 1);
+			const int32 p1 = std::clamp<int32>((i + 1), 0, _Desc.NewVtxCnt - 1);
+			const int32 p2 = std::clamp<int32>((i + 1) + 2, 0, _Desc.NewVtxCnt - 1);
+			const int32 p3 = std::clamp<int32>((i + 1) + 4, 0, _Desc.NewVtxCnt - 1);
+
+			D3DXVec3CatmullRom(
+				&VtxPt,
+				&VtxPtr[p0].Location,
+				&VtxPtr[p1].Location,
+				&VtxPtr[p2].Location,
+				&VtxPtr[p3].Location,
+				CurveT);
+
+			VtxPtr[i + 1].Location = VtxPt;
+		}
+	}
+};
+
+void Trail::VertexBufUpdate()
+{
+	Vertex::TrailVertex* VtxPtr{};
+	VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
+	// 최대 버텍스 카운트를 초과한 경우 .
+
+	if (_Desc.NewVtxCnt > _Desc.VtxCnt)
+	{
+		static constexpr uint32 RemoveCount = 2;
+		_Desc.NewVtxCnt -= RemoveCount;
+
+		for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
+		{
+			VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
+			VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
+		}
 	}
 
-	const uint32 Numsubset = _WaveCircle->GetNumSubset();
-	for (uint32 i = 0; i < Numsubset; ++i)
+	if (auto _GameObject = FindGameObjectWithTag(TAG_RedQueen).lock();
+		_GameObject)
 	{
-		if (auto SpSubset = _WaveCircle->GetSubset(i).lock();
-			SpSubset)
+		if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
+			RQ)
 		{
-			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-			{
-				continue;
-			}
+			const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
 
-			SpSubset->Render(_Info.Fx);
-		};
-	};*/
+			auto Low = RQ->Get_BoneMatrixPtr("_000");
+			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
+
+			auto High = RQ->Get_BoneMatrixPtr("_001");
+			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
+
+			VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
+			VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
+		}
+	};
+
+	VtxUVCalc(VtxPtr);
+
+	_Desc.NewVtxCnt += 2;
+
+	VtxSplineInterpolation(VtxPtr);
+
+	if (bEdit)
+	{
+		for (size_t i = 0; i < _VtxLog.size(); ++i)
+		{
+			_VtxLog[i]   = VtxPtr[i];
+		}
+	}
+	VtxBuffer->Unlock();
+}
+void Trail::IndexBufUpdate()
+{
+	/*
+		1 3 5 7 9 11.......
+		0 2 4 6 8 10 .....
+
+		1번 삼각형
+		1 →  3
+		↑ ↙
+		0
+
+		2번 삼각형
+		   3
+		 ↗ ↓
+		0 ← 2
+		*/
+
+	Vertex::Index32* IdxPtr{ nullptr };
+	IdxBuffer->Lock(0, 0, (void**)&IdxPtr, 0);
+
+	for (uint32 i = 0; i < _Desc.TriCnt; i += 2)
+	{
+		IdxPtr[i]._0 = i;
+		IdxPtr[i]._1 = i + 1;
+		IdxPtr[i]._2 = i + 3;
+
+		IdxPtr[i + 1]._0 = i;
+		IdxPtr[i + 1]._1 = i + 3;
+		IdxPtr[i + 1]._2 = i + 2;
+	}
+
+	if (bEdit)
+	{
+		_IdxLog.resize(_Desc.TriCnt);
+		for (size_t i = 0; i < _IdxLog.size(); ++i)
+		{
+			_IdxLog[i] = IdxPtr[i];
+		}
+	}
+
+	IdxBuffer->Unlock();
+};
+
+void Trail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
+{
+	for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
+	{
+		VtxPtr[i + 1].UV0 = { ((float)i / ((float)_Desc.NewVtxCnt - 2)) * UV0Multiply,0.f };
+		VtxPtr[i].UV0 = { ((float)i / ((float)_Desc.NewVtxCnt - 2)) * UV0Multiply ,1.f };
+
+		VtxPtr[i + 1].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2),0.f };
+		VtxPtr[i].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2) ,1.f };
+	}
 };
 
 void Trail::RenderDebug(const DrawInfo& _Info)
@@ -210,14 +368,12 @@ void Trail::RenderDebug(const DrawInfo& _Info)
 
 HRESULT Trail::Ready()
 {
-	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.f,0.f });
 	InitTransform.lock()->SetScale(Vector3{ 1.f,1.f,1.f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
-	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 	return S_OK;
 };
 
@@ -242,158 +398,9 @@ UINT Trail::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
-	_Desc.CurVtxUpdateCycle -= _fDeltaTime;
 
-	SpriteCurUpdateCycle -= _fDeltaTime;
-	if (SpriteCurUpdateCycle < 0.0f)
-	{
-		++SpriteColIdx;
-		if (SpriteColIdx >= SpriteCol)
-		{
-			SpriteColIdx = 0;
-			++SpriteRowIdx;
-			if (SpriteRowIdx >= SpriteRow)
-			{
-				SpriteRowIdx = 0;
-			}
-		}
-		SpriteCurUpdateCycle += 0.05f;
-	}
-
-	if (_Desc.CurVtxUpdateCycle < 0.0f)
-	{
-		 _Desc.CurVtxUpdateCycle += _Desc.UpdateCycle;
-		/*
-		1 3 5 7 9 11.......
-		0 2 4 6 8 10 .....
-
-		1번 삼각형
-		1 →  3
-		↑ ↙
-		0
-
-		2번 삼각형
-		   3
-		 ↗ ↓
-		0 ← 2
-		*/
-
-		 Vertex::Index32* IdxPtr{ nullptr };
-		IdxBuffer->Lock(0, 0, (void**)&IdxPtr, 0);
-		// _IdxLog.resize(_Desc.TriCnt);
-		for (uint32 i = 0; i < _Desc.TriCnt; i += 2)
-		{
-			IdxPtr[i]._0 = i;
-			IdxPtr[i]._1 = i + 1;
-			IdxPtr[i]._2 = i + 3;
-
-			// _IdxLog[i] = IdxPtr[i];
-
-			IdxPtr[i + 1]._0 = i;
-			IdxPtr[i + 1]._1 = i + 3;
-			IdxPtr[i + 1]._2 = i + 2;
-
-		 //	_IdxLog[i + 1] = IdxPtr[i + 1];
-		}
-
-		IdxBuffer->Unlock();
-
-
-
-		Vertex::TrailVertex* VtxPtr{};
-		VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
-		// 최대 버텍스 카운트를 초과한 경우 .
-
-		if (_Desc.NewVtxCnt > _Desc.VtxCnt)
-		{
-			static constexpr uint32 RemoveCount = 2;
-			_Desc.NewVtxCnt -= RemoveCount;
-		// 	_VtxLog.resize(_Desc.NewVtxCnt);
-
-			for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
-			{
-				VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
-				VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
-
-				/*_VtxLog[i].Location = VtxPtr[i].Location;
-				_VtxLog[i + 1].Location = VtxPtr[i + 1].Location;*/
-			}
-		}
-
-		if (auto _GameObject = FindGameObjectWithTag(TAG_RedQueen).lock();
-			_GameObject)
-		{
-			if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
-				RQ)
-			{
-				const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
-
-				auto Low = RQ->Get_BoneMatrixPtr("_000") ;
-				const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
-
-				auto High = RQ->Get_BoneMatrixPtr("_001");
-				const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
-
-				VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-				VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
-				_RenderUpdateInfo.World = FMath::Identity();
-			}
-		};
-
-		for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
-		{
-			VtxPtr[i + 1].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2),0.f };
-			VtxPtr[i].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2) ,1.f };
-
-			VtxPtr[i + 1].UV0 = {  ( (float)i / ((float)_Desc.NewVtxCnt - 2) ) * UV0Multiply,0.f };
-			VtxPtr[i].UV0 = { ( (float)i / ((float)_Desc.NewVtxCnt - 2 ) )* UV0Multiply ,1.f };
-		}
-
-		_Desc.NewVtxCnt += 2;
-
-		// 곡선 보간 .....
-		for (int32 i = 0; i < _Desc.NewVtxCnt; i+=2)
-		{
-			{
-				Vector3 VtxPt{};
-
-				const int32 p0 = std::clamp<int32>(i - 2, 0, _Desc.NewVtxCnt - 1);
-				const int32 p1 = std::clamp<int32>(i, 0, _Desc.NewVtxCnt - 1);
-				const int32 p2 = std::clamp<int32>(i + 2, 0, _Desc.NewVtxCnt - 1);
-				const int32 p3 = std::clamp<int32>(i + 4, 0, _Desc.NewVtxCnt - 1);
-
-				D3DXVec3CatmullRom(
-					&VtxPt,
-					&VtxPtr[p0].Location,
-					&VtxPtr[p1].Location,
-					&VtxPtr[p2].Location,
-					&VtxPtr[p3].Location,
-					CurveT);
-
-				VtxPtr[i].Location = VtxPt;
-			}
-
-			{
-				Vector3 VtxPt{};
-
-				const int32 p0 = std::clamp<int32>((i + 1) - 2, 0, _Desc.NewVtxCnt - 1);
-				const int32 p1 = std::clamp<int32>((i + 1), 0,     _Desc.NewVtxCnt - 1);
-				const int32 p2 = std::clamp<int32>((i + 1) + 2, 0, _Desc.NewVtxCnt - 1);
-				const int32 p3 = std::clamp<int32>((i + 1) + 4, 0, _Desc.NewVtxCnt - 1);
-
-				D3DXVec3CatmullRom(
-					&VtxPt,
-					&VtxPtr[p0].Location,
-					&VtxPtr[p1].Location,
-					&VtxPtr[p2].Location,
-					&VtxPtr[p3].Location,
-					CurveT);
-
-				VtxPtr[i+1].Location = VtxPt;
-			}
-		}
-		VtxBuffer->Unlock();
-	}
+	SpriteUpdate(_fDeltaTime);
+	BufferUpdate(_fDeltaTime);
 
 	return 0;
 }
