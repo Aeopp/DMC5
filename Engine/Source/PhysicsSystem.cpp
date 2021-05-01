@@ -100,7 +100,11 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 #endif
 
 	//Physics
-	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, physx::PxTolerancesScale(), true, m_pPVD);
+	PxTolerancesScale TolerancesScale;
+	// TolerancesScale.length = 1000.f;
+	TolerancesScale.length = 1.f;
+	TolerancesScale.speed = 10.f;
+	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, TolerancesScale, true, m_pPVD);
 	if (nullptr == m_pPhysics)
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to PxCreatePhysics"));
@@ -111,7 +115,7 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, m_pPhysics->getTolerancesScale());
 
 	//Default Material
-	m_pDefaultMaterial = m_pPhysics->createMaterial(1.f, 1.f, 0.f);
+	m_pDefaultMaterial = m_pPhysics->createMaterial(0.7f, 0.7f, 0.f);
 	
 	m_pDispatcher = PxDefaultCpuDispatcherCreate(2);
 
@@ -159,7 +163,7 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 	delete[] ppActors;
 
 	//Simulation ½ÃÀÛ
-	m_pScene->simulate(1.f/60.f);
+	m_pScene->simulate(_fDeltaTime);
 
 	m_bSimulate = true;
 
@@ -264,7 +268,7 @@ HRESULT PhysicsSystem::CreateScene(const UINT _nSceneID)
 
 	//Scene Description
 	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.f, -4.905f, 0.f);
+	sceneDesc.gravity = physx::PxVec3(0.f, -4.45f, 0.f);
 	sceneDesc.cpuDispatcher = m_pDispatcher;
 	sceneDesc.filterShader = contactReportFilterShader;
 
