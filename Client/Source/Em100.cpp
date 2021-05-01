@@ -273,7 +273,36 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_bAir = true;
 			m_pMesh->PlayAnimation("Air_Start", false, {}, 1.f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->PlayingTime()>=0.8f)
+			m_pCollider.lock()->AddForce({ 0.f, 1.8f,0.f });
+
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && 
+				m_pMesh->PlayingTime()>=0.1f&&m_pCollider.lock()->IsGround() )
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->PlayingTime()>=0.8f)
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+
+		}
+		break;
+	case Em100::Hit_Air_Snatch_Start:
+		if (m_bHit == true)
+		{
+			m_bAir = true;
+			m_pMesh->PlayAnimation("Air_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" &&
+				m_pMesh->PlayingTime() >= 0.1f && m_pCollider.lock()->IsGround())
+			{
+				m_eState = Hit_Air_Loop;
+				m_pCollider.lock()->SetGravity(true);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Air_Start" && m_pMesh->PlayingTime() >= 0.8f)
 			{
 				m_eState = Hit_Air_Loop;
 				m_pCollider.lock()->SetGravity(true);
@@ -285,6 +314,9 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Air_Loop", true, {}, 1.f, 20.f, true);
+
+			m_pCollider.lock()->AddForce({ 0.f, 1.8f,0.f });
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Loop" && m_pCollider.lock()->IsGround())
 			{
 				if (fDot < 0)
@@ -650,7 +682,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			{
 				m_bAir = true;
 				m_pCollider.lock()->SetGravity(false);
-				m_eState = Hit_Air_Start;
+				m_eState = Hit_Air_Snatch_Start;
 			}
 			else if (m_bSnatch == false)
 				m_eState = Hit_Snatch_End;

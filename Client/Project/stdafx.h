@@ -43,6 +43,7 @@ enum GAMEOBJECTTAG
 	Eff_AppearGroundMonster,
 	Eff_Smoke,
 	Eff_QliphothBlock,
+	Eff_AirHike,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,

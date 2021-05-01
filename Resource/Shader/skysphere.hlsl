@@ -1,4 +1,35 @@
-uniform sampler2D skytexture : register(s0);
+uniform float Time;
+uniform bool Distortion;
+uniform float noisewrap;
+uniform float timecorr;
+uniform vector DistortionColor;
+uniform float DistortionIntencity;
+
+texture SkyMap;
+sampler Sky = sampler_state
+{
+    texture = SkyMap;
+    minfilter = ANISOTROPIC;
+    magfilter = ANISOTROPIC;
+    mipfilter = ANISOTROPIC;
+    MAXANISOTROPY = 4;
+    addressu = clamp;
+    addressv = clamp;
+    SRGBTEXTURE = false;
+};
+
+texture NoiseMap;
+sampler Noise = sampler_state
+{
+    texture = NoiseMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    addressu= wrap;
+    addressv = wrap;
+    srgbtexture = false;
+};
+
 
 uniform matrix matViewProj;
 uniform matrix matSkyRotation;
@@ -16,16 +47,26 @@ void vs_main(
 
 void ps_main(
 	in float2 tex    : TEXCOORD0,
-	out float4 color : COLOR0)
+	out float4 color : COLOR0 ,
+    out float4 color1 : COLOR1)
 {
-    color = tex2D(skytexture, tex) ;
-
+    // tex += NoiseSample.xy;
+    color = tex2D(Sky, tex);
     color.rgb *= intencity;
+    if (Distortion)
+    {
+        float2 noiseuv = (tex * noisewrap)+(Time * timecorr);
+        float4 NoiseSample = tex2D(Noise, noiseuv);
+        color1 = NoiseSample;
+        
+        color.rgba *= DistortionColor;
+    }
 }
 
 technique sky
 {
     pass p0
+
     {
         zenable = false;
         alphablendenable = false;

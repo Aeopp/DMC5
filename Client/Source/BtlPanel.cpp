@@ -199,7 +199,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _EnemyHPTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.025f);
 			_ImplInfo.Fx->SetFloat("_TotalAccumulateTime", _TotalAccumulateTime);
 
 			_ImplInfo.Fx->SetFloat("_HP_Degree", _TargetHP_Degree);
@@ -258,7 +258,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _TargetCursorTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.02f);
 			_ImplInfo.Fx->SetFloat("_AccumulationTexV", _TotalAccumulateTime * 0.3f);
 
 			for (int i = 0; i < 3; ++i)

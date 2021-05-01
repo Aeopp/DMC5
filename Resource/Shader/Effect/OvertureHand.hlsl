@@ -1,8 +1,8 @@
 matrix World;
 matrix ViewProjection;
 
+float exposure_corr = 1.f;
 float _BrightScale = 1.f;
-
 float _SliceAmount = 0.f;
 float _TexV = 0.5f;  // 0 ~ 1
 
@@ -125,7 +125,7 @@ PsOut PsMain_White(PsIn In)
     clip(NoiseSample);
  
     Out.Color = tex2D(ALB0, NewUV);
-    Out.Color.rgb *= _BrightScale;
+    Out.Color.rgb *= (_BrightScale * exposure_corr);
     Out.Color.a *= 0.4f;    // ¹à±â º¸Á¤
 
     return Out;
@@ -143,7 +143,7 @@ PsOut PsMain_Lightning(PsIn In)
     NoiseSample.rgb -= _SliceAmount;
     clip(NoiseSample);
  
-    Out.Color = float4(tex2D(ALB0, NewUV).rgb * _BrightScale, tex2D(Alpha, NewUV).r);
+    Out.Color = float4(tex2D(ALB0, NewUV).rgb * _BrightScale * exposure_corr, tex2D(Alpha, NewUV).r);
     //Out.Color = float4(In.UV.x, In.UV.y, 0.f, 1.f);
     
     return Out;
@@ -157,7 +157,7 @@ PsOut PsMain_LightningParts(PsIn In)
     float2 NewUV = In.UV;
     NewUV.y = _TexV;
    
-    Out.Color = float4(tex2D(ALB0, NewUV).rgb * _BrightScale, tex2D(Alpha, NewUV).r);
+    Out.Color = float4(tex2D(ALB0, NewUV).rgb * _BrightScale * exposure_corr, tex2D(Alpha, NewUV).r);
     //Out.Color = float4(In.UV.x, In.UV.y, 0.f, 1.f);
     
     return Out;
