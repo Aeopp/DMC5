@@ -1661,6 +1661,7 @@ HRESULT Renderer::UIRender()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("Ortho", &_RenderInfo.Ortho);
+		Fx->SetFloat("exposure_corr",1.f/(exposure *0.002f));
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
@@ -1700,6 +1701,7 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("Ortho", &_RenderInfo.Ortho);
+		Fx->SetFloat("exposure_corr", 1.f / (exposure * 0.002f));
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
