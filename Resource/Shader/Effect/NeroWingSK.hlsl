@@ -1,10 +1,11 @@
-matrix World;
-matrix ViewProjection;
-float3 LightDirection = float3(0.f, -1.f, 0.f);
+uniform matrix World;
+uniform matrix ViewProjection;
+uniform float3 LightDirection = float3(0.f, -1.f, 0.f);
 
-float _BrightScale = 1.f;
-float _SliceAmount = 0.f;
-float _AccumulationTexV = 0.f;
+uniform float exposure_corr = 1.f;
+uniform float _BrightScale = 1.f;
+uniform float _SliceAmount = 0.f;
+uniform float _AccumulationTexV = 0.f;
 
 uniform float2 UVScale = { 1, 1 };
 uniform int nMaxBonesRefPerVtx = 4;
@@ -56,6 +57,7 @@ sampler Gradation = sampler_state
     AddressU = mirror;
     AddressV = mirror;
 };
+
 
 struct VsIn
 {
@@ -202,7 +204,7 @@ PsOut PsMain0(PsIn In)
     float2 newUV = float2(In.UV.y, In.UV.x);
     newUV.x -= _AccumulationTexV;
     
-    Out.Color = float4(float3(0.55f, 0.092f, 0.f) * _BrightScale, tex2D(Gradation, newUV).a * 0.2f);
+    Out.Color = float4(float3(0.55f, 0.092f, 0.f) * _BrightScale * exposure_corr, tex2D(Gradation, newUV).a * 0.2f);
 
     return Out;
 };
@@ -224,13 +226,13 @@ PsOut PsMain1(PsIn In)
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
              
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
-    float4 c1 = float4(Diffuse * ATOSSample.g * _BrightScale * 0.1f * float3(0.106f, 0.f, 0.f), 1.f);
+    float4 c1 = float4(Diffuse * ATOSSample.g * _BrightScale * exposure_corr * 0.1f * float3(0.106f, 0.f, 0.f), 1.f);
     c1.a = saturate(ATOSSample.g);
     
-    float4 c2 = float4(ATOSSample.r * _BrightScale * float3(0.55f, 0.001f, 0.f), 1.f);
+    float4 c2 = float4(ATOSSample.r * _BrightScale * exposure_corr * float3(0.55f, 0.001f, 0.f), 1.f);
     c2.a = saturate(ATOSSample.r);
    
-    float4 c3 = float4(ATOSSample.b * _BrightScale * float3(0.121f, 0.002f, 0.f), 1.f);
+    float4 c3 = float4(ATOSSample.b * _BrightScale * exposure_corr * float3(0.121f, 0.002f, 0.f), 1.f);
     c3.a = saturate(ATOSSample.b);
 
     float crr = saturate(tex2D(Gradation, -float2(0.f, _AccumulationTexV)).r);

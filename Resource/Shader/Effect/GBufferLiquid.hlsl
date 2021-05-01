@@ -7,6 +7,7 @@ uniform matrix matViewProj;
 
 uniform float2 uv = { 1, 1 };
 
+uniform float exposure_corr = 1.f;
 uniform float brightScale = 1.f;
 
 uniform float3 extraColor = { 0.f, 0.f, 0.f };
@@ -66,7 +67,7 @@ void ps_gbuffer_tbn(
     float3 n = normalize(mul(tbn, tnorm));
 
     float4 albm = tex2D(baseColor, tex);
-    color0 = saturate(float4((albm.rgb + extraColor) * brightScale, albm.a));
+    color0 = saturate(float4((albm.rgb + extraColor) * brightScale * exposure_corr, albm.a));
     color1 = float4(n * 0.5f + 0.5f, normap_sample.w);
     color2 = float4(zw.x / zw.y, 0, 0, 0);
 };

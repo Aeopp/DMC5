@@ -171,7 +171,7 @@ void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
 		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
-		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.02f);
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.005f);
 		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
 		SharedSubset->Render(_Info.Fx);
@@ -224,7 +224,7 @@ HRESULT AppearGroundMonster::Ready()
 
 	_PlayingSpeed = 1.f;
 
-	_BrightScale = 0.5f;
+	_BrightScale = 0.25f;
 
 	Reset();
 

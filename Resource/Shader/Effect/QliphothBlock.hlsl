@@ -3,6 +3,7 @@ matrix ViewProjection;
 matrix InverseProjection;
 
 float SoftParticleDepthScale;
+float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
 float _AccumulationTexU = 0.f;
@@ -92,7 +93,7 @@ PsOut PsMain0(PsIn In)
     
     float4 NoiseSample = tex2D(Noise, newUV);
 
-    Out.Color = float4(0.01f * NoiseSample.g * _BrightScale, 0.f, 0.f, saturate(NoiseSample.b * 0.1f + 0.9f) * (1.f - _SliceAmount));
+    Out.Color = float4(0.01f * NoiseSample.g * _BrightScale * exposure_corr, 0.f, 0.f, saturate(NoiseSample.b * 0.1f + 0.9f) * (1.f - _SliceAmount));
     
     // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
@@ -126,7 +127,7 @@ PsOut PsMain1(PsIn In)
     newUV.x += _AccumulationTexU;
     newUV.y += _AccumulationTexV;
     
-    Out.Color = float4(0.055f * tex2D(Noise, newUV).r * _BrightScale, 0.f, 0.f, tex2D(ALP0, In.UV).a * 0.8f * saturate((1.f - _SliceAmount * 2.f)));
+    Out.Color = float4(0.055f * tex2D(Noise, newUV).r * _BrightScale * exposure_corr, 0.f, 0.f, tex2D(ALP0, In.UV).a * 0.4f * saturate((1.f - _SliceAmount * 2.f)));
     
     // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
