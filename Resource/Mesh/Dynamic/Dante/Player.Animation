@@ -154,12 +154,12 @@
             },
             {
                 "Name": "Cbs_SKill_Revolver_Loop",
-                "Acceleration": 1.0,
+                "Acceleration": 1.2,
                 "TransitionTime": 0.10000000149011612
             },
             {
                 "Name": "Cbs_SKill_Revolver_Start",
-                "Acceleration": 1.0,
+                "Acceleration": 1.4,
                 "TransitionTime": 0.10000000149011612
             },
             {

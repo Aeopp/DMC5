@@ -124,6 +124,15 @@ public:
 		ANI_JUMP_LANDING,
 		ANI_JUMP_LANDING_HIGH,
 		ANI_JUMP_TWICE,
+		ANI_CBS_JUMP,
+		ANI_CBS_JUMP_BACK,
+		ANI_CBS_JUMP_BACK_TWICE,
+		ANI_CBS_JUMP_FRONT,
+		ANI_CBS_JUMP_FRONT_LANDING,
+		ANI_CBS_JUMP_FRONT_TWICE,
+		ANI_CBS_JUMP_LANDING,
+		ANI_CBS_JUMP_LANDING_HIGH,
+		ANI_CBS_JUMP_TWICE,
 		ANI_MIDDLE_CBS_BIATTACK,
 		ANI_MIDDLE_CBS_BLITZATTACK,
 		ANI_MIDDLE_CBS_SATELLITE,
@@ -383,6 +392,7 @@ public:
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
+	void ChangeWeaponUI();
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;

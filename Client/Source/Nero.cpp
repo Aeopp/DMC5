@@ -1004,3 +1004,11 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		break;
 	}
 }
+
+void Nero::ChangeWeaponUI()
+{
+	if (Nero::NeroCom_RedQueen == m_iCurWeaponIndex)
+		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+	else
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
+}

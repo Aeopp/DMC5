@@ -95,11 +95,15 @@ UINT Cbs_Long::LateUpdate(const float _fDeltaTime)
 void Cbs_Long::OnEnable()
 {
 	Unit::OnEnable();
+
+	_RenderProperty.bRender = true;
 }
 
 void Cbs_Long::OnDisable()
 {
 	Unit::OnDisable();
+
+	_RenderProperty.bRender = false;
 }
 
 void Cbs_Long::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
