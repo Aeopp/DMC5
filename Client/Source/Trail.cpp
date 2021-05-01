@@ -171,7 +171,6 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("SpriteMap", nullptr);
 	}
 
-
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 

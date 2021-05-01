@@ -371,6 +371,7 @@
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Trail.h" />
+    <ClInclude Include="..\Header\SpriteEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -573,6 +574,7 @@
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Trail.cpp" />
+    <ClCompile Include="..\Source\SpriteEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
