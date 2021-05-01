@@ -91,13 +91,13 @@ void Trail::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
-	_Desc.VtxCnt = 52;
+	_Desc.VtxCnt = 26;
 	// 반드시 짝수로 매칭 . 
-	_Desc.TriCnt = 50;
+	_Desc.TriCnt = 24;
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 	_Desc.UpdateCycle = 0.0f;
-	_Desc.DrawTriCnt = 10;
+	_Desc.DrawTriCnt = 24;
 
 
 
@@ -310,10 +310,6 @@ UINT Trail::Update(const float _fDeltaTime)
 			}
 		};
 
-
-
-
-
 		// 여기서 위치 대입 (월드까지 적용해서 대입하거나 쉐이더에서 월드 곱하거나)
 		// VtxPtr[_Desc.NewVtxCnt].Location   = ? 
 		// VtxPtr[_Desc.NewVtxCnt+1].Location = ?;
@@ -369,9 +365,7 @@ UINT Trail::Update(const float _fDeltaTime)
 
 				VtxPtr[i+1].Location = VtxPt;
 			}
-	
 		}
-
 		VtxBuffer->Unlock();
 	}
 
@@ -422,6 +416,8 @@ void Trail::Editor()
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");
 			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);
