@@ -9,6 +9,9 @@
 #include "Nero.h"
 #include <filesystem>
 #include "Em5000Hand.h"
+#include "Liquid.h"
+
+static std::set<int> NonCullingSubsetIdxSet{ 0,13,14};
 
 void Em5000::Free()
 {
@@ -45,7 +48,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 	//거리가 멀때만 이동 or 회전을 함.
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
-	if (fDir >= 20.f)
+	if (fDir >= 2.f)
 	{
 		if (m_bThrow && m_bIng == false)
 		{
@@ -71,7 +74,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 			return;
 		}
-		if (m_bJumpAttack && fDir >= 25.f && fDir <=30.f)
+		if (m_bJumpAttack && fDir >= 2.5f && fDir <=3.f)
 		{
 			if (m_eState == Move_Start || m_eState == Move_Loop)
 			{
@@ -129,6 +132,20 @@ void Em5000::Fight(const float _fDeltaTime)
 				return;
 			}
 		}
+		if (m_bRushAttack && m_bIng == false)
+		{
+			int iRush = FMath::Random<int>(1, 3);
+
+			if (iRush == 1)
+			{
+				m_bIng = true;
+				Update_Angle();
+				Set_Rotate();
+
+				m_eState = Attack_Rush_Start;
+				return;
+			}
+		}
 	}
 
 
@@ -141,8 +158,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 
 
-	Vector3 vCarDir = m_pTransform.lock()->GetPosition() - m_pCarTrans.lock()->GetPosition();
-	float   fCarDir = D3DXVec3Length(&vCarDir);
+	Vector3 vCarDir(1.f,1.f,1.f); //= m_pTransform.lock()->GetPosition() - m_pCarTrans.lock()->GetPosition();
+	float   fCarDir = 1.f; //= D3DXVec3Length(&vCarDir);
 
 
 	switch (m_eState)
@@ -152,11 +169,32 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_Back_L", false, {}, 1.5f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingTime() >= 0.95f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = Idle;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingTime() >= 0.4f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_Front);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -165,11 +203,32 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_Back_R", false, {}, 1.5f, 20.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->PlayingTime() >= 0.95f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = Idle;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->PlayingTime() >= 0.4f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -197,11 +256,32 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_Hack", false, {}, 1.5f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.95f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = Idle;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.4f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -216,11 +296,31 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_bInteraction = true;
 			}
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Jump_Attack" && m_pMesh->PlayingTime()>=0.98f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Jump_Attack" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bJumpAttack = false;
-				m_eState = Idle;
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Jump_Attack" && m_pMesh->PlayingTime() >= 0.4f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Jump_Attack" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -229,11 +329,32 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_Punch_Twice", false, {}, 1.5f, 50.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.95f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = Idle;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.5f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -244,7 +365,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f, true);
 			
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && fDir <= 25.f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && fDir <= 2.5f)
 				m_eState = Attack_Rush_End;
 
 
@@ -259,7 +380,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 35.f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 3.5f)
 				m_eState = Attack_Rush_End;
 		}
 		break;
@@ -267,13 +388,33 @@ void Em5000::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_Rush_End", false, {}, 1.f, 10.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime()>= 0.95f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bMove = false;
 				m_bRushAttack = false;
-				m_eState = Idle;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime() >= 0.3f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime() >= 0.1f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -281,11 +422,31 @@ void Em5000::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_Side_L", false, {}, 1.f, 20.f, true);
-			if (m_pMesh->IsAnimationEnd() && m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_L")
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_L" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = Idle;	
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_L" && m_pMesh->PlayingTime() >= 0.4f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_L" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -293,11 +454,31 @@ void Em5000::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_Side_R", false, {}, 1.f, 20.f, true);
-			if (m_pMesh->IsAnimationEnd() && m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_R")
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_R" && m_pMesh->IsAnimationEnd())
 			{
+				int iRandom = FMath::Random<int>(1, 4);
+
+				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-				m_eState = Idle;
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_R" && m_pMesh->PlayingTime() >= 0.4f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_R" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+				}
 			}
 		}
 		break;
@@ -328,7 +509,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				if (iRandom == 1)
 				{
 
-					if (m_bRushAttack && fDir >= 15.f)
+					if (m_bRushAttack && fDir >= 1.5f)
 					{
 						m_eState = Attack_Rush_Start;
 						m_bMove = false;
@@ -337,7 +518,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				}
 				else
 				{
-					if (m_bJumpAttack && fDir >= 20.f &&fDir <= 25.f)
+					if (m_bJumpAttack && fDir >= 2.f &&fDir <= 2.5f)
 					{
 						m_eState = Attack_Jump_Attack;
 						m_bMove = false;
@@ -383,13 +564,13 @@ void Em5000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 
 
-			if (fDir <= 30 && fDir >= 25.f && m_bJumpAttack)  
+			if (fDir <= 3 && fDir >= 2.5f && m_bJumpAttack)  
 			{
 				m_eState = Attack_Jump_Attack;
 				m_bMove = false;
 				return;
 			}
-			if (fDir <= 12.f)
+			if (fDir <= 1.2f)
 			{
 				m_bIng = false;
 				m_bMove = false;
@@ -575,15 +756,15 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 			m_fJumpAttackTime = 0.f;
 		}
 	}
-	if (m_bThrow == false)
-	{
-		m_fThrowTime += _fDeltaTime;
-		if (m_fThrowTime >= 20.f)
-		{
-			m_bThrow = true;
-			m_fThrowTime = 0.f;
-		}
-	}
+	//if (m_bThrow == false)
+	//{
+	//	m_fThrowTime += _fDeltaTime;
+	//	if (m_fThrowTime >= 20.f)
+	//	{
+	//		m_bThrow = true;
+	//		m_fThrowTime = 0.f;
+	//	}
+	//}
 	if (m_bBackJump == false)
 	{
 		m_fBackJumpTime += _fDeltaTime;
@@ -606,7 +787,7 @@ HRESULT Em5000::Ready()
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.015,0.015,0.015 });
+	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -616,7 +797,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ 10.f, 5.f, 0.f});
+	m_pTransform.lock()->SetPosition({ -0.2f, 1.f, -0.5f });
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -625,8 +806,8 @@ HRESULT Em5000::Ready()
 HRESULT Em5000::Awake()
 {
 	Unit::Awake();
-	//m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-	//m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
+	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	//
 	//m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
 	//m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
@@ -641,14 +822,18 @@ HRESULT Em5000::Awake()
 		m_pHand[i].lock()->m_pEm5000Mesh = m_pMesh;
 		m_pHand[i].lock()->m_bLeft = (bool)i;
 	}
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
-	m_pCollider.lock()->SetRigid(false);
-	m_pCollider.lock()->SetGravity(false);
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
 	
-	m_pCollider.lock()->SetRadius(6.f);
-	m_pCollider.lock()->SetHeight(8.f);
-	m_pCollider.lock()->SetCenter({ 0.f,6.f,-2.f });
+	m_pCollider.lock()->SetRadius(0.4f);
+	m_pCollider.lock()->SetHeight(0.f);
+	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
 
+	m_pBlood = AddGameObject<Liquid>();
 	return S_OK;
 }
 
@@ -682,6 +867,8 @@ UINT Em5000::Update(const float _fDeltaTime)
 		 D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
 		 D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 		 D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
+
+		 //SpTransform->Translate(DeltaPos * SpTransform->GetScale().x);
 
 		 SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
@@ -734,6 +921,19 @@ void Em5000::OnDisable()
 
 void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	if (!m_pBlood.expired())
+	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetScale(0.008f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
 }
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
@@ -755,10 +955,15 @@ void Em5000::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		if (NonCullingSubsetIdxSet.contains(i))
+		{
+
+		}
+		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 		{
 			continue;
 		}
+
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -780,10 +985,15 @@ void Em5000::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		if (NonCullingSubsetIdxSet.contains(i))
+		{
+
+		}
+		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 		{
 			continue;
 		}
+
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -810,10 +1020,15 @@ void Em5000::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		if (NonCullingSubsetIdxSet.contains(i))
+		{
+
+		}
+		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 		{
 			continue;
 		}
+
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -948,6 +1163,44 @@ void Em5000::Update_Angle()
 		m_fAngleSpeed = fabs(m_fAngleSpeed);
 	else
 		m_fAngleSpeed = -fabs(m_fAngleSpeed);
+}
+
+void Em5000::Set_Rotate()
+{
+	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fRadian), 0.f });
+}
+
+void Em5000::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	Monster::OnCollisionEnter(_pOther);
+}
+
+void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	if (!m_bCollEnable)
+		return;
+	if (m_eState == Dead)
+		return;
+
+	m_bCollEnable = false;
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		//_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
+		//Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		break;
+	case GAMEOBJECTTAG::Overture:
+		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
+		m_bHit = true;
+		break;
+	default:
+		break;
+	}
 }
 
 void Em5000::Turn()

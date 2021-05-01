@@ -9,7 +9,7 @@
 #include "Nero.h"
 #include "RedQueen.h"
 #include "Em100.h"
-#include "Em101.h"
+#include "Em200.h"
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
@@ -29,8 +29,13 @@
 #include "CircleWave.h"
 #include "Trail.h"
 #include "Em1000.h"
+#include "Em5300.h"
+
 #include <iostream>
 #include <fstream>
+#include "Cbs_Long.h"
+#include "Cbs_Middle.h"
+#include "Cbs_Short.h"
 using namespace std;
 
 TestScene::TestScene()
@@ -62,6 +67,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Trail>();
 
 	//AddGameObject<Car>();
+	//AddGameObject<Em100>();
 
 	//// Wave 1st
 	//{
@@ -86,7 +92,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavefirst.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	////// Wave 2nd
+	//// Wave 2nd
 	//{
 	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
@@ -109,7 +115,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	////// Wave 2nd
+	//// Wave 2nd
 	//{
 	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
@@ -138,7 +144,6 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
-	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
 
 	// 수정필요
@@ -240,8 +245,8 @@ HRESULT TestScene::Awake()
 	/*if (nullptr != pPlane)
 		return S_OK;*/
 
-		//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-		//Physics::AddActor(UniqueID, *pPlane);
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }

@@ -51,13 +51,13 @@ HRESULT Em5000Hand::Awake()
 
 	if (m_bLeft)
 	{
-		m_pCollider.lock()->SetCenter({ -1.f, 0.f, -1.f });
-		m_pCollider.lock()->SetRadius(2.f);
+		m_pCollider.lock()->SetCenter({ 0.f, 0.f, 0.f });
+		m_pCollider.lock()->SetRadius(0.15f);
 	}
 	else
 	{
-		m_pCollider.lock()->SetCenter({ 1.f, 0.f, -1.f });
-		m_pCollider.lock()->SetRadius(2.f);
+		m_pCollider.lock()->SetCenter({ 0.f, 0.f, 0.f });
+		m_pCollider.lock()->SetRadius(0.15f);
 	}
 
 	return S_OK;

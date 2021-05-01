@@ -23,9 +23,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+
 
 #ifndef PX_PRISMATICJOINT_H
 #define PX_PRISMATICJOINT_H
@@ -46,15 +47,18 @@ class PxPrismaticJoint;
 /**
 \brief Create a prismatic joint.
 
- \param[in] physics		The physics SDK
- \param[in] actor0		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame0	The position and orientation of the joint relative to actor0
- \param[in] actor1		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame1	The position and orientation of the joint relative to actor1 
+ \param[in] physics the physics SDK
+ \param[in] actor0 an actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+ \param[in] localFrame0 the position and orientation of the joint relative to actor0
+ \param[in] actor1 an actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+ \param[in] localFrame1 the position and orientation of the joint relative to actor1 
 
 @see PxPrismaticJoint
 */
-PxPrismaticJoint*	PxPrismaticJointCreate(PxPhysics& physics, PxRigidActor* actor0, const PxTransform& localFrame0, PxRigidActor* actor1, const PxTransform& localFrame1);
+
+PxPrismaticJoint*	PxPrismaticJointCreate(PxPhysics& physics, 
+										   PxRigidActor* actor0, const PxTransform& localFrame0, 
+										   PxRigidActor* actor1, const PxTransform& localFrame1);
 
 
 /**
@@ -62,6 +66,7 @@ PxPrismaticJoint*	PxPrismaticJointCreate(PxPhysics& physics, PxRigidActor* actor
 
 @see PxPrismaticJoint
 */
+
 struct PxPrismaticJointFlag
 {
 	enum Enum
@@ -72,6 +77,7 @@ struct PxPrismaticJointFlag
 
 typedef PxFlags<PxPrismaticJointFlag::Enum, PxU16> PxPrismaticJointFlags;
 PX_FLAGS_OPERATORS(PxPrismaticJointFlag::Enum, PxU16)
+
 
 /**
  \brief A prismatic joint permits relative translational movement between two bodies along
@@ -84,19 +90,22 @@ PX_FLAGS_OPERATORS(PxPrismaticJointFlag::Enum, PxU16)
 
  @see PxPrismaticJointCreate() PxJoint
 */
+
 class PxPrismaticJoint : public PxJoint
 {
 public:
 	
+
 	/** 
 	\brief returns the displacement of the joint along its axis.
 	*/
-	virtual PxReal			getPosition()	const	= 0;
+
+	virtual PxReal			getPosition()				const				= 0;
 
 	/** 
 	\brief returns the velocity of the joint along its axis
 	*/
-	virtual PxReal			getVelocity()	const	= 0;
+	virtual PxReal			getVelocity()				const				= 0;
 
 	/**
 	\brief sets the joint limit  parameters.
@@ -113,7 +122,8 @@ public:
 
 	@see PxJointLinearLimit getLimit()
 	*/
-	virtual PxJointLinearLimitPair getLimit()	const	= 0;
+	virtual PxJointLinearLimitPair getLimit()			const			= 0;
+
 
 	/**
 	\brief Set the flags specific to the Prismatic Joint.
@@ -124,16 +134,18 @@ public:
 
 	@see PxPrismaticJointFlag setFlag() getFlags()
 	*/
+
 	virtual void					setPrismaticJointFlags(PxPrismaticJointFlags flags) = 0;
 
 	/**
 	\brief Set a single flag specific to a Prismatic Joint to true or false.
 
-	\param[in] flag		The flag to set or clear.
-	\param[in] value	The value to which to set the flag
+	\param[in] flag The flag to set or clear.
+	\param[in] value the value to which to set the flag
 
 	@see PxPrismaticJointFlag, getFlags() setFlags()
 	*/
+
 	virtual void					setPrismaticJointFlag(PxPrismaticJointFlag::Enum flag, bool value) = 0;
 
 	/**
@@ -143,9 +155,10 @@ public:
 
 	@see PxPrismaticJoint::flags, PxPrismaticJointFlag setFlag() setFlags()
 	*/
-	virtual PxPrismaticJointFlags	getPrismaticJointFlags()	const	= 0;
 
-	/**
+	virtual PxPrismaticJointFlags	getPrismaticJointFlags(void)					const	= 0;
+
+		/**
 	\brief Set the linear tolerance threshold for projection.
 
 	If the joint separates by more than this distance along its locked degrees of freedom, the solver 
@@ -164,7 +177,7 @@ public:
 
 	@see getProjectionLinearTolerance()
 	*/
-	virtual void			setProjectionLinearTolerance(PxReal tolerance)	= 0;
+	virtual void			setProjectionLinearTolerance(PxReal tolerance)					= 0;
 
 	/**
 	\brief Get the linear tolerance threshold for projection.
@@ -173,7 +186,8 @@ public:
 
 	@see setProjectionLinearTolerance()
 	*/
-	virtual PxReal			getProjectionLinearTolerance()	const	= 0;
+
+	virtual PxReal			getProjectionLinearTolerance()			const					= 0;
 
 	/**
 	\brief Set the angular tolerance threshold for projection. Projection is enabled if PxConstraintFlag::ePROJECTION
@@ -193,14 +207,15 @@ public:
 
 	@see getProjectionLinearTolerance() PxJoint::setConstraintFlags()
 	*/
-	virtual void			setProjectionAngularTolerance(PxReal tolerance)	= 0;
+
+	virtual void			setProjectionAngularTolerance(PxReal tolerance)					= 0;
 
 	/**
 	\brief Get the angular tolerance threshold for projection.
 
 	@see getProjectionAngularTolerance()
 	*/
-	virtual PxReal			getProjectionAngularTolerance()	const	= 0;
+	virtual PxReal			getProjectionAngularTolerance()			const					= 0;
 
 	/**
 	\brief Returns string name of PxPrismaticJoint, used for serialization

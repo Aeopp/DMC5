@@ -123,13 +123,13 @@ void CollisionCallback::onContact(const physx::PxContactPairHeader& pairHeader, 
 
 void CollisionCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
 {
-	LPPXUSERDATA pUserData[2] = {};
-	std::weak_ptr<Collider> pCollider[2] = {};
-
 	for (UINT i = 0; i < count; ++i)
 	{
-		pUserData[0] = (LPPXUSERDATA)pairs->otherActor->userData;
-		pUserData[1] = (LPPXUSERDATA)pairs->triggerActor->userData;
+		LPPXUSERDATA pUserData[2] = {};
+		std::weak_ptr<Collider> pCollider[2] = {};
+
+		pUserData[0] = (LPPXUSERDATA)pairs[i].otherActor->userData;
+		pUserData[1] = (LPPXUSERDATA)pairs[i].triggerActor->userData;
 
 		//Collider 컴포넌트가 해제되어 pUserData가 nullptr인 경우의 예외처리.
 		if (nullptr == pUserData[0] || nullptr == pUserData[1])

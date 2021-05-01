@@ -5,7 +5,8 @@ USING(ENGINE)
 Subset::Subset(LPDIRECT3DDEVICE9 const _pDevice)
 	: m_pDevice(_pDevice)
 	, m_pVertexBuffer(nullptr)
-	, m_pIndexBuffer(nullptr)
+	, m_pIndexBuffer(nullptr),
+	bRender(true)
 {
 	SafeAddRef(_pDevice);
 }
@@ -64,6 +65,9 @@ Subset* Subset::Create(LPDIRECT3DDEVICE9 const _pDevice)
 
 void Subset::Render(ID3DXEffect*const Fx)
 {
+	if (false == bRender)
+		return;
+
 	if (nullptr == m_pVertexBuffer || nullptr == m_pIndexBuffer)
 		return;
 	if (Fx)

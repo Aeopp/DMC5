@@ -94,7 +94,7 @@ void TestObject::RenderInit()
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
-		{"Debug" ,
+		{"Collider" ,
 		[this](const DrawInfo& _Info)
 		{
 			DrawCollider(_Info);

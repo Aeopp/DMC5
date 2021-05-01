@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -60,8 +60,8 @@ struct PxRigidDynamicLockFlag
 	};
 };
 
-typedef PxFlags<PxRigidDynamicLockFlag::Enum, PxU8> PxRigidDynamicLockFlags;
-PX_FLAGS_OPERATORS(PxRigidDynamicLockFlag::Enum, PxU8)
+typedef PxFlags<PxRigidDynamicLockFlag::Enum, PxU16> PxRigidDynamicLockFlags;
+PX_FLAGS_OPERATORS(PxRigidDynamicLockFlag::Enum, PxU16)
 
 /**
 \brief PxRigidDynamic represents a dynamic rigid simulation object in the physics SDK.
@@ -126,6 +126,88 @@ public:
 	*/
 	virtual		bool				getKinematicTarget(PxTransform& target)	const	= 0;
 
+/************************************************************************************************/
+/** @name Damping
+*/
+
+	/**
+	\brief Sets the linear damping coefficient.
+	
+	Zero represents no damping. The damping coefficient must be nonnegative.
+
+	<b>Default:</b> 0.0
+	
+	\param[in] linDamp Linear damping coefficient. <b>Range:</b> [0, PX_MAX_F32)
+
+	@see getLinearDamping() setAngularDamping()
+	*/
+	virtual		void				setLinearDamping(PxReal linDamp) = 0;
+
+	/**
+	\brief Retrieves the linear damping coefficient.
+
+	\return The linear damping coefficient associated with this actor.
+
+	@see setLinearDamping() getAngularDamping()
+	*/
+	virtual		PxReal				getLinearDamping() const = 0;
+
+	/**
+	\brief Sets the angular damping coefficient.
+	
+	Zero represents no damping.
+	
+	The angular damping coefficient must be nonnegative.
+
+	<b>Default:</b> 0.05
+
+	\param[in] angDamp Angular damping coefficient. <b>Range:</b> [0, PX_MAX_F32)
+
+	@see getAngularDamping() setLinearDamping()
+	*/
+	virtual		void				setAngularDamping(PxReal angDamp) = 0;
+
+	/**
+	\brief Retrieves the angular damping coefficient.
+
+	\return The angular damping coefficient associated with this actor.
+
+	@see setAngularDamping() getLinearDamping()
+	*/
+	virtual		PxReal				getAngularDamping() const = 0;
+
+/************************************************************************************************/
+/** @name Velocity
+*/
+
+	/**
+	\brief Lets you set the maximum angular velocity permitted for this actor.
+	
+	For various internal computations, very quickly rotating actors introduce error 
+	into the simulation, which leads to undesired results.
+
+	With this function, you can set the  maximum angular velocity permitted for this rigid body. 
+	Higher angular velocities are clamped to this value. 
+
+	Note: The angular velocity is clamped to the set value <i>before</i> the solver, which means that
+	the limit may still be momentarily exceeded.
+
+	<b>Default:</b> 7.0
+
+	\param[in] maxAngVel Max allowable angular velocity for actor. <b>Range:</b> [0, PX_MAX_F32)
+
+	@see getMaxAngularVelocity()
+	*/
+	virtual		void				setMaxAngularVelocity(PxReal maxAngVel) = 0;
+
+	/**
+	\brief Retrieves the maximum angular velocity permitted for this actor.
+
+	\return The maximum allowed angular velocity for this actor.
+
+	@see setMaxAngularVelocity
+	*/
+	virtual		PxReal				getMaxAngularVelocity()	const = 0; 
 
 /************************************************************************************************/
 /** @name Sleeping

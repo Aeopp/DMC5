@@ -53,6 +53,8 @@ private:
 		Hit_Air_Snatch_Start,
 		Hit_Snatch_End,
 		Hit_Split_Start,
+		Hit_Air_Buster_Start,
+		Hit_Air_Buster_End,
 		Enter_Ground,
 		State_END
 	};

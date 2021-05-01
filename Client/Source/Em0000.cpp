@@ -31,29 +31,18 @@ Em0000* Em0000::Create()
 
 void Em0000::Fight(const float _fDeltaTime)
 {
-	if (m_bMove == false)
-	{
-		m_fMoveTime += _fDeltaTime;
-		if (m_fMoveTime >= 5.f)
-		{
-			m_bMove = true;
-			m_fMoveTime = 0.f;
-		}
-	}
-	if (m_bAttack == false)
-	{
-		m_fAttackTime += _fDeltaTime;
-		if (m_fAttackTime >= 5.f)
-		{
-			m_bAttack = true;
-			m_fAttackTime = 0.f;
-		}
-	}
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 	
 	/////이놈은 움직임이 한방향 밖에 없어서. 앞으로 갈지 아니면 백스탭 이후에 강한 공격할지
 	//Move가 On일때 1/4 확률로 백스텝을 하고 백스텝을 한 이후에는 바로 달려가면서 강한 공격
+
+	if (m_BattleInfo.iHp <= 0.f)
+	{
+		m_eState = Dead;
+		m_bIng = true;
+	}
+
 
 	if (fDir >= 0.6f)
 	{
@@ -471,6 +460,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			Set_Rotate();
 			m_bDown = false;
+			m_bAir = false;
 			m_pMesh->PlayAnimation("Snatch_Start", false, {}, 1.f, 20.f, true);
 
 			if (m_pPlayer.lock()->GetComponent<ENGINE::CapsuleCollider>().lock()->IsGround() == false
@@ -519,6 +509,27 @@ void Em0000::State_Change(const float _fDeltaTime)
 			}
 		}
 		break;
+	case Em0000::Hit_Air_Buster_Start:
+		if (m_bHit)
+		{
+			m_pCollider.lock()->SetGravity(false);
+			m_pCollider.lock()->SetTrigger(true);
+
+			Update_Angle();
+			Set_Rotate();
+			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_AIR &&
+				m_pPlayer.lock()->Get_PlayingTime()>=0.5f)
+			{
+				m_eState = Hit_Air_Buster_End;
+
+				Vector3 vRot(0.f, 0.f, 0.f);
+				m_pTransform.lock()->SetRotation(vRot);
+				m_pCollider.lock()->SetGravity(true);
+			}
+		}
+		break;
 	case Em0000::Hit_Buster_End:
 		if (m_bHit)
 		{
@@ -529,6 +540,33 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_pCollider.lock()->SetRigid(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_End" && m_pMesh->IsAnimationEnd())
 				m_eState = Prone_Getup;
+		}
+		break;
+	case Em0000::Hit_Air_Buster_End:
+		if (m_bHit)
+		{
+			Update_Angle();
+			Set_Rotate();
+
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
+
+			m_eState = Hit_KnocBack;
+			m_bHit = true;
+
+			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+			m_vPower += -vLook;
+			m_vPower.y = -2.f;
+
+			m_fPower = 200.f;
+
+			D3DXVec3Normalize(&m_vPower, &m_vPower);
+			m_pCollider.lock()->AddForce(m_vPower * m_fPower);
+
+			m_vPower.x = 0.f;
+			m_vPower.z = 0.f;
+			m_fPower = 100.f;
 		}
 		break;
 	case Em0000::Enter_Ground:
@@ -552,6 +590,24 @@ void Em0000::State_Change(const float _fDeltaTime)
 
 void Em0000::Skill_CoolTime(const float _fDeltaTime)
 {
+	if (m_bMove == false)
+	{
+		m_fMoveTime += _fDeltaTime;
+		if (m_fMoveTime >= 5.f)
+		{
+			m_bMove = true;
+			m_fMoveTime = 0.f;
+		}
+	}
+	if (m_bAttack == false)
+	{
+		m_fAttackTime += _fDeltaTime;
+		if (m_fAttackTime >= 5.f)
+		{
+			m_bAttack = true;
+			m_fAttackTime = 0.f;
+		}
+	}
 }
 
 HRESULT Em0000::Ready()
@@ -606,7 +662,7 @@ HRESULT Em0000::Awake()
 	m_pCollider.lock()->SetGravity(true);
 		
 	m_pCollider.lock()->SetRadius(0.06f);
-	m_pCollider.lock()->SetHeight(0.17f);
+	m_pCollider.lock()->SetHeight(0.13f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.03f });
 
 	//m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Waist");
@@ -655,13 +711,17 @@ UINT Em0000::Update(const float _fDeltaTime)
 
 			
 	if (m_bEnterGround)
+	{
+		if (!m_bHit)
+			Skill_CoolTime(_fDeltaTime);
 		Fight(_fDeltaTime);
+	}
 
 	State_Change(_fDeltaTime);
 
 
 
-	if (m_eState == Hit_Buster_Start)
+	if (m_eState == Hit_Buster_Start || m_eState == Hit_Air_Buster_Start)
 	{
 		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
 		m_Result = (*m_pPlayerBone * m_PlayerWorld);
@@ -682,12 +742,7 @@ UINT Em0000::Update(const float _fDeltaTime)
 		m_pTransform.lock()->SetPosition(vRedQueenPos);
 	}
 
-
 	Rotate(_fDeltaTime);
-
-
-	//if (m_BattleInfo.iHp <= 0)
-	//	m_eState = Dead;
 
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
@@ -710,7 +765,7 @@ void Em0000::Editor()
 	Unit::Editor();
 	if (bEdit)
 	{
-
+		ImGui::InputInt("Count", &nCount);
 	}
 
 }
@@ -827,7 +882,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
+			Vector3	vDir(vLook.x * 0.06f, 1.f, vLook.z * 0.06f);
 
 			m_pCollider.lock()->AddForce(vDir * m_fPower);
 			break;
@@ -887,7 +942,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 			Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
 			D3DXVec3Normalize(&vLook, &vLook);
-			Vector3	vDir(vLook.x * 0.05f, 1.f, vLook.z * 0.05f);
+			Vector3	vDir(vLook.x * 0.06f, 1.f, vLook.z * 0.06f);
 
 			m_pCollider.lock()->AddForce(vDir* m_fPower);
 			break;
@@ -909,7 +964,10 @@ void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 	m_bDown = true;
 	m_pCollider.lock()->SetRigid(false);
 
-	m_eState = Hit_Buster_Start;
+	if (m_bAir)
+		m_eState = Hit_Air_Buster_Start;
+	else
+		m_eState = Hit_Buster_Start;
 	
 }
 
@@ -1271,42 +1329,6 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	}
 
-}
-
-void Em0000::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
-{
-	if (!m_bCollEnable)
-		return;
-	if (m_eState == Dead)
-		return;
-
-	m_bCollEnable = false;
-
-	switch (_pOther.lock()->m_nTag)
-	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-		if (m_bAir)
-			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		else
-			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
-		break;
-	case GAMEOBJECTTAG::TAG_BusterArm_Right:
-		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	case GAMEOBJECTTAG::TAG_WireArm:
-		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	case GAMEOBJECTTAG::Overture:
-		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
-		m_bHit = true;
-		m_bDown = true;
-		m_eState = Hit_KnocBack;
-		break;
-	default:
-		break;
-	}
 }
 
 void Em0000::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)

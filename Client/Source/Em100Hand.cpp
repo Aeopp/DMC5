@@ -34,7 +34,7 @@ HRESULT Em100Hand::Ready()
 HRESULT Em100Hand::Awake()
 {
 	Unit::Awake();
-
+	
 
 	m_pParentBone = m_pEm100Mesh.lock()->GetToRootMatrixPtr(m_bLeft ? "L_Hand" : "R_Hand");
 	m_pEm100Trans = m_pEm100.lock()->GetComponent<ENGINE::Transform>();
