@@ -23,9 +23,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+
 
 #ifndef PX_PHYSICS_NX_CONSTRAINT
 #define PX_PHYSICS_NX_CONSTRAINT
@@ -72,8 +73,7 @@ struct PxConstraintFlag
 		eDRIVE_LIMITS_ARE_FORCES	= 1<<5,			//!< limits for drive strength are forces rather than impulses
 		eIMPROVED_SLERP				= 1<<7,			//!< perform preprocessing for improved accuracy on D6 Slerp Drive (this flag will be removed in a future release when preprocessing is no longer required)
 		eDISABLE_PREPROCESSING		= 1<<8,			//!< suppress constraint preprocessing, intended for use with rowResponseThreshold. May result in worse solver accuracy for ill-conditioned constraints.
-		eENABLE_EXTENDED_LIMITS		= 1<<9,			//!< enables extended limit ranges for angular limits (e.g. limit values > PxPi or < -PxPi)
-		eGPU_COMPATIBLE				= 1<<10			//!< the constraint type is supported by gpu dynamic
+		eGPU_COMPATIBLE				= 1<<9			//!< the constraint type is supported by gpu dynamic
 	};
 };
 
@@ -84,6 +84,7 @@ struct PxConstraintFlag
 
 typedef PxFlags<PxConstraintFlag::Enum, PxU16> PxConstraintFlags;
 PX_FLAGS_OPERATORS(PxConstraintFlag::Enum, PxU16)
+
 
 struct PxConstraintShaderTable
 {
@@ -135,7 +136,9 @@ public:
 
 	@see PxActor
 	*/
+
 	virtual void				getActors(PxRigidActor*& actor0, PxRigidActor*& actor1)	const	= 0;
+
 
 	/**
 	\brief Sets the actors for this constraint.
@@ -145,11 +148,13 @@ public:
 
 	@see PxActor
 	*/
+
 	virtual void				setActors(PxRigidActor* actor0, PxRigidActor* actor1)			= 0;
 
 	/**
 	\brief Notify the scene that the constraint shader data has been updated by the application
 	*/
+
 	virtual void				markDirty()														= 0;
 
 	/**
@@ -161,6 +166,7 @@ public:
 
 	@see PxConstraintFlags
 	*/
+
 	virtual void				setFlags(PxConstraintFlags flags)								= 0;
 
 	/**
@@ -169,7 +175,9 @@ public:
 	\return the constraint flags
 	@see PxConstraintFlags
 	*/
+
 	virtual PxConstraintFlags	getFlags()												const	= 0;
+
 
 	/**
 	\brief Set a flag for this constraint
@@ -179,6 +187,7 @@ public:
 
 	@see PxConstraintFlags
 	*/
+
 	virtual void				setFlag(PxConstraintFlag::Enum flag, bool value)				= 0;
 
 	/**
@@ -189,6 +198,7 @@ public:
 	*/
 	virtual void				getForce(PxVec3& linear, PxVec3& angular)				const	= 0;
 
+
 	/**
 	\brief whether the constraint is valid. 
 	
@@ -197,6 +207,7 @@ public:
 	is attached may not be inserted into a scene.
 
 	Invalid constraints arise only when an actor to which the constraint is attached has been deleted.
+
 	*/
 	virtual bool				isValid() const													= 0;
 
@@ -208,6 +219,8 @@ public:
 	\param[in] linear the linear break threshold
 	\param[in] angular the angular break threshold
 	*/
+
+
 	virtual	void				setBreakForce(PxReal linear, PxReal angular)				= 0;
 
 	/**
@@ -215,8 +228,10 @@ public:
 	
 	\param[out] linear the linear break threshold
 	\param[out] angular the angular break threshold
+
 	*/
 	virtual	void				getBreakForce(PxReal& linear, PxReal& angular)		const	= 0;
+
 
 	/**
 	\brief Set the minimum response threshold for a constraint row 
@@ -230,14 +245,18 @@ public:
 
 	@see PxConstraintFlag::eDISABLE_PREPROCESSING
 	*/
+
+
 	virtual	void				setMinResponseThreshold(PxReal threshold)					= 0;
 
 	/**
 	\brief Retrieve the constraint break force and torque thresholds
 
 	\return the minimum response threshold for a constraint row
+
 	*/
 	virtual	PxReal				getMinResponseThreshold()							const	= 0;
+
 
 	/**
 	\brief Fetch external owner of the constraint.
