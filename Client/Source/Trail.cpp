@@ -70,16 +70,6 @@ void Trail::RenderInit()
 			}
 	} };
 
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
-		=
-	{
-		{"Collider" ,[this](const DrawInfo& _Info)
-			{
-				DrawCollider(_Info);
-			}
-		}
-	};
-
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
 		{"Trail",[this](const DrawInfo& _Info)

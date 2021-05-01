@@ -1,27 +1,27 @@
 #include "stdafx.h"
-#include "..\Header\SpriteEffect.h"
+#include "..\Header\DashTrail.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
 #include <iostream>
 
-void SpriteEffect::Free()
+void DashTrail::Free()
 {
 	GameObject::Free();
 };
 
-std::string SpriteEffect::GetName()
+std::string DashTrail::GetName()
 {
-	return "SpriteEffect";
+	return "DashTrail";
 };
 
-SpriteEffect* SpriteEffect::Create()
+DashTrail* DashTrail::Create()
 {
-	return new SpriteEffect{};
+	return new DashTrail{};
 };
 
-void SpriteEffect::RenderReady()
+void DashTrail::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
 
@@ -31,29 +31,14 @@ void SpriteEffect::RenderReady()
 		if (auto SpTransform = GetComponent<Transform>().lock();
 			SpTransform)
 		{
-			const float CurScale = SpTransform->GetScale().x;
 			_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-			if (_StaticMesh)
-			{
-				const uint32  Numsubset = _StaticMesh->GetNumSubset();
-				_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
-
-				for (uint32 i = 0; i < Numsubset; ++i)
-				{
-					const auto& _Subset = _StaticMesh->GetSubset(i);
-					const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
-
-					_RenderUpdateInfo.SubsetCullingSphere[i] = 
-						_CurBS.Transform(_RenderUpdateInfo.World, CurScale);
-				}
-			}
 		}
 	}
 };
 
-void SpriteEffect::RenderInit()
+void DashTrail::RenderInit()
 {
-	m_nTag = Eff_SpriteEffect;
+	m_nTag = Eff_DashTrail;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
