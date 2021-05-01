@@ -48,7 +48,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = HP_GLASS;
-	if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 	{
 		auto WeakSubset = _HPGlassMesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
@@ -58,6 +58,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGlassNRMRTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ALB0Map", _GlassTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ALB1Map", _BloodTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.025f);
 			_ImplInfo.Fx->SetFloat("_HPGlassDirt", _HPGlassDirt);
 
 			Create_ScreenMat(CurID, ScreenMat);
@@ -71,15 +72,16 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = EX_GAUGE_BACK;
-	if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 	{
 		auto WeakSubset = _PlaneMesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _ExBackALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExBackALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _ExBackATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _ExBackNRMRTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
 
 			if (_UIDescs[EX_GAUGE].Using)
 				Create_ScreenMat(CurID, ScreenMat);
@@ -96,13 +98,14 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = EX_GAUGE;
-	if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 	{
 		_ImplInfo.Fx->SetTexture("ALB0Map", _ExALBM0Tex->GetTexture());
 		_ImplInfo.Fx->SetTexture("ALB1Map", _ExFireTex->GetTexture());
 		_ImplInfo.Fx->SetTexture("NRMR0Map", _ExNRMR0Tex->GetTexture());
 		_ImplInfo.Fx->SetTexture("Emissive0Map", _ExEmissive0Tex->GetTexture());
 		_ImplInfo.Fx->SetTexture("BurnRamp0Map", _BurnRampTex->GetTexture());
+		_ImplInfo.Fx->SetFloat("_BrightScale", 0.08f);
 		_ImplInfo.Fx->SetFloat("_SliceAmount", _ExGauge_DissolveAmount);
 		
 		auto WeakSubset0 = _Ex0Mesh->GetSubset(0u);
@@ -143,10 +146,11 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = STYLISH_LETTER;
-	if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 	{
 		_ImplInfo.Fx->SetTexture("ALB0Map", _StylishALBMTex->GetTexture());
 		_ImplInfo.Fx->SetTexture("NRMR0Map", _StylishNRMRTex->GetTexture());
+		_ImplInfo.Fx->SetFloat("_BrightScale", 0.08f);
 
 		for (uint32 i = 0; i < 2u; ++i)
 		{
@@ -181,21 +185,21 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		}
 	}
 
-	ExtraColor = Vector3(0.0f, 0.f, 0.f);
+	// 재지정
+	ExtraColor = Vector3(0.f, 0.f, 0.f);
 	_ImplInfo.Fx->SetFloatArray("_ExtraColor", ExtraColor, 3u);
-
-	// LightDirection 재지정
 	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir, 3u);
 
 	// 그리는 순서에 따라서 Clip하는 다른 애들때문에 지글지글 거림 ㅠ
 	CurID = TARGET_HP;
-	if (0.f < _TargetCursorAlpha && !_ImplInfo.IsAfterPostProcessing)
+	if (!_ImplInfo.IsAfterPostProcessing && 0.f < _TargetCursorAlpha)
 	{
 		auto WeakSubset = _Pipe0Mesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _EnemyHPTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.025f);
 			_ImplInfo.Fx->SetFloat("_TotalAccumulateTime", _TotalAccumulateTime);
 
 			_ImplInfo.Fx->SetFloat("_HP_Degree", _TargetHP_Degree);
@@ -219,11 +223,12 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 	{
 		//
 		CurID = REDORB;
-		if (_UIDescs[CurID].Using && _ImplInfo.IsAfterPostProcessing)
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _RedOrbALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -233,7 +238,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->EndPass();
 
 			////////////////////////////////////////////////////////////
-			_ImplInfo.Fx->SetTexture("ALB0Map", _Dummy0000Tex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _Dummy0000Tex->GetTexture());
 
 			Create_ScreenMat(CurID, ScreenMat, 1);
 
@@ -250,9 +255,10 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = TARGET_CURSOR;
-		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _TargetCursorTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.02f);
 			_ImplInfo.Fx->SetFloat("_AccumulationTexV", _TotalAccumulateTime * 0.3f);
 
 			for (int i = 0; i < 3; ++i)
@@ -268,10 +274,11 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = BOSS_GUAGE;
-		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _BossGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _BossGaugeNRMRTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
 
 			_ImplInfo.Fx->SetFloat("_HP_Degree", _TargetHP_Degree);
 			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrtho);
@@ -298,11 +305,12 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = HP_GAUGE;
-		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _HPGaugeBaseALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _HPGaugeBaseALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _HPGaugeBaseATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGaugeBaseNRMRTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
 
 			for (int i = 0; i < _HPGaugeCount; ++i)
 			{
@@ -317,7 +325,6 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ALB0Map", _HPGaugeALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _HPGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGaugeNRMRTex->GetTexture());
-
 
 			for (int i = 0; i < _HPGaugeCount; ++i)
 			{
@@ -340,10 +347,11 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = TDT_GAUGE;
-		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _TDTGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _TDTGaugeNRMRTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.025f);
 			_ImplInfo.Fx->SetFloat("_AccumulationTexU", _TotalAccumulateTime * -0.3f);
 			_ImplInfo.Fx->SetFloat("_AccumulationTexV", _TotalAccumulateTime * 0.1f);
 			_ImplInfo.Fx->SetFloat("_EmissivePower", _TDTGauge_EmissivePower);
@@ -363,10 +371,11 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = KEYBOARD;
-		if (_UIDescs[CurID].Using && _ImplInfo.IsAfterPostProcessing)
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
 			// 키보드 base
-			_ImplInfo.Fx->SetTexture("ALB0Map", _KeyBoardTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _KeyBoardTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.3f), 2u);
 
@@ -457,9 +466,10 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = RANK_BACK;
-		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing && 0.00001f >_RankDissolveAmount)
+		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using && 0.00001f >_RankDissolveAmount)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _RingTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
 
 			for (int i = 0; i < 3; ++i)
 			{
@@ -474,9 +484,10 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = RANK_LETTER;
-		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _RankLetterGlintTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RankLetterGlintTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(_RankLetter_GlintFrame.x, _RankLetter_GlintFrame.y), 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(_RankLetter_GlintFrame.z, _RankLetter_GlintFrame.w), 2u);
 
@@ -487,7 +498,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetTexture("ALB0Map", _RankLetterTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RankLetterTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_SliceAmount", _RankDissolveAmount);
 
 			Create_ScreenMat(CurID, ScreenMat, _CurRank);
@@ -503,9 +514,10 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = EX_GAUGE;
-		if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
-			_ImplInfo.Fx->SetTexture("ALB0Map", _ExFireTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExFireTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(_ExGauge_FireFrame.x, _ExGauge_FireFrame.y), 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(_ExGauge_FireFrame.z, _ExGauge_FireFrame.w), 2u);
 
@@ -533,7 +545,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = RANK;
-	if (_UIDescs[CurID].Using && !_ImplInfo.IsAfterPostProcessing)
+	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 	{
 		std::weak_ptr<ENGINE::StaticMesh> RankMesh;
 		std::weak_ptr<ENGINE::Texture> RankTex;
@@ -571,6 +583,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		if (!RankMesh.expired())
 		{
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.025f);
 			_ImplInfo.Fx->SetFloat("_SliceAmount", _RankDissolveAmount);
 
 			auto WeakSubset0 = RankMesh.lock()->GetSubset(0u);
@@ -771,7 +784,7 @@ void BtlPanel::SetTargetCursorActive(bool IsActive)
 {
 	if (IsActive)
 		_TargetCursorAlpha = 0.f;
-	else
+	else if (!IsActive && _UIDescs[TARGET_CURSOR].Using)
 		_TargetCursorAlpha = 1.f;
 
 	_UIDescs[TARGET_CURSOR].Using = IsActive;
@@ -1943,23 +1956,24 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 
 		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
 		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
+		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->SetLoop(true);
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
-
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
-		SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		AccumulateTDTGauge(0.3f);
+		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
+		//AccumulateTDTGauge(0.3f);
 		ChangeWeaponUI(Nero::WeaponList::RQ);
+
+		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
+		//ConsumeTDTGauge(0.5f);
+		ChangeWeaponUI(Nero::WeaponList::Cbs);
+
 		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
 		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->Reset();
-
-		ConsumeTDTGauge(0.5f);
-		ChangeWeaponUI(Nero::WeaponList::Cbs);
 	}
 	////////////////////////////
 

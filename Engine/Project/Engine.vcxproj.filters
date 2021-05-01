@@ -177,12 +177,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
-      <Filter>04.HLSL\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\UI\BtlPanel.hlsl">
-      <Filter>04.HLSL\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Object.h">
       <Filter>00.Object</Filter>
     </ClInclude>
@@ -381,9 +375,6 @@
     <ClInclude Include="..\Header\Physics.h">
       <Filter>01.System\07.Physics\01.Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
-      <Filter>04.HLSL\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\SkeletonMesh.h">
       <Filter>02.Resource\02.Mesh\03.SkeletonMesh\00.Base</Filter>
     </ClInclude>
@@ -429,20 +420,8 @@
     <ClInclude Include="..\Header\BoxCollider.h">
       <Filter>03.Utility\00.Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
-      <Filter>04.HLSL\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
-      <Filter>04.HLSL\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
-      <Filter>04.HLSL\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\FileHelper.h">
       <Filter>98.UnLabeld</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
-      <Filter>04.HLSL\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -551,12 +530,6 @@
     <Filter Include="02.Resource\03.Shader">
       <UniqueIdentifier>{452cc59f-9cac-42bf-b51f-132041299f68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.HLSL\Effect">
-      <UniqueIdentifier>{9ad7bbcb-3f23-488e-a0d7-8e7fe13562eb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.HLSL\UI">
-      <UniqueIdentifier>{eb60c326-48c8-4eab-a8f7-1a5de0f5ef2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.Resource\02.Mesh\03.SkeletonMesh\00.Base">
       <UniqueIdentifier>{173ebb63-ca20-433b-8f8c-24eece564388}</UniqueIdentifier>
     </Filter>
@@ -616,9 +589,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
-      <Filter>04.HLSL\Effect</Filter>
-    </None>
     <None Include="..\..\Resource\Shader\Blur.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
@@ -674,6 +644,12 @@
       <Filter>04.HLSL\Common</Filter>
     </None>
     <None Include="..\..\Resource\Shader\hdreffects.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Emissive.hlsl">
+      <Filter>04.HLSL\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Distortion.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
   </ItemGroup>

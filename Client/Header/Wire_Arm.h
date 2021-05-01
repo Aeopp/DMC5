@@ -35,6 +35,9 @@ public:
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
 public:
+	void Set_RadianForRotX(float _fRadian) { m_fRadianForRotX = _fRadian; }
+	void Set_GrabEnd(bool _bGrabEnd);
+public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
 	virtual void Editor()override;
@@ -55,6 +58,7 @@ private:
 	bool								m_bIsRender;
 	Matrix*								m_pBoneMatrix;
 	Matrix								m_MyRenderMatrix;
+	float								m_fRadianForRotX;
 };
 
 

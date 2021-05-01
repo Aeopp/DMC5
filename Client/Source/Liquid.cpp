@@ -17,7 +17,24 @@ void Liquid::Free()
 std::string Liquid::GetName()
 {
 	return "Liquid";
-};
+}
+
+void Liquid::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _LiquidMeshVec[_VariationIdx].first->GetSubset(_SubsetIdx);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+	}
+}
 
 void Liquid::Reset()
 {
@@ -89,6 +106,9 @@ void Liquid::RenderGBuffer(const DrawInfo& _Info)
 	if (MAX_VARIATION_IDX <= _VariationIdx)
 		return;
 
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
 	// blood
@@ -96,7 +116,8 @@ void Liquid::RenderGBuffer(const DrawInfo& _Info)
 	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
 	_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
-	_Info.Fx->SetFloat("magicNumber", 0.5f);
+	_Info.Fx->SetFloat("brightScale", _BrightScale);
+	//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 	//
 	
 	// meat
@@ -147,6 +168,7 @@ HRESULT Liquid::Ready()
 	_MeatNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_Meat_NRMR.tga");
 
 	_PlayingSpeed = 40.f;
+	_BrightScale = 0.25f;
 
 	SetVariationIdx(_VariationIdx);
 
@@ -166,6 +188,9 @@ HRESULT Liquid::Start()
 UINT Liquid::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
+
+	if (!_IsPlaying)
+		return 0;
 
 	if (MAX_VARIATION_IDX <= _VariationIdx)
 		return 0;

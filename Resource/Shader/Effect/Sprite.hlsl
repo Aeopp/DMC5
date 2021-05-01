@@ -1,8 +1,10 @@
 matrix World;
-
 matrix ViewProjection;
 matrix InverseProjection;
+
 float SoftParticleDepthScale;
+float exposure_corr = 1.f;
+float _BrightScale = 1.f;
 
 float2 _MinTexUV = float2(0.f, 0.f);
 float2 _MaxTexUV = float2(1.f, 1.f);
@@ -16,8 +18,10 @@ sampler ALB0 = sampler_state
     minfilter = anisotropic;
     magfilter = anisotropic;
     mipfilter = anisotropic;
-    sRGBTexture = true;
+    sRGBTexture = false;
     MaxAnisotropy = 4;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
 texture NRMR0Map;
@@ -51,7 +55,7 @@ sampler Noise = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = true;
+    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -112,6 +116,7 @@ PsOut PsMain(PsIn In)
     PsOut Out = (PsOut) 0;
 
     Out.Color = tex2D(ALB0, In.UV);
+    Out.Color.rgb *= (_BrightScale * exposure_corr);
     
     // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
@@ -146,7 +151,7 @@ technique Default
         destblend = invsrcalpha;
         //zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();

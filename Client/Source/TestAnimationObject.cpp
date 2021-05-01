@@ -70,19 +70,18 @@ void TestAnimationObject::RenderInit()
 		}
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
-	
+
 	// 스켈레톤 메쉬 로딩 ... 
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	_SkeletonMesh = Resources::Load<ENGINE::SkeletonMesh>
-		("C:\\WorkingDirectory\\TestResource\\Boss\\Em5300\\Em5300.X", _InitInfo);
+		(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.fbx", _InitInfo);
 	_SkeletonMesh->LoadAnimationFromDirectory
-	(L"..\\..\\Resource\\Mesh\\Dynamic\\_AnimationFBX_C4D");
-
+	(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Ani");
 	//  애니메이션을 원하는 만큼 로딩하고 애니메이션 데이터를 제이슨 테이블에 있는 데이터로 덮어 씌운다. 파일이 존재하지 않는다면 덮어씌우지 않는다.
 	//  애니메이션 데이터 로딩이 끝난뒤에 호출해줘야 한다. 
-	_SkeletonMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante.Animation");
+	_SkeletonMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.Animation");
 	// ToRoot 매트릭스를 클론마다 저장한다 . (1. 디버그 본 렌더링 필요할시 2. 본 위치가 CPU 에서도 필요할시 )
 
 	_SkeletonMesh->EnableToRootMatricies();
@@ -125,7 +124,8 @@ void TestAnimationObject::RenderReady()
 				const auto& _Subset = _SkeletonMesh->GetSubset(i);
 				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(
+					_RenderUpdateInfo.World, Scale.x);
 			}
 		}
 	}
@@ -152,7 +152,7 @@ void TestAnimationObject::RenderGBufferSK(const DrawInfo& _Info)
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
 			SpSubset->Render(_Info.Fx);
-		}; 
+		};
 	};
 }
 void TestAnimationObject::RenderShadowSK(const DrawInfo& _Info)
@@ -170,6 +170,7 @@ void TestAnimationObject::RenderShadowSK(const DrawInfo& _Info)
 		{
 			continue;
 		}
+
 		if (auto SpSubset = _SkeletonMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -189,7 +190,7 @@ void TestAnimationObject::RenderDebugSK(const DrawInfo& _Info)
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
 	const uint32 Numsubset = _SkeletonMesh->GetNumSubset();
-	
+
 	if (Numsubset > 0)
 	{
 		_SkeletonMesh->BindVTF(_Info.Fx);
@@ -236,10 +237,10 @@ HRESULT TestAnimationObject::Start()
 UINT TestAnimationObject::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-	auto [DeltaScale,DeltaQuat,DeltaPos ] = _SkeletonMesh->Update(_fDeltaTime);
-	 Vector3 Axis = { 1,0,0 };
+	auto [DeltaScale, DeltaQuat, DeltaPos] = _SkeletonMesh->Update(_fDeltaTime);
+	Vector3 Axis = { 1,0,0 };
 
-	 const float Length = FMath::Length(DeltaPos);
+	const float Length = FMath::Length(DeltaPos);
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)

@@ -16,7 +16,8 @@ public:
 private:
 	Smoke::VARIATION _VariationIdx = SMOKE_0;	// 총 베리에이션
 
-	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
+	//std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _SmokeMesh{};
 	std::shared_ptr<ENGINE::Texture> _SmokeALB0Tex{};
 	Vector2 _SmokeMinTexUV = Vector2(0.f, 0.f);
 	Vector2 _SmokeMaxTexUV = Vector2(1.f, 1.f);
@@ -27,6 +28,7 @@ private:
 	// Effect을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
+	virtual void RenderReady() override;
 	virtual void Imgui_Modify() override;
 private:
 	void RenderInit();

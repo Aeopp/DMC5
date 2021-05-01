@@ -6,7 +6,7 @@
 
 
 class Em0000;
-class Em0000Weapon : public ENGINE::GameObject ,
+class Em0000Weapon : public Unit ,
 				   public ENGINE::RenderInterface				
 {
 private:
@@ -36,7 +36,10 @@ public:
 	void RenderShadow(const DrawInfo& _Info);
 private:
 	std::shared_ptr<ENGINE::StaticMesh> m_pStaticMesh{};
-
+public:
+	virtual void	Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther) override;
 public:
 	weak_ptr<SphereCollider>			  m_pCollider;
 

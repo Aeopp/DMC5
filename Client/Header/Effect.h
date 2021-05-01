@@ -12,14 +12,16 @@ protected:
 	bool _IsPlaying = false;
 	bool _Loop = false;
 
+	float _BrightScale = 1.f;
+	float _SoftParticleDepthScale = 1.f;
 protected:
 	explicit Effect() = default;
 	virtual ~Effect() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override PURE;
 	virtual std::string GetName() override PURE;
-public:
-	virtual void    RenderReady() override;
+	// RenderInterface를 통해 상속됨
+	virtual void    RenderReady() override PURE;	// 각자의 bounding sphere 생성해야
 public:
 	virtual HRESULT Ready() override PURE;
 	virtual HRESULT Awake() override PURE;
@@ -32,13 +34,13 @@ public:
 protected:
 	virtual void	Imgui_Modify() {}
 public:
-	virtual void	Reset() PURE;
+	virtual void	PlayStart(const float PlayingSpeed = 1.f);
+	virtual void	Reset() PURE;	// 이펙트 종료 & 초기화
 	virtual void	SetScale(const float AllScale);
 	virtual void	SetRotation(const Vector3& Rot);
 	virtual void	SetPosition(const Vector3& Pos);
 public:
 	bool IsPlaying() const	{ return _IsPlaying; }
 	void SetLoop(bool Loop) { _Loop = Loop; _AccumulateTime = 0.f; }
-	void PlayStart(const float PlayingSpeed = 1.f);
 };
 #endif // !__EFFECT__

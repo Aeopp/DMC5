@@ -29,6 +29,23 @@ void Glint::Reset()
 	Effect::Reset();
 }
 
+void Glint::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _PlaneMesh->GetSubset(0);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, 0.01534f * Scale.x);	// ㅠㅠ
+	}
+}
+
 void Glint::Imgui_Modify()
 {
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
@@ -43,7 +60,7 @@ void Glint::Imgui_Modify()
 
 		{
 			static float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##Glint", &Scale, 0.1f, 10.f);
+			ImGui::SliderFloat("Scale##Glint", &Scale, 0.01f, 1.f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 			SetScale(Scale);
 		}
@@ -62,8 +79,11 @@ Glint* Glint::Create()
 }
 
 
-void Glint::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
+void Glint::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+	
 	auto WeakSubset_Plane = _PlaneMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset_Plane.lock();
 		SharedSubset)
@@ -72,11 +92,12 @@ void Glint::RenderAlphaBlendEffect(const DrawInfo& _ImplInfo)
 		{
 			if (_SliceAmount[i] < 1.f)
 			{
-				_ImplInfo.Fx->SetMatrix("World", &_WorldMatrix[i]);
-				_ImplInfo.Fx->SetFloat("_SliceAmount", _SliceAmount[i]);
-				_ImplInfo.Fx->SetTexture("BaseMap", _GlintTex->GetTexture());
-				
-				SharedSubset->Render(_ImplInfo.Fx);
+				_Info.Fx->SetMatrix("World", &_WorldMatrix[i]);
+				_Info.Fx->SetTexture("BaseMap", _GlintTex->GetTexture());
+				_Info.Fx->SetFloat("_BrightScale", 0.03f);
+				_Info.Fx->SetFloat("_SliceAmount", _SliceAmount[i]);
+
+				SharedSubset->Render(_Info.Fx);
 			}
 		}
 	}
@@ -101,10 +122,14 @@ HRESULT Glint::Ready()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
+	auto InitTransform = GetComponent<ENGINE::Transform>();
+	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
+
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_GlintTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Light\\tex_capcom_light_glint_0017_alpg.tga");
 
 	_PlayingSpeed = 3.5f;
+	_BrightScale = 0.02f;
 
 	Reset();	// PlayStart()로 재생
 
@@ -125,7 +150,8 @@ UINT Glint::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
-	//std::cout << _AccumulateTime << endl;
+	if (!_IsPlaying)
+		return 0;
 
 	if (1.5f < _AccumulateTime)
 		Reset();
@@ -145,8 +171,8 @@ UINT Glint::Update(const float _fDeltaTime)
 			else
 			{
 				_Scale[i] = 0.1f + ScaleSpeed * _SliceAmount[0];
-				if (1.f < _Scale[i])
-					_Scale[i] = 1.f;
+				if (0.12f < _Scale[i])
+					_Scale[i] = 0.12f;
 
 				Matrix TempMat, BillMat;
 				D3DXMatrixIdentity(&_WorldMatrix[i]);

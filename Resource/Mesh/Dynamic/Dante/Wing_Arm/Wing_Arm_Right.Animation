@@ -62,7 +62,7 @@
             },
             {
                 "Name": "Wire_Snatch_End",
-                "Acceleration": 0.56,
+                "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582
             }
         ]

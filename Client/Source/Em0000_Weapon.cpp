@@ -30,8 +30,22 @@ void Em0000Weapon::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
+		const Vector3 Scale = _SpTransform->GetScale();
 		_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		if (m_pStaticMesh)
+		{
+			const uint32  Numsubset = m_pStaticMesh->GetNumSubset();
+			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+
+			for (uint32 i = 0; i < Numsubset; ++i)
+			{
+				const auto& _Subset = m_pStaticMesh->GetSubset(i);
+				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+			}
+		}
 	}
 }
 
@@ -41,6 +55,9 @@ HRESULT Em0000Weapon::Ready()
 
 	RenderInit();
 
+
+	m_nTag = MonsterWeapon;
+
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.005f,0.005f,0.005f});
@@ -48,7 +65,7 @@ HRESULT Em0000Weapon::Ready()
 
 
 	m_pTransform = GetComponent<ENGINE::Transform>();
-
+	m_BattleInfo.iAttack = 10;
 
 
 
@@ -70,8 +87,8 @@ HRESULT Em0000Weapon::Awake()
 
 	m_pCollider.lock()->SetGravity(false);
 
-	m_pCollider.lock()->SetCenter({ -1.f,0.f,-1.7f });
-	m_pCollider.lock()->SetRadius(0.8f);
+	m_pCollider.lock()->SetCenter({ -0.1f,0.1f,-0.1f });
+	m_pCollider.lock()->SetRadius(0.15f);
 	
 
 	return S_OK;
@@ -178,6 +195,12 @@ void Em0000Weapon::RenderDebug(const DrawInfo& _Info)
 	const uint32 Numsubset = m_pStaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false ==
+			_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
+
 		if (auto SpSubset = m_pStaticMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -196,6 +219,12 @@ void Em0000Weapon::RenderGBuffer(const DrawInfo& _Info)
 		if (auto SpSubset = m_pStaticMesh->GetSubset(i).lock();
 			SpSubset)
 		{
+			if (false ==
+				_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+			{
+				continue;
+			}
+
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
 			SpSubset->Render(_Info.Fx);
@@ -210,12 +239,26 @@ void Em0000Weapon::RenderShadow(const DrawInfo& _Info)
 	const uint32 Numsubset = m_pStaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false ==
+			_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
+
 		if (auto SpSubset = m_pStaticMesh->GetSubset(i).lock();
 			SpSubset)
 		{
 			SpSubset->Render(_Info.Fx);
 		};
 	};
+}
+
+void Em0000Weapon::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Em0000Weapon::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
 }
 
 

@@ -6,10 +6,13 @@ class QliphothBlock final : public Effect
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _BaseMesh{};
-	
+	std::shared_ptr<ENGINE::StaticMesh> _BaseInnerMesh{};
+
+	std::shared_ptr<ENGINE::Texture> _BaseInnerTex{};
 	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
 
-	float _SliceAmount = 0.f;
+	float _SliceAmount = 1.f;
+	bool _IsAlive = false;
 
 private:
 	explicit QliphothBlock() = default;
@@ -17,6 +20,7 @@ private:
 	// Effect을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
+	virtual void RenderReady() override;
 	virtual void Imgui_Modify() override;
 private:
 	void RenderInit();
@@ -33,6 +37,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	virtual void Reset() override;
+	virtual void	PlayStart(const float PlayingSpeed = 1.f) override;
+	virtual void	Reset() override;
 };
 #endif // !__EFF_QLIPHOTH_BLOCK_H__

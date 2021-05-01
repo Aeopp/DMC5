@@ -85,7 +85,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 			}
 			else
 			{
-				
 			}
 		}
 	}

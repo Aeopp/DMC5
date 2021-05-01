@@ -32,7 +32,7 @@ HRESULT MainCamera::Ready()
 	m_fFovY = D3DXToRadian(45.f);
 	m_fAspect = float(float(g_nWndCX) / float(g_nWndCY));
 	m_fNear = 0.05f;
-	m_fFar = 500.f;
+	m_fFar = 25.f;
 
 
 	D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
@@ -44,6 +44,8 @@ HRESULT MainCamera::Ready()
 
 	m_fCameraAngle = 35.f;
 	m_fDistanceToTarget = OGDistance;
+	//지워야함
+	m_fDistanceToTarget = 0.8f;
 
 	m_fRotX = -17.1f;
 	m_fFloatingAmount = 0.16f;

@@ -48,7 +48,7 @@ public:
 	void    DisablePrevVTF()&;
 	std::tuple<Vector3, Quaternion, Vector3>   
 		Update(const float DeltaTime)&;
-	void TPose();
+	void    TPose();
 	void    BoneDebugRender(const Matrix & OwnerTransformWorld,ID3DXEffect* const Fx)&;
 	void    VTFUpdate()&;
 	Node* GetRootNode()&;
@@ -98,7 +98,6 @@ private:
 	std::tuple<Vector3, Quaternion, Vector3>    AnimationUpdateImplementation()&;
 	void AnimationSave(const std::filesystem::path & FullPath)&;
 private:
-
 	virtual HRESULT LoadMeshImplementation(
 		const aiScene * AiScene,
 		const std::filesystem::path _Path,
@@ -125,9 +124,9 @@ private:
 	std::shared_ptr<std::set<std::filesystem::path>>
 		AnimationDataLoadFromJsonTablePathSet{};
 
-	std::string RootMotionScaleName = NormallyRootMotionScaleName;
-	std::string RootMotionRotationName = NormallyRootMotionRotationName;
-	std::string RootMotionTransitionName = NormallyRootMotionTransitionName;
+	std::shared_ptr<std::string> RootMotionScaleName{}; 
+	std::shared_ptr<std::string> RootMotionRotationName{}; 
+	std::shared_ptr<std::string> RootMotionTransitionName{};
 
 	Vector3 CalcRootMotionDeltaPos(std::optional<float> bTimeBeyondAnimation,
 									const std::string & _TargetAnimName,
@@ -167,9 +166,10 @@ public:
 
 	float DeltaTimeFactor = 1.f;
 	float RootMotionDeltaFactor = 1.f;
-	bool  bRootMotionScale = false;
-	bool  bRootMotionRotation = false;
-	bool  bRootMotionTransition = false;
+
+	std::shared_ptr<bool> bRootMotionScale{};
+	std::shared_ptr<bool> bRootMotionRotation{};
+	std::shared_ptr<bool> bRootMotionTransition{};
 
 	std::string PrevAnimName{};
 	std::string AnimName{};
@@ -198,9 +198,9 @@ public:
 	AnimNotify           CurAnimNotify{};
 	AnimationInformation CurPlayAnimInfo{};
 	AnimationInformation PrevPlayAnimInfo{};
-	IDirect3DTexture9* BoneAnimMatrixInfo{ nullptr };
-	IDirect3DTexture9* PrevBoneAnimMatrixInfo{ nullptr };
-	int32 VTFPitch{ 0 };
+	IDirect3DTexture9*   BoneAnimMatrixInfo{ nullptr };
+	IDirect3DTexture9*   PrevBoneAnimMatrixInfo{ nullptr };
+	int32				VTFPitch{ 0 };
 	std::vector<Matrix> BoneSkinningMatries{};
 	std::vector<Matrix> PrevBoneSkinningMatries{};
 	bool bHasAnimation = false;
@@ -209,11 +209,11 @@ public:
 	std::shared_ptr<std::map<uint32, std::string>>				AnimIndexNameMap{};
 	std::shared_ptr<std::map<std::string,AnimationInformation>> AnimInfoTable{};
 	std::shared_ptr<std::unordered_map<std::string,std::shared_ptr<Node>>> Nodes{};
-	//              노드 이름과 ToRoot 매트릭스 매핑 ... 
+	//노드 이름과 ToRoot 매트릭스 매핑 ... 
 	std::optional<std::unordered_map<std::string, Matrix>> ToRoots{};
 
-	Vector3    EulerOffset{0,0,0};
-	Quaternion tOffset{ 0,0,0,1 };
+	std::shared_ptr<Vector3> EulerOffset{};
+	std::shared_ptr<Quaternion> tOffset{};
 };
 END
 #endif // !_SKELETONMESH_H_

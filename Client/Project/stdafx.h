@@ -34,6 +34,7 @@ enum GAMEOBJECTTAG
 	Monster101,
 	Monster0000,
 	Monster5000,
+	Monster1000,
 	MonsterWeapon,
 	UI_BtlPanel,
 	Eff_Glint,
@@ -42,6 +43,7 @@ enum GAMEOBJECTTAG
 	Eff_AppearGroundMonster,
 	Eff_Smoke,
 	Eff_QliphothBlock,
+	Eff_AirHike,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,
@@ -54,4 +56,4 @@ enum GAMEOBJECTTAG
 
 #define OGDistance 0.33f
 #define MaxDistance 0.48f
-#define RotateDistance 0.45f
+#define RotateDistance 0.7f

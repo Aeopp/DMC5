@@ -233,7 +233,7 @@ void Scene::SetActive(std::weak_ptr<GameObject> const _pGameObject, const bool _
 			
 			//활성화 상태인 객체를 비활성화 상태로 변경하는 경우.
 			//만약 객체가 현재 Loop 진행 중인 경우라면 m_LoopIter를 이전 노드로 옮긴 뒤 목록에서 제거한다ssssssssssssssssw.
-			if(m_bOnLoop)
+			if (m_bOnLoop && 0 != nLoopIdx)
 			if ((false == _bActive) && (_pGameObject.lock() == (*m_LoopIter).lock()) && m_LoopIter == iterFind)
 				--m_LoopIter;
 			//nSrcIdx에서 제거

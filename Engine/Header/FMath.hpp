@@ -513,13 +513,13 @@ Matrix FMath::WorldMatrix(
 	const Vector3& Scale, const Vector3& Rotation, const Vector3& Location)
 {
 	return FMath::Scale(Scale) * FMath::Rotation(Rotation) * FMath::Translation(Location);
-}
+};
 
 template<typename _Ty>
 inline _Ty FMath::Lerp(const _Ty& Lhs, const _Ty& Rhs, const double t)
 {
 	return Lhs + t * (Rhs - Lhs);
-}
+};
 
 inline Quaternion FMath::SLerp(
 	const  Quaternion& Lhs,

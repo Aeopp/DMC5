@@ -1,8 +1,10 @@
 matrix World;
 matrix ViewProjection;
-//float3 LightDirection = float3(0, -1, 0);
 
+float exposure_corr = 1.f;
+float _BrightScale = 1.f;
 float _SliceAmount = 0.f;
+
 
 texture BaseMap;
 sampler Base = sampler_state
@@ -11,7 +13,7 @@ sampler Base = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
-    sRGBTexture = true;
+    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -60,6 +62,7 @@ PsOut PsMain(PsIn In)
     float4 BaseSample = tex2D(Base, In.UV);
 
     Out.Color = BaseSample;
+    Out.Color.rgb *= (_BrightScale * exposure_corr);
     Out.Color.a *= (1.f - _SliceAmount) * 0.5f;
     
     return Out;
@@ -75,7 +78,7 @@ technique Default
         destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
-        sRGBWRITEENABLE = true;
+        sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();

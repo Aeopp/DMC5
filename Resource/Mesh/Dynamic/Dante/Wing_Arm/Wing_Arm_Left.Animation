@@ -8,77 +8,77 @@
             {
                 "Name": "ComboA1",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "ComboA3",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "ComboA4",
                 "Acceleration": 0.4,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "ComboC1",
                 "Acceleration": 0.4,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "ComboC2",
                 "Acceleration": 0.5,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "ComboC4",
                 "Acceleration": 0.45,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "ComboD1",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Hr_Ground",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Shuffle_Ex",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Split_End",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Split_Loop",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Split_Start",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Streak_End",
                 "Acceleration": 0.65,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Streak_Loop",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             },
             {
                 "Name": "Streak_Start",
                 "Acceleration": 0.56,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0
             }
         ]
     }

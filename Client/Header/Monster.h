@@ -5,6 +5,8 @@
 #include "RenderInterface.h"
 #include "SkeletonMesh.h"
 
+class Nero;
+class RedQueen;
 class Monster : public Unit,
 				public ENGINE::RenderInterface
 {
@@ -24,7 +26,7 @@ public:
 
 	std::shared_ptr<ENGINE::SkeletonMesh> Get_Mesh() { return m_pMesh; }
 	
-
+	Vector3			GetMonsterBoneWorldPos(std::string _BoneName);
 public:
 	virtual HRESULT Ready() override PURE;
 	virtual HRESULT Awake() override PURE;
@@ -37,7 +39,16 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) PURE;
 
+public:
+	//형의 부하가 추가함
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+public:
+	//형의 부하가 추가함
+	virtual void	SetGravity(bool _bActiveOrNot);
+	void	Set_Snatch(bool _bSnatch);
+	void	AddRankScore(float _fRankScore);
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
 	virtual void   Update_Angle() PURE;
@@ -47,6 +58,9 @@ protected:
 	bool	m_bIng = false;
 	bool	m_bHit = false;
 	bool	m_bDown = false;
+	bool	m_bSnatch = true;
+	bool	m_bEnterGround = false;
+	bool	m_bAir = false;
 
 	//플레이어 방향 회전하기 용
 	bool	m_bInteraction = false;;
@@ -56,8 +70,12 @@ protected:
 	/////////////////////////////
 	float		m_fPower = 0.f;
 	D3DXVECTOR3 m_vPower;
-};
 
+	////////////Player//
+	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
+	std::weak_ptr<Nero>				 m_pPlayer;
+	std::weak_ptr<RedQueen>			 m_pRedQueen;
+};
 
 
 #endif // Monster_h__

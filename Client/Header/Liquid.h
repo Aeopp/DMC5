@@ -34,14 +34,13 @@ private:
 	uint32 _SubsetIdx = 0u;	// 애니메이션 프레임 같은 역할
 	Vector3 _ExtraColor = Vector3(0.f, 0.f, 0.f);	// 원본 albedo에 더해줄 색
 
-	float _MagicNumber = 1.f;
-
 private:
 	explicit Liquid() = default;
 	virtual ~Liquid() = default;
 	// Effect을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
+	virtual void RenderReady() override;
 	virtual void Imgui_Modify() override;
 private:
 	void RenderInit();

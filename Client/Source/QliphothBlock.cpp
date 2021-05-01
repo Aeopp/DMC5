@@ -14,13 +14,34 @@ void QliphothBlock::Free()
 std::string QliphothBlock::GetName()
 {
 	return "QliphothBlock";
-};
+}
+
+void QliphothBlock::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _BaseMesh->GetSubset(0);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);	// _Subset을 회전만 하기 떄문에 부모꺼 그대로 씀
+	}
+}
+
+void QliphothBlock::PlayStart(const float PlayingSpeed)
+{
+	Effect::PlayStart(PlayingSpeed);
+	_IsAlive = true;
+}
 
 void QliphothBlock::Reset()
 {
-	_SliceAmount = 0.f;
-
-	Effect::Reset();
+	_IsAlive = false;
 }
 
 void QliphothBlock::Imgui_Modify()
@@ -38,7 +59,7 @@ void QliphothBlock::Imgui_Modify()
 
 		{
 			static float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##QliphothBlock", &Scale, 0.1f, 1.f);
+			ImGui::SliderFloat("Scale##QliphothBlock", &Scale, 0.001f, 0.1f);
 			Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 		}
 
@@ -53,6 +74,12 @@ void QliphothBlock::Imgui_Modify()
 			ImGui::SliderFloat("PlayingSpeed##QliphothBlock", &PlayingSpeed, 0.1f, 10.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
+
+		//{
+		//	static float SliceAmount = _SliceAmount;
+		//	ImGui::SliderFloat("SliceAmount##QliphothBlock", &SliceAmount, 0.f, 1.f);
+		//	_SliceAmount = SliceAmount;
+		//}
 	}
 }
 
@@ -82,15 +109,19 @@ void QliphothBlock::RenderInit()
 
 void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
 
-	auto WeakSubset = _BaseMesh->GetSubset(0u);
-	if (auto SharedSubset = WeakSubset.lock();
-		SharedSubset)
+	//auto RefEffInfo = std::any_cast<EffectInfo>((_Info.BySituation));
+
+	if (0 == _Info.PassIndex)
 	{
-		if (0 == _Info.PassIndex)
+		auto WeakSubset = _BaseMesh->GetSubset(0u);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
 		{
 			_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
 			_Info.Fx->SetFloat("_AccumulationTexU", _AccumulateTime * 0.2f);
 			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.2f);
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
@@ -104,16 +135,42 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 				D3DXMatrixRotationZ(&Rot, D3DXToRadian(45.f * i));
 				Rot *= _RenderUpdateInfo.World;
 				_Info.Fx->SetMatrix("World", &Rot);
-				
+
 				SharedSubset->Render(_Info.Fx);
 			}
+
+			// 깊이스케일 조절 했으면 원래대로 복구 . 해주세요 ~  
 		}
-		else if (1 == _Info.PassIndex)
+
+		return;
+	}
+	else if (1 == _Info.PassIndex)
+	{
+		auto WeakSubset = _BaseInnerMesh->GetSubset(0u);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
 		{
+			_Info.Fx->SetTexture("ALP0Map", _BaseInnerTex->GetTexture());
+			_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+			_Info.Fx->SetFloat("_AccumulationTexU", _AccumulateTime * 0.075f);
+			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.075f);
+			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
+			// 깊이스케일 조절 하고 싶으면 바인드 .
+			 // Fx -> ???????? RefEffInfo.SoftParticleDepthBiasScale 
+
+			Matrix temp;
+			D3DXMatrixScaling(&temp, 0.8f, 0.8f, 0.8f);
+			temp *= _RenderUpdateInfo.World;
+			_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
+
+			SharedSubset->Render(_Info.Fx);
+
+			// 깊이스케일 조절 했으면 원래대로 복구 . 해주세요 ~  
 		}
 
-		// 깊이스케일 조절 했으면 원래대로 복구 . 해주세요 ~  
+		return;
 	}
 }
 
@@ -128,10 +185,13 @@ HRESULT QliphothBlock::Ready()
 	InitTransform.lock()->SetScale({ 0.05f, 0.05f, 0.05f });
 	
 	_BaseMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_props_sm7001_001_00.fbx");
+	_BaseInnerMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_environment_lc_00.fbx");
 
+	_BaseInnerTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\ex_capcom_smoke_00_0037_alpg.tga");
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 	_PlayingSpeed = 1.f;
+	_BrightScale = 0.01f;
 
 	Reset();
 
@@ -152,13 +212,30 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
 
-	//
-	//if (5.f < _AccumulateTime)
-	//	Reset();
-	//else if (4.f < _AccumulateTime)
-	//	_SliceAmount =  (_AccumulateTime - 4.f) * 0.6f;
-	//else
-	//	_SliceAmount = 1.f - _AccumulateTime * 0.6f;
+	if (!_IsPlaying)
+		return 0;
+	else
+	{
+		if (_IsAlive)
+		{
+			if (0.f < _SliceAmount)
+			{
+				_SliceAmount -= _fDeltaTime * 1.f;
+				if (0.f > _SliceAmount)
+					_SliceAmount = 0.f;
+			}
+		}
+		else
+		{
+			_SliceAmount += _fDeltaTime * 1.f;
+			if (1.f <= _SliceAmount)
+			{
+				_SliceAmount = 1.f;
+
+				Effect::Reset();
+			}
+		}
+	}
 
 	//
 	//Imgui_Modify();

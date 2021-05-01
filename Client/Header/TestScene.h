@@ -1,10 +1,25 @@
 #ifndef __TEST_SCENE_H__
 #define __TEST_SCENE_H__
 #include "Scene.h"
+
 class TestScene : public Scene
 {
 private:
 	physx::PxRigidStatic* pPlane;
+
+	// 임시 트리거 
+	std::weak_ptr<class Nero> _Player{};
+	std::vector<weak_ptr<GameObject>> Wavefirst{};
+	Vector3 WavefirstTriggerPos { -0.47842f , 0.02297f ,-2.57254f};
+	bool bfirst = false;
+	std::vector<weak_ptr<GameObject>> Wavesecond{};
+	Vector3 WavesecondTriggerPos { -1.80262f,0.01168f,1.4464f};
+	bool bsecond = false;
+
+	/*vector<weak_ptr<GameObject>> m_vecEm100;
+	vector<weak_ptr<GameObject>> m_vecEm0000;*/
+	vector<weak_ptr<class Effect>> m_vecQliphothBlock;
+
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;

@@ -31,7 +31,6 @@ HRESULT NeroFSM::ReadyFSM()
 
 	m_vecState.emplace_back(Idle::Create(this, IDLE, m_pNero));
 	m_vecState.emplace_back(Idle_Start::Create(this, IDLE_START, m_pNero));
-	m_vecState.emplace_back(Idle_Battle::Create(this, IDLE_BATTLE, m_pNero));
 	m_vecState.emplace_back(BT_Att1::Create(this, ATT1, m_pNero));
 	m_vecState.emplace_back(BT_Att2::Create(this, ATT2, m_pNero));
 	m_vecState.emplace_back(BT_Att3::Create(this, ATT3, m_pNero));
@@ -45,6 +44,11 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(DashLoop::Create(this, DASHLOOP, m_pNero));
 	m_vecState.emplace_back(DashStop::Create(this, DASHSTOP, m_pNero));
 	m_vecState.emplace_back(DashTurn::Create(this, DASHTURN, m_pNero));
+
+	m_vecState.emplace_back(Jog_Loop::Create(this, JOGLOOP, m_pNero));
+	m_vecState.emplace_back(Jog_Stop::Create(this, JOGSTOP, m_pNero));
+	m_vecState.emplace_back(Jog_Turn_180::Create(this, JOG_TURN_180, m_pNero));
+	m_vecState.emplace_back(Jog_Turn_180_L::Create(this, JOG_TURN_180L, m_pNero));
 
 	m_vecState.emplace_back(BT_Att_ComboC_R_to_L::Create(this, ATT_COMBO_C_R, m_pNero));
 	m_vecState.emplace_back(BT_Att_ComboC_L_to_R::Create(this, ATT_COMBO_C_L, m_pNero));
@@ -70,7 +74,7 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(Skill_Float_Ground_Ex3::Create(this, SKILL_FLOAT_GROUND_EX3, m_pNero));
 	m_vecState.emplace_back(Skill_Float_Ground_Ex3_Start::Create(this, SKILL_FLOAT_GROUND_EX3_START, m_pNero));
 	m_vecState.emplace_back(Skill_Float_Ground_Finish::Create(this, SKILL_FLOAT_GROUND_FINISH, m_pNero));
-
+	
 	m_vecState.emplace_back(Skill_Shuffle::Create(this, SKILL_SHUFFLE, m_pNero));
 	m_vecState.emplace_back(Skill_Shuffle_Ex::Create(this, SKILL_SHUFFLE_EX, m_pNero));
 #pragma region GT

@@ -35,6 +35,8 @@ public :
 
 		Shadow,
 
+		Emissive,
+
 		AlphaBlendEffect,
 		UI,
 
@@ -46,6 +48,6 @@ public :
 	using CallType = std::function<void(const DrawInfo&)>;
 	std::map<Order,std::map<std::string, CallType>> RenderOrders{};
 };  
-
 END
+
 #endif // !__RENDERPROPERTY_H__

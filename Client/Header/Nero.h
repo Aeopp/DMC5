@@ -19,6 +19,7 @@ class GT_Overture;
 class GT_Rockman;
 class Monster;
 class Effect;
+class Liquid;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -198,6 +199,10 @@ public:
 		ANI_BUSTER_START,
 		ANI_TO_MAJIN,
 		ANI_TO_MAJIN2,
+		ANI_JOG_LOOP,
+		ANI_JOG_STOP,
+		ANI_JOG_TURN_180,
+		ANI_JOG_TURN_180_L,
 		ANI_BUSTER_AIR_CATCH,
 		ANI_BUSTER_STRIKE_COMMON,
 		ANI_BUSTER_STRIKE_COMMON_AIR,
@@ -239,7 +244,11 @@ public:
 		Dir_Front,
 		Dir_Back,
 		Dir_Left,
-		Dir_Right
+		Dir_Right,
+		Dir_Front_Down,
+		Dir_Up,
+		Dir_Down,
+		Dir_End
 	};
 
 	enum EffDircetion
@@ -262,7 +271,7 @@ public:
 		NeroCom_RedQueen,
 		NeroCom_Cerberos,
 		NeroCom_End
-	};			
+	};	
 
 private:
 	explicit Nero();
@@ -302,7 +311,9 @@ public:
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
 	Matrix Get_NeroBoneWorldMatrix(std::string _BoneName);
+	Vector3 Get_NeroBoneWorldPos(std::string _BoneName);
 	bool Get_IsMajinMode() { return m_IsMajin; }
+	int  GetDashLoopDir() { return m_iDashLoopDir; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
@@ -313,9 +324,19 @@ public:
 	void SetAngleFromCamera(float _fAddAngle = 0.f);
 	void SetRotationAngle(float _fAngle) { m_fRotationAngle += _fAngle; }
 	void SetAddForce(Vector3 _vJumpPos);
+	void SetAddForce_Dir(NeroDirection _eDir, float _fPower);
+	void SetLockOnMonster();
+	void SetOffLockOnMonster();
+	void SetDashLoopDir();
+	void SetGravity(bool _ActiveOrNot) { m_pCollider.lock()->SetGravity(_ActiveOrNot); }
+	void SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
+	void Set_GrabEnd(bool _bGrabEnd);
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
+	void Locking();
+	NeroDirection RotateToTargetMonster();
+	void NeroMove(NeroDirection _eDir, float _fPower);
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//Ä«¸Þ¶ó
@@ -388,6 +409,8 @@ private:
 	std::weak_ptr<GT_Overture>		m_pOverture;
 	std::weak_ptr<GT_Rockman>		m_pRockman;
 	std::weak_ptr<Effect>			m_pEffOverture;
+	std::weak_ptr<Monster>			m_pTargetMonster;
+	std::weak_ptr<Liquid>		m_pBlood;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -404,6 +427,7 @@ private:
 	float	m_fRotationAngle = 0.f;
 
 	bool	m_IsMajin = false;
+	int		m_iDashLoopDir = 1;
 
 	//
 	D3DXVECTOR3 vDegree;

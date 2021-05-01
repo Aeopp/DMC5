@@ -43,12 +43,17 @@ private:
 		Idle,
 		Idle2,
 		Idle3,
-		Idle4,		
+		Idle4,
 		Hit_Buster_Start,
 		Hit_Buster_Loop,
 		Hit_Buster_End,
 		Downword_Down_StandUp,
 		Downword_Damage,
+		Hit_Snatch_Start,
+		Hit_Air_Snatch_Start,
+		Hit_Snatch_End,
+		Hit_Split_Start,
+		Enter_Ground,
 		State_END
 	};
 
@@ -78,7 +83,12 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	void		 Air_Hit(BT_INFO _BattleInfo, void* pArg = nullptr);
 public:
+	//형의 부하가 추가함
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 	// 렌더링 함수....
@@ -89,15 +99,13 @@ public:
 	void RenderInit();
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle(const float _fDeltaTime, bool _bTest = false);
 	virtual void Update_Angle()override;
+
+	void		 Set_Rotate();
+	virtual void SetGravity(bool _bActiveOrNot);
 private:
 	//몬스터 상태
 	Em100_State	m_eState =State_END;		
-	//Player 받아옴.
-	std::weak_ptr<Nero>					m_pPlayer;
-	std::weak_ptr<ENGINE::Transform>	m_pPlayerTrans;
-	std::weak_ptr<RedQueen>				m_pRedQueen;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;
@@ -125,6 +133,11 @@ private:
 	Matrix								  m_TempMatrix;
 	////////////////
 
+
+	/*---이펙트 ---*/
+	weak_ptr<class Liquid> m_pBlood;
+	weak_ptr<class AppearGroundMonster>   m_pAppear;
+	/*----------------*/
 };
 
 #endif // Em100_h__

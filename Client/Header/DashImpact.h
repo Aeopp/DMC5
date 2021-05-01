@@ -45,6 +45,7 @@ private:
 
 	// Effect을(를) 통해 상속됨
 	virtual void Reset() override;
+	virtual void RenderReady() override;
 
 };
 #endif // !__DashEffect_h__

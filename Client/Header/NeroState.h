@@ -33,7 +33,10 @@ protected:
 	
 	void ActiveColl_Monsters(bool _ActiveOrNot);
 	void ActiveColl_RedQueen(bool _ActiveOrNot);
-
+	void ActiveGravity(bool _ActiveOrNot);
+	void IsGround();
+	//static inline bool m_bActive_Gravity = true; // 스테이트 클래스 공통적으로 쓸 그래비티 함수;
+	static bool m_bActive_Gravity;
 };
 
 class Idle : public NeroState
@@ -2720,6 +2723,75 @@ public:
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
+
+class Jog_Loop : public NeroState
+{
+private:
+	explicit Jog_Loop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~Jog_Loop();
+
+public:
+	static Jog_Loop* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
+class Jog_Stop : public NeroState
+{
+private:
+	explicit Jog_Stop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~Jog_Stop();
+
+public:
+	static Jog_Stop* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
+class Jog_Turn_180 : public NeroState
+{
+private:
+	explicit Jog_Turn_180(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~Jog_Turn_180();
+
+public:
+	static Jog_Turn_180* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
+class Jog_Turn_180_L : public NeroState
+{
+private:
+	explicit Jog_Turn_180_L(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~Jog_Turn_180_L();
+
+public:
+	static Jog_Turn_180_L* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
+
+
+
+
 
 
 

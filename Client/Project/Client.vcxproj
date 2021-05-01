@@ -162,6 +162,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
+    <ClInclude Include="..\Header\CircleWave.h" />
+    <ClInclude Include="..\Header\Em1000.h" />
+    <ClInclude Include="..\Header\Em1000Hand.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -193,6 +196,7 @@
     <ClInclude Include="..\Header\Nero_RWing.h" />
     <ClInclude Include="..\Header\QliphothBlock.h" />
     <ClInclude Include="..\Header\RedQueen.h" />
+    <ClInclude Include="..\Header\AirHike.h" />
     <ClInclude Include="..\Header\TempMap.h" />
     <ClInclude Include="..\Header\TestAnimationObject.h" />
     <ClInclude Include="..\Header\OvertureHand.h" />
@@ -214,6 +218,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\CircleWave.cpp" />
+    <ClCompile Include="..\Source\Em1000.cpp" />
+    <ClCompile Include="..\Source\Em1000Hand.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
@@ -245,6 +252,7 @@
     <ClCompile Include="..\Source\Nero_RWing.cpp" />
     <ClCompile Include="..\Source\QliphothBlock.cpp" />
     <ClCompile Include="..\Source\RedQueen.cpp" />
+    <ClCompile Include="..\Source\AirHike.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
     <ClCompile Include="..\Source\TestAnimationObject.cpp" />
     <ClCompile Include="..\Source\OvertureHand.cpp" />
@@ -267,6 +275,61 @@
   <ItemGroup>
     <Image Include="Client.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingSK.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\UI\BtlPanel.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -145,6 +145,15 @@
     <Filter Include="02.GameObject\99.MainCamera">
       <UniqueIdentifier>{2bca4428-2e97-442e-8dc9-ce5d306b6452}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000">
+      <UniqueIdentifier>{17cd0331-10a7-4ab5-95c6-f99402feed08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand">
+      <UniqueIdentifier>{aec58016-38ed-47ff-950f-4e09465e4d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\HLSL">
+      <UniqueIdentifier>{6b562c3b-480a-4fac-9529-c5c32a8a1bda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -290,7 +299,41 @@
     <ClInclude Include="..\Header\QliphothBlock.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
+    <ClInclude Include="..\Header\Em1000.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em1000Hand.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Wire_Arm_Grab.h">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CircleWave.h" />
+    <ClInclude Include="..\Header\AirHike.h" />
+    <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingSK.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\UI\BtlPanel.hlsl">
+      <Filter>02.GameObject\UI\BtlPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -441,7 +484,6 @@
     <ClCompile Include="..\Source\Buster_Arm.cpp" />
     <ClCompile Include="..\Source\FSMBase.cpp" />
     <ClCompile Include="..\Source\FSMState.cpp" />
-    <ClCompile Include="..\Source\NeroFSM.cpp" />
     <ClCompile Include="..\Source\NeroState.cpp" />
     <ClCompile Include="..\Source\Nero_LWing.cpp" />
     <ClCompile Include="..\Source\Nero_RWing.cpp" />
@@ -461,7 +503,20 @@
     <ClCompile Include="..\Source\QliphothBlock.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
+    <ClCompile Include="..\Source\Em1000.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em1000Hand.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Wire_Arm_Grab.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroFSM.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CircleWave.cpp" />
+    <ClCompile Include="..\Source\AirHike.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -491,5 +546,12 @@
     <ClCompile Include="..\Source\RedQueen.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\05.RedQueen</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

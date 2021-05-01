@@ -3,7 +3,6 @@
 
 #include "Monster.h"
 
-class TestObject;
 class Em101 final : public Monster
 {
 private:
@@ -61,7 +60,11 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
-
+	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+public:
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void SetGravity(bool _bActiveOrNot);
+public: 
 	// 렌더링 함수....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -76,8 +79,6 @@ private:
 	//몬스터 상태
 	Em101_State	m_eState =State_END;		
 	//TestPlayer 받아옴.
-	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<TestObject>		 m_pPlayer;
 
 
 	//공격 및 이동 관련

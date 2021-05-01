@@ -20,7 +20,7 @@ sampler VTFSampler = sampler_state
 };
 
 void vs_variance(
-	in out float4 pos : POSITION, 
+	in out float4 pos : POSITION,
 
     in float4 BoneIds0 : BLENDINDICES0,
     in float4 BoneIds1 : BLENDINDICES1,
@@ -37,7 +37,6 @@ void vs_variance(
     const float UVCorrection = 0.5f;
     float FVTFPitch = float(VTFPitch);
     int IVTFPitch = int(VTFPitch);
-
     
     for (int i = 0; i < 4; ++i)
     {
@@ -62,7 +61,6 @@ void vs_variance(
             tex2Dlod(VTFSampler, float4(VTFUVRow2, 0.f, 0.f)),
             tex2Dlod(VTFSampler, float4(VTFUVRow3, 0.f, 0.f))
         };
-      
         AnimPos += (mul(pos, AnimMatrix) * Weights0[i]);
     }
     
@@ -88,10 +86,9 @@ void vs_variance(
             {
                 tex2Dlod(VTFSampler, float4(VTFUVRow0, 0.f, 0.f)),
                  tex2Dlod(VTFSampler, float4(VTFUVRow1, 0.f, 0.f)),
-                tex2Dlod(VTFSampler, float4(VTFUVRow2, 0.f, 0.f)),
+                  tex2Dlod(VTFSampler, float4(VTFUVRow2, 0.f, 0.f)),
                 tex2Dlod(VTFSampler, float4(VTFUVRow3, 0.f, 0.f))
             };
-        
             AnimPos += (mul(pos, AnimMatrix) * Weights1[i]);
         }
     }
@@ -100,7 +97,7 @@ void vs_variance(
     pos = mul(wpos, matViewProj);
 
     zw.xy = pos.zw;
-}
+};
 
 void ps_variance(
 	in float2 zw : TEXCOORD0,
@@ -120,7 +117,8 @@ void ps_variance(
     }
     
     color = float4(d, d * d, 0, 1);
-}
+};
+
 
 technique variance
 {

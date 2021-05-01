@@ -4,8 +4,8 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-#include "TestObject.h"
 #include <filesystem>
+#include "Nero.h"
 
 void Em101::Free()
 {
@@ -134,9 +134,8 @@ HRESULT Em101::Awake()
 {
 	Unit::Awake();
 
-	m_pPlayer = std::static_pointer_cast<TestObject>(FindGameObjectWithTag(Player).lock());
+	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
-
 
 	return S_OK;
 }
@@ -172,11 +171,6 @@ UINT Em101::Update(const float _fDeltaTime)
 	{
 		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
-	//플레이어가 사라졌는지 판단
-	/*if (false == m_pPlayer.expired())
-	{
-		std::cout << "Player Dead" << std::endl;
-	}*/
 
 
 	
@@ -251,6 +245,10 @@ void Em101::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -272,6 +270,10 @@ void Em101::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -298,6 +300,10 @@ void Em101::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
+		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		{
+			continue;
+		}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -409,8 +415,23 @@ void Em101::Update_Angle()
 
 void Em101::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	AddRankScore(_BattleInfo.iAttack);
 }
 
 void Em101::Buster(BT_INFO _BattleInfo, void* pArg)
 {
+}
+
+void Em101::Snatch(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Em101::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	Monster::OnCollisionEnter(_pOther);
+}
+
+void Em101::SetGravity(bool _bActiveOrNot)
+{
+	//m_pCollider.lock()->SetGravity(_bActiveOrNot);
 }

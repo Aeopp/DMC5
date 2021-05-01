@@ -17,7 +17,24 @@ void AppearGroundMonster::Free()
 std::string AppearGroundMonster::GetName()
 {
 	return "AppearGroundMonster";
-};
+}
+
+void AppearGroundMonster::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+		const auto& _Subset = _PlaneMesh->GetSubset(0);
+		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_DecalBloodChildWorldMatrix * _RenderUpdateInfo.World, 0.1f * Scale.x);	// 0.1 = planeÀÇ Å©±â
+	}
+}
 
 void AppearGroundMonster::Reset()
 {
@@ -104,12 +121,15 @@ void AppearGroundMonster::RenderInit()
 
 void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
 	// blood
 	_ExtraColor = Vector3(0.55f, 0.f, 0.f);
 	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 	_Info._Device->SetTexture(0, _BloodALB0Tex->GetTexture());
 	_Info._Device->SetTexture(1, _BloodNRMR0Tex->GetTexture());
-	_Info.Fx->SetFloat("magicNumber", 0.5f);
+	_Info.Fx->SetFloat("brightScale", _BrightScale);
 	//
 	
 	for (auto& Element : _BloodMeshVec)
@@ -131,6 +151,9 @@ void AppearGroundMonster::RenderGBuffer(const DrawInfo& _Info)
 
 void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
 	auto WeakSubset = _PlaneMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
@@ -138,9 +161,17 @@ void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		Matrix World = _DecalBloodChildWorldMatrix * _RenderUpdateInfo.World;
 		_Info.Fx->SetMatrix("World", &World);
 
+		if (!Renderer::GetInstance()->GetDirLights().empty())
+		{
+			// ¤¾¤¾
+			auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
+			_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
+		}
+
 		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
 		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.005f);
 		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
 		SharedSubset->Render(_Info.Fx);
@@ -193,6 +224,8 @@ HRESULT AppearGroundMonster::Ready()
 
 	_PlayingSpeed = 1.f;
 
+	_BrightScale = 0.25f;
+
 	Reset();
 
 	return S_OK;
@@ -211,6 +244,9 @@ HRESULT AppearGroundMonster::Start()
 UINT AppearGroundMonster::Update(const float _fDeltaTime)
 {
 	Effect::Update(_fDeltaTime);
+
+	if (!_IsPlaying)
+		return 0;
 
 	//
 	if (5.f < _AccumulateTime)

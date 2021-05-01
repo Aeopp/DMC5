@@ -6,6 +6,9 @@ class OvertureHand final : public Effect
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _HandMesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _SparkBranchMesh{};
+	//std::shared_ptr<ENGINE::StaticMesh> _SparkPartsMesh{};
+
 	std::shared_ptr<ENGINE::Texture> _LightningTex{};
 	std::shared_ptr<ENGINE::Texture> _GlowTex{};
 	std::shared_ptr<ENGINE::Texture> _LightningColorTex{};
@@ -14,6 +17,8 @@ private:
 	float _SliceAmount = 0.f;
 	float _RandTexV0 = 0.8f;
 	float _RandTexV1 = 0.6f;
+	float _SparkBranchSubsetIdx = 0.f;
+	Matrix _SparkBranchWorldMatrix = Matrix();
 
 private:
 	explicit OvertureHand() = default;
@@ -21,9 +26,10 @@ private:
 	// Effect을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
+	virtual void RenderReady() override;
 	virtual void Imgui_Modify() override;
 private:
-	void RenderAlphaBlendEffect(const DrawInfo& _ImplInfo);
+	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 public:
 	static OvertureHand* Create();
 public:
