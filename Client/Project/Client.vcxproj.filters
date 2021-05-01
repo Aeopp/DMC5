@@ -334,6 +334,9 @@
     <ClInclude Include="..\..\Resource\Shader\UI\BtlPanel.hlsl">
       <Filter>02.GameObject\UI\BtlPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Cbs_Long.h" />
+    <ClInclude Include="..\Header\Cbs_Middle.h" />
+    <ClInclude Include="..\Header\Cbs_Short.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -517,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\CircleWave.cpp" />
     <ClCompile Include="..\Source\AirHike.cpp" />
+    <ClCompile Include="..\Source\Cbs_Long.cpp" />
+    <ClCompile Include="..\Source\Cbs_Middle.cpp" />
+    <ClCompile Include="..\Source\Cbs_Short.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
