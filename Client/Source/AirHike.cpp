@@ -276,7 +276,6 @@ void AirHike::Editor()
 		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit4("FinalColor", FinalColor);
 		ImGui::EndChild();
-		
 	}
 }
 

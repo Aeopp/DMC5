@@ -123,6 +123,9 @@ void Trail::RenderInit()
 	FireSpriteMap = Resources::Load<Texture >(
 		  "..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
 
+	ExplosionTrailMap =Resources::Load<Texture >(
+		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
+
 	SpriteCol = 8;
 	SpriteRow = 8;
 };
@@ -158,16 +161,17 @@ void Trail::PlayEnd()
 void Trail::RenderTrail(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 
 	if (CurMode ==Mode::Explosion)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+		_Info.Fx->SetTexture("TrailMap", ExplosionTrailMap->GetTexture());
 		_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
 	}
 	else if (CurMode == Mode::Non)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", NonDistortionIntencity);
+		_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 		_Info.Fx->SetTexture("SpriteMap", nullptr);
 	}
 

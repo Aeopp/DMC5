@@ -611,5 +611,7 @@
     <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Trail.hlsl" />
   </ItemGroup>
 </Project>

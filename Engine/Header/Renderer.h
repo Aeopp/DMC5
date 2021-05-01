@@ -95,7 +95,7 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
-	bool    bDistortion = false;
+	bool    bDistortion = true;
 	float   DistortionIntencity = 0.05f;
 	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;

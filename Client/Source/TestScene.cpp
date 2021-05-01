@@ -27,6 +27,8 @@
 #include "Trail.h"
 #include "AirHike.h"
 #include "CircleWave.h"
+#include "SpriteEffect.h"
+
 
 #include <iostream>
 #include <fstream>
@@ -61,6 +63,53 @@ HRESULT TestScene::LoadScene()
 	// AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
+
+	{
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			 _SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			 _SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
+			 _SE->RegistAlbedoTex
+				("..\\..\\Resource\\Texture\\Effect\\tex_capcom_impact_directional_0000_alpg.tex_noesispreviewdata.tga",
+					8,8);
+		}
+
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
+			_SE->RegistAlbedoTex
+			("..\\..\\Resource\\Texture\\Effect\\impact.tga",
+				3, 1);
+			_SE->RegistDistortionTex("..\\..\\Resource\\Texture\\Effect\\impact.tga");
+		}
+
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
+			_SE->RegistAlbedoTex
+			("..\\..\\Resource\\Texture\\Effect\\spark00.tga",
+				4, 2);
+		}
+
+
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			_SE->RegistInfo(1.f, 0.0f, { 1.f,1.f,1.f,1.f });
+			_SE->RegistAlbedoTex
+			("..\\..\\Resource\\Texture\\Effect\\lightsprite.tga",
+				6, 1);
+			_SE->RegistDistortionTex
+			("..\\..\\Resource\\Texture\\Effect\\lightsprite.tga");
+		}
+	}
+	
 
 	//AddGameObject<Em100>();
 	//AddGameObject<Em0000>();
@@ -111,7 +160,6 @@ HRESULT TestScene::LoadScene()
 	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
-
 
 	LoadMap();
 	// AddGameObject<TempMap>();

@@ -18,23 +18,21 @@ private:
 	std::shared_ptr<ENGINE::Texture> _SpriteTex{};
 	std::shared_ptr<ENGINE::Texture> _DistortionTex{};
 
-	float EndT{1.f};
-	float CurrentT{ 0.0f };
 	int32 SpriteCol;
 	int32 SpriteRow;
-	int32 SpriteColIdx;
-	int32 SpriteRowIdx;
+	float SpriteColIdx;
+	float SpriteRowIdx;
 	float CurSpriteUpdateTime = 0.0f;
 
 	float DistortionIntencity = 1.f;
-	float ColorIntencity = 1.f;
+	float ColorIntencity = 0.001f;
 	Vector4 _Color{1.f,1.f,1.f,1.f};
 
 	float SpriteUpdateTime = 0.0f;
 
 	float EditSpriteUpdateTime = 0.0f;
-	int32 EditRow{0};
-	int32 EditCol{0};
+	/*int32 EditRow{0};
+	int32 EditCol{0};*/
 private:
 	explicit SpriteEffect() = default;
 	virtual ~SpriteEffect() = default;
@@ -56,11 +54,16 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
+	void RegistInfo(const float DistortionIntencity = 1.f,
+					const float ColorIntencity = 1.f,
+					const Vector4 _Color = Vector4{ 1.f,1.f,1.f,1.f });
+
 	void RegistMesh(const std::string& MeshPath);
-	void RegistAlbedoTex(const std::string& TexPath);
+	void RegistAlbedoTex(const std::string& TexPath ,
+		const uint32 Col, const uint32 Row);
 	void RegistDistortionTex(const std::string& TexPath);
 public:
-	void PlayStart(const uint32 Col , const uint32 Row,
+	void PlayStart(
 				const float SpriteUpdateTime ,const std::optional<Vector3>& Location = std::nullopt);
 private:
 	void PlayEnd();

@@ -85,7 +85,7 @@ void SpriteEffect::RenderInit()
 		}
 	} };
 
-	_RenderProperty.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
+	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
 		{"SpriteEffect",
 		[this](const DrawInfo& _Info)
@@ -99,7 +99,7 @@ void SpriteEffect::RenderInit()
 };
 
 void SpriteEffect::PlayStart(
-	const uint32 Col, const uint32 Row, const float SpriteUpdateTime,
+	/*const uint32 Col, const uint32 Row,*/ const float SpriteUpdateTime,
 	const std::optional<Vector3>& Location)
 {
 	if (Location)
@@ -107,8 +107,10 @@ void SpriteEffect::PlayStart(
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
 	}
 
-	SpriteColIdx = Col;
-	SpriteRowIdx = Row;
+	/*SpriteCol = Col;
+	SpriteRow = Row;*/
+	SpriteColIdx = 0.f;
+	SpriteRowIdx = 0.f;
 	CurSpriteUpdateTime = this->SpriteUpdateTime = SpriteUpdateTime;
 
 	_RenderProperty.bRender = true;
@@ -126,17 +128,18 @@ void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 	if (Numsubset > 0)
 	{
-		_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / SpriteCol);
-		_Info.Fx->SetFloat("SpriteXEnd", (SpriteColIdx + 1) / SpriteCol);
-		_Info.Fx->SetFloat("SpriteYStart", SpriteRowIdx / SpriteRow);
-		_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
+		_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / static_cast<float >(SpriteCol));
+		_Info.Fx->SetFloat("SpriteXEnd", (SpriteColIdx + 1.f) / static_cast<float>(SpriteCol));
+		_Info.Fx->SetFloat("SpriteYStart", SpriteRowIdx / static_cast<float>(SpriteRow));
+		_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1.f) / static_cast<float>(SpriteRow));
 
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
-		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity); 
+		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 		_Info.Fx->SetVector("_Color", &_Color);
-		
+
 		_Info.Fx->SetMatrix("matWorld", &World);
 		_Info.Fx->SetTexture("SpriteMap", _SpriteTex->GetTexture());
+
 		if (_DistortionTex)
 		{
 			_Info.Fx->SetTexture("DistortionMap", _DistortionTex->GetTexture());
@@ -187,8 +190,8 @@ HRESULT SpriteEffect::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.11544f,0.f });
+	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
+	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.5f });
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -198,7 +201,7 @@ HRESULT SpriteEffect::Ready()
 HRESULT SpriteEffect::Awake()
 {
 	GameObject::Awake();
-	m_pTransform.lock()->SetPosition(Vector3{0.f,0.11544f,0.5f });
+	m_pTransform.lock()->SetPosition(Vector3{0.f,0.5f,0.5f });
 	return S_OK;
 }
 
@@ -219,26 +222,26 @@ UINT SpriteEffect::Update(const float _fDeltaTime)
 
 	if (CurSpriteUpdateTime < 0.0f)
 	{
-		if ( ( (SpriteColIdx - 1) >= SpriteCol  ) &&
-			 ( (SpriteRowIdx - 1) >= SpriteRow ) ) 
+		if ( ( (SpriteColIdx) >= (SpriteCol-1)  ) &&
+			 ( (SpriteRowIdx) >= (SpriteRow-1)) ) 
 		{
 			PlayEnd();
-			return;
+			return 0;
 		}
 
 		CurSpriteUpdateTime += SpriteUpdateTime;
 
-		++SpriteColIdx;
+		SpriteColIdx += 1.f;
 
 		if (SpriteColIdx >= SpriteCol)
 		{
-			SpriteColIdx = 0;
+			SpriteColIdx = 0.f;
 			
-			++SpriteRowIdx;
+			SpriteRowIdx += 1.f;
 
 			if (SpriteRowIdx >= SpriteRow)
 			{
-				SpriteRowIdx = 0;
+				SpriteRowIdx = 0.f;
 			}
 		}
 	}
@@ -262,17 +265,25 @@ void SpriteEffect::Editor()
 		const std::string ChildName = GetName() + "_Play";
 		if (ImGui::TreeNode(ChildName.c_str()))
 		{
-			ImGui::Text("Cur Col %d", SpriteColIdx);
+			ImGui::Text("Cur Col %2.6f", SpriteColIdx);
 			ImGui::SameLine();
-			ImGui::Text("Cur Row %d", SpriteRowIdx);
+			ImGui::Text("Cur Row %2.6f", SpriteRowIdx);
 
-			ImGui::InputInt("Play Row", &EditRow);
-			ImGui::InputInt("Play Col", &EditCol);
+			/*ImGui::InputInt("Play Row", &EditRow);
+			ImGui::InputInt("Play Col", &EditCol);*/
 			ImGui::InputFloat("Play SpriteUpdateTime", &EditSpriteUpdateTime);
+
+			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 10000.f);
+			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 10000.f);
+
+			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.f, 10000.f);
+			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 10000.f);
+
+			ImGui::ColorEdit4("_Color",_Color);
 
 			if (ImGui::SmallButton("Play"))
 			{
-				PlayStart(EditCol, EditRow , EditSpriteUpdateTime);
+				PlayStart(EditSpriteUpdateTime);
 			}
 
 			ImGui::TreePop();
@@ -288,6 +299,15 @@ void SpriteEffect::OnEnable()
 void SpriteEffect::OnDisable()
 {
 	GameObject::OnDisable();
+}
+void SpriteEffect::RegistInfo(
+	const float DistortionIntencity, 
+	const float ColorIntencity,
+	const Vector4 _Color)
+{
+	this->DistortionIntencity = DistortionIntencity;
+	this->ColorIntencity = ColorIntencity;
+	this->_Color = _Color;
 };
 
 void SpriteEffect::RegistMesh(const std::string& MeshPath)
@@ -301,12 +321,16 @@ void SpriteEffect::RegistMesh(const std::string& MeshPath)
 	};
 };
 
-void SpriteEffect::RegistAlbedoTex(const std::string& TexPath)
+void SpriteEffect::RegistAlbedoTex(const std::string& TexPath ,
+	const uint32 Col, const uint32 Row)
 {
 	_SpriteTex = Resources::Load<Texture>(TexPath);
 	if (_SpriteTex)
 	{
 		PushEditEntity(_SpriteTex.get());
+
+		SpriteCol = Col;
+		SpriteRow = Row;
 	};
 };
 

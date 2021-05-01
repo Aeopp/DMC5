@@ -35,6 +35,7 @@ private:
 	IDirect3DDevice9* Device{ nullptr };
 
 	std::shared_ptr<Texture> TrailMap{};
+	std::shared_ptr<Texture> ExplosionTrailMap{};
 	std::shared_ptr<Texture> FireSpriteMap{};
 
 	Mode CurMode = Mode::Explosion;

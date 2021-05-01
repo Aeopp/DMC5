@@ -36,8 +36,7 @@ sampler Distortion = sampler_state
 };
 
 void VsMain(in out float4 Position : POSITION0,
-            in out float2 UV0 : TEXCOORD0,
-            in out float2 UV1 : TEXCOORD1)
+            in out float2 UV0 : TEXCOORD0)
 {
     Position = mul(Position, matWorld);
     Position = mul(Position, ViewProjection);
@@ -45,8 +44,7 @@ void VsMain(in out float4 Position : POSITION0,
 
 void PsMain(out float4 Color : COLOR0, 
             out float4 Color1 : COLOR1 ,
-            in float2 UV0 : TEXCOORD0 ,
-            in float2 UV1 : TEXCOORD1)
+            in float2 UV0 : TEXCOORD0)
 {
     UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
     UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
@@ -56,7 +54,7 @@ void PsMain(out float4 Color : COLOR0,
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;
     
-    Color1 = tex2D(Distortion, UV1);    
+    Color1 = tex2D(Distortion, UV0);
     Color1.rgb *= DistortionIntencity;
 };
 
@@ -70,7 +68,7 @@ technique Default
         //zenable = false;
         zwriteenable = false;
         sRGBWRITEENABLE = false;
-        cullmode = none;
+        cullmode = ccw;
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();
     }

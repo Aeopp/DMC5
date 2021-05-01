@@ -74,7 +74,7 @@ technique Default
         //zenable = false;
         zwriteenable = false;
         sRGBWRITEENABLE = false;
-        cullmode = none;
+        cullmode = ccw;
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();
     }
