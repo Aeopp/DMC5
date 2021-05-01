@@ -2,6 +2,7 @@ float4x4 World;
 float4x4 ViewProjection;
 float2 UVScale = { 1, 1 };
 float4 DebugColor = float4(0.7f, 0.0f, 0.3f, 0.5f);
+
 int nMaxBonesRefPerVtx = 4;
 int VTFPitch;
 texture VTF;

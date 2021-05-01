@@ -17,10 +17,13 @@
 #include "Monster.h"
 #include "OvertureHand.h"
 #include "Liquid.h"
+#include "Cbs_Short.h"
+#include "Cbs_Middle.h"
+#include "Cbs_Long.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
-	, m_iCurWeaponIndex(RQ)
+	, m_iCurWeaponIndex(NeroCom_Cbs_Short)
 	, m_iJumpDirIndex(Basic)
 	, m_fRedQueenGage(0.f)
 	, m_iCurDirIndex(Dir_Front)
@@ -56,7 +59,12 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 	case Nero::NeroCom_RedQueen:
 		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
 		break;
-	case Nero::NeroCom_Cerberos:
+	case Nero::NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		break;
+	case Nero::NeroCom_Cbs_Long:
 		break;
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
@@ -84,7 +92,12 @@ void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->Set_AttackType(_eAttDir);
 		break;
-	case Nero::NeroCom_Cerberos:
+	case Nero::NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->SetAttType(_eAttDir);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		break;
+	case Nero::NeroCom_Cbs_Long:
 		break;
 	case Nero::NeroCom_End:
 		break;
@@ -100,7 +113,16 @@ void Nero::Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex)
 	case Nero::NeroCom_RedQueen:
 		m_pRedQueen.lock()->SetWeaponState(_StateIndex);
 		break;
-	case Nero::NeroCom_Cerberos:
+	case Nero::NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->SetWeaponState(_StateIndex);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		break;
+	case Nero::NeroCom_Cbs_Long:
+		break;
+	case Nero::NeroCom_All_Weapon:
+		m_pRedQueen.lock()->SetWeaponState(_StateIndex);
+		m_pCbsShort.lock()->SetWeaponState(_StateIndex);
 		break;
 	case Nero::NeroCom_End:
 		break;
@@ -173,6 +195,9 @@ HRESULT Nero::Ready()
 	m_pWingArm_Right = AddGameObject<WingArm_Right>();
 	m_pOverture = AddGameObject<GT_Overture>();
 	m_pEffOverture = AddGameObject<OvertureHand>();
+	m_pCbsShort = AddGameObject<Cbs_Short>();
+	m_pCbsMiddle = AddGameObject<Cbs_Middle>();
+	m_pCbsLong = AddGameObject<Cbs_Long>();
 	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
@@ -190,7 +215,7 @@ HRESULT Nero::Ready()
 HRESULT Nero::Awake()
 {
 	Unit::Awake();
-	m_pFSM->ChangeState(NeroFSM::IDLE);
+	m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
@@ -229,8 +254,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	Update_Majin(_fDeltaTime);
 
 
-	if (Input::GetKeyDown(DIK_0))
-		Hit(m_BattleInfo);
+	//if (Input::GetKeyDown(DIK_0))
+	//	Hit(m_BattleInfo);
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -669,6 +694,15 @@ void Nero::Set_GrabEnd(bool _bGrabEnd)
 	m_pWireArm.lock()->Set_GrabEnd(_bGrabEnd);
 }
 
+void Nero::SetCbsIdle()
+{
+	m_pCbsLong.lock()->SetActive(false);
+	m_pCbsMiddle.lock()->SetActive(false);
+	m_pCbsShort.lock()->SetActive(true);
+	m_pCbsShort.lock()->SetWeaponState(Nero::WS_Idle);
+	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -898,7 +932,7 @@ void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, co
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
 }
 
-void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify, const bool bOverlap)
 {
 	switch (_eNeroComID)
 	{
@@ -921,7 +955,13 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 		break;
 	case Nero::NeroCom_RedQueen:
 		break;
-	case Nero::NeroCom_Cerberos:
+	case Nero::NeroCom_Cbs_Short:
+		ChangeWeapon(Nero::NeroCom_Cbs_Short);
+		m_pCbsShort.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify, bOverlap);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		ChangeWeapon(Nero::NeroCom_Cbs_Middle);
+		m_pCbsMiddle.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify, bOverlap);
 		break;
 	case Nero::NeroCom_End:
 		break;
@@ -930,7 +970,37 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 	}
 }
 
-void Nero::ChangeWeapon(UINT _iWeaponIndex)
+void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 {
 	m_iCurWeaponIndex = _iWeaponIndex;
+
+	switch (m_iCurWeaponIndex)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetActive(true);
+		m_pCbsShort.lock()->SetActive(false);
+		m_pCbsMiddle.lock()->SetActive(false);
+		m_pCbsLong.lock()->SetActive(false);
+		break;
+	case Nero::NeroCom_Cbs_Short:
+		m_pRedQueen.lock()->SetActive(false);
+		m_pCbsShort.lock()->SetActive(true);
+		m_pCbsMiddle.lock()->SetActive(false);
+		m_pCbsLong.lock()->SetActive(false);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		m_pRedQueen.lock()->SetActive(false);
+		m_pCbsShort.lock()->SetActive(false);
+		m_pCbsMiddle.lock()->SetActive(true);
+		m_pCbsLong.lock()->SetActive(false);
+		break;
+	case Nero::NeroCom_Cbs_Long:
+		m_pRedQueen.lock()->SetActive(false);
+		m_pCbsShort.lock()->SetActive(false);
+		m_pCbsMiddle.lock()->SetActive(false);
+		m_pCbsLong.lock()->SetActive(true);
+		break;
+	default:
+		break;
+	}
 }

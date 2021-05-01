@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -132,16 +132,17 @@ to type #PxQueryHitType::eBLOCK when the value of PxHitCallback::nbTouches provi
 struct PxQueryFilterData
 {
 	/** \brief default constructor */
-	explicit PX_INLINE PxQueryFilterData() : flags(PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC)		{}
+	explicit PX_INLINE PxQueryFilterData() : flags(PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC), clientId(PX_DEFAULT_CLIENT) {}
 
 	/** \brief constructor to set both filter data and filter flags */
-	explicit PX_INLINE PxQueryFilterData(const PxFilterData& fd, PxQueryFlags f) : data(fd), flags(f)	{}
+	explicit PX_INLINE PxQueryFilterData(const PxFilterData& fd, PxQueryFlags f) : data(fd), flags(f), clientId(PX_DEFAULT_CLIENT) {}
 
 	/** \brief constructor to set filter flags only */
-	explicit PX_INLINE PxQueryFilterData(PxQueryFlags f) : flags(f)										{}
+	explicit PX_INLINE PxQueryFilterData(PxQueryFlags f) : flags(f), clientId(PX_DEFAULT_CLIENT) {}
 
 	PxFilterData	data;		//!< Filter data associated with the scene query
 	PxQueryFlags	flags;		//!< Filter flags (see #PxQueryFlags)
+	PX_DEPRECATED PxClientID		clientId;	//!< ID of the client doing the query (see #PxScene.createClient())
 };
 
 /**

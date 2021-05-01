@@ -31,6 +31,8 @@ HRESULT Scene::Awake()
 	if (0 == m_Loop[ACTIVE][LOOP_AWAKE].size())
 		return S_OK;
 
+	m_bOnLoop = false;
+
 	for (auto pGameObject : m_Loop[ACTIVE][LOOP_AWAKE])
 	{
 		if (pGameObject.expired())

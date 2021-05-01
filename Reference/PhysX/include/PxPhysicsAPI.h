@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -50,6 +50,8 @@ Alternatively, one can instead directly #include a subset of the below files.
 #include "foundation/PxErrorCallback.h"
 #include "foundation/PxErrors.h"
 #include "foundation/PxFlags.h"
+#include "foundation/PxFoundation.h"
+#include "foundation/PxFoundationVersion.h"
 #include "foundation/PxIntrinsics.h"
 #include "foundation/PxIO.h"
 #include "foundation/PxMat33.h"
@@ -91,7 +93,6 @@ Alternatively, one can instead directly #include a subset of the below files.
 
 //Geometry Library
 #include "geometry/PxBoxGeometry.h"
-#include "geometry/PxBVHStructure.h"
 #include "geometry/PxCapsuleGeometry.h"
 #include "geometry/PxConvexMesh.h"
 #include "geometry/PxConvexMeshGeometry.h"
@@ -117,9 +118,7 @@ Alternatively, one can instead directly #include a subset of the below files.
 #include "PxActor.h"
 #include "PxAggregate.h"
 #include "PxArticulation.h"
-#include "PxArticulationReducedCoordinate.h"
 #include "PxArticulationJoint.h"
-#include "PxArticulationJointReducedCoordinate.h"
 #include "PxArticulationLink.h"
 #include "PxBatchQuery.h"
 #include "PxBatchQueryDesc.h"
@@ -131,7 +130,6 @@ Alternatively, one can instead directly #include a subset of the below files.
 #include "PxDeletionListener.h"
 #include "PxFiltering.h"
 #include "PxForceMode.h"
-#include "PxFoundation.h"
 #include "PxLockedData.h"
 #include "PxMaterial.h"
 #include "PxPhysics.h"
@@ -149,17 +147,29 @@ Alternatively, one can instead directly #include a subset of the below files.
 #include "PxShape.h"
 #include "PxSimulationEventCallback.h"
 #include "PxSimulationStatistics.h"
+#include "PxSpatialIndex.h"
 #include "PxVisualizationParameter.h"
+#include "PxVolumeCache.h"
 #include "PxPruningStructure.h"
 
 //Character Controller
 #include "characterkinematic/PxBoxController.h"
 #include "characterkinematic/PxCapsuleController.h"
+#include "characterkinematic/PxCharacter.h"
 #include "characterkinematic/PxController.h"
 #include "characterkinematic/PxControllerBehavior.h"
 #include "characterkinematic/PxControllerManager.h"
 #include "characterkinematic/PxControllerObstacles.h"
 #include "characterkinematic/PxExtended.h"
+
+//Cloth Simulation
+#if PX_USE_CLOTH_API
+#include "cloth/PxCloth.h"
+#include "cloth/PxClothCollisionData.h"
+#include "cloth/PxClothFabric.h"
+#include "cloth/PxClothParticleData.h"
+#include "cloth/PxClothTypes.h"
+#endif
 
 //Cooking (data preprocessing)
 #include "cooking/Pxc.h"
@@ -177,6 +187,7 @@ Alternatively, one can instead directly #include a subset of the below files.
 #include "extensions/PxFixedJoint.h"
 #include "extensions/PxJoint.h"
 #include "extensions/PxJointLimit.h"
+#include "extensions/PxParticleExt.h"
 #include "extensions/PxPrismaticJoint.h"
 #include "extensions/PxRevoluteJoint.h"
 #include "extensions/PxRigidBodyExt.h"
@@ -192,6 +203,18 @@ Alternatively, one can instead directly #include a subset of the below files.
 #include "extensions/PxSerialization.h"
 #include "extensions/PxBinaryConverter.h"
 #include "extensions/PxRepXSerializer.h"
+
+//Particle Simulation
+#if PX_USE_PARTICLE_SYSTEM_API
+#include "particles/PxParticleBase.h"
+#include "particles/PxParticleBaseFlag.h"
+#include "particles/PxParticleCreationData.h"
+#include "particles/PxParticleFlag.h"
+#include "particles/PxParticleFluid.h"
+#include "particles/PxParticleFluidReadData.h"
+#include "particles/PxParticleReadData.h"
+#include "particles/PxParticleSystem.h"
+#endif
 
 //Vehicle Simulation
 #include "vehicle/PxVehicleComponents.h"

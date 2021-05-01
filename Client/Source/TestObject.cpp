@@ -100,6 +100,13 @@ void TestObject::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
+
+
+
+
+
+
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 

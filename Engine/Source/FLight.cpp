@@ -35,6 +35,7 @@ FLight::FLight()
 	Spotdirection = D3DXVECTOR3(0, 0, 0);
 	Spotparams = D3DXVECTOR2(0, 0);
 
+	Position = { 0.f,0.f,0.f ,1.f};
 	BlurIntencity = 4.f;
 	Cubeshadowmap = nullptr;
 	Blurredcubeshadowmap = nullptr;

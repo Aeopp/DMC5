@@ -42,6 +42,7 @@ HRESULT Renderer::ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice)
 	ReadyFrustum();
 	ReadyQuad();
 	ReadySky();
+	ReadyTextures();
 
 	TestShaderInit();
 	return S_OK;
@@ -73,6 +74,7 @@ void Renderer::ReadySky()
 
 	SkyTexMission02Sun = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\First.dds");
 	SkyTexMission02Sunset = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\Second.dds");
+	SkyNoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\smoke_01_iam.tga");
 }
 
 void Renderer::ReadyLights()
@@ -213,6 +215,23 @@ void Renderer::ReadyRenderTargets()
 	}
 
 	{
+		auto& Distortion = RenderTargets["Distortion"] = std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX;
+		InitInfo.Height = g_nWndCY;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A8R8G8B8;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+
+		Distortion->Initialize(InitInfo);
+		Distortion->DebugBufferInitialize(
+			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
+			RenderTargetDebugRenderSize);
+	}
+
+	{
 		auto& Emissive = RenderTargets["Emissive"] = std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo{};
@@ -224,7 +243,7 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		Emissive->Initialize(InitInfo);
 		Emissive->DebugBufferInitialize(
-			{ InitX,InitY + (YOffset * 99999.f) + Interval },
+			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -459,6 +478,12 @@ void Renderer::ReadyQuad()
 	_Quad->Initialize(Device);
 }
 
+void Renderer::ReadyTextures()
+{
+	DistortionTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\water_new_height.png");
+	
+}
+
 void Renderer::Push(const std::weak_ptr<GameObject>& _RenderEntity)&
 {
 	if (auto _SharedObject = _RenderEntity.lock();
@@ -500,6 +525,11 @@ HRESULT Renderer::Render()&
 	RenderReady();
 	RenderBegin();
 
+	if (bDistortion)
+	{
+		ClearDistortion();
+	}
+
 	//  쉐도우 패스 
 	RenderShadowMaps();
 	EnableDepthBias();
@@ -519,9 +549,12 @@ HRESULT Renderer::Render()&
 
 	RenderEmissive();
 	AlphaBlendEffectRender();
+	if (bDistortion)
+	{
+		BlendDistortion();
+	}
 	UIRender();
 	// RenderInsulatorMetal();
-
 	{
 		// 테스트 끝나면 주석 풀기
 		RenderMeasureLuminance();
@@ -628,17 +661,33 @@ void Renderer::Editor()&
 		{
 			LightLoad(FileHelper::OpenDialogBox());
 		}
+
+		ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 1.f,
+			"%3.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
 		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
+		ImGui::Checkbox("Distortion", &bDistortion);
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
+
 		ImGui::SliderFloat("ao", &ao, 0.0f, 1.f);
 		ImGui::InputFloat("In ao", &ao, 0.0f, 1.f);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
+		ImGui::Checkbox("SkyDistortion", &SkyDistortion);
+		if (SkyDistortion)
+		{
+			ImGui::BeginChild("SkyDistortion Edit");
+			ImGui::SliderFloat("SkyNoisewrap", &SkyNoisewrap, 0.0f, 20.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);;
+			ImGui::SliderFloat("SkyTimecorr", &SkyTimecorr, 0.0f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+			ImGui::ColorEdit4("DistortionColor", DistortionColor);
+			ImGui::SliderFloat("SkyDistortionIntencity ", &SkyDistortionIntencity, 0.0f, 100.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+			ImGui::EndChild();
+		}
+
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
 		ImGui::SliderFloat("FogDistance", &FogDistance, 0.0f, 1000.f);
 		ImGui::SliderFloat("SkySphereScale", &SkysphereScale, 0.f, 10.f);
@@ -760,6 +809,14 @@ void Renderer::ResetState()&
 	Device->SetViewport(&_RenderInfo.Viewport);
 };
 
+void Renderer::ClearDistortion()&
+{
+	Device->SetRenderTarget(0u, RenderTargets["Distortion"]->GetSurface(0));
+	// Device->Clear(0u, nullptr, D3DCLEAR_TARGET, 0xffffffff, 1.0f, 0);
+	 Device->Clear(0u, nullptr, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0);
+	Device->SetRenderTarget(0u, nullptr);
+};
+
 void Renderer::RenderEnd()&
 {
 	_PrevRenderInfo = _RenderInfo;
@@ -863,8 +920,7 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("lightPos", &light->GetPosition());
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
-			Device->Clear(0,
-				NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			Device->Clear(0,NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
 			// 렌더 시작 ... 
@@ -913,6 +969,7 @@ void Renderer::RenderGBuffer()
 		device->SetRenderTarget(0, RenderTargets["ALBM"]->GetSurface());
 		device->SetRenderTarget(1, RenderTargets["NRMR"]->GetSurface());
 		device->SetRenderTarget(2, RenderTargets["Depth"]->GetSurface());
+		// 왜곡도 클리어 . 
 	}
 
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -1336,15 +1393,17 @@ HRESULT Renderer::RenderSkySphere()&
 
 		Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 		Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-		Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
 
-		Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
-		Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
-		Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
-		Device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
-		Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-		Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		//Device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
+		//Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+		//Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_ANISOTROPIC);
+		//Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_ANISOTROPIC);
+		//Device->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 4);
+		//Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+		//Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 		Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+
+		Device->SetRenderTarget(1u, RenderTargets["Distortion"]->GetSurface(0));
 
 		Matrix SkyView = _RenderInfo.View;
 		SkyView._41 = SkyView._42 = SkyView._43 = 0.0f;
@@ -1353,18 +1412,35 @@ HRESULT Renderer::RenderSkySphere()&
 		auto Fx = Shaders["skysphere"]->GetEffect();
 		Fx->SetMatrix("matViewProj", &ViewProj);
 		const float Dt = TimeSystem::GetInstance()->DeltaTime();
-		SkysphereRot.y += Dt * SkyRotationSpeed;
+		if (!SkyDistortion)
+		{
+			SkysphereRot.y += Dt * SkyRotationSpeed;
+		}
+		
 		const Matrix World = FMath::WorldMatrix(SkysphereScale, FMath::ToRadian( SkysphereRot ) , SkysphereLoc);
 		Fx->SetMatrix("matSkyRotation", &World);
+		Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
 		Fx->SetFloat("intencity", SkyIntencity);
+		Fx->SetBool("Distortion", SkyDistortion);
+		if (SkyDistortion)
+		{
+			Fx->SetFloat("noisewrap", SkyNoisewrap);
+			Fx->SetFloat("timecorr", SkyTimecorr);
+			Fx->SetVector("DistortionColor", &DistortionColor);
+			Fx->SetTexture("NoiseMap", SkyNoiseMap->GetTexture());
+			Fx->SetFloat("DistortionIntencity", SkyDistortionIntencity);
+		}
+		Fx->SetTexture("SkyMap", CurSkysphereTex->GetTexture());
 		Fx->Begin(NULL, 0);
 		Fx->BeginPass(0);
-		Device->SetTexture(0u, CurSkysphereTex->GetTexture());
+		// Device->SetTexture(0u, CurSkysphereTex->GetTexture());
 		const int32 Numsubset = SkysphereMesh->GetNumSubset();
 		SkysphereMesh->GetSubset(0).lock()->Render(Fx);
 		Fx->EndPass();
 		Fx->End();
 		Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+		Device->SetRenderTarget(1u, nullptr);
 	}
 
 	return S_OK;
@@ -1457,6 +1533,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
+	Device->SetRenderTarget(1u, RenderTargets["Distortion"]->GetSurface(0));
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	
 	using AsType = std::pair<const std::string*,
@@ -1510,6 +1587,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale", SoftParticleDepthScale);
+		Fx->SetFloat("exposure_corr",1.f/(exposure *0.002f));
 		_DrawInfo.Fx = Fx;
 
 		UINT Passes{ 0u };
@@ -1525,9 +1603,6 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		}
 		Fx->End();
 	}
-
-	AlphaSortArr.clear();
-	AlphaSortArr.shrink_to_fit();
 
 	/*for (auto& [ShaderKey, Entitys] : _Group)
 	{
@@ -1558,6 +1633,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 
+	Device->SetRenderTarget(1u, nullptr);
 	return S_OK;
 };
 
@@ -1585,6 +1661,7 @@ HRESULT Renderer::UIRender()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("Ortho", &_RenderInfo.Ortho);
+		Fx->SetFloat("exposure_corr",1.f/(exposure *0.002f));
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
@@ -1624,6 +1701,7 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("Ortho", &_RenderInfo.Ortho);
+		Fx->SetFloat("exposure_corr", 1.f / (exposure * 0.002f));
 		_DrawInfo.Fx = Fx;
 		for (auto& [Entity, Call] : Entitys)
 		{
@@ -2393,6 +2471,56 @@ HRESULT Renderer::RenderEmissive()
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+
+	return S_OK;
+};
+
+HRESULT Renderer::RenderUV()
+{
+	return S_OK;
+};
+
+HRESULT Renderer::BlendDistortion()
+{
+	DWORD zwrite, zenable, alphablendenable, srcblend, destblend;
+	Device->GetRenderState(D3DRS_ZWRITEENABLE,&zwrite);
+	Device->GetRenderState(D3DRS_ZENABLE, &zenable);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &alphablendenable);
+	Device->GetRenderState(D3DRS_SRCBLEND,&srcblend);
+	Device->GetRenderState(D3DRS_DESTBLEND, &destblend);
+
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	Vector4 PixelSize{ 0.f,0.f,0.f,1.f };
+	
+	PixelSize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
+	PixelSize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
+
+	Device->SetRenderTarget(0u, RenderTargets["SceneTarget"]->GetSurface(0));
+	auto Fx = Shaders["Distortion"]->GetEffect();
+	Fx->SetVector("PixelSize", &PixelSize);
+
+	Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
+	Fx->SetFloat("Intencity", DistortionIntencity);
+
+	Fx->Begin(nullptr,0);
+	Fx->BeginPass(0);
+	Fx->SetTexture("SceneMap",RenderTargets["SceneTarget"]->GetTexture());
+	// Fx->SetTexture("DistortionMap", DistortionTex->GetTexture());
+	Fx->SetTexture("DistortionMap", RenderTargets["Distortion"]->GetTexture());
+	_Quad->Render(Device, 1.f, 1.f, Fx);
+	Fx->EndPass();
+	Fx->End();
+
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, zwrite);
+	Device->SetRenderState(D3DRS_ZENABLE, zenable);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, alphablendenable);
+	Device->SetRenderState(D3DRS_SRCBLEND, srcblend);
+	Device->SetRenderState(D3DRS_DESTBLEND, destblend);
 
 	return S_OK;
 };

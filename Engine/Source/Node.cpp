@@ -8,6 +8,16 @@ void Node::Editor(std::string& RefRootMotionScaleName,
 {
 	if (ImGui::TreeNode(Name.c_str()))
 	{
+		for (uint32 Row = 0u; Row < 4u; ++Row)
+		{
+			for (uint32 Col = 0u; Col < 4u; ++Col)
+			{
+				ImGui::Text("%9.9f", Transform(Row, Col));
+			}
+			ImGui::Separator();
+		}
+		ImGui::Separator();
+
 		if (ImGui::TreeNode("RootMotionSet"))
 		{
 			if (ImGui::Button("Scale"))
@@ -268,7 +278,7 @@ void Node::NodeUpdate(const Matrix& ParentToRoot,
 		Transform = OriginTransform;
 	}
 
-	ToRoot = Transform * ParentToRoot;
+	ToRoot =  Transform * ParentToRoot;
 	Final = Offset * ToRoot;
 
 	for (auto& ChildrenTarget : Childrens)

@@ -78,9 +78,9 @@
                 "TransitionTime": 0.10000000149011612
             },
             {
-                "Name": "Cbs_DashStop",
+                "Name": "Cbs_Dash",
                 "Acceleration": 1.0,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0.1
             },
             {
                 "Name": "Cbs_Idle",
@@ -93,9 +93,39 @@
                 "TransitionTime": 0.10000000149011612
             },
             {
+                "Name": "Cbs_RunLoop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "Cbs_RunStart180",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "Cbs_RunStart180_L",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "Cbs_RunStart270",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "Cbs_RunStart90",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
+                "Name": "Cbs_RunStartFront",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.1
+            },
+            {
                 "Name": "Cbs_RunStop",
                 "Acceleration": 1.0,
-                "TransitionTime": 0.009999999776482582
+                "TransitionTime": 0.1
             },
             {
                 "Name": "Cbs_SKill_Crystal",
@@ -504,12 +534,12 @@
             },
             {
                 "Name": "Jump_Front",
-                "Acceleration": 1.1,
+                "Acceleration": 1.100000023841858,
                 "TransitionTime": 0.10000000149011612
             },
             {
                 "Name": "Jump_Front_Landing",
-                "Acceleration": 1.1,
+                "Acceleration": 1.100000023841858,
                 "TransitionTime": 0.10000000149011612
             },
             {
@@ -936,6 +966,36 @@
                 "Name": "em0000_M-Buster",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.10000000149011612
+            },
+            {
+                "Name": "em200_Buster_Air_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em200_Buster_Air_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em200_Buster_Air_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em200_Buster_Finish",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em200_Buster_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em200_Buster_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "em5000_Buster_Finish",

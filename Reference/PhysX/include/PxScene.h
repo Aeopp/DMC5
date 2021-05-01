@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -42,6 +42,11 @@
 #include "PxClient.h"
 #include "task/PxTask.h"
 
+#if PX_USE_PARTICLE_SYSTEM_API
+#include "particles/PxParticleSystem.h"
+#include "particles/PxParticleFluid.h"
+#endif
+
 #include "pvd/PxPvdSceneClient.h"
 
 #if !PX_DOXYGEN
@@ -59,18 +64,31 @@ class PxBatchQueryDesc;
 class PxBatchQuery;
 class PxAggregate;
 class PxRenderBuffer;
+class PxVolumeCache;
 
 class PxSphereGeometry;
 class PxBoxGeometry;
 class PxCapsuleGeometry;
 
 class PxPruningStructure;
-class PxBVHStructure;
 struct PxContactPairHeader;
 
 typedef PxU8 PxDominanceGroup;
 
 class PxPvdSceneClient;
+
+/**
+\brief Data struct for use with Active Transform Notification.
+Used with PxScene::getActiveTransforms().
+
+@see PxScene
+*/
+struct PX_DEPRECATED PxActiveTransform
+{
+	PxActor*		actor;				//!< Affected actor
+	void*			userData;			//!< User data of the actor
+	PxTransform		actor2World;		//!< Actor-to-world transform of the actor
+};
 
 /**
 \brief Expresses the dominance relationship of a contact.
@@ -110,7 +128,32 @@ struct PxActorTypeFlag
 		\brief A dynamic rigid body
 		@see PxRigidDynamic
 		*/
-		eRIGID_DYNAMIC		= (1 << 1)
+		eRIGID_DYNAMIC		= (1 << 1),
+
+#if PX_USE_PARTICLE_SYSTEM_API
+		/**
+		\brief A particle system (deprecated)
+		\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+		@see PxParticleSystem
+		*/
+		ePARTICLE_SYSTEM	PX_DEPRECATED = (1 << 2),
+
+		/**
+		\brief A particle fluid (deprecated)
+		\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+		@see PxParticleFluid
+		*/
+		ePARTICLE_FLUID		PX_DEPRECATED = (1 << 3),
+#endif
+
+#if PX_USE_CLOTH_API
+		/**
+		\brief A cloth
+		\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+		@see PxCloth
+		*/
+		eCLOTH				PX_DEPRECATED = (1 << 5)
+#endif
 	};
 };
 
@@ -158,10 +201,10 @@ struct PxQueryCache
 };
 
 /** 
- \brief A scene is a collection of bodies and constraints which can interact.
+ \brief A scene is a collection of bodies, particle systems and constraints which can interact.
 
  The scene simulates the behavior of these objects over time. Several scenes may exist 
- at the same time, but each body or constraint is specific to a scene 
+ at the same time, but each body, particle system or constraint is specific to a scene 
  -- they may not be shared.
 
  @see PxSceneDesc PxPhysics.createScene() release()
@@ -184,7 +227,7 @@ class PxScene
 	/**
 	\brief Deletes the scene.
 
-	Removes any actors and constraint shaders from this scene
+	Removes any actors,  particle systems, and constraint shaders from this scene
 	(if the user hasn't already done so).
 
 	Be sure	to not keep a reference to this object after calling release.
@@ -265,7 +308,7 @@ class PxScene
 
 	@see PxArticulation
 	*/
-	virtual	void				addArticulation(PxArticulationBase& articulation) = 0;
+	virtual	void				addArticulation(PxArticulation& articulation) = 0;
 
 	/**
 	\brief Removes an articulation from this scene.
@@ -279,12 +322,7 @@ class PxScene
 
 	@see PxArticulation, PxAggregate
 	*/
-	virtual	void				removeArticulation(PxArticulationBase& articulation, bool wakeOnLostTouch = true) = 0;
-
-
-	//@}
-	/************************************************************************************************/
-
+	virtual	void				removeArticulation(PxArticulation& articulation, bool wakeOnLostTouch = true) = 0;
 
 	/**
 	\brief Adds an actor to this scene.
@@ -297,18 +335,11 @@ class PxScene
 	\note If the actor is a PxRigidActor then each assigned PxConstraint object will get added to the scene automatically if
 	it connects to another actor that is part of the scene already. 
 
-	\note When BVHStructure is provided the actor shapes are grouped together. 
-	The scene query pruning structure inside PhysX SDK will store/update one
-	bound per actor. The scene queries against such an actor will query actor
-	bounds and then make a local space query against the provided BVH structure, which is in
-	actor's local space.
-
 	\param[in] actor Actor to add to scene.
-	\param[in] bvhStructure BVHStructure for actor shapes.
 
-	@see PxActor, PxConstraint::isValid(), PxBVHStructure
+	@see PxActor, PxConstraint::isValid()
 	*/
-	virtual	void				addActor(PxActor& actor, const PxBVHStructure* bvhStructure = NULL) = 0;
+	virtual	void				addActor(PxActor& actor) = 0;
 
 	/**
 	\brief Adds actors to this scene.	
@@ -460,17 +491,41 @@ class PxScene
 	\brief Queries the PxScene for a list of the PxActors whose transforms have been 
 	updated during the previous simulation step
 
+	\note PxSceneFlag::eENABLE_ACTIVETRANSFORMS must be set.
+	Multiclient behavior: Active transforms return only the list of active actors owned by the specified client.
+
+	\note Do not use this method while the simulation is running. Calls to this method while the simulation is running will be ignored and NULL will be returned.
+
+	\param[out] nbTransformsOut The number of transforms returned.
+	\param[in] client The client whose actors the caller is interested in.
+
+	\return A pointer to the list of PxActiveTransforms generated during the last call to fetchResults().
+
+	@see PxActiveTransform
+	*/
+	PX_DEPRECATED virtual const PxActiveTransform*
+								getActiveTransforms(PxU32& nbTransformsOut, PxClientID client = PX_DEFAULT_CLIENT) = 0;
+
+
+	/**
+	\brief Queries the PxScene for a list of the PxActors whose transforms have been 
+	updated during the previous simulation step
+
 	\note PxSceneFlag::eENABLE_ACTIVE_ACTORS must be set.
+	Multiclient behavior: the system returns only the list of active actors owned by the specified client.
 
 	\note Do not use this method while the simulation is running. Calls to this method while the simulation is running will be ignored and NULL will be returned.
 
 	\param[out] nbActorsOut The number of actors returned.
+	\param[in] client The client whose actors the caller is interested in.
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
 
 	\return A pointer to the list of active PxActors generated during the last call to fetchResults().
 
 	@see PxActor
 	*/
-	virtual PxActor**		getActiveActors(PxU32& nbActorsOut) = 0;
+	virtual PxActor**		getActiveActors(PxU32& nbActorsOut, PX_DEPRECATED PxClientID client = PX_DEFAULT_CLIENT) = 0;
 
 	/**
 	\brief Returns the number of articulations in the scene.
@@ -491,7 +546,7 @@ class PxScene
 
 	@see getNbArticulations()
 	*/
-	virtual	PxU32				getArticulations(PxArticulationBase** userBuffer, PxU32 bufferSize, PxU32 startIndex=0) const = 0;
+	virtual	PxU32				getArticulations(PxArticulation** userBuffer, PxU32 bufferSize, PxU32 startIndex=0) const = 0;
 
 	/**
 	\brief Returns the number of constraint shaders in the scene.
@@ -618,13 +673,13 @@ class PxScene
 	virtual PxCpuDispatcher* getCpuDispatcher() const = 0;
 
 	/**
-	\brief Return the CUDA context manager that was set in PxSceneDesc::cudaContextManager when creating the scene with PxPhysics::createScene
+	\brief Return the gpu dispatcher that was set in PxSceneDesc::gpuDispatcher when creating the scene with PxPhysics::createScene
 
 	<b>Platform specific:</b> Applies to PC GPU only.
 
-	@see PxSceneDesc::cudaContextManager, PxPhysics::createScene
+	@see PxSceneDesc::gpuDispatcher, PxPhysics::createScene
 	*/
-	virtual PxCudaContextManager* getCudaContextManager() const = 0;
+	virtual PxGpuDispatcher* getGpuDispatcher() const = 0;
 
 	//@}
 	/************************************************************************************************/
@@ -638,11 +693,105 @@ class PxScene
 	Additional clients are returned by this function. Clients cannot be released once created. 
 	An error is reported when more than a supported number of clients (currently 128) are created. 
 
-	@see PxClientID
+	@see PxClientBehaviorFlag PxClientID setClientBehaviorFlags() PxActor::setClientBehaviorFlags()
 	*/
 	virtual PxClientID			createClient() = 0;
 
+	/**
+	\brief Sets behavior bits for a client.
+
+	The behavior bits are a property of a client that determine when it receives callbacks.
+
+	It is permissible to change the behavior for PX_DEFAULT_CLIENT with this call.
+	Initially all created clients, as well as PX_DEFAULT_CLIENT have all bits set to 0.
+
+	Note that in addition to setting a client to listen to a particular foreign actor event type, 
+	the user must also configure actors to send that particular event type to foreign clients
+	using PxActor::setClientBehaviorFlags().
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
+
+	@see PxClientBehaviorFlag PxClientID createClient() getClientBehaviorFlags() PxActor::setClientBehaviorFlags()
+	*/
+	PX_DEPRECATED virtual void				setClientBehaviorFlags(PxClientID client, PxClientBehaviorFlags clientBehaviorFlags) = 0; 
+
+	/**
+	\brief Retrieves behavior bits for a client.
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
+
+	@see PxClientBehaviorFlag PxClientID setClientBehaviorFlags() createClient()
+	*/
+	PX_DEPRECATED virtual PxClientBehaviorFlags getClientBehaviorFlags(PxClientID client) const = 0;
 	//@}
+
+
+	#if PX_USE_CLOTH_API
+
+	/************************************************************************************************/
+
+	/** @name Cloth
+	*/
+	//@{
+	/**
+	\brief Sets the minimum separation distance for cloth inter-collision.
+	
+	Particles closer than this distance that belong to different PxCloth objects 
+	will be separated.
+	
+	\param[in] distance The minimum particle separation distance (default: 0.0).
+
+	\note The PxCloth objects that interact can be controlled through the filter
+	shader, @see PxSimulationFilterShader. Cloth objects with the PxClothFlag::eGPU
+	set can only interact with other GPU simulated cloth objects.
+	
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	*/
+	PX_DEPRECATED virtual void	setClothInterCollisionDistance(PxF32 distance) = 0;
+
+	/**
+	\brief Retrieves distance used for cloth inter-collision.
+	\return The distance used for cloth inter-collision.
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	*/
+	PX_DEPRECATED virtual PxF32	getClothInterCollisionDistance() const = 0;
+
+	/**
+	\brief Sets the cloth inter-collision stiffness.
+	
+	Inter-collision stiffness controls how much two particles repel	each other 
+	when they are closer than the inter-collision distance.
+
+	\param [in] stiffness Fraction of distance residual to resolve per iteration (default: 1.0).
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	*/
+	PX_DEPRECATED virtual void	setClothInterCollisionStiffness(PxF32 stiffness) = 0; 
+	/**
+	\brief Retrieves the stiffness coefficient used for cloth inter-collision.
+	\return The stiffness coefficient used for cloth inter-collision.
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	*/
+	PX_DEPRECATED virtual PxF32	getClothInterCollisionStiffness() const = 0; 
+
+	/**
+	\brief Sets the number of inter-collision separation iterations to perform.
+
+	The accuracy of cloth inter-collision may be improved by increasing the number
+	of separation passes that are performed.
+
+	\param[in] nbIterations The number of iterations to perform (default: 1).
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	*/
+	PX_DEPRECATED virtual void	setClothInterCollisionNbIterations(PxU32 nbIterations) = 0; 	
+	/**
+	\brief Retrieves the number of iterations used for cloth inter-collision.
+	\return The number of iterations used for cloth inter-collision.
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	*/
+	PX_DEPRECATED virtual PxU32	getClothInterCollisionNbIterations() const = 0; 
+	//@}
+
+	#endif // PX_USE_CLOTH_API
 
 	/************************************************************************************************/
 
@@ -653,22 +802,33 @@ class PxScene
 	/**
 	\brief Sets a user notify object which receives special simulation events when they occur.
 
+	Multiclient behavior: unlike the PxSimulationEventCallback that can be specified in the PxSceneDesc, this method 
+	lets the user associate additional callbacks with clients other than PX_DEFAULT_CLIENT. This way 
+	each client can register its own callback class.
+
 	\note Do not set the callback while the simulation is running. Calls to this method while the simulation is running will be ignored.
 
 	\param[in] callback User notification callback. See #PxSimulationEventCallback.
+	\param[in] client The client to be associated with this callback.
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
 
 	@see PxSimulationEventCallback getSimulationEventCallback
 	*/
-	virtual void				setSimulationEventCallback(PxSimulationEventCallback* callback) = 0;
+	virtual void				setSimulationEventCallback(PxSimulationEventCallback* callback, PX_DEPRECATED PxClientID client = PX_DEFAULT_CLIENT) = 0;
 
 	/**
 	\brief Retrieves the simulationEventCallback pointer set with setSimulationEventCallback().
 
+	\param[in] client The client whose callback object is to be returned.
 	\return The current user notify pointer. See #PxSimulationEventCallback.
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
 
 	@see PxSimulationEventCallback setSimulationEventCallback()
 	*/
-	virtual PxSimulationEventCallback*	getSimulationEventCallback() const = 0;
+	virtual PxSimulationEventCallback*
+								getSimulationEventCallback(PX_DEPRECATED PxClientID client = PX_DEFAULT_CLIENT) const = 0;
 
 	/**
 	\brief Sets a user callback object, which receives callbacks on all contacts generated for specified actors.
@@ -695,7 +855,8 @@ class PxScene
 
 	@see PxContactModifyCallback setContactModifyCallback()
 	*/
-	virtual PxContactModifyCallback*	getContactModifyCallback() const = 0;
+	virtual PxContactModifyCallback*
+								getContactModifyCallback() const = 0;
 
 	/**
 	\brief Retrieves the PxCCDContactModifyCallback pointer set with setContactModifyCallback().
@@ -704,25 +865,39 @@ class PxScene
 
 	@see PxContactModifyCallback setContactModifyCallback()
 	*/
-	virtual PxCCDContactModifyCallback*	getCCDContactModifyCallback() const = 0;
+	virtual PxCCDContactModifyCallback*
+								getCCDContactModifyCallback() const = 0;
 
 	/**
 	\brief Sets a broad-phase user callback object.
 
+	Multiclient behavior: unlike the PxBroadPhaseCallback that can be specified in the PxSceneDesc, this method 
+	lets the user associate additional callbacks with clients other than PX_DEFAULT_CLIENT. This way 
+	each client can register its own callback class. Each callback function has a somewhat different
+	way of determining which clients' callbacks will be called in a certain event. Refer to the documentation
+	of particular callback functions inside PxBroadPhaseCallback for this information.
+
 	\note Do not set the callback while the simulation is running. Calls to this method while the simulation is running will be ignored.
 
 	\param[in] callback	Asynchronous broad-phase callback. See #PxBroadPhaseCallback.
+	\param[in] client	The client to be associated with this callback.
+
+	\deprecated PxClient feature has been deprecated in PhysX version 3.4
 	*/
-	virtual void				setBroadPhaseCallback(PxBroadPhaseCallback* callback) = 0;
+	virtual void				setBroadPhaseCallback(PxBroadPhaseCallback* callback, PX_DEPRECATED PxClientID client = PX_DEFAULT_CLIENT) = 0;
 
 	/**
 	\brief Retrieves the PxBroadPhaseCallback pointer set with setBroadPhaseCallback().
 
+	\param[in] client The client whose callback object is to be returned.
+
 	\return The current broad-phase callback pointer. See #PxBroadPhaseCallback.
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
 
 	@see PxBroadPhaseCallback setBroadPhaseCallback()
 	*/
-	virtual PxBroadPhaseCallback* getBroadPhaseCallback()	const = 0;
+	virtual PxBroadPhaseCallback* getBroadPhaseCallback(PX_DEPRECATED PxClientID client = PX_DEFAULT_CLIENT)	const = 0;
 
 	//@}
 	/************************************************************************************************/
@@ -776,7 +951,8 @@ class PxScene
 
 	@see PxSceneDesc.filterShader PxSimulationFilterShader
 	*/
-	virtual	PxSimulationFilterShader	getFilterShader() const = 0;
+	virtual	PxSimulationFilterShader
+								getFilterShader() const = 0;
 
 	/**
 	\brief Gets the custom collision filter callback in use for this scene.
@@ -785,7 +961,8 @@ class PxScene
 
 	@see PxSceneDesc.filterCallback PxSimulationFilterCallback
 	*/
-	virtual	PxSimulationFilterCallback*	getFilterCallback() const = 0;
+	virtual	PxSimulationFilterCallback*
+								getFilterCallback() const = 0;
 
 	/**
 	\brief Marks the object to reset interactions and re-run collision filters in the next simulation step.
@@ -793,7 +970,7 @@ class PxScene
 	This call forces the object to remove all existing collision interactions, to search anew for existing contact
 	pairs and to run the collision filters again for found collision pairs.
 
-	\note The operation is supported for PxRigidActor objects only.
+	\note The operation is supported for PxParticleBase (deprecated) and PxRigidActor objects only.
 
 	\note All persistent state of existing interactions will be lost and can not be retrieved even if the same collison pair
 	is found again in the next step. This will mean, for example, that you will not get notified about persistent contact
@@ -833,24 +1010,6 @@ class PxScene
 	@see PxSimulationFilterShader PxSimulationFilterCallback
 	*/
 	virtual void				resetFiltering(PxRigidActor& actor, PxShape*const* shapes, PxU32 shapeCount) = 0;
-
-	/**
-	\brief Gets the pair filtering mode for kinematic-kinematic pairs.
-
-	\return Filtering mode for kinematic-kinematic pairs.
-
-	@see PxPairFilteringMode PxSceneDesc
-	*/
-	virtual	PxPairFilteringMode::Enum	getKinematicKinematicFilteringMode()	const	= 0;
-
-	/**
-	\brief Gets the pair filtering mode for static-kinematic pairs.
-
-	\return Filtering mode for static-kinematic pairs.
-
-	@see PxPairFilteringMode PxSceneDesc
-	*/
-	virtual	PxPairFilteringMode::Enum	getStaticKinematicFilteringMode()		const	= 0;
 
 	//@}
 	/************************************************************************************************/
@@ -1193,7 +1352,7 @@ class PxScene
 	virtual PxPruningStructureType::Enum getDynamicStructure() const = 0;
 
 	/**
-	\brief Flushes any changes to the scene query representation.
+	\brief Flushes any changes in the simulation to the scene query representation.
 
 	This method updates the state of the scene query representation to match changes in the scene state.
 
@@ -1204,7 +1363,8 @@ class PxScene
 	A thread performing updates will hold a write lock on the query structure, and thus stall other querying threads. In multithread
 	scenarios it can be useful to explicitly schedule the period where this lock may be held for a significant period, so that
 	subsequent queries issued from multiple threads will not block.
-	
+
+	Note that while queries will block during the execution of this method, other read operations on the scene will not.
 	*/
 	virtual	void				flushQueryUpdates() = 0;
 
@@ -1220,6 +1380,15 @@ class PxScene
 	@see PxBatchQuery PxBatchQueryDesc
 	*/
 	PX_DEPRECATED virtual	PxBatchQuery*		createBatchQuery(const PxBatchQueryDesc& desc) = 0;
+
+	/**
+	\brief Creates a volume cache. See the Guide, "Scene Queries" section, "Volume Caching" subsection for more information.
+
+	\deprecated The volume cache feature has been deprecated in PhysX version 3.4
+
+	@see PxVolumeCache PxVolumeCache.release()
+	*/
+	PX_DEPRECATED virtual	PxVolumeCache*		createVolumeCache(PxU32 maxStaticShapes = 32, PxU32 maxDynamicShapes = 8) = 0;
 
 	/**
 	\brief Sets the rebuild rate of the dynamic tree pruning structures.
@@ -1322,7 +1491,7 @@ class PxScene
 	\param[in] distance		Length of the ray. Has to be in the [0, inf) range.
 	\param[out] hitCall		Raycast hit buffer or callback object used to report raycast hits.
 	\param[in] hitFlags		Specifies which properties per hit should be computed and returned via the hit callback.
-	\param[in] filterData	Filtering data passed to the filter shader. See #PxQueryFilterData #PxBatchQueryPreFilterShader, #PxBatchQueryPostFilterShader
+	\param[in] filterData	Filtering data passed to the filer shader. See #PxQueryFilterData #PxBatchQueryPreFilterShader, #PxBatchQueryPostFilterShader
 	\param[in] filterCall	Custom filtering logic (optional). Only used if the corresponding #PxQueryFlag flags are set. If NULL, all hits are assumed to be blocking.
 	\param[in] cache		Cached hit shape (optional). Ray is tested against cached shape first. If no hit is found the ray gets queried against the scene.
 							Note: Filtering is not executed for a cached shape if supplied; instead, if a hit is found, it is assumed to be a blocking hit.
@@ -1616,24 +1785,6 @@ class PxScene
 	@see PxSceneDesc.solverBatchSize setSolverBatchSize()
 	*/
 	virtual PxU32						getSolverBatchSize() const = 0;
-
-	/**
-	\brief Sets the number of articulations required to spawn a separate rigid body solver thread.
-
-	\param[in] solverBatchSize Number of articulations required to spawn a separate rigid body solver thread.
-
-	@see PxSceneDesc.solverBatchSize getSolverArticulationBatchSize()
-	*/
-	virtual	void						setSolverArticulationBatchSize(PxU32 solverBatchSize) = 0;
-
-	/**
-	\brief Retrieves the number of articulations required to spawn a separate rigid body solver thread.
-
-	\return Current number of articulations required to spawn a separate rigid body solver thread.
-
-	@see PxSceneDesc.solverBatchSize setSolverArticulationBatchSize()
-	*/
-	virtual PxU32						getSolverArticulationBatchSize() const = 0;
 	
 
 	//@}

@@ -23,9 +23,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+
 
 #ifndef PX_DISTANCEJOINT_H
 #define PX_DISTANCEJOINT_H
@@ -45,15 +46,18 @@ class PxDistanceJoint;
 /**
 \brief Create a distance Joint.
 
- \param[in] physics		The physics SDK
- \param[in] actor0		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame0	The position and orientation of the joint relative to actor0
- \param[in] actor1		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame1	The position and orientation of the joint relative to actor1 
+ \param[in] physics the physics SDK
+ \param[in] actor0 an actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+ \param[in] localFrame0 the position and orientation of the joint relative to actor0
+ \param[in] actor1 an actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+ \param[in] localFrame1 the position and orientation of the joint relative to actor1 
 
 @see PxDistanceJoint
 */
-PxDistanceJoint*	PxDistanceJointCreate(PxPhysics& physics, PxRigidActor* actor0, const PxTransform& localFrame0, PxRigidActor* actor1, const PxTransform& localFrame1);
+
+PxDistanceJoint*	PxDistanceJointCreate(PxPhysics& physics, 
+									 	  PxRigidActor* actor0, const PxTransform& localFrame0, 
+										  PxRigidActor* actor1, const PxTransform& localFrame1);
 
 
 /** 
@@ -61,6 +65,7 @@ PxDistanceJoint*	PxDistanceJointCreate(PxPhysics& physics, PxRigidActor* actor0,
 
 @see PxDistanceJoint
 */
+
 struct PxDistanceJointFlag
 {
 	enum Enum
@@ -83,10 +88,12 @@ class PxDistanceJoint : public PxJoint
 {
 public:
 
+
 	/**
 	\brief Return the current distance of the joint
 	*/
-	virtual PxReal					getDistance()	const	= 0;
+
+	virtual PxReal					getDistance() const									= 0;
 	
 	/**
 	\brief Set the allowed minimum distance for the joint.
@@ -100,7 +107,8 @@ public:
 
 	@see PxDistanceJoint::minDistance, PxDistanceJointFlag::eMIN_DISTANCE_ENABLED getMinDistance()
 	*/
-	virtual void					setMinDistance(PxReal distance)	= 0;
+
+	virtual void					setMinDistance(PxReal distance)						= 0;
 
 	/**
 	\brief Get the allowed minimum distance for the joint.
@@ -109,7 +117,9 @@ public:
 
 	@see PxDistanceJoint::minDistance, PxDistanceJointFlag::eMIN_DISTANCE_ENABLED setMinDistance()
 	*/
-	virtual PxReal					getMinDistance()	const	= 0;
+
+	virtual PxReal					getMinDistance()							const	= 0;
+
 
 	/**
 	\brief Set the allowed maximum distance for the joint.
@@ -123,7 +133,8 @@ public:
 
 	@see PxDistanceJoint::maxDistance, PxDistanceJointFlag::eMAX_DISTANCE_ENABLED getMinDistance()
 	*/
-	virtual void					setMaxDistance(PxReal distance)	= 0;
+
+	virtual void					setMaxDistance(PxReal distance)						= 0;
 
 	/**
 	\brief Get the allowed maximum distance for the joint.
@@ -132,7 +143,9 @@ public:
 
 	@see PxDistanceJoint::maxDistance, PxDistanceJointFlag::eMAX_DISTANCE_ENABLED setMaxDistance()
 	*/
-	virtual PxReal					getMaxDistance()	const	= 0;
+
+	virtual PxReal					getMaxDistance()							const	= 0;
+
 
 	/**
 	\brief Set the error tolerance of the joint.
@@ -141,7 +154,9 @@ public:
 
 	@see PxDistanceJoint::tolerance, getTolerance()
 	*/
-	virtual void					setTolerance(PxReal tolerance)	= 0;
+
+	virtual void					setTolerance(PxReal tolerance)						= 0;
+
 
 	/**
 	\brief Get the error tolerance of the joint.
@@ -156,7 +171,7 @@ public:
 
 	@see PxDistanceJoint::tolerance, setTolerance()
 	*/
-	virtual PxReal					getTolerance()	const	= 0;
+	virtual PxReal					getTolerance()								const	= 0;
 
 	/**
 	\brief Set the strength of the joint spring.
@@ -170,7 +185,8 @@ public:
 
 	@see PxDistanceJointFlag::eSPRING_ENABLED getStiffness()
 	*/
-	virtual void					setStiffness(PxReal stiffness)	= 0;
+
+	virtual void					setStiffness(PxReal stiffness)					= 0;
 
 	/**
 	\brief Get the strength of the joint spring.
@@ -179,7 +195,9 @@ public:
 
 	@see PxDistanceJointFlag::eSPRING_ENABLED setStiffness()
 	*/
-	virtual PxReal					getStiffness()	const	= 0;
+
+	virtual PxReal					getStiffness()									const	= 0;
+
 
 	/**
 	\brief Set the damping of the joint spring.
@@ -193,8 +211,10 @@ public:
 
 	@see PxDistanceJointFlag::eSPRING_ENABLED setDamping()
 	*/
-	virtual void					setDamping(PxReal damping)	= 0;
+
+	virtual void					setDamping(PxReal damping)							= 0;
 	
+
 	/**
 	\brief Get the damping of the joint spring.
 
@@ -202,7 +222,8 @@ public:
 
 	@see PxDistanceJointFlag::eSPRING_ENABLED setDamping()
 	*/
-	virtual PxReal					getDamping()	const	= 0;
+
+	virtual PxReal					getDamping()									const	= 0;
 
 	/**
 	\brief Set the flags specific to the Distance Joint.
@@ -213,7 +234,9 @@ public:
 
 	@see PxDistanceJointFlag setFlag() getFlags()
 	*/
+
 	virtual void					setDistanceJointFlags(PxDistanceJointFlags flags) = 0;
+
 
 	/**
 	\brief Set a single flag specific to a Distance Joint to true or false.
@@ -223,6 +246,7 @@ public:
 
 	@see PxDistanceJointFlag, getFlags() setFlags()
 	*/
+
 	virtual void					setDistanceJointFlag(PxDistanceJointFlag::Enum flag, bool value) = 0;
 
 	/**
@@ -232,7 +256,8 @@ public:
 
 	@see PxDistanceJoint::flags, PxDistanceJointFlag setFlag() setFlags()
 	*/
-	virtual PxDistanceJointFlags	getDistanceJointFlags()	const	= 0;
+
+	virtual PxDistanceJointFlags	getDistanceJointFlags(void)					const	= 0;
 
 	/**
 	\brief Returns string name of PxDistanceJoint, used for serialization

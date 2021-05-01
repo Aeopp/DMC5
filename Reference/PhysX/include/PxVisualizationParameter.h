@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -133,6 +133,13 @@ struct PxVisualizationParameter
 		eBODY_ANG_VELOCITY,
 
 
+		/**
+		\brief Visualize the bodies joint projection group.
+
+		@see PxBodyDesc.angularVelocity PxActor
+		*/
+		eDEPRECATED_BODY_JOINT_GROUPS,
+
 	/* Contact visualisations */
 
 		/**
@@ -226,11 +233,70 @@ struct PxVisualizationParameter
 		\brief Joint limits
 		*/
 		eJOINT_LIMITS,
+
+
+	/* ParticleSystem visualizations */
+		
+		/**
+		\brief Particle position visualization.
+		*/
+		ePARTICLE_SYSTEM_POSITION,
+		
+		/**
+		\brief Particle velocity visualization.
+		*/
+		ePARTICLE_SYSTEM_VELOCITY,
+
+		/**
+		\brief Particle collision normal visualization.
+		*/
+		ePARTICLE_SYSTEM_COLLISION_NORMAL,
+		
+		/**
+		\brief ParticleSystem AABB visualization.
+		*/
+		ePARTICLE_SYSTEM_BOUNDS,
+
+		/**
+		\brief Particle grid visualization.
+		*/
+		ePARTICLE_SYSTEM_GRID,
+		
+		/**
+		\brief Particle system broad phase bounds.
+		*/
+		ePARTICLE_SYSTEM_BROADPHASE_BOUNDS,
+
+		/**
+		\brief ParticleSystem maximum motion distance visualization.
+		*/
+		ePARTICLE_SYSTEM_MAX_MOTION_DISTANCE,
 	
 		/**
 		\brief Visualize culling box
 		*/
 		eCULL_BOX,
+
+		/**
+		\brief Cloth fabric vertical sets
+		*/
+		eCLOTH_VERTICAL,    
+		/**
+		\brief Cloth fabric horizontal sets
+		*/
+		eCLOTH_HORIZONTAL,  
+		/**
+		\brief Cloth fabric bending sets
+		*/
+		eCLOTH_BENDING,     
+		/**
+		\brief Cloth fabric shearing sets
+		*/
+		eCLOTH_SHEARING,    
+		/**
+		\brief Cloth virtual particles
+		*/
+		eCLOTH_VIRTUAL_PARTICLES,
 
 		/**
 		\brief MBP regions
