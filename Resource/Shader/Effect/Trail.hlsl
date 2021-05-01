@@ -31,12 +31,13 @@ void PsMain(out float4 Color : COLOR0,
             in float2 UV1 : TEXCOORD1)
 {
     // Color = float4(1.0f, 0.0f, 0.0f, 0.5f);
-    Color = tex2D(Trail, UV0);
-    Color.a = Color.r;
-    Color *= _Color;
-    Color.rgb *= exposure * 0.002f;    
-    Color1 = tex2D(Trail, UV1);
+    UV0.x = 1.0f - UV0.x;
+    UV1.x = 1.0f - UV1.x;
     
+    Color = tex2D(Trail, UV0);
+    Color *= _Color;
+    Color.rgb *= 10.f * exposure * 0.002f;    
+    Color1 = tex2D(Trail, UV1);    
     Color1.rgb *= DistortionIntencity;
 };
 
