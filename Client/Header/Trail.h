@@ -43,7 +43,7 @@ private:
 	Vector3 HighOffset{ 0.f,0.f,-115.f };
 
 	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
-	float DistortionIntencity = 0.01f;
+	float DistortionIntencity = 10000.f;
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
 	float ColorIntencity = 50.f;
