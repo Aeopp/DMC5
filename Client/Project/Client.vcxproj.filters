@@ -340,6 +340,9 @@
     <ClInclude Include="..\Header\StoneDebrisMulti.h">
       <Filter>02.GameObject\Effect\Stone</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\AppearEm1000.h">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -525,6 +528,9 @@
     <ClCompile Include="..\Source\AirHike.cpp" />
     <ClCompile Include="..\Source\StoneDebrisMulti.cpp">
       <Filter>02.GameObject\Effect\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AppearEm1000.cpp">
+      <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

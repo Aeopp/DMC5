@@ -132,6 +132,7 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 		_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
+		_Info.Fx->SetBool("_UsingNoise", true);
 		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 		_Info.Fx->SetFloat("_BrightScale", _BrightScale);
 		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
