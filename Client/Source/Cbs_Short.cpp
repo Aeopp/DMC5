@@ -31,6 +31,8 @@ HRESULT Cbs_Short::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
+	SetActive(false);
+
 	return S_OK;
 }
 
@@ -45,8 +47,8 @@ HRESULT Cbs_Short::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(0.11f);
-	m_pCollider.lock()->SetCenter({ 0.f,0.1f,0.f });
+	m_pCollider.lock()->SetRadius(0.08f);
+	m_pCollider.lock()->SetCenter({ 0.f,0.05f,0.f });
 
 	m_pCollider.lock()->SetActive(false);
 

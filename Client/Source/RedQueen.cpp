@@ -33,7 +33,7 @@ HRESULT RedQueen::Ready()
 
 	m_vecParentMat.reserve(2);
 
-	_RenderProperty.bRender = false;
+	_RenderProperty.bRender = true;
 	
 	
 	return S_OK;

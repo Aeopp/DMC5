@@ -389,10 +389,10 @@ public:
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {}, const bool bOverlap = false);
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
-	void ChangeWeaponUI();
+	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;

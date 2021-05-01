@@ -107,7 +107,7 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(Middle_Cbs_Satellite::Create(this, MIDDLE_CBS_SATELLITE, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Satellite_Air::Create(this, MIDDLE_CBS_SATELLITE_AIR, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike::Create(this, MIDDLE_CBS_STRIKE, m_pNero));
-	m_vecState.emplace_back(Middle_Cbs_Strike_Air_Down::Create(this, MIDDLE_CBS_STRIKE_DOWN, m_pNero));
+	m_vecState.emplace_back(Middle_Cbs_Strike_Down::Create(this, MIDDLE_CBS_STRIKE_DOWN, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike_Up::Create(this, MIDDLE_CBS_STRIKE_UP, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike_Air::Create(this, MIDDLE_CBS_STRIKE_AIR, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike_Air_Down::Create(this, MIDDLE_CBS_STRIKE_AIR_DOWN, m_pNero));

@@ -9,7 +9,6 @@ class NeroState :    public FSMState
 {
 protected:
 	weak_ptr<Nero>	m_pNero;
-	bool			m_bActiveColl = false;
 	bool			m_bActiveColl_RedQueen = false;
 	//weak_ptr<Animator>	m_pAnimator;
 public:
@@ -34,11 +33,13 @@ protected:
 	
 	void ActiveColl_Monsters(bool _ActiveOrNot);
 	void ActiveColl_RedQueen(bool _ActiveOrNot);
+	void ActiveColl_Cbs(bool _ActiveOrNot, const int _nIndex);
 	void ActiveGravity(bool _ActiveOrNot);
 	void SetCbsIdle();
 	void IsGround();
 	//static inline bool m_bActive_Gravity = true; // 스테이트 클래스 공통적으로 쓸 그래비티 함수;
 	static bool m_bActive_Gravity;
+	static bool	m_bActiveColl_Cbs;
 	static bool m_bCbsIdle;
 	static UINT m_iNeroCurWeaponIndex;
 };
@@ -74,25 +75,6 @@ public:
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
-
-class Idle_Battle : public NeroState
-{
-private:
-	explicit Idle_Battle(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~Idle_Battle();
-
-public:
-	static Idle_Battle* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-
-
 
 class Jump_Basic : public NeroState
 {

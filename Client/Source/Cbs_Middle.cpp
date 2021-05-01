@@ -30,7 +30,7 @@ HRESULT Cbs_Middle::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
-	//SetActive(false);
+	SetActive(false);
 
 	return S_OK;
 }
