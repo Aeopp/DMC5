@@ -127,7 +127,8 @@ void Trail::RenderInit()
 	SpriteRow = 8;
 };
 
-void Trail::PlayStart(const std::optional<Vector3>& Location)
+void Trail::PlayStart(const Mode _Mode,
+	const std::optional<Vector3>& Location)
 {
 	if (Location)
 	{
@@ -139,6 +140,7 @@ void Trail::PlayStart(const std::optional<Vector3>& Location)
 	ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
 	VtxBuffer->Unlock();
 
+	CurMode = _Mode;
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
@@ -157,12 +159,22 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
-	_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
-	// _Info.Fx->SetTexture("SpriteMap", nullptr);
+
+	if (CurMode ==Mode::Explosion)
+	{
+		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+		_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
+	}
+	else if (CurMode == Mode::Non)
+	{
+		_Info.Fx->SetFloat("DistortionIntencity", NonDistortionIntencity);
+		_Info.Fx->SetTexture("SpriteMap", nullptr);
+	}
+
+
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 
-	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / SpriteCol);
 	_Info.Fx->SetFloat("SpriteXEnd",  ( SpriteColIdx + 1)/ SpriteCol);
 	_Info.Fx->SetFloat("SpriteYStart",SpriteRowIdx/ SpriteRow );
@@ -422,9 +434,11 @@ void Trail::Editor()
 		const std::string ChildName = GetName() + "_Play";
 		ImGui::BeginChild(ChildName.c_str());
 		{
+			static int32 _Mode;
+			ImGui::InputInt("Mode", &_Mode);
 			if (ImGui::SmallButton("Play"))
 			{
-				PlayStart();
+				PlayStart(static_cast<Trail::Mode>(_Mode));
 			}
 			if (ImGui::SmallButton("PlayEnd"))
 			{
@@ -441,6 +455,10 @@ void Trail::Editor()
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+
+
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");

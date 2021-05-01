@@ -22,6 +22,12 @@ struct TrailDesc
 class Trail : public ENGINE::GameObject,
 			  public ENGINE::RenderInterface
 {
+public:
+	enum class Mode : int32
+	{
+		Non,
+		Explosion,
+	};
 private:
 	IDirect3DVertexBuffer9* VtxBuffer{nullptr};
 	IDirect3DIndexBuffer9*  IdxBuffer{ nullptr };
@@ -30,6 +36,8 @@ private:
 
 	std::shared_ptr<Texture> TrailMap{};
 	std::shared_ptr<Texture> FireSpriteMap{};
+
+	Mode CurMode = Mode::Explosion;
 
 	float SpriteRow;
 	float SpriteCol;
@@ -43,6 +51,8 @@ private:
 	Vector3 HighOffset{ 0.f,0.f,-115.f };
 
 	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
+
+	float NonDistortionIntencity = 1.f;
 	float DistortionIntencity = 10000.f;
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
@@ -73,7 +83,9 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const std::optional<Vector3>& Location = std::nullopt);
+	void PlayStart(
+				const Mode _Mode ,
+				const std::optional<Vector3>& Location = std::nullopt);
 	void PlayEnd();
 private:
 	void SpriteUpdate(const float DeltaTime);
