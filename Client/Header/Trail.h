@@ -37,16 +37,16 @@ private:
 	float SpriteColIdx = 0.f;
 
 	float SpriteCurUpdateCycle = 0.0f;
-	float SpriteUpdateCycle = 0.1f;
+	float SpriteUpdateCycle = 0.000001f;
 
-	Vector3 LowOffset{ 0.f,0.f,21.f};
-	Vector3 HighOffset{ 0.f,0.f,-100.f };
+	Vector3 LowOffset{ 0.f,0.f,16.f};
+	Vector3 HighOffset{ 0.f,0.f,-115.f };
 
-	Vector4 _Color{ 1.f,1.f,1.f,1.f};
+	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
 	float DistortionIntencity = 0.01f;
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
-	float ColorIntencity = 1.f;
+	float ColorIntencity = 50.f;
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 

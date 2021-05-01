@@ -90,7 +90,7 @@ void Trail::RenderInit()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 50;
+	const int32 TriCnt = 16;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt+2;
@@ -158,6 +158,7 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 	_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
+	// _Info.Fx->SetTexture("SpriteMap", nullptr);
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 

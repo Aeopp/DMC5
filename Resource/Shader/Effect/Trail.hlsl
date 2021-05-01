@@ -10,7 +10,6 @@ uniform float SpriteXEnd;
 uniform float SpriteYStart;
 uniform float SpriteYEnd;
 
-
 texture SpriteMap;
 sampler Sprite = sampler_state
 {
