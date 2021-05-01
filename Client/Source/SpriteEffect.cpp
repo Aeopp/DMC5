@@ -138,7 +138,15 @@ void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetVector("_Color", &_Color);
 
 		_Info.Fx->SetMatrix("matWorld", &World);
-		_Info.Fx->SetTexture("SpriteMap", _SpriteTex->GetTexture());
+
+		if (_SpriteTex)
+		{
+			_Info.Fx->SetTexture("SpriteMap", _SpriteTex->GetTexture());
+		}
+		else
+		{
+			_Info.Fx->SetTexture("SpriteMap",nullptr);
+		}
 
 		if (_DistortionTex)
 		{
@@ -314,23 +322,26 @@ void SpriteEffect::RegistMesh(const std::string& MeshPath)
 {
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
-	_StaticMesh = Resources::Load<StaticMesh>(MeshPath,_InitInfo);
+	_StaticMesh = Resources::Load<StaticMesh>(MeshPath, _InitInfo);
 	if (_StaticMesh)
 	{
 		PushEditEntity(_StaticMesh.get());
 	};
 };
 
-void SpriteEffect::RegistAlbedoTex(const std::string& TexPath ,
-	const uint32 Col, const uint32 Row)
+void SpriteEffect::RegistSpriteInfo(const uint32 Col, const uint32 Row)
+{
+	SpriteCol = Col;
+	SpriteRow = Row;
+};
+
+void SpriteEffect::RegistAlbedoTex(const std::string& TexPath 
+	)
 {
 	_SpriteTex = Resources::Load<Texture>(TexPath);
 	if (_SpriteTex)
 	{
 		PushEditEntity(_SpriteTex.get());
-
-		SpriteCol = Col;
-		SpriteRow = Row;
 	};
 };
 

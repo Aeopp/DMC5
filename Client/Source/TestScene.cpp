@@ -63,7 +63,6 @@ HRESULT TestScene::LoadScene()
 	// AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
-
 	{
 		if (auto _SE = AddGameObject<SpriteEffect>().lock();
 			_SE)
@@ -71,8 +70,8 @@ HRESULT TestScene::LoadScene()
 			 _SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 			 _SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
 			 _SE->RegistAlbedoTex
-				("..\\..\\Resource\\Texture\\Effect\\tex_capcom_impact_directional_0000_alpg.tex_noesispreviewdata.tga",
-					8,8);
+				("..\\..\\Resource\\Texture\\Effect\\tex_capcom_impact_directional_0000_alpg.tex_noesispreviewdata.tga");
+			 _SE->RegistSpriteInfo(8, 8);
 		}
 
 		if (auto _SE = AddGameObject<SpriteEffect>().lock();
@@ -81,8 +80,8 @@ HRESULT TestScene::LoadScene()
 			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
 			_SE->RegistAlbedoTex
-			("..\\..\\Resource\\Texture\\Effect\\impact.tga",
-				3, 1);
+			("..\\..\\Resource\\Texture\\Effect\\impact.tga");
+			_SE->RegistSpriteInfo(3, 1);
 			_SE->RegistDistortionTex("..\\..\\Resource\\Texture\\Effect\\impact.tga");
 		}
 
@@ -92,10 +91,9 @@ HRESULT TestScene::LoadScene()
 			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
 			_SE->RegistAlbedoTex
-			("..\\..\\Resource\\Texture\\Effect\\spark00.tga",
-				4, 2);
+			("..\\..\\Resource\\Texture\\Effect\\spark00.tga");
+			_SE->RegistSpriteInfo(4, 2);
 		}
-
 
 		if (auto _SE = AddGameObject<SpriteEffect>().lock();
 			_SE)
@@ -103,8 +101,8 @@ HRESULT TestScene::LoadScene()
 			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 			_SE->RegistInfo(1.f, 0.0f, { 1.f,1.f,1.f,1.f });
 			_SE->RegistAlbedoTex
-			("..\\..\\Resource\\Texture\\Effect\\lightsprite.tga",
-				6, 1);
+			("..\\..\\Resource\\Texture\\Effect\\NullWhite.tga");
+			_SE->RegistSpriteInfo(6, 1);
 			_SE->RegistDistortionTex
 			("..\\..\\Resource\\Texture\\Effect\\lightsprite.tga");
 		}

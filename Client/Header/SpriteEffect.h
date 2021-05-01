@@ -56,11 +56,12 @@ public:
 public:
 	void RegistInfo(const float DistortionIntencity = 1.f,
 					const float ColorIntencity = 1.f,
+					
 					const Vector4 _Color = Vector4{ 1.f,1.f,1.f,1.f });
 
 	void RegistMesh(const std::string& MeshPath);
-	void RegistAlbedoTex(const std::string& TexPath ,
-		const uint32 Col, const uint32 Row);
+	void RegistSpriteInfo(const uint32 Col, const uint32 Row);
+	void RegistAlbedoTex(const std::string& TexPath );
 	void RegistDistortionTex(const std::string& TexPath);
 public:
 	void PlayStart(
