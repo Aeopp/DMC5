@@ -27,6 +27,7 @@ protected:
 	virtual HRESULT KeyInput_Idle(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Run(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Cbs_Idle(const int _nIndex = -1);
+	virtual HRESULT KeyInput_Cbs_Run(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Jump(const int _nIndex = -1);
 	virtual HRESULT KeyInput_Cbs_Jump(const int _nIndex = -1);
 protected:
@@ -34,9 +35,12 @@ protected:
 	void ActiveColl_Monsters(bool _ActiveOrNot);
 	void ActiveColl_RedQueen(bool _ActiveOrNot);
 	void ActiveGravity(bool _ActiveOrNot);
+	void SetCbsIdle();
 	void IsGround();
 	//static inline bool m_bActive_Gravity = true; // 스테이트 클래스 공통적으로 쓸 그래비티 함수;
 	static bool m_bActive_Gravity;
+	static bool m_bCbsIdle;
+	static UINT m_iNeroCurWeaponIndex;
 };
 
 class Idle : public NeroState
@@ -2787,7 +2791,6 @@ public:
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
-
 
 
 

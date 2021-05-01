@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -49,9 +49,14 @@ sometimes they are stored in a byte.
   @{
 */
 
-#define PX_PHYSICS_VERSION_MAJOR 4
-#define PX_PHYSICS_VERSION_MINOR 1
-#define PX_PHYSICS_VERSION_BUGFIX 1
+//
+// Important: if you adjust the versions below, don't forget to adjust the compatibility list in
+// sBinaryCompatibleVersions as well.
+//
+
+#define PX_PHYSICS_VERSION_MAJOR 3
+#define PX_PHYSICS_VERSION_MINOR 4
+#define PX_PHYSICS_VERSION_BUGFIX 2
 
 /**
 The constant PX_PHYSICS_VERSION is used when creating certain PhysX module objects.

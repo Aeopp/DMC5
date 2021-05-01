@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -38,7 +38,6 @@
 #include "extensions/PxDefaultAllocator.h"
 #include "extensions/PxConstraintExt.h"
 #include "extensions/PxDistanceJoint.h"
-#include "extensions/PxContactJoint.h"
 #include "extensions/PxFixedJoint.h"
 #include "extensions/PxPrismaticJoint.h"
 #include "extensions/PxRevoluteJoint.h"
@@ -50,13 +49,16 @@
 #include "extensions/PxRigidActorExt.h"
 #include "extensions/PxRigidBodyExt.h"
 #include "extensions/PxShapeExt.h"
+#include "extensions/PxParticleExt.h"
 #include "extensions/PxTriangleMeshExt.h"
 #include "extensions/PxSerialization.h"
 #include "extensions/PxDefaultCpuDispatcher.h"
 #include "extensions/PxSmoothNormals.h"
 #include "extensions/PxSimpleFactory.h"
 #include "extensions/PxStringTableExt.h"
+#include "extensions/PxClothFabricCooker.h"
 #include "extensions/PxBroadPhaseExt.h"
+#include "extensions/PxClothMeshQuadifier.h"
 #include "extensions/PxMassProperties.h"
 #include "extensions/PxSceneQueryExt.h"
 

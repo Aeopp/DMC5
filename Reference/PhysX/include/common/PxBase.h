@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -35,10 +35,10 @@
 @{
 */
 
-#include "foundation/PxFlags.h"
-#include "common/PxSerialFramework.h"
-#include "common/PxCollection.h"
+#include "PxSerialFramework.h"
+#include "PxCollection.h"
 #include "common/PxTypeInfo.h"
+#include "foundation/PxFlags.h"
 #include <string.h>	// For strcmp
 
 #if !PX_DOXYGEN
@@ -133,7 +133,7 @@ public:
 
 	@see PxBaseFlags
 	*/
-	PX_FORCE_INLINE	void					setBaseFlags(PxBaseFlags inFlags)				{ mBaseFlags = inFlags; }
+	PX_FORCE_INLINE	void					setBaseFlags(PxBaseFlags inFlags )				{ mBaseFlags = inFlags; }
 	
 	/**
 	\brief Returns PxBaseFlags 

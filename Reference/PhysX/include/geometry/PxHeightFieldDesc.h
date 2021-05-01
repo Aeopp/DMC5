@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -34,6 +34,7 @@
 @{
 */
 
+#include "foundation/PxBounds3.h"
 #include "common/PxPhysXCommonConfig.h"
 #include "geometry/PxHeightFieldFlag.h"
 #include "common/PxCoreUtilityTypes.h"
@@ -107,6 +108,25 @@ public:
 	PxStridedData					samples;
 
 	/**
+	\brief Sets how thick the heightfield surface is.
+
+	In this way even objects which are under the surface of the height field but above
+	this cutoff are treated as colliding with the height field.
+
+	The thickness is measured relative to the surface at the given point.
+
+	You may set this to a positive value, in which case the extent will be cast along the opposite side of the height field.
+
+	You may use a smaller finite value for the extent if you want to put some space under the height field, such as a cave.
+
+	\note Please refer to the Raycasts Against Heightfields section of the user guide for details of how this value affects raycasts.
+
+	<b>Range:</b> (-PX_MAX_BOUNDS_EXTENTS, PX_MAX_BOUNDS_EXTENTS)<br>
+	<b>Default:</b> -1
+	*/
+	PX_DEPRECATED PxReal					thickness;
+
+	/**
 	This threshold is used by the collision detection to determine if a height field edge is convex
 	and can generate contact points.
 	Usually the convexity of an edge is determined from the angle (or cosine of the angle) between
@@ -153,6 +173,7 @@ PX_INLINE PxHeightFieldDesc::PxHeightFieldDesc()	//constructor sets to default
 	nbColumns					= 0;
 	nbRows						= 0;
 	format						= PxHeightFieldFormat::eS16_TM;
+	thickness					= -1.0f;
 	convexEdgeThreshold			= 0.0f;
 	flags						= PxHeightFieldFlags();
 }
@@ -175,6 +196,8 @@ PX_INLINE bool PxHeightFieldDesc::isValid() const
 	if (convexEdgeThreshold < 0)
 		return false;
 	if ((flags & PxHeightFieldFlag::eNO_BOUNDARY_EDGES) != flags)
+		return false;
+	if (thickness < -PX_MAX_BOUNDS_EXTENTS || thickness > PX_MAX_BOUNDS_EXTENTS)
 		return false;
 	return true;
 }

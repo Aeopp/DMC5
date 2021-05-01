@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -63,8 +63,19 @@ public:
 	For simulating roughly human-sized in metric units, 1 is a good choice.
 	If simulation is done in centimetres, use 100 instead. This is used to
 	estimate certain length-related tolerances.
+
 	*/
+
 	PxReal	length;
+
+
+	/** brief
+	The approximate mass of a length * length * length block.
+	If using metric scale for character sized objects and measuring mass in
+	kilogrammes, 1000 is a good choice.	
+	\note This parameter is ignored by the PhysX SDK.
+	*/
+	PX_DEPRECATED PxReal	mass;
 
 	/** brief
 	The typical magnitude of velocities of objects in simulation. This is used to estimate 
@@ -75,6 +86,7 @@ public:
 	under gravity for one second.
 	*/
 	PxReal	speed;
+
 
 	/**
 	\brief constructor sets to default 
@@ -90,14 +102,15 @@ public:
 };
 
 PX_INLINE PxTolerancesScale::PxTolerancesScale():
-	length(1.0f),
-	speed(10.0f)
+	length(1),
+	mass(1000),
+	speed(10)
 	{
 	}
 
 PX_INLINE bool PxTolerancesScale::isValid() const
 {
-	return length>0.0f;
+	return length>0 && mass>0;
 }
 
 #if !PX_DOXYGEN

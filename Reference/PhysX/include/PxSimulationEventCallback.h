@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -777,15 +777,15 @@ struct PxConstraintInfo
 /**
 \brief An interface class that the user can implement in order to receive simulation events.
 
-With the exception of onAdvance(), the events get sent during the call to either #PxScene::fetchResults() or 
-#PxScene::flushSimulation() with sendPendingReports=true. onAdvance() gets called while the simulation
-is running (that is between PxScene::simulate(), onAdvance() and PxScene::fetchResults()).
+With the exception of #onAdvance(), the events get sent during the call to either #PxScene::fetchResults() or 
+#PxScene::flushSimulation() with sendPendingReports=true. #onAdvance() gets called while the simulation
+is running (that is between PxScene::simulate()/::advance() and PxScene::fetchResults()).
 
 \note SDK state should not be modified from within the callbacks. In particular objects should not
 be created or destroyed. If state modification is needed then the changes should be stored to a buffer
 and performed after the simulation step.
 
-<b>Threading:</b> With the exception of onAdvance(), it is not necessary to make these callbacks thread safe as 
+<b>Threading:</b> With the exception of #onAdvance(), it is not necessary to make these callbacks thread safe as 
 they will only be called in the context of the user thread.
 
 @see PxScene.setSimulationEventCallback() PxScene.getSimulationEventCallback()
@@ -869,6 +869,8 @@ class PxSimulationEventCallback
 	according to the pair flag specification in the filter shader (see #PxPairFlag, #PxSimulationFilterShader).
 
 	\note Trigger shapes will no longer send notification events for interactions with other trigger shapes.
+	For PhysX 3.4 there is the option to re-enable the reports by raising #PxSceneFlag::eDEPRECATED_TRIGGER_TRIGGER_REPORTS.
+	In PhysX 3.5 there will be no support for these reports any longer. See the 3.4 migration guide for more information.
 
 	\param[in] pairs - The trigger pair events.
 	\param[in] count - The number of trigger pair events.

@@ -31,6 +31,9 @@
 
 #include <iostream>
 #include <fstream>
+#include "Cbs_Long.h"
+#include "Cbs_Middle.h"
+#include "Cbs_Short.h"
 using namespace std;
 
 TestScene::TestScene()

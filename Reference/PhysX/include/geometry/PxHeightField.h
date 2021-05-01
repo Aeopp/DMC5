@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -163,6 +163,15 @@ class PxHeightField	: public PxBase
 	@see PxHeightFieldDesc.sampleStride
 	*/
 	PX_PHYSX_COMMON_API virtual		PxU32						getSampleStride()			const = 0;
+
+	/**
+	\brief Retrieves the thickness of the height volume in the vertical direction.
+
+	\return The thickness of the height volume in the vertical direction.
+
+	@see PxHeightFieldDesc.thickness
+	*/
+	PX_PHYSX_COMMON_API virtual		PxReal						getThickness()				const = 0;
 
 	/**
 	\brief Retrieves the convex edge threshold.

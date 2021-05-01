@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -122,6 +122,38 @@ class PxHeightFieldGeometry;
 	maxIter = N, the code will attempt at most N iterations but it might exit earlier if depenetration has
 	been successful. Usually N = 4 gives good results.
 
+	\param[in] maxIter Max number of iterations before returning.
+	\param[in] geom The geometry object
+	\param[in] geomPose Pose for the geometry object
+	\param[in] meshGeom The mesh geometry
+	\param[in] meshPose Pose for the mesh
+	\param[out] nb Number of depenetrations attempts performed during the call. 0 means no overlap has been detected.
+
+	\return Approximate depenetration vector
+
+	@see PxGeometry PxTransform PxTriangleMeshGeometry
+	*/
+	PX_DEPRECATED	PxVec3 PxComputeMeshPenetration(PxU32 maxIter, 
+													const PxGeometry& geom, 
+													const PxTransform& geomPose, 
+													const PxTriangleMeshGeometry& meshGeom, 
+													const PxTransform& meshPose, PxU32& nb);
+
+
+	/**
+	\brief Computes an approximate minimum translational distance (MTD) between a geometry object and a mesh.
+
+	This iterative function computes an approximate vector that can be used to depenetrate a geom object
+	from a triangle mesh. Returned depenetration vector should be applied to 'geom', to get out of the mesh.
+
+	The function works best when the amount of overlap between the geom object and the mesh is small. If the
+	geom object's center goes inside the mesh, backface culling usually kicks in, no overlap is detected,
+	and the function does not compute an MTD vector.
+
+	The function early exits if no overlap is detected after a depenetration attempt. This means that if
+	maxIter = N, the code will attempt at most N iterations but it might exit earlier if depenetration has
+	been successful. Usually N = 4 gives good results.
+
 	\param[out] direction Computed MTD unit direction
 	\param[out] depth Penetration depth. Always positive or zero.
 	\param[in] geom The geometry object
@@ -143,6 +175,39 @@ class PxHeightFieldGeometry;
 										  const PxTransform& meshPose, 
 										  PxU32 maxIter,
 										  PxU32* usedIter = NULL);
+
+	/**
+	\brief Computes an approximate minimum translational distance (MTD) between a geometry object and a heightfield.
+
+	This iterative function computes an approximate vector that can be used to depenetrate a geom object
+	from a heightfield. Returned depenetration vector should be applied to 'geom', to get out of the heightfield.
+
+	The function works best when the amount of overlap between the geom object and the mesh is small. If the
+	geom object's center goes inside the heightfield, backface culling usually kicks in, no overlap is detected,
+	and the function does not compute an MTD vector.
+
+	The function early exits if no overlap is detected after a depenetration attempt. This means that if
+	maxIter = N, the code will attempt at most N iterations but it might exit earlier if depenetration has
+	been successful. Usually N = 4 gives good results.
+
+	\param[in] maxIter Max number of iterations before returning.
+	\param[in] geom The geometry object
+	\param[in] geomPose Pose for the geometry object
+	\param[in] heightFieldGeom The heightfield geometry
+	\param[in] heightFieldPose Pose for the heightfield
+	\param[out] nb Number of depenetrations attempts performed during the call. 0 means no overlap has been detected.
+
+	\return Approximate depenetration vector
+
+	@see PxGeometry PxTransform PxHeightFieldGeometry
+	*/
+	PX_DEPRECATED	PxVec3 PxComputeHeightFieldPenetration(PxU32 maxIter, 
+														   const PxGeometry& geom, 
+														   const PxTransform& geomPose, 
+														   const PxHeightFieldGeometry& heightFieldGeom, 
+														   const PxTransform& heightFieldPose, 
+														   PxU32& nb);
+
 
 	/**
 	\brief Computes an approximate minimum translational distance (MTD) between a geometry object and a heightfield.
