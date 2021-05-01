@@ -197,6 +197,7 @@
     <ClInclude Include="..\Header\QliphothBlock.h" />
     <ClInclude Include="..\Header\RedQueen.h" />
     <ClInclude Include="..\Header\AirHike.h" />
+    <ClInclude Include="..\Header\StoneDebrisMulti.h" />
     <ClInclude Include="..\Header\TempMap.h" />
     <ClInclude Include="..\Header\TestAnimationObject.h" />
     <ClInclude Include="..\Header\OvertureHand.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="..\Source\QliphothBlock.cpp" />
     <ClCompile Include="..\Source\RedQueen.cpp" />
     <ClCompile Include="..\Source\AirHike.cpp" />
+    <ClCompile Include="..\Source\StoneDebrisMulti.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
     <ClCompile Include="..\Source\TestAnimationObject.cpp" />
     <ClCompile Include="..\Source\OvertureHand.cpp" />
@@ -297,7 +299,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferEffect.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

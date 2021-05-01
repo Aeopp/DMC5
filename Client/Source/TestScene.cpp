@@ -21,6 +21,7 @@
 #include "AppearGroundMonster.h"
 #include "Smoke.h"
 #include "QliphothBlock.h"
+#include "StoneDebrisMulti.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -51,14 +52,14 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	// AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
-	AddGameObject<CircleWave>();
-	AddGameObject<AirHike>();
+	//AddGameObject<Em0000>();
+	//AddGameObject<Em1000>();
+	//AddGameObject<CircleWave>();
+	//AddGameObject<AirHike>();
 
 	//AddGameObject<Car>();
 
@@ -138,6 +139,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<AppearGroundMonster>();
+	//AddGameObject<StoneDebrisMulti>();
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
@@ -152,7 +154,7 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
-	_Renderer->SoftParticleDepthScale = 0.7f;
+	_Renderer->SoftParticleDepthScale = 1.f;
 	_Renderer->SkyRotationSpeed = 1.5f;
 
 	// Stage2 안개

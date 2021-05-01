@@ -99,7 +99,7 @@ void AppearGroundMonster::RenderInit()
 	_InitRenderProp.bRender = false;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"GBufferLiquid",
+		{"GBufferEffect",
 		[this](const DrawInfo& _Info)
 			{
 				this->RenderGBuffer(_Info);
