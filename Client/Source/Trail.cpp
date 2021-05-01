@@ -91,9 +91,9 @@ void Trail::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
-	_Desc.VtxCnt = 12;
+	_Desc.VtxCnt = 52;
 	// ¹Ýµå½Ã Â¦¼ö·Î ¸ÅÄª . 
-	_Desc.TriCnt = 10;
+	_Desc.TriCnt = 50;
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 	_Desc.UpdateCycle = 0.0f;
@@ -330,16 +330,46 @@ UINT Trail::Update(const float _fDeltaTime)
 		_Desc.NewVtxCnt += 2;
 
 		// °î¼± º¸°£ .....
-		for (int32 i = 0; i < _Desc.NewVtxCnt; ++i)
+		for (int32 i = 0; i < _Desc.NewVtxCnt; i+=2)
 		{
-			Vector3 VtxPt{}; 
-			D3DXVec3CatmullRom(
-				&VtxPt,
-				&VtxPtr[i - 1].Location,
-				&VtxPtr[i].Location,
-				&VtxPtr[i + 1].Location,
-				&VtxPtr[i + 2].Location,
-				CurveT);
+			{
+				Vector3 VtxPt{};
+
+				const int32 p0 = std::clamp<int32>(i - 2, 0, _Desc.NewVtxCnt - 1);
+				const int32 p1 = std::clamp<int32>(i, 0, _Desc.NewVtxCnt - 1);
+				const int32 p2 = std::clamp<int32>(i + 2, 0, _Desc.NewVtxCnt - 1);
+				const int32 p3 = std::clamp<int32>(i + 4, 0, _Desc.NewVtxCnt - 1);
+
+				D3DXVec3CatmullRom(
+					&VtxPt,
+					&VtxPtr[p0].Location,
+					&VtxPtr[p1].Location,
+					&VtxPtr[p2].Location,
+					&VtxPtr[p3].Location,
+					CurveT);
+
+				VtxPtr[i].Location = VtxPt;
+			}
+
+			{
+				Vector3 VtxPt{};
+
+				const int32 p0 = std::clamp<int32>((i + 1) - 2, 0, _Desc.NewVtxCnt - 1);
+				const int32 p1 = std::clamp<int32>((i + 1), 0,     _Desc.NewVtxCnt - 1);
+				const int32 p2 = std::clamp<int32>((i + 1) + 2, 0, _Desc.NewVtxCnt - 1);
+				const int32 p3 = std::clamp<int32>((i + 1) + 4, 0, _Desc.NewVtxCnt - 1);
+
+				D3DXVec3CatmullRom(
+					&VtxPt,
+					&VtxPtr[p0].Location,
+					&VtxPtr[p1].Location,
+					&VtxPtr[p2].Location,
+					&VtxPtr[p3].Location,
+					CurveT);
+
+				VtxPtr[i+1].Location = VtxPt;
+			}
+	
 		}
 
 		VtxBuffer->Unlock();
