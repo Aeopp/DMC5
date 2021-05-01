@@ -13,6 +13,11 @@ void Smoke::SetVariationIdx(Smoke::VARIATION Idx)
 
 	Reset();
 
+	if (APPEAR_AERIAL_MONSTER == Idx)
+		_SliceAmount = 1.f;
+	else
+		_SliceAmount = 0.f;
+
 	_VariationIdx = Idx;
 }
 
@@ -45,6 +50,13 @@ void Smoke::RenderReady()
 
 void Smoke::Reset()
 {
+	_SpriteIdx = 0.f;
+
+	if (APPEAR_AERIAL_MONSTER == _VariationIdx)
+		_SliceAmount = 1.f;
+	else
+		_SliceAmount = 0.f;
+
 	Effect::Reset();
 }
 
@@ -53,7 +65,7 @@ void Smoke::Imgui_Modify()
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 		Sptransform)
 	{
-		ImGui::Text("Eff_Smoke");
+		ImGui::Text("Eff_Smoke : %d", _VariationIdx);
 
 		{
 			static Vector3 Position = Sptransform->GetPosition();
@@ -63,7 +75,7 @@ void Smoke::Imgui_Modify()
 
 		{
 			static float Scale = Sptransform->GetScale().x;
-			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.01f, 0.3f);
+			ImGui::SliderFloat("Scale##Smoke", &Scale, 0.001f, 0.3f);
 			//Sptransform->SetScale({ Scale, Scale, Scale });	// x만 유효
 			SetScale(Scale);
 		}
@@ -119,12 +131,17 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	{
 		_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 		_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
-		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
+		_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
+		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 		_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
 
 		SharedSubset->Render(_Info.Fx);
+
+		if (APPEAR_AERIAL_MONSTER == _VariationIdx)
+			SharedSubset->Render(_Info.Fx);	// 옅어서 한번 더 그림
 	}
 }
 
@@ -142,6 +159,7 @@ HRESULT Smoke::Ready()
 	_SmokeMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_enviroment_smoke00_03.fbx");
 
 	_SmokeALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_smoke_00_0016_alpg.tga");
+	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 	_PlayingSpeed = 1.f;
 	_BrightScale = 0.00005f;
@@ -168,17 +186,28 @@ UINT Smoke::Update(const float _fDeltaTime)
 	if (!_IsPlaying)
 		return 0;
 
-	// Reset() 호출까지 계속 재생
+	// SMOKE_0는 Reset() 호출까지 계속 재생
+	if (APPEAR_AERIAL_MONSTER == _VariationIdx)
+	{
+		//
+		if (5.f < _AccumulateTime)
+			Reset();
+		else if (4.f < _AccumulateTime)
+			_SliceAmount = (_AccumulateTime - 4.f) * 0.6f;
+		else
+			_SliceAmount = 1.f - _AccumulateTime * 0.6f;
+	}
 
-	//
-	// + if (SMOKE_0 == _VariationIdx)
+	// sprite
+	_SpriteIdx += _PlayingSpeed * _fDeltaTime;
+
 	float cx = 8.f;	// 가로 갯수
 	float cy = 8.f; // 세로 갯수
 
-	if (cx * cy < _AccumulateTime)
-		_AccumulateTime = 0.f;
+	if (cx * cy < _SpriteIdx)
+		_SpriteIdx = 0.f;
 
-	int Frame = static_cast<int>(_AccumulateTime);
+	int Frame = static_cast<int>(_SpriteIdx);
 	int w = Frame % static_cast<int>(cx);
 	int h = Frame / static_cast<int>(cx);
 	_SmokeMinTexUV.x = 1.f / cx * static_cast<float>(w);

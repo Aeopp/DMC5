@@ -114,7 +114,11 @@ struct PsOut
 PsOut PsMain(PsIn In)
 {
     PsOut Out = (PsOut) 0;
-
+    
+    float4 NoiseSample = tex2D(Noise, In.UV).gggg;
+    NoiseSample.rgb -= saturate(_SliceAmount);
+    clip(NoiseSample);
+    
     Out.Color = tex2D(ALB0, In.UV);
     Out.Color.rgb *= (_BrightScale * exposure_corr);
     
