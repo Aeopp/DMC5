@@ -346,6 +346,31 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	}
 }
 
+void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
+	switch (eTag)
+	{
+	case Monster5300:
+	{
+		//현재 상태가 플라이 루프일때
+		//플라이 엔드로 상태 변환
+		//m_pLetMeFlyMonster 초기화
+		UINT iFsmTag = m_pFSM->GetCurrentIndex();
+		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag)
+		{
+			m_pLetMeFlyMonster.reset();
+			m_pFSM->ChangeState(NeroFSM::WIRE_HELLHOUND_END);
+			return;
+		}
+	}
+		break;
+		//보스가 아니라 여러마리있는애들이면
+		//태그 검사이후에
+		//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
+	}
+}
+
 void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
@@ -725,6 +750,11 @@ void Nero::SetCbsIdle()
 	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
 }
 
+void Nero::SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster)
+{
+	m_pLetMeFlyMonster = _pMonster;
+}
+
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -786,7 +816,7 @@ void Nero::Locking()
 		return;
 	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	m_pBtlPanel.lock()->SetTargetCursor(
-		m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Waist"),
+		m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
 		fHpRatio);
 	
 	
@@ -895,6 +925,22 @@ void Nero::NeroMove(NeroDirection _eDir, float _fPower)
 	default:
 		break;
 	}
+}
+
+void Nero::WireFly()
+{
+	if (m_pLetMeFlyMonster.expired())
+		return;
+
+	Vector3 vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+	Vector3 vDir = vMonsterPos - vMyPos;
+
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	m_pTransform.lock()->Translate(vDir * 1.3f);
+
 }
 
 void Nero::DecreaseDistance(float _GoalDis, float _fDeltaTime)

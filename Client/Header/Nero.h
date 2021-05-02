@@ -360,6 +360,7 @@ public:
 	void SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
 	void Set_GrabEnd(bool _bGrabEnd);
 	void SetCbsIdle();
+	void SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster);
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
@@ -367,6 +368,7 @@ public:
 	NeroDirection RotateToTargetMonster();
 	void RotateToHitMonster(std::weak_ptr<GameObject> _pMonster);
 	void NeroMove(NeroDirection _eDir, float _fPower);
+	void WireFly();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
 	//ī�޶�
@@ -411,6 +413,8 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
@@ -440,11 +444,12 @@ private:
 	std::weak_ptr<GT_Overture>		m_pOverture;
 	std::weak_ptr<GT_Rockman>		m_pRockman;
 	std::weak_ptr<Effect>			m_pEffOverture;
-	std::weak_ptr<Monster>			m_pTargetMonster;
 	std::weak_ptr<Liquid>		m_pBlood;
 	std::weak_ptr<Cbs_Short>		m_pCbsShort;
 	std::weak_ptr<Cbs_Middle>		m_pCbsMiddle;
 	std::weak_ptr<Cbs_Long>			m_pCbsLong;
+	std::weak_ptr<Monster>			m_pTargetMonster;
+	std::weak_ptr<Monster>			m_pLetMeFlyMonster;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

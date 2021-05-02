@@ -163,6 +163,19 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			break;
 		}
 		break;
+	case Monster200:
+		switch (CurNeroAnimationIndex)
+		{
+		case Nero::ANI_BUSTER_START:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM200_BUSTER_START);
+			break;
+		case Nero::ANI_BUSTER_AIR_CATCH:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM200_BUSTER_AIR_START);
+			break;
+		default:
+			break;
+		}
+		break;
 	case Monster5000:
 		//그로기 상태일때만
 		break;
