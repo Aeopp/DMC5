@@ -257,8 +257,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	Update_Majin(_fDeltaTime);
 
 
-	//if (Input::GetKeyDown(DIK_0))
-	//	Hit(m_BattleInfo);
+	if (Input::GetKeyDown(DIK_0))
+		Hit(m_BattleInfo);
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -279,23 +279,23 @@ UINT Nero::Update(const float _fDeltaTime)
 
 
 	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
-	static bool Test = false;
-	if (Input::GetKeyDown(DIK_RCONTROL))
-	{
-		Test = !Test;
-		if (Test)
-		{
-			m_pMesh->StopAnimation();
-			m_pCbsShort.lock()->StopAnimation();
-			m_pCbsMiddle.lock()->StopAnimation();
-		}
-		else
-		{
-			m_pMesh->ContinueAnimation();
-			m_pCbsShort.lock()->ContinueAnimation();
-			m_pCbsMiddle.lock()->ContinueAnimation();
-		}
-	}
+	//static bool Test = false;
+	//if (Input::GetKeyDown(DIK_RCONTROL))
+	//{
+	//	Test = !Test;
+	//	if (Test)
+	//	{
+	//		m_pMesh->StopAnimation();
+	//		m_pCbsShort.lock()->StopAnimation();
+	//		m_pCbsMiddle.lock()->StopAnimation();
+	//	}
+	//	else
+	//	{
+	//		m_pMesh->ContinueAnimation();
+	//		m_pCbsShort.lock()->ContinueAnimation();
+	//		m_pCbsMiddle.lock()->ContinueAnimation();
+	//	}
+	//}
 	return 0;
 }
 
@@ -322,9 +322,11 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+	RotateToHitMonster(*(std::weak_ptr<GameObject>*)(pArg));
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Front:
+		m_pFSM->ChangeState(NeroFSM::STATERESET);
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	//case Attack_Down:
@@ -352,7 +354,7 @@ void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case MonsterWeapon:
 		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
 			return;
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(),(void*)&_pOther);
 		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
 		break;
 	default:
@@ -845,6 +847,31 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 		return  NeroDirection::Dir_Up;
 	}
 	return NeroDirection::Dir_Front;
+}
+
+void Nero::RotateToHitMonster(std::weak_ptr<GameObject> _pMonster)
+{
+	Vector3 vMonsterPos = _pMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+	Vector3 vDir = vMonsterPos - vMyPos;
+	vDir.y = 0;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	float fRadian = acosf(fDot);
+
+	Vector3	vCross;
+	D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+	if (vCross.y > 0)
+		fRadian *= -1;
+	m_fAngle += -D3DXToDegree(fRadian) + vRotationDegree.y;
+	vDegree.y = m_fAngle;
+	vRotationDegree.y = m_fRotationAngle = 0;
+	Reset_RootRotation();
 }
 
 void Nero::NeroMove(NeroDirection _eDir, float _fPower)

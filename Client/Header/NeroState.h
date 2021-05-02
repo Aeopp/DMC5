@@ -2886,6 +2886,21 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
 
+class StateReset : public NeroState
+{
+private:
+	explicit StateReset(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~StateReset();
+
+public:
+	static StateReset* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
 
 
 

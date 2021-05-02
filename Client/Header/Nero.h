@@ -365,6 +365,7 @@ public:
 	bool CheckIsGround();
 	void Locking();
 	NeroDirection RotateToTargetMonster();
+	void RotateToHitMonster(std::weak_ptr<GameObject> _pMonster);
 	void NeroMove(NeroDirection _eDir, float _fPower);
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
