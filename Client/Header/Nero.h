@@ -10,6 +10,7 @@ class RedQueen;
 class Nero_LWing;
 class Nero_RWing;
 class Buster_Arm;
+class Buster_Arm_Left;
 class Wire_Arm;
 class WIngArm_Left;
 class WingArm_Right;
@@ -288,6 +289,7 @@ public:
 		NeroCom_LWing,
 		NeroCom_RWing,
 		NeroCom_BusterArm,
+		NeroCom_BusterArm_Left,
 		NeroCom_WireArm,
 		NeroCom_WIngArm_Left,
 		NeroCom_WingArm_Right,
@@ -346,6 +348,7 @@ public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
 	void Reset_RootRotation() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
+	void Reset_LerfAmount() { m_fLerfAmount = 0.f; }
 
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot);
@@ -368,6 +371,7 @@ public:
 	NeroDirection RotateToTargetMonster();
 	void RotateToHitMonster(std::weak_ptr<GameObject> _pMonster);
 	void NeroMove(NeroDirection _eDir, float _fPower);
+	void NeroMoveLerf(NeroDirection _eDir, float _fPower,float _fMax);
 	void WireFly();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
@@ -435,6 +439,7 @@ private:
 	std::weak_ptr<Nero_LWing>	m_pLWing;
 	std::weak_ptr<Nero_RWing>	m_pRWing;
 	std::weak_ptr<Buster_Arm>	m_pBusterArm;
+	std::weak_ptr<Buster_Arm_Left>	m_pBusterArmLeft;
 	std::weak_ptr<Wire_Arm>	m_pWireArm;
 	std::weak_ptr<WIngArm_Left> m_pWingArm_Left;
 	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
@@ -465,6 +470,7 @@ private:
 	float	m_fAngle = 0.f;
 	float	m_fRotationAngle = 0.f;
 	float	m_fFlySpeed = 0.f;
+	float   m_fLerfAmount = 0.f;
 
 	bool	m_IsMajin = false;
 	int		m_iDashLoopDir = 1;

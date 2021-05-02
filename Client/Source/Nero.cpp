@@ -20,6 +20,7 @@
 #include "Cbs_Short.h"
 #include "Cbs_Middle.h"
 #include "Cbs_Long.h"
+#include "Buster_Arm_Left.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -194,6 +195,7 @@ HRESULT Nero::Ready()
 	m_pLWing = AddGameObject<Nero_LWing>();
 	m_pRWing = AddGameObject<Nero_RWing>();
 	m_pBusterArm = AddGameObject<Buster_Arm>();
+	m_pBusterArmLeft = AddGameObject<Buster_Arm_Left>();
 	m_pWireArm = AddGameObject<Wire_Arm>();
 	m_pWingArm_Left = AddGameObject <WIngArm_Left>();
 	m_pWingArm_Right = AddGameObject<WingArm_Right>();
@@ -258,8 +260,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	Update_Majin(_fDeltaTime);
 
 
-	if (Input::GetKeyDown(DIK_0))
-		Hit(m_BattleInfo);
+	//if (Input::GetKeyDown(DIK_0))
+	//	Hit(m_BattleInfo);
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -297,6 +299,11 @@ UINT Nero::Update(const float _fDeltaTime)
 	//		m_pCbsMiddle.lock()->ContinueAnimation();
 	//	}
 	//}
+
+	if (Input::GetKeyDown(DIK_N))
+	{
+		m_pFSM->ChangeState(NeroFSM::EM5000_BUSTER_START);
+	}
 	return 0;
 }
 
@@ -323,7 +330,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
-	RotateToHitMonster(*(std::weak_ptr<GameObject>*)(pArg));
+	//RotateToHitMonster(*(std::weak_ptr<GameObject>*)(pArg));
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Front:
@@ -349,6 +356,12 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 {
+	UINT iFsmTag = m_pFSM->GetCurrentIndex();
+	if (NeroFSM::SKILL_STREAK_LOOP == iFsmTag)
+	{
+		m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_END);
+		return;
+	}
 	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
 	switch (eTag)
 	{
@@ -357,7 +370,7 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		//현재 상태가 플라이 루프일때
 		//플라이 엔드로 상태 변환
 		//m_pLetMeFlyMonster 초기화
-		UINT iFsmTag = m_pFSM->GetCurrentIndex();
+
 		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
 			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
 		{
@@ -930,6 +943,31 @@ void Nero::NeroMove(NeroDirection _eDir, float _fPower)
 	}
 }
 
+void Nero::NeroMoveLerf(NeroDirection _eDir, float _fPower, float _fMax)
+{
+	if (m_fLerfAmount <= _fMax)
+		m_fLerfAmount += _fPower;
+	switch (_eDir)
+	{
+	case Nero::Dir_Front:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetLook() * -1.f * m_fLerfAmount);
+		break;
+	case Nero::Dir_Back:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetLook() * m_fLerfAmount);
+		break;
+	case Nero::Dir_Left:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * -1.f * m_fLerfAmount);
+		break;
+	case Nero::Dir_Right:
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * m_fLerfAmount);
+		break;
+	case Nero::Dir_Front_Down:
+		break;
+	default:
+		break;
+	}
+}
+
 void Nero::WireFly()
 {
 	if (m_pLetMeFlyMonster.expired())
@@ -1043,10 +1081,15 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 		m_pBusterArm.lock()->SetActive(true);
 		m_pBusterArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
+	case Nero::NeroCom_BusterArm_Left:
+		m_pBusterArmLeft.lock()->SetActive(true);
+		m_pBusterArmLeft.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
 	case Nero::NeroCom_WireArm:
 		m_pWireArm.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WIngArm_Left:
+		m_pWingArm_Left.lock()->SetActive(true);
 		m_pWingArm_Left.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_WingArm_Right:

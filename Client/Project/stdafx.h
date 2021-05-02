@@ -51,6 +51,7 @@ enum GAMEOBJECTTAG
 	TAG_Camera,
 	TAG_RedQueen,
 	TAG_BusterArm_Right,
+	TAG_BusterArm_Left,
 	TAG_WireArm,
 	TAG_WireArm_Grab,
 	Overture,

@@ -1,65 +1,51 @@
 #include "stdafx.h"
-#include "Buster_Arm.h"
+#include "Buster_Arm_Left.h"
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
-#include "Monster.h"
-#include "NeroFSM.h"
 
-Buster_Arm::Buster_Arm()
-	:m_bIsRender(false)
+Buster_Arm_Left::Buster_Arm_Left()
 {
-	m_nTag = TAG_BusterArm_Right;
-
-	m_BattleInfo.iAttack = 20;
+	m_nTag = TAG_BusterArm_Left;
 }
 
-void Buster_Arm::Free()
+void Buster_Arm_Left::Free()
 {
 	Unit::Free();
 }
 
-Buster_Arm* Buster_Arm::Create()
+Buster_Arm_Left* Buster_Arm_Left::Create()
 {
-	return new Buster_Arm;
+	return new Buster_Arm_Left;
 }
 
-HRESULT Buster_Arm::Ready()
+HRESULT Buster_Arm_Left::Ready()
 {
 	Unit::Ready();
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
-	
+
 	PushEditEntity(m_pTransform.lock().get());
 	SetActive(false);
 
 	return S_OK;
 }
 
-HRESULT Buster_Arm::Awake()
+HRESULT Buster_Arm_Left::Awake()
 {
 	Unit::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-	
-	m_pCollider = AddComponent<SphereCollider>();
-	m_pCollider.lock()->ReadyCollider();
-	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetCenter({ 0.f,0.13f,-0.05f });
-	m_pCollider.lock()->SetRadius(0.05f);
-	m_pCollider.lock()->SetActive(false);
-	PushEditEntity(m_pCollider.lock().get());
-
 	return S_OK;
 }
 
-HRESULT Buster_Arm::Start()
+HRESULT Buster_Arm_Left::Start()
 {
 	Unit::Start();
 	return S_OK;
 }
 
-UINT Buster_Arm::Update(const float _fDeltaTime)
+UINT Buster_Arm_Left::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
@@ -76,13 +62,10 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
-
-	if ("em0000_Buster_End" == m_pMesh->AnimName && 0.2f <= m_pMesh->PlayingTime())
+	if("em0000_Buster_End" == m_pMesh->AnimName && 0.2f <= m_pMesh->PlayingTime())
 		SetActive(false);
-
 	if ("em5000_Buster_End" == m_pMesh->AnimName && 0.2f <= m_pMesh->PlayingTime())
 		SetActive(false);
-
 	if (m_pMesh->IsAnimationEnd())
 	{
 		if ("em0000_Buster_Start" != m_pMesh->AnimName)
@@ -92,16 +75,15 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 	return 0;
 }
 
-UINT Buster_Arm::LateUpdate(const float _fDeltaTime)
+UINT Buster_Arm_Left::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
 	return 0;
 }
 
-void Buster_Arm::OnEnable()
+void Buster_Arm_Left::OnEnable()
 {
 	Unit::OnEnable();
-	m_bIsRender = true;
 
 	Matrix NeroWorld = m_pNero.lock()->Get_NeroWorldMatrix();
 	std::optional<Matrix> R_HandLocal = m_pNero.lock()->Get_BoneMatrix_ByName("root");
@@ -115,97 +97,67 @@ void Buster_Arm::OnEnable()
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
-	_RenderProperty.bRender = m_bIsRender;
-
-
-	if (m_pCollider.lock())
-		m_pCollider.lock()->SetActive(true);
-
+	_RenderProperty.bRender = true;
 }
 
-void Buster_Arm::OnDisable()
+void Buster_Arm_Left::OnDisable()
 {
 	Unit::OnDisable();
-	m_bIsRender = false;
-	m_pMesh->SetPlayingTime(0);
-
-	_RenderProperty.bRender = m_bIsRender;
-
-	if(m_pCollider.lock())
-		m_pCollider.lock()->SetActive(false);
+	_RenderProperty.bRender = false;
 }
 
-void Buster_Arm::Hit(BT_INFO _BattleInfo, void* pArg)
+void Buster_Arm_Left::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
-void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+void Buster_Arm_Left::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	if (nullptr == dynamic_pointer_cast<Monster>(_pOther.lock()))
-		return;
-	UINT MonsterTag = _pOther.lock()->m_nTag;
-	UINT CurNeroAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
-	switch (MonsterTag)
+}
+
+void Buster_Arm_Left::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
+}
+
+void Buster_Arm_Left::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
 	{
-	case Monster100:
-		switch (CurNeroAnimationIndex)
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		if (m_pMesh)
 		{
-		case Nero::ANI_BUSTER_START:
-			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON);
-			break;
-		case Nero::ANI_BUSTER_AIR_CATCH:
-			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::BUSTER_STRIKE_COMMON_AIR);
-			break;
-		default:
-			break;
+			const uint32  Numsubset = m_pMesh->GetNumSubset();
+			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+
+			for (uint32 i = 0; i < Numsubset; ++i)
+			{
+				const auto& _Subset = m_pMesh->GetSubset(i);
+				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+			}
 		}
-		break;
-	case Monster0000:
-		switch (CurNeroAnimationIndex)
-		{
-		case Nero::ANI_BUSTER_START:
-			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM0000_BUSTER_START);
-			break;
-		case Nero::ANI_BUSTER_AIR_CATCH:
-			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM0000_BUSTER_AIR);
-			break;
-		default:
-			break;
-		}
-		break;
-	case Monster200:
-		switch (CurNeroAnimationIndex)
-		{
-		case Nero::ANI_BUSTER_START:
-			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM200_BUSTER_START);
-			break;
-		case Nero::ANI_BUSTER_AIR_CATCH:
-			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM200_BUSTER_AIR_START);
-			break;
-		default:
-			break;
-		}
-		break;
-	case Monster5000:
-		//그로기 상태일때만
-		break;
-	default:
-		break;
 	}
-
 }
 
-void Buster_Arm::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+void Buster_Arm_Left::Editor()
 {
+	Unit::Editor();
+	if (bEdit)
+	{
+		// 에디터 .... 
+	}
 }
 
-void Buster_Arm::RenderInit()
+void Buster_Arm_Left::RenderInit()
 {
 	SetRenderEnable(true);
 
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
-	_InitRenderProp.bRender = m_bIsRender;
+	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
 		{"gbuffer_dsSK",
@@ -256,14 +208,13 @@ void Buster_Arm::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
-	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Buster_Arm\\BusterArm_Right.fbx", _InitInfo);
+	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Buster_Arm\\BusterArm_Left.fbx", _InitInfo);
 
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
-
 }
 
-void Buster_Arm::RenderGBufferSK(const DrawInfo& _Info)
+void Buster_Arm_Left::RenderGBufferSK(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("matWorld", &World);
@@ -288,7 +239,7 @@ void Buster_Arm::RenderGBufferSK(const DrawInfo& _Info)
 	};
 }
 
-void Buster_Arm::RenderShadowSK(const DrawInfo& _Info)
+void Buster_Arm_Left::RenderShadowSK(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("matWorld", &World);
@@ -311,13 +262,13 @@ void Buster_Arm::RenderShadowSK(const DrawInfo& _Info)
 	};
 }
 
-void Buster_Arm::RenderDebugBone(const DrawInfo& _Info)
+void Buster_Arm_Left::RenderDebugBone(const DrawInfo& _Info)
 {
 	const Matrix ScaleOffset = FMath::Scale({ GScale,GScale ,GScale });
 	m_pMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
 }
 
-void Buster_Arm::RenderDebugSK(const DrawInfo& _Info)
+void Buster_Arm_Left::RenderDebugSK(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
@@ -341,56 +292,22 @@ void Buster_Arm::RenderDebugSK(const DrawInfo& _Info)
 	};
 }
 
-void Buster_Arm::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
+void Buster_Arm_Left::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)
 {
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
 }
 
-std::string Buster_Arm::GetName()
+std::string Buster_Arm_Left::GetName()
 {
-	return "Buster_Arm";
+	return "Buster_Arm_Left";
 }
 
-float Buster_Arm::Get_PlayingTime()
+float Buster_Arm_Left::Get_PlayingTime()
 {
 	return m_pMesh->PlayingTime();
 }
 
-float Buster_Arm::Get_PlayingAccTime()
+float Buster_Arm_Left::Get_PlayingAccTime()
 {
 	return m_pMesh->PlayingAccTime();
-}
-
-void Buster_Arm::RenderReady()
-{
-	auto _WeakTransform = GetComponent<ENGINE::Transform>();
-	if (auto _SpTransform = _WeakTransform.lock();
-		_SpTransform)
-	{
-		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-		if (m_pMesh)
-		{
-			const uint32  Numsubset = m_pMesh->GetNumSubset();
-			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
-
-			for (uint32 i = 0; i < Numsubset; ++i)
-			{
-				const auto& _Subset = m_pMesh->GetSubset(i);
-				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
-
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
-			}
-		}
-	}
-};
-
-
-void Buster_Arm::Editor()
-{
-	Unit::Editor();
-	if (bEdit)
-	{
-		// 에디터 .... 
-	}
 }

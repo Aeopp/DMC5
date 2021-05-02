@@ -377,6 +377,7 @@
     <ClInclude Include="..\Header\Em5300Homing.h">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Buster_Arm_Left.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -582,6 +583,7 @@
     <ClCompile Include="..\Source\Em5300Homing.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
