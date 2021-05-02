@@ -17,17 +17,6 @@ std::string Em5300Rush::GetName()
 	return std::string();
 }
 
-void Em5300Rush::Fight(const float _fDeltaTime)
-{
-}
-
-void Em5300Rush::State_Change(const float _fDeltaTime)
-{
-}
-
-void Em5300Rush::Skill_CoolTime(const float _fDeltaTime)
-{
-}
 
 HRESULT Em5300Rush::Ready()
 {
@@ -94,17 +83,19 @@ void Em5300Rush::OnDisable()
 	Unit::OnDisable();
 }
 
+void Em5300Rush::RenderReady()
+{
+}
+
 void Em5300Rush::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
-void Em5300Rush::Buster(BT_INFO _BattleInfo, void* pArg)
+void Em5300Rush::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 }
 
-void Em5300Rush::Snatch(BT_INFO _BattleInfo, void* pArg)
-{
-}
+
 
 void Em5300Rush::RenderInit()
 {
@@ -129,10 +120,4 @@ void Em5300Rush::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 }
 
-void Em5300Rush::Rotate(const float _fDeltaTime)
-{
-}
 
-void Em5300Rush::Update_Angle()
-{
-}

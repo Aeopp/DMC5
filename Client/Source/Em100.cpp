@@ -34,7 +34,7 @@ void Em100::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	/*if (m_BattleInfo.iHp <= 0.f)
+	/*if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
 	{
 		m_eState = Dead;
 		m_bIng = true;
@@ -1290,6 +1290,33 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
 		if (m_bAir)
 			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		else

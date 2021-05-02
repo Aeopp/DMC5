@@ -13,6 +13,7 @@
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
 #include "Em1000.h"
+#include "Em5300.h"
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
@@ -55,9 +56,9 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
-	AddGameObject<Em5300>();
+	//AddGameObject<Em5300>();
 
-	//AddGameObject<Em100>();
+	AddGameObject<Em5300>();
 
 	// Wave 1st
 	//{
@@ -107,7 +108,7 @@ HRESULT TestScene::LoadScene()
 
 
 	//LoadMap();
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
@@ -215,8 +216,8 @@ HRESULT TestScene::Awake()
 	/*if (nullptr != pPlane)
 		return S_OK;*/
 
-		//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-		//Physics::AddActor(UniqueID, *pPlane);
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }

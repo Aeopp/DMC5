@@ -140,6 +140,8 @@ private:
 	float	m_fPower = 0.f;
 	Vector3	m_vPower;
 	bool	m_bFight = false;
+
+
 };
 
 #endif // Em5300_h__

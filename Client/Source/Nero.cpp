@@ -786,7 +786,7 @@ void Nero::Locking()
 		return;
 	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
 	m_pBtlPanel.lock()->SetTargetCursor(
-		m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Waist"),
+		m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
 		fHpRatio);
 	
 	

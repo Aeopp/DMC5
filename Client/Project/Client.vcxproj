@@ -132,7 +132,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Engine\Bin\;$(SolutionDir)Reference\Lib\Debug\;$(SolutionDir)Reference\PhysX\Lib\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;Engine.lib;fmod_vc.lib;fmodL_vc.lib;assimp-vc142-mtd.lib;LowLevelAABBDEBUG.lib;LowLevelClothDEBUG.lib;LowLevelDEBUG.lib;LowLevelDynamicsDEBUG.lib;LowLevelParticlesDEBUG.lib;PhysX3CharacterKinematicDEBUG_x64.lib;PhysX3CommonDEBUG_x64.lib;PhysX3CookingDEBUG_x64.lib;PhysX3DEBUG_x64.lib;PhysX3ExtensionsDEBUG.lib;PhysX3VehicleDEBUG.lib;PsFastXmlDEBUG_x64.lib;PxFoundationDEBUG_x64.lib;PxPvdSDKDEBUG_x64.lib;PxTaskDEBUG_x64.lib;SceneQueryDEBUG.lib;SimulationControllerDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;EngineDEBUG.lib;fmod_vc.lib;fmodL_vc.lib;assimp-vc142-mtd.lib;LowLevelAABBDEBUG.lib;LowLevelClothDEBUG.lib;LowLevelDEBUG.lib;LowLevelDynamicsDEBUG.lib;LowLevelParticlesDEBUG.lib;PhysX3CharacterKinematicDEBUG_x64.lib;PhysX3CommonDEBUG_x64.lib;PhysX3CookingDEBUG_x64.lib;PhysX3DEBUG_x64.lib;PhysX3ExtensionsDEBUG.lib;PhysX3VehicleDEBUG.lib;PsFastXmlDEBUG_x64.lib;PxFoundationDEBUG_x64.lib;PxPvdSDKDEBUG_x64.lib;PxTaskDEBUG_x64.lib;SceneQueryDEBUG.lib;SimulationControllerDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -171,6 +171,7 @@
     <ClInclude Include="..\Header\Em200.h" />
     <ClInclude Include="..\Header\Em200Hand.h" />
     <ClInclude Include="..\Header\Em5300.h" />
+    <ClInclude Include="..\Header\Em5300Homing.h" />
     <ClInclude Include="..\Header\Em5300Missile.h" />
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="..\Source\Em200.cpp" />
     <ClCompile Include="..\Source\Em200Hand.cpp" />
     <ClCompile Include="..\Source\Em5300.cpp" />
+    <ClCompile Include="..\Source\Em5300Homing.cpp" />
     <ClCompile Include="..\Source\Em5300Missile.cpp" />
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />

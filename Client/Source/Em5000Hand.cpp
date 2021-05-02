@@ -17,17 +17,6 @@ std::string Em5000Hand::GetName()
 	return std::string();
 }
 
-void Em5000Hand::Fight(const float _fDeltaTime)
-{
-}
-
-void Em5000Hand::State_Change(const float _fDeltaTime)
-{
-}
-
-void Em5000Hand::Skill_CoolTime(const float _fDeltaTime)
-{
-}
 
 HRESULT Em5000Hand::Ready()
 {
@@ -40,6 +29,9 @@ HRESULT Em5000Hand::Ready()
 HRESULT Em5000Hand::Awake()
 {
 	Unit::Awake();
+
+
+	m_nTag = MonsterWeapon;
 	m_pParentBone = m_pEm5000Mesh.lock()->GetToRootMatrixPtr(m_bLeft ? "L_Hand" : "R_Hand");
 	m_pEm5000Trans = m_pEm5000.lock()->GetComponent<ENGINE::Transform>();
 
@@ -52,12 +44,12 @@ HRESULT Em5000Hand::Awake()
 	if (m_bLeft)
 	{
 		m_pCollider.lock()->SetCenter({ 0.f, 0.f, 0.f });
-		m_pCollider.lock()->SetRadius(0.15f);
+		m_pCollider.lock()->SetRadius(0.2f);
 	}
 	else
 	{
 		m_pCollider.lock()->SetCenter({ 0.f, 0.f, 0.f });
-		m_pCollider.lock()->SetRadius(0.15f);
+		m_pCollider.lock()->SetRadius(0.2f);
 	}
 
 	return S_OK;
@@ -105,13 +97,15 @@ void Em5000Hand::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
 
-void Em5000Hand::Buster(BT_INFO _BattleInfo, void* pArg)
+void Em5000Hand::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 }
 
-void Em5000Hand::Snatch(BT_INFO _BattleInfo, void* pArg)
+void Em5000Hand::RenderReady()
 {
 }
+
+
 
 void Em5000Hand::RenderInit()
 {
@@ -136,10 +130,4 @@ void Em5000Hand::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 }
 
-void Em5000Hand::Rotate(const float _fDeltaTime)
-{
-}
 
-void Em5000Hand::Update_Angle()
-{
-}
