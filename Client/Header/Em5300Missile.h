@@ -34,9 +34,14 @@ public:
 	void RenderShadow(const DrawInfo& _Info);
 
 	void Missile();
+	void Missile2();
 	void Set_Missile(const bool _bMissile) { m_bReadyMissile = _bMissile; }
 	void Set_MissilePos(const int _iPos) { m_iMissilePos = _iPos; }
 	void Set_StartMissile(const bool _bStartMissile) { m_bStartMissile = _bStartMissile; }
+
+	void Set_Missile2(const bool _bMissile) { m_bReadyMissile2 = _bMissile; }
+	void Set_StartMissile2(const bool _bStartMissile) { m_bStartMissile2 = _bStartMissile; }
+
 public:
 	virtual void	Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
@@ -66,6 +71,11 @@ private:
 	bool								  m_bRotMissile = false;	//한번만 총알 회전
 	int									  m_iMissilePos = 0;
 	Vector3								  m_vMissileDir;
+
+	bool								  m_bReadyMissile2 = false;
+	bool								  m_bStartMissile2 = false;
+	bool							      m_bMissileDir2 = false;
+	bool								  m_bRotMissile2 = false;
 
 
 };
