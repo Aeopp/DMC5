@@ -5,7 +5,8 @@
 #include "Monster.h"
 
 class Em5300;
-class Em5300Rush final : public Monster
+class Em5300Rush final : public Unit,
+	public ENGINE::RenderInterface
 {
 private:
 	explicit Em5300Rush() = default;
@@ -16,9 +17,6 @@ public:
 	static Em5300Rush* Create();
 public:
 	virtual std::string GetName() override;
-	virtual void Fight(const float _fDeltaTime) override;
-	virtual void State_Change(const float _fDeltaTime) override;
-	virtual void Skill_CoolTime(const float _fDeltaTime) override;
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -29,14 +27,12 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void RenderReady() override;
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
-	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
-	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void OnTriggerEnter(std::weak_ptr<GameObject> _pOther) override;
 public:
 	void RenderInit();
 
-	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle() override;
 
 
 public:

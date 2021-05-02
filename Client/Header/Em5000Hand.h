@@ -5,7 +5,8 @@
 #include "Monster.h"
 
 class Em5000;
-class Em5000Hand final : public Monster
+class Em5000Hand final : public Unit,
+	public ENGINE::RenderInterface
 {
 private:
 	explicit Em5000Hand() = default;
@@ -16,9 +17,6 @@ public:
 	static Em5000Hand* Create();
 public:
 	virtual std::string GetName() override;
-	virtual void Fight(const float _fDeltaTime) override;
-	virtual void State_Change(const float _fDeltaTime) override;
-	virtual void Skill_CoolTime(const float _fDeltaTime) override;
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -30,13 +28,11 @@ public:
 	virtual void OnDisable() override;
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
-	virtual void Buster(BT_INFO _BattleInfo, void* pArg = nullptr) override;
-	virtual void Snatch(BT_INFO _BattleInfo, void* pArg = nullptr) override;
+	virtual void OnTriggerEnter(std::weak_ptr<GameObject> _pOther) override;
+	virtual void RenderReady() override;
 public:
 	void RenderInit();
 
-	virtual void Rotate(const float _fDeltaTime) override;
-	virtual void Update_Angle() override;
 
 
 public:

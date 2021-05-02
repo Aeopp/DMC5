@@ -172,6 +172,9 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain">
       <UniqueIdentifier>{6656c183-0125-4959-81d9-39d99a9fd3c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing">
+      <UniqueIdentifier>{ae8e25f1-06da-4841-ab2e-6eee047285ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -369,6 +372,10 @@
     </ClInclude>
     <ClInclude Include="..\Header\Em5300Rain.h">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Trail.h" />
+    <ClInclude Include="..\Header\Em5300Homing.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -570,6 +577,10 @@
     </ClCompile>
     <ClCompile Include="..\Source\Em5300Rain.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Trail.cpp" />
+    <ClCompile Include="..\Source\Em5300Homing.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -21,6 +21,10 @@ public:
 		Attack_Laser_End,
 		Attack_Laser_Loop,
 		Attack_Laser_Start,
+		Attack_Missile2_Start,
+		Attack_Missile2_Attack,
+		Attack_Missile2_Loop,
+		Attack_Missile2_End,
 		New_Missile_End,
 		New_Missile_Loop,
 		New_Missile_Start,
@@ -122,6 +126,8 @@ private:
 	bool		m_bRain = false;
 	float		m_fRainTime = 0.f;
 
+	bool		m_bMissile2 = false;
+	float		m_fMissile2Time = 0.f;
 	weak_ptr<Em5300Missile>	m_pBullet[32];
 	weak_ptr<Em5300Rain>	m_pRain[12];
 
@@ -134,6 +140,8 @@ private:
 	float	m_fPower = 0.f;
 	Vector3	m_vPower;
 	bool	m_bFight = false;
+
+
 };
 
 #endif // Em5300_h__
