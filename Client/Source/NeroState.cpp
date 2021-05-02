@@ -11072,3 +11072,197 @@ HRESULT Jog_Turn_180_L::StateUpdate(const float _fDeltaTime)
 	NeroState::StateUpdate(_fDeltaTime);
 	return S_OK;
 }
+
+em200_Buster_Start::em200_Buster_Start(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+em200_Buster_Start::~em200_Buster_Start()
+{
+}
+
+em200_Buster_Start* em200_Buster_Start::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em200_Buster_Start(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT em200_Buster_Start::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Start::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Start::StateUpdate(const float _fDeltaTime)
+{
+	NeroState::StateUpdate(_fDeltaTime);
+	return S_OK;
+}
+
+em200_Buster_Loop::em200_Buster_Loop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+em200_Buster_Loop::~em200_Buster_Loop()
+{
+}
+
+em200_Buster_Loop* em200_Buster_Loop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em200_Buster_Loop(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT em200_Buster_Loop::StateEnter()
+{
+	NeroState::StateEnter();
+
+	return S_OK;
+}
+
+HRESULT em200_Buster_Loop::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Loop::StateUpdate(const float _fDeltaTime)
+{
+	NeroState::StateUpdate(_fDeltaTime);
+
+	return S_OK;
+}
+
+em200_BusterFinish::em200_BusterFinish(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+em200_BusterFinish::~em200_BusterFinish()
+{
+}
+
+em200_BusterFinish* em200_BusterFinish::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em200_BusterFinish(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT em200_BusterFinish::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em200_BusterFinish::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em200_BusterFinish::StateUpdate(const float _fDeltaTime)
+{
+	NeroState::StateUpdate(_fDeltaTime);
+	return S_OK;
+}
+
+em200_Buster_Air_Start::em200_Buster_Air_Start(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+em200_Buster_Air_Start::~em200_Buster_Air_Start()
+{
+}
+
+em200_Buster_Air_Start* em200_Buster_Air_Start::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em200_Buster_Air_Start(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT em200_Buster_Air_Start::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Air_Start::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Air_Start::StateUpdate(const float _fDeltaTime)
+{
+	NeroState::StateUpdate(_fDeltaTime);
+	return S_OK;
+}
+
+em200_Buster_Air_Loop::em200_Buster_Air_Loop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+em200_Buster_Air_Loop::~em200_Buster_Air_Loop()
+{
+}
+
+em200_Buster_Air_Loop* em200_Buster_Air_Loop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em200_Buster_Air_Loop(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT em200_Buster_Air_Loop::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Air_Loop::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Air_Loop::StateUpdate(const float _fDeltaTime)
+{
+	NeroState::StateUpdate(_fDeltaTime);
+	return S_OK;
+}
+
+em200_Buster_Air_Finish::em200_Buster_Air_Finish(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM,_nIndex,_pNero)
+{
+}
+
+em200_Buster_Air_Finish::~em200_Buster_Air_Finish()
+{
+}
+
+em200_Buster_Air_Finish* em200_Buster_Air_Finish::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new em200_Buster_Air_Finish(_pFSM,_nIndex,_pNero);
+}
+
+HRESULT em200_Buster_Air_Finish::StateEnter()
+{
+	NeroState::StateEnter();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Air_Finish::StateExit()
+{
+	NeroState::StateExit();
+	return S_OK;
+}
+
+HRESULT em200_Buster_Air_Finish::StateUpdate(const float _fDeltaTime)
+{
+	NeroState::StateUpdate(_fDeltaTime);
+	return S_OK;
+}
