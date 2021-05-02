@@ -4369,8 +4369,13 @@ HRESULT Wire_Fly_Start::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 
+	m_pNero.lock()->WireFly();
+
 	if (m_pNero.lock()->IsAnimationEnd())
+	{
 		m_pFSM->ChangeState(NeroFSM::WIRE_HELLHOUND_LOOP);
+		return S_OK;
+	}
 	return S_OK;
 }
 
@@ -4444,6 +4449,11 @@ HRESULT Wire_Fly_End::StateUpdate(const float _fDeltaTime)
 	NeroState::StateUpdate(_fDeltaTime);
 
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.5f <= fCurAnimationTime)
+	{
+		NeroState::ActiveGravity(true);
+	}
 
 	//특정 시간 지나면 중력 ON; 키입력 ON
 	if (m_pNero.lock()->IsAnimationEnd())

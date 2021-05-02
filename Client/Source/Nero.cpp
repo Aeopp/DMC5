@@ -29,6 +29,7 @@ Nero::Nero()
 	, m_iCurDirIndex(Dir_Front)
 	, m_iPreDirIndex(Dir_Front)
 	, m_IsMajin(false)
+	, m_fFlySpeed(0.f)
 {
 	m_nTag = Player;
 	m_BattleInfo.iMaxHp = 100;
@@ -357,10 +358,12 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		//플라이 엔드로 상태 변환
 		//m_pLetMeFlyMonster 초기화
 		UINT iFsmTag = m_pFSM->GetCurrentIndex();
-		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag)
+		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
+			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
 		{
 			m_pLetMeFlyMonster.reset();
 			m_pFSM->ChangeState(NeroFSM::WIRE_HELLHOUND_END);
+			m_fFlySpeed = 0.f;
 			return;
 		}
 	}
@@ -932,6 +935,9 @@ void Nero::WireFly()
 	if (m_pLetMeFlyMonster.expired())
 		return;
 
+	if (m_fFlySpeed <= 0.23f)
+		m_fFlySpeed += 0.001f;
+
 	Vector3 vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");
 	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
 
@@ -939,7 +945,11 @@ void Nero::WireFly()
 
 	D3DXVec3Normalize(&vDir, &vDir);
 
-	m_pTransform.lock()->Translate(vDir * 1.3f);
+	//Y흔들기
+	vDir.y += FMath::Random<float>(-0.1f, 0.1f);
+
+
+	m_pTransform.lock()->Translate(vDir * m_fFlySpeed);
 
 }
 

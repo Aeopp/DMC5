@@ -249,15 +249,7 @@ UINT Em5300Homing::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
-	if (m_bReadyRain == false)
-	{
-		m_ParentWorld = m_pEm5300Trasform.lock()->GetWorldMatrix();
-		m_Result = (*m_pParentBone * m_ParentWorld);
-		m_pTransform.lock()->SetPosition({ m_Result._41, m_Result._42, m_Result._43 });
-	}
 
-	if (m_bReadyRain)
-		Rain(_fDeltaTime);
 	return 0;
 }
 

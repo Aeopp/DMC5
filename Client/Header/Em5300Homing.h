@@ -34,9 +34,7 @@ public:
 	void RenderShadow(const DrawInfo& _Info);
 
 	void Rain(const float _fDeltaTime);
-	void Set_Rain(const bool _bRain) { m_bReadyRain = _bRain; }
-	void Set_RainPos(const int _iPos) { m_iRainPos = _iPos; }
-	void Set_StartRain(const bool _bStartRain) { m_bStartRain = _bStartRain; }
+
 public:
 	virtual void	Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:

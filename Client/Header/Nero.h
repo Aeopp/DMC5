@@ -464,6 +464,7 @@ private:
 	float	m_fRedQueenGage = 0.f;
 	float	m_fAngle = 0.f;
 	float	m_fRotationAngle = 0.f;
+	float	m_fFlySpeed = 0.f;
 
 	bool	m_IsMajin = false;
 	int		m_iDashLoopDir = 1;
