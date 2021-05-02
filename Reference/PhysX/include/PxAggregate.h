@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -45,7 +45,6 @@ namespace physx
 #endif
 
 class PxActor;
-class PxBVHStructure;
 
 /**
 \brief Class to aggregate actors into a single broad-phase entry.
@@ -92,17 +91,10 @@ public:
 	If the actor already belongs to a scene, a warning is output and the call is ignored. You need to remove
 	the actor from the scene first, before adding it to the aggregate.
 
-	\note When BVHStructure is provided the actor shapes are grouped together. 
-	The scene query pruning structure inside PhysX SDK will store/update one
-	bound per actor. The scene queries against such an actor will query actor
-	bounds and then make a local space query against the provided BVH structure, which is in
-	actor's local space.
-
 	\param	[in] actor The actor that should be added to the aggregate
-	\param	[in] bvhStructure BVHStructure for actor shapes.
 	return	true if success
 	*/
-	virtual	bool		addActor(PxActor& actor, const PxBVHStructure* bvhStructure = NULL)		= 0;
+	virtual	bool		addActor(PxActor& actor)		= 0;
 
 	/**
 	\brief Removes an actor from the aggregate object.
@@ -131,7 +123,7 @@ public:
 	\param	[in] articulation The articulation that should be added to the aggregate
 	return	true if success
 	*/
-	virtual	bool		addArticulation(PxArticulationBase& articulation) = 0;
+	virtual	bool		addArticulation(PxArticulation& articulation) = 0;
 
 	/**
 	\brief Removes an articulation from the aggregate object.
@@ -144,7 +136,7 @@ public:
 	\param	[in] articulation The articulation that should be removed from the aggregate
 	return	true if success
 	*/
-	virtual	bool		removeArticulation(PxArticulationBase& articulation) = 0;
+	virtual	bool		removeArticulation(PxArticulation& articulation) = 0;
 
 	/**
 	\brief Returns the number of actors contained in the aggregate.

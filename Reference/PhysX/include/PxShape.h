@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -96,6 +96,8 @@ struct PxShapeFlag
 		ensure that eSIMULATION_SHAPE flag is already lowered.
 
 		\note Trigger shapes will no longer send notification events for interactions with other trigger shapes.
+		For PhysX 3.4 there is the option to re-enable the reports by raising #PxSceneFlag::eDEPRECATED_TRIGGER_TRIGGER_REPORTS.
+		In PhysX 3.5 there will be no support for these reports any longer. See the 3.4 migration guide for more information.
 
 		\note Shapes marked as triggers are allowed to participate in scene queries, provided the eSCENE_QUERY_SHAPE flag is set. 
 
@@ -110,7 +112,12 @@ struct PxShapeFlag
 
 		@see PxScene.getRenderBuffer() PxRenderBuffer PxVisualizationParameter
 		*/
-		eVISUALIZATION					= (1<<3)
+		eVISUALIZATION					= (1<<3),
+
+		/**
+		\brief Sets the shape to be a particle drain.
+		*/
+		ePARTICLE_DRAIN					= (1<<4)
 	};
 };
 
@@ -154,16 +161,6 @@ public:
 	@see PxRigidActor::createShape() PxPhysics::createShape() PxRigidActor::attachShape() PxRigidActor::detachShape()
 	*/
 	virtual		void					release() = 0;
-
-	/**
-	\brief Returns the reference count of the shape.
-
-	At creation, the reference count of the shape is 1. Every actor referencing this shape increments the
-	count by 1.	When the reference count reaches 0, and only then, the shape gets destroyed automatically.
-
-	\return the current reference count.
-	*/
-	virtual		PxU32					getReferenceCount() const = 0;
 
 	/**
 	\brief Acquires a counted reference to a shape.
@@ -283,7 +280,6 @@ public:
 	@see PxGeometry PxGeometryType getGeometryType()
 	*/
 	virtual		bool					getTriangleMeshGeometry(PxTriangleMeshGeometry& geometry) const = 0;
-
 
 	/**
 	\brief Fetch the geometry of the shape.
@@ -501,58 +497,6 @@ public:
 	@see setRestOffset()
 	*/
 	virtual		PxReal					getRestOffset() const	= 0;
-
-
-	/**
-	\brief Sets torsional patch radius.
-	
-	This defines the radius of the contact patch used to apply torsional friction. If the radius is 0, no torsional friction
-	will be applied. If the radius is > 0, some torsional friction will be applied. This is proportional to the penetration depth
-	so, if the shapes are separated or penetration is zero, no torsional friction will be applied. It is used to approximate 
-	rotational friction introduced by the compression of contacting surfaces.
-
-	\param[in] radius	<b>Range:</b> (0, PX_MAX_F32)
-
-	*/
-	virtual			void						setTorsionalPatchRadius(PxReal radius) = 0;
-
-	/**
-	\brief Gets torsional patch radius.
-
-	This defines the radius of the contact patch used to apply torsional friction. If the radius is 0, no torsional friction
-	will be applied. If the radius is > 0, some torsional friction will be applied. This is proportional to the penetration depth
-	so, if the shapes are separated or penetration is zero, no torsional friction will be applied. It is used to approximate
-	rotational friction introduced by the compression of contacting surfaces.
-
-	\return The torsional patch radius of the shape.
-	*/
-	virtual			PxReal						getTorsionalPatchRadius() const = 0;
-
-	/**
-	\brief Sets minimum torsional patch radius.
-
-	This defines the minimum radius of the contact patch used to apply torsional friction. If the radius is 0, the amount of torsional friction
-	that will be applied will be entirely dependent on the value of torsionalPatchRadius. 
-	
-	If the radius is > 0, some torsional friction will be applied regardless of the value of torsionalPatchRadius or the amount of penetration.
-
-	\param[in] radius	<b>Range:</b> (0, PX_MAX_F32)
-
-	*/
-	virtual			void						setMinTorsionalPatchRadius(PxReal radius) = 0;
-
-	/**
-	\brief Gets minimum torsional patch radius.
-
-	This defines the minimum radius of the contact patch used to apply torsional friction. If the radius is 0, the amount of torsional friction
-	that will be applied will be entirely dependent on the value of torsionalPatchRadius. 
-	
-	If the radius is > 0, some torsional friction will be applied regardless of the value of torsionalPatchRadius or the amount of penetration.
-
-	\return The minimum torsional patch radius of the shape.
-	*/
-	virtual			PxReal						getMinTorsionalPatchRadius() const = 0;
-
 
 /************************************************************************************************/
 

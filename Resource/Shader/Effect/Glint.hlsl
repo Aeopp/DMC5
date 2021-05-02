@@ -1,8 +1,10 @@
 matrix World;
 matrix ViewProjection;
 
+float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 float _SliceAmount = 0.f;
+
 
 texture BaseMap;
 sampler Base = sampler_state
@@ -60,7 +62,7 @@ PsOut PsMain(PsIn In)
     float4 BaseSample = tex2D(Base, In.UV);
 
     Out.Color = BaseSample;
-    Out.Color.rgb *= _BrightScale;
+    Out.Color.rgb *= (_BrightScale * exposure_corr);
     Out.Color.a *= (1.f - _SliceAmount) * 0.5f;
     
     return Out;

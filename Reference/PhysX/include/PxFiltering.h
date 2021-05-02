@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -312,6 +312,8 @@ struct PxFilterFlag
 		\li Same conditions as for killed pairs (see #eKILL)
 		\li The filter data or the filter object attributes change for one of the collision objects
 
+		\note For PxCloth objects, eSUPPRESS will be treated as eKILL.
+
 		@see PxFilterData PxFilterObjectAttributes
 		*/
 		eSUPPRESS			= (1<<1),
@@ -458,10 +460,30 @@ struct PxFilterObjectType
 		eRIGID_DYNAMIC,
 
 		/**
+		\brief A particle system (deprecated)
+		\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+		@see PxParticleSystem
+		*/
+		ePARTICLE_SYSTEM PX_DEPRECATED,
+
+		/**
+		\brief A particle fluid (deprecated)
+		\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+		@see PxParticleFluid
+		*/
+		ePARTICLE_FLUID PX_DEPRECATED,
+
+		/**
 		\brief An articulation
 		@see PxArticulation
 		*/
 		eARTICULATION,
+		
+		/**
+		\brief A cloth object
+		@see PxCloth
+		*/
+		eCLOTH,
 
 		//brief internal use only!
 		eMAX_TYPE_COUNT = 16,
@@ -501,7 +523,7 @@ typedef PxU32 PxFilterObjectAttributes;
 */
 PX_INLINE PxFilterObjectType::Enum PxGetFilterObjectType(PxFilterObjectAttributes attr)
 {
-	return PxFilterObjectType::Enum(attr & (PxFilterObjectType::eMAX_TYPE_COUNT-1));
+	return static_cast<PxFilterObjectType::Enum>( (attr & (PxFilterObjectType::eMAX_TYPE_COUNT-1)) );
 }
 
 
@@ -515,7 +537,7 @@ PX_INLINE PxFilterObjectType::Enum PxGetFilterObjectType(PxFilterObjectAttribute
 */
 PX_INLINE bool PxFilterObjectIsKinematic(PxFilterObjectAttributes attr)
 {
-	return (attr & PxFilterObjectFlag::eKINEMATIC) != 0;
+	return ((attr & PxFilterObjectFlag::eKINEMATIC) != 0);
 }
 
 
@@ -529,7 +551,7 @@ PX_INLINE bool PxFilterObjectIsKinematic(PxFilterObjectAttributes attr)
 */
 PX_INLINE bool PxFilterObjectIsTrigger(PxFilterObjectAttributes attr)
 {
-	return (attr & PxFilterObjectFlag::eTRIGGER) != 0;
+	return ((attr & PxFilterObjectFlag::eTRIGGER) != 0);
 }
 
 
@@ -562,10 +584,12 @@ This methods gets called when:
 following pairs:
 
 \li Pair of static rigid actors
-\li A static rigid actor and a kinematic actor (unless one is a trigger or if explicitly enabled through PxPairFilteringMode::eKEEP)
-\li Two kinematic actors (unless one is a trigger or if explicitly enabled through PxPairFilteringMode::eKEEP)
+\li A static rigid actor and a kinematic actor (unless one is a trigger or if explicitly enabled through PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS)
+\li Two kinematic actors (unless one is a trigger or if explicitly enabled through PxSceneFlag::eENABLE_KINEMATIC_PAIRS)
+\li Pair of particle systems
 \li Two jointed rigid bodies and the joint was defined to disable collision
 \li Two articulation links if connected through an articulation joint
+\li Cloth objects and rigid body actors
 
 \note This is a performance critical method and should be stateless. You should neither access external objects 
 from within this method nor should you call external methods that are not inlined. If you need a more complex
@@ -630,11 +654,11 @@ public:
 	\param[in] attributes0 The filter attribute of the first object
 	\param[in] filterData0 The custom filter data of the first object
 	\param[in] a0 Actor pointer of the first object
-	\param[in] s0 Shape pointer of the first object (NULL if the object has no shapes)
+	\param[in] s0 Shape pointer of the first object (NULL if the object has no shapes, for example in the case of a particle system)
 	\param[in] attributes1 The filter attribute of the second object
 	\param[in] filterData1 The custom filter data of the second object
 	\param[in] a1 Actor pointer of the second object
-	\param[in] s1 Shape pointer of the second object (NULL if the object has no shapes)
+	\param[in] s1 Shape pointer of the second object (NULL if the object has no shapes, for example in the case of a  particle system)
 	\param[in,out] pairFlags In: Pair flags returned by the filter shader. Out: Additional information on how an accepted pair should get processed
 	\return Filter flags defining whether the pair should be discarded, temporarily ignored or processed and whether the pair
 	should be tracked and send a report on pair deletion through the filter callback
@@ -696,24 +720,30 @@ protected:
 	virtual						~PxSimulationFilterCallback() {}
 };
 
+
+struct PxFilterInfo
+{
+	PX_FORCE_INLINE	PxFilterInfo()								:	filterFlags(0), pairFlags(0), filterPairIndex(INVALID_FILTER_PAIR_INDEX)			{}
+	PX_FORCE_INLINE	PxFilterInfo(PxFilterFlags filterFlags_)	:	filterFlags(filterFlags_), pairFlags(0), filterPairIndex(INVALID_FILTER_PAIR_INDEX)	{}
+
+	PxFilterFlags	filterFlags;
+	PxPairFlags		pairFlags;
+	PxU32			filterPairIndex;
+};
+
 struct PxPairFilteringMode
 {
 	enum Enum
 	{
 		/**
 		Output pair from BP, potentially send to user callbacks, create regular interaction object.
-
-		Enable contact pair filtering between kinematic/static or kinematic/kinematic rigid bodies.
-		
-		By default contacts between these are suppressed (see #PxFilterFlag::eSUPPRESS) and don't get reported to the filter mechanism.
-		Use this mode if these pairs should go through the filtering pipeline nonetheless.
-
-		\note This mode is not mutable, and must be set in PxSceneDesc at scene creation.
+		Similar to enabling PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS / PxSceneFlag::eENABLE_KINEMATIC_PAIRS.
 		*/
 		eKEEP,
 
 		/**
 		Output pair from BP, create interaction marker. Can be later switched to regular interaction.
+		Similar to disabling PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS / PxSceneFlag::eENABLE_KINEMATIC_PAIRS.
 		*/
 		eSUPPRESS,
 
@@ -723,12 +753,11 @@ struct PxPairFilteringMode
 		eKILL,
 
 		/**
-		Default is eSUPPRESS for compatibility with previous PhysX versions.
+		Default is to ignore the mode and use PxSceneFlag::eENABLE_KINEMATIC_STATIC_PAIRS and PxSceneFlag::eENABLE_KINEMATIC_PAIRS instead (compatibility).
 		*/
-		eDEFAULT = eSUPPRESS
+		eDEFAULT
 	};
 };
-
 
 #if !PX_DOXYGEN
 } // namespace physx

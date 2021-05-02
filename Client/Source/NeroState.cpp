@@ -5627,7 +5627,7 @@ HRESULT BT_Air_Att2::StateUpdate(const float _fDeltaTime)
 		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 
 
-	if (0.27f <= fCurrAnimationTime && fCurrAnimationTime <= 0.42f)
+	if (0.32f <= fCurrAnimationTime && fCurrAnimationTime <= 0.42f)
 	{
 		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 			NeroState::KeyInput_Jump(NeroFSM::AIR_COMBOA2);
@@ -10450,6 +10450,7 @@ HRESULT Buster_Air_Catch::StateEnter()
 HRESULT Buster_Air_Catch::StateExit()
 {
 	NeroState::StateExit();
+	NeroState::ActiveGravity(true);
 	return S_OK;
 }
 

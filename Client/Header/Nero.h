@@ -245,8 +245,8 @@ public:
 
 	enum WeaponList
 	{
-		RQ, // °Ë
-		Cbs // »ïÀý°ï
+		RQ, // ï¿½ï¿½
+		Cbs // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	};
 
@@ -303,7 +303,7 @@ public:
 private:
 	explicit Nero();
 	virtual ~Nero() = default;
-	// GameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// GameObjectï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	virtual void Free() override;
 public:
 
@@ -368,26 +368,26 @@ public:
 	void NeroMove(NeroDirection _eDir, float _fPower);
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
-	//Ä«¸Þ¶ó
+	//Ä«ï¿½Þ¶ï¿½
 	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
 	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
-	//Å×½ºÆ®
+	//ï¿½×½ï¿½Æ®
 
 public:
-	//UI°ü·Ã
-	//EX°ÔÀÌÁö
+	//UIï¿½ï¿½ï¿½ï¿½
+	//EXï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	float Get_ExGauge();
 	uint32 Get_ExGaugeCount();
 	void Add_ExGauge(float ExGauge);
 	void Use_ExGauge(const uint32 Count);
-	//º¯½Å°ÔÀÌÁö
+	//ï¿½ï¿½ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½
 	float Get_TDTGauge();
 	void AccumulateTDTGauge(const float Amount);
 	void ConsumeTDTGauge(const float Speed = 1.f);
-	//·©Å© ½ºÄÚ¾î
+	//ï¿½ï¿½Å© ï¿½ï¿½ï¿½Ú¾ï¿½
 	void AddRankScore(float Score);
 public:
-	//¾Ö´Ï¸ÞÀÌ¼Ç °ü·Ã
+	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void  StopAnimation();
 	void  ContinueAnimiation();
 	bool  IsAnimationEnd();
@@ -413,7 +413,7 @@ public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
-	// ·»´õ¸µ ÇÔ¼ö....
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);

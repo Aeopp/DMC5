@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -52,7 +52,7 @@ namespace physx
 class PxMidphaseDesc
 {
 public:
-	PX_FORCE_INLINE PxMidphaseDesc()	{ setToDefault(PxMeshMidPhase::eBVH33);	}
+	PX_FORCE_INLINE PxMidphaseDesc(): mType(PxMeshMidPhase::eINVALID) { }
 
 	/**
 	\brief	Returns type of midphase mesh structure.
@@ -97,7 +97,7 @@ public:
 			return mBVH33Desc.isValid();
 		else if(mType==PxMeshMidPhase::eBVH34)
 			return mBVH34Desc.isValid();
-		return false;
+		return true;
 	}
 
 	PX_FORCE_INLINE PxMidphaseDesc&		operator=(PxMeshMidPhase::Enum descType) 

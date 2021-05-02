@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -44,10 +44,10 @@ https://developercommunity.visualstudio.com/content/problem/66047/possible-compi
 #endif
 
 // define API function declaration (public API only needed because of extensions)
-#if defined PX_PHYSX_STATIC_LIB
+#if defined PX_PHYSX_STATIC_LIB || defined PX_PHYSX_CORE_STATIC_LIB
 	#define PX_PHYSX_CORE_API
 #else
-	#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4)
+	#if PX_WINDOWS
 		#if defined PX_PHYSX_CORE_EXPORTS
 			#define PX_PHYSX_CORE_API __declspec(dllexport)
 		#else
@@ -61,42 +61,35 @@ https://developercommunity.visualstudio.com/content/problem/66047/possible-compi
 #endif
 
 #if PX_SUPPORT_GPU_PHYSX
+
 // define API function declaration
-#if defined PX_PHYSX_GPU_STATIC
-	#define PX_PHYSX_GPU_API
+#if PX_WINDOWS 
+#if defined PX_PHYSX_GPU_EXPORTS
+#define PX_PHYSX_GPU_API __declspec(dllexport)
 #else
-	#if PX_WINDOWS 
-	#if defined PX_PHYSX_GPU_EXPORTS
-	#define PX_PHYSX_GPU_API __declspec(dllexport)
-	#else
-	#define PX_PHYSX_GPU_API __declspec(dllimport)
-	#endif
-	#elif PX_UNIX_FAMILY
-	#define PX_PHYSX_GPU_API PX_UNIX_EXPORT
-	#else
-	#define PX_PHYSX_GPU_API
-	#endif
+#define PX_PHYSX_GPU_API __declspec(dllimport)
+#endif
+#elif PX_UNIX_FAMILY
+#define PX_PHYSX_GPU_API PX_UNIX_EXPORT
+#else
+#define PX_PHYSX_GPU_API
 #endif
 
 #else // PX_SUPPORT_GPU_PHYSX
 #define PX_PHYSX_GPU_API
 #endif // PX_SUPPORT_GPU_PHYSX
 
-#if defined PX_PHYSX_STATIC_LIB
-	#define PX_PHYSX_COMMON_API
-#else
-	#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4) && !defined(__CUDACC__)
-		#if defined PX_PHYSX_COMMON_EXPORTS
-			#define PX_PHYSX_COMMON_API __declspec(dllexport)
-		#else
-			#define PX_PHYSX_COMMON_API __declspec(dllimport)
-		#endif
-	#elif PX_UNIX_FAMILY
-		#define PX_PHYSX_COMMON_API PX_UNIX_EXPORT
+#if PX_WINDOWS && !defined(__CUDACC__)
+	#if defined PX_PHYSX_COMMON_EXPORTS
+		#define PX_PHYSX_COMMON_API __declspec(dllexport)
 	#else
-		#define PX_PHYSX_COMMON_API
+		#define PX_PHYSX_COMMON_API __declspec(dllimport)
 	#endif
-#endif 
+#elif PX_UNIX_FAMILY
+	#define PX_PHYSX_COMMON_API PX_UNIX_EXPORT
+#else
+	#define PX_PHYSX_COMMON_API
+#endif
 
 // Changing these parameters requires recompilation of the SDK
 

@@ -112,9 +112,6 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\00.Em100\00.Hand">
       <UniqueIdentifier>{3848d087-87ec-4bc2-8f96-dedbfe780217}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\01.Unit\02.Monster\01.Em101">
-      <UniqueIdentifier>{7bc9598d-78ac-4f39-b931-83b51179adf3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\01.Unit\02.Monster\02.Em0000">
       <UniqueIdentifier>{713e754a-60d1-45f6-8821-e4e8ea31c584}</UniqueIdentifier>
     </Filter>
@@ -150,6 +147,30 @@
     </Filter>
     <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\00.Hand">
       <UniqueIdentifier>{aec58016-38ed-47ff-950f-4e09465e4d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\HLSL">
+      <UniqueIdentifier>{6b562c3b-480a-4fac-9529-c5c32a8a1bda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\01.Em200">
+      <UniqueIdentifier>{7bc9598d-78ac-4f39-b931-83b51179adf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand">
+      <UniqueIdentifier>{40f58fc8-669a-4317-8223-c57f12e0cb60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300">
+      <UniqueIdentifier>{23e32db9-0a9f-4310-8475-f20a0fcb6eb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\00.Zako">
+      <UniqueIdentifier>{d0171c98-637c-432c-bc84-1b5ce8a1deab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\01.Rush">
+      <UniqueIdentifier>{15603b03-2209-4816-8c71-1734e0e63408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\02.Missile">
+      <UniqueIdentifier>{a85dc6bf-5b15-43c2-9b20-a11eff265365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain">
+      <UniqueIdentifier>{6656c183-0125-4959-81d9-39d99a9fd3c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +218,6 @@
     </ClInclude>
     <ClInclude Include="..\Header\Em100.h">
       <Filter>02.GameObject\01.Unit\02.Monster\00.Em100</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\Em101.h">
-      <Filter>02.GameObject\01.Unit\02.Monster\01.Em101</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em0000.h">
       <Filter>02.GameObject\01.Unit\02.Monster\02.Em0000</Filter>
@@ -305,9 +323,53 @@
     <ClInclude Include="..\Header\Wire_Arm_Grab.h">
       <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Cbs_Short.h" />
-    <ClInclude Include="..\Header\Cbs_Middle.h" />
+    <ClInclude Include="..\Header\CircleWave.h" />
+    <ClInclude Include="..\Header\AirHike.h" />
+    <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingSK.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\OvertureHand.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\QliphothBlock.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\Sprite.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\UI\BtlPanel.hlsl">
+      <Filter>02.GameObject\UI\BtlPanel</Filter>
+    </ClInclude>
     <ClInclude Include="..\Header\Cbs_Long.h" />
+    <ClInclude Include="..\Header\Cbs_Middle.h" />
+    <ClInclude Include="..\Header\Cbs_Short.h" />
+    <ClInclude Include="..\Header\Em200.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em200Hand.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300Rush.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\01.Rush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300Missile.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\02.Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Em5300Rain.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -361,9 +423,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\Monster.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Em101.cpp">
-      <Filter>02.GameObject\01.Unit\02.Monster\01.Em101</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em0000.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\02.Em0000</Filter>
@@ -489,9 +548,29 @@
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Cbs_Short.cpp" />
-    <ClCompile Include="..\Source\Cbs_Middle.cpp" />
+    <ClCompile Include="..\Source\CircleWave.cpp" />
+    <ClCompile Include="..\Source\AirHike.cpp" />
     <ClCompile Include="..\Source\Cbs_Long.cpp" />
+    <ClCompile Include="..\Source\Cbs_Middle.cpp" />
+    <ClCompile Include="..\Source\Cbs_Short.cpp" />
+    <ClCompile Include="..\Source\Em200.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em200Hand.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\01.Em200\00.Hand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300Rush.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\01.Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300Missile.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\02.Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Em5300Rain.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -521,5 +600,12 @@
     <ClCompile Include="..\Source\RedQueen.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\05.RedQueen</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

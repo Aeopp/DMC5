@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -44,6 +44,12 @@ namespace physx
 {
 #endif
 
+// Exposing the ParticleSystem API. Run API meta data generation in Tools/PhysXMetaDataGenerator when changing.
+#define PX_USE_PARTICLE_SYSTEM_API 1
+
+// Exposing of the Cloth API. Run API meta data generation in Tools/PhysXMetaDataGenerator when changing.
+#define PX_USE_CLOTH_API 1
+
 class PxPhysics;
 class PxShape;
 
@@ -55,12 +61,18 @@ class PxConstraint;
 class PxConstraintDesc;
 
 class PxArticulation;
-class PxArticulationReducedCoordinate;
-class PxArticulationBase;
 class PxArticulationLink;
 class PxArticulationJoint;
-class PxArticulationJointReducedCoordinate;
-class PxArticulationJointBase;
+
+class PxParticleSystem;
+class PxParticleFluid;
+class PxParticleReadData;
+class PxParticleFluidReadData;
+
+class PxClothFabric;
+class PxCloth;
+class PxClothParticleData;
+
 
 class PxMaterial;
 

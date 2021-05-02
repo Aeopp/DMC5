@@ -35,6 +35,7 @@ private:
 	void    ReadyRenderInfo();
 	void    ReadyFrustum();
 	void    ReadyQuad();
+	void    ReadyTextures();
 public:
 	HRESULT Render()&;
 	HRESULT OptRender()&;
@@ -55,6 +56,8 @@ private:
 	void RenderEntityClear()&;
 private:
 	void ResetState()&;
+private:
+	void ClearDistortion()&;
 private:
 	HRESULT RenderDebug()&;
 	HRESULT RenderDebugBone()&;
@@ -79,6 +82,8 @@ private:
 	HRESULT LensFlare();
 	HRESULT ToneMap();
 	HRESULT RenderEmissive();
+	HRESULT RenderUV();
+	HRESULT BlendDistortion();
 private:
 	void EnableDepthBias()&;
 	void DisableDepthBias()&;
@@ -90,9 +95,18 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
-
+	bool    bDistortion = false;
+	float   DistortionIntencity = 0.05f;
+	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
+	
+	
+	Vector4 DistortionColor { 246.f/255.f,10.f/255.f,10.f/255.f,1.f };
+	float   SkyDistortionIntencity = 1.f;
+	float   SkyNoisewrap = 8.173007f;
+	float   SkyTimecorr  = 0.304011f;
+	bool    SkyDistortion = true;
 	float   SkyRotationSpeed = 0.001f;
 	float   SkyIntencity = 0.111f;
 	float   SkysphereScale = 0.078f;
@@ -127,7 +141,7 @@ private:
 	// 0 으로 세팅되면 미정의 동작 . 
 	float adaptedluminance = 0.1f;
 
-	float exposure = 1.f;
+
 	IDirect3DSurface9* BackBuffer{ nullptr };
 	IDirect3DSurface9* BackBufferZBuffer{ nullptr };
 
@@ -141,6 +155,8 @@ private:
 		std::unordered_map<std::string,
 		std::vector<RenderEntityType>>>
 		RenderEntitys{};
+
+	std::shared_ptr<Texture> DistortionTex{};
 	std::set<RenderInterface* > RenderEntitySet{};
 	std::shared_ptr<Quad> _Quad;
 	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
@@ -148,9 +164,10 @@ private:
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
 
-
+	std::shared_ptr<Texture> SkyNoiseMap{};
 	std::shared_ptr<StaticMesh> SkysphereMesh{};
 	std::shared_ptr<Texture> sky{};
+	
 
 	// 쉐이더 테스트 시작 ....
 	bool TestShaderInit();

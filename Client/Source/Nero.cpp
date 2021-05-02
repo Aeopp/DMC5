@@ -23,7 +23,11 @@
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
+<<<<<<< HEAD
 	, m_iCurWeaponIndex(NeroCom_RedQueen)
+=======
+	, m_iCurWeaponIndex(NeroCom_Cbs_Short)
+>>>>>>> origin/main
 	, m_iJumpDirIndex(Basic)
 	, m_fRedQueenGage(0.f)
 	, m_iCurDirIndex(Dir_Front)
@@ -59,6 +63,7 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 	case Nero::NeroCom_RedQueen:
 		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
 		break;
+<<<<<<< HEAD
 	case Nero::NeroCom_Cbs_Short:
 		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
 		break;
@@ -67,6 +72,14 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 		break;
 	case Nero::NeroCom_Cbs_Long:
 		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
+=======
+	case Nero::NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		break;
+	case Nero::NeroCom_Cbs_Long:
+>>>>>>> origin/main
 		break;
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
@@ -94,6 +107,7 @@ void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->Set_AttackType(_eAttDir);
 		break;
+<<<<<<< HEAD
 	case Nero::NeroCom_Cbs_Short:
 		m_pCbsShort.lock()->SetAttType(_eAttDir);
 		break;
@@ -102,6 +116,14 @@ void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
 		break;
 	case Nero::NeroCom_Cbs_Long:
 		m_pCbsLong.lock()->Set_AttackType(_eAttDir);
+=======
+	case Nero::NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->SetAttType(_eAttDir);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		break;
+	case Nero::NeroCom_Cbs_Long:
+>>>>>>> origin/main
 		break;
 	case Nero::NeroCom_End:
 		break;
@@ -186,7 +208,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 3.f, -5.02f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 2.f, -5.02f});
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -219,7 +241,11 @@ HRESULT Nero::Ready()
 HRESULT Nero::Awake()
 {
 	Unit::Awake();
+<<<<<<< HEAD
 	m_pFSM->ChangeState(NeroFSM::IDLE);
+=======
+	m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+>>>>>>> origin/main
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
@@ -714,6 +740,7 @@ void Nero::Set_GrabEnd(bool _bGrabEnd)
 	m_pWireArm.lock()->Set_GrabEnd(_bGrabEnd);
 }
 
+<<<<<<< HEAD
 void Nero::SetCbsIdle()
 {
 	m_pCbsLong.lock()->SetActive(false);
@@ -724,6 +751,17 @@ void Nero::SetCbsIdle()
 	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
 }
 
+=======
+void Nero::SetCbsIdle()
+{
+	m_pCbsLong.lock()->SetActive(false);
+	m_pCbsMiddle.lock()->SetActive(false);
+	m_pCbsShort.lock()->SetActive(true);
+	m_pCbsShort.lock()->SetWeaponState(Nero::WS_Idle);
+	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
+}
+
+>>>>>>> origin/main
 void Nero::CheckAutoRotate()
 {
 	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
@@ -994,6 +1032,7 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 {
 	m_iCurWeaponIndex = _iWeaponIndex;
+<<<<<<< HEAD
 
 	switch (m_iCurWeaponIndex)
 	{
@@ -1025,6 +1064,35 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pCbsLong.lock()->SetActive(true);
 		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
 		break;
+=======
+
+	switch (m_iCurWeaponIndex)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetActive(true);
+		m_pCbsShort.lock()->SetActive(false);
+		m_pCbsMiddle.lock()->SetActive(false);
+		m_pCbsLong.lock()->SetActive(false);
+		break;
+	case Nero::NeroCom_Cbs_Short:
+		m_pRedQueen.lock()->SetActive(false);
+		m_pCbsShort.lock()->SetActive(true);
+		m_pCbsMiddle.lock()->SetActive(false);
+		m_pCbsLong.lock()->SetActive(false);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		m_pRedQueen.lock()->SetActive(false);
+		m_pCbsShort.lock()->SetActive(false);
+		m_pCbsMiddle.lock()->SetActive(true);
+		m_pCbsLong.lock()->SetActive(false);
+		break;
+	case Nero::NeroCom_Cbs_Long:
+		m_pRedQueen.lock()->SetActive(false);
+		m_pCbsShort.lock()->SetActive(false);
+		m_pCbsMiddle.lock()->SetActive(false);
+		m_pCbsLong.lock()->SetActive(true);
+		break;
+>>>>>>> origin/main
 	default:
 		break;
 	}

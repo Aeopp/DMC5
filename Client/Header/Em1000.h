@@ -3,6 +3,7 @@
 
 #include "Monster.h"
 
+#define EM1000_ALWAYS_RENDER_SUBSET_IDX 1
 
 class RedQueen;
 class Nero;
@@ -64,10 +65,13 @@ public:
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
 	void RenderInit();
+
+	void	Set_Wall(bool _Wall) { m_bWall = _Wall; }
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle(const float _fDeltaTime, bool _bTest = false);
 	virtual void Update_Angle()override;
+	void		 Set_Rotate();
 private:
 	//몬스터 상태
 	Em1000_State	m_eState =State_END;		
@@ -93,6 +97,8 @@ private:
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
 	////////////////
+
+	bool			m_bWall = false;
 
 };
 

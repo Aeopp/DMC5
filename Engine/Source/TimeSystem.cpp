@@ -37,7 +37,8 @@ void TimeSystem::Editor()
 	ImGui::Begin("Time");
 	ImGui::Text("Frame Rate : %d ", m_uiFrameRate);
 	ImGui::Text("Delta Time : %2.6f ", m_fDeltaTime);
-	ImGui::Text("Accumulate Time : %9.1f ", m_fAccTime);
+	ImGui::Text("Accumulate Time : %8.6f ", m_fAccTime);
+	ImGui::SliderFloat("Slow", &Slowly, 0.0f, 1.f, "%2.6f");
 	ImGui::End();
 }
 
@@ -64,7 +65,7 @@ float TimeSystem::AccTime()
 
 float TimeSystem::DeltaTime()
 {
-	return m_fDeltaTime;
+	return m_fDeltaTime * Slowly;
 }
 
 

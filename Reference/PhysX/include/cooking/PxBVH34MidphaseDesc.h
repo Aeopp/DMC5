@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.
 
@@ -51,22 +51,22 @@ namespace physx
 struct PxBVH34MidphaseDesc
 {
 	/**
-	\brief Mesh cooking hint for max primitives per leaf limit. 
-	Less primitives per leaf produces larger meshes with better runtime performance 
+	\brief Mesh cooking hint for max triangles per leaf limit. 
+	Less triangles per leaf produces larger meshes with better runtime performance 
 	and worse cooking performance. More triangles per leaf results in faster cooking speed and
 	smaller mesh sizes, but with worse runtime performance.
 
 	<b>Default value:</b> 4
 	<b>Range:</b> <4, 15>
 	*/
-	PxU32			numPrimsPerLeaf;
+	PxU32			numTrisPerLeaf;
 
 	/**
 	\brief Desc initialization to default value.
 	*/
     void setToDefault()
     {
-		numPrimsPerLeaf = 4;
+	    numTrisPerLeaf = 4;
     }
 
 	/**
@@ -75,7 +75,7 @@ struct PxBVH34MidphaseDesc
 	*/
 	bool isValid() const
 	{
-		if(numPrimsPerLeaf < 4 || numPrimsPerLeaf > 15)
+		if(numTrisPerLeaf < 4 || numTrisPerLeaf > 15)
 			return false;
 		return true;
 	}

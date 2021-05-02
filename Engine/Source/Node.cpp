@@ -278,7 +278,7 @@ void Node::NodeUpdate(const Matrix& ParentToRoot,
 		Transform = OriginTransform;
 	}
 
-	ToRoot = Transform * ParentToRoot;
+	ToRoot =  Transform * ParentToRoot;
 	Final = Offset * ToRoot;
 
 	for (auto& ChildrenTarget : Childrens)
