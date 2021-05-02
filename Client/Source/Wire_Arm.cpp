@@ -47,7 +47,7 @@ HRESULT Wire_Arm::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(0.05f);
+	m_pCollider.lock()->SetRadius(0.085f);
 	PushEditEntity(m_pCollider.lock().get());
 
 	m_pBoneMatrix = m_pMesh->GetToRootMatrixPtr("R_B_Thumb1_front_ST");

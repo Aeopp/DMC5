@@ -45,6 +45,8 @@ enum GAMEOBJECTTAG
 	Eff_Smoke,
 	Eff_QliphothBlock,
 	Eff_AirHike,
+	Eff_Trail,
+	Eff_CircleWave,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,

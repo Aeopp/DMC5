@@ -53,7 +53,7 @@ void CircleWave::RenderReady()
 
 void CircleWave::RenderInit()
 {
-	m_nTag = Player;
+	m_nTag = Eff_CircleWave;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -64,7 +64,7 @@ void CircleWave::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = false;
-	
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
 	{
@@ -81,18 +81,7 @@ void CircleWave::RenderInit()
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
-		{"Debug" ,
-		[this](const DrawInfo& _Info)
-		{
-			DrawCollider(_Info);
-		}
-	} };
-
-
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
-		=
-	{
-			{"Debug" ,[this](const DrawInfo& _Info)
+			{"Collider" ,[this](const DrawInfo& _Info)
 			{
 				DrawCollider(_Info);
 			}
@@ -255,21 +244,26 @@ void CircleWave::Editor()
 
 	if (bEdit)
 	{
+		const std::string PlayName = GetName() + "_Play"; 
+
+		ImGui::BeginChild(PlayName.c_str());
 		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart();
 		}
 
 		ImGui::Text("T : %2.6f", T);
-		ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f",_Color.x,_Color.y,_Color.z,_Color.w);
+		ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f", _Color.x, _Color.y, _Color.z, _Color.w);
 
-			ImGui::Checkbox("bWaveDistortion", &bWaveDistortion);
-			ImGui::SliderFloat("WaveScale", &WaveScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("WaveSpeed", &WaveSpeed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("WaveIntencity", &WaveIntencity, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("MinAlpha", &MinAlpha, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("UV_VOffset", &UV_VOffset, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("EndT", &EndT, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::Checkbox("bWaveDistortion", &bWaveDistortion);
+		ImGui::SliderFloat("WaveScale", &WaveScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("WaveSpeed", &WaveSpeed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("WaveIntencity", &WaveIntencity, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("MinAlpha", &MinAlpha, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("UV_VOffset", &UV_VOffset, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("EndT", &EndT, -1.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+
+		ImGui::EndChild();
 	}
 }
 

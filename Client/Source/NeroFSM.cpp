@@ -107,7 +107,7 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(Middle_Cbs_Satellite::Create(this, MIDDLE_CBS_SATELLITE, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Satellite_Air::Create(this, MIDDLE_CBS_SATELLITE_AIR, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike::Create(this, MIDDLE_CBS_STRIKE, m_pNero));
-	m_vecState.emplace_back(Middle_Cbs_Strike_Air_Down::Create(this, MIDDLE_CBS_STRIKE_DOWN, m_pNero));
+	m_vecState.emplace_back(Middle_Cbs_Strike_Down::Create(this, MIDDLE_CBS_STRIKE_DOWN, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike_Up::Create(this, MIDDLE_CBS_STRIKE_UP, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike_Air::Create(this, MIDDLE_CBS_STRIKE_AIR, m_pNero));
 	m_vecState.emplace_back(Middle_Cbs_Strike_Air_Down::Create(this, MIDDLE_CBS_STRIKE_AIR_DOWN, m_pNero));
@@ -189,7 +189,15 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(em5000_Buster_Swing_Loop::Create(this, EM5000_BUSTER_SWING_LOOP, m_pNero));
 	m_vecState.emplace_back(em5000_Buster_Finish::Create(this, EM5000_BUSTER_FINISH, m_pNero));
 
+	m_vecState.emplace_back(em200_Buster_Start::Create(this, EM200_BUSTER_START, m_pNero));
+	m_vecState.emplace_back(em200_Buster_Loop::Create(this, EM200_BUSTER_LOOP, m_pNero));
+	m_vecState.emplace_back(em200_BusterFinish::Create(this, EM200_BUSTER_FINSH, m_pNero));
+	m_vecState.emplace_back(em200_Buster_Air_Start::Create(this, EM200_BUSTER_AIR_START, m_pNero));
+	m_vecState.emplace_back(em200_Buster_Air_Loop::Create(this, EM200_BUSTER_AIR_LOOP, m_pNero));
+	m_vecState.emplace_back(em200_Buster_Air_Finish::Create(this, EM200_BUSTER_AIR_FINSH, m_pNero));
+	m_vecState.emplace_back(Cbs_Dash::Create(this, CBS_DASH, m_pNero));
 
+	m_vecState.emplace_back(StateReset::Create(this, STATERESET, m_pNero));
 	return S_OK;						
 }
 

@@ -124,6 +124,15 @@ public:
 		ANI_JUMP_LANDING,
 		ANI_JUMP_LANDING_HIGH,
 		ANI_JUMP_TWICE,
+		ANI_CBS_JUMP,
+		ANI_CBS_JUMP_BACK,
+		ANI_CBS_JUMP_BACK_TWICE,
+		ANI_CBS_JUMP_FRONT,
+		ANI_CBS_JUMP_FRONT_LANDING,
+		ANI_CBS_JUMP_FRONT_TWICE,
+		ANI_CBS_JUMP_LANDING,
+		ANI_CBS_JUMP_LANDING_HIGH,
+		ANI_CBS_JUMP_TWICE,
 		ANI_MIDDLE_CBS_BIATTACK,
 		ANI_MIDDLE_CBS_BLITZATTACK,
 		ANI_MIDDLE_CBS_SATELLITE,
@@ -225,13 +234,19 @@ public:
 		ANI_CBS_RUNSTART270,
 		ANI_CBS_RUNSTART0,
 		ANI_CBS_DASH,
+		ANI_EM200_BUSTER_START,
+		ANI_EM200_BUSTER_LOOP,
+		ANI_EM200_BUSTER_FINISH,
+		ANI_EM200_BUSTER_AIR_START,
+		ANI_EM200_BUSTER_AIR_LOOP,
+		ANI_EM200_BUSTER_AIR_FINISH,
 		ANI_END
 	};
 
 	enum WeaponList
 	{
-		RQ, // °Ë
-		Cbs // »ïÀý°ï
+		RQ, // ï¿½ï¿½
+		Cbs // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	};
 
@@ -288,7 +303,7 @@ public:
 private:
 	explicit Nero();
 	virtual ~Nero() = default;
-	// GameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// GameObjectï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	virtual void Free() override;
 public:
 
@@ -350,29 +365,30 @@ public:
 	bool CheckIsGround();
 	void Locking();
 	NeroDirection RotateToTargetMonster();
+	void RotateToHitMonster(std::weak_ptr<GameObject> _pMonster);
 	void NeroMove(NeroDirection _eDir, float _fPower);
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
-	//Ä«¸Þ¶ó
+	//Ä«ï¿½Þ¶ï¿½
 	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
 	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
-	//Å×½ºÆ®
+	//ï¿½×½ï¿½Æ®
 
 public:
-	//UI°ü·Ã
-	//EX°ÔÀÌÁö
+	//UIï¿½ï¿½ï¿½ï¿½
+	//EXï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	float Get_ExGauge();
 	uint32 Get_ExGaugeCount();
 	void Add_ExGauge(float ExGauge);
 	void Use_ExGauge(const uint32 Count);
-	//º¯½Å°ÔÀÌÁö
+	//ï¿½ï¿½ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½
 	float Get_TDTGauge();
 	void AccumulateTDTGauge(const float Amount);
 	void ConsumeTDTGauge(const float Speed = 1.f);
-	//·©Å© ½ºÄÚ¾î
+	//ï¿½ï¿½Å© ï¿½ï¿½ï¿½Ú¾ï¿½
 	void AddRankScore(float Score);
 public:
-	//¾Ö´Ï¸ÞÀÌ¼Ç °ü·Ã
+	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void  StopAnimation();
 	void  ContinueAnimiation();
 	bool  IsAnimationEnd();
@@ -380,9 +396,10 @@ public:
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {}, const bool bOverlap = false);
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
+	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -397,7 +414,7 @@ public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
-	// ·»´õ¸µ ÇÔ¼ö....
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);

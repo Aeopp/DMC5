@@ -27,7 +27,6 @@ public:
 	HRESULT AddState(FSMState* _pState, const UINT _nIndex);
 	HRESULT ChangeState(const UINT _nIndex);
 	UINT	GetCurrentIndex();
-
 };
 
 

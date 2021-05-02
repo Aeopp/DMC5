@@ -30,7 +30,7 @@ HRESULT Cbs_Long::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
-	//SetActive(false);
+	SetActive(false);
 	return S_OK;
 }
 
@@ -44,8 +44,9 @@ HRESULT Cbs_Long::Awake()
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(0.11f);
-	m_pCollider.lock()->SetCenter({ 0.f,0.1f,0.f });
+	m_pCollider.lock()->SetRadius(0.05f);
+	m_pCollider.lock()->SetHeight(0.11f);
+	m_pCollider.lock()->SetCenter({ 0.f, 0.05f, 0.f });
 
 	m_pCollider.lock()->SetActive(false);
 
@@ -95,11 +96,15 @@ UINT Cbs_Long::LateUpdate(const float _fDeltaTime)
 void Cbs_Long::OnEnable()
 {
 	Unit::OnEnable();
+
+	_RenderProperty.bRender = true;
 }
 
 void Cbs_Long::OnDisable()
 {
 	Unit::OnDisable();
+
+	_RenderProperty.bRender = false;
 }
 
 void Cbs_Long::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

@@ -30,7 +30,7 @@ HRESULT Cbs_Middle::Ready()
 
 	PushEditEntity(m_pTransform.lock().get());
 
-	//SetActive(false);
+	SetActive(false);
 
 	return S_OK;
 }
@@ -91,11 +91,13 @@ UINT Cbs_Middle::LateUpdate(const float _fDeltaTime)
 void Cbs_Middle::OnEnable()
 {
 	Unit::OnEnable();
+	_RenderProperty.bRender = true;
 }
 
 void Cbs_Middle::OnDisable()
 {
 	Unit::OnDisable();
+	_RenderProperty.bRender = false;
 }
 
 void Cbs_Middle::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

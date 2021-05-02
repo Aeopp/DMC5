@@ -218,7 +218,7 @@ void Renderer::ReadyRenderTargets()
 		auto& Distortion = RenderTargets["Distortion"] = std::make_shared<RenderTarget>();
 
 		RenderTarget::Info InitInfo{};
-		InitInfo.Width = g_nWndCX;
+		InitInfo.Width = g_nWndCX; 
 		InitInfo.Height = g_nWndCY;
 		InitInfo.Levels = 1;
 		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
@@ -2497,10 +2497,12 @@ HRESULT Renderer::BlendDistortion()
 
 	Vector4 PixelSize{ 0.f,0.f,0.f,1.f };
 	
-	PixelSize.x = 1.0f / (float)_RenderInfo.Viewport.Width;
-	PixelSize.y = -1.0f / (float)_RenderInfo.Viewport.Height;
+	auto& DistortionRT = RenderTargets["SceneTarget"];
 
-	Device->SetRenderTarget(0u, RenderTargets["SceneTarget"]->GetSurface(0));
+	PixelSize.x = 1.0f / (float)DistortionRT->GetInfo().Width;
+	PixelSize.y = -1.0f / (float)DistortionRT->GetInfo().Height;
+
+	Device->SetRenderTarget(0u, DistortionRT->GetSurface(0));
 	auto Fx = Shaders["Distortion"]->GetEffect();
 	Fx->SetVector("PixelSize", &PixelSize);
 

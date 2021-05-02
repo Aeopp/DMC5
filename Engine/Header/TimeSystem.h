@@ -24,6 +24,7 @@ private:
 	// Object을(를) 통해 상속됨
 	virtual void Free() override;
 public:
+	float Slowly = 1.f;
 	bool bTimeRender = true;
 	HRESULT ReadyTimeSystem();
 	HRESULT UpdateTimeSystem(const float Delta);

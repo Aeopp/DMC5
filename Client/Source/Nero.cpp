@@ -23,7 +23,7 @@
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
-	, m_iCurWeaponIndex(NeroCom_Cbs_Short)
+	, m_iCurWeaponIndex(NeroCom_RedQueen)
 	, m_iJumpDirIndex(Basic)
 	, m_fRedQueenGage(0.f)
 	, m_iCurDirIndex(Dir_Front)
@@ -63,8 +63,10 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
+		m_pCbsMiddle.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
 		break;
 	case Nero::NeroCom_Cbs_Long:
+		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
 		break;
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
@@ -96,9 +98,10 @@ void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
 		m_pCbsShort.lock()->SetAttType(_eAttDir);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
+		m_pCbsMiddle.lock()->Set_AttackType(_eAttDir);
 		break;
 	case Nero::NeroCom_Cbs_Long:
-		break;
+		m_pCbsLong.lock()->Set_AttackType(_eAttDir);
 	case Nero::NeroCom_End:
 		break;
 	default:
@@ -215,7 +218,7 @@ HRESULT Nero::Ready()
 HRESULT Nero::Awake()
 {
 	Unit::Awake();
-	m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+	m_pFSM->ChangeState(NeroFSM::IDLE);
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
@@ -254,8 +257,8 @@ UINT Nero::Update(const float _fDeltaTime)
 	Update_Majin(_fDeltaTime);
 
 
-	//if (Input::GetKeyDown(DIK_0))
-	//	Hit(m_BattleInfo);
+	if (Input::GetKeyDown(DIK_0))
+		Hit(m_BattleInfo);
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -274,9 +277,25 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
 
-	//테스트
-	//if(!m_IsMajin)
-		m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
+
+	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
+	//static bool Test = false;
+	//if (Input::GetKeyDown(DIK_RCONTROL))
+	//{
+	//	Test = !Test;
+	//	if (Test)
+	//	{
+	//		m_pMesh->StopAnimation();
+	//		m_pCbsShort.lock()->StopAnimation();
+	//		m_pCbsMiddle.lock()->StopAnimation();
+	//	}
+	//	else
+	//	{
+	//		m_pMesh->ContinueAnimation();
+	//		m_pCbsShort.lock()->ContinueAnimation();
+	//		m_pCbsMiddle.lock()->ContinueAnimation();
+	//	}
+	//}
 	return 0;
 }
 
@@ -303,9 +322,11 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+	RotateToHitMonster(*(std::weak_ptr<GameObject>*)(pArg));
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Front:
+		m_pFSM->ChangeState(NeroFSM::STATERESET);
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	//case Attack_Down:
@@ -333,7 +354,7 @@ void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case MonsterWeapon:
 		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
 			return;
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(),(void*)&_pOther);
 		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
 		break;
 	default:
@@ -699,6 +720,7 @@ void Nero::SetCbsIdle()
 	m_pCbsLong.lock()->SetActive(false);
 	m_pCbsMiddle.lock()->SetActive(false);
 	m_pCbsShort.lock()->SetActive(true);
+	m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 	m_pCbsShort.lock()->SetWeaponState(Nero::WS_Idle);
 	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
 }
@@ -827,6 +849,31 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	return NeroDirection::Dir_Front;
 }
 
+void Nero::RotateToHitMonster(std::weak_ptr<GameObject> _pMonster)
+{
+	Vector3 vMonsterPos = _pMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+	Vector3 vDir = vMonsterPos - vMyPos;
+	vDir.y = 0;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	float fRadian = acosf(fDot);
+
+	Vector3	vCross;
+	D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+	if (vCross.y > 0)
+		fRadian *= -1;
+	m_fAngle += -D3DXToDegree(fRadian) + vRotationDegree.y;
+	vDegree.y = m_fAngle;
+	vRotationDegree.y = m_fRotationAngle = 0;
+	Reset_RootRotation();
+}
+
 void Nero::NeroMove(NeroDirection _eDir, float _fPower)
 {
 	switch (_eDir)
@@ -925,11 +972,11 @@ void Nero::ChangeNeroDirection(UINT _NeroDirection)
 	m_iCurDirIndex = _NeroDirection;
 }
 
-void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const UINT AnimationIndex, const AnimNotify& _Notify)
+void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const UINT AnimationIndex, const AnimNotify& _Notify, const bool bOverlap)
 {
 	m_iPreAnimationIndex = m_iCurAnimationIndex;
 	m_iCurAnimationIndex = AnimationIndex;
-	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify);
+	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify, 1.f,1.f, bOverlap);
 }
 
 void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify, const bool bOverlap)
@@ -981,26 +1028,36 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
 		break;
 	case Nero::NeroCom_Cbs_Short:
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(true);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(true);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pCbsMiddle.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		break;
 	case Nero::NeroCom_Cbs_Long:
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(true);
-		break;
-	default:
+		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
 		break;
 	}
+}
+
+void Nero::ChangeWeaponUI(NeroComponentID _iWeaponIndex)
+{
+	if (Nero::NeroCom_RedQueen == _iWeaponIndex)
+		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+	else
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
 }
