@@ -9,6 +9,13 @@ class DashTrail  :   public ENGINE::GameObject,
 {
 private:
 	std::map<int32, std::shared_ptr<StaticMesh>> _Meshs{};
+	float TrailEndTime = 0.0f;
+	float CurTrailTime = 0.0f;
+
+	float ColorIntencity = 1.f;
+	float DistortionIntencity = 1.f;
+	Vector4 _Color{1.f,1.f,1.f,1.f};
+	float EditTrailEndTime = 1.f;
 private:
 	explicit DashTrail() = default;
 	virtual ~DashTrail() = default;
@@ -29,6 +36,12 @@ public:
 	virtual void    Editor()override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
+public:
+	void PlayStart(
+		const float TrailEndTime = 0.0f
+		, const std::optional<Vector3>& Location = std::nullopt);
+private:
+	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);

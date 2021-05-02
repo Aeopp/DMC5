@@ -28,7 +28,7 @@
 #include "AirHike.h"
 #include "CircleWave.h"
 #include "SpriteEffect.h"
-
+#include "DashTrail.h"
 
 #include <iostream>
 #include <fstream>
@@ -62,6 +62,8 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 	// AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
+
+	AddGameObject<DashTrail>();
 
 	{
 		if (auto _SE = AddGameObject<SpriteEffect>().lock();

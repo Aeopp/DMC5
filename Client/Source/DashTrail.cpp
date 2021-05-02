@@ -32,6 +32,20 @@ void DashTrail::RenderReady()
 			SpTransform)
 		{
 			_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+
+			auto& _StaticMesh = _Meshs[static_cast<int32>((CurTrailTime / TrailEndTime) * _Meshs.size())];
+			const uint32  Numsubset = _StaticMesh->GetNumSubset();
+			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+			;
+
+			for (uint32 i = 0; i < Numsubset; ++i)
+			{
+				const auto& _Subset = _StaticMesh->GetSubset(i);
+				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, SpTransform->GetScale().x);
+			}
+
 		}
 	}
 };
@@ -62,7 +76,7 @@ void DashTrail::RenderInit()
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"SpriteEffect",
+		{"DashTrail",
 		[this](const DrawInfo& _Info)
 			{
 				this->RenderAlphaBlendEffect(_Info);
@@ -71,63 +85,51 @@ void DashTrail::RenderInit()
 	};
 
 	RenderInterface::Initialize(_InitRenderProp);
+
+	// 메쉬 스태틱 이펙트 트레일 대쉬 01 
+	_Meshs[0] = Resources::Load<StaticMesh>
+		("..\\..\\Resource\\Mesh\\Static\\Effect\\Trail\\dash_01.fbx");
+	_Meshs[1] = Resources::Load<StaticMesh>
+		("..\\..\\Resource\\Mesh\\Static\\Effect\\Trail\\dash_02.fbx");
+	_Meshs[2] = Resources::Load<StaticMesh>
+		("..\\..\\Resource\\Mesh\\Static\\Effect\\Trail\\dash_03.fbx");
+	_Meshs[3] = Resources::Load<StaticMesh>
+		("..\\..\\Resource\\Mesh\\Static\\Effect\\Trail\\dash_04.fbx");
 };
 
-void SpriteEffect::PlayStart(
-	/*const uint32 Col, const uint32 Row,*/ const float SpriteUpdateTime,
-	const std::optional<Vector3>& Location)
+void DashTrail::PlayStart(
+	const float TrailChangeSpeed
+	, const std::optional<Vector3>& Location )
 {
 	if (Location)
 	{
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
-	}
+	};
 
-	/*SpriteCol = Col;
-	SpriteRow = Row;*/
-	SpriteColIdx = 0.f;
-	SpriteRowIdx = 0.f;
-	CurSpriteUpdateTime = this->SpriteUpdateTime = SpriteUpdateTime;
+	TrailEndTime = TrailChangeSpeed;
+	CurTrailTime = 0.0f;
 
 	_RenderProperty.bRender = true;
 };
 
-void SpriteEffect::PlayEnd()
+void DashTrail::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 };
 
-void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void DashTrail::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	const Matrix World =     _RenderUpdateInfo.World;
+	auto& _StaticMesh =_Meshs[static_cast<int32>((CurTrailTime / TrailEndTime) * _Meshs.size())];
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
 
 	if (Numsubset > 0)
 	{
-		_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / static_cast<float >(SpriteCol));
-		_Info.Fx->SetFloat("SpriteXEnd", (SpriteColIdx + 1.f) / static_cast<float>(SpriteCol));
-		_Info.Fx->SetFloat("SpriteYStart", SpriteRowIdx / static_cast<float>(SpriteRow));
-		_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1.f) / static_cast<float>(SpriteRow));
-
-		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+		_Info.Fx->SetMatrix("matWorld", &World);
+		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity );
 		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 		_Info.Fx->SetVector("_Color", &_Color);
-
-		_Info.Fx->SetMatrix("matWorld", &World);
-
-		if (_SpriteTex)
-		{
-			_Info.Fx->SetTexture("SpriteMap", _SpriteTex->GetTexture());
-		}
-		else
-		{
-			_Info.Fx->SetTexture("SpriteMap",nullptr);
-		}
-
-		if (_DistortionTex)
-		{
-			_Info.Fx->SetTexture("DistortionMap", _DistortionTex->GetTexture());
-		}
-	}
+	};
 
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -145,11 +147,11 @@ void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 }
 
 
-void SpriteEffect::RenderDebug(const DrawInfo& _Info)
+void DashTrail::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
-
+	auto& _StaticMesh = _Meshs[static_cast<int32>((CurTrailTime / TrailEndTime) * _Meshs.size())];
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -168,8 +170,7 @@ void SpriteEffect::RenderDebug(const DrawInfo& _Info)
 
 };
 
-
-HRESULT SpriteEffect::Ready()
+HRESULT DashTrail::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
@@ -181,65 +182,44 @@ HRESULT SpriteEffect::Ready()
 	return S_OK;
 };
 
-HRESULT SpriteEffect::Awake()
+HRESULT DashTrail::Awake()
 {
 	GameObject::Awake();
 	m_pTransform.lock()->SetPosition(Vector3{0.f,0.5f,0.5f });
 	return S_OK;
 }
 
-HRESULT SpriteEffect::Start()
+HRESULT DashTrail::Start()
 {
 	GameObject::Start();
 
 	return S_OK;
 }
 
-UINT SpriteEffect::Update(const float _fDeltaTime)
+UINT DashTrail::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
 	if (_RenderProperty.bRender == false) return 0;
 
-	CurSpriteUpdateTime -= _fDeltaTime;
+	CurTrailTime += _fDeltaTime;
 
-	if (CurSpriteUpdateTime < 0.0f)
+	if (CurTrailTime >= TrailEndTime)
 	{
-		if ( ( (SpriteColIdx) >= (SpriteCol-1)  ) &&
-			 ( (SpriteRowIdx) >= (SpriteRow-1)) ) 
-		{
-			PlayEnd();
-			return 0;
-		}
-
-		CurSpriteUpdateTime += SpriteUpdateTime;
-
-		SpriteColIdx += 1.f;
-
-		if (SpriteColIdx >= SpriteCol)
-		{
-			SpriteColIdx = 0.f;
-			
-			SpriteRowIdx += 1.f;
-
-			if (SpriteRowIdx >= SpriteRow)
-			{
-				SpriteRowIdx = 0.f;
-			}
-		}
+		PlayEnd();
 	}
 
 	return 0;
 }
 
-UINT SpriteEffect::LateUpdate(const float _fDeltaTime)
+UINT DashTrail::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
 
 	return 0;
 }
 
-void SpriteEffect::Editor()
+void DashTrail::Editor()
 {
 	GameObject::Editor();
 
@@ -248,25 +228,27 @@ void SpriteEffect::Editor()
 		const std::string ChildName = GetName() + "_Play";
 		if (ImGui::TreeNode(ChildName.c_str()))
 		{
-			ImGui::Text("Cur Col %2.6f", SpriteColIdx);
+			ImGui::Text("Cur Time %3.6f", CurTrailTime);
 			ImGui::SameLine();
-			ImGui::Text("Cur Row %2.6f", SpriteRowIdx);
-
-			/*ImGui::InputInt("Play Row", &EditRow);
-			ImGui::InputInt("Play Col", &EditCol);*/
-			ImGui::InputFloat("Play SpriteUpdateTime", &EditSpriteUpdateTime);
+			ImGui::Text("End Time %3.6f", TrailEndTime);
+			ImGui::SameLine();
+			const int32 Idx = static_cast<int32>((CurTrailTime / TrailEndTime) * _Meshs.size());
+			ImGui::Text("Cur Idx : %d", Idx);
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 10000.f);
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 10000.f);
 
-			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.f, 10000.f);
-			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 10000.f);
+			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.f, 100.f);
+			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 100.f);
 
 			ImGui::ColorEdit4("_Color",_Color);
 
+			ImGui::SliderFloat("EditTrailEndTime", &EditTrailEndTime, 0.f, 10.f);
+			ImGui::InputFloat("In EditTrailEndTime", &EditTrailEndTime, 0.f, 10.f);
+
 			if (ImGui::SmallButton("Play"))
 			{
-				PlayStart(EditSpriteUpdateTime);
+				PlayStart(EditTrailEndTime);
 			}
 
 			ImGui::TreePop();
@@ -274,58 +256,12 @@ void SpriteEffect::Editor()
 	}
 };
 
-void SpriteEffect::OnEnable()
+void DashTrail::OnEnable()
 {
 	GameObject::OnEnable();
 };
 
-void SpriteEffect::OnDisable()
+void DashTrail::OnDisable()
 {
 	GameObject::OnDisable();
 }
-void SpriteEffect::RegistInfo(
-	const float DistortionIntencity, 
-	const float ColorIntencity,
-	const Vector4 _Color)
-{
-	this->DistortionIntencity = DistortionIntencity;
-	this->ColorIntencity = ColorIntencity;
-	this->_Color = _Color;
-};
-
-void SpriteEffect::RegistMesh(const std::string& MeshPath)
-{
-	Mesh::InitializeInfo _InitInfo{};
-	_InitInfo.bLocalVertexLocationsStorage = false;
-	_StaticMesh = Resources::Load<StaticMesh>(MeshPath, _InitInfo);
-	if (_StaticMesh)
-	{
-		PushEditEntity(_StaticMesh.get());
-	};
-};
-
-void SpriteEffect::RegistSpriteInfo(const uint32 Col, const uint32 Row)
-{
-	SpriteCol = Col;
-	SpriteRow = Row;
-};
-
-void SpriteEffect::RegistAlbedoTex(const std::string& TexPath 
-	)
-{
-	_SpriteTex = Resources::Load<Texture>(TexPath);
-	if (_SpriteTex)
-	{
-		PushEditEntity(_SpriteTex.get());
-	};
-};
-
-void SpriteEffect::RegistDistortionTex(const std::string& TexPath)
-{
-	_DistortionTex = Resources::Load<Texture>(TexPath);
-	if (_DistortionTex)
-	{
-		PushEditEntity(_DistortionTex.get());
-	};
-};
-
