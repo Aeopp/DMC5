@@ -373,6 +373,7 @@
     <ClInclude Include="..\Header\Trail.h" />
     <ClInclude Include="..\Header\SpriteEffect.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
+    <ClInclude Include="..\Header\FireCircle.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -577,6 +578,7 @@
     <ClCompile Include="..\Source\Trail.cpp" />
     <ClCompile Include="..\Source\SpriteEffect.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
+    <ClCompile Include="..\Source\FireCircle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -616,5 +618,6 @@
     <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\Trail.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DashTrail.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\FireCircle.hlsl" />
   </ItemGroup>
 </Project>

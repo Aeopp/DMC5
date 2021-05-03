@@ -114,6 +114,9 @@ void Trail::RenderInit()
 		  "..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
 	ExplosionTrailMap =Resources::Load<Texture >(
 		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
+
+	EmissiveMskMap = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
 	//NoiseMap = Resources::Load<Texture>(
 	//	"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 	//	
@@ -172,6 +175,8 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 		_Info.Fx->SetTexture("SpriteMap", nullptr);
 	}
+	_Info.Fx->SetTexture("EmissiveMskMap", EmissiveMskMap->GetTexture());
+	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
 
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
@@ -202,7 +207,7 @@ void Trail::SpriteUpdate(const float DeltaTime)
 				SpriteRowIdx = 0;
 			}
 		}
-		SpriteCurUpdateCycle += 0.05f;
+		SpriteCurUpdateCycle += SpriteUpdateCycle;
 	}
 }
 void Trail::BufferUpdate(const float DeltaTime)
@@ -467,6 +472,8 @@ void Trail::Editor()
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");
+			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
+			
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");
 			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);

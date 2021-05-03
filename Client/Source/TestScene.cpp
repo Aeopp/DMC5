@@ -29,6 +29,7 @@
 #include "CircleWave.h"
 #include "SpriteEffect.h"
 #include "DashTrail.h"
+#include "FireCircle.h"
 
 #include <iostream>
 #include <fstream>
@@ -58,6 +59,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Trail>();
 	AddGameObject<AirHike>();
 	AddGameObject<CircleWave>();
+	AddGameObject<FireCircle>();
 
 	AddGameObject<BtlPanel>();
 	// AddGameObject<MainCamera>();

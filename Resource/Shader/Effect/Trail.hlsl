@@ -4,6 +4,7 @@ uniform float DistortionIntencity;
 uniform float exposure_corr;
 uniform vector _Color;
 uniform float ColorIntencity;
+uniform float EmissiveIntencity;
 
 uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
@@ -53,6 +54,17 @@ sampler Trail = sampler_state
     sRGBTexture = false;
 };
 
+texture EmissiveMskMap;
+sampler Emissive = sampler_state
+{
+    texture = EmissiveMskMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
+};
 
 //texture NoiseMap;
 //sampler Noise = sampler_state
@@ -94,6 +106,10 @@ void PsMain(out float4 Color : COLOR0,
 {
     // Color = float4(1.0f, 0.0f, 0.0f, 0.5f);
     UV0.x = 1.0f - UV0.x;
+    float2 OriginUV0 = UV0;
+    float4 EmissiveSample = tex2D(Emissive, OriginUV0);
+    EmissiveSample.rgb *= EmissiveIntencity;
+    
     UV1.x = 1.0f - UV1.x;
     
     UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
@@ -102,6 +118,7 @@ void PsMain(out float4 Color : COLOR0,
     Color = tex2D(Sprite, UV0);
     Color *= _Color;
     Color.rgb *= ColorIntencity;
+    Color.rgb += EmissiveSample.rgb;
     Color.rgb *= exposure_corr;
     
     float4 trailsample = tex2D(Trail, UV1);
