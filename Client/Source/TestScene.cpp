@@ -58,7 +58,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<AirHike>();
 	//AddGameObject<Em5300>();
 
-	AddGameObject<Em5300>();
+	//AddGameObject<Em5300>();
 
 	// Wave 1st
 	//{

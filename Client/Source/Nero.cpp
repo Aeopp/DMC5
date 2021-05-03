@@ -122,6 +122,7 @@ void Nero::Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex)
 		m_pCbsShort.lock()->SetWeaponState(_StateIndex);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
+		m_pCbsMiddle.lock()->SetWeaponState(_StateIndex);
 		break;
 	case Nero::NeroCom_Cbs_Long:
 		break;
@@ -302,7 +303,7 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	if (Input::GetKeyDown(DIK_N))
 	{
-		m_pFSM->ChangeState(NeroFSM::EM5000_BUSTER_START);
+		m_pFSM->ChangeState(NeroFSM::STUN_START);
 	}
 	return 0;
 }
@@ -331,23 +332,30 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 	//RotateToHitMonster(*(std::weak_ptr<GameObject>*)(pArg));
+	if (m_IsFly)
+	{
+		m_pFSM->ChangeState(NeroFSM::HIT_AIR_AWAY);
+		if (NeroCom_RedQueen == m_iCurWeaponIndex)
+			m_pRedQueen.lock()->SetWeaponState(WS_Idle);
+		else
+			SetCbsIdle();
+		
+		return;
+	}
 	switch (_BattleInfo.eAttackType)
 	{
 	case Attack_Front:
 		m_pFSM->ChangeState(NeroFSM::STATERESET);
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
-	//case Attack_Down:
-	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
-	//	break;
-	//case Attack_Stun:
-	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
-	//	break;
-	//case Attack_KnocBack:
-	//	m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
-	//	break;
-	//case Attack_END:
-	//	break;
+	case Attack_Hard:
+		break;
+	case Attack_KnocBack:
+		m_pFSM->ChangeState(NeroFSM::HIT_GROUND_AWAY);
+		break;
+	case Attack_Stun:
+		m_pFSM->ChangeState(NeroFSM::STUN_START);
+		break;
 	default:
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
@@ -387,12 +395,45 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 	}
 }
 
-void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 {
+	UINT iFsmTag = m_pFSM->GetCurrentIndex();
 	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
 	switch (eTag)
 	{
-	case MonsterWeapon:
+	case Monster5300:
+	{
+		//현재 상태가 플라이 루프일때
+		//플라이 엔드로 상태 변환
+		//m_pLetMeFlyMonster 초기화
+
+		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
+			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
+		{
+			m_pLetMeFlyMonster.reset();
+			m_pFSM->ChangeState(NeroFSM::WIRE_HELLHOUND_END);
+			m_fFlySpeed = 0.f;
+			return;
+		}
+	}
+	break;
+	//보스가 아니라 여러마리있는애들이면
+	//태그 검사이후에
+	//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
+	}
+}
+
+void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	UINT iFsmTag = m_pFSM->GetCurrentIndex();
+	
+	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
+	switch (eTag)
+	{
+	case MonsterWeapon:	
+		//회피기일때 탈출
+		if (NeroFSM::EVADE_L == iFsmTag	|| NeroFSM::EVADE_R == iFsmTag)
+			return;
 		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
 			return;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(),(void*)&_pOther);
@@ -822,7 +863,12 @@ void Nero::CheckAutoRotate()
 
 bool Nero::CheckIsGround()
 {
-	return m_pCollider.lock()->IsGround();
+	if (m_pCollider.lock()->IsGround())
+	{
+		m_IsFly = false;
+		return true;
+	}
+	return false;
 }
 
 void Nero::Locking()

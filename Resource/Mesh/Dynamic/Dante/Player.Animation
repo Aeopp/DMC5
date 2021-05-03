@@ -13,11 +13,6 @@
                 "TransitionTime": 0.10000000149011612
             },
             {
-                "Name": "Air_Dive_Slash_Loop",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.009999999776482582
-            },
-            {
                 "Name": "Air_Dive_Slash_Start",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.10000000149011612
@@ -99,11 +94,6 @@
             },
             {
                 "Name": "Cbs_RunStart180",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.1
-            },
-            {
-                "Name": "Cbs_RunStart180_L",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.1
             },
@@ -273,11 +263,6 @@
                 "TransitionTime": 0.10000000149011612
             },
             {
-                "Name": "DashLoop2",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
                 "Name": "DashStop",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.10000000149011612
@@ -409,11 +394,6 @@
             },
             {
                 "Name": "Hr_Air",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "Hr_Ex_2",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.10000000149011612
             },
@@ -551,16 +531,6 @@
                 "Name": "Jump_Landing",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "Jump_Landing_High",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "Jump_Loop",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.009999999776482582
             },
             {
                 "Name": "Jump_Twice",

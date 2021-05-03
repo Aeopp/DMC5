@@ -10,6 +10,7 @@ Cbs_Middle::Cbs_Middle()
 	m_nTag = Tag_Cbs_Middle;
 	m_BattleInfo.eAttackType = Attack_Front;
 	m_BattleInfo.iAttack = 10;
+	D3DXMatrixIdentity(&m_MyRenderMat);
 }
 
 void Cbs_Middle::Free()
@@ -32,6 +33,8 @@ HRESULT Cbs_Middle::Ready()
 
 	SetActive(false);
 
+	m_vecMyBoneMat.reserve(2);
+
 	return S_OK;
 }
 
@@ -42,11 +45,14 @@ HRESULT Cbs_Middle::Awake()
 
 	m_pParentMat = m_pNero.lock()->Get_BoneMatrixPtr("R_WeaponHand");
 
+	m_vecMyBoneMat.emplace_back(m_pMesh->GetToRootMatrixPtr("pole02"));
+	m_vecMyBoneMat.emplace_back(m_pMesh->GetToRootMatrixPtr("pole03"));
+
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(0.11f);
-	m_pCollider.lock()->SetCenter({ 0.f,0.1f,0.f });
+	m_pCollider.lock()->SetRadius(0.14f);
+	m_pCollider.lock()->SetCenter({ 0.f,0.05f,0.f });
 
 	m_pCollider.lock()->SetActive(false);
 
@@ -82,7 +88,8 @@ UINT Cbs_Middle::LateUpdate(const float _fDeltaTime)
 	if (nullptr != m_pParentMat)
 	{
 		FinalWorld = *m_pParentMat * ParentWorldMatrix;
-		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+		m_MyRenderMat = FinalWorld;
+		m_pTransform.lock()->SetWorldMatrix(*m_vecMyBoneMat[m_iBoneIndex] * FinalWorld);
 	}
 
 	return 0;
@@ -139,7 +146,8 @@ void Cbs_Middle::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		//_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = m_MyRenderMat;
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

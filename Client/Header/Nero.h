@@ -364,6 +364,7 @@ public:
 	void Set_GrabEnd(bool _bGrabEnd);
 	void SetCbsIdle();
 	void SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster);
+	void SetFly(bool _ActiveOrNot) { m_IsFly = _ActiveOrNot; }
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
@@ -418,6 +419,7 @@ public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnCollisionStay(std::weak_ptr<GameObject> _pOther);
 public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
@@ -473,6 +475,7 @@ private:
 	float   m_fLerfAmount = 0.f;
 
 	bool	m_IsMajin = false;
+	bool	m_IsFly = false;
 	int		m_iDashLoopDir = 1;
 
 	//
