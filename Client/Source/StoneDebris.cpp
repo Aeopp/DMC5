@@ -13,6 +13,35 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 
 	Reset();
 
+	switch (Idx)
+	{
+	case REDORB_0:
+	case GREENORB_0:
+		_SubsetIdx = 0u;
+		_BrightScale = 1.f;
+		break;
+	case REDORB_1:
+	case GREENORB_1:
+		_SubsetIdx = 1u;
+		_BrightScale = 1.f;
+		break;
+	case REDORB_2:
+	case GREENORB_2:
+		_SubsetIdx = 2u;
+		_BrightScale = 1.f;
+		break;
+	case REDORB_3:
+	case GREENORB_3:
+		_SubsetIdx = 3u;
+		_BrightScale = 1.f;
+		break;
+	}
+	
+	if (GREENORB_0 <= Idx)
+		_SmokeExtraColor = Vector3(0.09f, 0.596f, 0.518f);
+	else
+		_SmokeExtraColor = Vector3(0.518f, 0.019f, 0.051f);
+
 	_VariationIdx = Idx;
 }
 
@@ -45,7 +74,18 @@ void StoneDebris::RenderReady()
 
 void StoneDebris::Reset()
 {
-	_SubsetIdx = 0u;
+	//_SubsetIdx = 0u;
+	_SmokeSpriteIdx = 0.f;
+	_SmokeMinTexUV = Vector2(0.f, 0.f);
+	_SmokeMaxTexUV = Vector2(0.f, 0.f);
+	_SmokeSliceAmount = 0.f;
+
+	uint32 DustSingleIdx = FMath::Random<uint32>(0u, 3u);
+	_DustSingleMinTexUV = Vector2(DustSingleIdx * 0.25f, 0.f);
+	_DustSingleMaxTexUV = Vector2((DustSingleIdx + 1u) * 0.25f, 0.25f);
+
+	_DustSingleVelocity = Vector3(0.f, 0.f, 0.f);
+	_DustSingleDeltaPos = Vector3(0.f, 0.f, 0.f);
 
 	Effect::Reset();
 }
@@ -82,16 +122,12 @@ void StoneDebris::Imgui_Modify()
 			_PlayingSpeed = PlayingSpeed;
 		}
 
+		if (_Loop)
 		{
 			static int VariationIdx = _VariationIdx;
-			ImGui::SliderInt("VariationIdx##Eff_StoneDebris", &VariationIdx, 0, 2);
-			_VariationIdx = (StoneDebris::VARIATION)VariationIdx;
-		}
-
-		{
-			static int SubsetIdx = _SubsetIdx;
-			ImGui::SliderInt("SubsetIdx##Eff_StoneDebris", &SubsetIdx, 0, 3);
-			_SubsetIdx = (uint32)SubsetIdx;
+			ImGui::SliderInt("VariationIdx##Eff_StoneDebris", &VariationIdx, 0, 7);
+			if(ImGui::Button("Apply##Eff_StoneDebris"))
+				SetVariationIdx((StoneDebris::VARIATION)VariationIdx);	
 		}
 	}
 }
@@ -125,6 +161,9 @@ void StoneDebris::RenderInit()
 
 void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 {
+	if (2.f < _AccumulateTime)
+		return;
+
 	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
 		return;
 
@@ -132,20 +171,19 @@ void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 
 	switch (_VariationIdx)
 	{
-	case STONE_0:
-		_Info._Device->SetTexture(0, _DebrisALBMTex->GetTexture());
-		_Info._Device->SetTexture(1, _DebrisNRMRTex->GetTexture());
-		_BrightScale = 0.1f;
-		break;
 	case REDORB_0:
+	case REDORB_1:
+	case REDORB_2:
+	case REDORB_3:
 		_Info._Device->SetTexture(0, _RedOrbALBMTex->GetTexture());
 		_Info._Device->SetTexture(1, _RedOrbNRMRTex->GetTexture());
-		_BrightScale = 1.f;
 		break;
 	case GREENORB_0:
+	case GREENORB_1:
+	case GREENORB_2:
+	case GREENORB_3:
 		_Info._Device->SetTexture(0, _GreenOrbALBMTex->GetTexture());
 		_Info._Device->SetTexture(1, _GreenOrbNRMRTex->GetTexture());
-		_BrightScale = 1.f;
 		break;
 	}
 
@@ -161,35 +199,52 @@ void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 
 void StoneDebris::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	auto WeakSubset = _DebrisMesh->GetSubset(_SubsetIdx);
-	if (auto SharedSubset = WeakSubset.lock();
-		SharedSubset)
+	if (2.f > _AccumulateTime)
+		return;
+
+	auto WeakSubset_Plane = _PlaneMesh->GetSubset(0u);
+	if (auto SharedSubset_Plane = WeakSubset_Plane.lock();
+		SharedSubset_Plane)
 	{
-		auto WeakSubset_Plane = _PlaneMesh->GetSubset(0u);
-		if (auto SharedSubset_Plane = WeakSubset_Plane.lock();
-			SharedSubset_Plane)
+		// Smoke
+		const Matrix World = _SmokeChildWorldMatrix * _RenderUpdateInfo.World;
+		_Info.Fx->SetMatrix("World", &World);
+
+		_Info.Fx->SetTexture("ALB0Map", _SmokeTex->GetTexture());
+		//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
+		_Info.Fx->SetBool("_UsingNoise", false);
+		_Info.Fx->SetFloat("_SliceAmount", _SmokeSliceAmount);
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.05f);
+		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
+		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
+		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
+		_Info.Fx->SetFloatArray("_ExtraColor", _SmokeExtraColor, 3u);
+
+		SharedSubset_Plane->Render(_Info.Fx);
+
+
+		// Single Dust
+		auto WeakSubset = _DebrisMesh->GetSubset(_SubsetIdx);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
 		{
 			_Info.Fx->SetTexture("ALB0Map", _DustSingleTex->GetTexture());
 			//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
 			_Info.Fx->SetBool("_UsingNoise", false);
-			_Info.Fx->SetFloat("_SliceAmount", 0.f);
-			_Info.Fx->SetFloat("_BrightScale", 1.f);
+			//_Info.Fx->SetFloat("_SliceAmount", _SmokeSliceAmount);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SmokeSliceAmount) * 7.f);
 			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
-			_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
-			_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(0.25f, 0.25f), 2u);
+			_Info.Fx->SetFloatArray("_MinTexUV", _DustSingleMinTexUV, 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", _DustSingleMaxTexUV, 2u);
+			//_Info.Fx->SetFloatArray("_ExtraColor", _SmokeExtraColor, 3u);
 						
 			for (auto& p : *SharedSubset->GetVertexBufferDesc().LocalVertexLocation)
 			{
-				Matrix temp;
-				D3DXMatrixScaling(&temp, 0.001f, 0.001f, 0.001f);
-				Vector3 pos;
-				D3DXVec3TransformCoord(&pos, &p, &_RenderUpdateInfo.World);
-				temp._41 += pos.x;
-				temp._42 += pos.y;
-				temp._43 += pos.z;
-
-				_Info.Fx->SetMatrix("World", &temp);
-				SharedSubset->Render(_Info.Fx);		// ³Ê¹« °ø°£ÀÌ ºö ¤Ð¤Ð
+				Vector3* pPos = reinterpret_cast<Vector3*>(&_DustSingleChildWorldMatrix.m[3][0]);
+				D3DXVec3TransformCoord(pPos, &p, &_RenderUpdateInfo.World);
+				*pPos += _DustSingleDeltaPos;
+				_Info.Fx->SetMatrix("World", &_DustSingleChildWorldMatrix);
+				SharedSubset_Plane->Render(_Info.Fx);
 			}
 		}
 	}
@@ -213,18 +268,24 @@ HRESULT StoneDebris::Ready()
 	_Info.bLocalVertexLocationsStorage = true;
 	_DebrisMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
 
-	_DebrisALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_debris_stone00_ALBM.tga");
-	_DebrisNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_debris_stone00_NRMR.tga");
 	_RedOrbALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\orb000_0_ALBM.tga");
 	_RedOrbNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\orb000_0_NRMR.tga");
 	_GreenOrbALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\orb001_0_Low_ALBM.tga");
 	_GreenOrbNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\orb001_0_Low_NRMR.tga");
 
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+	_SmokeTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_smoke_00_0049_alpg.tga");
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
 
+	D3DXMatrixScaling(&_SmokeChildWorldMatrix, 0.2f, 0.2f, 0.2f);
+	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+
+	uint32 DustSingleIdx = FMath::Random<uint32>(0u, 3u);
+	_DustSingleMinTexUV = Vector2(DustSingleIdx * 0.25f, 0.f);
+	_DustSingleMaxTexUV = Vector2((DustSingleIdx + 1u) * 0.25f, 0.25f);
+
 	_PlayingSpeed = 1.f;
-	_BrightScale = 0.1f;
+	_BrightScale = 1.f;
 
 	return S_OK;
 };
@@ -246,10 +307,52 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 	if (!_IsPlaying)
 		return 0;
 
-	//
-	//_SubsetIdx = static_cast<uint32>(_AccumulateTime);
-	//if (MAX_SUBSET_IDX < _SubsetIdx)
-	//	Reset();
+	if (4.f < _AccumulateTime)
+		Reset();
+	else if (2.f < _AccumulateTime)
+	{
+		Matrix ViewMat, BillMat, InvRotMat;
+		ViewMat = Renderer::GetInstance()->_RenderInfo.View;
+		D3DXMatrixIdentity(&BillMat);
+		memcpy(&BillMat.m[0][0], &ViewMat.m[0][0], sizeof(Vector3));
+		memcpy(&BillMat.m[1][0], &ViewMat.m[1][0], sizeof(Vector3));
+		memcpy(&BillMat.m[2][0], &ViewMat.m[2][0], sizeof(Vector3));
+		D3DXMatrixInverse(&BillMat, 0, &BillMat);
+		D3DXMatrixInverse(&InvRotMat, 0, &GetComponent<Transform>().lock()->GetRotationMatrix());
+
+		// Smoke
+		_SmokeSpriteIdx += (20.f * _PlayingSpeed * _fDeltaTime);
+		_SmokeSliceAmount += (0.8f * _PlayingSpeed * _fDeltaTime);
+
+		float cx = 8.f;	// °¡·Î °¹¼ö
+		float cy = 8.f; // ¼¼·Î °¹¼ö
+
+		if (cx * cy < _SmokeSpriteIdx)
+			_SmokeSpriteIdx = 0.f;
+
+		int Frame = static_cast<int>(_SmokeSpriteIdx);
+		int w = Frame % static_cast<int>(cx);
+		int h = Frame / static_cast<int>(cx);
+		_SmokeMinTexUV.x = 1.f / cx * static_cast<float>(w);
+		_SmokeMinTexUV.y = 1.f / cy * static_cast<float>(h);
+		_SmokeMaxTexUV.x = _SmokeMinTexUV.x + 1.f / cx;
+		_SmokeMaxTexUV.y = _SmokeMinTexUV.y + 1.f / cy;
+
+		D3DXMatrixScaling(&_SmokeChildWorldMatrix, 0.2f, 0.2f, 0.2f);
+		_SmokeChildWorldMatrix = _SmokeChildWorldMatrix * BillMat * InvRotMat;
+
+		// Single Dust
+		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+		_DustSingleChildWorldMatrix = _DustSingleChildWorldMatrix * BillMat * InvRotMat;
+	
+		_DustSingleVelocity.x = 0.01f * cosf(_AccumulateTime * 2.f);
+		_DustSingleVelocity.y = 0.01f;
+		_DustSingleVelocity.z = 0.01f * sinf(_AccumulateTime * 2.f);
+
+		_DustSingleDeltaPos.x += _DustSingleVelocity.x * _fDeltaTime;
+		_DustSingleDeltaPos.y += _DustSingleVelocity.y * _fDeltaTime;
+		_DustSingleDeltaPos.z += _DustSingleVelocity.z * _fDeltaTime;
+	}
 
 	//
 	Imgui_Modify();

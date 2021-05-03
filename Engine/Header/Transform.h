@@ -65,6 +65,8 @@ public:
 	D3DXVECTOR3		GetLook();
 
 	bool IsUpdated();
+
+	const D3DXMATRIX&	GetRotationMatrix() const { return m_matRotation; }
 public:
 	void	Translate(const D3DXVECTOR3 _vTranslate);
 	void	Rotate(const D3DXVECTOR3 _vRotate);

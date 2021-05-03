@@ -148,7 +148,13 @@ HRESULT TestScene::LoadScene()
 	//	p->SetLoop(true);
 	//	p->PlayStart(1.f);
 	//}
-	AddGameObject<StoneDebris>().lock()->PlayStart();
+	if (auto p = AddGameObject<StoneDebris>().lock();
+		p)
+	{
+		p->SetVariationIdx(StoneDebris::REDORB_0);
+		p->SetLoop(true);
+		p->PlayStart();
+	}
 
 	// 수정필요
 	//AddGameObject<DashImpact>();

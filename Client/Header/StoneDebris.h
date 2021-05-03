@@ -7,28 +7,45 @@ class StoneDebris final : public Effect
 public:
 	enum VARIATION : uint32
 	{
-		STONE_0 = 0u,
-		REDORB_0,
+		REDORB_0 = 0u,
+		REDORB_1,
+		REDORB_2,
+		REDORB_3,
 		GREENORB_0,
+		GREENORB_1,
+		GREENORB_2,
+		GREENORB_3,
 		MAX_VARIATION_IDX
 	};
 	void SetVariationIdx(StoneDebris::VARIATION Idx);
 
 private:
-	StoneDebris::VARIATION _VariationIdx = STONE_0;
+	StoneDebris::VARIATION _VariationIdx = REDORB_0;
 
 	std::shared_ptr<ENGINE::StaticMesh> _DebrisMesh{};
-	std::shared_ptr<ENGINE::Texture> _DebrisALBMTex{};
-	std::shared_ptr<ENGINE::Texture> _DebrisNRMRTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbALBMTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};
 	std::shared_ptr<ENGINE::Texture> _GreenOrbALBMTex{};
 	std::shared_ptr<ENGINE::Texture> _GreenOrbNRMRTex{};
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
+	std::shared_ptr<ENGINE::Texture> _SmokeTex{};
 	std::shared_ptr<ENGINE::Texture> _DustSingleTex{};
 
 	enum { MAX_SUBSET_IDX = 4u };
 	uint32 _SubsetIdx = 0u;	// 4종류의 서브셋중 하나만 사용
+
+	Matrix _SmokeChildWorldMatrix = Matrix();
+	float _SmokeSpriteIdx = 0.f;
+	Vector2 _SmokeMinTexUV = Vector2(0.f, 0.f);
+	Vector2 _SmokeMaxTexUV = Vector2(1.f, 1.f);
+	float _SmokeSliceAmount = 0.f;
+	Vector3 _SmokeExtraColor = Vector3(1.f, 1.f, 1.f);
+
+	Matrix _DustSingleChildWorldMatrix = Matrix();
+	Vector2 _DustSingleMinTexUV = Vector2(0.f, 0.f);
+	Vector2 _DustSingleMaxTexUV = Vector2(1.f, 1.f);
+	Vector3 _DustSingleVelocity = Vector3(0.f, 0.f, 0.f);
+	Vector3 _DustSingleDeltaPos = Vector3(0.f, 0.f, 0.f);
 
 private:
 	explicit StoneDebris() = default;
