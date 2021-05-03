@@ -24,6 +24,7 @@
 #include "StoneDebrisMulti.h"
 #include "AppearEm1000.h"
 #include "StoneDebris.h"
+#include "ShapeParticle.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
@@ -54,6 +55,14 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = true;
+	Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
+	/*--------------------------------------------------------- */
+
 	AddGameObject<Camera>();
 	//AddGameObject<MainCamera>();
 	//_Player = AddGameObject<Nero>();
@@ -148,13 +157,22 @@ HRESULT TestScene::LoadScene()
 	//	p->SetLoop(true);
 	//	p->PlayStart(1.f);
 	//}
-	if (auto p = AddGameObject<StoneDebris>().lock();
+	//if (auto p = AddGameObject<StoneDebris>().lock();
+	//	p)
+	//{
+	//	p->SetVariationIdx(StoneDebris::REDORB_0);
+	//	p->SetLoop(true);
+	//	p->PlayStart();
+	//}
+	if (auto p = AddGameObject<ShapeParticle>().lock();
 		p)
 	{
-		p->SetVariationIdx(StoneDebris::REDORB_0);
+		p->SetShapeIdx(ShapeParticle::SPHERE);
+		p->SetColorIdx(ShapeParticle::RED);
 		p->SetLoop(true);
 		p->PlayStart();
 	}
+
 
 	// 수정필요
 	//AddGameObject<DashImpact>();

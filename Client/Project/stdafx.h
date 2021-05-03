@@ -46,6 +46,7 @@ enum GAMEOBJECTTAG
 	Eff_StoneDebrisMulti,
 	Eff_StoneDebris,
 	Eff_AppearEm1000,
+	Eff_ShapeParticle,
 	Eff_AirHike,
 	ThrowCar,
 	TAG_Camera,

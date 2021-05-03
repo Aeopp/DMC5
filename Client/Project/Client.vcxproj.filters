@@ -346,6 +346,9 @@
     <ClInclude Include="..\Header\StoneDebris.h">
       <Filter>02.GameObject\Effect\Stone</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ShapeParticle.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -537,6 +540,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\StoneDebris.cpp">
       <Filter>02.GameObject\Effect\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ShapeParticle.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

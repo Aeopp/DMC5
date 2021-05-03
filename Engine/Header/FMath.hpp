@@ -53,8 +53,8 @@ public:
 		IDirect3DDevice9* const _Device, const float Width, const float Height);
 	static inline bool InnerPointFromFace(const Vector3& Point, const std::array<Vector3, 3ul>& Face);
 
-	static inline Vector2 ScreenCoordToNDC(const float x, const float y , const float Width, const float Height);
-	static inline Vector2 NDCToScreenCoord(const float x, const float y , const float Width, const float Height);
+	static inline Vector2 ScreenCoordToNDC(const float x, const float y, const float Width, const float Height);
+	static inline Vector2 NDCToScreenCoord(const float x, const float y, const float Width, const float Height);
 
 	// 임의의 위치 벡터를 평면에 투영시킨 위치 벡터를 반환.
 	static inline Vector3 ProjectionPointFromFace(const D3DXPLANE _Plane, const Vector3& Point);
@@ -118,6 +118,15 @@ public:
 		Vector3& IntersectPointLhs,
 		Vector3& IntersectPointRhs);
 
+	static inline Vector3 BezierCurve(const Vector3& Start,
+		const Vector3& CP0, const Vector3& CP1,
+		const Vector3& End, const float t);
+
+	static inline Vector3 BezierCurve(const Vector3& Start,
+		const Vector3& CP0,
+		const Vector3& End, const float t);
+
+
 	static inline bool IsRayToSphere(
 		const Ray& Lhs, const Sphere& Rhs,
 		float& t0, float& t1, Vector3& OutIntersectPoint);
@@ -167,7 +176,10 @@ private:
 inline float FMath::MaxScala(const Vector3& Lhs)
 {
 	return (std::max)({ Lhs.x,Lhs.y,Lhs.z });
-}
+};
+
+
+
 inline void FMath::DebugPrintMatrix(const Matrix& _Matrix)
 {
 	for (uint32 Row = 0u; Row < 4u; ++Row)
@@ -244,6 +256,23 @@ auto& FMath::GetGenerator()
 };
 
 
+inline Vector3 FMath::BezierCurve
+(const Vector3& Start,
+	const Vector3& CP0,
+	const Vector3& End, const float t)
+{
+	return FMath::Lerp(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, End, t), t);
+};
+
+inline Vector3 FMath::BezierCurve(
+	const Vector3& Start,
+	const Vector3& CP0, const Vector3& CP1,
+	const Vector3& End,
+	const float t)
+{
+	return BezierCurve(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, CP1, t), FMath::Lerp(CP1, End, t), t);
+};
+
 
 inline Vector2 FMath::ScreenCoordToNDC(const float x, const float y,
 	const float Width, const float Height)
@@ -254,7 +283,7 @@ inline Vector2 FMath::ScreenCoordToNDC(const float x, const float y,
 };
 
 inline Vector2 FMath::NDCToScreenCoord(
-	const float x, const float y ,
+	const float x, const float y,
 	const float Width, const float Height)
 {
 	return Vector2
