@@ -79,6 +79,7 @@ void StoneDebris::Reset()
 	_SmokeMinTexUV = Vector2(0.f, 0.f);
 	_SmokeMaxTexUV = Vector2(0.f, 0.f);
 	_SmokeSliceAmount = 0.f;
+	_SmokeDeltaPosY = 0.f;
 
 	uint32 DustSingleIdx = FMath::Random<uint32>(0u, 3u);
 	_DustSingleMinTexUV = Vector2(DustSingleIdx * 0.25f, 0.f);
@@ -340,6 +341,9 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 
 		D3DXMatrixScaling(&_SmokeChildWorldMatrix, 0.2f, 0.2f, 0.2f);
 		_SmokeChildWorldMatrix = _SmokeChildWorldMatrix * BillMat * InvRotMat;
+
+		_SmokeDeltaPosY += 5.f * _fDeltaTime;
+		_SmokeChildWorldMatrix._42 = _SmokeDeltaPosY;
 
 		// Single Dust
 		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);

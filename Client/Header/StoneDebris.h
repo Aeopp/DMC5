@@ -40,6 +40,7 @@ private:
 	Vector2 _SmokeMaxTexUV = Vector2(1.f, 1.f);
 	float _SmokeSliceAmount = 0.f;
 	Vector3 _SmokeExtraColor = Vector3(1.f, 1.f, 1.f);
+	float _SmokeDeltaPosY = 0.f;
 
 	Matrix _DustSingleChildWorldMatrix = Matrix();
 	Vector2 _DustSingleMinTexUV = Vector2(0.f, 0.f);
