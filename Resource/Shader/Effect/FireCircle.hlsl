@@ -5,9 +5,6 @@ uniform float exposure_corr;
 uniform vector _Color;
 uniform float ColorIntencity;
 
-uniform matrix InverseProjection;
-uniform float SoftParticleDepthScale;
-
 uniform float SpriteXStart;
 uniform float SpriteXEnd;
 uniform float SpriteYStart;
@@ -15,19 +12,6 @@ uniform float SpriteYEnd;
 
 //uniform float3 ScrollSpeed;
 //uniform float3 Scale;
-
-
-
-texture DepthMap;
-sampler Depth = sampler_state
-{
-    texture = DepthMap;
-    minfilter = linear;
-    magfilter = linear;
-    mipfilter = none;
-    sRGBTexture = false;
-};
-
 
 texture SpriteMap;
 sampler Sprite = sampler_state
@@ -53,7 +37,6 @@ sampler Trail = sampler_state
     sRGBTexture = false;
 };
 
-
 //texture NoiseMap;
 //sampler Noise = sampler_state
 //{
@@ -69,14 +52,13 @@ sampler Trail = sampler_state
 
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV0 : TEXCOORD0,
-            in out float2 UV1 : TEXCOORD1 ,
-            out float4 ClipPosition : TEXCOORD2)
+            in out float2 UV1 : TEXCOORD1)
             //out float2 UV2 : TEXCOORD2,
             //out float2 UV3 : TEXCOORD3,
             //out float2 UV4 : TEXCOORD4)
 {
     Position = mul(Position, matWorld);
-    ClipPosition = Position = mul(Position, ViewProjection);
+    Position = mul(Position, ViewProjection);
     
     //UV2 = UV0 * Scale.x + ScrollSpeed.x;
     //UV3 = UV0 * Scale.y + ScrollSpeed.y;
@@ -88,7 +70,6 @@ void PsMain(out float4 Color : COLOR0,
             out float4 Color1 : COLOR1 ,
             in float2 UV0 : TEXCOORD0 ,
             in float2 UV1 : TEXCOORD1 ,
-            in float4 ClipPosition : TEXCOORD2
             //int float2 UV2 :TEXCOORD2 ,
 )
 {
@@ -109,27 +90,6 @@ void PsMain(out float4 Color : COLOR0,
     
     Color1 = trailsample;
     Color1.rgb *= DistortionIntencity;
-    
-    // 소프트 파티클 계산 .... 
-    // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
-    float2 vDepthUV = float2(
-         (ClipPosition.x / ClipPosition.w) * 0.5f + 0.5f,
-         (ClipPosition.y / ClipPosition.w) * -0.5f + 0.5f
-                );
-    
-    // 현재 파티클의 뷰 스페이스 상에서의 위치를 구한다음 거리를 구한다. 
-    float particledistance = length(mul(ClipPosition, InverseProjection).xyz);
-   
-    // scene depth 얻어오기 ( 같은 xy 선상에서 scene 에 그려진 제일 낮은 깊이 ) 
-    float4 scenepos = mul(float4(ClipPosition.x, ClipPosition.y,
-                     tex2D(Depth, vDepthUV).r, 1.f),
-                    InverseProjection);
-    // 투영 나누기를 수행해서 투영 좌표에서 뷰 좌표로 역변환 한다. 
-    scenepos.xyzw /= scenepos.w;
-    
-    float scenedistance = length(scenepos.xyz);
-    Color.a = Color.a *  saturate((scenedistance - particledistance) * SoftParticleDepthScale);
-    // 소프트 파티클 끝
 };
 
 technique Default

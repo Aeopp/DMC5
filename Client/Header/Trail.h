@@ -37,6 +37,7 @@ private:
 	std::shared_ptr<Texture> TrailMap{};
 	std::shared_ptr<Texture> ExplosionTrailMap{};
 	std::shared_ptr<Texture> FireSpriteMap{};
+	/*std::shared_ptr<Texture> NoiseMap{};*/
 
 	Mode CurMode = Mode::Explosion;
 
@@ -58,6 +59,10 @@ private:
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
 	float ColorIntencity = 50.f;
+
+	Vector3 Scale{ 1.f,2.f,3.f };
+	Vector3 ScrollSpeed{ 1.f,2.f,3.f };
+
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 

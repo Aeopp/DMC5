@@ -46,6 +46,7 @@ enum GAMEOBJECTTAG
 	Eff_QliphothBlock,
 	Eff_AirHike,
 	Eff_Trail,
+	Eff_FireCircle,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
 	Eff_DashTrail,

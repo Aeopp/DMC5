@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Header\Trail.h"
+#include "..\Header\FireCircle.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "TextureType.h"
@@ -8,48 +8,54 @@
 #include "GraphicSystem.h"
 #include "RedQueen.h"
 
-Trail::Trail()
+FireCircle::Trail()
 {
 
 }
 
-void Trail::Free()
+void FireCircle::Free()
 {
 	GameObject::Free();
-
-	if (VtxBuffer)
-	{
-		VtxBuffer->Release();
-	}
-	if (IdxBuffer)
-	{
-		IdxBuffer->Release();
-	}
-	if (VtxDecl)
-	{
-		VtxDecl->Release();
-	}
 };
 
-std::string Trail::GetName()
+std::string FireCircle::GetName()
 {
-	return "Trail";
+	return "FireCircle";
 };
 
-Trail* Trail::Create()
+FireCircle* FireCircle::Create()
 {
-	return new Trail{};
+	return new FireCircle{};
 };
 
-void Trail::RenderReady()
+void FireCircle::RenderReady()
 {
 	// 이미 버텍스 자체가 월드 위치임 . 
-	_RenderUpdateInfo.World = FMath::Identity();
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		const Vector3 Scale = _SpTransform->GetScale();
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		if (_StaticMesh)
+		{
+			const uint32  Numsubset = _StaticMesh->GetNumSubset();
+			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+
+			for (uint32 i = 0; i < Numsubset; ++i)
+			{
+				const auto& _Subset = _StaticMesh->GetSubset(i);
+				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+			}
+		}
+	}
 };
 
-void Trail::RenderInit()
+void FireCircle::RenderInit()
 {
-	m_nTag = Eff_Trail;
+	m_nTag = Eff_FireCircle;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -72,53 +78,15 @@ void Trail::RenderInit()
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"Trail",[this](const DrawInfo& _Info)
+		{"FireCircle",[this](const DrawInfo& _Info)
 			{
-				this->RenderTrail(_Info);
+				this->RenderAlphaBlendEffect(_Info);
 			}
 		}
 	};
 	RenderInterface::Initialize(_InitRenderProp);
-
-	const int32 TriCnt = 24;
-
-	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
-	_Desc.VtxCnt = TriCnt+2;
-	// 반드시 짝수로 매칭 . 
-	_Desc.TriCnt = TriCnt;
-	_Desc.DrawTriCnt = TriCnt;
-	_Desc.IdxSize = sizeof(Vertex::Index32);
-	_Desc.IdxFmt = D3DFMT_INDEX32;
-
-	_Desc.UpdateCycle = 0.0f;
-	_Desc.NewVtxCnt = 0;
-	UV0Multiply = 1.f;
-
-	Device = g_pDevice;
-
-	VtxDecl = Vertex::TrailVertex::GetVertexDecl(Device);
-	Device->CreateVertexBuffer
-	(_Desc.VtxSize * _Desc.VtxCnt, 0, 
-		NULL, 
-		D3DPOOL_MANAGED, 
-		&VtxBuffer, nullptr);
-
-	Device->CreateIndexBuffer
-	(_Desc.IdxSize* _Desc.TriCnt
-		, 0, _Desc.IdxFmt, 
-		D3DPOOL_MANAGED, &IdxBuffer, nullptr);
-
-	TrailMap = Resources::Load<Texture>(
-		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
-	FireSpriteMap = Resources::Load<Texture >(
-		  "..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
-	ExplosionTrailMap =Resources::Load<Texture >(
-		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
-	//NoiseMap = Resources::Load<Texture>(
-	//	"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
-	//	
-	SpriteCol = 8;
-	SpriteRow = 8;
+	_StaticMesh = Resources::Load<StaticMesh>("");
+	ColorMap = Resources::Load<Texture>("");
 
 	Scale = { 1.f,2.f,3.f };
 	ScrollSpeed = { 1.f,2.f,3.f };
