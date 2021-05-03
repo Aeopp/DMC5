@@ -60,7 +60,10 @@ void PsMain(out float4 Color : COLOR0,
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;
     
-    Color1 = tex2D(Trail, UV1);    
+    float4 trailsample = tex2D(Trail, UV1);
+    Color.a *= trailsample.a;
+    
+    Color1 = trailsample;
     Color1.rgb *= DistortionIntencity;
 };
 
