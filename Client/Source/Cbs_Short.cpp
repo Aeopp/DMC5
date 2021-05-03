@@ -47,8 +47,8 @@ HRESULT Cbs_Short::Awake()
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
-	m_pCollider.lock()->SetRadius(0.11f);
-	m_pCollider.lock()->SetCenter({ 0.f,0.1f,0.f });
+	m_pCollider.lock()->SetRadius(0.08f);
+	m_pCollider.lock()->SetCenter({ 0.f,0.05f,0.f });
 
 	m_pCollider.lock()->SetActive(false);
 
@@ -103,11 +103,13 @@ UINT Cbs_Short::LateUpdate(const float _fDeltaTime)
 void Cbs_Short::OnEnable()
 {
 	Unit::OnEnable();
+	_RenderProperty.bRender = true;
 }
 
 void Cbs_Short::OnDisable()
 {
 	Unit::OnDisable();
+	_RenderProperty.bRender = false;
 }
 
 void Cbs_Short::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

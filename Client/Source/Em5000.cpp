@@ -141,8 +141,8 @@ void Em5000::Fight(const float _fDeltaTime)
 				m_bIng = true;
 				Update_Angle();
 				Set_Rotate();
-
-				m_eState = Attack_Rush_Start;
+				
+				m_eState = Back_Jump;
 				return;
 			}
 		}
@@ -194,6 +194,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_Front);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -228,6 +229,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -281,6 +283,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -320,6 +323,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -354,6 +358,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -414,6 +419,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -446,6 +452,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -478,6 +485,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -504,27 +512,20 @@ void Em5000::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->PlayingTime()>=0.9f && m_pMesh->CurPlayAnimInfo.Name == "Back_Jump")
 			{
-				int iRandom = FMath::Random<int>(1, 2);
-				
-				if (iRandom == 1)
+				if (m_bRushAttack)
 				{
+					m_eState = Attack_Rush_Start;
+					m_bMove = false;
+					return;
+				}
 
-					if (m_bRushAttack && fDir >= 1.5f)
-					{
-						m_eState = Attack_Rush_Start;
-						m_bMove = false;
-						return;
-					}
-				}
-				else
+				if (m_bJumpAttack && fDir >= 2.f && fDir <= 2.5f)
 				{
-					if (m_bJumpAttack && fDir >= 2.f &&fDir <= 2.5f)
-					{
-						m_eState = Attack_Jump_Attack;
-						m_bMove = false;
-						return;
-					}
+					m_eState = Attack_Jump_Attack;
+					m_bMove = false;
+					return;
 				}
+				
 				m_bIng = false;
 				m_bMove = false;
 				m_bBackJump = false;

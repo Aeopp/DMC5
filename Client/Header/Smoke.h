@@ -9,6 +9,8 @@ public:
 	{
 		SMOKE_0 = 0u,
 
+		APPEAR_AERIAL_MONSTER,
+
 		MAX_VARIATION_IDX
 	};
 	void SetVariationIdx(Smoke::VARIATION Idx);
@@ -19,8 +21,13 @@ private:
 	//std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
 	std::shared_ptr<ENGINE::StaticMesh> _SmokeMesh{};
 	std::shared_ptr<ENGINE::Texture> _SmokeALB0Tex{};
+	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
+
 	Vector2 _SmokeMinTexUV = Vector2(0.f, 0.f);
 	Vector2 _SmokeMaxTexUV = Vector2(1.f, 1.f);
+
+	float _SpriteIdx = 0.f;
+	float _SliceAmount = 0.f;
 
 private:
 	explicit Smoke() = default;

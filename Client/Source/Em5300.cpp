@@ -65,6 +65,11 @@ void Em5300::Fight(const float _fDeltaTime)
 		m_eState = Attack_Rain_Start;
 		m_bIng = true;
 	}
+	if (m_bMissile2 && m_bIng == false)
+	{
+		m_eState = Attack_Missile2_Start;
+		m_bIng = true;
+	}
 
 }
 
@@ -92,10 +97,63 @@ void Em5300::State_Change(const float _fDeltaTime)
 		break;
 	case Em5300::Attack_Laser_Start:
 		break;
+	case Em5300::Attack_Missile2_Start:
+		if (m_bIng)
+		{
+			Update_Angle();
+			m_bInteraction = true;
+			m_pMesh->PlayAnimation("Attack_Missile_Start", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Missile_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Attack_Missile2_Loop;
+		}
+		break;
+	case Em5300::Attack_Missile2_Loop:
+		if (m_bIng)
+		{
+			Update_Angle();
+			m_bInteraction = true;
+			m_pMesh->PlayAnimation("Attack_Missile_Loop", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Missile_Loop" && m_pMesh->IsAnimationEnd())
+				m_eState = Attack_Missile2_Attack;
+		}
+		break;
+	case Em5300::Attack_Missile2_Attack:
+		if (m_bIng)
+		{
+			m_pMesh->PlayAnimation("Attack_Missile2_Attack", false, {}, 0.4f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Missile2_Attack" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Attack_Missile2_End;
+				for (int i = 0; i < 32; ++i)
+				{
+					m_pBullet[i].lock()->Set_Missile2(true);
+					m_pBullet[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pBullet[i].lock()->Set_AttackType(Attack_Front);
+					m_pBullet[i].lock()->Set_Coll(true);
+				}
+			}
+		}
+		break;
+	case Em5300::Attack_Missile2_End:
+		if (m_bIng)
+		{
+			m_pMesh->PlayAnimation("Attack_Missile_End", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Missile_End" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bIng = false;
+				m_bMissile2 = false;
+			}
+		}
+		break;
 	case Em5300::New_Missile_End:
 		if (m_bIng)
 		{
-			m_pMesh->PlayAnimation("New_Missile_End", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("New_Missile_End", false, {}, 0.6f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "New_Missile_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_bIng = false;
@@ -122,6 +180,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 					m_pBullet[i].lock()->Set_Missile(true);
 					m_pBullet[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pBullet[i].lock()->Set_AttackType(Attack_Front);
+					m_pBullet[i].lock()->Set_Coll(true);
 				}
 			}
 		}
@@ -185,6 +244,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 				for (int i = 0; i < 12; ++i)
 				{
 					m_pRain[i].lock()->Set_Rain(true);
+					m_pRain[i].lock()->Set_Coll(true);
 					m_pRain[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pRain[i].lock()->Set_AttackType(Attack_Front);
 				}
@@ -209,9 +269,16 @@ void Em5300::State_Change(const float _fDeltaTime)
 			{
 				m_eState = Move_Front_End;
 				m_fRushTime = 0.f;
+				m_pRush.lock()->Set_Coll(false);
+				m_pRush.lock()->SetActive(false);
 			}
 			else if (m_fRushTime >= 0.6 && m_pTransform.lock()->GetPosition().y <= 0.5f)
+			{
 				m_pTransform.lock()->Translate({ 0.f, 0.01f, 0.f });
+				m_pRush.lock()->Set_Coll(true);
+				m_pRush.lock()->SetActive(true);
+				m_pRush.lock()->Set_AttackType(Attack_KnocBack);
+			}
 		}
 		break;
 	case Em5300::Attack_Rush_Start:
@@ -299,35 +366,43 @@ void Em5300::Skill_CoolTime(const float _fDeltaTime)
 			m_fMoveTime = 0.f;
 		}
 	}
-	/*if (m_bRushAttack == false)
-	{
-		m_fRushAttackTime += _fDeltaTime;
-		if (m_fRushAttackTime >= 10.f)
-		{
-			m_bRushAttack = true;
-			m_bRushDir = true;
-			m_fRushAttackTime = 0.f;
-		}
-	}*/
-	//if (m_bMissile == false)
+	//if (m_bRushAttack == false)
 	//{
-	//	m_fMissileTime += _fDeltaTime;
-	//	if (m_fMissileTime >= 1.f)
+	//	m_fRushAttackTime += _fDeltaTime;
+	//	if (m_fRushAttackTime >= 5.f)
 	//	{
-	//		m_bMissile = true;
-	//		m_fMissileTime = 0.f;
+	//		m_bRushAttack = true;
+	//		m_bRushDir = true;
+	//		m_fRushAttackTime = 0.f;
 	//	}
 	//}
-	if (m_bRain == false)
+	/*if (m_bMissile == false)
 	{
-		m_fRainTime += _fDeltaTime;
-		if (m_fRainTime >= 1.f)
+		m_fMissileTime += _fDeltaTime;
+		if (m_fMissileTime >= 1.f)
 		{
-			m_bRain = true;
-			m_fRainTime = 0.f;
+			m_bMissile = true;
+			m_fMissileTime = 0.f;
+		}
+	}*/
+	//if (m_bRain == false)
+	//{
+	//	m_fRainTime += _fDeltaTime;
+	//	if (m_fRainTime >= 1.f)
+	//	{
+	//		m_bRain = true;
+	//		m_fRainTime = 0.f;
+	//	}
+	//}
+	if (m_bMissile2 == false)
+	{
+		m_fMissile2Time += _fDeltaTime;
+		if (m_fMissile2Time >= 1.f)
+		{
+			m_bMissile2 = true;
+			m_fMissile2Time = 0.f;
 		}
 	}
-
 }
 
 HRESULT Em5300::Ready()
@@ -468,14 +543,20 @@ UINT Em5300::Update(const float _fDeltaTime)
 		State_Change(_fDeltaTime);
 	}
 
+	//if (Input::GetKeyDown(DIK_Y))
+	//{
+	//	for (int i = 0; i < 12; ++i)
+	//	{
+	//		m_pRain[i].lock()->Set_Rain(false);
+	//		m_pRain[i].lock()->Set_StartRain(false);
+	//	}
+	//}
 	if (Input::GetKeyDown(DIK_Y))
 	{
-		for (int i = 0; i < 12; ++i)
+		for (int i = 0; i < 32; ++i)
 		{
-			/*m_pBullet[i].lock()->Set_Missile(false);
-			m_pBullet[i].lock()->Set_StartMissile(false);*/
-			m_pRain[i].lock()->Set_Rain(false);
-			m_pRain[i].lock()->Set_StartRain(false);
+			m_pBullet[i].lock()->Set_Missile2(false);
+			m_pBullet[i].lock()->Set_StartMissile2(false);
 		}
 	}
 	return 0;
@@ -663,7 +744,6 @@ void Em5300::RenderInit()
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em5300\\Em5300.x", _InitInfo);
-	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em5300\\Ani");
 
 	m_pMesh->EnableToRootMatricies();
 	// 모션 블러 사용시 켜기 

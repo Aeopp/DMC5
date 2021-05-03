@@ -459,6 +459,134 @@ void Em5300Missile::Missile()
 	
 }
 
+void Em5300Missile::Missile2()
+{
+	if (m_iMissilePos == 0 || m_iMissilePos == 1 || m_iMissilePos == 2
+		|| m_iMissilePos == 8 || m_iMissilePos == 9 || m_iMissilePos == 10)
+		m_bReadyMissile2 = false;
+
+
+	if (m_bStartMissile2 == false)
+	{
+		Matrix* pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("Tail8");
+		m_ParentWorld = m_pEm5300Trasform.lock()->GetWorldMatrix();
+
+		m_Result = (*pParentBone * m_ParentWorld);
+
+		Vector3 vLook = m_pEm5300Trasform.lock()->GetLook();
+		Vector3 vParentBone = { m_Result._41, m_Result._42, m_Result._43 };
+
+		Vector3 vDir = vParentBone - m_pTransform.lock()->GetPosition();
+
+		vDir.x += -vLook.x * 0.05f;
+		vDir.z += -vLook.z * 0.05f;
+		float fTest2 = D3DXVec3Length(&vDir);
+
+
+		D3DXVec3Normalize(&vDir, &vDir);
+	
+		m_pTransform.lock()->Translate(vDir * 0.005f);
+
+		Vector3 vTest = vParentBone - m_pTransform.lock()->GetPosition();
+
+		float fTest = D3DXVec3Length(&vTest);
+	
+		if (fTest2 <= 0.005f)
+		{
+			m_bStartMissile2= true;
+			m_bMissileDir2 = true;
+			m_bRotMissile2 = true;
+		}
+	}
+	else
+	{
+		if (m_bMissileDir2)
+		{
+			m_vMissileDir = m_pPlayerTrans.lock()->GetPosition() - m_pEm5300Trasform.lock()->GetPosition();
+			D3DXVec3Normalize(&m_vMissileDir, &m_vMissileDir);
+			m_bMissileDir = false;
+		}
+		if (m_bRotMissile2)
+		{
+			switch (m_iMissilePos)
+			{
+			case 3:
+				m_vMissileDir.y = 0;
+				break;
+			case 4:
+				m_vMissileDir.y = 0.1f;
+				break;
+			case 5:
+				m_vMissileDir.y = 0.2f;
+				break;
+			case 6:
+				m_vMissileDir.y = 0.3f;
+				break;
+			case 7:
+				m_vMissileDir.y = 0.4f;
+				break;
+			case 11:
+				m_vMissileDir.y = 0.5f;
+				break;
+			case 12:
+				m_vMissileDir.y = 0.6f;
+				break;
+			case 13:
+				m_vMissileDir.y = 0.7f;
+				break;
+			case 14:
+				m_vMissileDir.y = 0.8f;
+				break;
+			case 15:
+				m_vMissileDir.y = 0.9f;
+				break;
+			default:
+				return;
+			}
+			m_bRotMissile2 = false;
+		}
+
+		switch (m_iMissilePos)
+		{
+		case 3:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.14f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 4:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.1f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 5:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.06f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 6:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.02f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 7:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.18f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 11:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.16f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 12:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.12f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 13:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.08f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 14:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.04f, m_vMissileDir.z) * 0.04f));
+			break;
+		case 15:
+			m_pTransform.lock()->Translate((Vector3(m_vMissileDir.x, 0.f, m_vMissileDir.z) * 0.04f));
+			break;
+		default:
+			return;
+		}
+
+
+		
+	}
+}
+
 void Em5300Missile::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 }
@@ -574,7 +702,7 @@ UINT Em5300Missile::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
-	if (m_bReadyMissile == false)
+	if (m_bReadyMissile == false && m_bReadyMissile2 == false)
 	{
 		m_ParentWorld = m_pEm5300Trasform.lock()->GetWorldMatrix();
 		m_Result = (*m_pParentBone * m_ParentWorld);
@@ -583,6 +711,8 @@ UINT Em5300Missile::Update(const float _fDeltaTime)
 
 	if (m_bReadyMissile)
 		Missile();
+	if (m_bReadyMissile2)
+		Missile2();
 	return 0;
 }
 

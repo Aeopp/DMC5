@@ -28,12 +28,15 @@ public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
+	void StopAnimation() { m_pMesh->StopAnimation(); }
+	void ContinueAnimation() { m_pMesh->ContinueAnimation(); }
 public:
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
 public:
 	void	SetAttType(ATTACKTYPE _eAttDir) { m_BattleInfo.eAttackType = _eAttDir; }
+	void	SetWeaponState(UINT _StateIndex) { m_iBoneIndex = _StateIndex; }
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
@@ -51,6 +54,11 @@ private:
 	std::weak_ptr<SphereCollider> m_pCollider;
 
 	Matrix*				m_pParentMat;
+	Matrix				m_MyRenderMat;
+
+	std::vector<Matrix*> m_vecMyBoneMat;
+
+	UINT				m_iBoneIndex = 0;
 };
 
 

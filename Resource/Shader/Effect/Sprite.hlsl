@@ -10,6 +10,9 @@ float2 _MinTexUV = float2(0.f, 0.f);
 float2 _MaxTexUV = float2(1.f, 1.f);
 float _SliceAmount = 0.f;
 
+bool _UsingNoise = false;
+
+float3 _ExtraColor = float3(1.f, 1.f, 1.f);
 
 texture ALB0Map;
 sampler ALB0 = sampler_state
@@ -18,32 +21,8 @@ sampler ALB0 = sampler_state
     minfilter = anisotropic;
     magfilter = anisotropic;
     mipfilter = anisotropic;
-    sRGBTexture = false;
+    sRGBTexture = true;
     MaxAnisotropy = 4;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
-
-texture NRMR0Map;
-sampler NRMR0 = sampler_state
-{
-    texture = NRMR0Map;
-    minfilter = point;
-    magfilter = point;
-    mipfilter = point;
-    sRGBTexture = false;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
-
-texture Msk0Map;
-sampler Msk0 = sampler_state
-{
-    texture = Msk0Map;
-    minfilter = point;
-    magfilter = point;
-    mipfilter = point;
-    sRGBTexture = false;
     AddressU = Wrap;
     AddressV = Wrap;
 };
@@ -114,9 +93,17 @@ struct PsOut
 PsOut PsMain(PsIn In)
 {
     PsOut Out = (PsOut) 0;
+    
+    if (_UsingNoise)
+    {
+        float4 NoiseSample = tex2D(Noise, In.UV).gggg;
+        NoiseSample.rgb -= saturate(_SliceAmount);
+        clip(NoiseSample);
+    }
 
     Out.Color = tex2D(ALB0, In.UV);
-    Out.Color.rgb *= (_BrightScale * exposure_corr);
+    Out.Color.rgb *= _ExtraColor * (_BrightScale * exposure_corr);
+    Out.Color.a *= saturate(1.f - _SliceAmount);
     
     // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 

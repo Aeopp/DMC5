@@ -10,6 +10,7 @@ class RedQueen;
 class Nero_LWing;
 class Nero_RWing;
 class Buster_Arm;
+class Buster_Arm_Left;
 class Wire_Arm;
 class WIngArm_Left;
 class WingArm_Right;
@@ -124,6 +125,15 @@ public:
 		ANI_JUMP_LANDING,
 		ANI_JUMP_LANDING_HIGH,
 		ANI_JUMP_TWICE,
+		ANI_CBS_JUMP,
+		ANI_CBS_JUMP_BACK,
+		ANI_CBS_JUMP_BACK_TWICE,
+		ANI_CBS_JUMP_FRONT,
+		ANI_CBS_JUMP_FRONT_LANDING,
+		ANI_CBS_JUMP_FRONT_TWICE,
+		ANI_CBS_JUMP_LANDING,
+		ANI_CBS_JUMP_LANDING_HIGH,
+		ANI_CBS_JUMP_TWICE,
 		ANI_MIDDLE_CBS_BIATTACK,
 		ANI_MIDDLE_CBS_BLITZATTACK,
 		ANI_MIDDLE_CBS_SATELLITE,
@@ -225,13 +235,19 @@ public:
 		ANI_CBS_RUNSTART270,
 		ANI_CBS_RUNSTART0,
 		ANI_CBS_DASH,
+		ANI_EM200_BUSTER_START,
+		ANI_EM200_BUSTER_LOOP,
+		ANI_EM200_BUSTER_FINISH,
+		ANI_EM200_BUSTER_AIR_START,
+		ANI_EM200_BUSTER_AIR_LOOP,
+		ANI_EM200_BUSTER_AIR_FINISH,
 		ANI_END
 	};
 
 	enum WeaponList
 	{
-		RQ, // °Ë
-		Cbs // »ïÀý°ï
+		RQ, // ï¿½ï¿½
+		Cbs // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	};
 
@@ -273,6 +289,7 @@ public:
 		NeroCom_LWing,
 		NeroCom_RWing,
 		NeroCom_BusterArm,
+		NeroCom_BusterArm_Left,
 		NeroCom_WireArm,
 		NeroCom_WIngArm_Left,
 		NeroCom_WingArm_Right,
@@ -288,7 +305,7 @@ public:
 private:
 	explicit Nero();
 	virtual ~Nero() = default;
-	// GameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// GameObjectï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	virtual void Free() override;
 public:
 
@@ -331,6 +348,7 @@ public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
 	void Reset_RootRotation() { vAccumlatonDegree = { 0.f,0.f,0.f }; }
+	void Reset_LerfAmount() { m_fLerfAmount = 0.f; }
 
 	void Set_JumpDir(UINT _iJumpDir) { m_iJumpDirIndex = _iJumpDir; }
 	void SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot);
@@ -345,34 +363,39 @@ public:
 	void SetLinearVelocity(const D3DXVECTOR3 _vLinearVelocity = D3DXVECTOR3(0.f, 0.f, 0.f));
 	void Set_GrabEnd(bool _bGrabEnd);
 	void SetCbsIdle();
+	void SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster);
+	void SetFly(bool _ActiveOrNot) { m_IsFly = _ActiveOrNot; }
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
 	void Locking();
 	NeroDirection RotateToTargetMonster();
+	void RotateToHitMonster(std::weak_ptr<GameObject> _pMonster);
 	void NeroMove(NeroDirection _eDir, float _fPower);
+	void NeroMoveLerf(NeroDirection _eDir, float _fPower,float _fMax);
+	void WireFly();
 public:
 	void DecreaseJumpCount() { --m_iJumpCount; }
-	//Ä«¸Þ¶ó
+	//Ä«ï¿½Þ¶ï¿½
 	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
 	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
-	//Å×½ºÆ®
+	//ï¿½×½ï¿½Æ®
 
 public:
-	//UI°ü·Ã
-	//EX°ÔÀÌÁö
+	//UIï¿½ï¿½ï¿½ï¿½
+	//EXï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	float Get_ExGauge();
 	uint32 Get_ExGaugeCount();
 	void Add_ExGauge(float ExGauge);
 	void Use_ExGauge(const uint32 Count);
-	//º¯½Å°ÔÀÌÁö
+	//ï¿½ï¿½ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½
 	float Get_TDTGauge();
 	void AccumulateTDTGauge(const float Amount);
 	void ConsumeTDTGauge(const float Speed = 1.f);
-	//·©Å© ½ºÄÚ¾î
+	//ï¿½ï¿½Å© ï¿½ï¿½ï¿½Ú¾ï¿½
 	void AddRankScore(float Score);
 public:
-	//¾Ö´Ï¸ÞÀÌ¼Ç °ü·Ã
+	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void  StopAnimation();
 	void  ContinueAnimiation();
 	bool  IsAnimationEnd();
@@ -380,9 +403,10 @@ public:
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
 	void Change_To_MajinMode() { m_IsMajin = true; }
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {});
+	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {}, const bool bOverlap = false);
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
+	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -394,10 +418,13 @@ public:
 public:
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnCollisionStay(std::weak_ptr<GameObject> _pOther);
+public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
-	// ·»´õ¸µ ÇÔ¼ö....
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½....
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
@@ -414,6 +441,7 @@ private:
 	std::weak_ptr<Nero_LWing>	m_pLWing;
 	std::weak_ptr<Nero_RWing>	m_pRWing;
 	std::weak_ptr<Buster_Arm>	m_pBusterArm;
+	std::weak_ptr<Buster_Arm_Left>	m_pBusterArmLeft;
 	std::weak_ptr<Wire_Arm>	m_pWireArm;
 	std::weak_ptr<WIngArm_Left> m_pWingArm_Left;
 	std::weak_ptr<WingArm_Right> m_pWingArm_Right;
@@ -423,11 +451,12 @@ private:
 	std::weak_ptr<GT_Overture>		m_pOverture;
 	std::weak_ptr<GT_Rockman>		m_pRockman;
 	std::weak_ptr<Effect>			m_pEffOverture;
-	std::weak_ptr<Monster>			m_pTargetMonster;
 	std::weak_ptr<Liquid>		m_pBlood;
 	std::weak_ptr<Cbs_Short>		m_pCbsShort;
 	std::weak_ptr<Cbs_Middle>		m_pCbsMiddle;
 	std::weak_ptr<Cbs_Long>			m_pCbsLong;
+	std::weak_ptr<Monster>			m_pTargetMonster;
+	std::weak_ptr<Monster>			m_pLetMeFlyMonster;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -442,8 +471,11 @@ private:
 	float	m_fRedQueenGage = 0.f;
 	float	m_fAngle = 0.f;
 	float	m_fRotationAngle = 0.f;
+	float	m_fFlySpeed = 0.f;
+	float   m_fLerfAmount = 0.f;
 
 	bool	m_IsMajin = false;
+	bool	m_IsFly = false;
 	int		m_iDashLoopDir = 1;
 
 	//

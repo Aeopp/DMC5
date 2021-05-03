@@ -132,7 +132,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Engine\Bin\;$(SolutionDir)Reference\Lib\Debug\;$(SolutionDir)Reference\PhysX\Lib\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;Engine.lib;fmod_vc.lib;fmodL_vc.lib;assimp-vc142-mtd.lib;LowLevelAABBDEBUG.lib;LowLevelClothDEBUG.lib;LowLevelDEBUG.lib;LowLevelDynamicsDEBUG.lib;LowLevelParticlesDEBUG.lib;PhysX3CharacterKinematicDEBUG_x64.lib;PhysX3CommonDEBUG_x64.lib;PhysX3CookingDEBUG_x64.lib;PhysX3DEBUG_x64.lib;PhysX3ExtensionsDEBUG.lib;PhysX3VehicleDEBUG.lib;PsFastXmlDEBUG_x64.lib;PxFoundationDEBUG_x64.lib;PxPvdSDKDEBUG_x64.lib;PxTaskDEBUG_x64.lib;SceneQueryDEBUG.lib;SimulationControllerDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;EngineDEBUG.lib;fmod_vc.lib;fmodL_vc.lib;assimp-vc142-mtd.lib;LowLevelAABBDEBUG.lib;LowLevelClothDEBUG.lib;LowLevelDEBUG.lib;LowLevelDynamicsDEBUG.lib;LowLevelParticlesDEBUG.lib;PhysX3CharacterKinematicDEBUG_x64.lib;PhysX3CommonDEBUG_x64.lib;PhysX3CookingDEBUG_x64.lib;PhysX3DEBUG_x64.lib;PhysX3ExtensionsDEBUG.lib;PhysX3VehicleDEBUG.lib;PsFastXmlDEBUG_x64.lib;PxFoundationDEBUG_x64.lib;PxPvdSDKDEBUG_x64.lib;PxTaskDEBUG_x64.lib;SceneQueryDEBUG.lib;SimulationControllerDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,10 +158,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Header\AppearEm1000.h" />
     <ClInclude Include="..\Header\AppearGroundMonster.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
+    <ClInclude Include="..\Header\Buster_Arm_Left.h" />
     <ClInclude Include="..\Header\Cbs_Long.h" />
     <ClInclude Include="..\Header\Cbs_Middle.h" />
     <ClInclude Include="..\Header\Cbs_Short.h" />
@@ -172,6 +174,7 @@
     <ClInclude Include="..\Header\Em200.h" />
     <ClInclude Include="..\Header\Em200Hand.h" />
     <ClInclude Include="..\Header\Em5300.h" />
+    <ClInclude Include="..\Header\Em5300Homing.h" />
     <ClInclude Include="..\Header\Em5300Missile.h" />
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
@@ -208,6 +211,9 @@
     <ClInclude Include="..\Header\RedQueen.h" />
     <ClInclude Include="..\Header\AirHike.h" />
     <ClInclude Include="..\Header\SpriteEffect.h" />
+    <ClInclude Include="..\Header\ShapeParticle.h" />
+    <ClInclude Include="..\Header\StoneDebris.h" />
+    <ClInclude Include="..\Header\StoneDebrisMulti.h" />
     <ClInclude Include="..\Header\TempMap.h" />
     <ClInclude Include="..\Header\TestAnimationObject.h" />
     <ClInclude Include="..\Header\OvertureHand.h" />
@@ -226,10 +232,12 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\AppearEm1000.cpp" />
     <ClCompile Include="..\Source\AppearGroundMonster.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
     <ClCompile Include="..\Source\Cbs_Long.cpp" />
     <ClCompile Include="..\Source\Cbs_Middle.cpp" />
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
@@ -240,6 +248,7 @@
     <ClCompile Include="..\Source\Em200.cpp" />
     <ClCompile Include="..\Source\Em200Hand.cpp" />
     <ClCompile Include="..\Source\Em5300.cpp" />
+    <ClCompile Include="..\Source\Em5300Homing.cpp" />
     <ClCompile Include="..\Source\Em5300Missile.cpp" />
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
@@ -276,6 +285,9 @@
     <ClCompile Include="..\Source\RedQueen.cpp" />
     <ClCompile Include="..\Source\AirHike.cpp" />
     <ClCompile Include="..\Source\SpriteEffect.cpp" />
+    <ClCompile Include="..\Source\ShapeParticle.cpp" />
+    <ClCompile Include="..\Source\StoneDebris.cpp" />
+    <ClCompile Include="..\Source\StoneDebrisMulti.cpp" />
     <ClCompile Include="..\Source\TempMap.cpp" />
     <ClCompile Include="..\Source\TestAnimationObject.cpp" />
     <ClCompile Include="..\Source\OvertureHand.cpp" />
@@ -321,7 +333,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferEffect.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>
