@@ -66,8 +66,6 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
 	//AddGameObject<Em5300>();
 
 	//AddGameObject<Car>();
@@ -122,34 +120,36 @@ HRESULT TestScene::LoadScene()
 	LoadMap();
 	AddGameObject<TempMap>();
 
+	//AddGameObject<CircleWave>();
+	//AddGameObject<AirHike>();
+	//
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
 	//AddGameObject<StoneDebrisMulti>();
-	//if (auto p = AddGameObject<AppearEm1000>().lock();
-	//	p)
-	//{
-	//	p->SetLoop(true);
-	//	p->PlayStart(1.f);
-	//}
-	//if (auto p = AddGameObject<StoneDebris>().lock();
-	//	p)
-	//{
-	//	p->SetVariationIdx(StoneDebris::REDORB_0);
-	//	p->SetLoop(true);
-	//	p->PlayStart();
-	//}
-	//if (auto p = AddGameObject<ShapeParticle>().lock();
-	//	p)
-	//{
-	//	p->SetShapeIdx(ShapeParticle::SPHERE);
-	//	p->SetColorIdx(ShapeParticle::RED);
-	//	p->SetLoop(true);
-	//	p->PlayStart();
-	//}
-
+	if (auto p = AddGameObject<AppearEm1000>().lock();
+		p)
+	{
+		p->SetLoop(true);
+		p->PlayStart(1.f);
+	}
+	if (auto p = AddGameObject<StoneDebris>().lock();
+		p)
+	{
+		p->SetVariationIdx(StoneDebris::REDORB_0);
+		p->SetLoop(true);
+		p->PlayStart();
+	}
+	if (auto p = AddGameObject<ShapeParticle>().lock();
+		p)
+	{
+		p->SetShapeIdx(ShapeParticle::SPHERE);
+		p->SetColorIdx(ShapeParticle::RED);
+		p->SetLoop(true);
+		p->PlayStart();
+	}
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
