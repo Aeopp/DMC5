@@ -161,7 +161,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	LoadMap();
+	// LoadMap();
 	// AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();

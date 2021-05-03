@@ -48,8 +48,8 @@ private:
 	float SpriteCurUpdateCycle = 0.0f;
 	float SpriteUpdateCycle = 0.000001f;
 
-	Vector3 LowOffset{ 0.f,0.f,16.f};
-	Vector3 HighOffset{ 0.f,0.f,-115.f };
+	Vector3 LowOffset{ 0.f,0.f,143.f};
+	Vector3 HighOffset{ 0.f,0.f,-231.f };
 
 	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
 
