@@ -10,8 +10,8 @@
 #include "RedQueen.h"
 #include "Em100.h"
 #include "Em0000.h"
-#include "Em0000_Weapon.h"
 #include "Em5000.h"
+#include "Em0000_Weapon.h"
 #include "Em1000.h"
 #include "Em5300.h"
 #include "Car.h"
@@ -35,7 +35,6 @@
 #include "SpriteEffect.h"
 #include "DashTrail.h"
 #include "FireCircle.h"
-
 #include <iostream>
 #include <fstream>
 
@@ -62,20 +61,23 @@ HRESULT TestScene::LoadScene()
 	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = true;
-	Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
 	/*--------------------------------------------------------- */
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
-	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
-	//AddGameObject<Em5300>();
+	AddGameObject<Camera>();
+	// AddGameObject<MainCamera>();
+	// _Player = AddGameObject<Nero>();
+	// AddGameObject<BtlPanel>();
+	// AddGameObject<Em0000>();
+	// AddGameObject<Em1000>();
+	// AddGameObject<Em5300>();
 
-	//AddGameObject<Car>();
+	// AddGameObject<Car>();
 
 	// Wave 1st
 	//{
@@ -295,9 +297,9 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
-		0.f,0.02f,0.f
-		});
+	//_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
+	//	0.f,0.02f,0.f
+	//	});
 
 	// 여기서 임시로 트리거 처리 ???
 	//if (
