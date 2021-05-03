@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -49,6 +49,9 @@ class PxRigidActor;
 class PxRigidBody;
 class PxRigidStatic;
 class PxRigidDynamic;
+class PxParticleBase;
+class PxParticleSystem;
+class PxParticleFluid;
 class PxArticulation;
 class PxArticulationLink;
 
@@ -131,12 +134,37 @@ struct PxActorType
 		@see PxRigidDynamic
 		*/
 		eRIGID_DYNAMIC,
+
+#if PX_USE_PARTICLE_SYSTEM_API
+		/**
+		\brief A particle system (deprecated)
+		\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+		@see PxParticleSystem
+		*/
+		ePARTICLE_SYSTEM PX_DEPRECATED,
+
+		/**
+		\brief A particle fluid (deprecated)
+		\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+		@see PxParticleFluid
+		*/
+		ePARTICLE_FLUID PX_DEPRECATED,
+#endif
 		
 		/**
 		\brief An articulation link
 		@see PxArticulationLink
 		*/
 		eARTICULATION_LINK,
+
+#if PX_USE_CLOTH_API
+		/**
+		\brief A cloth
+		\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+		@see PxCloth
+		*/
+		eCLOTH PX_DEPRECATED,
+#endif
 
 		//brief internal use only!
 		eACTOR_COUNT,
@@ -302,6 +330,34 @@ public:
 	virtual		PxClientID		getOwnerClient() const = 0;
 
 	/**
+	\brief Sets the behavior bits of the actor.
+
+	The behavior bits determine which types of events the actor will broadcast to foreign clients.
+	The actor will always send notice for all possible events to its own owner client.  By default
+	it will not send any events to any other clients.  If the user however raises a bit flag for
+	any event type using this function, that event will then be sent also to any other clients which
+	are programmed to listed to foreign actor events of that type. 
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
+
+	<b>Default:</b> 0
+
+	@see PxClientID PxActorClientBehaviorFlag PxScene::setClientBehaviorFlags()
+	*/
+	PX_DEPRECATED virtual		void			setClientBehaviorFlags(PxActorClientBehaviorFlags) = 0;
+
+	/**
+	\brief Retrieves the behavior bits of the actor.
+
+	The behavior bits determine which types of events the actor will broadcast to foreign clients.
+
+	\deprecated PxActorClientBehaviorFlag feature has been deprecated in PhysX version 3.4
+
+	@see PxActorClientBehaviorFlag setClientBehaviorFlags()
+	*/
+	PX_DEPRECATED virtual		PxActorClientBehaviorFlags	getClientBehaviorFlags()	const = 0;
+
+	/**
 	\brief Retrieves the aggregate the actor might be a part of.
 
 	\return The aggregate the actor is a part of, or NULL if the actor does not belong to an aggregate.
@@ -312,6 +368,7 @@ public:
 
 	//public variables:
 				void*			userData;	//!< user can assign this to whatever, usually to create a 1:1 relationship with a user object.
+
 
 protected:
 	PX_INLINE					PxActor(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags), userData(NULL) {}

@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -86,7 +86,7 @@ public:
 	\param[in] shapeDensities The per shape densities. There must be one entry for each shape which has the PxShapeFlag::eSIMULATION_SHAPE set (or for all shapes if includeNonSimShapes is set to true). Other shapes are ignored. The density values must be greater than 0.
 	\param[in] shapeDensityCount The number of provided density values.
 	\param[in] massLocalPose The center of mass relative to the actor frame.  If set to null then (0,0,0) is assumed.
-	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE) should be taken into account.
+	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE, PxShapeFlag::ePARTICLE_DRAIN) should be taken into account.
 	\return Boolean. True on success else false.
 
 	@see PxRigidBody::setMassLocalPose PxRigidBody::setMassSpaceInertiaTensor PxRigidBody::setMass
@@ -102,7 +102,7 @@ public:
 	\param[in,out] body The rigid body.
 	\param[in] density The density of the body. Used to compute the mass of the body. The density must be greater than 0. 
 	\param[in] massLocalPose The center of mass relative to the actor frame.  If set to null then (0,0,0) is assumed.
-	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE) should be taken into account.
+	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE, PxShapeFlag::ePARTICLE_DRAIN) should be taken into account.
 	\return Boolean. True on success else false.
 
 	@see PxRigidBody::setMassLocalPose PxRigidBody::setMassSpaceInertiaTensor PxRigidBody::setMass
@@ -126,7 +126,7 @@ public:
 	\param[in] shapeMasses The per shape mass values. There must be one entry for each shape which has the PxShapeFlag::eSIMULATION_SHAPE set. Other shapes are ignored. The mass values must be greater than 0.
 	\param[in] shapeMassCount The number of provided mass values.
 	\param[in] massLocalPose The center of mass relative to the actor frame. If set to null then (0,0,0) is assumed.
-	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE) should be taken into account.
+	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE, PxShapeFlag::ePARTICLE_DRAIN) should be taken into account.
 	\return Boolean. True on success else false.
 
 	@see PxRigidBody::setCMassLocalPose PxRigidBody::setMassSpaceInertiaTensor PxRigidBody::setMass
@@ -147,7 +147,7 @@ public:
 	\param[in,out] body The rigid body for which to set the mass and centre of mass local pose properties.
 	\param[in] mass The mass of the body. Must be greater than 0.
 	\param[in] massLocalPose The center of mass relative to the actor frame. If set to null then (0,0,0) is assumed.
-	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE) should be taken into account.
+	\param[in] includeNonSimShapes True if all kind of shapes (PxShapeFlag::eSCENE_QUERY_SHAPE, PxShapeFlag::eTRIGGER_SHAPE, PxShapeFlag::ePARTICLE_DRAIN) should be taken into account.
 	\return Boolean. True on success else false.
 
 	@see PxRigidBody::setCMassLocalPose PxRigidBody::setMassSpaceInertiaTensor PxRigidBody::setMass

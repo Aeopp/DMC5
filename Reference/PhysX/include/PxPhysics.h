@@ -23,12 +23,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
+
 #ifndef PX_PHYSICS_NX_PHYSICS
 #define PX_PHYSICS_NX_PHYSICS
+
 
 /** \addtogroup physics
 @{
@@ -38,6 +40,13 @@
 #include "PxDeletionListener.h"
 #include "foundation/PxTransform.h"
 #include "PxShape.h"
+
+
+#if PX_USE_CLOTH_API
+#include "cloth/PxClothTypes.h"
+#include "cloth/PxClothFabric.h"
+#endif
+
 
 #if !PX_DOXYGEN
 namespace physx
@@ -56,7 +65,6 @@ class PxFoundation;
 class PxSerializationRegistry;
 
 class PxPruningStructure;
-class PxBVHStructure;
 
 /**
 \brief Abstract singleton factory class used for instancing objects in the Physics SDK.
@@ -76,7 +84,10 @@ public:
 	*/
 	//@{
 	
+	
+
 	virtual ~PxPhysics() {}
+	
 	
 	/**	
 	\brief Destroys the instance it is called on.
@@ -107,8 +118,8 @@ public:
 	/**
 	\brief Creates an aggregate with the specified maximum size and selfCollision property.
 
-	\param	[in] maxSize				The maximum number of actors that may be placed in the aggregate.
-	\param	[in] enableSelfCollision	Whether the aggregate supports self-collision
+	\param[in] maxSize the maximum number of actors that may be placed in the aggregate.  This value must not exceed 128, otherwise NULL will be returned.
+	\param[in] enableSelfCollision whether the aggregate supports self-collision
 	\return The new aggregate.
 
 	@see PxAggregate
@@ -121,6 +132,7 @@ public:
 	*/
 	virtual const PxTolerancesScale&		getTolerancesScale() const = 0;
 
+	
 	//@}
 	/** @name Meshes
 	*/
@@ -131,13 +143,15 @@ public:
 
 	This can then be instanced into #PxShape objects.
 
-	\param	[in] stream	The triangle mesh stream.
+	\param[in] stream The triangle mesh stream.
 	\return The new triangle mesh.
 
 	@see PxTriangleMesh PxMeshPreprocessingFlag PxTriangleMesh.release() PxInputStream PxTriangleMeshFlag
 	*/
 	virtual PxTriangleMesh*    createTriangleMesh(PxInputStream& stream) = 0;
 	
+
+
 	/**
 	\brief Return the number of triangle meshes that currently exist.
 
@@ -154,9 +168,9 @@ public:
 
 	The ordering of the triangle meshes in the array is not specified.
 
-	\param	[out] userBuffer	The buffer to receive triangle mesh pointers.
-	\param	[in]  bufferSize	The number of triangle mesh pointers which can be stored in the buffer.
-	\param	[in]  startIndex	Index of first mesh pointer to be retrieved
+	\param[out] userBuffer The buffer to receive triangle mesh pointers.
+	\param[in] bufferSize The number of triangle mesh pointers which can be stored in the buffer.
+	\param[in] startIndex Index of first mesh pointer to be retrieved
 	\return The number of triangle mesh pointers written to userBuffer, this should be less or equal to bufferSize.
 
 	@see getNbTriangleMeshes() PxTriangleMesh
@@ -168,10 +182,10 @@ public:
 
 	This can then be instanced into #PxShape objects.
 
-	\param	[in] stream	The heightfield mesh stream.
+	\param[in] stream The heightfield mesh stream.
 	\return The new heightfield.
 
-	@see PxHeightField PxHeightField.release() PxInputStream PxRegisterHeightFields
+	@see PxHeightField PxHeightField.release() PxInputStream PxRegisterHeightFields PxRegisterUnifiedHeightFields
 	*/
 	virtual PxHeightField*		createHeightField(PxInputStream& stream) = 0;
 
@@ -191,9 +205,9 @@ public:
 
 	The ordering of the heightfields in the array is not specified.
 
-	\param	[out] userBuffer	The buffer to receive heightfield pointers.
-	\param	[in]  bufferSize	The number of heightfield pointers which can be stored in the buffer.
-	\param	[in]  startIndex	Index of first heightfield pointer to be retrieved
+	\param[out] userBuffer The buffer to receive heightfield pointers.
+	\param[in] bufferSize The number of heightfield pointers which can be stored in the buffer.
+	\param[in] startIndex Index of first heightfield pointer to be retrieved
 	\return The number of heightfield pointers written to userBuffer, this should be less or equal to bufferSize.
 
 	@see getNbHeightFields() PxHeightField
@@ -205,7 +219,7 @@ public:
 
 	This can then be instanced into #PxShape objects.
 
-	\param	[in] stream	The stream to load the convex mesh from.
+	\param[in] stream The stream to load the convex mesh from.
 	\return The new convex mesh.
 
 	@see PxConvexMesh PxConvexMesh.release() PxInputStream createTriangleMesh() PxConvexMeshGeometry PxShape
@@ -228,49 +242,75 @@ public:
 
 	The ordering of the convex meshes in the array is not specified.
 
-	\param	[out] userBuffer	The buffer to receive convex mesh pointers.
-	\param	[in]  bufferSize	The number of convex mesh pointers which can be stored in the buffer.
-	\param	[in]  startIndex	Index of first convex mesh pointer to be retrieved
+	\param[out] userBuffer The buffer to receive convex mesh pointers.
+	\param[in] bufferSize The number of convex mesh pointers which can be stored in the buffer.
+	\param[in] startIndex Index of first convex mesh pointer to be retrieved
 	\return The number of convex mesh pointers written to userBuffer, this should be less or equal to bufferSize.
 
 	@see getNbConvexMeshes() PxConvexMesh
 	*/
 	virtual	PxU32				getConvexMeshes(PxConvexMesh** userBuffer, PxU32 bufferSize, PxU32 startIndex=0) const = 0;
 
+
+#if PX_USE_CLOTH_API
 	/**
-	\brief Creates a bounding volume hierarchy structure.
+	\brief Creates a cloth fabric object.
+
+	This can then be instanced into #PxCloth objects.
+
+	\param[in] stream The stream to load the cloth fabric from.
+	\return The new cloth fabric.
 	
-	\param	[in] stream	The stream to load the BVH structure from.
-	\return The new BVH structure.
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
 
-	@see PxBVHStructure PxInputStream
+	@see PxClothFabric PxClothFabric.release() PxInputStream PxCloth PxRegisterCloth
 	*/
-	virtual PxBVHStructure*		createBVHStructure(PxInputStream &stream)					= 0;
+	PX_DEPRECATED virtual PxClothFabric*	createClothFabric(PxInputStream& stream) = 0;
 
 	/**
-	\brief Return the number of bounding volume hierarchy structures that currently exist.
+	\brief Creates a cloth fabric object from particle connectivity and restlength information.
 
-	\return Number of bounding volume hierarchy structures.
+	\note The particle connectivity can be created using #PxClothFabricCooker in extensions.
 
-	@see getBVHStructures()
+	This can then be instanced into #PxCloth objects.
+
+	\param[in] desc Fabric descriptor, see #PxClothFabricDesc.
+	\return The new cloth fabric.
+
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+
+	@see PxClothFabric PxClothFabric.release() PxCloth
 	*/
-	virtual PxU32				getNbBVHStructures() const = 0;
+	PX_DEPRECATED virtual PxClothFabric*	createClothFabric(const PxClothFabricDesc& desc) = 0;
 
 	/**
-	\brief Writes the array of bounding volume hierarchy structure pointers to a user buffer.
+	\brief Return the number of cloth fabrics that currently exist.
+
+	\return Number of cloth fabrics.
+	
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+
+	@see getClothFabrics()
+	*/
+	PX_DEPRECATED virtual PxU32	getNbClothFabrics() const = 0;
+
+	/**
+	\brief Writes the array of cloth fabrics to a user buffer.
 	
 	Returns the number of pointers written.
 
-	The ordering of the BVH structures in the array is not specified.
+	The ordering of the cloth fabrics in the array is not specified.
 
-	\param	[out] userBuffer	The buffer to receive BVH structure pointers.
-	\param	[in]  bufferSize	The number of BVH structure pointers which can be stored in the buffer.
-	\param	[in]  startIndex	Index of first BVH structure pointer to be retrieved
-	\return The number of BVH structure pointers written to userBuffer, this should be less or equal to bufferSize.
+	\param[out] userBuffer The buffer to receive cloth fabric pointers.
+	\param[in] bufferSize The number of cloth fabric pointers which can be stored in the buffer.
+	\return The number of cloth fabric pointers written to userBuffer, this should be less or equal to bufferSize.
 
-	@see getNbBVHStructures() PxBVHStructure
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+
+	@see getNbClothFabrics() PxClothFabric
 	*/
-	virtual	PxU32				getBVHStructures(PxBVHStructure** userBuffer, PxU32 bufferSize, PxU32 startIndex=0) const = 0;
+	PX_DEPRECATED virtual	PxU32	getClothFabrics(PxClothFabric** userBuffer, PxU32 bufferSize) const = 0;
+#endif
 
 	//@}
 	/** @name Scenes
@@ -283,7 +323,7 @@ public:
 	\note Every scene uses a Thread Local Storage slot. This imposes a platform specific limit on the
 	number of scenes that can be created.
 
-	\param	[in] sceneDesc	Scene descriptor. See #PxSceneDesc
+	\param[in] sceneDesc Scene descriptor. See #PxSceneDesc
 	\return The new scene object.
 
 	@see PxScene PxScene.release() PxSceneDesc
@@ -306,9 +346,9 @@ public:
 
 	The ordering of the scene pointers in the array is not specified.
 
-	\param	[out] userBuffer	The buffer to receive scene pointers.
-	\param	[in]  bufferSize	The number of scene pointers which can be stored in the buffer.
-	\param	[in]  startIndex	Index of first scene pointer to be retrieved
+	\param[out] userBuffer The buffer to receive scene pointers.
+	\param[in] bufferSize The number of scene pointers which can be stored in the buffer.
+	\param[in] startIndex Index of first scene pointer to be retrieved
 	\return The number of scene pointers written to userBuffer, this should be less or equal to bufferSize.
 
 	@see getNbScenes() PxScene
@@ -324,21 +364,72 @@ public:
 	\brief Creates a static rigid actor with the specified pose and all other fields initialized
 	to their default values.
 	
-	\param	[in] pose	The initial pose of the actor. Must be a valid transform
+	\param[in] pose the initial pose of the actor. Must be a valid transform
 
 	@see PxRigidStatic
 	*/
+
 	virtual PxRigidStatic*      createRigidStatic(const PxTransform& pose) = 0;
+
+
 
 	/**
 	\brief Creates a dynamic rigid actor with the specified pose and all other fields initialized
 	to their default values.
 	
-	\param	[in] pose	The initial pose of the actor. Must be a valid transform
+	\param[in] pose the initial pose of the actor. Must be a valid transform
 
 	@see PxRigidDynamic
 	*/
+
 	virtual PxRigidDynamic*      createRigidDynamic(const PxTransform& pose) = 0;
+
+
+#if PX_USE_PARTICLE_SYSTEM_API
+	/**
+	\brief Creates a particle system. (deprecated)
+
+	\param maxParticles the maximum number of particles that may be placed in the particle system
+	\param perParticleRestOffset whether the ParticleSystem supports perParticleRestOffset
+	\return The new particle system.
+
+	\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+
+	@see PxParticleSystem PxRegisterParticles
+	*/
+	PX_DEPRECATED virtual PxParticleSystem*	createParticleSystem(PxU32 maxParticles, bool perParticleRestOffset = false) = 0;
+
+	/**
+	\brief Creates a particle fluid. (deprecated)
+	
+	\param maxParticles the maximum number of particles that may be placed in the particle fluid
+	\param perParticleRestOffset whether the ParticleFluid supports perParticleRestOffset
+	\return The new particle fluid.
+
+	\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+
+	@see PxParticleFluid PxRegisterParticles
+	*/
+	PX_DEPRECATED virtual PxParticleFluid*	createParticleFluid(PxU32 maxParticles, bool perParticleRestOffset = false) = 0;
+#endif
+
+
+#if PX_USE_CLOTH_API
+	/**
+	\brief Creates a cloth.
+
+	\param globalPose The world space transform of the cloth.
+	\param fabric The fabric the cloth should use.
+	\param particles Particle definition buffer. The size of the buffer has to match fabric.getNbParticles().
+	\param flags Cloth flags.
+	\return The new cloth.
+
+	\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+	
+	@see PxCloth PxClothFabric PxClothFlags PxRegisterCloth
+	*/
+	PX_DEPRECATED virtual PxCloth*	createCloth(const PxTransform& globalPose, PxClothFabric& fabric, const PxClothParticle* particles, PxClothFlags flags) = 0;
+#endif
 
 	/**
 	\brief Creates a pruning structure from actors.
@@ -348,32 +439,34 @@ public:
 	\note It is not allowed to pass in actors which are already part of a scene.
 	\note Articulation links cannot be provided.
 
-	\param	[in] actors		Array of actors to add to the pruning structure. Must be non NULL.
-	\param	[in] nbActors	Number of actors in the array. Must be >0.
+	\param[in] actors Array of actors to add to the pruning structure. Must be non NULL.
+	\param[in] nbActors Number of actors in the array. Must be >0.
 	\return Pruning structure created from given actors, or NULL if any of the actors did not comply with the above requirements.
 	@see PxActor PxPruningStructure
 	*/
 	virtual PxPruningStructure*	createPruningStructure(PxRigidActor*const* actors, PxU32 nbActors)	= 0;
-
+	
 	//@}
 	/** @name Shapes
 	*/
 	//@{
 	
+
 	/**
 	\brief Creates a shape which may be attached to multiple actors
 	
 	The shape will be created with a reference count of 1.
 
-	\param	[in] geometry		The geometry for the shape
-	\param	[in] material		The material for the shape
-	\param	[in] isExclusive	Whether this shape is exclusive to a single actor or maybe be shared
-	\param	[in] shapeFlags		The PxShapeFlags to be set
+	\param[in] geometry the geometry for the shape
+	\param[in] material the material for the shape
+	\param[in] isExclusive whether this shape is exclusive to a single actor or maybe be shared
+	\param[in] shapeFlags the PxShapeFlags to be set
 
 	Shared shapes are not mutable when they are attached to an actor
 
 	@see PxShape
 	*/
+
 	PX_FORCE_INLINE	PxShape*	createShape(	const PxGeometry& geometry, 
 												const PxMaterial& material, 
 												bool isExclusive = false, 
@@ -383,26 +476,29 @@ public:
 		return createShape(geometry, &materialPtr, 1, isExclusive, shapeFlags);
 	}
 
+
 	/**
 	\brief Creates a shape which may be attached to multiple actors
 	
 	The shape will be created with a reference count of 1.
 
-	\param	[in] geometry		The geometry for the shape
-	\param	[in] materials		The materials for the shape
-	\param	[in] materialCount	The number of materials
-	\param	[in] isExclusive	Whether this shape is exclusive to a single actor or may be shared
-	\param	[in] shapeFlags		The PxShapeFlags to be set
+	\param[in] geometry the geometry for the shape
+	\param[in] materials the materials for the shape
+	\param[in] materialCount the number of materials
+	\param[in] isExclusive whether this shape is exclusive to a single actor or may be shared
+	\param[in] shapeFlags the PxShapeFlags to be set
 
 	Shared shapes are not mutable when they are attached to an actor
 
 	@see PxShape
 	*/
+
 	virtual PxShape*			createShape(const PxGeometry& geometry, 
 											PxMaterial*const * materials, 
 											PxU16 materialCount, 
 											bool isExclusive = false,
 											PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE) = 0;
+
 
 	/**
 	\brief Return the number of shapes that currently exist.
@@ -420,9 +516,9 @@ public:
 
 	The ordering of the shapes in the array is not specified.
 
-	\param	[out] userBuffer	The buffer to receive shape pointers.
-	\param	[in]  bufferSize	The number of shape pointers which can be stored in the buffer.
-	\param	[in]  startIndex	Index of first shape pointer to be retrieved
+	\param[out] userBuffer The buffer to receive shape pointers.
+	\param[in] bufferSize The number of shape pointers which can be stored in the buffer.
+	\param[in] startIndex Index of first shape pointer to be retrieved
 	\return The number of shape pointers written to userBuffer, this should be less or equal to bufferSize.
 
 	@see getNbShapes() PxShape
@@ -434,23 +530,25 @@ public:
 	*/
 	//@{
 
+
 	/**
 	\brief Creates a constraint shader.
 
 	\note A constraint shader will get added automatically to the scene the two linked actors belong to. Either, but not both, of actor0 and actor1 may
 	be NULL to denote attachment to the world.
 	
-	\param	[in] actor0		The first actor
-	\param	[in] actor1		The second actor
-	\param	[in] connector	The connector object, which the SDK uses to communicate with the infrastructure for the constraint
-	\param	[in] shaders	The shader functions for the constraint
-	\param	[in] dataSize	The size of the data block for the shader
+	\param[in] actor0 the first actor
+	\param[in] actor1 the second actor
+	\param[in] connector the connector object, which the SDK uses to communicate with the infrastructure for the constraint
+	\param[in] shaders the shader functions for the constraint
+	\param[in] dataSize the size of the data block for the shader
 
 	\return The new shader.
 
 	@see PxConstraint
 	*/
 	virtual PxConstraint*      createConstraint(PxRigidActor* actor0, PxRigidActor* actor1, PxConstraintConnector& connector, const PxConstraintShaderTable& shaders, PxU32 dataSize)		= 0;
+
 
 	/**
 	\brief Creates an articulation with all fields initialized to their default values.
@@ -459,31 +557,22 @@ public:
 
 	@see PxArticulation, PxRegisterArticulations
 	*/
-	virtual PxArticulation*						createArticulation() = 0;
-
-	/**
-	\brief Creates a reduced coordinate articulation with all fields initialized to their default values.
-
-	\return the new articulation
-
-	@see PxArticulationReducedCoordinate, PxRegisterArticulationsReducedCoordinate
-	*/
-	virtual PxArticulationReducedCoordinate*	createArticulationReducedCoordinate() = 0;
-
+	virtual PxArticulation*      createArticulation() = 0;
 
 	//@}
 	/** @name Materials
 	*/
 	//@{
 
+
 	/**
 	\brief Creates a new material with default properties.
 
 	\return The new material.
 
-	\param	[in] staticFriction		The coefficient of static friction
-	\param	[in] dynamicFriction	The coefficient of dynamic friction
-	\param	[in] restitution		The coefficient of restitution
+	\param staticFriction the coefficient of static friction
+	\param dynamicFriction the coefficient of dynamic friction
+	\param restitution the coefficient of restitution
 
 	@see PxMaterial 
 	*/
@@ -506,9 +595,9 @@ public:
 
 	The ordering of the materials in the array is not specified.
 
-	\param	[out] userBuffer	The buffer to receive material pointers.
-	\param	[in]  bufferSize	The number of material pointers which can be stored in the buffer.
-	\param	[in]  startIndex	Index of first material pointer to be retrieved
+	\param[out] userBuffer The buffer to receive material pointers.
+	\param[in] bufferSize The number of material pointers which can be stored in the buffer.
+	\param[in] startIndex Index of first material pointer to be retrieved
 	\return The number of material pointers written to userBuffer, this should be less or equal to bufferSize.
 
 	@see getNbMaterials() PxMaterial
@@ -529,9 +618,9 @@ public:
 
 	\note The deletion events are only supported on core PhysX objects. In general, objects in extension modules do not provide this functionality, however, in the case of PxJoint objects, the underlying PxConstraint will send the events.
 
-	\param	[in] observer				Observer object to send notifications to.
-	\param	[in] deletionEvents			The deletion event types to get notified of.
-	\param	[in] restrictedObjectSet	If false, the deletion listener will get events from all objects, else the objects to receive events from have to be specified explicitly through #registerDeletionListenerObjects.
+	\param[in] observer Observer object to send notifications to.
+	\param[in] deletionEvents The deletion event types to get notified of.
+	\param[in] restrictedObjectSet If false, the deletion listener will get events from all objects, else the objects to receive events from have to be specified explicitly through #registerDeletionListenerObjects.
 
 	@see PxDeletionListener unregisterDeletionListener
 	*/
@@ -542,7 +631,7 @@ public:
 
 	It is illegal to register or unregister a deletion listener while deletions are being processed.
 
-	\param	[in] observer	Observer object to send notifications to
+	\param[in] observer Observer object to send notifications to
 
 	@see PxDeletionListener registerDeletionListener
 	*/
@@ -557,9 +646,9 @@ public:
 
 	\note The deletion listener has to be registered through #registerDeletionListener() and configured to support restricted objects sets prior to this method being used.
 
-	\param	[in] observer			Observer object to send notifications to.
-	\param	[in] observables		List of objects for which to receive deletion events. Only PhysX core objects are supported. In the case of PxJoint objects, the underlying PxConstraint can be used to get the events.
-	\param	[in] observableCount	Size of the observables list.
+	\param[in] observer Observer object to send notifications to.
+	\param[in] observables List of objects for which to receive deletion events. Only PhysX core objects are supported. In the case of PxJoint objects, the underlying PxConstraint can be used to get the events.
+	\param[in] observableCount Size of the observables list.
 
 	@see PxDeletionListener unregisterDeletionListenerObjects
 	*/
@@ -574,9 +663,9 @@ public:
 
 	\note The deletion listener has to be registered through #registerDeletionListener() and configured to support restricted objects sets prior to this method being used.
 
-	\param	[in] observer			Observer object to stop sending notifications to.
-	\param	[in] observables		List of objects for which to not receive deletion events anymore.
-	\param	[in] observableCount	Size of the observables list.
+	\param[in] observer Observer object to stop sending notifications to.
+	\param[in] observables List of objects for which to not receive deletion events anymore.
+	\param[in] observableCount Size of the observables list.
 
 	@see PxDeletionListener registerDeletionListenerObjects
 	*/
@@ -608,16 +697,6 @@ component, you shoud call PxCreateBasePhysics() followed by this call.
 */
 PX_C_EXPORT PX_PHYSX_CORE_API void PX_CALL_CONV PxRegisterArticulations(physx::PxPhysics& physics);
 
-
-/**
-\brief Enables the usage of the reduced coordinate articulations feature.  This function is called automatically inside PxCreatePhysics().
-On resource constrained platforms, it is possible to call PxCreateBasePhysics() and then NOT call this function
-to save on code memory if your application does not use articulations.  In this case the linker should strip out
-the relevant implementation code from the library.  If you need to use articulations but not some other optional
-component, you shoud call PxCreateBasePhysics() followed by this call.
-*/
-PX_C_EXPORT PX_PHYSX_CORE_API void PX_CALL_CONV PxRegisterArticulationsReducedCoordinate(physx::PxPhysics& physics);
-
 /**
 \brief Enables the usage of the heightfield feature.  
 
@@ -633,20 +712,69 @@ You must call this function at a time where no ::PxScene instance exists, typica
 This is to prevent a change to the heightfield implementation code at runtime which would have undefined results.
 
 Calling PxCreateBasePhysics() and then attempting to create a heightfield shape without first calling 
-::PxRegisterHeightFields(), will result in an error.
+::PxRegisterHeightFields(), ::PxRegisterUnifiedHeightFields() or ::PxRegisterLegacyHeightFields() will result in an error.
 */
 PX_C_EXPORT PX_PHYSX_CORE_API void PX_CALL_CONV PxRegisterHeightFields(physx::PxPhysics& physics);
+
+/**
+\brief Enables the usage of the legacy heightfield feature.
+
+This call will link the default 'legacy' implementation of heightfields which uses a special purpose collison code
+path distinct from triangle meshes.
+
+You must call this function at a time where no ::PxScene instance exists, typically before calling PxPhysics::createScene().
+This is to prevent a change to the heightfield implementation code at runtime which would have undefined results.
+
+Calling PxCreateBasePhysics() and then attempting to create a heightfield shape without first calling
+::PxRegisterHeightFields(), ::PxRegisterLegacyHeightFields() or ::PxRegisterUnifiedHeightFields() will result in an error.
+*/
+PX_DEPRECATED PX_C_EXPORT PX_PHYSX_CORE_API void PX_CALL_CONV PxRegisterLegacyHeightFields(physx::PxPhysics& physics);
+
+/**
+\brief Enables the usage of the unified heightfield feature.
+
+This method is deprecated and provided only for compatibility with legacy applications. It will be removed in future releases. 
+Call PxRegisterHeightFields instead, which also registers unified heightfields.
+*/
+
+PX_DEPRECATED PX_INLINE void PX_CALL_CONV PxRegisterUnifiedHeightFields(physx::PxPhysics& physics)
+{
+	PxRegisterHeightFields(physics);
+}
+
+
+/**
+\brief Enables the usage of the cloth feature.  This function is called automatically inside PxCreatePhysics().
+On resource constrained platforms, it is possible to call PxCreateBasePhysics() and then NOT call this function
+to save on code memory if your application does not use cloth.  In this case the linker should strip out
+the relevant implementation code from the library.  If you need to use cloth but not some other optional
+component, you shoud call PxCreateBasePhysics() followed by this call.
+
+\deprecated The PhysX cloth feature has been deprecated in PhysX version 3.4.1
+*/
+PX_DEPRECATED PX_C_EXPORT PX_PHYSX_CORE_API void PX_CALL_CONV PxRegisterCloth(physx::PxPhysics& physics);
+
+/**
+\brief Enables the usage of the particles feature.  This function is called automatically inside PxCreatePhysics(). (deprecated)
+On resource constrained platforms, it is possible to call PxCreateBasePhysics() and then NOT call this function
+to save on code memory if your application does not use particles.  In this case the linker should strip out
+the relevant implementation code from the library.  If you need to use particles but not some other optional
+component, you shoud call PxCreateBasePhysics() followed by this call.
+
+\deprecated The PhysX particle feature has been deprecated in PhysX version 3.4
+*/
+PX_DEPRECATED PX_C_EXPORT PX_PHYSX_CORE_API void PX_CALL_CONV PxRegisterParticles(physx::PxPhysics& physics);
 
 /**
 \brief Creates an instance of the physics SDK with minimal additional components registered
 
 Creates an instance of this class. May not be a class member to avoid name mangling.
-Pass the constant #PX_PHYSICS_VERSION as the argument.
+Pass the constant PX_PHYSICS_VERSION as the argument.
 There may be only one instance of this class per process. Calling this method after an instance 
 has been created already will result in an error message and NULL will be returned.
 
-\param version Version number we are expecting(should be #PX_PHYSICS_VERSION)
-\param foundation Foundation instance (see PxFoundation)
+\param version Version number we are expecting(should be PX_PHYSICS_VERSION)
+\param foundation Foundation instance (see #PxFoundation)
 \param scale values used to determine default tolerances for objects at creation time
 \param trackOutstandingAllocations true if you want to track memory allocations 
 			so a debugger connection partway through your physics simulation will get
@@ -656,7 +784,7 @@ has been created already will result in an error message and NULL will be return
 			If pvd is NULL no connection will be attempted.
 \return PxPhysics instance on success, NULL if operation failed
 
-@see PxPhysics, PxFoundation, PxTolerancesScale, PxPvd
+@see PxPhysics, PxFoundation, PxTolerancesScale, PxProfileZoneManager, PxPvd
 */
 PX_C_EXPORT PX_PHYSX_CORE_API physx::PxPhysics* PX_CALL_CONV PxCreateBasePhysics(physx::PxU32 version,
 																			     physx::PxFoundation& foundation,
@@ -668,16 +796,18 @@ PX_C_EXPORT PX_PHYSX_CORE_API physx::PxPhysics* PX_CALL_CONV PxCreateBasePhysics
 \brief Creates an instance of the physics SDK.
 
 Creates an instance of this class. May not be a class member to avoid name mangling.
-Pass the constant #PX_PHYSICS_VERSION as the argument.
+Pass the constant PX_PHYSICS_VERSION as the argument.
 There may be only one instance of this class per process. Calling this method after an instance 
 has been created already will result in an error message and NULL will be returned.
 
-Calling this will register all optional code modules (Articulations and HeightFields), preparing them for use.  
-If you do not need some of these modules, consider calling PxCreateBasePhysics() instead and registering needed 
-modules manually.
+Calling this will register all optional code modules (Articulations, HeightFields, Cloth 
+and Particles), preparing them for use.  If you do not need some of these modules, consider
+calling PxCreateBasePhysics() instead and registering needed modules manually.  If you would
+like to use the unified heightfield collision code instead, it is permitted to follow this call
+with a call to ::PxRegisterUnifiedHeightFields().
 
-\param version Version number we are expecting(should be #PX_PHYSICS_VERSION)
-\param foundation Foundation instance (see PxFoundation)
+\param version Version number we are expecting(should be PX_PHYSICS_VERSION)
+\param foundation Foundation instance (see #PxFoundation)
 \param scale values used to determine default tolerances for objects at creation time
 \param trackOutstandingAllocations true if you want to track memory allocations 
 			so a debugger connection partway through your physics simulation will get
@@ -687,7 +817,7 @@ modules manually.
 			If pvd is NULL no connection will be attempted.
 \return PxPhysics instance on success, NULL if operation failed
 
-@see PxPhysics, PxCreateBasePhysics, PxRegisterArticulations, PxRegisterArticulationsReducedCoordinate, PxRegisterHeightFields 
+@see PxPhysics, PxCreateBasePhysics, PxRegisterArticulations, PxRegisterHeightFields, PxRegisterCloth, PxRegisterParticles 
 */
 PX_INLINE physx::PxPhysics* PxCreatePhysics(physx::PxU32 version,
 											physx::PxFoundation& foundation,
@@ -700,12 +830,12 @@ PX_INLINE physx::PxPhysics* PxCreatePhysics(physx::PxU32 version,
 		return NULL;
 
 	PxRegisterArticulations(*physics);
-	PxRegisterArticulationsReducedCoordinate(*physics);
 	PxRegisterHeightFields(*physics);
+	PxRegisterCloth(*physics);
+	PxRegisterParticles(*physics);
 
 	return physics;
 }
-
 
 /**
 \brief Retrieves the Physics SDK after it has been created.
@@ -714,16 +844,7 @@ Before using this function the user must call #PxCreatePhysics().
 
 \note The behavior of this method is undefined if the Physics SDK instance has not been created already.
 */
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
-#endif
-
 PX_C_EXPORT PX_PHYSX_CORE_API physx::PxPhysics& PX_CALL_CONV PxGetPhysics();
-
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
 
 /** @} */
 #endif

@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -45,12 +45,11 @@ namespace physx
 class PxConstraint;
 class PxMaterial;
 class PxGeometry;
-class PxBVHStructure;
 
 /**
 \brief PxRigidActor represents a base class shared between dynamic and static rigid bodies in the physics SDK.
 
-PxRigidActor objects specify the geometry of the object by defining a set of attached shapes (see #PxShape).
+PxRigidActor objects specify the geometry of the object by defining a set of attached shapes (see #PxShape, #createShape()).
 
 @see PxActor
 */
@@ -124,6 +123,76 @@ public:
 /** @name Shapes
 */
 
+
+	/**
+	\brief Creates a new shape with default properties and a list of materials and adds it to the list of shapes of this actor.
+	
+	This is equivalent to the following
+
+	PxShape* shape(...) = PxGetPhysics().createShape(...);	// reference count is 1
+	actor->attachShape(shape);								// increments reference count
+	shape->release();										// releases user reference, leaving reference count at 1
+
+	As a consequence, detachShape() will result in the release of the last reference, and the shape will be deleted.
+
+	\note The default shape flags to be set are: eVISUALIZATION, eSIMULATION_SHAPE, eSCENE_QUERY_SHAPE (see #PxShapeFlag).
+	Triangle mesh, heightfield or plane geometry shapes configured as eSIMULATION_SHAPE are not supported for 
+	non-kinematic PxRigidDynamic instances.
+
+	\note Creating compounds with a very large number of shapes may adversely affect performance and stability.
+
+	<b>Sleeping:</b> Does <b>NOT</b> wake the actor up automatically.
+
+	\param[in] geometry	the geometry of the shape
+	\param[in] materials a pointer to an array of material pointers
+	\param[in] materialCount the count of materials
+	\param[in] shapeFlags optional PxShapeFlags
+
+	\return The newly created shape.
+
+	\note this method is <b>deprecated</b>, please use PxPhysics::createShape() and PxRigidActor::attachShape() or PxRigidActorExt::createExclusiveShape()
+
+	@see PxShape PxShape::release(), PxPhysics::createShape(), PxRigidActor::attachShape(), PxRigidActorExt::createExclusiveShape()
+	*/
+
+	PX_DEPRECATED virtual		PxShape*		createShape(const PxGeometry& geometry, PxMaterial*const* materials, PxU16 materialCount, PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE) = 0;
+
+	/**
+	\brief Creates a new shape with default properties and a single material adds it to the list of shapes of this actor.
+
+	This is equivalent to the following
+
+	PxShape* shape(...) = PxGetPhysics().createShape(...);	// reference count is 1
+	actor->attachShape(shape);								// increments reference count
+	shape->release();										// releases user reference, leaving reference count at 1
+
+	As a consequence, detachShape() will result in the release of the last reference, and the shape will be deleted.
+
+	\note The default shape flags to be set are: eVISUALIZATION, eSIMULATION_SHAPE, eSCENE_QUERY_SHAPE (see #PxShapeFlag).
+	Triangle mesh, heightfield or plane geometry shapes configured as eSIMULATION_SHAPE are not supported for 
+	non-kinematic PxRigidDynamic instances.
+
+	\note Creating compounds with a very large number of shapes may adversely affect performance and stability.
+
+	<b>Sleeping:</b> Does <b>NOT</b> wake the actor up automatically.
+
+	\param[in] geometry	the geometry of the shape
+	\param[in] material	the material for the shape
+	\param[in] shapeFlags optional PxShapeFlags
+
+	\return The newly created shape.
+
+	\note this method is <b>deprecated</b>, please use PxPhysics::createShape() and PxRigidActor::attachShape() or PxRigidActorExt::createExclusiveShape()
+
+	@see PxShape PxShape::release(), PxPhysics::createShape(), PxRigidActor::attachShape(), PxRigidActorExt::createExclusiveShape()
+	*/
+
+	PX_DEPRECATED PX_FORCE_INLINE	PxShape*	createShape(const PxGeometry& geometry, const PxMaterial& material, PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE)
+	{
+		PxMaterial* materialPtr = const_cast<PxMaterial*>(&material);
+		return createShape(geometry, &materialPtr, 1, shapeFlags);
+	}
+
 	/** attach a shared shape to an actor 
 
 	This call will increment the reference count of the shape.
@@ -140,9 +209,8 @@ public:
 
 	\param[in] shape	the shape to attach.
 
-	\return True if success.
 	*/
-	virtual bool				attachShape(PxShape& shape) = 0;
+	virtual void				attachShape(PxShape& shape) = 0;
 
 
 	/** detach a shape from an actor. 
@@ -187,7 +255,6 @@ public:
 	@see PxShape getNbShapes() PxShape::release()
 	*/
 	virtual		PxU32			getShapes(PxShape** userBuffer, PxU32 bufferSize, PxU32 startIndex=0)			const	= 0;
-
 
 /************************************************************************************************/
 /** @name Constraints

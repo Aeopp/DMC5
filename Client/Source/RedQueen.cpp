@@ -218,7 +218,7 @@ void RedQueen::RenderInit()
 	// ���� �Ӽ� ��ü �ʱ�ȭ 
 	ENGINE::RenderProperty _InitRenderProp;
 	// �̰��� ��Ÿ�ӿ� �ٲٸ� ������ �Ѱ� ���� ����. 
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = false;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
 		{"gbuffer_dsSK",

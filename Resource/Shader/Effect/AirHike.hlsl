@@ -5,6 +5,19 @@ vector CurColor;
 uniform float Intencity;
 uniform float exposure_corr;
 
+texture MagicMap;
+sampler Magic = sampler_state
+{
+    texture = MagicMap;
+    minfilter = ANISOTROPIC;
+    magfilter = ANISOTROPIC;
+    mipfilter = ANISOTROPIC;
+    MAXANISOTROPY = 8;
+    addressu = wrap;
+    addressv = wrap;
+    SRGBTEXTURE = false;
+};
+
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV : TEXCOORD0)
 {
@@ -15,7 +28,7 @@ void VsMain(in out float4 Position : POSITION0,
 void PsMain(out float4 Color : COLOR0,
             in float2 UV : TEXCOORD0)
 {
-    Color = CurColor;
+    Color = tex2D(Magic, UV) * CurColor;
     Color.rgb *= Intencity * exposure_corr;
 };
 

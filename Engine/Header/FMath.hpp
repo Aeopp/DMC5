@@ -120,7 +120,7 @@ public:
 
 	static inline Vector3 BezierCurve(const Vector3& Start,
 		const Vector3& CP0, const Vector3& CP1,
-		const Vector3& End, const float t);
+		const Vector3& End,const float t);
 
 	static inline Vector3 BezierCurve(const Vector3& Start,
 		const Vector3& CP0,
@@ -255,6 +255,23 @@ auto& FMath::GetGenerator()
 	return gen;
 };
 
+
+inline Vector3 FMath::BezierCurve
+(   const Vector3& Start,
+	const Vector3& CP0,
+	const Vector3& End, const float t)
+{
+	return FMath::Lerp(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, End, t), t);
+};
+
+inline Vector3 FMath::BezierCurve(
+	const Vector3& Start,
+	const Vector3& CP0, const Vector3& CP1,
+	const Vector3& End,
+	const float t)
+{
+	return BezierCurve(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, CP1, t), FMath::Lerp(CP1, End, t), t);
+};
 
 inline Vector3 FMath::BezierCurve
 (const Vector3& Start,

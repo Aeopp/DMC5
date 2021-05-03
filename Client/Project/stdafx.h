@@ -31,9 +31,10 @@ enum GAMEOBJECTTAG
 {
 	Player = 1,
 	Monster100,
-	Monster101,
+	Monster200,
 	Monster0000,
 	Monster5000,
+	Monster5300,
 	Monster1000,
 	MonsterWeapon,
 	UI_BtlPanel,
@@ -48,13 +49,19 @@ enum GAMEOBJECTTAG
 	Eff_AppearEm1000,
 	Eff_ShapeParticle,
 	Eff_AirHike,
+	Eff_Trail,
+	Eff_CircleWave,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,
 	TAG_BusterArm_Right,
+	TAG_BusterArm_Left,
 	TAG_WireArm,
 	TAG_WireArm_Grab,
 	Overture,
+	Tag_Cbs_Short,
+	Tag_Cbs_Middle,
+	Tag_Cbs_Long,
 	Tag_END
 };
 

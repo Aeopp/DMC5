@@ -23,9 +23,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+
 
 #ifndef PX_FIXEDJOINT_H
 #define PX_FIXEDJOINT_H
@@ -45,15 +46,19 @@ class PxFixedJoint;
 /**
 \brief Create a fixed joint.
 
- \param[in] physics		The physics SDK
- \param[in] actor0		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame0	The position and orientation of the joint relative to actor0
- \param[in] actor1		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame1	The position and orientation of the joint relative to actor1 
+ \param[in] physics the physics SDK
+ \param[in] actor0 an actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+ \param[in] localFrame0 the position and orientation of the joint relative to actor0
+ \param[in] actor1 an actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+ \param[in] localFrame1 the position and orientation of the joint relative to actor1 
 
 @see PxFixedJoint
 */
-PxFixedJoint*	PxFixedJointCreate(PxPhysics& physics, PxRigidActor* actor0, const PxTransform& localFrame0, PxRigidActor* actor1, const PxTransform& localFrame1);
+
+PxFixedJoint*		PxFixedJointCreate(PxPhysics& physics, 
+									   PxRigidActor* actor0, const PxTransform& localFrame0, 
+									   PxRigidActor* actor1, const PxTransform& localFrame1);
+
 
 /**
  \brief A fixed joint permits no relative movement between two bodies. ie the bodies are glued together.
@@ -62,6 +67,7 @@ PxFixedJoint*	PxFixedJointCreate(PxPhysics& physics, PxRigidActor* actor0, const
 
  @see PxFixedJointCreate() PxJoint
 */
+
 class PxFixedJoint : public PxJoint
 {
 public:
@@ -84,16 +90,18 @@ public:
 
 	@see getProjectionLinearTolerance() PxJoint::setConstraintFlags() PxConstraintFlag::ePROJECTION
 	*/
-	virtual void				setProjectionLinearTolerance(PxReal tolerance)	= 0;
 
-	/**
+	virtual void				setProjectionLinearTolerance(PxReal tolerance)					= 0;
+
+						/**
 	\brief Get the linear tolerance threshold for projection.
 
 	\return the linear tolerance threshold
 
 	@see setProjectionLinearTolerance() PxJoint::setConstraintFlag()
 	*/
-	virtual PxReal				getProjectionLinearTolerance()	const	= 0;
+
+	virtual PxReal				getProjectionLinearTolerance()			const					= 0;
 
 	/**
 	\brief Set the angular tolerance threshold for projection. Projection is enabled if 
@@ -113,7 +121,8 @@ public:
 
 	@see getProjectionAngularTolerance() PxJoint::setConstraintFlag() PxConstraintFlag::ePROJECTION
 	*/
-	virtual void				setProjectionAngularTolerance(PxReal tolerance)	= 0;
+
+	virtual void				setProjectionAngularTolerance(PxReal tolerance)							= 0;
 
 	/**
 	\brief Get the angular tolerance threshold for projection.
@@ -122,7 +131,8 @@ public:
 
 	@see setProjectionAngularTolerance() 
 	*/
-	virtual PxReal				getProjectionAngularTolerance()	const	= 0;
+
+	virtual PxReal				getProjectionAngularTolerance()			const					= 0;
 	
 	/**
 	\brief Returns string name of PxFixedJoint, used for serialization

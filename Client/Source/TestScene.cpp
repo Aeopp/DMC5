@@ -9,11 +9,11 @@
 #include "Nero.h"
 #include "RedQueen.h"
 #include "Em100.h"
-#include "Em101.h"
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
 #include "Em5000.h"
 #include "Em1000.h"
+#include "Em5300.h"
 #include "Car.h"
 #include "OvertureHand.h"
 #include "Glint.h"
@@ -29,14 +29,10 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-#include "AirHike.h"
-#include "CircleWave.h"
-#include "Em1000.h"
-
 #include <iostream>
 #include <fstream>
-using namespace std;
 
+using namespace std;
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -51,7 +47,8 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-};
+}
+
 
 HRESULT TestScene::LoadScene()
 {
@@ -63,18 +60,19 @@ HRESULT TestScene::LoadScene()
 	Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
 	/*--------------------------------------------------------- */
 
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
+	//AddGameObject<Em5300>();
 
 	//AddGameObject<Car>();
 
-	//// Wave 1st
+	// Wave 1st
 	//{
 	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
@@ -106,7 +104,7 @@ HRESULT TestScene::LoadScene()
 
 	//	_Em100 = AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
+	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f });
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
 	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
@@ -120,28 +118,6 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//// Wave 2nd
-	//{
-	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
-
-	//	_Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f});
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
-
-	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-
-	//	pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-	//}
 
 	LoadMap();
 	AddGameObject<TempMap>();
@@ -149,6 +125,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
+	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
 	//AddGameObject<StoneDebrisMulti>();
 	//if (auto p = AddGameObject<AppearEm1000>().lock();
@@ -164,18 +141,19 @@ HRESULT TestScene::LoadScene()
 	//	p->SetLoop(true);
 	//	p->PlayStart();
 	//}
-	if (auto p = AddGameObject<ShapeParticle>().lock();
-		p)
-	{
-		p->SetShapeIdx(ShapeParticle::SPHERE);
-		p->SetColorIdx(ShapeParticle::RED);
-		p->SetLoop(true);
-		p->PlayStart();
-	}
+	//if (auto p = AddGameObject<ShapeParticle>().lock();
+	//	p)
+	//{
+	//	p->SetShapeIdx(ShapeParticle::SPHERE);
+	//	p->SetColorIdx(ShapeParticle::RED);
+	//	p->SetLoop(true);
+	//	p->PlayStart();
+	//}
 
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
+
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
@@ -190,78 +168,78 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SoftParticleDepthScale = 1.f;
 	_Renderer->SkyRotationSpeed = 1.5f;
 
-	// Stage2 안개
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
-		pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
-		pSmoke->PlayStart(10.f);
-	}
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
-		pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
-		pSmoke->PlayStart(10.f);
-	}
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
-		pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
-		pSmoke->PlayStart(10.f);
-	}
-	if (auto pSmoke = AddGameObject<Smoke>().lock();
-		pSmoke)
-	{
-		pSmoke->SetScale(0.3f);
-		pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
-		pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
-		pSmoke->PlayStart(10.f);
-	}
+	//// Stage2 안개
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
+	//	pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
+	//	pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
+	//	pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
+	//if (auto pSmoke = AddGameObject<Smoke>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetScale(0.3f);
+	//	pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
+	//	pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
+	//	pSmoke->PlayStart(10.f);
+	//}
 
-	// Stage2 길막
-	m_vecQliphothBlock.reserve(4);
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.015f);
-		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
-		ptr.lock()->PlayStart();
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.009f);
-		ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
-		ptr.lock()->SetActive(false);
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.025f);
-		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
-		ptr.lock()->SetActive(false);
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
-	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
-		!ptr.expired())
-	{
-		ptr.lock()->SetScale(0.016f);
-		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
-		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
-		ptr.lock()->SetActive(false);
-		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
-	}
+	//// Stage2 길막
+	//m_vecQliphothBlock.reserve(4);
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.015f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+	//	ptr.lock()->PlayStart();
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.009f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
+	//	ptr.lock()->SetActive(false);
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.025f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
+	//	ptr.lock()->SetActive(false);
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
+	//if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+	//	!ptr.expired())
+	//{
+	//	ptr.lock()->SetScale(0.016f);
+	//	ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
+	//	ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
+	//	ptr.lock()->SetActive(false);
+	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	//}
 
 	return S_OK;
 }
@@ -273,8 +251,8 @@ HRESULT TestScene::Awake()
 	/*if (nullptr != pPlane)
 		return S_OK;*/
 
-		//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f) , *Physics::GetDefaultMaterial());
-		//Physics::AddActor(UniqueID, *pPlane);
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
@@ -290,16 +268,17 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	//cout << "SceneUpdate" << endl;
 
-	//// 여기서 임시로 트리거 처리 ???
+
+	// 여기서 임시로 트리거 처리 ???
 	//if (
 	//	(FMath::Length
-	//	( WavefirstTriggerPos  - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
-	//	  < 0.1f  )   && 
-	//		! bfirst    )
+	//	(WavefirstTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
+	//		< 0.1f) &&
+	//	!bfirst)
 	//{
 	//	for (auto& spawn_entity : Wavefirst)
 	//	{
-	//		bfirst= true;
+	//		bfirst = true;
 	//		spawn_entity.lock()->SetActive(true);
 	//	}
 
@@ -312,6 +291,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//		}
 	//	}
 	//}
+
 
 	//if ((FMath::Length
 	//(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
@@ -325,6 +305,22 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	}
 	//}
 
+
+	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//{
+
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->SetActive(true);
+	//			m_vecQliphothBlock[i].lock()->PlayStart();
+	//		}
+	//	}
+	//}
+
+
+
 	//if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
 	//{
 	//	int count = Wavefirst.size();
@@ -332,7 +328,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	{
 	//		if (target.expired())
 	//		{
-	//			--count; 
+	//			--count;
 	//		}
 	//		if (count <= 0)
 	//		{
@@ -346,20 +342,15 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//			}
 	//		}
 	//	}
-	//}
+	//	/*std::all_of(std::begin(Wavefirst), std::end(Wavefirst),
+	//		[]
+	//	(const weak_ptr<GameObject>& target)
+	//		return target.experiod();
+	//		{});*/
 
 
-	//if (Input::GetKeyDown(DIK_NUMPAD2))
-	//{
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->SetActive(true);
-	//			m_vecQliphothBlock[i].lock()->PlayStart();
-	//		}
-	//	}
 	//}
+
 
 	//if (Input::GetKeyDown(DIK_NUMPAD8))
 	//{

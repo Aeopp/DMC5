@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -73,9 +73,23 @@ struct PxConvexFlag
 
 		\note This flag is only used in combination with eCOMPUTE_CONVEX.
 
+		\note If this flag is used in combination with eINFLATE_CONVEX, the newly added triangles 
+		by the inflation algorithm are not checked (size of the triangles depends on PxCooking::skinWidth).  
+
 		@see PxCookingParams PxCookingParams::areaTestEpsilon
 		*/		
 		eCHECK_ZERO_AREA_TRIANGLES		=	(1<<2),
+
+		/**
+		\brief Inflates the convex points according to skin width.
+
+		\note eINFLATE_CONVEX flag has been deprecated. The flag is automatically used when
+		PxConvexMeshCookingType::eINFLATION_INCREMENTAL_HULL is set. The default algorithm 
+		PxConvexMeshCookingType::eQUICK_HULL ignores this flag, inflation is not used. 
+
+		@see PxCookingParams PxConvexMeshCookingType
+		*/
+		PX_DEPRECATED eINFLATE_CONVEX		=	(1<<3),
 
 		/**
 		\brief Quantizes the input vertices using the k-means clustering
@@ -84,7 +98,7 @@ struct PxConvexFlag
 		see http://en.wikipedia.org/wiki/K-means_clustering
 
 		*/
-		eQUANTIZE_INPUT = (1 << 3),
+		eQUANTIZE_INPUT = (1 << 4),
 
 		/**
 		\brief Disables the convex mesh validation to speed-up hull creation. Please use separate validation
@@ -93,7 +107,7 @@ struct PxConvexFlag
 
 		@see PxCooking::validateConvexMesh
 		*/
-		eDISABLE_MESH_VALIDATION = (1 << 4),
+		eDISABLE_MESH_VALIDATION = (1 << 5),
 
 		/**
 		\brief Enables plane shifting vertex limit algorithm.
@@ -112,20 +126,20 @@ struct PxConvexFlag
 		very far away from the input cloud, and does not guarantee that all input vertices are inside the resulting
 		hull.However, it can be used with a vertex limit as low as 4.
 		*/
-		ePLANE_SHIFTING = (1 << 5),
+		ePLANE_SHIFTING = (1 << 6),
 
 		/**
 		\brief Inertia tensor computation is faster using SIMD code, but the precision is lower, which may result 
 		in incorrect inertia for very thin hulls.
 		*/
-		eFAST_INERTIA_COMPUTATION = (1 << 6),
+		eFAST_INERTIA_COMPUTATION = (1 << 7),
 
 		/**
 		\brief Convex hulls are created with respect to GPU simulation limitations. Vertex limit is set to 64 and
 		vertex limit per face is internally set to 32.
 		\note Can be used only with eCOMPUTE_CONVEX flag.
 		*/
-		eGPU_COMPATIBLE = (1 << 7),
+		eGPU_COMPATIBLE = (1 << 8),
 
 		/**
 		\brief Convex hull input vertices are shifted to be around origin to provide better computation stability.
@@ -133,7 +147,7 @@ struct PxConvexFlag
 		numerical stability.
 		\note Is used only with eCOMPUTE_CONVEX flag.
 		*/
-		eSHIFT_VERTICES = (1 << 8)
+		eSHIFT_VERTICES = (1 << 9)
 	};
 };
 

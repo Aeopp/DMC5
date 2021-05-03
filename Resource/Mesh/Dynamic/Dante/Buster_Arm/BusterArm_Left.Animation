@@ -1,0 +1,50 @@
+{
+    "AnimationData": {
+        "RootMotion_DeltaFactor": 1.0,
+        "Offset Euler Yaw": 0.0,
+        "Offset Euler Pitch": 0.0,
+        "Offset Euler Roll": 0.0,
+        "AnimInfoTable": [
+            {
+                "Name": "em0000_Buster_Air",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em0000_Buster_End",
+                "Acceleration": 1.4,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em0000_Buster_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em0000_M_Buster",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em5000_Buster_End",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em5000_Buster_Start",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em5000_Buster_Swing",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            },
+            {
+                "Name": "em5000_Buster_Swing_Loop",
+                "Acceleration": 1.0,
+                "TransitionTime": 0.009999999776482582
+            }
+        ]
+    }
+}

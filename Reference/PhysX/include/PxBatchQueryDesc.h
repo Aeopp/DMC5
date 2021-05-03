@@ -23,7 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Copyright (c) 2008-2019 NVIDIA Corporation. All rights reserved.
+// Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
@@ -253,6 +253,15 @@ public:
 	PxBatchQueryPostFilterShader	postFilterShader;	
 
 	/**
+	\brief client that creates and owns this scene query.
+
+	This value will be used as an override when PX_DEFAULT_CLIENT value is passed to the query in PxQueryFilterData.clientId.
+
+	@see PxScene::createClient()
+	*/
+	PX_DEPRECATED PxClientID		ownerClient;
+
+	/**
 	\brief User memory buffers for the query.
 
 	@see PxBatchQueryMemory
@@ -281,6 +290,7 @@ PX_INLINE PxBatchQueryDesc::PxBatchQueryDesc(PxU32 maxRaycastsPerExecute, PxU32 
 	filterShaderDataSize	(0),
 	preFilterShader			(NULL),
 	postFilterShader		(NULL),
+	ownerClient				(PX_DEFAULT_CLIENT),
 	queryMemory				(maxRaycastsPerExecute, maxSweepsPerExecute, maxOverlapsPerExecute)
 {
 }

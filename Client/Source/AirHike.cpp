@@ -56,7 +56,7 @@ void AirHike::RenderReady()
 
 void AirHike::RenderInit()
 {
-	m_nTag = Player;
+	m_nTag  = Eff_AirHike;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -78,24 +78,10 @@ void AirHike::RenderInit()
 		}
 	} };
 
-	/// <summary>
-	/// DrawCollider
-	/// </summary>
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
-		{"Debug" ,
-		[this](const DrawInfo& _Info)
-		{
-			DrawCollider(_Info);
-		}
-	} };
-
-
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
-		=
-	{
-		{"Debug" ,
+		{"Collider" ,
 		[this](const DrawInfo& _Info)
 		{
 			DrawCollider(_Info);
@@ -121,8 +107,10 @@ void AirHike::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
-			(L"..\\..\\Resource\\Mesh\\Static\\Effect\\AirHike\\AirHike.fbx" , _InitInfo);
-	
+			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx" , _InitInfo);
+
+	_MagicTexture = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\MagicTexture.tga");
+
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -150,15 +138,18 @@ void AirHike::PlayEnd()
 
 void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	
 	const Matrix World = _RenderUpdateInfo.World;
 	const float CurIntencity = FMath::Lerp(StartIntencity, FinalIntencity, Sin);
 	const Vector4 CurColor = FMath::Lerp(StartColor, FinalColor, Sin);
-	_Info.Fx->SetMatrix("matWorld", &World);
-	_Info.Fx->SetVector("CurColor", &CurColor);
-	_Info.Fx->SetFloat("Intencity", CurIntencity);
-
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+
+	if (Numsubset > 0)
+	{
+		_Info.Fx->SetMatrix("matWorld", &World);
+		_Info.Fx->SetVector("CurColor", &CurColor);
+		_Info.Fx->SetFloat("Intencity", CurIntencity);
+		_Info.Fx->SetTexture("MagicMap", _MagicTexture->GetTexture());
+	}
 
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -257,6 +248,8 @@ void AirHike::Editor()
 
 	if (bEdit)
 	{
+		const std::string ChildName = GetName() + "_Play";
+		ImGui::BeginChild(ChildName.c_str()); 
 		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart();
@@ -264,14 +257,16 @@ void AirHike::Editor()
 
 		ImGui::Text("T : %2.6f", T);
 		ImGui::SliderFloat("Speed", &Speed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-	
+
 		ImGui::SliderFloat("StartIntencity", &StartIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("StartScale", &StartScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit4("StartColor", StartColor);
 
 		ImGui::SliderFloat("FinalIntencity", &FinalIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::ColorEdit4("FinalColor", FinalColor);     
+		ImGui::ColorEdit4("FinalColor", FinalColor);
+		ImGui::EndChild();
+		
 	}
 }
 

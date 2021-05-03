@@ -32,14 +32,41 @@ void Em1000::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
+	if (m_BattleInfo.iHp <= 0.f)
+	{
+		if (m_bWall)
+		{
+			m_eState = Dead_Wall;
+			m_bIng = true;
+		}
+		else
+		{
+			m_eState = Dead_Floor;
+			m_bIng = true;
+		}
+	}
+
 	if (fDir <= 0.6f)
 	{
-		if (m_bAttack && m_bIng == false)
+		if (m_bWall)
 		{
-			m_bIng = true;
-			m_eState = Attack_Ready_Floor;
-			m_pHand.lock()->Set_Coll(true);
+			if (m_bAttack && m_bIng == false)
+			{
+				m_bIng = true;
+				m_eState = Attack_Ready_Wall;
+				m_pHand.lock()->Set_Coll(true);
+			}
 		}
+		else
+		{
+			if (m_bAttack && m_bIng == false)
+			{
+				m_bIng = true;
+				m_eState = Attack_Ready_Floor;
+				m_pHand.lock()->Set_Coll(true);
+			}
+		}
+		
 	}
 }
 
@@ -50,68 +77,151 @@ void Em1000::State_Change(const float _fDeltaTime)
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
 
-
-	switch (m_eState)
+	if (m_bWall)
 	{
-	case Em1000::Idle_Floor:
-		m_pMesh->PlayAnimation("Idle_Floor", true, {}, 1.f, 20.f, true);
-		m_BattleInfo.eAttackType = Attack_END;
-		break;
-	case Em1000::Idle_Wall:
-		break;
-	case Em1000::Attack_Ready_Floor:
-		if (m_bIng)
+		switch (m_eState)
 		{
-			m_pMesh->PlayAnimation("Attack_Ready_Floor", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Ready_Floor" && m_pMesh->IsAnimationEnd())
-				m_eState = Attack_Floor;
-		}
-		break;
-	case Em1000::Attack_Ready_Wall:
-		break;
-	case Em1000::Enter_Ground_Floor:
-		break;
-	case Em1000::Enter_Ground_Wall:
-		break;
-	case Em1000::Hit_Floor:
-		if (m_bHit)
-		{
-			m_pMesh->PlayAnimation("Hit_Floor", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Floor" && m_pMesh->IsAnimationEnd())
+		case Em1000::Idle_Wall:
+			m_pMesh->PlayAnimation("Idle_Wall", true, {}, 1.f, 20.f, true);
+			m_BattleInfo.eAttackType = Attack_END;
+			break;
+		case Em1000::Attack_Ready_Wall:
+			if (m_bIng)
 			{
-				m_bIng = false;
-				m_bHit = false;
-				m_eState = Idle_Floor;
+				m_pMesh->PlayAnimation("Attack_Ready_Wall", false, {}, 1.f, 20.f, true);
+				Update_Angle();
+				m_bInteraction = true;
+				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Ready_Wall" && m_pMesh->IsAnimationEnd())
+					m_eState = Attack_Wall;
 			}
-		}
-		break;
-	case Em1000::Hit_Wall:
-		break;
-	case Em1000::Attack_Floor:
-		if (m_bIng)
-		{
-			m_pMesh->PlayAnimation("Attack_Floor", false, {}, 1.f, 20.f, true);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Floor" && m_pMesh->IsAnimationEnd())
+			break;
+		case Em1000::Enter_Ground_Wall:
+			if (m_bEnterGround == false)
 			{
-				m_eState = Idle_Floor;
-				m_bIng = false;
-				m_bAttack = false;
+				m_pMesh->PlayAnimation("Enter_Ground_Wall", false, {}, 1.f, 20.f, true);
+
+				Update_Angle();
+				Set_Rotate();
+
+				m_bEnterGround = true;
 			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground_Wall" && m_pMesh->IsAnimationEnd())
+				m_eState = Idle_Wall;
+			break;
+		case Em1000::Hit_Wall:
+			if (m_bHit)
+			{
+				m_pMesh->PlayAnimation("Hit_Wall", false, {}, 1.f, 20.f, true);
+
+				if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Wall" && m_pMesh->IsAnimationEnd())
+				{
+					m_bIng = false;
+					m_bHit = false;
+					m_eState = Idle_Wall;
+				}
+			}
+			break;
+		case Em1000::Attack_Wall:
+			if (m_bIng)
+			{
+				m_pMesh->PlayAnimation("Attack_Wall", false, {}, 1.f, 20.f, true);
+
+				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Wall" && m_pMesh->IsAnimationEnd())
+				{
+					m_eState = Idle_Wall;
+					m_bIng = false;
+					m_bAttack = false;
+					m_pHand.lock()->Set_Coll(false);
+					m_pHand.lock()->m_pCollider.lock()->SetActive(false);
+				}
+				else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Wall" && m_pMesh->PlayingTime() >= 0.4f)
+					m_pHand.lock()->m_pCollider.lock()->SetActive(false);
+				else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Wall" && m_pMesh->PlayingTime() >= 0.2f)
+				{
+					m_pHand.lock()->Set_AttackType(Attack_Front);
+					m_pHand.lock()->m_pCollider.lock()->SetActive(true);
+				}
+			}
+			break;
+		case Em1000::Dead_Wall:
+			if (m_bIng == true)
+				m_pMesh->PlayAnimation("Dead_Wall", false, {}, 1.f, 20.f, true);
+			break;
 		}
-		break;
-	case Em1000::Attack_Wall:
-		break;
-	case Em1000::Dead_Floor:
-		break;
-	case Em1000::Dead_Wall:
-		break;
-	case Em1000::State_END:
-		break;
-	default:
-		break;
+	}
+	else
+	{
+		switch (m_eState)
+		{
+		case Em1000::Idle_Floor:
+			m_pMesh->PlayAnimation("Idle_Floor", true, {}, 1.f, 20.f, true);
+			m_BattleInfo.eAttackType = Attack_END;
+			break;
+		case Em1000::Attack_Ready_Floor:
+			if (m_bIng)
+			{
+				m_pMesh->PlayAnimation("Attack_Ready_Floor", false, {}, 1.f, 20.f, true);
+				Update_Angle();
+				m_bInteraction = true;
+				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Ready_Floor" && m_pMesh->IsAnimationEnd())
+					m_eState = Attack_Floor;
+
+
+			}
+			break;
+		case Em1000::Enter_Ground_Floor:
+			if (m_bEnterGround == false)
+			{
+				m_pMesh->PlayAnimation("Enter_Ground_Floor", false, {}, 1.f, 20.f, true);
+
+				Update_Angle();
+				Set_Rotate();
+
+				m_bEnterGround = true;
+			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground_Floor" && m_pMesh->IsAnimationEnd())
+				m_eState = Idle_Floor;
+			break;
+		case Em1000::Hit_Floor:
+			if (m_bHit)
+			{
+				m_pMesh->PlayAnimation("Hit_Floor", false, {}, 1.f, 20.f, true);
+
+				if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Floor" && m_pMesh->IsAnimationEnd())
+				{
+					m_bIng = false;
+					m_bHit = false;
+					m_eState = Idle_Floor;
+				}
+			}
+			break;
+		case Em1000::Attack_Floor:
+			if (m_bIng)
+			{
+				m_pMesh->PlayAnimation("Attack_Floor", false, {}, 1.f, 20.f, true);
+
+				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Floor" && m_pMesh->IsAnimationEnd())
+				{
+					m_eState = Idle_Floor;
+					m_bIng = false;
+					m_bAttack = false;
+					m_pHand.lock()->Set_Coll(false);
+					m_pHand.lock()->m_pCollider.lock()->SetActive(false);
+				}
+				else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Floor" && m_pMesh->PlayingTime() >= 0.4f)
+					m_pHand.lock()->m_pCollider.lock()->SetActive(false);
+				else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Floor" && m_pMesh->PlayingTime() >= 0.2f)
+				{
+					m_pHand.lock()->Set_AttackType(Attack_Front);
+					m_pHand.lock()->m_pCollider.lock()->SetActive(true);
+				}
+			}
+			break;
+		case Em1000::Dead_Floor:
+			if (m_bIng == true)
+				m_pMesh->PlayAnimation("Dead_Floor", false, {}, 1.f, 20.f, true);
+			break;
+		}
 	}
 }
 
@@ -134,9 +244,9 @@ HRESULT Em1000::Ready()
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster1000;
 
-	m_BattleInfo.iMaxHp = 200;
-	m_BattleInfo.iHp = 200;
-	m_BattleInfo.iAttack = 20;
+	m_BattleInfo.iMaxHp = 150;
+	m_BattleInfo.iHp = 150;
+	m_BattleInfo.iAttack = 30;
 
 	m_pTransform.lock()->SetPosition({ -4.8f, -0.2f, -4.82f });
 		
@@ -186,7 +296,10 @@ HRESULT Em1000::Awake()
 	m_pHand.lock()->m_pEm1000 = static_pointer_cast<Em1000>(m_pGameObject.lock());
 	m_pHand.lock()->m_pEm1000Mesh = m_pMesh;
 
-	m_eState = Idle_Floor;
+	if (m_bWall)
+		m_eState = Enter_Ground_Wall;
+	else
+		m_eState =Enter_Ground_Floor;
 
 	return S_OK;
 }
@@ -235,23 +348,29 @@ UINT Em1000::Update(const float _fDeltaTime)
 	if (m_bHit)
 		m_bIng = true;
 
-	if (Input::GetKeyDown(DIK_T))
-	{
-		if (m_bTest == true)
-			m_bTest = false;
-		else
-			m_bTest = true;
-	}
 
-	if (m_bTest == true)
+	if (m_bEnterGround == true)
 	{
 		if(!m_bHit)
 			Skill_CoolTime(_fDeltaTime);
 		Fight(_fDeltaTime);
-		State_Change(_fDeltaTime);
+	}
+	State_Change(_fDeltaTime);
+	
+
+
+	if (m_eState == Dead_Floor || m_eState == Dead_Wall)
+	{
+		if (m_pMesh->IsAnimationEnd())
+		{
+			Destroy(m_pHand);
+			Destroy(m_pGameObject);
+		}
 	}
 
-	
+
+
+	Rotate(_fDeltaTime);
 	return 0;
 }
 
@@ -291,10 +410,19 @@ void Em1000::OnDisable()
 
 void Em1000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
+	//공격준비 or 공격중일댄 피격모션으로 안바뀜 바뀌면 너무 호구임
+	if (m_eState == Attack_Ready_Floor || m_eState == Attack_Ready_Wall
+		|| m_eState == Attack_Floor || m_eState == Attack_Wall)
+		return;
+
 	m_bHit = true;
-	m_eState = Hit_Floor;
+	if (m_bWall)
+		m_eState = Hit_Wall;
+	else
+		m_eState = Hit_Floor;
 };
 
 void Em1000::Buster(BT_INFO _BattleInfo, void* pArg)
@@ -325,7 +453,10 @@ void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
 		m_bHit = true;
 		m_bDown = true;
-		m_eState = Hit_Floor;
+		if (m_bWall)
+			m_eState = Hit_Wall;
+		else
+			m_eState = Hit_Floor;
 		break;
 	default:
 		break;
@@ -368,10 +499,15 @@ void Em1000::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		if (i == EM1000_ALWAYS_RENDER_SUBSET_IDX)
+		{
+
+		}
+		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 		{
 			continue;
 		}
+
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -393,7 +529,11 @@ void Em1000::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		if (i == EM1000_ALWAYS_RENDER_SUBSET_IDX)
+		{
+
+		}
+		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 		{
 			continue;
 		}
@@ -423,7 +563,11 @@ void Em1000::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		if (i == EM1000_ALWAYS_RENDER_SUBSET_IDX)
+		{
+
+		}
+		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 		{
 			continue;
 		}
@@ -498,11 +642,27 @@ void Em1000::RenderInit()
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
 	//몬스터 초기상태 Idle
-	m_pMesh->PlayAnimation("Idle_Floor", true);
+	
 }
 
 void Em1000::Rotate(const float _fDeltaTime)
 {
+	if (m_bInteraction == false)
+		return;
+
+	if (fabs(m_fRadian) <= fabs(m_fAccuangle))
+	{
+		float fAdd = m_fRadian - m_fAccuangle;
+
+		m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(fAdd), 0.f });
+
+		m_bInteraction = false;
+		return;
+	}
+
+	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fAngleSpeed * _fDeltaTime), 0.f });
+
+	m_fAccuangle += m_fAngleSpeed * _fDeltaTime;
 }
 
 void Em1000::Update_Angle(const float _fDeltaTime, bool _bTest)
@@ -511,4 +671,37 @@ void Em1000::Update_Angle(const float _fDeltaTime, bool _bTest)
 
 void Em1000::Update_Angle()
 {
+	Vector3 vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+	Vector3 vDir = vPlayerPos - vMyPos;
+	vDir.y = 0;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	float fRadian = acosf(fDot);
+
+	Vector3	vCross;
+	D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+	if (vCross.y > 0)
+		fRadian *= -1;
+
+	m_fRadian = fRadian;
+	m_fAccuangle = 0.f;
+
+	if (D3DXToDegree(m_fRadian) > -2.f && D3DXToDegree(m_fRadian) < 2.f)
+		m_fRadian = 0.f;
+
+	if (m_fRadian > 0)
+		m_fAngleSpeed = fabs(m_fAngleSpeed);
+	else
+		m_fAngleSpeed = -fabs(m_fAngleSpeed);
+}
+
+void Em1000::Set_Rotate()
+{
+	m_pTransform.lock()->Rotate({ 0.f, -D3DXToDegree(m_fRadian), 0.f });
 }

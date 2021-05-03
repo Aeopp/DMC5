@@ -95,14 +95,12 @@ HRESULT CapsuleCollider::DrawCollider(const DrawInfo& _Info)
 	memcpy_s(&tQuat, sizeof(D3DXQUATERNION), &localPose.q, sizeof(D3DXQUATERNION));
 	memcpy_s(&vPos, sizeof(D3DXVECTOR3), &localPose.p, sizeof(D3DXVECTOR3));
 
-
 	//Draw Cylinder
 	D3DXMATRIX matScale, matRot, matTrans, matWorld;
 
-	D3DXMatrixScaling(&matScale, m_fHeight, m_fRadius * 2.f, m_fRadius * 2.f);
+	D3DXMatrixScaling(&matScale, (m_fHeight + m_fRadius * 2.f) * 0.5f, m_fRadius * 2.f, m_fRadius * 2.f);
 	D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 	D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);
-
 
 	PxTransform actorTrans = m_pRigidActor->getGlobalPose();
 
