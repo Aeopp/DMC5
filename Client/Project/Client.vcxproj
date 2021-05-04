@@ -395,7 +395,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resource\Shader\gbuffer_ice.hlsl">
+    <None Include="..\..\Resource\Shader\Effect\IceParticle.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

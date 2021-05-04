@@ -7,7 +7,7 @@
 #include <iostream>
 #include "GraphicSystem.h"
 #include "RedQueen.h"
-#include "ShapeParticle.h"
+
 
 IceAge::IceAge()
 {
@@ -52,7 +52,6 @@ void IceAge::RenderReady()
 			}
 		}
 	}
-
 };
 
 void IceAge::RenderInit()
@@ -84,17 +83,15 @@ void IceAge::RenderInit()
 			{
 				this->RenderAlphaBlendEffect(_Info);
 			}
-		},
+		}/*,
 
 		{
 			"IceParticle",[this](const DrawInfo& _Info)
 			{
 				this->RenderEftIceParticle(_Info);
 			}
-		}
+		}*/
 	};
-
-	
 
 	RenderInterface::Initialize(_InitRenderProp);
 
@@ -127,12 +124,32 @@ void IceAge::RenderInit()
 	ColorIntencity = 0.059f;
 	DistortionIntencity = 1.2f;
 
+	// ¾óÀ½ º¸¼þÀÌ 
+	_GeneratorParticle = AddGameObject<ShapeParticle>();
 };
 
 void IceAge::PlayStart(const std::optional<Vector3>& Location,
 					   const float RollRotateSpeed,
 						const float PlayTime)
 {
+	Vector3 MyLocation = { 0,0,0 };
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		MyLocation = SpTransform->GetPosition();
+	}
+
+	//_IceParticles.resize(100);
+	//for (auto& _Element : _IceParticles)
+	//{
+	//	_Element.Scale = { 0.001f,0.001f,0.001f };
+	//	_Element.Rotation = { 0.f,0.f,0.f };
+	//	_Element.Location = MyLocation + FMath::Random<Vector3>({ -0.1f,-0.1f,-0.1f }, { 0.1f,0.1f,0.1f });;
+	//	/*_Element.Location = MyLocation + FMath::Random<Vector3> ({-1.f,-1.f,-1.f }, { 1.f,1.f,1.f });
+	//	_Element.Rotation = FMath::Random<Vector3>({ -3.14f,-3.14f,-3.14f }, { 3.14f,3.14f,3.14f });
+	//	_Element.Scale = FMath::Random<Vector3>({1,1,1},{  3,3,3} );*/
+	//}
+
 	if (Location)
 	{
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
@@ -155,6 +172,8 @@ void IceAge::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+	/*_IceParticles.clear();
+	_IceParticles.shrink_to_fit();*/
 };
 
 void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -200,31 +219,31 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 }
 void IceAge::RenderEftIceParticle(const DrawInfo& _Info)
 {
-	// WorldDirLight;
-	/*uniform float  ColorIntencity;
-	uniform float  EmissiveIntencity;
-	uniform float  AlphaFactor = 1.f;*/
+	//{
+	//	const uint32 Numsubset = IceParticle->GetNumSubset();
+	//	for (uint32 i = 0; i < Numsubset; ++i)
+	//	{
+	//		if (auto SpSubset = IceParticle->GetSubset(i).lock();
 
-	{
-		const uint32 Numsubset = IceParticle->GetNumSubset();
-		if (Numsubset > 0)
-		{
-
-		};
-
-		for (uint32 i = 0; i < Numsubset; ++i)
-		{
-			if (auto SpSubset = IceParticle->GetSubset(i).lock();
-				SpSubset)
-			{
-				SpSubset->BindProperty(TextureType::DIFFUSE, 0, "AlbedoMap", _Info.Fx);
-				SpSubset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", _Info.Fx);
-				_Info.Fx->SetTexture("EmssiveMskMap", EmssiveMskMap->GetTexture());
-
-				SpSubset->Render(_Info.Fx);
-			};
-		};
-	}
+	//			SpSubset)
+	//		{
+	//			SpSubset->BindProperty(TextureType::DIFFUSE, 0, "AlbedoMap", _Info.Fx);
+	//			SpSubset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", _Info.Fx);
+	//			_Info.Fx->SetTexture("EmssiveMskMap", EmssiveMskMap->GetTexture());
+	//			
+	//			/*for (auto& _Element : _IceParticles)
+	//			{
+	//				_Info.Fx->SetFloat("ColorIntencity", _Element.ColorIntencity);
+	//				_Info.Fx->SetFloat("EmissiveIntencity", _Element.EmissiveIntencity);
+	//				_Info.Fx->SetFloat("AlphaFactor", _Element.AlphaFactor);
+	//				_Info.Fx->SetFloat("SpecularPow", _Element.SpecularPow);
+	//				const auto _World= FMath::WorldMatrix(_Element.Scale , _Element.Rotation  , _Element.Location);
+	//				_Info.Fx->SetMatrix("matWorld", &_World);
+	//				SpSubset->Render(_Info.Fx);
+	//			}*/
+	//		};
+	//	};
+	//}
 };
 
 void IceAge::RenderDebug(const DrawInfo& _Info)
@@ -280,6 +299,7 @@ HRESULT IceAge::Start()
 UINT IceAge::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+
 	if (_RenderProperty.bRender == false) return 0;
 
 	T += _fDeltaTime;
@@ -295,17 +315,41 @@ UINT IceAge::Update(const float _fDeltaTime)
 		spTransform->Rotate(Vector3{ 0.f,RollRotationSpeed * _fDeltaTime , 0.f});
 	}
 
+	//if (auto _ParticleG = _GeneratorParticle.lock();
+	//	_ParticleG)
+	//{
+	//	if (false == _ParticleG->IsPlaying())
+	//	{
+	//		{
+	//			{
+
+	//				const Vector3 Location = FMath::Mul(*VtxIter, _RenderUpdateInfo.World);
+
+	//				_ParticleG->SetPosition(Location);
+	//				_ParticleG->SetShapeIdx(ShapeParticle::SPHERE);
+	//				_ParticleG->SetColorIdx(ShapeParticle::COLOR::RED);
+	//				// _ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::ZERO);
+	//				// _ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::ZERO);
+	//				_ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::HALF);
+	//				_ParticleG->SetScale(0.003f);
+	//				//_ParticleG->SetLoop(true);
+	//				_ParticleG->PlayStart(1.f);
+
+	//			}
+	//		};
+	//	}
+	//};
+		
+
+	
+
+	
+
+
+
 	//static constexpr uint32 Jump = 30;
 
-	//if (Inner->m_spVertexLocations)
-	//{
-	//	for (auto VtxIter = std::begin(*Inner->m_spVertexLocations);
-	//		VtxIter != std::end(*Inner->m_spVertexLocations);
-	//		std::advance(VtxIter, 30))
-	//	{
-	//		const Vector3& Location = *VtxIter;
 
-	//	}
 	//}
 
 	return 0;
@@ -375,4 +419,5 @@ void IceAge::OnDisable()
 {
 	GameObject::OnDisable();
 };
+
 

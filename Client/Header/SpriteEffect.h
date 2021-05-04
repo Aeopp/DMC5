@@ -1,11 +1,11 @@
-#ifndef __SPRITEEFFECT_H_
+ï»¿#ifndef __SPRITEEFFECT_H_
 #define __SPRITEEFFECT_H_
 #include "GameObject.h"
 #include "RenderInterface.h"
 #include <optional>
 
 class SpriteEffect : public ENGINE::GameObject,
-	                 public ENGINE::RenderInterface
+	public ENGINE::RenderInterface
 {
 public:
 	enum class MeshType : int32
@@ -26,7 +26,7 @@ private:
 
 	float DistortionIntencity = 1.f;
 	float ColorIntencity = 0.001f;
-	Vector4 _Color{1.f,1.f,1.f,1.f};
+	Vector4 _Color{ 1.f,1.f,1.f,1.f };
 
 	float SpriteUpdateTime = 0.0f;
 
@@ -36,7 +36,7 @@ private:
 private:
 	explicit SpriteEffect() = default;
 	virtual ~SpriteEffect() = default;
-	// GameObjectÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// GameObjectÃ€Â»(Â¸Â¦) Ã…Ã«Ã‡Ã˜ Â»Ã³Â¼Ã“ÂµÃŠ
 	virtual void Free() override;
 	virtual std::string GetName() override;
 public:
@@ -55,17 +55,17 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void RegistInfo(const float DistortionIntencity = 1.f,
-					const float ColorIntencity = 1.f,
-					
-					const Vector4 _Color = Vector4{ 1.f,1.f,1.f,1.f });
+		const float ColorIntencity = 1.f,
+
+		const Vector4 _Color = Vector4{ 1.f,1.f,1.f,1.f });
 
 	void RegistMesh(const std::string& MeshPath);
 	void RegistSpriteInfo(const uint32 Col, const uint32 Row);
-	void RegistAlbedoTex(const std::string& TexPath );
+	void RegistAlbedoTex(const std::string& TexPath);
 	void RegistDistortionTex(const std::string& TexPath);
 public:
 	void PlayStart(
-				const float SpriteUpdateTime ,const std::optional<Vector3>& Location = std::nullopt);
+		const float SpriteUpdateTime, const std::optional<Vector3>& Location = std::nullopt);
 private:
 	void PlayEnd();
 public:

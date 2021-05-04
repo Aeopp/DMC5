@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "..\Header\ShapeParticle.h"
+#include "..\Header\SpriteParticle.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
 
-void ShapeParticle::SetShapeIdx(ShapeParticle::SHAPE Idx)
+void SpriteParticle::SetShapeIdx(SpriteParticle::SHAPE Idx)
 {
 	if (Idx > MAX_SHAPE_IDX)
 		return;
@@ -16,7 +16,7 @@ void ShapeParticle::SetShapeIdx(ShapeParticle::SHAPE Idx)
 	Reset();
 }
 
-void ShapeParticle::SetColorIdx(ShapeParticle::COLOR Idx)
+void SpriteParticle::SetColorIdx(SpriteParticle::COLOR Idx)
 {
 	switch (Idx)
 	{
@@ -37,14 +37,14 @@ void ShapeParticle::SetColorIdx(ShapeParticle::COLOR Idx)
 	Reset();
 }
 
-void ShapeParticle::SetCtrlIdx(ShapeParticle::CONTROLPT Idx)
+void SpriteParticle::SetCtrlIdx(SpriteParticle::CONTROLPT Idx)
 {
 	_CtrlPt = Idx;
 
 	Reset();
 }
 
-void ShapeParticle::Free()
+void SpriteParticle::Free()
 {
 	_BezierCurveDescVec.clear();
 	_BezierCurveDescVec.shrink_to_fit();
@@ -52,12 +52,12 @@ void ShapeParticle::Free()
 	GameObject::Free();
 }
 
-std::string ShapeParticle::GetName()
+std::string SpriteParticle::GetName()
 {
-	return "ShapeParticle";
+	return "SpriteParticle";
 }
 
-void ShapeParticle::RenderReady()
+void SpriteParticle::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
 	if (auto _SpTransform = _WeakTransform.lock();
@@ -74,7 +74,7 @@ void ShapeParticle::RenderReady()
 	}
 }
 
-void ShapeParticle::Reset()
+void SpriteParticle::Reset()
 {
 	// dust 모양 4가지중 하나 결정
 	uint32 DustSingleIdx = FMath::Random<uint32>(0u, 3u);
@@ -100,9 +100,6 @@ void ShapeParticle::Reset()
 			case PIPE01:
 				divide = 1;
 				break;
-			case NSG:
-				divide = 5;
-				break;
 			}
 
 			_BezierCurveDescVec.clear();
@@ -125,11 +122,6 @@ void ShapeParticle::Reset()
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
 				case PIPE01:
-					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
-					break;
-				case NSG :
-					//
-
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
 				}
@@ -156,9 +148,6 @@ void ShapeParticle::Reset()
 				case PIPE01:
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
-				case NSG :
-					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
-					break;
 				}
 
 				Element.EndPos = EndPos;
@@ -171,12 +160,12 @@ void ShapeParticle::Reset()
 	Effect::Reset();
 }
 
-void ShapeParticle::Imgui_Modify()
+void SpriteParticle::Imgui_Modify()
 {
 	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 		Sptransform)
 	{
-		ImGui::Text("Eff_SphereParticle");
+		ImGui::Text("Eff_SpriteParticle");
 
 		{
 			static Vector3 SliderPosition = Sptransform->GetPosition();
@@ -239,41 +228,33 @@ void ShapeParticle::RenderInit()
 		},
 	};
 	RenderInterface::Initialize(_InitRenderProp);
-};
+}
 
 void ShapeParticle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	if (_RenderCall)
+	auto WeakSubset = _PlaneMesh->GetSubset(0u);
+	if (auto SharedSubset = WeakSubset.lock();
+		SharedSubset)
 	{
-		_RenderCall(_Info, this);
-	}
-	else
-	{
-		auto WeakSubset = _PlaneMesh->GetSubset(0u);
-		if (auto SharedSubset = WeakSubset.lock();
-			SharedSubset)
+		// Single Dust
+		_Info.Fx->SetTexture("ALB0Map", _DustSingleTex->GetTexture());
+		//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
+		_Info.Fx->SetBool("_UsingNoise", false);
+		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SliceAmount));
+		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
+		_Info.Fx->SetFloatArray("_MinTexUV", _DustSingleMinTexUV, 2u);
+		_Info.Fx->SetFloatArray("_MaxTexUV", _DustSingleMaxTexUV, 2u);
+		_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
+				
+		for (auto& Element : _BezierCurveDescVec)
 		{
-			// Single Dust
-			_Info.Fx->SetTexture("ALB0Map", _DustSingleTex->GetTexture());
-			//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
-			_Info.Fx->SetBool("_UsingNoise", false);
-			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
-			_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SliceAmount));
-			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
-			_Info.Fx->SetFloatArray("_MinTexUV", _DustSingleMinTexUV, 2u);
-			_Info.Fx->SetFloatArray("_MaxTexUV", _DustSingleMaxTexUV, 2u);
-			_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
-
-			for (auto& Element : _BezierCurveDescVec)
-			{
-				Vector3* pPos = reinterpret_cast<Vector3*>(&_DustSingleChildWorldMatrix.m[3][0]);
-				D3DXVec3TransformCoord(pPos, &Element.DeltaPos, &_RenderUpdateInfo.World);
-				_Info.Fx->SetMatrix("World", &_DustSingleChildWorldMatrix);
-				SharedSubset->Render(_Info.Fx);
-			}
+			Vector3* pPos = reinterpret_cast<Vector3*>(&_DustSingleChildWorldMatrix.m[3][0]);
+			D3DXVec3TransformCoord(pPos, &Element.DeltaPos, &_RenderUpdateInfo.World);
+			_Info.Fx->SetMatrix("World", &_DustSingleChildWorldMatrix);
+			SharedSubset->Render(_Info.Fx);
 		}
 	}
-	
 }
 
 ShapeParticle* ShapeParticle::Create()
@@ -296,7 +277,6 @@ HRESULT ShapeParticle::Ready()
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info));
-	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info));
 
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
@@ -367,7 +347,7 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 	}
 
 	//
-	// Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }
@@ -380,11 +360,6 @@ UINT ShapeParticle::LateUpdate(const float _fDeltaTime)
 void ShapeParticle::Editor()
 {
 	GameObject::Editor();
-
-	if (bEdit)
-	{
-
-	}
 }
 
 void ShapeParticle::OnEnable()

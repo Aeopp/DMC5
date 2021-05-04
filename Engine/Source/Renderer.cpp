@@ -1588,7 +1588,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale", SoftParticleDepthScale);
 		Fx->SetFloat("exposure_corr",1.f/(exposure *0.002f));
-		// 
+		
 		Vector3  LightDirection = { 0,-1,0 };
 
 		if (DirLights.empty() == false)
@@ -1599,8 +1599,10 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 			}
 		}
 
+		LightDirection = FMath::Normalize(LightDirection);
+
 		Fx->SetFloatArray("LightDirection", LightDirection, 3u);
-		
+		Fx->SetFloatArray("EyePos", _RenderInfo.Eye ,3u);
 
 		_DrawInfo.Fx = Fx;
 

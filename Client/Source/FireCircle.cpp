@@ -115,8 +115,12 @@ void FireCircle::RenderInit()
 	NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 
-	NoiseScale = { 0.f,0.005f,0.005f};
-	NoiseScrollSpeed = { 0.f,0.0005f,0.0005f};
+	/*NoiseScale = { 0.f,0.005f,0.005f};
+	NoiseScrollSpeed = { 0.f,0.0005f,0.0005f};*/
+
+	NoiseScale = { 0.f,0.f,0.f };
+	NoiseScrollSpeed = { 0.f,0.f,0.f };
+
 	RollRotationSpeed = FMath::PI;
 	EmissiveIntencity = 0.01f;
 	ColorIntencity = 0.6f;
