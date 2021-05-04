@@ -148,16 +148,13 @@ void IceAge::PlayStart(const std::optional<Vector3>& Location,
 	//	_Element.Scale = FMath::Random<Vector3>({1,1,1},{  3,3,3} );*/
 	//}
 
-	if (Location)
-	{
-		GetComponent<Transform>().lock()->SetPosition(Location.value());
-	}
-
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
-		SpTransform->Rotate({ 0.f,RollRotateSpeed,0.f });
+		SpTransform->SetPosition( Location.value() );
+		// SpTransform->Rotate({ 0.f,RollRotateSpeed,0.f });
 	}
+
 	this->PlayTime = PlayTime;
 	this->RollRotationSpeed = RollRotateSpeed;
 	_RenderProperty.bRender = true;
@@ -302,6 +299,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 	if (_RenderProperty.bRender == false) return 0;
 
 	T += _fDeltaTime;
+
 	if (T > PlayTime)
 	{
 		PlayEnd();
@@ -321,9 +319,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 	//	{
 	//		{
 	//			{
-
 	//				const Vector3 Location = FMath::Mul(*VtxIter, _RenderUpdateInfo.World);
-
 	//				_ParticleG->SetPosition(Location);
 	//				_ParticleG->SetShapeIdx(ShapeParticle::SPHERE);
 	//				_ParticleG->SetColorIdx(ShapeParticle::COLOR::RED);
@@ -333,22 +329,12 @@ UINT IceAge::Update(const float _fDeltaTime)
 	//				_ParticleG->SetScale(0.003f);
 	//				//_ParticleG->SetLoop(true);
 	//				_ParticleG->PlayStart(1.f);
-
 	//			}
 	//		};
 	//	}
 	//};
-		
-
-	
-
-	
-
-
 
 	//static constexpr uint32 Jump = 30;
-
-
 	//}
 
 	return 0;
@@ -379,7 +365,7 @@ void IceAge::Editor()
 					Point = SpTransform->GetPosition();
 				};
 
-				PlayStart(Point, EditRotationSpeed);
+				PlayStart(Point, EditRotationSpeed ,EditPlayTime);
 			}
 			if (ImGui::SmallButton("PlayEnd"))
 			{
@@ -391,6 +377,10 @@ void IceAge::Editor()
 
 			ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
+
+
+			ImGui::SliderFloat("EditPlayTime", &EditPlayTime, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In EditPlayTime", &EditPlayTime, 0.f, 0.f, "%9.6f");
 
 			ImGui::SliderFloat("EditPlayRollRotateSpeed", &EditRotationSpeed, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayRollRotateSpeed", &EditRotationSpeed,0.f,0.f ,"%9.6f");

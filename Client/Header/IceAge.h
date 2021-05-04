@@ -59,7 +59,7 @@ public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
 		const float YawRotationSpeed = FMath::PI,
-		const float PlayTime = 5.f);
+		const float PlayTime = 2.f);
 	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);
@@ -86,7 +86,8 @@ private:
 	float RollRotationSpeed = FMath::PI;
 
 	float T{ 0.0f };
-	float PlayTime = 5.f;
+	float PlayTime = 2.f;
+	float EditPlayTime = 2.f;
 
 	float EditRotationSpeed{ 0.f };
 };
