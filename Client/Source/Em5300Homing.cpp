@@ -154,10 +154,33 @@ void Em5300Homing::RenderShadow(const DrawInfo& _Info)
 	};
 }
 
-void Em5300Homing::Rain(const float _fDeltaTime)
+void Em5300Homing::Homing(const float _fDeltaTime)
 {
-	
-	
+	if (m_bStartHoming == false)
+	{
+		m_bStartHoming = true;
+		m_bHomingDir = true;
+	}
+	else
+	{
+		if (m_bHomingDir)
+		{
+			float fRandomX = FMath::Random<float>(-0.399f, 0.399f);
+			float fRandomY = FMath::Random<float>(-0.399f, 0.399f);
+			float fRandomZ = FMath::Random<float>(-0.399f, 0.399f);
+			m_vHomingDir = { fRandomX, fRandomY, fRandomZ };
+
+			Vector3 vLook = m_pEm5300Trasform.lock()->GetLook();
+			m_vHomingDir += -vLook;
+
+			D3DXVec3Normalize(&m_vHomingDir, &m_vHomingDir);
+
+			m_bHomingDir = false;
+		}
+
+		
+		m_pTransform.lock()->Translate(m_vHomingDir * 0.002f);
+	}
 
 	
 }
@@ -219,7 +242,22 @@ HRESULT Em5300Homing::Awake()
 	m_pEm5300Trasform = m_pEm5300.lock()->GetComponent<Transform>();
 	
 
-
+	if (m_iHomingPos == 0)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("L_Breast_00_01");
+	else if (m_iHomingPos == 1)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("L_Breast_00_02");
+	else if (m_iHomingPos == 2)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("L_Breast_00_03");
+	else if (m_iHomingPos == 3)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("L_Breast_00_04");
+	else if (m_iHomingPos == 4)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("R_Breast_00_01");
+	else if (m_iHomingPos == 5)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("R_Breast_00_02");
+	else if (m_iHomingPos == 6)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("R_Breast_00_03");
+	else if (m_iHomingPos == 7)
+		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("R_Breast_00_04");
 
 	
 
@@ -249,7 +287,15 @@ UINT Em5300Homing::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
+	if (m_bReadyHoming == false)
+	{
+		m_ParentWorld = m_pEm5300Trasform.lock()->GetWorldMatrix();
+		m_Result = (*m_pParentBone * m_ParentWorld);
+		m_pTransform.lock()->SetPosition({ m_Result._41, m_Result._42, m_Result._43 });
+	}
 
+	if (m_bReadyHoming)
+		Homing(_fDeltaTime);
 	return 0;
 }
 

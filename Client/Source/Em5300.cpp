@@ -12,6 +12,7 @@
 #include "Liquid.h"
 #include "Em5300Missile.h"
 #include "Em5300Rain.h"
+#include "Em5300Homing.h"
 
 void Em5300::Free()
 {
@@ -50,6 +51,17 @@ void Em5300::Fight(const float _fDeltaTime)
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
 
 
+	if (fDir <= 1.f)
+	{
+		if (m_bMove && m_bIng == false)
+		{
+			m_eState = Move_Back_Start;
+			m_bIng = true;
+		}
+	}
+
+
+
 	if (m_bRushAttack && m_bIng == false)
 	{
 		m_eState = Attack_Rush_Start;
@@ -70,6 +82,12 @@ void Em5300::Fight(const float _fDeltaTime)
 		m_eState = Attack_Missile2_Start;
 		m_bIng = true;
 	}
+	if (m_bHoming && m_bIng == false)
+	{
+		m_eState = Attack_Homing_Start;
+		m_bIng = true;
+
+	}
 
 }
 
@@ -86,10 +104,47 @@ void Em5300::State_Change(const float _fDeltaTime)
 	case Em5300::Attack_Bug:
 		break;
 	case Em5300::Attack_Homing_End:
+		if (m_bIng)
+		{
+			m_pMesh->PlayAnimation("Attack_Homing_End", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Homing_End" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bIng = false;
+				m_bHoming = false;
+			}
+		}
 		break;
 	case Em5300::Attack_Homing_Loop:
+		if (m_bIng)
+		{
+			Update_Angle();
+			m_bInteraction = true;
+			m_pMesh->PlayAnimation("Attack_Homing_Loop", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Homing_Loop" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Attack_Homing_End;
+
+				for (int i = 0; i < 8; ++i)
+				{
+					m_pHoming[i].lock()->Set_Homing(true);
+					m_pHoming[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHoming[i].lock()->Set_AttackType(Attack_Front);
+					m_pHoming[i].lock()->Set_Coll(true);
+				}
+			}
+		}
 		break;
 	case Em5300::Attack_Homing_Start:
+		if (m_bIng)
+		{
+			Update_Angle();
+			m_bInteraction = true;
+			m_pMesh->PlayAnimation("Attack_Homing_Start", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Homing_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Attack_Homing_Loop;
+		}
 		break;
 	case Em5300::Attack_Laser_End:
 		break;
@@ -322,10 +377,39 @@ void Em5300::State_Change(const float _fDeltaTime)
 		m_bHit = false;
 		break;
 	case Em5300::Move_Back_End:
+		if (m_bIng)
+		{
+			m_pMesh->PlayAnimation("Move_Back_End", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Back_End" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bIng = false;
+				m_bMove = false;
+			}
+		}
 		break;
 	case Em5300::Move_Back_Loop:
+		if (m_bIng)
+		{
+			D3DXVec3Normalize(&vDir, &vDir);
+			m_pTransform.lock()->Translate({ -vDir.x * 0.02f, 0.f, -vDir.z * 0.02f });
+			m_pMesh->PlayAnimation("Move_Back_Loop", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Back_Loop" && m_pMesh->IsAnimationEnd())
+				m_eState = Move_Back_End;
+		}
 		break;
 	case Em5300::Move_Back_Start:
+		if (m_bIng)
+		{
+			Update_Angle();
+			Set_Rotate();
+			D3DXVec3Normalize(&vDir, &vDir);
+			m_pTransform.lock()->Translate({-vDir.x * 0.02f, 0.f, -vDir.z * 0.02f});
+
+			m_pMesh->PlayAnimation("Move_Back_Start", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Back_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Move_Back_Loop;
+		}
 		break;
 	case Em5300::Move_Front_End:
 		if (m_bIng)
@@ -376,6 +460,7 @@ void Em5300::Skill_CoolTime(const float _fDeltaTime)
 	//		m_fRushAttackTime = 0.f;
 	//	}
 	//}
+	//퍼지는 미사일
 	/*if (m_bMissile == false)
 	{
 		m_fMissileTime += _fDeltaTime;
@@ -385,6 +470,8 @@ void Em5300::Skill_CoolTime(const float _fDeltaTime)
 			m_fMissileTime = 0.f;
 		}
 	}*/
+	
+	// 위에서 떨어지는거
 	//if (m_bRain == false)
 	//{
 	//	m_fRainTime += _fDeltaTime;
@@ -394,7 +481,9 @@ void Em5300::Skill_CoolTime(const float _fDeltaTime)
 	//		m_fRainTime = 0.f;
 	//	}
 	//}
-	if (m_bMissile2 == false)
+	// 
+	//세로 미사일
+	/*if (m_bMissile2 == false)
 	{
 		m_fMissile2Time += _fDeltaTime;
 		if (m_fMissile2Time >= 1.f)
@@ -402,7 +491,18 @@ void Em5300::Skill_CoolTime(const float _fDeltaTime)
 			m_bMissile2 = true;
 			m_fMissile2Time = 0.f;
 		}
-	}
+	}*/
+
+	//공중에 떠다니는 미사일
+	//if (m_bHoming == false)
+	//{
+	//	m_fHomingTime += _fDeltaTime;
+	//	if (m_fHomingTime >= 1.f)
+	//	{
+	//		m_bHoming = true;
+	//		m_fHomingTime = 0.f;
+	//	}
+	//}
 }
 
 HRESULT Em5300::Ready()
@@ -482,6 +582,13 @@ HRESULT Em5300::Awake()
 		m_pRain[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
 		m_pRain[i].lock()->m_pEm5300Mesh = m_pMesh;
 		m_pRain[i].lock()->Set_RainPos(i);
+	}
+	for (int i = 0; i < 8; ++i)
+	{
+		m_pHoming[i] = AddGameObject<Em5300Homing>();
+		m_pHoming[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
+		m_pHoming[i].lock()->m_pEm5300Mesh = m_pMesh;
+		m_pHoming[i].lock()->Set_HomingPos(i);
 	}
 
 	m_eState = Idle;
@@ -838,6 +945,18 @@ void Em5300::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::Overture:
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
 		m_bHit = true;
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pRush.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pRush.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pRush.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	default:
 		break;
