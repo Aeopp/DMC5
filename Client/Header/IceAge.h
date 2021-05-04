@@ -10,6 +10,7 @@ class IceAge :     public ENGINE::GameObject,
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Inner{};
+	std::shared_ptr<ENGINE::StaticMesh> IceParticle{};
 	std::shared_ptr<ENGINE::Texture>    Albedo{};
 	std::shared_ptr<ENGINE::Texture>    TrailMap{};
 	std::shared_ptr<ENGINE::Texture>    EmssiveMskMap{};
@@ -36,13 +37,17 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void PlayStart(
-				const std::optional<Vector3>& Location = std::nullopt,
-				const float YawRotationSpeed =FMath::PI);
+		const std::optional<Vector3>& Location = std::nullopt,
+		const float YawRotationSpeed = FMath::PI,
+		const float PlayTime = 5.f
+				);
 	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+	void RenderEftIceParticle(const DrawInfo& _Info);
 private:
+
 	float EmissiveIntencity{ 1.f };
 	float ColorIntencity{ 1.f };
 	float DistortionIntencity{ 1.f };
@@ -60,6 +65,7 @@ private:
 	float RollRotationSpeed = FMath::PI;
 
 	float T{ 0.0f };
+	float PlayTime = 5.f;
 
 	float EditRotationSpeed{ 0.f };
 };

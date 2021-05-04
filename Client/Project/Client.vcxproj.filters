@@ -692,5 +692,6 @@
     <None Include="..\..\Resource\Shader\Effect\DashTrail.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\FireCircle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\IceAge.hlsl" />
+    <None Include="..\..\Resource\Shader\gbuffer_ice.hlsl" />
   </ItemGroup>
 </Project>

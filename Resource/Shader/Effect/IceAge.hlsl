@@ -9,6 +9,7 @@ uniform float  EmissiveIntencity;
 
 uniform matrix InverseProjection;
 uniform float  SoftParticleDepthScale;
+uniform float AlphaFactor = 1.f;
 
 uniform float3 NoiseScale;
 uniform float3 NoiseScrollSpeed;
@@ -156,6 +157,8 @@ void PsMain(out float4 Color  : COLOR0,
     
     float scenedistance = length(scenepos.xyz);
     Color.a = Color.a * saturate((scenedistance - particledistance) * SoftParticleDepthScale);
+    
+    Color.a *= AlphaFactor;
     // ....... 
 };
 

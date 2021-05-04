@@ -68,6 +68,9 @@ HRESULT TestScene::LoadScene()
 		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
 	Resources::Load<ENGINE::StaticMesh>(
 		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
+
+	// 메쉬 미리 로딩.
+	Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info);
 	/*--------------------------------------------------------- */
 
 	// 이펙트
@@ -77,7 +80,6 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<FireCircle>();
 	AddGameObject<DashTrail>();
 	AddGameObject<IceAge>();
-
 
 	{
 		if (auto _SE = AddGameObject<SpriteEffect>().lock();

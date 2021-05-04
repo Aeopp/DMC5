@@ -7,6 +7,7 @@
 #include <iostream>
 #include "GraphicSystem.h"
 #include "RedQueen.h"
+#include "ShapeParticle.h"
 
 IceAge::IceAge()
 {
@@ -78,18 +79,34 @@ void IceAge::RenderInit()
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"IceAge",[this](const DrawInfo& _Info)
+		{
+			"IceAge",[this](const DrawInfo& _Info)
 			{
 				this->RenderAlphaBlendEffect(_Info);
+			}
+		},
+
+		{
+			"IceParticle",[this](const DrawInfo& _Info)
+			{
+				this->RenderEftIceParticle(_Info);
 			}
 		}
 	};
 
+	
+
 	RenderInterface::Initialize(_InitRenderProp);
 
-	// 메시
-	Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx");
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = true;
 
+	// 메시
+	{
+		Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
+		IceParticle = Resources::Load<StaticMesh>("..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx");
+	}
+	
 	// 텍스쳐 
 	Albedo = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\mesh_03_debris_ice00_00_albm.tga");
 	TrailMap = Resources::Load<Texture>("..\\..\\Usable\\mesh_03_cs_noise_00_00_alb.tga");
@@ -109,10 +126,12 @@ void IceAge::RenderInit()
 	EmissiveIntencity = 0.01f;
 	ColorIntencity = 0.059f;
 	DistortionIntencity = 1.2f;
+
 };
 
 void IceAge::PlayStart(const std::optional<Vector3>& Location,
-					   const float RollRotateSpeed)
+					   const float RollRotateSpeed,
+						const float PlayTime)
 {
 	if (Location)
 	{
@@ -124,15 +143,18 @@ void IceAge::PlayStart(const std::optional<Vector3>& Location,
 	{
 		SpTransform->Rotate({ 0.f,RollRotateSpeed,0.f });
 	}
-
+	this->PlayTime = PlayTime;
 	this->RollRotationSpeed = RollRotateSpeed;
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 };
 
+
+
 void IceAge::PlayEnd()
 {
 	_RenderProperty.bRender = false;
+	T = 0.0f;
 };
 
 void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -143,6 +165,9 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 
+	const float AlphaFactor = std::clamp(PlayTime - T, 0.0f, 1.f);
+
+	_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
 	_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
 	const Vector3 Speed = NoiseScrollSpeed * T;
 	_Info.Fx->SetFloatArray("NoiseScrollSpeed", Speed, 3u);
@@ -172,9 +197,35 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			};
 		};
 	}
+}
+void IceAge::RenderEftIceParticle(const DrawInfo& _Info)
+{
+	// WorldDirLight;
+	/*uniform float  ColorIntencity;
+	uniform float  EmissiveIntencity;
+	uniform float  AlphaFactor = 1.f;*/
 
+	{
+		const uint32 Numsubset = IceParticle->GetNumSubset();
+		if (Numsubset > 0)
+		{
+
+		};
+
+		for (uint32 i = 0; i < Numsubset; ++i)
+		{
+			if (auto SpSubset = IceParticle->GetSubset(i).lock();
+				SpSubset)
+			{
+				SpSubset->BindProperty(TextureType::DIFFUSE, 0, "AlbedoMap", _Info.Fx);
+				SpSubset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", _Info.Fx);
+				_Info.Fx->SetTexture("EmssiveMskMap", EmssiveMskMap->GetTexture());
+
+				SpSubset->Render(_Info.Fx);
+			};
+		};
+	}
 };
-
 
 void IceAge::RenderDebug(const DrawInfo& _Info)
 {
@@ -196,7 +247,6 @@ void IceAge::RenderDebug(const DrawInfo& _Info)
 			};
 		};
 	}
-
 };
 
 
@@ -231,13 +281,32 @@ UINT IceAge::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
+
 	T += _fDeltaTime;
+	if (T > PlayTime)
+	{
+		PlayEnd();
+		return 0;
+	}
 
 	if (auto spTransform = GetComponent<ENGINE::Transform>().lock();
 		spTransform)
 	{
 		spTransform->Rotate(Vector3{ 0.f,RollRotationSpeed * _fDeltaTime , 0.f});
 	}
+
+	//static constexpr uint32 Jump = 30;
+
+	//if (Inner->m_spVertexLocations)
+	//{
+	//	for (auto VtxIter = std::begin(*Inner->m_spVertexLocations);
+	//		VtxIter != std::end(*Inner->m_spVertexLocations);
+	//		std::advance(VtxIter, 30))
+	//	{
+	//		const Vector3& Location = *VtxIter;
+
+	//	}
+	//}
 
 	return 0;
 }
@@ -274,7 +343,6 @@ void IceAge::Editor()
 				PlayEnd();
 			}
 
-			
 			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
 
