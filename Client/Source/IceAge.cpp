@@ -89,11 +89,11 @@ void IceAge::RenderInit()
 
 	// 메시
 	Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx");
+
 	// 텍스쳐 
 	Albedo = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\mesh_03_debris_ice00_00_albm.tga");
 	TrailMap = Resources::Load<Texture>("..\\..\\Usable\\mesh_03_cs_noise_00_00_alb.tga");
 	EmssiveMskMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
-	// NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 	NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\water_new_height.png");
 
 	PushEditEntity(Inner.get());
@@ -107,8 +107,8 @@ void IceAge::RenderInit()
 	EditRotationSpeed = 500.f;
 	RollRotationSpeed = FMath::PI;
 	EmissiveIntencity = 0.01f;
-	ColorIntencity = 0.003f;
-	DistortionIntencity = 0.059f;
+	ColorIntencity = 0.059f;
+	DistortionIntencity = 1.2f;
 };
 
 void IceAge::PlayStart(const std::optional<Vector3>& Location,
@@ -143,32 +143,14 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 
-	_Info.Fx->SetBool("bNoise", bNoise);
+	_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
+	const Vector3 Speed = NoiseScrollSpeed * T;
+	_Info.Fx->SetFloatArray("NoiseScrollSpeed", Speed, 3u);
 
-	if (bNoise)
-	{
-		_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
-		const Vector3 Speed = NoiseScrollSpeed * T;
-		_Info.Fx->SetFloatArray("NoiseScrollSpeed", Speed, 3u);
-
-		_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
-		_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
-
-	}
-	else
-	{
-		_Info.Fx->SetFloatArray("NoiseScale", nullptr, 3u);
-		const Vector3 Speed = NoiseScrollSpeed * T;
-		_Info.Fx->SetFloatArray("NoiseScrollSpeed", nullptr, 3u);
-
-		_Info.Fx->SetFloatArray("NoiseDistortion0", nullptr, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion1", nullptr, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion2", nullptr, 2u);
-
-		_Info.Fx->SetTexture("NoiseMap", nullptr);
-	}
+	_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
+	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
 
 	_Info.Fx->SetTexture("AlbedoMap", Albedo->GetTexture());
 	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
@@ -292,16 +274,12 @@ void IceAge::Editor()
 				PlayEnd();
 			}
 
-			ImGui::Checkbox("bNoise", &bNoise);
+			
+			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
 
-			if (bNoise)
-			{
-				ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
-				ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
-
-				ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
-				ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
-			}
+			ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
 
 			ImGui::SliderFloat("EditPlayRollRotateSpeed", &EditRotationSpeed, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayRollRotateSpeed", &EditRotationSpeed,0.f,0.f ,"%9.6f");

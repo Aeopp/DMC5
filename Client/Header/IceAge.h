@@ -43,8 +43,6 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	bool bNoise = true;
-
 	float EmissiveIntencity{ 1.f };
 	float ColorIntencity{ 1.f };
 	float DistortionIntencity{ 1.f };

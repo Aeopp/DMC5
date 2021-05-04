@@ -3,7 +3,6 @@ matrix ViewProjection;
 
 uniform float exposure_corr;
 
-
 uniform float  DistortionIntencity;
 uniform float  ColorIntencity;
 uniform float  EmissiveIntencity;
@@ -81,12 +80,10 @@ sampler Noise = sampler_state
 
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV0 : TEXCOORD0,
-            in out float2 UV1 : TEXCOORD1,
-
-            out float4 ClipPosition : TEXCOORD2,
-            out float2 UV2 : TEXCOORD3,
-            out float2 UV3 : TEXCOORD4,
-            out float2 UV4 : TEXCOORD5)
+            out float4 ClipPosition : TEXCOORD1,
+            out float2 UV2 : TEXCOORD2,
+            out float2 UV3 : TEXCOORD3,
+            out float2 UV4 : TEXCOORD4)
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
@@ -99,56 +96,46 @@ void VsMain(in out float4 Position : POSITION0,
 void PsMain(out float4 Color  : COLOR0,
             out float4 Color1 : COLOR1,
             in float2 UV0 : TEXCOORD0,
-            in float2 UV1 : TEXCOORD1,
-
-            in float4 ClipPosition : TEXCOORD2,
-            in float2 UV2 : TEXCOORD3,
-            in float2 UV3 : TEXCOORD4,
-            in float2 UV4 : TEXCOORD5
+            in float4 ClipPosition : TEXCOORD1,
+            in float2 UV2 : TEXCOORD2,
+            in float2 UV3 : TEXCOORD3,
+            in float2 UV4 : TEXCOORD4
 )
 {
-    float2 finalNoise = float2(0, 0);
-    
     // 노이즈 시작 
-    if (bNoise)
-    {
-        float4 Noise1 = tex2D(Noise, UV2);
-        float4 Noise2 = tex2D(Noise, UV3);
-        float4 Noise3 = tex2D(Noise, UV4);
+    
+    float4 Noise1 = tex2D(Noise, UV2);
+    float4 Noise2 = tex2D(Noise, UV3);
+    float4 Noise3 = tex2D(Noise, UV4);
 
-        Noise1 = (Noise1 - 0.5f) * 2.0f;
-        Noise2 = (Noise2 - 0.5f) * 2.0f;
-        Noise3 = (Noise3 - 0.5f) * 2.0f;
+    Noise1 = (Noise1 - 0.5f) * 2.0f;
+    Noise2 = (Noise2 - 0.5f) * 2.0f;
+    Noise3 = (Noise3 - 0.5f) * 2.0f;
     
-        Noise1.xy = Noise1.xy * NoiseDistortion0.xy;
-        Noise2.xy = Noise2.xy * NoiseDistortion1.xy;
-        Noise3.xy = Noise3.xy * NoiseDistortion2.xy;
+    Noise1.xy = Noise1.xy * NoiseDistortion0.xy;
+    Noise2.xy = Noise2.xy * NoiseDistortion1.xy;
+    Noise3.xy = Noise3.xy * NoiseDistortion2.xy;
     
-        finalNoise = Noise1 + Noise2 + Noise3;
-    };
-    // 노이즈 끝.
-    
-    float4 EmissiveSample = tex2D(Emissive, UV0);
-    EmissiveSample.rgb *= EmissiveIntencity;
-    
-    Color = tex2D(Albedo, UV0 + finalNoise);
+    float2  finalNoise = Noise1 + Noise2 + Noise3;
+    // .....
     
     
-    float4 trailsample = tex2D(Trail, UV0);
-    // Color.a *= trailsample.a;
-    
+    Color = tex2D(Albedo, UV0 + finalNoise);    
     float4 NoiseSample = tex2D(Noise, UV0 + finalNoise);
-    Color.a *= trailsample.b;
-    
-    Color.rgb *= trailsample.b;
+    float4 trailsample = tex2D(Trail, UV0);
+    Color *= trailsample.b;
     Color.rgb *= ColorIntencity;
-    Color.rgb += EmissiveSample.rgb;
+    float4 EmissiveSample = tex2D(Emissive, UV0);
+    Color.rgb += (EmissiveSample.rgb * EmissiveIntencity);
     Color.rgb *= exposure_corr;
     
-    
-    
+    // 디스토션 시작 
     Color1 = NoiseSample;
     Color1.rgb *= DistortionIntencity;
+    // ....
+    
+    
+    
     
     // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
@@ -169,7 +156,7 @@ void PsMain(out float4 Color  : COLOR0,
     
     float scenedistance = length(scenepos.xyz);
     Color.a = Color.a * saturate((scenedistance - particledistance) * SoftParticleDepthScale);
-    // 소프트 파티클 끝
+    // ....... 
 };
 
 technique Default
