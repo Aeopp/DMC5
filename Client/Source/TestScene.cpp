@@ -67,6 +67,8 @@ HRESULT TestScene::LoadScene()
 		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
 	Resources::Load<ENGINE::StaticMesh>(
 		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
 	/*--------------------------------------------------------- */
 
 	AddGameObject<Camera>();
@@ -148,8 +150,8 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	// LoadMap();
-	// AddGameObject<TempMap>();
+	LoadMap();
+	AddGameObject<TempMap>();
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
@@ -166,13 +168,42 @@ HRESULT TestScene::LoadScene()
 	//	p->SetLoop(true);
 	//	p->PlayStart(1.f);
 	//}
-	//if (auto p = AddGameObject<StoneDebris>().lock();
-	//	p)
-	//{
-	//	p->SetVariationIdx(StoneDebris::REDORB_0);
-	//	p->SetLoop(true);
-	//	p->PlayStart();
-	//}
+	if (auto p = AddGameObject<StoneDebris>().lock();
+		p)
+	{
+		p->SetVariationIdx(StoneDebris::REDORB_0);
+		p->SetPosition({0.f, 0.f, 0.f});
+		p->SetVelocity({ 0.03f, 0.075f, 0.03f });
+		p->SetLoop(true);
+		p->PlayStart();
+	}
+	if (auto p = AddGameObject<StoneDebris>().lock();
+		p)
+	{
+		p->SetVariationIdx(StoneDebris::REDORB_1);
+		p->SetPosition({ 0.f, 0.f, 0.f });
+		p->SetVelocity({ -0.03f, 0.075f, 0.03f });
+		p->SetLoop(true);
+		p->PlayStart();
+	}
+	if (auto p = AddGameObject<StoneDebris>().lock();
+		p)
+	{
+		p->SetVariationIdx(StoneDebris::GREENORB_0);
+		p->SetPosition({ 0.f, 0.f, 0.f });
+		p->SetVelocity({ -0.03f, 0.075f, -0.03f });
+		p->SetLoop(true);
+		p->PlayStart();
+	}
+	if (auto p = AddGameObject<StoneDebris>().lock();
+		p)
+	{
+		p->SetVariationIdx(StoneDebris::GREENORB_1);
+		p->SetPosition({ 0.f, 0.f, 0.f });
+		p->SetVelocity({ 0.03f, 0.075f, -0.03f });
+		p->SetLoop(true);
+		p->PlayStart();
+	}
 	//if (auto p = AddGameObject<ShapeParticle>().lock();
 	//	p)
 	//{

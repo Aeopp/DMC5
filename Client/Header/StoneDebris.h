@@ -19,6 +19,8 @@ public:
 	};
 	void SetVariationIdx(StoneDebris::VARIATION Idx);
 
+	void SetVelocity(const Vector3& v0) { _Velocity0 = v0; }	// _BeginPos.y 0.05f 기준 y == 0.075f 근처가 적당
+
 private:
 	StoneDebris::VARIATION _VariationIdx = REDORB_0;
 
@@ -48,6 +50,9 @@ private:
 	Vector3 _DustSingleVelocity = Vector3(0.f, 0.f, 0.f);
 	Vector3 _DustSingleDeltaPos = Vector3(0.f, 0.f, 0.f);
 
+	Vector3 _BeginPos = Vector3(0.f, 0.05f, 0.f);
+	Vector3 _Velocity0 = Vector3(0.f, 0.075f, 0.f);
+
 private:
 	explicit StoneDebris() = default;
 	virtual ~StoneDebris() = default;
@@ -73,5 +78,6 @@ public:
 	virtual void    OnDisable() override;
 public:
 	virtual void Reset() override;
+	virtual void SetPosition(const Vector3& Pos) override;
 };
 #endif // !__EFF_STONE_DEBRIS_H__

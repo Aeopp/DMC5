@@ -88,6 +88,13 @@ void StoneDebris::Reset()
 	_DustSingleVelocity = Vector3(0.f, 0.f, 0.f);
 	_DustSingleDeltaPos = Vector3(0.f, 0.f, 0.f);
 
+	if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+		Sptransform)
+	{
+		Sptransform->SetPosition(_BeginPos);
+		Sptransform->UpdateTransform();
+	}
+
 	Effect::Reset();
 }
 
@@ -101,7 +108,7 @@ void StoneDebris::Imgui_Modify()
 		{
 			static Vector3 SliderPosition = Sptransform->GetPosition();
 			ImGui::SliderFloat3("Pos##Eff_StoneDebris", SliderPosition, -10.f, 10.f);
-			Sptransform->SetPosition(SliderPosition);
+			SetPosition(SliderPosition);
 		}
 
 		{
@@ -264,6 +271,7 @@ HRESULT StoneDebris::Ready()
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.001f, 0.001f, 0.001f });
+	//InitTransform.lock()->SetPosition(_BeginPos);
 
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = true;
@@ -309,7 +317,9 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		return 0;
 
 	if (4.f < _AccumulateTime)
+	{
 		Reset();
+	}
 	else if (2.f < _AccumulateTime)
 	{
 		Matrix ViewMat, BillMat, InvRotMat;
@@ -357,9 +367,22 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		_DustSingleDeltaPos.y += _DustSingleVelocity.y * _fDeltaTime;
 		_DustSingleDeltaPos.z += _DustSingleVelocity.z * _fDeltaTime;
 	}
+	else
+	{
+		if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+			Sptransform)
+		{
+			Vector3 NewPos = Vector3(0.f, 0.f, 0.f);
+			NewPos.x = _BeginPos.x + _Velocity0.x * _AccumulateTime;
+			NewPos.y = _BeginPos.y + _Velocity0.y * _AccumulateTime - 0.049f * _AccumulateTime * _AccumulateTime;
+			NewPos.z = _BeginPos.z + _Velocity0.z * _AccumulateTime;
+
+			Sptransform->SetPosition(NewPos);
+		}
+	}
 
 	//
-	//Imgui_Modify();
+	Imgui_Modify();
 
 	return 0;
 }
@@ -382,4 +405,10 @@ void StoneDebris::OnEnable()
 void StoneDebris::OnDisable()
 {
 	GameObject::OnDisable();
+}
+
+void StoneDebris::SetPosition(const Vector3& Pos)
+{
+	_BeginPos = Pos;
+	_BeginPos.y += 0.05f;	// 바닥 기준으로 위로 살짝 올림
 }

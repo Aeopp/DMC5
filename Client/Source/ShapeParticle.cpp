@@ -318,7 +318,7 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 	{
 		// ¹à±â, ¾ËÆÄ °¨¼Ò
 		_SliceAmount += 0.2f * _fDeltaTime;
-		_BrightScale -= 0.003 * _fDeltaTime;
+		_BrightScale -= 0.003f * _fDeltaTime;
 
 		// ºôº¸µå
 		Matrix ViewMat, BillMat, InvRotMat;
