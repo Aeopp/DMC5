@@ -1205,6 +1205,33 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		for (int i = 0; i < 2; ++i)
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());

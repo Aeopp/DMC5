@@ -458,6 +458,18 @@ void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		else
 			m_eState = Hit_Floor;
 		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pHand.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pHand.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pHand.lock()->m_pCollider.lock()->SetActive(false);
+		break;
 	default:
 		break;
 	}

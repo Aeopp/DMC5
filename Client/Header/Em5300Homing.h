@@ -33,10 +33,10 @@ public:
 	void RenderGBuffer(const DrawInfo& _Info);
 	void RenderShadow(const DrawInfo& _Info);
 
-	void Rain(const float _fDeltaTime);
-	void Set_Rain(const bool _bRain) { m_bReadyRain = _bRain; }
-	void Set_RainPos(const int _iPos) { m_iRainPos = _iPos; }
-	void Set_StartRain(const bool _bStartRain) { m_bStartRain = _bStartRain; }
+	void Homing(const float _fDeltaTime);
+	void Set_Homing(const bool _bRain) { m_bReadyHoming = _bRain; }
+	void Set_HomingPos(const int _iPos) { m_iHomingPos = _iPos; }
+	void Set_HomingStart(const bool _bStartRain) { m_bStartHoming = _bStartRain; }
 public:
 	virtual void	Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
@@ -60,8 +60,12 @@ public:
 
 private:
 	//무지성 불변수 파티
-
+	bool	m_bReadyHoming = false;
+	bool	m_bStartHoming = false;
+	bool	m_bHomingDir = false;
 
 	int		m_iHomingPos;
+
+	Vector3	m_vHomingDir;
 };
 #endif //

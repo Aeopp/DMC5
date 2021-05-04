@@ -1312,6 +1312,29 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
