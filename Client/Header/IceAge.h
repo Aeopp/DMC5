@@ -66,7 +66,7 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderEftIceParticle(const DrawInfo& _Info);
 private:
-	std::weak_ptr< ShapeParticle> _GeneratorParticle{};
+	// std::weak_ptr< ShapeParticle> _GeneratorParticle{};
 	// std::vector<Particle> _IceParticles{};
 
 	float EmissiveIntencity{ 1.f };

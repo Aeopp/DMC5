@@ -8,11 +8,8 @@
 #include "GraphicSystem.h"
 #include "RedQueen.h"
 
-
 IceAge::IceAge()
-{
-
-}
+{};
 
 void IceAge::Free()
 {
@@ -83,8 +80,9 @@ void IceAge::RenderInit()
 			{
 				this->RenderAlphaBlendEffect(_Info);
 			}
-		}/*,
+		}
 
+		/*,
 		{
 			"IceParticle",[this](const DrawInfo& _Info)
 			{
@@ -125,7 +123,7 @@ void IceAge::RenderInit()
 	DistortionIntencity = 1.2f;
 
 	// 얼음 보숭이 
-	_GeneratorParticle = AddGameObject<ShapeParticle>();
+	// _GeneratorParticle = AddGameObject<ShapeParticle>();
 };
 
 void IceAge::PlayStart(const std::optional<Vector3>& Location,
@@ -216,7 +214,8 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			};
 		};
 	}
-}
+};
+
 void IceAge::RenderEftIceParticle(const DrawInfo& _Info)
 {
 	//{

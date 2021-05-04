@@ -144,8 +144,6 @@ void PsMain(out float4 Color : COLOR0,
     };
     // 노이즈 끝.
     
-   
-    
     //float2 PrevUV0 = float2(
     //            lerp(SpritePrevXStart, SpritePrevXEnd, UV0.x),
     //            lerp(SpritePrevYStart, SpritePrevYEnd, UV0.y));
@@ -160,7 +158,8 @@ void PsMain(out float4 Color : COLOR0,
     EmissiveSample.rgb *= EmissiveIntencity;
     
     // Color = tex2D(Sprite, UV0);
-    Color = tex2D(Sprite, UV0 + finalNoise);
+    // Color = tex2D(Sprite, UV0 + );
+    Color = tex2D(Sprite, UV0);
     // Color = lerp(PrevColor, Color, SpriteProgressTime);
     
     Color.rgb *= ColorIntencity;

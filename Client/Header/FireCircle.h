@@ -2,8 +2,9 @@
 #define __FIRECIRCLE_H_
 #include "GameObject.h"
 #include "RenderInterface.h"
-#include <optional>
 #include "Vertexs.h"
+#include <optional>
+
 
 class FireCircle : public ENGINE::GameObject,
 			       public ENGINE::RenderInterface
@@ -36,28 +37,36 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
+	
 	void PlayStart(
-				const std::optional<Vector3>& Location = std::nullopt,
-		const Vector3& Rotation = { 0.f,0.f,0.f },
-				const float RollRotateSpeed =FMath::PI);
+					const Vector3& Scale  = { 0.004f, 0.004f,0.004f } ,
+		       // 재생 시킬 위치 
+				// 재생 시킬 회전 
+					const Vector3& Rotation = { 0.f,0.f,0.f },
+					const Vector3& Location = { 0.f,0.f,0.f },
+				const float CurRoll=0.0f,
+				// 회전 속도 . 
+				const float RollRotateSpeed =FMath::PI ,
+				const int32 StartSpriteCol=0 ,
+				const int32 StartSpriteRow=3);
 	void PlayEnd();
 public:
 	void SpriteUpdate(const float DeltaTime);
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	float SpriteProgressTime = 0.0f;
-	bool bNoise = true;
+	float   SpriteProgressTime = 0.0f;
+	bool    bNoise = true;
 
-	bool bOuterRender = false;
+	bool    bOuterRender = false;
 
-	float EmissiveIntencity{ 1.f };
-	float ColorIntencity{ 1.f };
-	float OuterDistortionIntencity{ 1.f };
-	float DistortionIntencity{ 1.f };
+	float   EmissiveIntencity{ 1.f };
+	float   ColorIntencity{ 1.f };
+	float   OuterDistortionIntencity{ 1.f };
+	float   DistortionIntencity{ 1.f };
 
-	float Radian = 0.0f;
-	float RadianSpeed = 1.f;
+	float   Radian = 0.0f;
+	float   RadianSpeed = 1.f;
 
 	Vector3 NoiseScale      { 1.f,2.f,3.f };
 	Vector3 NoiseScrollSpeed{ 1.f,2.f,3.f };
@@ -81,8 +90,16 @@ private:
 	float SpriteRow{ 8.f };
 	float SpriteCol{ 8.f };
 
+	float CurRoll{ 0.f };
+	Vector3 _Rotation{ 0.f,0.f,0.f };
+
+	float EditStartRoll{ 0.0f };
+	Vector3 EditPlayStartScale{ 0.004f,0.004f,0.004f };
+	Vector3 EditPlayStartLocation{ 0.f,0.f,0.f };
 	Vector3 EditPlayStartRotation {0.f,0.f,0.f};
 	float EditPlayRollRotateSpeed{ 0.f };
+	int32 EditSpriteCol{ 0 };
+	int32 EditSpriteRow{3 };
 };
 #endif //
 

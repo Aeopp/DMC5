@@ -21,6 +21,7 @@
 #include "Cbs_Middle.h"
 #include "Cbs_Long.h"
 #include "Buster_Arm_Left.h"
+
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -56,6 +57,7 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 		for (auto& pMonster : Monsters)
 			pMonster.lock()->Set_Coll(true);
 	}
+
 	switch (_eNeroComID)
 	{
 	case Nero::NeroCom_RedQueen:
