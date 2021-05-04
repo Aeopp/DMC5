@@ -53,6 +53,8 @@ private:
 	Vector3 _BeginPos = Vector3(0.f, 0.05f, 0.f);
 	Vector3 _Velocity0 = Vector3(0.f, 0.075f, 0.f);
 
+	Vector3 _ExtraColor = Vector3(0.f, 0.f, 0.f);
+
 private:
 	explicit StoneDebris() = default;
 	virtual ~StoneDebris() = default;

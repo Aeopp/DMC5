@@ -114,7 +114,7 @@ void AppearEm1000::RenderInit()
 
 void AppearEm1000::RenderGBuffer(const DrawInfo& _Info)
 {
-	if (2.f > _AccumulateTime)
+	if (0.5f > _AccumulateTime)
 		return;
 
 	if (MAX_SUBSET_IDX < static_cast<uint32>(_DebrisSubsetIdx))
@@ -147,7 +147,7 @@ void AppearEm1000::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
 		return;
 
-	if (2.f > _AccumulateTime)
+	if (0.5f > _AccumulateTime)
 	{
 		auto WeakSubset = _PlaneMesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
@@ -244,9 +244,9 @@ UINT AppearEm1000::Update(const float _fDeltaTime)
 	if (!_IsPlaying)
 		return 0;
 
-	if (5.f < _AccumulateTime)
+	if (2.f < _AccumulateTime)
 		Reset();
-	else if (2.f < _AccumulateTime)
+	else if (0.5f < _AccumulateTime)
 	{
 		_DebrisSubsetIdx += _PlayingSpeed * 50.f * _fDeltaTime;
 		_SliceAmount += 0.1f * _fDeltaTime;

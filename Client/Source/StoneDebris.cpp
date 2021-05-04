@@ -196,6 +196,7 @@ void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 	}
 
 	_Info.Fx->SetFloat("brightScale", _BrightScale);
+	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
 
 	auto WeakSubset = _DebrisMesh->GetSubset(_SubsetIdx);
 	if (auto SharedSubset = WeakSubset.lock();
@@ -382,7 +383,7 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 	}
 
 	//
-	Imgui_Modify();
+	//Imgui_Modify();
 
 	return 0;
 }
