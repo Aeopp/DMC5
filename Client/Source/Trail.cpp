@@ -70,16 +70,6 @@ void Trail::RenderInit()
 			}
 	} };
 
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
-		=
-	{
-		{"Collider" ,[this](const DrawInfo& _Info)
-			{
-				DrawCollider(_Info);
-			}
-		}
-	};
-
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
 		{"Trail",[this](const DrawInfo& _Info)
@@ -90,7 +80,7 @@ void Trail::RenderInit()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 16;
+	const int32 TriCnt = 24;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt+2;
@@ -102,6 +92,7 @@ void Trail::RenderInit()
 
 	_Desc.UpdateCycle = 0.0f;
 	_Desc.NewVtxCnt = 0;
+	UV0Multiply = 1.f;
 
 	Device = g_pDevice;
 
@@ -119,12 +110,21 @@ void Trail::RenderInit()
 
 	TrailMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
-
 	FireSpriteMap = Resources::Load<Texture >(
 		  "..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
+	ExplosionTrailMap =Resources::Load<Texture >(
+		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
 
+	EmissiveMskMap = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
+	//NoiseMap = Resources::Load<Texture>(
+	//	"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
+	//	
 	SpriteCol = 8;
 	SpriteRow = 8;
+
+	Scale = { 1.f,2.f,3.f };
+	ScrollSpeed = { 1.f,2.f,3.f };
 };
 
 void Trail::PlayStart(const Mode _Mode,
@@ -158,19 +158,25 @@ void Trail::PlayEnd()
 void Trail::RenderTrail(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 
 	if (CurMode ==Mode::Explosion)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+		_Info.Fx->SetTexture("TrailMap", ExplosionTrailMap->GetTexture());
 		_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
+		/*_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
+		_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed, 3);
+		_Info.Fx->SetFloatArray("Scale", Scale, 3);*/
+		
 	}
 	else if (CurMode == Mode::Non)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", NonDistortionIntencity);
+		_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 		_Info.Fx->SetTexture("SpriteMap", nullptr);
 	}
-
+	_Info.Fx->SetTexture("EmissiveMskMap", EmissiveMskMap->GetTexture());
+	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
 
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
@@ -201,7 +207,7 @@ void Trail::SpriteUpdate(const float DeltaTime)
 				SpriteRowIdx = 0;
 			}
 		}
-		SpriteCurUpdateCycle += 0.05f;
+		SpriteCurUpdateCycle += SpriteUpdateCycle;
 	}
 }
 void Trail::BufferUpdate(const float DeltaTime)
@@ -298,14 +304,13 @@ void Trail::VertexBufUpdate()
 		}
 	};
 
-	VtxUVCalc(VtxPtr);
-
 	_Desc.NewVtxCnt += 2;
-
+	VtxUVCalc(VtxPtr);
 	VtxSplineInterpolation(VtxPtr);
 
 	if (bEdit)
 	{
+		_VtxLog.resize(_Desc.NewVtxCnt);
 		for (size_t i = 0; i < _VtxLog.size(); ++i)
 		{
 			_VtxLog[i]   = VtxPtr[i];
@@ -360,8 +365,8 @@ void Trail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
 {
 	for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 	{
-		VtxPtr[i + 1].UV0 = { ((float)i / ((float)_Desc.NewVtxCnt - 2)) * UV0Multiply,0.f };
-		VtxPtr[i].UV0 = { ((float)i / ((float)_Desc.NewVtxCnt - 2)) * UV0Multiply ,1.f };
+		VtxPtr[i + 1].UV0 = { ((float)i / ((float)_Desc.NewVtxCnt - 2)) ,0.f };
+		VtxPtr[i].UV0 = { ((float)i / ((float)_Desc.NewVtxCnt - 2)),1.f };
 
 		VtxPtr[i + 1].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2),0.f };
 		VtxPtr[i].UV1 = { (float)i / ((float)_Desc.NewVtxCnt - 2) ,1.f };
@@ -434,6 +439,7 @@ void Trail::Editor()
 		const std::string ChildName = GetName() + "_Play";
 		ImGui::BeginChild(ChildName.c_str());
 		{
+		
 			static int32 _Mode;
 			ImGui::InputInt("Mode", &_Mode);
 			if (ImGui::SmallButton("Play"))
@@ -444,9 +450,13 @@ void Trail::Editor()
 			{
 				PlayEnd();
 			}
-
 			ImGui::Text("Cur Col Idx : %d", (int32)SpriteColIdx);
 			ImGui::Text("Cur Row Idx : %d", (int32)SpriteRowIdx);
+			for (auto& _Vtx : _VtxLog)
+			{
+				ImGui::Text(" UV0 %9.6f ,%9.6f", _Vtx.UV0.x, _Vtx.UV0.y);
+				ImGui::Text(" UV1 %9.6f ,%9.6f", _Vtx.UV1.x, _Vtx.UV1.y);
+			}
 
 			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
@@ -458,8 +468,12 @@ void Trail::Editor()
 			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 
+			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
+			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");
+			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
+			
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");
 			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);

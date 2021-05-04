@@ -4,6 +4,8 @@
 #include "Renderer.h"
 #include "Subset.h"
 #include "Wire_Arm_Grab.h"
+#include "Monster.h"
+#include "NeroFSM.h"
 
 Wire_Arm::Wire_Arm()
 	:m_bIsRender(false)
@@ -82,7 +84,7 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 	memcpy(&FinalPos, CollWorld.m[3], sizeof(Vector3));
 	//D3DXVec3TransformNormal(&FinalPos, &FinalPos, &TestRotX);
 	m_pTransform.lock()->SetPosition(FinalPos);
-	if (m_pMesh->IsAnimationEnd())
+	if ("Wire_Arm_Start31" == m_pMesh->AnimName && m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Wire_Snatch_End", false);
@@ -167,6 +169,27 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		_RenderProperty.bRender = m_bIsRender = false;
 	}
 	break;
+	case GAMEOBJECTTAG::Monster200:
+	{
+		Vector3 MyPos = m_pTransform.lock()->GetPosition();
+		MyPos.y -= 0.2f;
+		m_pWireArmGrab.lock()->GetComponent<Transform>().lock()->SetPosition(MyPos);
+		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
+		m_pWireArmGrab.lock()->SetActive(true);
+		_RenderProperty.bRender = m_bIsRender = false;
+	}
+	break;
+	case GAMEOBJECTTAG::Monster5300:
+	{
+		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
+		m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
+		m_pCollider.lock()->SetActive(false);
+
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
+		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Hip");
+		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+	}
+		break;
 	default:
 		break;
 	}

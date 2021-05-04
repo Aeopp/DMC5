@@ -36,6 +36,7 @@ public:
 	float Get_PlayingAccTime();
 public:
 	void	SetAttType(ATTACKTYPE _eAttDir) { m_BattleInfo.eAttackType = _eAttDir; }
+	void	SetWeaponState(UINT _StateIndex) { m_iBoneIndex = _StateIndex; }
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
@@ -53,6 +54,11 @@ private:
 	std::weak_ptr<SphereCollider> m_pCollider;
 
 	Matrix*				m_pParentMat;
+	Matrix				m_MyRenderMat;
+
+	std::vector<Matrix*> m_vecMyBoneMat;
+
+	UINT				m_iBoneIndex = 0;
 };
 
 

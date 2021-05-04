@@ -198,6 +198,13 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(Cbs_Dash::Create(this, CBS_DASH, m_pNero));
 
 	m_vecState.emplace_back(StateReset::Create(this, STATERESET, m_pNero));
+
+	m_vecState.emplace_back(Hit_Air_Away::Create(this, HIT_AIR_AWAY, m_pNero));
+	m_vecState.emplace_back(Hit_Ground_Away::Create(this, HIT_GROUND_AWAY, m_pNero));
+
+	m_vecState.emplace_back(StunStart::Create(this, STUN_START, m_pNero));
+	m_vecState.emplace_back(StunLoop::Create(this, STUN_LOOP, m_pNero));
+	m_vecState.emplace_back(StunEnd::Create(this, STUN_END, m_pNero));
 	return S_OK;						
 }
 

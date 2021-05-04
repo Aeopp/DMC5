@@ -53,8 +53,8 @@ public:
 		IDirect3DDevice9* const _Device, const float Width, const float Height);
 	static inline bool InnerPointFromFace(const Vector3& Point, const std::array<Vector3, 3ul>& Face);
 
-	static inline Vector2 ScreenCoordToNDC(const float x, const float y , const float Width, const float Height);
-	static inline Vector2 NDCToScreenCoord(const float x, const float y , const float Width, const float Height);
+	static inline Vector2 ScreenCoordToNDC(const float x, const float y, const float Width, const float Height);
+	static inline Vector2 NDCToScreenCoord(const float x, const float y, const float Width, const float Height);
 
 	// 임의의 위치 벡터를 평면에 투영시킨 위치 벡터를 반환.
 	static inline Vector3 ProjectionPointFromFace(const D3DXPLANE _Plane, const Vector3& Point);
@@ -255,11 +255,11 @@ auto& FMath::GetGenerator()
 	return gen;
 };
 
-
-inline Vector3 FMath::BezierCurve
-(   const Vector3& Start,
+inline Vector3 FMath::BezierCurve(
+	const Vector3& Start,
 	const Vector3& CP0,
-	const Vector3& End, const float t)
+	const Vector3& End,
+	const float t)
 {
 	return FMath::Lerp(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, End, t), t);
 };
@@ -273,7 +273,6 @@ inline Vector3 FMath::BezierCurve(
 	return BezierCurve(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, CP1, t), FMath::Lerp(CP1, End, t), t);
 };
 
-
 inline Vector2 FMath::ScreenCoordToNDC(const float x, const float y,
 	const float Width, const float Height)
 {
@@ -283,7 +282,7 @@ inline Vector2 FMath::ScreenCoordToNDC(const float x, const float y,
 };
 
 inline Vector2 FMath::NDCToScreenCoord(
-	const float x, const float y ,
+	const float x, const float y,
 	const float Width, const float Height)
 {
 	return Vector2

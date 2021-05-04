@@ -79,16 +79,10 @@ Engine.pdb
 vc142.pdb
 Client.pdb
 Client.exe
-
-
-
-
-
-
-
-
-
-
+EngineDEBUG.dll
+EngineDEBUG.exp
+EngineDEBUG.pdb
+EngineDEBUG.lib
 
 
 

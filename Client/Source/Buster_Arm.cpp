@@ -76,9 +76,17 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
+
+	if ("em0000_Buster_End" == m_pMesh->AnimName && 0.2f <= m_pMesh->PlayingTime())
+		SetActive(false);
+
+	if ("em5000_Buster_End" == m_pMesh->AnimName && 0.2f <= m_pMesh->PlayingTime())
+		SetActive(false);
+
 	if (m_pMesh->IsAnimationEnd())
 	{
-		SetActive(false);
+		if ("em0000_Buster_Start" != m_pMesh->AnimName)
+			SetActive(false);
 	}
 
 	return 0;
@@ -108,8 +116,10 @@ void Buster_Arm::OnEnable()
 	m_pTransform.lock()->SetWorldMatrix(NeroWorld);
 
 	_RenderProperty.bRender = m_bIsRender;
+
+
 	if (m_pCollider.lock())
-	m_pCollider.lock()->SetActive(true);
+		m_pCollider.lock()->SetActive(true);
 
 }
 
@@ -122,7 +132,7 @@ void Buster_Arm::OnDisable()
 	_RenderProperty.bRender = m_bIsRender;
 
 	if(m_pCollider.lock())
-	m_pCollider.lock()->SetActive(false);
+		m_pCollider.lock()->SetActive(false);
 }
 
 void Buster_Arm::Hit(BT_INFO _BattleInfo, void* pArg)
@@ -158,6 +168,19 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			break;
 		case Nero::ANI_BUSTER_AIR_CATCH:
 			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM0000_BUSTER_AIR);
+			break;
+		default:
+			break;
+		}
+		break;
+	case Monster200:
+		switch (CurNeroAnimationIndex)
+		{
+		case Nero::ANI_BUSTER_START:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM200_BUSTER_START);
+			break;
+		case Nero::ANI_BUSTER_AIR_CATCH:
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM200_BUSTER_AIR_START);
 			break;
 		default:
 			break;

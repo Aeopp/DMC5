@@ -59,6 +59,9 @@ technique brightpass
 {
     pass p0
     {
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        alphablendenable = true;
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();
     }

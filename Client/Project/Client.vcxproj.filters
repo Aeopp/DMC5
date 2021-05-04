@@ -175,6 +175,9 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing">
       <UniqueIdentifier>{ae8e25f1-06da-4841-ab2e-6eee047285ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Effect\Stone">
+      <UniqueIdentifier>{bd5c7449-3e0b-4e89-ba48-858fc9d8b626}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -326,15 +329,13 @@
     <ClInclude Include="..\Header\Wire_Arm_Grab.h">
       <Filter>02.GameObject\01.Unit\01.Player\03.WireArm</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CircleWave.h" />
-    <ClInclude Include="..\Header\AirHike.h" />
     <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferLiquid.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\Effect\GBufferEffect.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingSK.hlsl">
@@ -352,9 +353,6 @@
     <ClInclude Include="..\..\Resource\Shader\UI\BtlPanel.hlsl">
       <Filter>02.GameObject\UI\BtlPanel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Cbs_Long.h" />
-    <ClInclude Include="..\Header\Cbs_Middle.h" />
-    <ClInclude Include="..\Header\Cbs_Short.h" />
     <ClInclude Include="..\Header\Em200.h">
       <Filter>02.GameObject\01.Unit\02.Monster\01.Em200</Filter>
     </ClInclude>
@@ -373,9 +371,41 @@
     <ClInclude Include="..\Header\Em5300Rain.h">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Trail.h" />
     <ClInclude Include="..\Header\Em5300Homing.h">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\StoneDebrisMulti.h">
+      <Filter>02.GameObject\Effect\Stone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\AppearEm1000.h">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\StoneDebris.h">
+      <Filter>02.GameObject\Effect\Stone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ShapeParticle.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Buster_Arm_Left.h">
+      <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Cbs_Long.h">
+      <Filter>02.GameObject\01.Unit\01.Player\06.Cerberos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Cbs_Middle.h">
+      <Filter>02.GameObject\01.Unit\01.Player\06.Cerberos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Cbs_Short.h">
+      <Filter>02.GameObject\01.Unit\01.Player\06.Cerberos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\AirHike.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\CircleWave.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Trail.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -533,9 +563,6 @@
       <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Nero.cpp" />
-    <ClCompile Include="..\Source\NeroFSM.cpp">
-      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Nero.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\00.Nero</Filter>
     </ClCompile>
@@ -555,11 +582,6 @@
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\CircleWave.cpp" />
-    <ClCompile Include="..\Source\AirHike.cpp" />
-    <ClCompile Include="..\Source\Cbs_Long.cpp" />
-    <ClCompile Include="..\Source\Cbs_Middle.cpp" />
-    <ClCompile Include="..\Source\Cbs_Short.cpp" />
     <ClCompile Include="..\Source\Em200.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\01.Em200</Filter>
     </ClCompile>
@@ -578,9 +600,44 @@
     <ClCompile Include="..\Source\Em5300Rain.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\03.Rain</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Trail.cpp" />
     <ClCompile Include="..\Source\Em5300Homing.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\04.Homing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\StoneDebrisMulti.cpp">
+      <Filter>02.GameObject\Effect\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AppearEm1000.cpp">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\StoneDebris.cpp">
+      <Filter>02.GameObject\Effect\Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ShapeParticle.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Buster_Arm_Left.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Cbs_Long.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\06.Cerberos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Cbs_Middle.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\06.Cerberos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Cbs_Short.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\06.Cerberos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AirHike.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CircleWave.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Trail.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NeroFSM.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -613,9 +670,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\Glint.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\WaveCircle.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
   </ItemGroup>
