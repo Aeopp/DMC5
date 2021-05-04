@@ -247,6 +247,8 @@ void PhysicsSystem::FetchResults(const bool _bBlock)
 	std::weak_ptr<Collider> pCollider;
 	for (UINT i = 0; i < nNumActors; ++i)
 	{
+		if ((ppActors[i]->userData) == nullptr)
+			continue;
 		pCollider = ((LPPXUSERDATA)(ppActors[i]->userData))->pCollider;
 
 		if (pCollider.expired())

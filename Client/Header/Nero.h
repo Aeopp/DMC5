@@ -450,7 +450,17 @@ private:
 	vector<PxU32>		m_vecIndices;
 	vector<PxClothParticle>		m_vecClothParticle;
 
-	PxCloth* pCloth;
+	PxCloth* pCloth = nullptr;
+
+	Node* pThigh[2];
+	Node* pShin[2];
+
+	PxRigidActor* pActor[4];
+	PxShape* pShape[4];
+
+	float fRadius;
+
+	float fDegree = 0.f;
 };
 
 

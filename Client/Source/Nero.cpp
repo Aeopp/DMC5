@@ -226,7 +226,8 @@ UINT Nero::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
 
-#pragma region CLOTH_TEST
+
+#pragma region CLOTH_UPDATE
 
 
 	PxClothParticleData* data = pCloth->lockParticleData(PxDataAccessFlag::eREADABLE);
@@ -236,7 +237,32 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	data->unlock();
 
-	for (UINT i = 0; i < m_vecClothBone.size(); ++i)
+	for (UINT nCoulmn = 0; nCoulmn < 29; nCoulmn += 4)
+	{
+		for (UINT nRow = 0; nRow < 6; nRow++)
+		{
+			int nParitlceIndex = nCoulmn * 6 + nRow;
+			int nBoneIndex = (nCoulmn / 4) * 6 + nRow;
+
+			memcpy_s(m_vecClothBone[nBoneIndex]->matToRoot.m[3], sizeof(D3DXVECTOR3), &m_vecClothParticle[nParitlceIndex].pos, sizeof(D3DXVECTOR3));
+
+			if (nullptr == m_vecClothBone[nBoneIndex]->pParent)
+			{
+				//m_vecClothBone[nBoneIndex]->matToRoot = m_vecClothBone[nBoneIndex]->pNode->ToRoot;
+				continue;
+			}
+
+			D3DXMATRIX matInv = m_vecClothBone[nBoneIndex]->pParent->matToRoot;
+
+			D3DXMatrixInverse(&matInv, nullptr, &matInv);
+
+			m_vecClothBone[nBoneIndex]->matLocal = m_vecClothBone[nBoneIndex]->matToRoot * matInv;
+
+			m_vecClothBone[nBoneIndex]->pNode->ClothTrans = m_vecClothBone[nBoneIndex]->matLocal;
+		}
+	}
+
+	/*for (UINT i = 0; i < m_vecClothBone.size(); ++i)
 	{
 		memcpy_s(m_vecClothBone[i]->matToRoot.m[3], sizeof(D3DXVECTOR3), &m_vecClothParticle[i].pos, sizeof(D3DXVECTOR3));
 		
@@ -250,16 +276,8 @@ UINT Nero::Update(const float _fDeltaTime)
 		m_vecClothBone[i]->matLocal = m_vecClothBone[i]->matToRoot * matInv;
 
 		m_vecClothBone[i]->pNode->ClothTrans = m_vecClothBone[i]->matLocal;
-	}
+	}*/
 
-	D3DXVECTOR3 vLook = m_pTransform.lock()->GetLook();
-	//pCloth->setParticleAccelerations(PxVec4(vLook.x, vLook.y, vLook.z, 1.f));
-	pCloth->setWindVelocity(PxVec3(vLook.x, vLook.y, vLook.z) * 1000.f);
-	//for (UINT nIdx = 0; nIdx < m_vecClothParticle.size(); ++nIdx)
-	//{
-	//	pCloth->setParticleAccelerations()
-	//	m_vecClothParticle[nIdx].pos = data->particles[nIdx].pos;
-	//}
 
 	D3DXVECTOR3 vPosition = m_pTransform.lock()->GetPosition();
 	D3DXQUATERNION tQuaternion = m_pTransform.lock()->GetQuaternion();
@@ -267,7 +285,7 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	Node* pNode = m_pMesh->GetNode("Chest");
 
-	D3DXMATRIX matChest = pNode->Transform;
+	D3DXMATRIX matChest = pNode->ToRoot;
 
 	D3DXQUATERNION tChestQuat;
 	D3DXVECTOR3 vChestScale;
@@ -275,10 +293,82 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	D3DXMatrixDecompose(&vChestScale, &tChestQuat, &vChestPos, &matChest);
 
-	targetPose.p = PxVec3(vPosition.x * 1000, vPosition.y * 1000, vPosition.z * 1000);
+	targetPose.p = PxVec3(vPosition.x , vPosition.y, vPosition.z );
+	//targetPose.p = pCloth->getGlobalPose().p;
+
+	//targetPose.p = PxVec3(vChestPos.x, vChestPos.y, vChestPos.z);
+
 	targetPose.q = PxQuat(tChestQuat.x, tChestQuat.y, tChestQuat.z, tChestQuat.w);
+
+	//pCloth->setTargetPose(targetPose);
+
+	PxClothCollisionSphere collSphere[4];
+
+	D3DXMATRIX matThigh = pThigh[0]->ToRoot;
 	
-	pCloth->setTargetPose(targetPose);
+	PxVec3 vThighPos(0.f, 0.f, 0.f);
+
+	memcpy_s(&vThighPos, sizeof(PxVec3), matThigh.m[3], sizeof(PxVec3));
+
+	D3DXVECTOR3 vTemp;
+	D3DXMATRIX matRY;
+
+	D3DXMatrixRotationY(&matRY, D3DXToRadian(fDegree));
+
+	memcpy_s(&vTemp, sizeof(PxVec3), &vThighPos, sizeof(PxVec3));
+	D3DXVec3TransformCoord(&vTemp, &vTemp, &matRY);
+	memcpy_s(&vThighPos, sizeof(PxVec3), &vTemp, sizeof(PxVec3));
+
+	collSphere[0].pos = vThighPos;
+	collSphere[0].radius = fRadius;
+
+	D3DXMATRIX matShin = pShin[0]->ToRoot;
+	PxVec3 vShinPos(0.f, 0.f, 0.f);
+	memcpy_s(&vShinPos, sizeof(PxVec3), matShin.m[3], sizeof(PxVec3));
+
+	memcpy_s(&vTemp, sizeof(PxVec3), &vShinPos, sizeof(PxVec3));
+	D3DXVec3TransformCoord(&vTemp, &vTemp, &matRY);
+	memcpy_s(&vShinPos, sizeof(PxVec3), &vTemp, sizeof(PxVec3));
+
+	collSphere[1].pos = vShinPos ;
+	collSphere[1].radius = fRadius * 0.5f;
+
+	
+	
+	matThigh = pThigh[1]->ToRoot;
+
+	memcpy_s(&vThighPos, sizeof(PxVec3), matThigh.m[3], sizeof(PxVec3));
+
+	memcpy_s(&vTemp, sizeof(PxVec3), &vThighPos, sizeof(PxVec3));
+	D3DXVec3TransformCoord(&vTemp, &vTemp, &matRY);
+	memcpy_s(&vThighPos, sizeof(PxVec3), &vTemp, sizeof(PxVec3));
+
+	collSphere[2].pos = vThighPos ;
+	collSphere[2].radius = fRadius;
+
+	matShin = pShin[1]->ToRoot;
+	memcpy_s(&vShinPos, sizeof(PxVec3), matShin.m[3], sizeof(PxVec3));
+
+	memcpy_s(&vTemp, sizeof(PxVec3), &vShinPos, sizeof(PxVec3));
+	D3DXVec3TransformCoord(&vTemp, &vTemp, &matRY);
+	memcpy_s(&vShinPos, sizeof(PxVec3), &vTemp, sizeof(PxVec3));
+	collSphere[3].pos = vShinPos;
+	collSphere[3].radius = fRadius * 0.5f;
+
+	pCloth->setCollisionSpheres(collSphere, 4);
+
+	PxTransform clothTransform = pCloth->getGlobalPose();
+
+	PxSphereGeometry geometry;
+
+	for (UINT i = 0; i < 4; ++i)
+	{
+		pShape[i]->getSphereGeometry(geometry);
+		geometry.radius = collSphere[i].radius;
+		pShape[i]->setGeometry(geometry);
+		pActor[i]->setGlobalPose(PxTransform(collSphere[i].pos, PxQuat(0.f, 0.f, 0.f, 1.f)));
+	}
+
 #pragma endregion
 	Update_Majin(_fDeltaTime);
 
@@ -508,107 +598,228 @@ void Nero::RenderInit()
 	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Animation");
 	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Player.Animation");
 
-#pragma region CLOTH_TEST
-	Node* pNode = m_pMesh->GetNode("CoatCloth_00_04");
-
-	LPCLOTHBONE pCurr = nullptr;
-	LPCLOTHBONE pNext = nullptr;
-
-	int nIndex = 0;
-	float fInvMass = 0;
-	while (true)
-	{
-		pNext = new CLOTHBONE;
-
-
-		pNext->pParent = pCurr;
-
-		pNext->sName = pNode->Name;
-		pNext->matLocal = pNode->Transform;
-		pNext->matToRoot = pNode->ToRoot;
-		pNext->pNode = pNode;
-
-		pNext->vPos.x = pNext->matToRoot.m[3][0];
-		pNext->vPos.y = pNext->matToRoot.m[3][1];
-		pNext->vPos.z = pNext->matToRoot.m[3][2];
-
-
-		m_vecClothParticle.push_back(PxClothParticle(PxVec3(pNext->vPos.x, pNext->vPos.y, pNext->vPos.z), fInvMass));
-		m_vecClothBone.push_back(pNext);
-
-		pCurr = pNext;
-
-		if (0 == pNode->Childrens.size())
-		{
-			nIndex++;
-			string sNextRootNode = "CoatCloth_0";
-			char szBuf[16] = {};
-
-			_itoa_s(nIndex, szBuf, 10);
-			sNextRootNode += szBuf;
-
-			if (7 == nIndex)
-				sNextRootNode += "_04";
-			else
-				sNextRootNode += "_01";
-
-			pNode = m_pMesh->GetNode(sNextRootNode);
-
-			if (nullptr == pNode)
-				break;
-
-			pCurr = nullptr;
-			pNext = nullptr;
-			fInvMass = 0.f;
-			continue;
-		}
-
-		//fInvMass = 1.f;
-		fInvMass += 0.25f;
-		pNode = pNode->Childrens[0];
-	}
-
-	PxClothMeshDesc meshDesc;
-
-	meshDesc.setToDefault();
-
-	meshDesc.points.count = m_vecClothParticle.size();
-	meshDesc.points.stride = sizeof(PxClothParticle);
-	meshDesc.points.data = m_vecClothParticle.data();
-
-	//meshDesc quad data 설정
-	for (UINT nCoulmn = 0; nCoulmn < 7; nCoulmn++)
-	{
-		for (UINT nRow = 0; nRow < 4; nRow++)
-		{
-			m_vecIndices.push_back(nCoulmn * 5 + nRow);
-			m_vecIndices.push_back(nCoulmn * 5 + nRow + 5);
-			m_vecIndices.push_back(nCoulmn * 5 + nRow + 5 + 1);
-			m_vecIndices.push_back(nCoulmn * 5 + nRow + 1);
-		}
-	}
-
-	meshDesc.quads.count = 28;
-	meshDesc.quads.stride = sizeof(PxU32) * 4;
-	meshDesc.quads.data = m_vecIndices.data();
-
-	PxClothFabric* pFabric = PxClothFabricCreate(*Physics::GetPxPhysics(), meshDesc, PxVec3(0.f, -9.8f *2.f, 0.f));
-
-	//
-	//if (false == meshDesc.isValid())
-	//{
-	//	return;
-	//}
-
-	PxTransform pose = PxTransform(PxIdentity);
-	pCloth = Physics::GetPxPhysics()->createCloth(pose, *pFabric, m_vecClothParticle.data(), PxClothFlag::eSCENE_COLLISION);
-
-
-	Physics::AddActor(GetSceneID(), *pCloth);
-#pragma endregion
 
 
 	m_pMesh->EnableToRootMatricies();
+
+	if (pCloth == nullptr)
+	{
+#pragma region CLOTH_TEST
+
+		fRadius = 10.f;
+		pThigh[0] = m_pMesh->GetNode("L_Thigh");
+		pShin[0] = m_pMesh->GetNode("L_Knee_SR");
+
+		pThigh[1] = m_pMesh->GetNode("R_Thigh");
+		pShin[1] = m_pMesh->GetNode("R_Knee_SR");
+
+
+		Node* pNode = m_pMesh->GetNode("CoatCloth_00_03");
+
+		LPCLOTHBONE pCurr = nullptr;
+		LPCLOTHBONE pNext = nullptr;
+
+		int nIndex = 0;
+		float fInvMass = 0;
+
+
+		PxClothParticle clothParticle[6][29];
+
+		int nRow = 0;
+		int nCoulmn = 0;
+		while (true)
+		{
+			pNext = new CLOTHBONE;
+
+
+			pNext->pParent = pCurr;
+
+			pNext->sName = pNode->Name;
+			pNext->matLocal = pNode->Transform;
+			pNext->matToRoot = pNode->ToRoot;
+			pNext->pNode = pNode;
+
+			pNext->vPos.x = pNext->matToRoot.m[3][0];
+			pNext->vPos.y = pNext->matToRoot.m[3][1];
+			pNext->vPos.z = pNext->matToRoot.m[3][2];
+
+
+			clothParticle[nRow][nCoulmn * 4] = PxClothParticle(PxVec3(pNext->vPos.x, pNext->vPos.y, pNext->vPos.z), (nRow > 1 ? 1.f : 0.f));
+			//m_vecClothParticle.push_back(PxClothParticle(PxVec3(pNext->vPos.x, pNext->vPos.y, pNext->vPos.z), fInvMass));
+			m_vecClothBone.push_back(pNext);
+
+			pCurr = pNext;
+
+			if (0 == pNode->Childrens.size())
+			{
+				nIndex++;
+				string sNextRootNode = "CoatCloth_0";
+				char szBuf[16] = {};
+
+				_itoa_s(nIndex, szBuf, 10);
+				sNextRootNode += szBuf;
+
+				if (7 == nIndex)
+					sNextRootNode += "_03";
+				else
+					sNextRootNode += "_00";
+
+				pNode = m_pMesh->GetNode(sNextRootNode);
+
+				if (nullptr == pNode)
+					break;
+
+				pCurr = nullptr;
+				pNext = nullptr;
+				fInvMass = 0.f;
+
+				nCoulmn++;
+				nRow = 0;
+				continue;
+			}
+
+			//fInvMass = 1.f;
+
+			if (pCurr->pParent)
+				fInvMass = 1.f;
+
+			pNode = pNode->Childrens[0];
+
+			nRow++;
+		}
+
+		//중간 값 보간 처리.
+
+		for (UINT nCoulmn = 0; nCoulmn != 28; nCoulmn += 4)
+		{
+			UINT nStart = nCoulmn;
+			UINT nEnd = nCoulmn + 4;
+
+			for (UINT nRow = 0; nRow < 6; ++nRow)
+			{
+				clothParticle[nRow][nCoulmn + 1].pos = clothParticle[nRow][nEnd].pos * 0.25f + clothParticle[nRow][nStart].pos * 0.75f;
+				clothParticle[nRow][nCoulmn + 1].invWeight = nRow > 1 ? 1.f : 0.f;
+				clothParticle[nRow][nCoulmn + 2].pos = clothParticle[nRow][nEnd].pos * 0.5f + clothParticle[nRow][nStart].pos * 0.5f;
+				clothParticle[nRow][nCoulmn + 2].invWeight = nRow > 1 ? 1.f : 0.f;
+				clothParticle[nRow][nCoulmn + 3].pos = clothParticle[nRow][nEnd].pos * 0.75f + clothParticle[nRow][nStart].pos * 0.25f;
+				clothParticle[nRow][nCoulmn + 3].invWeight = nRow > 1 ? 1.f : 0.f;
+			}
+		}
+
+		for (UINT nCoulmn = 0; nCoulmn < 29; nCoulmn++)
+		{
+			for (UINT nRow = 0; nRow < 6; nRow++)
+				m_vecClothParticle.push_back(clothParticle[nRow][nCoulmn]);
+		}
+
+		PxClothMeshDesc meshDesc;
+
+		meshDesc.setToDefault();
+
+		meshDesc.points.count = m_vecClothParticle.size();
+		meshDesc.points.stride = sizeof(PxClothParticle);
+		meshDesc.points.data = m_vecClothParticle.data();
+
+		//meshDesc quad data 설정
+		for (UINT nCoulmn = 0; nCoulmn < 28; nCoulmn++)
+		{
+			for (UINT nRow = 0; nRow < 5; nRow++)
+			{
+				m_vecIndices.push_back(nCoulmn * 6 + nRow);
+				m_vecIndices.push_back(nCoulmn * 6 + nRow + 1);
+				m_vecIndices.push_back(nCoulmn * 6 + nRow + 6 + 1);
+				m_vecIndices.push_back(nCoulmn * 6 + nRow + 6);
+			}
+		}
+
+		meshDesc.quads.count = 5 * 28;
+		meshDesc.quads.stride = sizeof(PxU32) * 4;
+		meshDesc.quads.data = m_vecIndices.data();
+
+		PxClothFabric* pFabric = PxClothFabricCreate(*Physics::GetPxPhysics(), meshDesc, PxVec3(0.f, -9.8f * 2.f, 0.f));
+
+		//
+		//if (false == meshDesc.isValid())
+		//{
+		//	return;
+		//}
+
+		PxTransform pose = PxTransform(PxIdentity);
+		pCloth = Physics::GetPxPhysics()->createCloth(pose, *pFabric, m_vecClothParticle.data(), PxClothFlag::eSWEPT_CONTACT);
+
+
+		Physics::AddActor(GetSceneID(), *pCloth);
+
+		pCloth->setSelfCollisionDistance(4.f);
+		pCloth->setInertiaScale(0.5f);
+
+		PxClothCollisionSphere collSphere[4];
+
+		D3DXMATRIX matThigh = pThigh[0]->ToRoot;
+		PxVec3 vThighPos(0.f, 0.f, 0.f);
+		memcpy_s(&vThighPos, sizeof(PxVec3), matThigh.m[3], sizeof(PxVec3));
+
+
+		//
+		D3DXVECTOR3 v1, v2;
+		D3DXQUATERNION t1;
+		D3DXMatrixDecompose(&v1, &t1, &v2, &matThigh);
+		//
+
+		collSphere[0].pos = vThighPos;
+		collSphere[0].radius = 10.f;
+
+		D3DXMATRIX matShin = pShin[0]->ToRoot;
+		PxVec3 vShinPos(0.f, 0.f, 0.f);
+		memcpy_s(&vShinPos, sizeof(PxVec3), matShin.m[3], sizeof(PxVec3));
+
+		collSphere[1].pos = vShinPos;
+		collSphere[1].radius = 10.f;
+
+		matThigh = pThigh[1]->ToRoot;
+		memcpy_s(&vThighPos, sizeof(PxVec3), matThigh.m[3], sizeof(PxVec3));
+
+		collSphere[2].pos = vThighPos;
+		collSphere[2].radius = 10.f;
+
+		matShin = pShin[1]->ToRoot;
+		memcpy_s(&vShinPos, sizeof(PxVec3), matShin.m[3], sizeof(PxVec3));
+
+		collSphere[3].pos = vShinPos;
+		collSphere[3].radius = 10.f;
+
+		pCloth->setCollisionSpheres(collSphere, 4);
+		pCloth->addCollisionCapsule(0, 1);
+		pCloth->addCollisionCapsule(2, 3);
+
+		pShape[0] = Physics::GetPxPhysics()->createShape(PxSphereGeometry(fRadius), *Physics::GetDefaultMaterial(), true);
+		pActor[0] = Physics::GetPxPhysics()->createRigidStatic(physx::PxTransform(PxVec3(0.f, 0.f, 0.f), PxQuat(0.f, 0.f, 0.f, 1.f)));
+		pActor[0]->attachShape(*pShape[0]);
+		pShape[0]->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+		pShape[0]->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+		//Physics::AddActor(GetSceneID(), *pActor[0]);
+
+		pShape[1] = Physics::GetPxPhysics()->createShape(PxSphereGeometry(fRadius), *Physics::GetDefaultMaterial(), true);
+		pActor[1] = Physics::GetPxPhysics()->createRigidStatic(physx::PxTransform(PxVec3(0.f, 0.f, 0.f), PxQuat(0.f, 0.f, 0.f, 1.f)));
+		pActor[1]->attachShape(*pShape[1]);
+		pShape[1]->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+		pShape[1]->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+		//Physics::AddActor(GetSceneID(), *pActor[1]);
+
+		pShape[2] = Physics::GetPxPhysics()->createShape(PxSphereGeometry(fRadius), *Physics::GetDefaultMaterial(), true);
+		pActor[2] = Physics::GetPxPhysics()->createRigidStatic(physx::PxTransform(PxVec3(0.f, 0.f, 0.f), PxQuat(0.f, 0.f, 0.f, 1.f)));
+		pActor[2]->attachShape(*pShape[2]);
+		//Physics::AddActor(GetSceneID(), *pActor[2]);
+
+		pShape[3] = Physics::GetPxPhysics()->createShape(PxSphereGeometry(fRadius), *Physics::GetDefaultMaterial(), true);
+		pActor[3] = Physics::GetPxPhysics()->createRigidStatic(physx::PxTransform(PxVec3(0.f, 0.f, 0.f), PxQuat(0.f, 0.f, 0.f, 1.f)));
+		pActor[3]->attachShape(*pShape[3]);
+		//Physics::AddActor(GetSceneID(), *pActor[3]);
+
+
+#pragma endregion
+
+	}
 
 	PushEditEntity(m_pMesh.get());
 }
@@ -645,6 +856,9 @@ void Nero::RenderReady()
 void Nero::Editor()
 {
 	Unit::Editor();
+
+	ImGui::InputFloat("Radii", &fRadius);
+	ImGui::InputFloat("Degree", &fDegree);
 	bool MyButton = true;
 	float ZeroDotOne = 0.1f;
 	if (bEdit)
