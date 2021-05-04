@@ -170,7 +170,8 @@ void PsMain(out float4 Color : COLOR0,
     float4 trailsample = tex2D(Trail, UV0);
     Color.a *= trailsample.a;
     
-    Color1 = trailsample;
+    float4 NoiseSample = tex2D(Noise, UV0 + finalNoise);
+    Color1 = NoiseSample;
     Color1.rgb *= DistortionIntencity;
     
     // 소프트 파티클 계산 .... 

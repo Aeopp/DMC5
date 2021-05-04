@@ -103,8 +103,11 @@ void FireCircle::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 메시
+	// Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
 	Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
 	Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
+
+	// Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\halfpipe.fbx");
 	// 텍스쳐 
 	SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\fire_explosive_01.tga");
 	TrailMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire.tga");

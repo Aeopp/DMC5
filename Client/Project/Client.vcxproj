@@ -179,6 +179,7 @@
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
+    <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
+    <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
@@ -384,6 +386,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\FireCircle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\IceAge.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

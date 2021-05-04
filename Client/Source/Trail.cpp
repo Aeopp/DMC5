@@ -80,7 +80,7 @@ void Trail::RenderInit()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 24;
+	const int32 TriCnt = 32;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt+2;
@@ -125,6 +125,8 @@ void Trail::RenderInit()
 
 	Scale = { 1.f,2.f,3.f };
 	ScrollSpeed = { 1.f,2.f,3.f };
+
+	EmissiveIntencity = 0.9f;
 };
 
 void Trail::PlayStart(const Mode _Mode,

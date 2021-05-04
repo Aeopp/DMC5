@@ -35,6 +35,8 @@
 #include "SpriteEffect.h"
 #include "DashTrail.h"
 #include "FireCircle.h"
+#include "IceAge.h"
+
 #include <iostream>
 #include <fstream>
 
@@ -53,8 +55,7 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-}
-
+};
 
 HRESULT TestScene::LoadScene()
 {
@@ -69,10 +70,68 @@ HRESULT TestScene::LoadScene()
 		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
 	/*--------------------------------------------------------- */
 
+	// 이펙트
+	AddGameObject<AirHike>();
+	AddGameObject<CircleWave>();
+	AddGameObject<Trail>();
+	AddGameObject<FireCircle>();
+	AddGameObject<DashTrail>();
+	AddGameObject<IceAge>();
+
+
+	{
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
+			_SE->RegistAlbedoTex
+			("..\\..\\Resource\\Texture\\Effect\\tex_capcom_impact_directional_0000_alpg.tex_noesispreviewdata.tga");
+			_SE->RegistSpriteInfo(8, 8);
+		}
+
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
+			_SE->RegistAlbedoTex
+			("..\\..\\Resource\\Texture\\Effect\\impact.tga");
+			_SE->RegistSpriteInfo(3, 1);
+			_SE->RegistDistortionTex("..\\..\\Resource\\Texture\\Effect\\impact.tga");
+		}
+
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
+			_SE->RegistAlbedoTex
+			("..\\..\\Resource\\Texture\\Effect\\spark00.tga");
+			_SE->RegistSpriteInfo(4, 2);
+		}
+
+		if (auto _SE = AddGameObject<SpriteEffect>().lock();
+			_SE)
+		{
+			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+			_SE->RegistInfo(1.f, 0.0f, { 1.f,1.f,1.f,1.f });
+			_SE->RegistAlbedoTex
+			("..\\..\\Resource\\Texture\\Effect\\NullWhite.tga");
+			_SE->RegistSpriteInfo(6, 1);
+			_SE->RegistDistortionTex
+			("..\\..\\Resource\\Texture\\Effect\\lightsprite.tga");
+		}
+	}
+	// 이펙트 끝
+
+
+	// 
 	AddGameObject<Camera>();
+	
 	// AddGameObject<MainCamera>();
-	// _Player = AddGameObject<Nero>();
-	// AddGameObject<BtlPanel>();
+	_Player = AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
 	// AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();
 	// AddGameObject<Em5300>();
@@ -148,7 +207,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	// LoadMap();
+	LoadMap();
 	// AddGameObject<TempMap>();
 
 	//AddGameObject<CircleWave>();
@@ -297,9 +356,9 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	//_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
-	//	0.f,0.02f,0.f
-	//	});
+	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
+		0.f,0.02f,0.f
+		});
 
 	// 여기서 임시로 트리거 처리 ???
 	//if (
