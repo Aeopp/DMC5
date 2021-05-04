@@ -126,8 +126,10 @@ void IceAge::RenderInit()
 	// _GeneratorParticle = AddGameObject<ShapeParticle>();
 };
 
-void IceAge::PlayStart(const std::optional<Vector3>& Location,
-					   const float RollRotateSpeed,
+void IceAge::PlayStart(
+						const Vector3 Scale,
+						const std::optional<Vector3>& Location,
+						 const float RollRotateSpeed,
 						const float PlayTime)
 {
 	Vector3 MyLocation = { 0,0,0 };
@@ -151,6 +153,7 @@ void IceAge::PlayStart(const std::optional<Vector3>& Location,
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
+		SpTransform->SetScale(Scale);
 		SpTransform->SetPosition( Location.value() );
 		// SpTransform->Rotate({ 0.f,RollRotateSpeed,0.f });
 	}
@@ -365,7 +368,7 @@ void IceAge::Editor()
 					Point = SpTransform->GetPosition();
 				};
 
-				PlayStart(Point, EditRotationSpeed ,EditPlayTime);
+				PlayStart(Vector3{ 0.005f ,0.005f ,0.005f },Point, EditRotationSpeed ,EditPlayTime);
 			}
 			if (ImGui::SmallButton("PlayEnd"))
 			{

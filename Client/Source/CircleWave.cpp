@@ -28,26 +28,26 @@ void CircleWave::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-			auto SpTransform = GetComponent<Transform>().lock();
-			if (SpTransform)
+		auto SpTransform = GetComponent<Transform>().lock();
+		if (SpTransform)
+		{
+			SpTransform->SetScale({ WaveScale,WaveScale ,WaveScale });
+			SpTransform->SetRotation({ 90.f,0.f,0.f });
+			_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+			if (_WaveCircle)
 			{
-				SpTransform->SetScale({ WaveScale,WaveScale ,WaveScale });
-				SpTransform->SetRotation({ 90.f,0.f,0.f });
-				_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-				if (_WaveCircle)
+				const uint32  Numsubset = _WaveCircle->GetNumSubset();
+				_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+
+				for (uint32 i = 0; i < Numsubset; ++i)
 				{
-					const uint32  Numsubset = _WaveCircle->GetNumSubset();
-					_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+					const auto& _Subset = _WaveCircle->GetSubset(i);
+					const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-					for (uint32 i = 0; i < Numsubset; ++i)
-					{
-						const auto& _Subset = _WaveCircle->GetSubset(i);
-						const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
-
-						_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, WaveScale);
-					}
+					_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, WaveScale);
 				}
 			}
+		}
 	}
 };
 
@@ -96,20 +96,27 @@ void CircleWave::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
 	_WaveCircle = Resources::Load < ENGINE::StaticMesh >
-			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx" , _InitInfo);
+		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _InitInfo);
 
 	_WaveMask = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_wp01_007_0000_01_00_MSK4.tga");
-
+	WaveIntencity = -0.000061f;
 	PushEditEntity(_WaveCircle.get());
 };
 
-void CircleWave::PlayStart(const std::optional<Vector3>& Location)
+void CircleWave::PlayStart(
+	const float WaveScale,
+	const std::optional<Vector3>& Location)
 {
-	if (Location)
-	{
-		GetComponent<Transform>().lock()->SetPosition(Location.value());
-	}
 
+	if ( auto SpTransform = GetComponent<Transform>().lock();
+			SpTransform  )
+	{
+		if (Location)
+		{
+			SpTransform->SetPosition(Location.value());
+		}
+	}	
+	this->WaveScale = WaveScale;
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 };
@@ -240,11 +247,14 @@ void CircleWave::Editor()
 		ImGui::BeginChild(PlayName.c_str());
 		if (ImGui::SmallButton("Play"))
 		{
-			PlayStart();
+			PlayStart(EditPlayScale);
 		}
 
 		ImGui::Text("T : %2.6f", T);
 		ImGui::BulletText("r %1.6f g %1.6f b %1.6f a %1.6f", _Color.x, _Color.y, _Color.z, _Color.w);
+
+		ImGui::SliderFloat("EditPlayScale", &EditPlayScale, FLT_MIN, 1.f , "%2.6f");
+		ImGui::InputFloat("In EditPlayScale", &EditPlayScale);
 
 		ImGui::Checkbox("bWaveDistortion", &bWaveDistortion);
 		ImGui::SliderFloat("WaveScale", &WaveScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
