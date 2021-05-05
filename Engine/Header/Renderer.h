@@ -99,6 +99,8 @@ public:
 	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
+	float   StarScale = 4.f;
+	float   StarFactor = 0.9f;
 
 	bool bShadowMapBake = false;
 	
@@ -117,7 +119,9 @@ private:
 	
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
+	float FogStart = 1.f;
 	float FogDistance = 100.f;
+	float FogDensity = 1.f;
 	float SlpoeScaleDepthBias = 0.0f;
 	float DepthBias = 0.0f;
 	float DefaultDepthBias = 0.0f;

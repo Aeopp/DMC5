@@ -148,7 +148,10 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
 	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f; 
+	_Renderer->StarScale = 4.f;
+	_Renderer->StarFactor = 0.9f;
 
+	
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
 	//	pSmoke)

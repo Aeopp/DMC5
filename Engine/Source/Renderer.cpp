@@ -626,6 +626,14 @@ void Renderer::Editor()&
 			"%3.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
 		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
+
+		ImGui::SliderFloat("StarScale", &StarScale, -10.f, 10.f);
+		ImGui::SliderFloat("StarFactor", &StarFactor, -10.f, 10.f);
+		;
+
+
+		;
+
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("Distortion", &bDistortion);
@@ -649,12 +657,26 @@ void Renderer::Editor()&
 		}
 
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
+
+		ImGui::SliderFloat("FogStart", &FogStart, 0.0f, 1000.f);
+		ImGui::InputFloat("In FogStart", &FogStart);
+
 		ImGui::SliderFloat("FogDistance", &FogDistance, 0.0f, 1000.f);
+		ImGui::InputFloat("In FogDistance", &FogDistance);
+
+		ImGui::ColorEdit3("FogColor", FogColor);
+		ImGui::SliderFloat("FogDensity", &FogDensity, 0.0f,10.f);
+		ImGui::InputFloat("In FogDensity", &FogDensity);
+
+
+
 		ImGui::SliderFloat("SkySphereScale", &SkysphereScale, 0.f, 10.f);
 		ImGui::SliderFloat3("SkySphereRot", SkysphereRot, -360.f, 360.f);
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
 		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
-		//ImGui::ColorEdit3("FogColor", FogColor);
+
+		
+
 
 		static bool  DepthBiasButton = true;
 		static float ZeroDotOne = 0.000001f;
@@ -2295,7 +2317,10 @@ HRESULT Renderer::Stars()
 	hdreffects->SetTechnique("star");
 	hdreffects->SetVector("pixelSize", &pixelsize);
 	hdreffects->SetVector("texelSize", &texelsize);
+	hdreffects->SetFloat("StarScale", StarScale);
+	hdreffects->SetFloat("StarFactor", StarFactor);
 
+	
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
 	{
@@ -2582,6 +2607,11 @@ HRESULT Renderer::ToneMap()
 	hdreffects->SetFloatArray("eyepos", _RenderInfo.Eye, 3u);
 	hdreffects->SetFloatArray("fogcolor", FogColor, 3u);
 	hdreffects->SetFloat("fogdistance", FogDistance);
+	hdreffects->SetFloat("fogdensity", FogDensity);
+	hdreffects->SetFloat("fogstart", FogStart);
+
+	;
+	;
 
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
@@ -2593,6 +2623,11 @@ HRESULT Renderer::ToneMap()
 		Device->SetTexture(4, RenderTargets["afterimagetargets" +
 			std::to_string(1 - currentafterimage)]->GetTexture());
 		Device->SetTexture(5, RenderTargets["Depth"]->GetTexture());
+
+		Device->SetSamplerState(5, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(5, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(5, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+
 
 		_Quad->Render(Device, 1.f, 1.f, hdreffects);
 	}
