@@ -9,6 +9,7 @@ class Nero;
 class Em5300Rush;
 class Em5300Missile;
 class Em5300Rain;
+class Em5300Homing;
 class Em5300 final : public Monster
 {
 public:
@@ -128,8 +129,12 @@ private:
 
 	bool		m_bMissile2 = false;
 	float		m_fMissile2Time = 0.f;
+
+	bool		m_bHoming = false;
+	float		m_fHomingTime = 0.f;
 	weak_ptr<Em5300Missile>	m_pBullet[32];
 	weak_ptr<Em5300Rain>	m_pRain[12];
+	weak_ptr<Em5300Homing>	m_pHoming[8];
 
 	//전투 시작 테스트 용
 	std::weak_ptr<Em5300Rush>	m_pRush;

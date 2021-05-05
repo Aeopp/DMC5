@@ -47,12 +47,10 @@ UINT Gauntlet::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
 
-	Matrix								ParentWorldMatrix, FinalWorld, RotX;
-	Matrix RotY,Scale;
+	Matrix								ParentWorldMatrix, FinalWorld, Scale;
+
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
 
-	D3DXMatrixRotationX(&RotX, D3DXToRadian(-90));
-	D3DXMatrixRotationY(&RotY, D3DXToRadian(180));
 	D3DXMatrixScaling(&Scale, 1.1f, 1.1f, 1.1f);
 	if (nullptr != m_pParentMat)
 	{

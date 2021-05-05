@@ -53,6 +53,9 @@ protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
 	virtual void   Update_Angle() PURE;
 protected:
+	void StoneDebrisInit();
+	void StoneDebrisPlayStart();
+protected:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh = nullptr;
 
 	bool	m_bIng = false;
@@ -75,6 +78,10 @@ protected:
 	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
 	std::weak_ptr<Nero>				 m_pPlayer;
 	std::weak_ptr<RedQueen>			 m_pRedQueen;
+
+	// Effect
+	vector<weak_ptr<class StoneDebris>>	m_pStoneDebrisVec;
+	bool m_bStoneDebrisPlayStart = false;
 };
 
 

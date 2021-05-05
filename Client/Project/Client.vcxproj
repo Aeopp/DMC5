@@ -224,6 +224,11 @@
     <ClInclude Include="..\Header\Unit.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
+    <ClInclude Include="..\Header\WingSword.h" />
+    <ClInclude Include="..\Header\WingSword1st.h" />
+    <ClInclude Include="..\Header\WingSword2nd.h" />
+    <ClInclude Include="..\Header\WingSword3rd.h" />
+    <ClInclude Include="..\Header\WingSword4th.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
     <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
     <ClInclude Include="Client.h" />
@@ -299,6 +304,11 @@
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
+    <ClCompile Include="..\Source\WingSword.cpp" />
+    <ClCompile Include="..\Source\WingSword1st.cpp" />
+    <ClCompile Include="..\Source\WingSword2nd.cpp" />
+    <ClCompile Include="..\Source\WingSword3rd.cpp" />
+    <ClCompile Include="..\Source\WingSword4th.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
     <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
     <ClCompile Include="Client.cpp" />

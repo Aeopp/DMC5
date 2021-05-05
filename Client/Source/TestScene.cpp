@@ -8,10 +8,14 @@
 #include "Camera.h"
 #include "Nero.h"
 #include "RedQueen.h"
+#include "WingSword1st.h"
+#include "WingSword2nd.h"
+#include "WingSword3rd.h"
+#include "WingSword4th.h"
 #include "Em100.h"
 #include "Em0000.h"
-#include "Em5000.h"
 #include "Em0000_Weapon.h"
+#include "Em5000.h"
 #include "Em1000.h"
 #include "Em5300.h"
 #include "Car.h"
@@ -21,24 +25,13 @@
 #include "AppearGroundMonster.h"
 #include "Smoke.h"
 #include "QliphothBlock.h"
-#include "StoneDebrisMulti.h"
-#include "AppearEm1000.h"
-#include "StoneDebris.h"
-#include "ShapeParticle.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-#include "Trail.h"
-#include "AirHike.h"
-#include "CircleWave.h"
-#include "SpriteEffect.h"
-#include "DashTrail.h"
-#include "FireCircle.h"
-#include "IceAge.h"
-
 #include <iostream>
 #include <fstream>
+
 
 using namespace std;
 TestScene::TestScene()
@@ -55,90 +48,26 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-};
+}
+
 
 HRESULT TestScene::LoadScene()
 {
-	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
-	Mesh::InitializeInfo _Info{};
-	_Info.bLocalVertexLocationsStorage = true;
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
-
-	// 메쉬 미리 로딩.
-	Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info);
-	/*--------------------------------------------------------- */
-
-	// 이펙트
-	AddGameObject<AirHike>();
-	AddGameObject<CircleWave>();
-	AddGameObject<Trail>();
-	AddGameObject<FireCircle>();
-	AddGameObject<DashTrail>();
-	AddGameObject<IceAge>();
-
-	{
-		if (auto _SE = AddGameObject<SpriteEffect>().lock();
-			_SE)
-		{
-			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
-			_SE->RegistAlbedoTex
-			("..\\..\\Resource\\Texture\\Effect\\tex_capcom_impact_directional_0000_alpg.tex_noesispreviewdata.tga");
-			_SE->RegistSpriteInfo(8, 8);
-		}
-
-		if (auto _SE = AddGameObject<SpriteEffect>().lock();
-			_SE)
-		{
-			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
-			_SE->RegistAlbedoTex
-			("..\\..\\Resource\\Texture\\Effect\\impact.tga");
-			_SE->RegistSpriteInfo(3, 1);
-			_SE->RegistDistortionTex("..\\..\\Resource\\Texture\\Effect\\impact.tga");
-		}
-
-		if (auto _SE = AddGameObject<SpriteEffect>().lock();
-			_SE)
-		{
-			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-			_SE->RegistInfo(1.f, 0.001f, { 1.f,1.f,1.f,1.f });
-			_SE->RegistAlbedoTex
-			("..\\..\\Resource\\Texture\\Effect\\spark00.tga");
-			_SE->RegistSpriteInfo(4, 2);
-		}
-
-		if (auto _SE = AddGameObject<SpriteEffect>().lock();
-			_SE)
-		{
-			_SE->RegistMesh("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-			_SE->RegistInfo(1.f, 0.0f, { 1.f,1.f,1.f,1.f });
-			_SE->RegistAlbedoTex
-			("..\\..\\Resource\\Texture\\Effect\\NullWhite.tga");
-			_SE->RegistSpriteInfo(6, 1);
-			_SE->RegistDistortionTex
-			("..\\..\\Resource\\Texture\\Effect\\lightsprite.tga");
-		}
-	}
-	// 이펙트 끝
-
-
-	// 
-	AddGameObject<Camera>();
-	
-	// AddGameObject<MainCamera>();
+	 //AddGameObject<Camera>();
+	 //AddGameObject<WingSword1st>();
+	 //AddGameObject<WingSword2nd>();
+	 //AddGameObject<WingSword3rd>();
+	 //AddGameObject<WingSword4th>();
+	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	// AddGameObject<Em0000>();
-	// AddGameObject<Em1000>();
-	// AddGameObject<Em5300>();
+	//AddGameObject<Em0000>();
+	//AddGameObject<Em1000>();
+	//AddGameObject<CircleWave>();
+	//AddGameObject<AirHike>();
+	AddGameObject<Em5300>();
 
-	// AddGameObject<Car>();
+	//AddGameObject<Em5300>();
 
 	// Wave 1st
 	//{
@@ -186,78 +115,32 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//// Wave 2nd
-	//{
-	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	//	_Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
+	//LoadMap();
+	AddGameObject<TempMap>();
 
-	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-
-	//	pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-	//}
-
-	LoadMap();
-	// AddGameObject<TempMap>();
-
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
-	//
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<StoneDebrisMulti>();
-	//if (auto p = AddGameObject<AppearEm1000>().lock();
-	//	p)
-	//{
-	//	p->SetLoop(true);
-	//	p->PlayStart(1.f);
-	//}
-	//if (auto p = AddGameObject<StoneDebris>().lock();
-	//	p)
-	//{
-	//	p->SetVariationIdx(StoneDebris::REDORB_0);
-	//	p->SetLoop(true);
-	//	p->PlayStart();
-	//}
-	//if (auto p = AddGameObject<ShapeParticle>().lock();
-	//	p)
-	//{
-	//	p->SetShapeIdx(ShapeParticle::SPHERE);
-	//	p->SetColorIdx(ShapeParticle::RED);
-	//	p->SetLoop(true);
-	//	p->PlayStart();
-	//}
 
 	// 수정필요
 	//AddGameObject<DashImpact>();
 
+
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	 // _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005;
-	_Renderer->SkyIntencity = 0.005f;
-	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
-	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
-	_Renderer->SoftParticleDepthScale = 1.f;
-	_Renderer->SkyRotationSpeed = 1.5f;
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+	//_Renderer->ao = 0.0005;
+	//_Renderer->SkyIntencity = 0.005f;
+	//_Renderer->SkysphereScale = 0.078f;
+	//_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+	//_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
+	//_Renderer->SoftParticleDepthScale = 0.7f;
+	//_Renderer->SkyRotationSpeed = 1.5f;
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -357,10 +240,8 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	//cout << "SceneUpdate" << endl;
 
-	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
-		0.f,0.02f,0.f
-		});
 
 	// 여기서 임시로 트리거 처리 ???
 	//if (
@@ -385,15 +266,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	}
 	//}
 
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->SetActive(true);
-	//			m_vecQliphothBlock[i].lock()->PlayStart();
-	//		}
-	//	}
-	//}
 
 	//if ((FMath::Length
 	//(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())

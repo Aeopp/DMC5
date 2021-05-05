@@ -1199,6 +1199,21 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
 		m_bHit = true;
 		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		for (int i = 0; i < 2; ++i)
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		break;
 	default:
 		break;
 	}
