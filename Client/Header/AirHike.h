@@ -52,8 +52,8 @@ public:
 		const float StartScale = 0.005170f,
 		const float FinalScale= 0.008031f,
 		const float PlayTime = FMath::PI/2.f);
-private:
 	void PlayEnd();
+private:
 public:
 	float PlayTime = FMath::PI / 2.f;
 	void RenderDebug(const DrawInfo& _Info);

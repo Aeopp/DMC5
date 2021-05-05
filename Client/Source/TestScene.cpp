@@ -65,7 +65,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
-	AddGameObject<Em5300>();
+	//AddGameObject<Em5300>();
 
 	//AddGameObject<Em5300>();
 
@@ -115,7 +115,6 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-
 	//LoadMap();
 	AddGameObject<TempMap>();
 
@@ -131,16 +130,16 @@ HRESULT TestScene::LoadScene()
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	//_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	//_Renderer->ao = 0.0005;
-	//_Renderer->SkyIntencity = 0.005f;
-	//_Renderer->SkysphereScale = 0.078f;
-	//_Renderer->SkysphereRot = { 0.f,0.f,0.f };
-	//_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
-	//_Renderer->SoftParticleDepthScale = 0.7f;
-	//_Renderer->SkyRotationSpeed = 1.5f;
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+	_Renderer->ao = 0.0005;
+	_Renderer->SkyIntencity = 0.005f;
+	_Renderer->SkysphereScale = 0.078f;
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
+	_Renderer->SoftParticleDepthScale = 0.7f;
+	_Renderer->SkyRotationSpeed = 1.5f;
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
