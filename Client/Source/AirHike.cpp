@@ -78,16 +78,7 @@ void AirHike::RenderInit()
 		}
 	} };
 
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
-		=
-	{
-		{"Collider" ,
-		[this](const DrawInfo& _Info)
-		{
-			DrawCollider(_Info);
-		}
-	} };
-
+	
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
 		
@@ -109,7 +100,15 @@ void AirHike::RenderInit()
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
 			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx" , _InitInfo);
 
-	_MagicTexture = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\MagicTexture.tga");
+	_MagicTexture =
+		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\MagicTexture.tga");
+
+	_MagicAlb = 
+		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_pl_0120_0000_alb.tga");
+	_MagicMsk= 
+		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_pl0120_0000_msk2.tga");
+
+
 
 	PushEditEntity(_StaticMesh.get());
 };
@@ -149,6 +148,8 @@ void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetVector("CurColor", &CurColor);
 		_Info.Fx->SetFloat("Intencity", CurIntencity);
 		_Info.Fx->SetTexture("MagicMap", _MagicTexture->GetTexture());
+		_Info.Fx->SetTexture("MagicMsk", _MagicMsk->GetTexture());
+		_Info.Fx->SetTexture("MagicAlb", _MagicAlb->GetTexture());
 	}
 
 	for (uint32 i = 0; i < Numsubset; ++i)
@@ -266,7 +267,6 @@ void AirHike::Editor()
 		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit4("FinalColor", FinalColor);
 		ImGui::EndChild();
-		
 	}
 }
 

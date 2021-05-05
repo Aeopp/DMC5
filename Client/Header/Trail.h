@@ -35,7 +35,10 @@ private:
 	IDirect3DDevice9* Device{ nullptr };
 
 	std::shared_ptr<Texture> TrailMap{};
+	std::shared_ptr<Texture> ExplosionTrailMap{};
 	std::shared_ptr<Texture> FireSpriteMap{};
+	std::shared_ptr<Texture> EmissiveMskMap{};
+	/*std::shared_ptr<Texture> NoiseMap{};*/
 
 	Mode CurMode = Mode::Explosion;
 
@@ -47,8 +50,8 @@ private:
 	float SpriteCurUpdateCycle = 0.0f;
 	float SpriteUpdateCycle = 0.000001f;
 
-	Vector3 LowOffset{ 0.f,0.f,16.f};
-	Vector3 HighOffset{ 0.f,0.f,-115.f };
+	Vector3 LowOffset{ 0.f,0.f,143.f};
+	Vector3 HighOffset{ 0.f,0.f,-231.f };
 
 	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
 
@@ -56,7 +59,12 @@ private:
 	float DistortionIntencity = 10000.f;
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
-	float ColorIntencity = 50.f;
+	float ColorIntencity = 40.f;
+	float EmissiveIntencity= 20.f;
+
+	Vector3 Scale{ 1.f,2.f,3.f };
+	Vector3 ScrollSpeed{ 1.f,2.f,3.f };
+
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 

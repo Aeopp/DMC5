@@ -13,7 +13,7 @@
 
 void Em0000::Free()
 {
-	Unit::Free();
+	Monster::Free();
 }
 
 std::string Em0000::GetName()
@@ -177,6 +177,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Dead:
 		if (m_bIng == true)
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+		StoneDebrisPlayStart();
 		break;
 		break;
 	case Em0000::Guard_End:
@@ -675,6 +676,7 @@ HRESULT Em0000::Awake()
 	////////////
 	m_pBlood = AddGameObject<Liquid>();
 	m_pAppear = AddGameObject<AppearGroundMonster>();
+	StoneDebrisInit();
 	///////////
 
 	return S_OK;
@@ -1310,6 +1312,29 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:

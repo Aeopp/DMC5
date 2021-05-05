@@ -100,6 +100,9 @@ private:
 
 	bool			m_bWall = false;
 
+	weak_ptr<class Liquid>			m_pBlood;
+	weak_ptr<class AppearEm1000>	m_pAppear;
+
 };
 
 #endif // Em1000_h__
