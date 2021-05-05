@@ -106,7 +106,7 @@ public:
 	float   SkyDistortionIntencity = 1.f;
 	float   SkyNoisewrap = 8.173007f;
 	float   SkyTimecorr  = 0.304011f;
-	bool    SkyDistortion = true;
+	bool    SkyDistortion = false;
 	float   SkyRotationSpeed = 0.001f;
 	float   SkyIntencity = 0.111f;
 	float   SkysphereScale = 0.078f;

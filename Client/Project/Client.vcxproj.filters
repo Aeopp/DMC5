@@ -410,7 +410,10 @@
     <ClInclude Include="..\Header\DashTrail.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\SpriteEffect.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\Header\IceAge.h" />
+=======
+>>>>>>> origin/main
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -646,7 +649,10 @@
     <ClCompile Include="..\Source\DashTrail.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\SpriteEffect.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="..\Source\IceAge.cpp" />
+=======
+>>>>>>> origin/main
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -691,7 +697,10 @@
     <None Include="..\..\Resource\Shader\Effect\Trail.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DashTrail.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\FireCircle.hlsl" />
+<<<<<<< HEAD
     <None Include="..\..\Resource\Shader\Effect\IceAge.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\IceParticle.hlsl" />
+=======
+>>>>>>> origin/main
   </ItemGroup>
 </Project>

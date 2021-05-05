@@ -130,17 +130,22 @@ HRESULT TestScene::LoadScene()
 
 	// 
 	AddGameObject<Camera>();
-	
-	// AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
-	// AddGameObject<Em0000>();
-	// AddGameObject<Em1000>();
-	// AddGameObject<Em5300>();
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
+	/*--------------------------------------------------------- */
+
+	//AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
+	//AddGameObject<BtlPanel>();
+	////AddGameObject<Em0000>();
+	////AddGameObject<Em100>();
+	//AddGameObject<Em1000>();
+	//AddGameObject<Em5300>();
 
 	// AddGameObject<Car>();
 
-	// Wave 1st
+	//// Wave 1st
 	//{
 	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
@@ -210,27 +215,22 @@ HRESULT TestScene::LoadScene()
 	//}
 
 	LoadMap();
-	// AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
-	//
 	//AddGameObject<Glint>();
 	//AddGameObject<OvertureHand>();
 	//AddGameObject<Liquid>();
 	//AddGameObject<QliphothBlock>();
 	//AddGameObject<AppearGroundMonster>();
 	//AddGameObject<StoneDebrisMulti>();
-	//if (auto p = AddGameObject<AppearEm1000>().lock();
-	//	p)
-	//{
-	//	p->SetLoop(true);
-	//	p->PlayStart(1.f);
-	//}
+	//AddGameObject<AppearEm1000>().lock()
 	//if (auto p = AddGameObject<StoneDebris>().lock();
 	//	p)
 	//{
 	//	p->SetVariationIdx(StoneDebris::REDORB_0);
+	//	p->SetPosition({0.f, 0.f, 0.f});
+	//	p->SetScale(0.002f);
+	//	p->SetVelocity({ 0.03f, 0.075f, 0.03f });
 	//	p->SetLoop(true);
 	//	p->PlayStart();
 	//}
@@ -358,11 +358,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
-		0.f,0.02f,0.f
-		});
+	//_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
+	//	0.f,0.02f,0.f
+	//	});
 
-	// 여기서 임시로 트리거 처리 ???
+	//// 여기서 임시로 트리거 처리 ???
 	//if (
 	//	(FMath::Length
 	//	(WavefirstTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())

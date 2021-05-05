@@ -15,7 +15,7 @@
 
 void Em100::Free()
 {
-	Unit::Free();
+	Monster::Free();
 }
 
 std::string Em100::GetName()
@@ -34,11 +34,11 @@ void Em100::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	/*if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
-	{
-		m_eState = Dead;
-		m_bIng = true;
-	}*/
+	//if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
+	//{
+	//	m_eState = Dead;
+	//	m_bIng = true;
+	//}
 
 
 
@@ -255,6 +255,7 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Dead:
 		if (m_bIng == true)
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+		StoneDebrisPlayStart();
 		break;
 	case Em100::Hit_Air:
 		if (m_bHit && m_bAir == true)
@@ -869,9 +870,10 @@ HRESULT Em100::Awake()
 	m_eState = Enter_Ground;
 	
 
-	/*--- «« ¿Ã∆Â∆Æ ---*/
+	/*--- ¿Ã∆Â∆Æ ---*/
 	m_pBlood = AddGameObject<Liquid>();
 	m_pAppear = AddGameObject<AppearGroundMonster>();
+	StoneDebrisInit();
 	/*----------------*/
 
 	return S_OK;
