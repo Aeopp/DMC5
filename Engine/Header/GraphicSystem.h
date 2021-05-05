@@ -10,6 +10,7 @@ private:
 	LPDIRECT3DDEVICE9	m_pDevice;
 public:
 	bool  m_bDepthBiasCap;
+	bool  m_bCopyDepthStencil;
 private:
 	explicit GraphicSystem();
 	virtual	~GraphicSystem() = default;

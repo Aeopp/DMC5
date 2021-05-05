@@ -79,60 +79,7 @@ void Renderer::ReadySky()
 
 void Renderer::ReadyLights()
 {
-	// ´Þºû
-	//DirLights.resize(1u);
-	//DirLights[0] = std::make_shared<FLight>
-	//	(FLight(FLight::Type::Directional,
-	//	{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250)));
-	//DirLights[0]->InitRender();
-	//DirLights[0]->CreateShadowMap(Device, 2048);
-	//DirLights[0]->GetPosition().x = -9.f;
-	//DirLights[0]->GetPosition().y = 105.f;
-	//DirLights[0]->GetPosition().z = -22.f;
-	//DirLights[0]->Direction.x = 71.f;
-	//DirLights[0]->Direction.y = -2.f;
-	//DirLights[0]->Direction.z = -83.f;
 
-	//DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
-	//DirLights[0]->lightFlux = 10.0f;
-	//DirLights[0]->lightIlluminance = 1.5f;
-	//DirLights[0]->specularPower = 80.0f;
-	//DirLights[0]->SetPointRadius (5.0f); // meter
-
-	// PointLights.resize(1u);
-
-
-
-	//PointLights[0] = std::make_shared<FLight>(
-	//	FLight(
-	//		FLight::Type::Point, { 1.5f,0.5f, 0.0f ,1 },
-	//		{ 1,0,0,1 }));
-	//PointLights[0]->SetPointRadius(7.1f);
-
-	//PointLights[1] = std::make_shared<FLight>(
-	//	FLight(
-	//		FLight::Type::Point, { -0.7f , 0.5f , 1.2f , 1.f },
-	//		{ 0,1,0,1 }));
-	//PointLights[1]->SetPointRadius(7.1f);
-
-	//PointLights[2] = std::make_shared<FLight>(
-	//	FLight(
-	//		FLight::Type::Point,
-	//		{ 0.0f,0.5f,0.0f,1 },
-	//		{ 0,0,1,1 }));
-	//PointLights[2]->SetPointRadius(7.1f);
-
-	// ±×¸²ÀÚ¸Ê 512 ·Î »ý¼º
-	// DirLights[0]->CreateShadowMap(Device, 1024);
-	// DirLights[0]->SetProjectionParameters(7.1f, 7.1f, -20.f, +20.f);
-
-	// PointLights[0]->CreateShadowMap(Device, 512);
-	/*PointLights[1]->CreateShadowMap(Device, 512);
-	PointLights[2]->CreateShadowMap(Device, 512);*/
-
-	// PointLights[0]->SetProjectionParameters(0, 0, 0.1f, 10.0f);
-	/*PointLights[1]->SetProjectionParameters(0, 0, 0.1f, 10.0f);
-	PointLights[2]->SetProjectionParameters(0, 0, 0.1f, 10.0f);*/
 }
 
 void Renderer::ReadyRenderTargets()
@@ -788,6 +735,38 @@ void Renderer::RenderReady()&
 
 void Renderer::RenderBegin()&
 {
+	if (CurDirLight)
+	{
+		if (CurDirLight->ShadowMapSize > 0)
+		{
+			if (FAILED(g_pDevice->StretchRect
+			(CurDirLight->CacheDepthStencil, nullptr,
+				CurDirLight->DepthStencil, nullptr, D3DTEXF_POINT)))
+			{
+				PRINT_LOG(TEXT("Warning"),
+					TEXT("Depth stencil copy failure."));
+			}
+		}
+	}
+		
+
+	for (auto& PointLight : PointLights)
+	{
+		if (PointLight->ShadowMapSize > 0)
+		{
+			for (int i = 0; i < 6; ++i)
+			{
+				if (FAILED(g_pDevice->StretchRect
+				(PointLight->CubeCacheDepthStencil[i], nullptr,
+					PointLight->CubeDepthStencil[i], nullptr, D3DTEXF_POINT)))
+				{
+					PRINT_LOG(TEXT("Warning"), TEXT(
+						"Depth stencil copy failure."));
+				}
+			}
+		}
+	}
+
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
 	Device->GetDepthStencilSurface(&BackBufferZBuffer);
@@ -832,7 +811,14 @@ void Renderer::RenderEnd()&
 	for (auto iter = DirLights.begin(); iter != DirLights.end(); )
 	{
 		if (iter->get()->bRemove)
+		{
+			if (iter->get() == CurDirLight)
+			{
+				CurDirLight = nullptr;
+			}
+
 			iter = DirLights.erase(iter);
+		}
 		else
 			++iter;
 	}
@@ -858,21 +844,23 @@ void Renderer::RenderShadowMaps()
 
 	auto shadowmap = Shaders["Shadow"]->GetEffect();
 
-	for (auto& DirLight : DirLights)
+	// for (auto& DirLight : DirLights)
+	if(CurDirLight && (CurDirLight->GetShadowMapSize() > 0))
 	{
-		if (DirLight->GetShadowMapSize() <= 0) continue;
-
-		DirLight->RenderShadowMap(Device, [&](FLight* light) {
+		CurDirLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX  viewproj;
-			D3DXVECTOR4 clipplanes(light->GetNearPlane(), light->GetFarPlane(), 0, 0);
+			D3DXVECTOR4 clipplanes(
+				light->GetNearPlane(),
+				light->GetFarPlane(), 0, 0);
 
 			light->CalculateViewProjection(viewproj);
 
 			shadowmap->SetTechnique("variance");
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 			shadowmap->SetBool("isPerspective", FALSE);
-		
-			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+
+			Device->Clear(0, NULL, 
+				D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			// ·»´õ ½ÃÀÛ ... 
 			DrawInfo _DrawInfo{};
@@ -1133,8 +1121,10 @@ void Renderer::DeferredShading()
 		D3DXMATRIX lightviewproj;
 		D3DXVECTOR4 clipplanes(0, 0, 0, 0);
 
-		for (auto& DirLight : DirLights)
+		// for (auto& DirLight : DirLights)
+		if(CurDirLight)
 		{
+			auto& DirLight = CurDirLight;
 			DirLight->CalculateViewProjection(lightviewproj);
 			{
 				// directional light
@@ -1600,12 +1590,9 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		
 		Vector3  LightDirection = { 0,-1,0 };
 
-		if (DirLights.empty() == false)
+		if (CurDirLight)
 		{
-			if (DirLights[0])
-			{
-				LightDirection = DirLights[0]->GetDirection(); 
-			}
+			LightDirection = CurDirLight->GetDirection();
 		}
 
 		LightDirection = FMath::Normalize(LightDirection);
@@ -2780,6 +2767,11 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 		}
 	};
 
+
+	if (DirLights.empty() == false)
+	{
+		CurDirLight = DirLights[0].get();
+	}
 };
 
 

@@ -40,6 +40,8 @@ public:
 
 	void CreateShadowMap(LPDIRECT3DDEVICE9 _Device, const uint16_t Size);
 	void RenderShadowMap(LPDIRECT3DDEVICE9 _Device, std::function<void(FLight*)> CallBack);
+	void CacheShadowMapBake(
+		LPDIRECT3DDEVICE9 _Device, std::function<void(FLight*)> CallBack);
 
 	Matrix GetWorld();
 	// 다른 라이팅ㅇ으로부터 쉐오둥 블러 . 
@@ -98,9 +100,14 @@ public:
 	LPDIRECT3DTEXTURE9      CacheShadowMap{ nullptr };
 	LPDIRECT3DSURFACE9      CacheShadowMapSurface{ nullptr };
 	LPDIRECT3DTEXTURE9		Blurredshadowmap;
-	LPDIRECT3DSURFACE9      BlurredshadowmapSurface{ nullptr };
+	LPDIRECT3DSURFACE9      BlurredshadowmapSurface{nullptr};
+
 	LPDIRECT3DSURFACE9      DepthStencil{};
 	LPDIRECT3DSURFACE9      CacheDepthStencil{nullptr};
+
+	std::array<LPDIRECT3DSURFACE9, 6u>      CubeDepthStencil{};
+	std::array<LPDIRECT3DSURFACE9, 6u>      CubeCacheDepthStencil{};
+
 	
 	Vector3 Lradiance{ 1,1,1 };
 
