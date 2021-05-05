@@ -130,15 +130,17 @@ void FireCircle::RenderInit()
 	OuterDistortionIntencity =  DistortionIntencity = 10000000.f;
 };
 
-void FireCircle::PlayStart(
-							const Vector3& Scale,
-							const Vector3& Rotation,
-							const Vector3& Location,
-							const float CurRoll,
-							const float RollRotateSpeed ,
-							const int32 StartSpriteCol,
-							const int32 StartSpriteRow ,
-							const float PlayTime)
+void FireCircle::PlayStart(const Vector3& Rotation,
+	// 재생 시킬 위치 
+	const Vector3& Location ,
+	// 재생 시킬 회전 
+	const float CurRoll ,
+	// 회전 속도 . 
+	const float RollRotateSpeed,
+	const int32 StartSpriteRow ,
+	const float PlayTime ,
+	const int32 StartSpriteCol ,
+	const Vector3& Scale )
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
@@ -402,15 +404,14 @@ void FireCircle::Editor()
 		{
 			if (ImGui::SmallButton("Play"))
 			{
-				PlayStart(
-					EditPlayStartScale,
-					EditPlayStartRotation,
-					EditPlayStartLocation, 
+				PlayStart(EditPlayStartRotation,
+					EditPlayStartLocation,
 					EditStartRoll,
-					EditPlayRollRotateSpeed ,
+					EditPlayRollRotateSpeed,
+					EditSpriteRow,
+					EditPlayStartPlayTime,
 					EditSpriteCol,
-					EditSpriteRow ,
-					EditPlayStartPlayTime);
+					EditPlayStartScale);
 			}
 
 			if (ImGui::SmallButton("PlayEnd"))

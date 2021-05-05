@@ -113,9 +113,9 @@ void AirHike::RenderInit()
 };
 
 void AirHike::PlayStart(
+	const std::optional<Vector3>& Location,
 	const float StartScale,
 	const float FinalScale,
-	const std::optional<Vector3>& Location ,
 	const float PlayTime)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();

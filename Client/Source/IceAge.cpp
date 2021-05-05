@@ -127,10 +127,10 @@ void IceAge::RenderInit()
 };
 
 void IceAge::PlayStart(
-						const Vector3 Scale,
-						const std::optional<Vector3>& Location,
-						 const float RollRotateSpeed,
-						const float PlayTime)
+	const std::optional<Vector3>& Location,
+	const Vector3 Scale,
+	const float RollRotateSpeed,
+	const float PlayTime)
 {
 	Vector3 MyLocation = { 0,0,0 };
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -368,7 +368,7 @@ void IceAge::Editor()
 					Point = SpTransform->GetPosition();
 				};
 
-				PlayStart(Vector3{ 0.005f ,0.005f ,0.005f },Point, EditRotationSpeed ,EditPlayTime);
+				PlayStart(Point, Vector3{ 0.005f ,0.005f ,0.005f }, EditRotationSpeed ,EditPlayTime);
 			}
 			if (ImGui::SmallButton("PlayEnd"))
 			{

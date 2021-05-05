@@ -48,9 +48,9 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void PlayStart(
+		const std::optional<Vector3>& Location = std::nullopt,
 		const float StartScale = 0.005170f,
 		const float FinalScale= 0.008031f,
-		const std::optional<Vector3> & Location = std::nullopt ,
 		const float PlayTime = FMath::PI/2.f);
 private:
 	void PlayEnd();

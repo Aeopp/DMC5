@@ -37,17 +37,17 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void PlayStart(
-					const Vector3& Scale  = { 0.004f, 0.004f,0.004f } ,
-		       // 재생 시킬 위치 
-				// 재생 시킬 회전 
-					const Vector3& Rotation = { 0.f,0.f,0.f },
-					const Vector3& Location = { 0.f,0.f,0.f },
-				const float CurRoll=0.0f,
-				// 회전 속도 . 
-				const float RollRotateSpeed =FMath::PI ,
-				const int32 StartSpriteCol=0 ,
-				const int32 StartSpriteRow=3,
-				const float PlayTime=1.f);
+		const Vector3& Rotation = { 0.f,0.f,0.f },
+		// 재생 시킬 위치 
+		const Vector3& Location = { 0.f,0.f,0.f },
+		// 재생 시킬 회전 
+		const float CurRoll = 0.0f,
+		// 회전 속도 . 
+		const float RollRotateSpeed = FMath::PI,
+		const int32 StartSpriteRow = 3,
+		const float PlayTime = 1.f,
+		const int32 StartSpriteCol = 0,
+		const Vector3& Scale = { 0.004f, 0.004f,0.004f });
 	void PlayEnd();
 public:
 	void SpriteUpdate(const float DeltaTime);
