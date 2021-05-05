@@ -837,7 +837,7 @@
             ],
             "shadowmin": 0.0,
             "shadowdepthbias": 0.009999999776482582,
-            "ShadowMapSize": 2048.0,
+            "ShadowMapSize": 1024.0,
             "Type": "Point"
         }
     ]

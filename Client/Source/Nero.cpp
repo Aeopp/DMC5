@@ -197,7 +197,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 2.f, -5.02f});
+	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 3.f, -5.02f});
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -1268,5 +1268,61 @@ void Nero::ChangeAnimationWingSword(const std::string& InitAnimName, const bool 
 	{
 		pWingSword.lock()->SetActive(true);
 		pWingSword.lock()->ChangeAnimation(InitAnimName, bLoop);
+	}
+}
+
+void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float CurRoll)
+{
+	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+	switch (_eTag)
+	{
+	case Eff_AirHike:
+		m_pAirHike.lock()->PlayStart(vMyPos);
+		break;
+	case Eff_Trail:
+		if (0 < m_pBtlPanel.lock()->GetExGaugeCount())
+			m_pTrail.lock()->PlayStart(Trail::Mode::Explosion);
+		else
+			m_pTrail.lock()->PlayStart(Trail::Mode::Non);
+		break;
+	case Eff_FireCircle:
+		m_pFireCircle.lock()->PlayStart(Rotation, vMyPos, CurRoll);
+		break;
+	case Eff_IceAge:
+		m_pIceAge.lock()->PlayStart(vMyPos);
+		break;
+	case Eff_CircleWave:
+		m_pCircleWave.lock()->PlayStart(GScale, vMyPos);
+		break;
+	case Eff_DashTrail:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::StopEffect(GAMEOBJECTTAG _eTag)
+{
+	switch (_eTag)
+	{
+	case Eff_AirHike:
+		m_pAirHike.lock()->PlayEnd();
+		break;
+	case Eff_Trail:
+		m_pTrail.lock()->PlayEnd();
+		break;
+	case Eff_FireCircle:
+		m_pFireCircle.lock()->PlayEnd();
+		break;
+	case Eff_IceAge:
+		m_pIceAge.lock()->PlayEnd();
+		break;
+	case Eff_CircleWave:
+		m_pCircleWave.lock()->PlayEnd();
+		break;
+	case Eff_DashTrail:
+		break;
+	default:
+		break;
 	}
 }

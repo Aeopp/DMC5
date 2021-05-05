@@ -46,8 +46,8 @@ public:
 public:
 	void PlayStart(const float WaveScale,
 				   const std::optional<Vector3> & Location = std::nullopt);
-private:
 	void PlayEnd();
+private:
 	bool bWaveDistortion{ false };
 	float  EditPlayScale{ 0.01f};
 public:

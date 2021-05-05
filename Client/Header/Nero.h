@@ -4,7 +4,6 @@
 #pragma once
 #include "Unit.h"
 #include "RenderInterface.h"
-
 class NeroFSM;
 class RedQueen;
 class Nero_LWing;
@@ -415,8 +414,10 @@ public:
 	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
 	void ChangeAnimationWingSword(const std::string& InitAnimName, const bool  bLoop);
 	//Effect
-
-	void PlayEffect(GAMEOBJECTTAG _eTag);
+	void PlayEffect(GAMEOBJECTTAG _eTag,
+		const Vector3& Rotation = { 0.f,0.f,0.f }, 
+		const float CurRoll = 0.0f);
+	void StopEffect(GAMEOBJECTTAG _eTag);
 public:
 
 public:
