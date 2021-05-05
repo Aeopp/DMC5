@@ -116,6 +116,7 @@ void PsMain(out float4 Color : COLOR0,
     UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
 
     Color = tex2D(Sprite, UV0);
+    
     Color *= _Color;
     Color.rgb *= ColorIntencity;
     Color.rgb += EmissiveSample.rgb;

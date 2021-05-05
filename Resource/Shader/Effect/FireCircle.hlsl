@@ -10,6 +10,8 @@ uniform float EmissiveIntencity;
 uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
 
+uniform float ClipRange;
+
 uniform float3 NoiseScale;
 uniform float3 NoiseScrollSpeed;
 
@@ -18,7 +20,8 @@ uniform float2 NoiseDistortion1;
 uniform float2 NoiseDistortion2;
 
 uniform float SpriteProgressTime;
-
+uniform float AlphaFactor;
+;
 
 //uniform float SpritePrevXStart;
 //uniform float SpritePrevXEnd;
@@ -29,8 +32,6 @@ uniform float SpriteXStart;
 uniform float SpriteXEnd;
 uniform float SpriteYStart;
 uniform float SpriteYEnd;
-
-uniform bool bNoise;
 
 texture DepthMap;
 sampler Depth = sampler_state
@@ -126,8 +127,7 @@ void PsMain(out float4 Color : COLOR0,
     float2 finalNoise = float2(0, 0);
     
     // 노이즈 시작 
-    if (bNoise)
-    {
+    
         float4 Noise1 = tex2D(Noise, UV2);
         float4 Noise2 = tex2D(Noise, UV3);
         float4 Noise3 = tex2D(Noise, UV4);
@@ -141,10 +141,8 @@ void PsMain(out float4 Color : COLOR0,
         Noise3.xy = Noise3.xy * NoiseDistortion2.xy;
     
         finalNoise = Noise1 + Noise2 + Noise3;
-    };
-    // 노이즈 끝.
     
-   
+    // 노이즈 끝.
     
     //float2 PrevUV0 = float2(
     //            lerp(SpritePrevXStart, SpritePrevXEnd, UV0.x),
@@ -160,7 +158,10 @@ void PsMain(out float4 Color : COLOR0,
     EmissiveSample.rgb *= EmissiveIntencity;
     
     // Color = tex2D(Sprite, UV0);
-    Color = tex2D(Sprite, UV0 + finalNoise);
+    // Color = tex2D(Sprite, UV0 + );
+    Color = tex2D(Sprite, UV0);
+    clip(Color.r - ClipRange);
+    Color.a *= AlphaFactor;
     // Color = lerp(PrevColor, Color, SpriteProgressTime);
     
     Color.rgb *= ColorIntencity;
@@ -170,7 +171,8 @@ void PsMain(out float4 Color : COLOR0,
     float4 trailsample = tex2D(Trail, UV0);
     Color.a *= trailsample.a;
     
-    Color1 = trailsample;
+    float4 NoiseSample = tex2D(Noise, UV0 + finalNoise);
+    Color1 = NoiseSample;
     Color1.rgb *= DistortionIntencity;
     
     // 소프트 파티클 계산 .... 

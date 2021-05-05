@@ -44,10 +44,12 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const std::optional<Vector3> & Location = std::nullopt);
+	void PlayStart(const float WaveScale,
+				   const std::optional<Vector3> & Location = std::nullopt);
 private:
 	void PlayEnd();
 	bool bWaveDistortion{ false };
+	float  EditPlayScale{ 0.01f};
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderWaveCircle(const DrawInfo& _Info);

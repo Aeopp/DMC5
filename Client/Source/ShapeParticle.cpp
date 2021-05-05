@@ -5,7 +5,6 @@
 #include "TextureType.h"
 #include "Renderer.h"
 
-
 void ShapeParticle::SetShapeIdx(ShapeParticle::SHAPE Idx)
 {
 	if (Idx > MAX_SHAPE_IDX)
@@ -101,6 +100,9 @@ void ShapeParticle::Reset()
 			case PIPE01:
 				divide = 1;
 				break;
+			case NSG:
+				divide = 5;
+				break;
 			}
 
 			_BezierCurveDescVec.clear();
@@ -125,6 +127,11 @@ void ShapeParticle::Reset()
 				case PIPE01:
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
+				case NSG :
+					//
+
+					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
+					break;
 				}
 
 				_BezierCurveDescVec.push_back({ StartPos, EndPos, Vector3(0.f, 0.f, 0.f) });
@@ -147,6 +154,9 @@ void ShapeParticle::Reset()
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
 				case PIPE01:
+					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
+					break;
+				case NSG :
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
 				}
@@ -229,33 +239,41 @@ void ShapeParticle::RenderInit()
 		},
 	};
 	RenderInterface::Initialize(_InitRenderProp);
-}
+};
 
 void ShapeParticle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	auto WeakSubset = _PlaneMesh->GetSubset(0u);
-	if (auto SharedSubset = WeakSubset.lock();
-		SharedSubset)
+	if (_RenderCall)
 	{
-		// Single Dust
-		_Info.Fx->SetTexture("ALB0Map", _DustSingleTex->GetTexture());
-		//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
-		_Info.Fx->SetBool("_UsingNoise", false);
-		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
-		_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SliceAmount));
-		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
-		_Info.Fx->SetFloatArray("_MinTexUV", _DustSingleMinTexUV, 2u);
-		_Info.Fx->SetFloatArray("_MaxTexUV", _DustSingleMaxTexUV, 2u);
-		_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
-				
-		for (auto& Element : _BezierCurveDescVec)
+		_RenderCall(_Info, this);
+	}
+	else
+	{
+		auto WeakSubset = _PlaneMesh->GetSubset(0u);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
 		{
-			Vector3* pPos = reinterpret_cast<Vector3*>(&_DustSingleChildWorldMatrix.m[3][0]);
-			D3DXVec3TransformCoord(pPos, &Element.DeltaPos, &_RenderUpdateInfo.World);
-			_Info.Fx->SetMatrix("World", &_DustSingleChildWorldMatrix);
-			SharedSubset->Render(_Info.Fx);
+			// Single Dust
+			_Info.Fx->SetTexture("ALB0Map", _DustSingleTex->GetTexture());
+			//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
+			_Info.Fx->SetBool("_UsingNoise", false);
+			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SliceAmount));
+			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
+			_Info.Fx->SetFloatArray("_MinTexUV", _DustSingleMinTexUV, 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", _DustSingleMaxTexUV, 2u);
+			_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
+
+			for (auto& Element : _BezierCurveDescVec)
+			{
+				Vector3* pPos = reinterpret_cast<Vector3*>(&_DustSingleChildWorldMatrix.m[3][0]);
+				D3DXVec3TransformCoord(pPos, &Element.DeltaPos, &_RenderUpdateInfo.World);
+				_Info.Fx->SetMatrix("World", &_DustSingleChildWorldMatrix);
+				SharedSubset->Render(_Info.Fx);
+			}
 		}
 	}
+	
 }
 
 ShapeParticle* ShapeParticle::Create()
@@ -278,6 +296,7 @@ HRESULT ShapeParticle::Ready()
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info));
+	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info));
 
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
@@ -348,7 +367,7 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 	}
 
 	//
-	//Imgui_Modify();
+	// Imgui_Modify();
 
 	return 0;
 }
@@ -361,6 +380,11 @@ UINT ShapeParticle::LateUpdate(const float _fDeltaTime)
 void ShapeParticle::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+
+	}
 }
 
 void ShapeParticle::OnEnable()

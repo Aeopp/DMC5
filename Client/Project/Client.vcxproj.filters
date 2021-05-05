@@ -407,9 +407,23 @@
     <ClInclude Include="..\Header\Trail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\DashTrail.h" />
-    <ClInclude Include="..\Header\FireCircle.h" />
-    <ClInclude Include="..\Header\SpriteEffect.h" />
+    <ClInclude Include="..\Header\WingSword.h" />
+    <ClInclude Include="..\Header\WingSword1st.h" />
+    <ClInclude Include="..\Header\WingSword2nd.h" />
+    <ClInclude Include="..\Header\WingSword3rd.h" />
+    <ClInclude Include="..\Header\WingSword4th.h" />
+    <ClInclude Include="..\Header\DashTrail.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\FireCircle.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\IceAge.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\SpriteEffect.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -642,9 +656,23 @@
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\DashTrail.cpp" />
-    <ClCompile Include="..\Source\FireCircle.cpp" />
-    <ClCompile Include="..\Source\SpriteEffect.cpp" />
+    <ClCompile Include="..\Source\WingSword.cpp" />
+    <ClCompile Include="..\Source\WingSword1st.cpp" />
+    <ClCompile Include="..\Source\WingSword2nd.cpp" />
+    <ClCompile Include="..\Source\WingSword3rd.cpp" />
+    <ClCompile Include="..\Source\WingSword4th.cpp" />
+    <ClCompile Include="..\Source\FireCircle.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\IceAge.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\SpriteEffect.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DashTrail.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -685,9 +713,23 @@
     <None Include="..\..\Resource\Shader\Effect\AirHike.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
-    <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\Trail.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\DashTrail.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\FireCircle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\FireCircle.hlsl">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\IceParticle.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\IceAge.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\DashTrail.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\Trail.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

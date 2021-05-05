@@ -20,6 +20,7 @@
 #include "Cbs_Short.h"
 #include "Cbs_Middle.h"
 #include "Cbs_Long.h"
+<<<<<<< HEAD
 #include "Buster_Arm_Left.h"
 #include "WingSword1st.h"
 #include "WingSword2nd.h"
@@ -127,6 +128,110 @@ void Nero::Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex)
 	case Nero::NeroCom_RedQueen:
 		m_pRedQueen.lock()->SetWeaponState(_StateIndex);
 		break;
+=======
+#include "Buster_Arm_Left.h"
+#include "WingSword1st.h"
+#include "WingSword2nd.h"
+#include "WingSword3rd.h"
+#include "WingSword4th.h"
+Nero::Nero()
+	:m_iCurAnimationIndex(ANI_END)
+	, m_iPreAnimationIndex(ANI_END)
+	, m_iCurWeaponIndex(NeroCom_RedQueen)
+	, m_iJumpDirIndex(Basic)
+	, m_fRedQueenGage(0.f)
+	, m_iCurDirIndex(Dir_Front)
+	, m_iPreDirIndex(Dir_Front)
+	, m_IsMajin(false)
+	, m_fFlySpeed(0.f)
+{
+	m_nTag = Player;
+	m_BattleInfo.iMaxHp = 100;
+	m_BattleInfo.iHp = 100;
+}
+void Nero::Free()
+{
+	Unit::Free();
+	m_pFSM = nullptr;
+}
+
+void Nero::Set_PlayingTime(float NewTime)
+{
+	m_pMesh->SetPlayingTime(NewTime);
+}
+
+
+void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
+{
+	if (_ActiveOrNot)
+	{
+		std::list<std::weak_ptr<Monster>> Monsters = GetAllMonster();
+		for (auto& pMonster : Monsters)
+			pMonster.lock()->Set_Coll(true);
+	}
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		m_pCbsMiddle.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Cbs_Long:
+		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_BusterArm:
+		m_pBusterArm.lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_WireArm:
+		m_pWireArm.lock()->SetActive(_ActiveOrNot);
+		break;
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
+{
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetAttType(_eAttDir);
+		break;
+	case Nero::NeroCom_Overture:
+		m_pOverture.lock()->Set_AttackType(_eAttDir);
+		break;
+	case Nero::NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->SetAttType(_eAttDir);
+		break;
+	case Nero::NeroCom_Cbs_Middle:
+		m_pCbsMiddle.lock()->Set_AttackType(_eAttDir);
+		break;
+	case Nero::NeroCom_Cbs_Long:
+		m_pCbsLong.lock()->Set_AttackType(_eAttDir);
+	case Nero::NeroCom_End:
+		break;
+	default:
+		break;
+	}
+}
+
+void Nero::Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex)
+{
+	switch (_eNeroComID)
+	{
+	case Nero::NeroCom_RedQueen:
+		m_pRedQueen.lock()->SetWeaponState(_StateIndex);
+		break;
+>>>>>>> origin/main
 	case Nero::NeroCom_Cbs_Short:
 		m_pCbsShort.lock()->SetWeaponState(_StateIndex);
 		break;
@@ -214,6 +319,7 @@ HRESULT Nero::Ready()
 	m_pCbsShort = AddGameObject<Cbs_Short>();
 	m_pCbsMiddle = AddGameObject<Cbs_Middle>();
 	m_pCbsLong = AddGameObject<Cbs_Long>();
+<<<<<<< HEAD
 	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
@@ -282,6 +388,70 @@ UINT Nero::Update(const float _fDeltaTime)
 	Update_Majin(_fDeltaTime);
 
 
+=======
+	//m_pRockman = AddGameObject<GT_Rockman>();
+	m_pBlood = AddGameObject<Liquid>();
+	m_pBlood.lock()->SetScale(0.007f);
+	m_pBlood.lock()->SetVariationIdx(Liquid::BLOOD_0);
+
+	//m_vecWingSwords.reserve(4);
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword1st>());
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword2nd>());
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword3rd>());
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword4th>());
+
+	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
+
+	m_iCurAnimationIndex = ANI_END;
+	m_iPreAnimationIndex = ANI_END;
+
+	return S_OK;
+}
+
+
+HRESULT Nero::Awake()
+{
+	Unit::Awake();
+	m_pFSM->ChangeState(NeroFSM::IDLE);
+
+	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
+	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.08f, 0.f));
+	m_pCollider.lock()->SetRadius(0.04f);
+	m_pCollider.lock()->SetHeight(0.1f);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+
+
+	PushEditEntity(m_pCollider.lock().get());
+
+	vDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+
+	return S_OK;
+}
+
+HRESULT Nero::Start()
+{
+	Unit::Start();
+	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
+	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+
+	return S_OK;
+}
+
+UINT Nero::Update(const float _fDeltaTime)
+{
+	Unit::Update(_fDeltaTime);
+
+	Update_Majin(_fDeltaTime);
+
+
+>>>>>>> origin/main
 	//if (Input::GetKeyDown(DIK_0))
 	//	Hit(m_BattleInfo);
 	
