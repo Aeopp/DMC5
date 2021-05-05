@@ -29,11 +29,11 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+
 #include <iostream>
 #include <fstream>
-
-
 using namespace std;
+
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -125,9 +125,9 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
+
 	//LoadMap();
 	AddGameObject<TempMap>();
-
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
@@ -280,21 +280,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//}
 
 
-	//if (Input::GetKeyDown(DIK_NUMPAD2))
-	//{
-
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->SetActive(true);
-	//			m_vecQliphothBlock[i].lock()->PlayStart();
-	//		}
-	//	}
-	//}
-
-
-
 	//if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
 	//{
 	//	int count = Wavefirst.size();
@@ -321,11 +306,21 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	(const weak_ptr<GameObject>& target)
 	//		return target.experiod();
 	//		{});*/
-
-
 	//}
 
 
+	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//{
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->SetActive(true);
+	//			m_vecQliphothBlock[i].lock()->PlayStart();
+	//		}
+	//	}
+	//}
+	// 
 	//if (Input::GetKeyDown(DIK_NUMPAD8))
 	//{
 	//	for (int i = 1; i < 4; ++i)
