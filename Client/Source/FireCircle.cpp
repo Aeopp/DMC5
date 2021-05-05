@@ -137,7 +137,8 @@ void FireCircle::PlayStart(
 							const float CurRoll,
 							const float RollRotateSpeed ,
 							const int32 StartSpriteCol,
-							const int32 StartSpriteRow)
+							const int32 StartSpriteRow ,
+							const float PlayTime)
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
@@ -152,11 +153,15 @@ void FireCircle::PlayStart(
 	this->RollRotationSpeed = RollRotateSpeed;
 	_RenderProperty.bRender = true;
 	T = 0.0f;
+	this->PlayTime = PlayTime;
+	SpriteUpdateCycle = PlayTime / static_cast<float>(SpriteCol);
 	SpriteCurUpdateTime = SpriteUpdateCycle;
 	SpriteProgressTime = SpriteCurUpdateTime / SpriteUpdateCycle;
 
 	SpritePrevRowIdx = SpriteRowIdx = static_cast<float>(StartSpriteRow);
 	SpritePrevColIdx = SpriteColIdx = static_cast<float>(StartSpriteCol);
+
+	
 };
 
 void FireCircle::PlayEnd()
@@ -198,7 +203,19 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 	_Info.Fx->SetTexture("EmissiveMskMap", EmssiveMskMap->GetTexture());
 
+	const float PlayTimehalf = PlayTime * 0.5f;
+	if (T >= PlayTimehalf)
+	{
+		_Info.Fx->SetFloat("AlphaFactor", 1.0f - ((T-PlayTimehalf) / PlayTimehalf));
+		
+	}
+	else
+	{
+		_Info.Fx->SetFloat("AlphaFactor", 1.0f);
+	}
+	 // 알파보간 하셈 !! 
 
+	
 
 	{
 		const uint32 Numsubset = Inner->GetNumSubset();
@@ -343,6 +360,12 @@ UINT FireCircle::Update(const float _fDeltaTime)
 	if (_RenderProperty.bRender == false) return 0;
 	T += _fDeltaTime;
 
+	if (T > PlayTime)
+	{
+		PlayEnd();
+		return 0;
+	}
+
 	if (auto spTransform = GetComponent<ENGINE::Transform>().lock();
 		spTransform)
 	{		
@@ -386,7 +409,8 @@ void FireCircle::Editor()
 					EditStartRoll,
 					EditPlayRollRotateSpeed ,
 					EditSpriteCol,
-					EditSpriteRow);
+					EditSpriteRow ,
+					EditPlayStartPlayTime);
 			}
 
 			if (ImGui::SmallButton("PlayEnd"))
@@ -462,8 +486,13 @@ void FireCircle::Editor()
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");
 
-			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
-			ImGui::InputFloat("In SpriteUpdateCycle", &SpriteUpdateCycle, 0.f, 0.f, "%9.6f");
+			ImGui::SliderFloat("EditPlayStartPlayTime", &EditPlayStartPlayTime, FLT_MIN, 10000.f, "%9.6f");
+			ImGui::InputFloat("In EditPlayStartPlayTime", &EditPlayStartPlayTime, 0.f, 0.f, "%9.6f");
+
+
+
+		/*	ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In SpriteUpdateCycle", &SpriteUpdateCycle, 0.f, 0.f, "%9.6f");*/
 		}
 		ImGui::EndChild();
 	}

@@ -46,7 +46,8 @@ public:
 				// 회전 속도 . 
 				const float RollRotateSpeed =FMath::PI ,
 				const int32 StartSpriteCol=0 ,
-				const int32 StartSpriteRow=3);
+				const int32 StartSpriteRow=3,
+				const float PlayTime=1.f);
 	void PlayEnd();
 public:
 	void SpriteUpdate(const float DeltaTime);
@@ -89,9 +90,11 @@ private:
 	float SpriteRow{ 8.f };
 	float SpriteCol{ 8.f };
 
+	float PlayTime = 1.f;
 	float CurRoll{ 0.f };
 	Vector3 _Rotation{ 0.f,0.f,0.f };
 
+	float EditPlayStartPlayTime = 1.f;
 	float EditStartRoll{ 0.0f };
 	Vector3 EditPlayStartScale{ 0.004f,0.004f,0.004f };
 	Vector3 EditPlayStartLocation{ 0.f,0.f,0.f };

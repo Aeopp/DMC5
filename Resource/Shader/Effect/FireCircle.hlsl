@@ -20,7 +20,8 @@ uniform float2 NoiseDistortion1;
 uniform float2 NoiseDistortion2;
 
 uniform float SpriteProgressTime;
-
+uniform float AlphaFactor;
+;
 
 //uniform float SpritePrevXStart;
 //uniform float SpritePrevXEnd;
@@ -160,6 +161,7 @@ void PsMain(out float4 Color : COLOR0,
     // Color = tex2D(Sprite, UV0 + );
     Color = tex2D(Sprite, UV0);
     clip(Color.r - ClipRange);
+    Color.a *= AlphaFactor;
     // Color = lerp(PrevColor, Color, SpriteProgressTime);
     
     Color.rgb *= ColorIntencity;
