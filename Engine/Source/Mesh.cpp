@@ -65,7 +65,6 @@ HRESULT Mesh::LoadMeshFromFile(const std::filesystem::path _Path, const std::any
 	);
 
 	return LoadMeshImplementation(AiScene, ResourcePath, InitParams);
-
 };
 
 void Mesh::Free()

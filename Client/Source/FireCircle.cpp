@@ -109,22 +109,22 @@ void FireCircle::RenderInit()
 
 	// Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\halfpipe.fbx");
 	// 텍스쳐 
-	// SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\fire_explosive_01.tga");
-	SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\13.tga");
+	// SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\13.tga");
+	SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\7.tga");
 	TrailMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire.tga");
 	EmssiveMskMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
 	NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
-	/*NoiseScale = { 0.f,0.005f,0.005f};
-	NoiseScrollSpeed = { 0.f,0.0005f,0.0005f};*/
+	NoiseScale = { 0.f,0.005f,0.005f};
+	NoiseScrollSpeed = { 0.f,0.0005f,0.0005f};
 
-	NoiseScale = { 0.f,0.f,0.f };
-	NoiseScrollSpeed = { 0.f,0.f,0.f };
+	/*NoiseScale = { 0.f,0.f,0.f };
+	NoiseScrollSpeed = { 0.f,0.f,0.f };*/
 
-	RollRotationSpeed = FMath::PI;
+	EditPlayRollRotateSpeed  = 	RollRotationSpeed = 400.f;
 	EmissiveIntencity = 0.01f;
-	ColorIntencity = 0.6f;
-	SpriteUpdateCycle = 0.1f;
+	ColorIntencity = 0.2f;
+	SpriteUpdateCycle = 0.01f;
 	DistortionIntencity = 1.f;
 	bOuterRender = false;
 	OuterDistortionIntencity =  DistortionIntencity = 10000000.f;
@@ -168,12 +168,13 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
-
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetFloat("SpriteProgressTime", SpriteProgressTime);
+	_Info.Fx->SetFloat("ClipRange", ClipRange);
 
+	// 텍스쳐 바꾸고 클립 래인지 하세요 !! 까먹지마세요 . 
 	_Info.Fx->SetBool("bNoise", bNoise);
 
 	if (bNoise)
@@ -445,12 +446,17 @@ void FireCircle::Editor()
 				ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
 			}
 
+			ImGui::SliderFloat("ClipRange", &ClipRange, FLT_MIN, 1.f, "%9.6f");
+			ImGui::InputFloat("In ClipRange", &ClipRange, 0.f, 0.f, "%9.6f");
+
 			ImGui::SliderFloat3("EditPlayStartScale", EditPlayStartScale, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat3("In EditPlayStartScale", EditPlayStartScale, "%9.6f");
 
 			ImGui::SliderFloat("EditStartRoll", &EditStartRoll, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditStartRoll", &EditStartRoll, 0.f, 0.f, "%9.6f");
 
+			
+			;
 
 			ImGui::SliderFloat3("EditPlayStartLocation", EditPlayStartLocation, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat3("In EditPlayStartLocation", EditPlayStartLocation, "%9.6f");

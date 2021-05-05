@@ -37,7 +37,6 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	
 	void PlayStart(
 					const Vector3& Scale  = { 0.004f, 0.004f,0.004f } ,
 		       // 재생 시킬 위치 
@@ -80,6 +79,8 @@ private:
 	float SpriteCurUpdateTime{ 0.0f };
 	float SpriteUpdateCycle{ SpriteCurUpdateTime };
 
+	float ClipRange = 0.0f /255.f;
+
 	float SpritePrevRowIdx{ 0.0f };
 	float SpritePrevColIdx{ 0.0f };
 
@@ -97,7 +98,7 @@ private:
 	Vector3 EditPlayStartScale{ 0.004f,0.004f,0.004f };
 	Vector3 EditPlayStartLocation{ 0.f,0.f,0.f };
 	Vector3 EditPlayStartRotation {0.f,0.f,0.f};
-	float EditPlayRollRotateSpeed{ 0.f };
+	float EditPlayRollRotateSpeed{ 400.f };
 	int32 EditSpriteCol{ 0 };
 	int32 EditSpriteRow{3 };
 };

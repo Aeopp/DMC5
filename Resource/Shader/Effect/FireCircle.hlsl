@@ -10,6 +10,8 @@ uniform float EmissiveIntencity;
 uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
 
+uniform float ClipRange;
+
 uniform float3 NoiseScale;
 uniform float3 NoiseScrollSpeed;
 
@@ -160,6 +162,7 @@ void PsMain(out float4 Color : COLOR0,
     // Color = tex2D(Sprite, UV0);
     // Color = tex2D(Sprite, UV0 + );
     Color = tex2D(Sprite, UV0);
+    clip(Color.r - ClipRange);
     // Color = lerp(PrevColor, Color, SpriteProgressTime);
     
     Color.rgb *= ColorIntencity;

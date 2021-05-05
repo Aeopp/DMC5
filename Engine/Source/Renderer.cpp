@@ -547,7 +547,7 @@ HRESULT Renderer::Render()&
 		RenderSkySphere();
 	}
 
-	RenderEmissive();
+	// RenderEmissive();
 	AlphaBlendEffectRender();
 	if (bDistortion)
 	{

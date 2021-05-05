@@ -39,7 +39,7 @@
             ],
             "shadowmin": 0.0,
             "shadowdepthbias": 0.000009999999747378752,
-            "ShadowMapSize": 4096.0,
+            "ShadowMapSize": 0,
             "Type": "Directional"
         },
         {
@@ -837,7 +837,7 @@
             ],
             "shadowmin": 0.0,
             "shadowdepthbias": 0.009999999776482582,
-            "ShadowMapSize": 1024.0,
+            "ShadowMapSize": 2048.0,
             "Type": "Point"
         }
     ]

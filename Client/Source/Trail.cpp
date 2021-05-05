@@ -96,17 +96,18 @@ void Trail::RenderInit()
 
 	Device = g_pDevice;
 
+	
 	VtxDecl = Vertex::TrailVertex::GetVertexDecl(Device);
 	Device->CreateVertexBuffer
-	(_Desc.VtxSize * _Desc.VtxCnt, 0, 
+	(_Desc.VtxSize * _Desc.VtxCnt, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
 		NULL, 
-		D3DPOOL_MANAGED, 
+		D3DPOOL_DEFAULT,
 		&VtxBuffer, nullptr);
 
 	Device->CreateIndexBuffer
 	(_Desc.IdxSize* _Desc.TriCnt
-		, 0, _Desc.IdxFmt, 
-		D3DPOOL_MANAGED, &IdxBuffer, nullptr);
+		, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, _Desc.IdxFmt,
+		D3DPOOL_DEFAULT, &IdxBuffer, nullptr);
 
 	TrailMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
@@ -460,18 +461,22 @@ void Trail::Editor()
 				ImGui::Text(" UV1 %9.6f ,%9.6f", _Vtx.UV1.x, _Vtx.UV1.y);
 			}
 
+			
 			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
+
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+
 			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
+
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");
 			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
