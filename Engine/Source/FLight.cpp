@@ -624,11 +624,11 @@ void FLight::Render(const DrawInfo& _Info)
 			SpSubset)
 		{
 			_Info._Device->SetTexture(0, _Texture->GetTexture());
-// 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
+			// 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->Render(_Info.Fx);
 		};
 	};
-}
+};
 
 void FLight::CreateShadowMap(LPDIRECT3DDEVICE9 device, uint16_t size)
 {
@@ -656,7 +656,7 @@ void FLight::CreateShadowMap(LPDIRECT3DDEVICE9 device, uint16_t size)
 		}
 	}
 
-	D3DVIEWPORT9 viewport; 
+	D3DVIEWPORT9 viewport;
 	device->GetViewport(&viewport);
 	if (size > viewport.Y)
 	{
@@ -668,19 +668,12 @@ void FLight::CreateShadowMap(LPDIRECT3DDEVICE9 device, uint16_t size)
 			D3DFMT_D24X8, D3DMULTISAMPLE_TYPE::D3DMULTISAMPLE_NONE,
 			0, FALSE, &CacheDepthStencil, nullptr);
 	}
-}
+};
 
 void FLight::RenderShadowMap(
 	LPDIRECT3DDEVICE9 _Device,
 	std::function<void(FLight*)> CallBack)
 {
-	// D3DVIEWPORT9 OldViewPort;
-
-	// LPDIRECT3DSURFACE9 OldSurface = NULL;
-
-	// _Device->GetRenderTarget(0, &OldSurface);
-	// _Device->GetViewport(&OldViewPort);
-
 	if (_Type == Directional) {
 		D3DVIEWPORT9 Viewport;
 
@@ -692,25 +685,20 @@ void FLight::RenderShadowMap(
 		_Device->SetRenderTarget(0, ShadowmapSurface);
 		_Device->SetViewport(&Viewport);
 
-		// LPDIRECT3DSURFACE9 OldDepthStencil = NULL;
 		if (DepthStencil)
 		{
-			// _Device->GetDepthStencilSurface(&OldDepthStencil);
 			_Device->SetDepthStencilSurface(DepthStencil);
 		}
 		{
 			CallBack(this);
 		}
-		if (DepthStencil)
-		{
-			// _Device->SetDepthStencilSurface(OldDepthStencil);
-			// OldDepthStencil->Release();
-		}
+
+		g_pDevice->StretchRect
+		(ShadowmapSurface, nullptr, 
+			CacheShadowMapSurface, nullptr, D3DTEXF_POINT);
 	}
 	else if (_Type == Point) {
 		for (Currentface = 0; Currentface < 6; ++Currentface) {
-			//Cubeshadowmap->GetCubeMapSurface(
-			//	(D3DCUBEMAP_FACES)Currentface, 0, &Surface);
 			D3DVIEWPORT9 Viewport;
 			Viewport.X = Viewport.Y = 0;
 			Viewport.Width = Viewport.Height = ShadowMapSize;
@@ -719,30 +707,17 @@ void FLight::RenderShadowMap(
 
 			_Device->SetRenderTarget(0, CubeshadowmapSurface[Currentface]);
 			_Device->SetViewport(&Viewport);
-			//LPDIRECT3DSURFACE9 OldDepthStencil = NULL;
 			if (DepthStencil)
 			{
-				//_Device->GetDepthStencilSurface(&OldDepthStencil);
 				_Device->SetDepthStencilSurface(DepthStencil);
 			}
 			{
 				CallBack(this);
 			}
-			if (DepthStencil)
-			{
-				//_Device->SetDepthStencilSurface(OldDepthStencil);
-				//OldDepthStencil->Release();
-			}
 		}
 	}
 
 	Blurred = false;
-
-	//_Device->SetRenderTarget(0, OldSurface);
-	//_Device->SetViewport(&OldViewPort);
-// 	OldSurface->Release();
-
-	// Shadowmap->LockRect(0u,
 };
 
 Matrix FLight::GetWorld()
