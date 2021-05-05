@@ -5,7 +5,6 @@
 #include "Vertexs.h"
 #include <optional>
 
-
 class FireCircle : public ENGINE::GameObject,
 			       public ENGINE::RenderInterface
 {
@@ -100,7 +99,7 @@ private:
 	Vector3 EditPlayStartRotation {0.f,0.f,0.f};
 	float EditPlayRollRotateSpeed{ 400.f };
 	int32 EditSpriteCol{ 0 };
-	int32 EditSpriteRow{3 };
+	int32 EditSpriteRow{0 };
 };
 #endif //
 

@@ -115,8 +115,8 @@ void FireCircle::RenderInit()
 	EmssiveMskMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
 	NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
-	NoiseScale = { 0.f,0.005f,0.005f};
-	NoiseScrollSpeed = { 0.f,0.0005f,0.0005f};
+	NoiseScrollSpeed = { 0.55f,0.0f,2.09f };
+	NoiseScale = { 0.917f,1.009f,1.09f};
 
 	/*NoiseScale = { 0.f,0.f,0.f };
 	NoiseScrollSpeed = { 0.f,0.f,0.f };*/
