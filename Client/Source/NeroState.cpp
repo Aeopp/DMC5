@@ -24,9 +24,7 @@ HRESULT NeroState::StateEnter()
 {
 	FSMState::StateEnter();
 	m_bCbsIdle = false;
-	//if (m_pNero.expired())
-	//	return S_OK;
-	//m_pNero.lock()->SetAngleFromCamera();
+
 	switch (m_iNeroCurWeaponIndex)
 	{
 	case Nero::NeroCom_RedQueen:
