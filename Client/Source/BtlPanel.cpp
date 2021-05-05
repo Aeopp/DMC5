@@ -243,18 +243,18 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->EndPass();
 
 			////////////////////////////////////////////////////////////
-			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _Dummy0000Tex->GetTexture());
+			//_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _Dummy0000Tex->GetTexture());
 
-			Create_ScreenMat(CurID, ScreenMat, 1);
+			//Create_ScreenMat(CurID, ScreenMat, 1);
 
-			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
-			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			//_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			//_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
 
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			//_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
-			_ImplInfo.Fx->BeginPass(12);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
+			//_ImplInfo.Fx->BeginPass(12);
+			//SharedSubset->Render(_ImplInfo.Fx);
+			//_ImplInfo.Fx->EndPass();
 			////////////////////////////////////////////////////////////
 		}
 
@@ -660,7 +660,7 @@ HRESULT BtlPanel::Ready()
 	_RedOrbATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_atos.tga");
 	_RedOrbNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_nrmr.tga");
 
-	_Dummy0000Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\dummy0000.png");
+	//_Dummy0000Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\dummy0000.png");
 
 	_TargetCursorTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Cursor_MET.tga");
 	_EnemyHPTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Enemy_HP_Target_01_IM.tga");
@@ -754,6 +754,9 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 	Update_Rank(_fDeltaTime);
 	Update_Gauge(_fDeltaTime);
 	Check_KeyInput(_fDeltaTime);
+
+	//
+	_FontVec[REDORBCOUNT].lock()->SetText(std::string(std::to_string(_RedOrbCount)), { 1125.f, 50.f }, { 0.8f, 0.8f }, true);
 
 	//
 	//Imgui_ModifyUI(HP_GLASS);
@@ -1523,15 +1526,15 @@ void BtlPanel::Update_TargetInfo(const float _fDeltaTime)
 	{
 		if (0.f < _TargetCursorAlpha)
 		{
-			_TargetCursorAlpha -= _fDeltaTime * 2.5f;
+			_TargetCursorAlpha -= _fDeltaTime * 6.5f;
 			if (0.f > _TargetCursorAlpha)
 				_TargetCursorAlpha = 0.f;
 		}
 
 		if (0.56f > _UIDescs[TARGET_HP].Scale.x)
 		{
-			_UIDescs[TARGET_HP].Scale.x += _fDeltaTime * 0.25f;
-			_UIDescs[TARGET_HP].Scale.y += _fDeltaTime * 0.25f;
+			_UIDescs[TARGET_HP].Scale.x += _fDeltaTime * 0.65f;
+			_UIDescs[TARGET_HP].Scale.y += _fDeltaTime * 0.65f;
 
 			if (0.56f < _UIDescs[TARGET_HP].Scale.x)
 			{
@@ -1546,15 +1549,15 @@ void BtlPanel::Update_TargetInfo(const float _fDeltaTime)
 	//
 	if (1.f > _TargetCursorAlpha)
 	{
-		_TargetCursorAlpha += _fDeltaTime * 2.5f;
+		_TargetCursorAlpha += _fDeltaTime * 6.5f;
 		if (1.f < _TargetCursorAlpha)
 			_TargetCursorAlpha = 1.f;
 	}
 
 	if (0.46f < _UIDescs[TARGET_HP].Scale.x)
 	{
-		_UIDescs[TARGET_HP].Scale.x -= _fDeltaTime * 0.25f;
-		_UIDescs[TARGET_HP].Scale.y -= _fDeltaTime * 0.25f;
+		_UIDescs[TARGET_HP].Scale.x -= _fDeltaTime * 0.65f;
+		_UIDescs[TARGET_HP].Scale.y -= _fDeltaTime * 0.65f;
 
 		if (0.46f > _UIDescs[TARGET_HP].Scale.x)
 		{
@@ -1970,7 +1973,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		//AccumulateTDTGauge(0.3f);
+		//AccumulateTDTGauge(1.f);
 		ChangeWeaponUI(Nero::WeaponList::RQ);
 
 		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();

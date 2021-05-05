@@ -100,7 +100,7 @@ PsOut PsMain(PsIn In)
     }
 
     Out.Color = tex2D(ALB0, In.UV);
-    Out.Color.rgb *= (_BrightScale * exposure_corr);
+    Out.Color.rgb *= (_BrightScale/* exposure_corr*/);
     Out.Color.a *= saturate(1.f - _SliceAmount);
     
     return Out;

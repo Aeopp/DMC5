@@ -44,8 +44,7 @@ private:
 	std::shared_ptr<ENGINE::Texture> _RedOrbATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};
 
-	// 더미 나중에 폰트 제대로 만들자~
-	std::shared_ptr<ENGINE::Texture> _Dummy0000Tex{};
+	//std::shared_ptr<ENGINE::Texture> _Dummy0000Tex{};
 
 	std::shared_ptr<ENGINE::Texture> _TargetCursorTex{};
 	std::shared_ptr<ENGINE::Texture> _EnemyHPTex{};
@@ -197,6 +196,8 @@ private:
 		FONT_END
 	};
 	std::vector<std::weak_ptr<Font>> _FontVec;
+
+	uint32 _RedOrbCount = 9999999u;
 
 private:
 	explicit BtlPanel() = default;

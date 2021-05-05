@@ -161,12 +161,12 @@ void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		Matrix World = _DecalBloodChildWorldMatrix * _RenderUpdateInfo.World;
 		_Info.Fx->SetMatrix("World", &World);
 
-		if (!Renderer::GetInstance()->GetDirLights().empty())
-		{
-			// ぞぞ
-			auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
-			_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
-		}
+		//if (!Renderer::GetInstance()->GetDirLights().empty())
+		//{
+		//	// ぞぞ
+		//	auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
+		//	_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
+		//}
 
 		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
 		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
