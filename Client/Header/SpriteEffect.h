@@ -5,7 +5,7 @@
 #include <optional>
 
 class SpriteEffect : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+					 public ENGINE::RenderInterface
 {
 public:
 	enum class MeshType : int32
@@ -15,8 +15,8 @@ public:
 	};
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
-	std::shared_ptr<ENGINE::Texture> _SpriteTex{};
-	std::shared_ptr<ENGINE::Texture> _DistortionTex{};
+	std::shared_ptr<ENGINE::Texture>    _SpriteTex{};
+	std::shared_ptr<ENGINE::Texture>    _DistortionTex{};
 
 	int32 SpriteCol;
 	int32 SpriteRow;
@@ -55,8 +55,7 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void RegistInfo(const float DistortionIntencity = 1.f,
-		const float ColorIntencity = 1.f,
-
+		const float   ColorIntencity = 1.f,
 		const Vector4 _Color = Vector4{ 1.f,1.f,1.f,1.f });
 
 	void RegistMesh(const std::string& MeshPath);

@@ -58,7 +58,7 @@ void SpriteEffect::RenderInit()
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
 
-	// 렌더 정보 초기화 ...
+	// 렌더 정보 초기화 ..
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	// 렌더 속성 전체 초기화 
