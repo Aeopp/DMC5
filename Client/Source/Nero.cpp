@@ -25,6 +25,11 @@
 #include "WingSword2nd.h"
 #include "WingSword3rd.h"
 #include "WingSword4th.h"
+#include "AirHike.h"
+#include "Trail.h"
+#include "IceAge.h"
+#include "FireCircle.h"
+#include "CircleWave.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -213,6 +218,12 @@ HRESULT Nero::Ready()
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
 	m_pBlood.lock()->SetVariationIdx(Liquid::BLOOD_0);
+
+	m_pAirHike = AddGameObject<AirHike>();
+	m_pTrail = AddGameObject<Trail>();
+	m_pIceAge = AddGameObject<IceAge>();
+	m_pFireCircle = AddGameObject<FireCircle>();
+	m_pCircleWave = AddGameObject<CircleWave>();
 
 	//m_vecWingSwords.reserve(4);
 	//m_vecWingSwords.emplace_back(AddGameObject<WingSword1st>());
