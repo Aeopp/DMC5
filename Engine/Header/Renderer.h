@@ -99,6 +99,8 @@ public:
 	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
+
+	bool bShadowMapBake = false;
 	
 	
 	Vector4 DistortionColor { 246.f/255.f,10.f/255.f,10.f/255.f,1.f };
@@ -174,6 +176,7 @@ private:
 	void TestShaderRelease();
 	void TestLightRotation();
 	void RenderShadowMaps();
+	void ShadowCacheBake();
 	void RenderGBuffer();
 	void DeferredShading();
 

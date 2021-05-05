@@ -105,6 +105,7 @@ public:
 	LPDIRECT3DSURFACE9      DepthStencil{};
 	LPDIRECT3DSURFACE9      CacheDepthStencil{nullptr};
 
+
 	std::array<LPDIRECT3DSURFACE9, 6u>      CubeDepthStencil{};
 	std::array<LPDIRECT3DSURFACE9, 6u>      CubeCacheDepthStencil{};
 
@@ -114,7 +115,7 @@ public:
 
 	uint16_t				ShadowMapSize;
 	bool					Blurred;
-
+	bool                    bCurrentShadowRender = false;
 
 	Type				    _Type;
 	bool bRemove = false;

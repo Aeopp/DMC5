@@ -758,12 +758,13 @@ void FLight::CacheShadowMapBake(LPDIRECT3DDEVICE9 _Device, std::function<void(FL
 {
 	if (_Type == Directional) {
 		D3DVIEWPORT9 Viewport;
+
 		Viewport.X = Viewport.Y = 0;
 		Viewport.Width = Viewport.Height = ShadowMapSize;
 		Viewport.MinZ = 0;
 		Viewport.MaxZ = 1;
 
-		_Device->SetRenderTarget(0,CacheShadowMapSurface);
+		_Device->SetRenderTarget(0, ShadowmapSurface);
 		_Device->SetViewport(&Viewport);
 
 		if (DepthStencil)
@@ -774,9 +775,9 @@ void FLight::CacheShadowMapBake(LPDIRECT3DDEVICE9 _Device, std::function<void(FL
 			CallBack(this);
 		}
 
-		g_pDevice->StretchRect
-		(ShadowmapSurface, nullptr,
-			CacheShadowMapSurface, nullptr, D3DTEXF_POINT);
+		//g_pDevice->StretchRect
+		//(ShadowmapSurface, nullptr, 
+		//	CacheShadowMapSurface, nullptr, D3DTEXF_POINT);
 	}
 	else if (_Type == Point) {
 		for (Currentface = 0; Currentface < 6; ++Currentface) {

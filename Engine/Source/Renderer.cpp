@@ -478,8 +478,16 @@ HRESULT Renderer::Render()&
 	}
 
 	//  쉐도우 패스 
-	RenderShadowMaps();
+	if (bShadowMapBake)
+	{
+		ShadowCacheBake();
+	}
+	else
+	{
+		RenderShadowMaps();
+	}
 	
+	ShadowCacheBake();
 	EnableDepthBias();
 	// 기하 패스
 	RenderGBuffer();
@@ -739,6 +747,8 @@ void Renderer::RenderBegin()&
 	{
 		if (CurDirLight->ShadowMapSize > 0)
 		{
+			CurDirLight->bCurrentShadowRender = true;
+
 			if (FAILED(g_pDevice->StretchRect
 			(CurDirLight->CacheDepthStencil, nullptr,
 				CurDirLight->DepthStencil, nullptr, D3DTEXF_POINT)))
@@ -747,24 +757,48 @@ void Renderer::RenderBegin()&
 					TEXT("Depth stencil copy failure."));
 			}
 		}
+		else
+		{
+			CurDirLight->bCurrentShadowRender = false;
+		}
 	}
 		
 
 	for (auto& PointLight : PointLights)
 	{
-		if (PointLight->ShadowMapSize > 0)
+		if (PointLight->GetShadowMapSize() <= 0)
 		{
-			for (int i = 0; i < 6; ++i)
+			PointLight->bCurrentShadowRender = false;
+			continue;
+		}
+
+		Sphere PtlightSphere{};
+		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
+		PtlightSphere.Radius = PointLight->GetFarPlane();
+		if (false == CameraFrustum->IsIn(PtlightSphere))
+		{
+			PointLight->bCurrentShadowRender = false;
+			continue;
+		}
+
+		PtlightSphere.Radius = PointLight->GetPointRadius();
+		if (false == CameraFrustum->IsIn(PtlightSphere))
+		{
+			PointLight->bCurrentShadowRender = false;
+			continue;
+		}
+
+		for (int i = 0; i < 6; ++i)
+		{
+			if (FAILED(g_pDevice->StretchRect
+			(PointLight->CubeCacheDepthStencil[i], nullptr,
+				PointLight->CubeDepthStencil[i], nullptr, D3DTEXF_POINT)))
 			{
-				if (FAILED(g_pDevice->StretchRect
-				(PointLight->CubeCacheDepthStencil[i], nullptr,
-					PointLight->CubeDepthStencil[i], nullptr, D3DTEXF_POINT)))
-				{
-					PRINT_LOG(TEXT("Warning"), TEXT(
-						"Depth stencil copy failure."));
-				}
+				PRINT_LOG(TEXT("Warning"), TEXT(
+					"Depth stencil copy failure."));
 			}
 		}
+		PointLight->bCurrentShadowRender = true;
 	}
 
 	GraphicSystem::GetInstance()->Begin();
@@ -844,10 +878,13 @@ void Renderer::RenderShadowMaps()
 
 	auto shadowmap = Shaders["Shadow"]->GetEffect();
 
-	// for (auto& DirLight : DirLights)
-	if(CurDirLight && (CurDirLight->GetShadowMapSize() > 0))
+	if(
+		CurDirLight && 
+		(CurDirLight->GetShadowMapSize() > 0) 
+		&& CurDirLight->bCurrentShadowRender)
 	{
-		CurDirLight->RenderShadowMap(Device, [&](FLight* light) {
+		CurDirLight->RenderShadowMap(
+			Device, [&](FLight* light) {
 			D3DXMATRIX  viewproj;
 			D3DXVECTOR4 clipplanes(
 				light->GetNearPlane(),
@@ -892,17 +929,13 @@ void Renderer::RenderShadowMaps()
 			});
 	};
 	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
 	shadowmap->SetBool("isPerspective", TRUE);
 	for (auto& PointLight : PointLights)
 	{
-		Sphere PtlightSphere{};
-		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
-		PtlightSphere.Radius = PointLight->GetFarPlane();
-		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
-		PtlightSphere.Radius = PointLight->GetPointRadius();
-		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
+		if (PointLight->bCurrentShadowRender == false) 
+			continue;
 
-		if (PointLight->GetShadowMapSize() <= 0) continue;
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX viewproj;
@@ -949,6 +982,121 @@ void Renderer::RenderShadowMaps()
 	Device->SetDepthStencilSurface(BackBufferZBuffer);
 	Device->SetViewport(&_RenderInfo.Viewport);
 	 //Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+}
+void Renderer::ShadowCacheBake()
+{
+	if (!bShadowMapBake)return;
+
+	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
+	auto shadowmap = Shaders["Shadow"]->GetEffect();
+
+	if (
+		CurDirLight &&
+		(CurDirLight->GetShadowMapSize() > 0)
+		&& CurDirLight->bCurrentShadowRender)
+	{
+		CurDirLight->RenderShadowMap(
+			Device, [&](FLight* light) {
+				D3DXMATRIX  viewproj;
+				D3DXVECTOR4 clipplanes(
+					light->GetNearPlane(),
+					light->GetFarPlane(), 0, 0);
+
+				light->CalculateViewProjection(viewproj);
+
+				shadowmap->SetTechnique("variance");
+				shadowmap->SetVector("clipPlanes", &clipplanes);
+				shadowmap->SetBool("isPerspective", FALSE);
+
+				Device->Clear(0, NULL,
+					D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+
+				// 렌더 시작 ... 
+				DrawInfo _DrawInfo{};
+				_DrawInfo._Device = Device;
+				CurShadowFrustum->Make(light->viewinv, light->proj);
+				_DrawInfo._Frustum = CurShadowFrustum.get();
+				_DrawInfo.BySituation.reset();
+				for (auto& [ShaderKey, EntityArr] : RenderEntitys[RenderProperty::Order::Shadow])
+				{
+					auto Fx = Shaders[ShaderKey]->GetEffect();
+					Fx->SetMatrix("matViewProj", &viewproj);
+					_DrawInfo.Fx = Fx;
+					UINT Passes = 0u;
+					Fx->Begin(&Passes, NULL);
+					for (int32 i = 0; i < Passes; ++i)
+					{
+						_DrawInfo.PassIndex = i;
+						Fx->BeginPass(i);
+						for (auto& [_Entity, _Call] : EntityArr)
+						{
+							_Call(_DrawInfo);
+						}
+						Fx->EndPass();
+					}
+					Fx->End();
+				}
+				// 렌더 엔드 ... 
+
+			});
+	};
+	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	shadowmap->SetBool("isPerspective", TRUE);
+	for (auto& PointLight : PointLights)
+	{
+		if (PointLight->bCurrentShadowRender == false)
+			continue;
+
+
+		PointLight->RenderShadowMap(Device, [&](FLight* light) {
+			D3DXMATRIX viewproj;
+			D3DXVECTOR4 clipplanes(
+				light->GetNearPlane(), light->GetFarPlane(), 0, 0);
+
+			light->CalculateViewProjection(viewproj);
+
+			shadowmap->SetTechnique("variance");
+			shadowmap->SetVector("lightPos", &light->GetPosition());
+			shadowmap->SetVector("clipPlanes", &clipplanes);
+
+			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+
+			CurShadowFrustum->Make(light->viewinv, light->proj);
+			// 렌더 시작 ... 
+			DrawInfo _DrawInfo{};
+			_DrawInfo._Device = Device;
+			_DrawInfo._Frustum = CurShadowFrustum.get();
+			// 여기까지 했음 . 내일 화이팅
+			for (auto& [ShaderKey, EntityArr] :
+				RenderEntitys[RenderProperty::Order::Shadow])
+			{
+				auto Fx = Shaders[ShaderKey]->GetEffect();
+				_DrawInfo.Fx = Fx;
+				UINT Passes = 0u;
+				Fx->SetMatrix("matViewProj", &viewproj);
+				Fx->Begin(&Passes, NULL);
+				for (int32 i = 0; i < Passes; ++i)
+				{
+					_DrawInfo.PassIndex = i;
+					Fx->BeginPass(i);
+					for (auto& [_Entity, _Call] : EntityArr)
+					{
+						_Call(_DrawInfo);
+					}
+					Fx->EndPass();
+				}
+				Fx->End();
+			}
+			});
+	};
+
+	Device->SetDepthStencilSurface(BackBufferZBuffer);
+	Device->SetViewport(&_RenderInfo.Viewport);
+
+	bShadowMapBake = false;
 };
 
 void Renderer::RenderGBuffer()
