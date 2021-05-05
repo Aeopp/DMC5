@@ -174,33 +174,15 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("SpriteProgressTime", SpriteProgressTime);
 	_Info.Fx->SetFloat("ClipRange", ClipRange);
 
-	// 텍스쳐 바꾸고 클립 래인지 하세요 !! 까먹지마세요 . 
-	_Info.Fx->SetBool("bNoise", bNoise);
 
-	if (bNoise)
-	{
-		_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
-		const Vector3 Speed = NoiseScrollSpeed * T;
-		_Info.Fx->SetFloatArray("NoiseScrollSpeed", Speed, 3u);
+	_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
+	const Vector3 Speed = NoiseScrollSpeed * T;
+	_Info.Fx->SetFloatArray("NoiseScrollSpeed", Speed, 3u);
 
-		_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
-		_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
-
-	}
-	else
-	{
-		_Info.Fx->SetFloatArray("NoiseScale", nullptr, 3u);
-		const Vector3 Speed = NoiseScrollSpeed * T;
-		_Info.Fx->SetFloatArray("NoiseScrollSpeed", nullptr, 3u);
-
-		_Info.Fx->SetFloatArray("NoiseDistortion0", nullptr, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion1", nullptr, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion2", nullptr, 2u);
-
-		_Info.Fx->SetTexture("NoiseMap", nullptr);
-	}
+	_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
+	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
 
 	_Info.Fx->SetFloat("SpritePrevXStart", SpritePrevColIdx / SpriteCol);
 	_Info.Fx->SetFloat("SpritePrevXEnd", (SpritePrevColIdx + 1.f) / SpriteCol);
@@ -434,17 +416,15 @@ void FireCircle::Editor()
 			ImGui::Text("SpriteYStart %2.6f", SpriteRowIdx / SpriteRow);
 			ImGui::SameLine();
 			ImGui::Text("SpriteYEnd %2.6f", (SpriteRowIdx + 1.f) / SpriteRow);
+			
 
-			ImGui::Checkbox("bNoise", &bNoise);
+			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
 
-			if (bNoise)
-			{
-				ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
-				ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
+			ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
 
-				ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
-				ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
-			}
+			
 
 			ImGui::SliderFloat("ClipRange", &ClipRange, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In ClipRange", &ClipRange, 0.f, 0.f, "%9.6f");

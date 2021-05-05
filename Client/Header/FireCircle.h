@@ -54,7 +54,6 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
 	float   SpriteProgressTime = 0.0f;
-	bool    bNoise = true;
 
 	bool    bOuterRender = false;
 

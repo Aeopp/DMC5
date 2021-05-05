@@ -32,8 +32,6 @@ uniform float SpriteXEnd;
 uniform float SpriteYStart;
 uniform float SpriteYEnd;
 
-uniform bool bNoise;
-
 texture DepthMap;
 sampler Depth = sampler_state
 {
@@ -128,8 +126,7 @@ void PsMain(out float4 Color : COLOR0,
     float2 finalNoise = float2(0, 0);
     
     // 노이즈 시작 
-    if (bNoise)
-    {
+    
         float4 Noise1 = tex2D(Noise, UV2);
         float4 Noise2 = tex2D(Noise, UV3);
         float4 Noise3 = tex2D(Noise, UV4);
@@ -143,7 +140,7 @@ void PsMain(out float4 Color : COLOR0,
         Noise3.xy = Noise3.xy * NoiseDistortion2.xy;
     
         finalNoise = Noise1 + Noise2 + Noise3;
-    };
+    
     // 노이즈 끝.
     
     //float2 PrevUV0 = float2(
