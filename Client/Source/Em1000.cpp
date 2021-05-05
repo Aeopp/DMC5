@@ -15,6 +15,9 @@
 
 void Em1000::Free()
 {
+	Destroy(m_pBlood);
+	Destroy(m_pAppear);
+
 	Monster::Free();
 }
 

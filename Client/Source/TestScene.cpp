@@ -71,13 +71,13 @@ HRESULT TestScene::LoadScene()
 		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
 	/*--------------------------------------------------------- */
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em100>();
-	AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 
 	// AddGameObject<Car>();

@@ -18,6 +18,11 @@ void BtlPanel::Free()
 {
 	SafeDeleteArray(_UIDescs);
 
+	for (auto& Element : _FontVec)
+		Destroy(Element);
+	_FontVec.clear();
+	_FontVec.shrink_to_fit();
+
 	GameObject::Free();
 }
 
@@ -719,6 +724,9 @@ HRESULT BtlPanel::Ready()
 		 
 	Init_UIDescs();
 
+	_FontVec.reserve(FONT_END);
+	_FontVec.push_back(static_pointer_cast<Font>(AddGameObject<Font>().lock()));
+
 	return S_OK;
 }
 
@@ -748,7 +756,7 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 	Check_KeyInput(_fDeltaTime);
 
 	//
-	Imgui_ModifyUI(HP_GLASS);
+	//Imgui_ModifyUI(HP_GLASS);
 
 	//POINT pt{};
 	//GetCursorPos(&pt);

@@ -410,6 +410,12 @@
     <ClInclude Include="..\Header\DashTrail.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\SpriteEffect.h" />
+    <ClInclude Include="..\Header\Font.h">
+      <Filter>02.GameObject\UI\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\UI\Font.hlsl">
+      <Filter>02.GameObject\UI\Font</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -645,6 +651,9 @@
     <ClCompile Include="..\Source\DashTrail.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\SpriteEffect.cpp" />
+    <ClCompile Include="..\Source\Font.cpp">
+      <Filter>02.GameObject\UI\Font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
