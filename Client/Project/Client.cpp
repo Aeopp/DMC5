@@ -77,11 +77,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 			auto CurTime = std::chrono::high_resolution_clock::now();
 			std::chrono::duration<float, std::ratio<1, 1000>> Delta = CurTime - PrevTime;
 			const float CurDt = (Delta.count() * 0.001f);
-			// if (CurDt >=  TargetDelta)
+
+			if (g_bFrameLimit)
+			{
+				if (CurDt >= TargetDelta)
+				{
+					PrevTime = CurTime;
+					pApplication->UpdateApplication(CurDt);
+				}
+			}
+			else
 			{
 				PrevTime = CurTime;
 				pApplication->UpdateApplication(CurDt);
-			      // 프레임 고정 .... 
 			}
 		}
 	}

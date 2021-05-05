@@ -487,7 +487,6 @@ HRESULT Renderer::Render()&
 		RenderShadowMaps();
 	}
 	
-	ShadowCacheBake();
 	EnableDepthBias();
 	// ±âÇÏ ÆÐ½º
 	RenderGBuffer();
@@ -618,6 +617,11 @@ void Renderer::Editor()&
 			LightLoad(FileHelper::OpenDialogBox());
 		}
 
+		if (ImGui::Button("Shadow Cache Bake"))
+		{
+			bShadowMapBake = true;
+		}
+
 		ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 1.f,
 			"%3.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
@@ -743,63 +747,67 @@ void Renderer::RenderReady()&
 
 void Renderer::RenderBegin()&
 {
-	if (CurDirLight)
+	if (g_bOptRender == false)
 	{
-		if (CurDirLight->ShadowMapSize > 0)
+		if (CurDirLight)
 		{
-			CurDirLight->bCurrentShadowRender = true;
-
-			if (FAILED(g_pDevice->StretchRect
-			(CurDirLight->CacheDepthStencil, nullptr,
-				CurDirLight->DepthStencil, nullptr, D3DTEXF_POINT)))
+			if (CurDirLight->ShadowMapSize > 0)
 			{
-				PRINT_LOG(TEXT("Warning"),
-					TEXT("Depth stencil copy failure."));
+				CurDirLight->bCurrentShadowRender = true;
+
+				if (FAILED(g_pDevice->StretchRect
+				(CurDirLight->CacheDepthStencil, nullptr,
+					CurDirLight->DepthStencil, nullptr, D3DTEXF_POINT)))
+				{
+					PRINT_LOG(TEXT("Warning"),
+						TEXT("Depth stencil copy failure."));
+				}
+			}
+			else
+			{
+				CurDirLight->bCurrentShadowRender = false;
 			}
 		}
-		else
-		{
-			CurDirLight->bCurrentShadowRender = false;
-		}
-	}
-		
 
-	for (auto& PointLight : PointLights)
-	{
-		if (PointLight->GetShadowMapSize() <= 0)
-		{
-			PointLight->bCurrentShadowRender = false;
-			continue;
-		}
 
-		Sphere PtlightSphere{};
-		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
-		PtlightSphere.Radius = PointLight->GetFarPlane();
-		if (false == CameraFrustum->IsIn(PtlightSphere))
+		for (auto& PointLight : PointLights)
 		{
-			PointLight->bCurrentShadowRender = false;
-			continue;
-		}
-
-		PtlightSphere.Radius = PointLight->GetPointRadius();
-		if (false == CameraFrustum->IsIn(PtlightSphere))
-		{
-			PointLight->bCurrentShadowRender = false;
-			continue;
-		}
-
-		for (int i = 0; i < 6; ++i)
-		{
-			if (FAILED(g_pDevice->StretchRect
-			(PointLight->CubeCacheDepthStencil[i], nullptr,
-				PointLight->CubeDepthStencil[i], nullptr, D3DTEXF_POINT)))
+			if ((PointLight->GetShadowMapSize() > 0) == false)
 			{
-				PRINT_LOG(TEXT("Warning"), TEXT(
-					"Depth stencil copy failure."));
+				PointLight->bCurrentShadowRender = false;
+				continue;
 			}
+
+			Sphere PtlightSphere{};
+			PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
+			PtlightSphere.Radius = PointLight->GetFarPlane();
+			if (false == CameraFrustum->IsIn(PtlightSphere))
+			{
+				PointLight->bCurrentShadowRender = false;
+				continue;
+			}
+
+			PtlightSphere.Radius = PointLight->GetPointRadius();
+			if (false == CameraFrustum->IsIn(PtlightSphere))
+			{
+				PointLight->bCurrentShadowRender = false;
+				continue;
+			}
+
+			for (int i = 0; i < 6; ++i)
+			{
+				if (FAILED(g_pDevice->StretchRect
+				(PointLight->CubeCacheDepthStencil[i], nullptr,
+					PointLight->CubeDepthStencil[i], nullptr, D3DTEXF_POINT)))
+				{
+					PRINT_LOG(TEXT("Warning"), TEXT(
+						"Depth stencil copy failure."));
+				}
+			}
+			PointLight->bCurrentShadowRender = true;
 		}
-		PointLight->bCurrentShadowRender = true;
 	}
+	
 
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
@@ -873,6 +881,8 @@ void Renderer::RenderEntityClear()&
 
 void Renderer::RenderShadowMaps()
 {
+	if (bShadowMapBake)return;
+
 	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
@@ -896,8 +906,8 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 			shadowmap->SetBool("isPerspective", FALSE);
 
-			Device->Clear(0, NULL, 
-				D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			//Device->Clear(0, NULL, 
+			//	D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			// ·»´õ ½ÃÀÛ ... 
 			DrawInfo _DrawInfo{};
@@ -918,7 +928,10 @@ void Renderer::RenderShadowMaps()
 					Fx->BeginPass(i);
 					for (auto& [_Entity, _Call] : EntityArr)
 					{
-						_Call(_DrawInfo);
+						if (_Entity->_RenderProperty.bShadowCache == false)
+						{
+							_Call(_DrawInfo);
+						}
 					}
 					Fx->EndPass();
 				}
@@ -928,14 +941,12 @@ void Renderer::RenderShadowMaps()
 
 			});
 	};
-	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	shadowmap->SetBool("isPerspective", TRUE);
 	for (auto& PointLight : PointLights)
 	{
 		if (PointLight->bCurrentShadowRender == false) 
 			continue;
-
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX viewproj;
@@ -948,7 +959,7 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("lightPos", &light->GetPosition());
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
-			Device->Clear(0,NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			//Device->Clear(0,NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
 			// ·»´õ ½ÃÀÛ ... 
@@ -970,7 +981,10 @@ void Renderer::RenderShadowMaps()
 					Fx->BeginPass(i);
 					for (auto& [_Entity, _Call] : EntityArr)
 					{
-						_Call(_DrawInfo);
+						if (_Entity->_RenderProperty.bShadowCache == false)
+						{
+							_Call(_DrawInfo);
+						}
 					}
 					Fx->EndPass();
 				}
@@ -981,7 +995,6 @@ void Renderer::RenderShadowMaps()
 
 	Device->SetDepthStencilSurface(BackBufferZBuffer);
 	Device->SetViewport(&_RenderInfo.Viewport);
-	 //Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 void Renderer::ShadowCacheBake()
 {
@@ -989,15 +1002,15 @@ void Renderer::ShadowCacheBake()
 
 	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	auto shadowmap = Shaders["Shadow"]->GetEffect();
 
-	if (
-		CurDirLight &&
-		(CurDirLight->GetShadowMapSize() > 0)
-		&& CurDirLight->bCurrentShadowRender)
+	for (auto& _DirLight : DirLights)
 	{
-		CurDirLight->RenderShadowMap(
+		if ((_DirLight->ShadowMapSize >= 0) == false)continue;
+
+		_DirLight->CacheShadowMapBake(
 			Device, [&](FLight* light) {
 				D3DXMATRIX  viewproj;
 				D3DXVECTOR4 clipplanes(
@@ -1032,26 +1045,25 @@ void Renderer::ShadowCacheBake()
 						Fx->BeginPass(i);
 						for (auto& [_Entity, _Call] : EntityArr)
 						{
-							_Call(_DrawInfo);
+							if (_Entity->_RenderProperty.bShadowCache)
+							{
+								_Call(_DrawInfo);
+							}
 						}
 						Fx->EndPass();
 					}
 					Fx->End();
 				}
-				// ·»´õ ¿£µå ... 
 
 			});
-	};
-	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	}
 
 	shadowmap->SetBool("isPerspective", TRUE);
 	for (auto& PointLight : PointLights)
 	{
-		if (PointLight->bCurrentShadowRender == false)
-			continue;
+		if ((PointLight->ShadowMapSize >= 0) == false) continue;
 
-
-		PointLight->RenderShadowMap(Device, [&](FLight* light) {
+		PointLight->CacheShadowMapBake(Device, [&](FLight* light) {
 			D3DXMATRIX viewproj;
 			D3DXVECTOR4 clipplanes(
 				light->GetNearPlane(), light->GetFarPlane(), 0, 0);
@@ -1062,7 +1074,8 @@ void Renderer::ShadowCacheBake()
 			shadowmap->SetVector("lightPos", &light->GetPosition());
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
-			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			Device->Clear(0,
+				NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
 			// ·»´õ ½ÃÀÛ ... 
@@ -1084,7 +1097,10 @@ void Renderer::ShadowCacheBake()
 					Fx->BeginPass(i);
 					for (auto& [_Entity, _Call] : EntityArr)
 					{
-						_Call(_DrawInfo);
+						if (_Entity->_RenderProperty.bShadowCache)
+						{
+							_Call(_DrawInfo);
+						}
 					}
 					Fx->EndPass();
 				}
@@ -1095,6 +1111,7 @@ void Renderer::ShadowCacheBake()
 
 	Device->SetDepthStencilSurface(BackBufferZBuffer);
 	Device->SetViewport(&_RenderInfo.Viewport);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	bShadowMapBake = false;
 };
@@ -1269,7 +1286,6 @@ void Renderer::DeferredShading()
 		D3DXMATRIX lightviewproj;
 		D3DXVECTOR4 clipplanes(0, 0, 0, 0);
 
-		// for (auto& DirLight : DirLights)
 		if(CurDirLight)
 		{
 			auto& DirLight = CurDirLight;

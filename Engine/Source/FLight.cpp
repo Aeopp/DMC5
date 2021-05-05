@@ -35,11 +35,11 @@ FLight::FLight()
 	Spotdirection = D3DXVECTOR3(0, 0, 0);
 	Spotparams = D3DXVECTOR2(0, 0);
 	CubeshadowmapSurface.fill(nullptr);
-	BlurredcubeshadowmapSurface.fill(nullptr);
+	CubeCacheshadowmapSurface.fill(nullptr);
+
 	Position = { 0.f,0.f,0.f ,1.f};
 	BlurIntencity = 4.f;
 	Cubeshadowmap = nullptr;
-	Blurredcubeshadowmap = nullptr;
 	Shadowmap = nullptr;
 	CacheShadowMap = nullptr;
 	Blurredshadowmap = nullptr;
@@ -65,7 +65,6 @@ FLight::FLight(
 
 	BlurIntencity = blurIntencity;
 	Cubeshadowmap = nullptr;
-	Blurredcubeshadowmap = nullptr;
 	Shadowmap = nullptr;
 	Blurredshadowmap = nullptr;
 	Currentface = 0;
@@ -100,9 +99,6 @@ FLight::~FLight()
 	if (Cubeshadowmap != nullptr)
 		Cubeshadowmap->Release();
 
-	if (Blurredcubeshadowmap != nullptr)
-		Blurredcubeshadowmap->Release();
-
 	if (Shadowmap != nullptr)
 		Shadowmap->Release();
 
@@ -135,13 +131,7 @@ FLight::~FLight()
 		}
 	}
 
-	for (auto& _Surface : BlurredcubeshadowmapSurface)
-	{
-		if (_Surface)
-		{
-			_Surface->Release();
-		}
-	}
+
 
 	for (auto& _Surface : CubeDepthStencil)
 	{
@@ -158,6 +148,20 @@ FLight::~FLight()
 			_Surface->Release();
 		}
 	}
+
+	if(CubeCacheshadowmap)
+	{
+		CubeCacheshadowmap->Release();
+	}
+
+	for (auto& _Surface : CubeCacheshadowmapSurface)
+	{
+		if (_Surface)
+		{
+			_Surface->Release();
+		}
+	}
+
 };
 
 void FLight::Edit(const uint32 Idx)
@@ -188,8 +192,9 @@ void FLight::EditImplementation(const uint32 Idx)
 		TypeString = "Point";
 		ImGui::Text("CubeShadowMap");
 		ImGui::Image(reinterpret_cast<void**>(Cubeshadowmap), { 128,128 });
-		ImGui::Text("CubeBlurShadowMap");
-		ImGui::Image(reinterpret_cast<void**>(Blurredcubeshadowmap), { 128,128 });
+		ImGui::Text("CubeCacheshadowmap");
+		ImGui::Image(reinterpret_cast<void**>(CubeCacheshadowmap), { 128,128 });
+
 		break;
 	default:
 		break;
@@ -677,27 +682,31 @@ void FLight::CreateShadowMap(LPDIRECT3DDEVICE9 device, uint16_t size)
 	{
 		device->CreateCubeTexture(size, 1, D3DUSAGE_RENDERTARGET, D3DFMT_G32R32F, D3DPOOL_DEFAULT, &Cubeshadowmap, NULL);
 
+		device->CreateCubeTexture(size, 1, D3DUSAGE_RENDERTARGET, D3DFMT_G32R32F, D3DPOOL_DEFAULT, &CubeCacheshadowmap, NULL);
+
 		for (int i = 0; i < CubeshadowmapSurface.size(); ++i)
 		{
-			Cubeshadowmap->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 
+			Cubeshadowmap->GetCubeMapSurface
+			((D3DCUBEMAP_FACES)i, 
 				0, &(CubeshadowmapSurface[i]));
 
 			// ±íÀÌ ½ºÅÙ½Ç..
 			device->CreateDepthStencilSurface(size, size,
 				D3DFMT_D24X8, D3DMULTISAMPLE_TYPE::D3DMULTISAMPLE_NONE,
 				0, FALSE, &CubeDepthStencil[i], nullptr);
+		}
+
+		for (int i = 0; i < CubeCacheshadowmapSurface.size(); ++i)
+		{
+			CubeCacheshadowmap->GetCubeMapSurface(
+				(D3DCUBEMAP_FACES)i,
+				0, &(CubeCacheshadowmapSurface[i]));
 
 			device->CreateDepthStencilSurface(size, size,
 				D3DFMT_D24X8, D3DMULTISAMPLE_TYPE::D3DMULTISAMPLE_NONE,
 				0, FALSE, &CubeCacheDepthStencil[i], nullptr);
 		}
 
-		device->CreateCubeTexture(size, 1, D3DUSAGE_RENDERTARGET, D3DFMT_G32R32F, D3DPOOL_DEFAULT, &Blurredcubeshadowmap, NULL);
-
-		for (int i = 0; i < BlurredcubeshadowmapSurface.size(); ++i)
-		{
-			Blurredcubeshadowmap->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 0, &(BlurredcubeshadowmapSurface[i]));
-		}
 	}
 
 	D3DVIEWPORT9 viewport;
@@ -717,44 +726,48 @@ void FLight::RenderShadowMap(
 		Viewport.MinZ = 0;
 		Viewport.MaxZ = 1;
 
+		g_pDevice->StretchRect
+		(CacheShadowMapSurface , nullptr,
+			ShadowmapSurface, nullptr, D3DTEXF_POINT);
+
 		_Device->SetRenderTarget(0, ShadowmapSurface);
 		_Device->SetViewport(&Viewport);
+		_Device->SetDepthStencilSurface(DepthStencil);
 
-		if (DepthStencil)
-		{
-			_Device->SetDepthStencilSurface(DepthStencil);
-		}
-		{
-			CallBack(this);
-		}
-
-		//g_pDevice->StretchRect
-		//(ShadowmapSurface, nullptr, 
-		//	CacheShadowMapSurface, nullptr, D3DTEXF_POINT);
+		CallBack(this);
 	}
 	else if (_Type == Point) {
-		for (Currentface = 0; Currentface < 6; ++Currentface) {
+
+		for (Currentface = 0; Currentface < 6; ++Currentface) 
+		{
 			D3DVIEWPORT9 Viewport;
 			Viewport.X = Viewport.Y = 0;
 			Viewport.Width = Viewport.Height = ShadowMapSize;
 			Viewport.MinZ = 0;
 			Viewport.MaxZ = 1;
 
+			g_pDevice->StretchRect
+			(CubeCacheshadowmapSurface[Currentface], nullptr,
+				CubeshadowmapSurface[Currentface], nullptr, D3DTEXF_POINT);
+
 			_Device->SetRenderTarget(0, CubeshadowmapSurface[Currentface]);
 			_Device->SetViewport(&Viewport);
-			if (DepthStencil)
-			{
-				_Device->SetDepthStencilSurface(DepthStencil);
-			}
-			{
-				CallBack(this);
-			}
+			_Device->SetDepthStencilSurface(CubeDepthStencil[Currentface]);
+			CallBack(this);
+
 		}
 	}
 
 	Blurred = false;
-}
-void FLight::CacheShadowMapBake(LPDIRECT3DDEVICE9 _Device, std::function<void(FLight*)> CallBack)
+};
+
+//g_pDevice->StretchRect
+	//(ShadowmapSurface, nullptr, 
+	//	CacheShadowMapSurface, nullptr, D3DTEXF_POINT);
+
+void FLight::CacheShadowMapBake(
+	LPDIRECT3DDEVICE9 _Device, 
+	std::function<void(FLight*)> CallBack)
 {
 	if (_Type == Directional) {
 		D3DVIEWPORT9 Viewport;
@@ -764,38 +777,33 @@ void FLight::CacheShadowMapBake(LPDIRECT3DDEVICE9 _Device, std::function<void(FL
 		Viewport.MinZ = 0;
 		Viewport.MaxZ = 1;
 
-		_Device->SetRenderTarget(0, ShadowmapSurface);
+		_Device->SetRenderTarget(0,CacheShadowMapSurface);
 		_Device->SetViewport(&Viewport);
+		_Device->SetDepthStencilSurface(CacheDepthStencil);
 
-		if (DepthStencil)
-		{
-			_Device->SetDepthStencilSurface(DepthStencil);
-		}
-		{
-			CallBack(this);
-		}
+		CallBack(this);
 
-		//g_pDevice->StretchRect
-		//(ShadowmapSurface, nullptr, 
-		//	CacheShadowMapSurface, nullptr, D3DTEXF_POINT);
+		_Device->SetRenderTarget(0, nullptr);
 	}
-	else if (_Type == Point) {
-		for (Currentface = 0; Currentface < 6; ++Currentface) {
+	else if (_Type == Point) 
+	{
+		for (Currentface = 0; Currentface < 6; ++Currentface) 
+		{
 			D3DVIEWPORT9 Viewport;
 			Viewport.X = Viewport.Y = 0;
 			Viewport.Width = Viewport.Height = ShadowMapSize;
 			Viewport.MinZ = 0;
 			Viewport.MaxZ = 1;
 
-			_Device->SetRenderTarget(0, CubeshadowmapSurface[Currentface]);
+			_Device->SetRenderTarget(0, 
+				CubeCacheshadowmapSurface[Currentface]);
 			_Device->SetViewport(&Viewport);
-			if (DepthStencil)
-			{
-				_Device->SetDepthStencilSurface(DepthStencil);
-			}
-			{
-				CallBack(this);
-			}
+			_Device->SetDepthStencilSurface(
+				CubeCacheDepthStencil[Currentface]);
+
+			CallBack(this);
+
+			_Device->SetRenderTarget(0, nullptr);
 		}
 	}
 

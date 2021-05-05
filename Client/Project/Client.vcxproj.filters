@@ -189,9 +189,6 @@
     <ClInclude Include="targetver.h">
       <Filter>99.Default\02.Header</Filter>
     </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>00.WinMain</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Application.h">
       <Filter>01.Application</Filter>
     </ClInclude>
@@ -423,6 +420,9 @@
     </ClInclude>
     <ClInclude Include="..\Header\SpriteEffect.h">
       <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>00.WinMain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

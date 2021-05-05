@@ -66,7 +66,7 @@ public:
 	inline void  SetPointRadius(const float _PtRadius)& { PointRadius = _PtRadius;  };
 	inline bool IsPerspective()const& {return _Type!=Directional;};
 	inline LPDIRECT3DTEXTURE9 GetShadowMap() { return (Blurred ? Blurredshadowmap : Shadowmap); }
-	inline LPDIRECT3DCUBETEXTURE9 GetCubeShadowMap() { return (Blurred ? Blurredcubeshadowmap : Cubeshadowmap); }
+	inline LPDIRECT3DCUBETEXTURE9 GetCubeShadowMap() { return (Blurred ? Cubeshadowmap : Cubeshadowmap); }
 
 	void Save();
 	void Load();
@@ -91,10 +91,15 @@ public:
 	D3DXVECTOR2				Spotparams;	// cos(inner), cos(outer)
 	float				    PointRadius;
 	D3DXCOLOR				Color;
+
 	LPDIRECT3DCUBETEXTURE9	Cubeshadowmap;
 	std::array<LPDIRECT3DSURFACE9,6u> CubeshadowmapSurface;
-	LPDIRECT3DCUBETEXTURE9	Blurredcubeshadowmap;
-	std::array<LPDIRECT3DSURFACE9, 6u> BlurredcubeshadowmapSurface;
+	std::array<LPDIRECT3DSURFACE9, 6u>      CubeDepthStencil{};
+
+	LPDIRECT3DCUBETEXTURE9	CubeCacheshadowmap{ nullptr };
+	std::array<LPDIRECT3DSURFACE9, 6u> CubeCacheshadowmapSurface;
+	std::array<LPDIRECT3DSURFACE9, 6u>      CubeCacheDepthStencil{};
+
 	LPDIRECT3DTEXTURE9		Shadowmap;
 	LPDIRECT3DSURFACE9      ShadowmapSurface{ nullptr };
 	LPDIRECT3DTEXTURE9      CacheShadowMap{ nullptr };
@@ -106,8 +111,6 @@ public:
 	LPDIRECT3DSURFACE9      CacheDepthStencil{nullptr};
 
 
-	std::array<LPDIRECT3DSURFACE9, 6u>      CubeDepthStencil{};
-	std::array<LPDIRECT3DSURFACE9, 6u>      CubeCacheDepthStencil{};
 
 	
 	Vector3 Lradiance{ 1,1,1 };

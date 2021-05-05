@@ -103,10 +103,8 @@ void TestObject::RenderInit()
 	} };
 
 
-
-
-
-
+	/*움직임이 없는 정적 오브젝트는 그림자맵 캐쉬를 켜고 그렇지않다면 꺼주세요. */
+	_InitRenderProp.bShadowCache = false;
 
 	RenderInterface::Initialize(_InitRenderProp);
 

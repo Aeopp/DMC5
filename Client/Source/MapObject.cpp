@@ -129,6 +129,8 @@ void MapObject::RenderInit()
 		}
 	} };
 
+	_InitRenderProp.bShadowCache = true;
+
 	//_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 	//	=
 	//{
