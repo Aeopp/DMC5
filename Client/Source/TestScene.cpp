@@ -8,6 +8,10 @@
 #include "Camera.h"
 #include "Nero.h"
 #include "RedQueen.h"
+#include "WingSword1st.h"
+#include "WingSword2nd.h"
+#include "WingSword3rd.h"
+#include "WingSword4th.h"
 #include "Em100.h"
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
@@ -27,6 +31,7 @@
 #include "MapObject.h"
 #include <iostream>
 #include <fstream>
+
 
 using namespace std;
 TestScene::TestScene()
@@ -48,7 +53,11 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	// AddGameObject<Camera>();
+	 //AddGameObject<Camera>();
+	 //AddGameObject<WingSword1st>();
+	 //AddGameObject<WingSword2nd>();
+	 //AddGameObject<WingSword3rd>();
+	 //AddGameObject<WingSword4th>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
@@ -56,7 +65,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
-	//AddGameObject<Em5300>();
+	AddGameObject<Em5300>();
 
 	//AddGameObject<Em5300>();
 

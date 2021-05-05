@@ -21,6 +21,10 @@
 #include "Cbs_Middle.h"
 #include "Cbs_Long.h"
 #include "Buster_Arm_Left.h"
+#include "WingSword1st.h"
+#include "WingSword2nd.h"
+#include "WingSword3rd.h"
+#include "WingSword4th.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -210,6 +214,12 @@ HRESULT Nero::Ready()
 	m_pBlood.lock()->SetScale(0.007f);
 	m_pBlood.lock()->SetVariationIdx(Liquid::BLOOD_0);
 
+	//m_vecWingSwords.reserve(4);
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword1st>());
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword2nd>());
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword3rd>());
+	//m_vecWingSwords.emplace_back(AddGameObject<WingSword4th>());
+
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
 	m_iCurAnimationIndex = ANI_END;
@@ -283,28 +293,60 @@ UINT Nero::Update(const float _fDeltaTime)
 
 
 	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
-	//static bool Test = false;
+	static bool Test = false;
 	//if (Input::GetKeyDown(DIK_RCONTROL))
 	//{
 	//	Test = !Test;
 	//	if (Test)
 	//	{
-	//		m_pMesh->StopAnimation();
-	//		m_pCbsShort.lock()->StopAnimation();
-	//		m_pCbsMiddle.lock()->StopAnimation();
+	//		//m_pMesh->StopAnimation();
+	//		//m_pCbsShort.lock()->StopAnimation();
+	//		//m_pCbsMiddle.lock()->StopAnimation();
+	//		for (auto& pWingSword : m_vecWingSwords)
+	//		{
+	//			pWingSword.lock()->StopAnimation();
+	//		}
 	//	}
 	//	else
 	//	{
-	//		m_pMesh->ContinueAnimation();
-	//		m_pCbsShort.lock()->ContinueAnimation();
-	//		m_pCbsMiddle.lock()->ContinueAnimation();
+	//		//m_pMesh->ContinueAnimation();
+	//		//m_pCbsShort.lock()->ContinueAnimation();
+	//		//m_pCbsMiddle.lock()->ContinueAnimation();
+	//		for (auto& pWingSword : m_vecWingSwords)
+	//		{
+	//			pWingSword.lock()->ContinueAnimation();
+	//		}
 	//	}
 	//}
 
-	if (Input::GetKeyDown(DIK_N))
-	{
-		m_pFSM->ChangeState(NeroFSM::STUN_START);
-	}
+	//if (Input::GetKeyDown(DIK_6))
+	//{
+	//	for (auto& pWingSword : m_vecWingSwords)
+	//	{
+	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA1",false);
+	//	}
+	//}
+	//if (Input::GetKeyDown(DIK_7))
+	//{
+	//	for (auto& pWingSword : m_vecWingSwords)
+	//	{
+	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA2", false);
+	//	}
+	//}
+	//if (Input::GetKeyDown(DIK_8))
+	//{
+	//	for (auto& pWingSword : m_vecWingSwords)
+	//	{
+	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA3", false);
+	//	}
+	//}
+	//if (Input::GetKeyDown(DIK_9))
+	//{
+	//	for (auto& pWingSword : m_vecWingSwords)
+	//	{
+	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA5", false);
+	//	}
+	//}
 	return 0;
 }
 
@@ -1205,4 +1247,13 @@ void Nero::ChangeWeaponUI(NeroComponentID _iWeaponIndex)
 		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
 	else
 		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
+}
+
+void Nero::ChangeAnimationWingSword(const std::string& InitAnimName, const bool bLoop)
+{
+	for (auto& pWingSword : m_vecWingSwords)
+	{
+		pWingSword.lock()->SetActive(true);
+		pWingSword.lock()->ChangeAnimation(InitAnimName, bLoop);
+	}
 }
