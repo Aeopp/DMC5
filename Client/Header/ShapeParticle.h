@@ -5,11 +5,14 @@
 class ShapeParticle final : public Effect
 {
 public:
+	using CallType = std::function<void(const DrawInfo& _Info, ShapeParticle* const)>;
+
 	enum SHAPE : uint32
 	{
 		SPHERE = 0u,
 		PIPE00,
 		PIPE01,
+		NSG,
 
 		MAX_SHAPE_IDX
 	};
@@ -43,6 +46,8 @@ private:
 
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
 	std::shared_ptr<ENGINE::Texture> _DustSingleTex{};
+
+	CallType  _RenderCall{};
 
 	float _SliceAmount = 0.f;
 	Vector3 _ExtraColor = Vector3(1.f, 1.f, 1.f);

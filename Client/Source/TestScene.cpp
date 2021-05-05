@@ -8,10 +8,14 @@
 #include "Camera.h"
 #include "Nero.h"
 #include "RedQueen.h"
+#include "WingSword1st.h"
+#include "WingSword2nd.h"
+#include "WingSword3rd.h"
+#include "WingSword4th.h"
 #include "Em100.h"
 #include "Em0000.h"
-#include "Em5000.h"
 #include "Em0000_Weapon.h"
+#include "Em5000.h"
 #include "Em1000.h"
 #include "Em5300.h"
 #include "Car.h"
@@ -21,22 +25,13 @@
 #include "AppearGroundMonster.h"
 #include "Smoke.h"
 #include "QliphothBlock.h"
-#include "StoneDebrisMulti.h"
-#include "AppearEm1000.h"
-#include "StoneDebris.h"
-#include "ShapeParticle.h"
 #include "BtlPanel.h"
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-#include "Trail.h"
-#include "AirHike.h"
-#include "CircleWave.h"
-#include "SpriteEffect.h"
-#include "DashTrail.h"
-#include "FireCircle.h"
 #include <iostream>
 #include <fstream>
+
 
 using namespace std;
 TestScene::TestScene()
@@ -71,19 +66,20 @@ HRESULT TestScene::LoadScene()
 		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
 	/*--------------------------------------------------------- */
 
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 	AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
+	
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em100>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 
-	// AddGameObject<Car>();
+	//AddGameObject<CircleWave>();
+	//AddGameObject<AirHike>();
 
-	//// Wave 1st
+	// Wave 1st
 	//{
 	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
@@ -129,75 +125,21 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//// Wave 2nd
-	//{
-	//	weak_ptr<Em100> _Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
-
-	//	_Em100 = AddGameObject<Em100>();
-	//	_Em100.lock()->SetActive(false);
-	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
-
-	//	weak_ptr<Em0000> pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -1.64173f,0.02f,2.73873f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-
-	//	pEm0000 = AddGameObject<Em0000>();
-	//	pEm0000.lock()->SetActive(false);
-	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
-	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
-	//}
-
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
 
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
-	//
-	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
-	//AddGameObject<QliphothBlock>();
-	//AddGameObject<AppearGroundMonster>();
-	//AddGameObject<StoneDebrisMulti>();
-	//AddGameObject<AppearEm1000>().lock()
-	//if (auto p = AddGameObject<StoneDebris>().lock();
-	//	p)
-	//{
-	//	p->SetVariationIdx(StoneDebris::REDORB_0);
-	//	p->SetPosition({0.f, 0.f, 0.f});
-	//	p->SetScale(0.002f);
-	//	p->SetVelocity({ 0.03f, 0.075f, 0.03f });
-	//	p->SetLoop(true);
-	//	p->PlayStart();
-	//}
-	//if (auto p = AddGameObject<ShapeParticle>().lock();
-	//	p)
-	//{
-	//	p->SetShapeIdx(ShapeParticle::SPHERE);
-	//	p->SetColorIdx(ShapeParticle::RED);
-	//	p->SetLoop(true);
-	//	p->PlayStart();
-	//}
-
-	// 수정필요
-	//AddGameObject<DashImpact>();
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	 // _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
-	_Renderer->SoftParticleDepthScale = 1.f;
+	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f;
 
 	//// Stage2 안개
@@ -298,12 +240,10 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	//cout << "SceneUpdate" << endl;
 
-	//_Player.lock()->GetComponent<Transform>().lock()->SetPosition({
-	//	0.f,0.02f,0.f
-	//	});
 
-	//// 여기서 임시로 트리거 처리 ???
+	// 여기서 임시로 트리거 처리 ???
 	//if (
 	//	(FMath::Length
 	//	(WavefirstTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
@@ -326,15 +266,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	}
 	//}
 
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->SetActive(true);
-	//			m_vecQliphothBlock[i].lock()->PlayStart();
-	//		}
-	//	}
-	//}
 
 	//if ((FMath::Length
 	//(WavesecondTriggerPos - _Player.lock()->GetComponent<Transform>().lock()->GetPosition())
