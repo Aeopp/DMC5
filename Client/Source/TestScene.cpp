@@ -29,6 +29,10 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "CircleWave.h"
+#include "AirHike.h"
+#include "FireCircle.h"
+#include "IceAge.h"
 #include <iostream>
 #include <fstream>
 
@@ -52,19 +56,24 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<Camera>();
+	AddGameObject<Camera>();
 	//AddGameObject<WingSword1st>();
 	//AddGameObject<WingSword2nd>();
 	//AddGameObject<WingSword3rd>();
 	//AddGameObject<WingSword4th>();
-	AddGameObject<MainCamera>();
+	/*AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
+	AddGameObject<BtlPanel>();*/
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
-	AddGameObject<Em5300>();
+
+	AddGameObject<CircleWave>();
+	AddGameObject<AirHike>();
+	AddGameObject<FireCircle>();
+	AddGameObject<IceAge>();
+
+	// AddGameObject<Em5300>();
+	
 
 	//AddGameObject<Em5300>();
 
@@ -115,7 +124,7 @@ HRESULT TestScene::LoadScene()
 	//}
 
 
-// 	LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 
 	//AddGameObject<Glint>();
@@ -129,8 +138,8 @@ HRESULT TestScene::LoadScene()
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;

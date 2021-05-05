@@ -15,8 +15,6 @@
 #include "Quad.h"
 #include "basiccamera.h"
 
-// TODO :: 절두체 컬링 (포인트 라이트도 ) 
-// TODO :: 시저렉트 계산 
 BEGIN(ENGINE)
 class ENGINE_DLL Renderer final : public Object
 {

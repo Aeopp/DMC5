@@ -35,7 +35,6 @@ public:
 	void CalculateViewProjection(D3DXMATRIX& Out);
 	void CalculateScissorRect(RECT& Out, const D3DXMATRIX& View, const D3DXMATRIX& Projection, float Radius, int32_t Width, int32_t Height);
 
-
 	void InitRender();
 	void Render(const DrawInfo& _Info);
 
@@ -84,19 +83,24 @@ public:
 			FMath::ToRadian(Direction.y),
 			FMath::ToRadian(Direction.z) })));
 	}
-	D3DXVECTOR4				Position;	// or direction
 
+	D3DXVECTOR4				Position;	// or direction
 	D3DXVECTOR3				Spotdirection;
 	D3DXVECTOR2				Spotparams;	// cos(inner), cos(outer)
 	float				    PointRadius;
 	D3DXCOLOR				Color;
 	LPDIRECT3DCUBETEXTURE9	Cubeshadowmap;
+	std::array<LPDIRECT3DSURFACE9,6u> CubeshadowmapSurface;
 	LPDIRECT3DCUBETEXTURE9	Blurredcubeshadowmap;
+	std::array<LPDIRECT3DSURFACE9, 6u> BlurredcubeshadowmapSurface;
 	LPDIRECT3DTEXTURE9		Shadowmap;
+	LPDIRECT3DSURFACE9      ShadowmapSurface{ nullptr };
+	LPDIRECT3DTEXTURE9      CacheShadowMap{ nullptr };
+	LPDIRECT3DSURFACE9      CacheShadowMapSurface{ nullptr };
 	LPDIRECT3DTEXTURE9		Blurredshadowmap;
+	LPDIRECT3DSURFACE9      BlurredshadowmapSurface{ nullptr };
 	LPDIRECT3DSURFACE9      DepthStencil{};
-
-
+	LPDIRECT3DSURFACE9      CacheDepthStencil{nullptr};
 	
 	Vector3 Lradiance{ 1,1,1 };
 

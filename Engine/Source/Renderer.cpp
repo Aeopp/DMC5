@@ -532,6 +532,7 @@ HRESULT Renderer::Render()&
 
 	//  쉐도우 패스 
 	RenderShadowMaps();
+	
 	EnableDepthBias();
 	// 기하 패스
 	RenderGBuffer();
@@ -736,7 +737,10 @@ void Renderer::Editor()&
 						{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250))
 					);
 				DirLights.push_back(_Insert);
-				_Insert->CreateShadowMap(Device, ShadowMapSize);
+				if (ShadowMapSize > 0)
+				{
+					_Insert->CreateShadowMap(Device, ShadowMapSize);
+				}
 				_Insert->SetProjectionParameters(7.1f, 7.1f, -20.f, +20.f);
 				_Insert->InitRender();
 			}
@@ -749,7 +753,10 @@ void Renderer::Editor()&
 						{ 1,1,1,1 }));
 
 				PointLights.push_back(_Insert);
-				_Insert->CreateShadowMap(Device, ShadowMapSize);
+				if (ShadowMapSize > 0)
+				{
+					_Insert->CreateShadowMap(Device, ShadowMapSize);
+				}
 				_Insert->SetProjectionParameters(0, 0, 0.1f, 10.0f);
 				_Insert->InitRender();
 			};
@@ -951,6 +958,8 @@ void Renderer::RenderShadowMaps()
 		});
 	};
 
+	Device->SetDepthStencilSurface(BackBufferZBuffer);
+	Device->SetViewport(&_RenderInfo.Viewport);
 	 //Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 };
 
