@@ -419,9 +419,9 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 				if (auto pPlayer = FindGameObjectWithTag(Player);
 					!pPlayer.expired())
 				{
-					std::static_pointer_cast<Nero>(pPlayer.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -1.f);
-
-					// + 플레이어 체력 회복
+					auto pNero = std::static_pointer_cast<Nero>(pPlayer.lock());
+					pNero->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -1.f);
+					pNero->IncreaseHp(_PlayerIncreaseHpAmount);
 				}
 				break;
 			}

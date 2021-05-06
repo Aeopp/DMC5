@@ -419,6 +419,11 @@
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingArmSK.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

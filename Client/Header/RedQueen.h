@@ -24,6 +24,8 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 public:
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
 public:
@@ -48,14 +50,14 @@ public:
 	Vector3	GetRedQueenBoneWorldPos(std::string _BoneName);
 
 private:
-	std::weak_ptr<Nero>					m_pNero;
+	std::weak_ptr<Nero>					  m_pNero;
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
-	std::weak_ptr<CapsuleCollider> m_pCollider;
+	std::weak_ptr<CapsuleCollider>	m_pCollider;
 	std::weak_ptr<Glint>			m_pGlint; // ¶§·ÈÀ»¶§ ¹ÝÂ¦ÀÌ´Â ÀÌÆåÆ®
 
-
-	std::vector<Matrix*>					m_vecParentMat;
-	UINT								m_iStateIndex = 0;
+	std::vector<Matrix*>			m_vecParentMat;
+	Matrix*							m_pMyBoneMat;
+	UINT							m_iStateIndex = 0;
 };
 
 

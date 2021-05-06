@@ -430,6 +430,9 @@
     <ClInclude Include="..\..\Resource\Shader\UI\Font.hlsl">
       <Filter>02.GameObject\UI\Font</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingArmSK.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

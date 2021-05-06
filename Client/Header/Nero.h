@@ -385,6 +385,7 @@ public:
 	//ī�޶�
 	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
 	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
+	void IncreaseHp(int _Hp);
 	//�׽�Ʈ
 
 public:

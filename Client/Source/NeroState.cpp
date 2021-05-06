@@ -4806,6 +4806,7 @@ HRESULT BT_Att2::StateUpdate(const float _fDeltaTime)
 	{
 		NeroState::ActiveTrail(false);
 		m_pNero.lock()->StopEffect(Eff_Trail);
+		ActiveColl_RedQueen(false);
 	}
 
 	else if (0.1f <= fCurrAnimationTime)
@@ -4871,6 +4872,7 @@ HRESULT BT_Att3::StateUpdate(const float _fDeltaTime)
 	if (0.23f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveTrail(false);
+		ActiveColl_RedQueen(false);
 		m_pNero.lock()->StopEffect(Eff_Trail);
 	}
 
@@ -4943,6 +4945,7 @@ HRESULT BT_Att4::StateUpdate(const float _fDeltaTime)
 	if (0.23f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveTrail(false);
+		ActiveColl_RedQueen(false);
 		m_pNero.lock()->StopEffect(Eff_Trail);
 	}
 

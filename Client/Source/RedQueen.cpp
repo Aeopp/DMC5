@@ -34,6 +34,8 @@ HRESULT RedQueen::Ready()
 	m_vecParentMat.reserve(2);
 
 	_RenderProperty.bRender = true;
+
+	m_pGlint = std::static_pointer_cast<Glint>(FindGameObjectWithTag(GAMEOBJECTTAG::Eff_Glint).lock());
 	
 	
 	return S_OK;
@@ -59,14 +61,14 @@ HRESULT RedQueen::Awake()
 	m_pCollider.lock()->SetActive(false);
 
 	PushEditEntity(m_pCollider.lock().get());
-
+	m_pMyBoneMat = m_pMesh->GetToRootMatrixPtr("_001");
 	return S_OK;
 }
 
 HRESULT RedQueen::Start()
 {
 	Unit::Start();
-	m_pGlint = std::static_pointer_cast<Glint>(FindGameObjectWithTag(GAMEOBJECTTAG::Eff_Glint).lock());
+
 	return S_OK;
 }
 
@@ -110,6 +112,16 @@ void RedQueen::OnDisable()
 {
 	Unit::OnDisable();
 	_RenderProperty.bRender = false;
+}
+
+void RedQueen::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	Vector3 vGlintPos; 
+	memcpy(&vGlintPos, (*m_pMyBoneMat * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
+
+	// + m_pGlint.lock()->SetScale(적당히 작은 사이즈)
+	m_pGlint.lock()->SetPosition(vGlintPos);
+	m_pGlint.lock()->PlayStart(3.5f);
 }
 
 void RedQueen::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
