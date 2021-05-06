@@ -55,6 +55,8 @@ private:
 
 	Vector3 _ExtraColor = Vector3(0.f, 0.f, 0.f);
 
+	float _PlayerEffectStart = false;
+
 private:
 	explicit StoneDebris() = default;
 	virtual ~StoneDebris() = default;

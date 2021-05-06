@@ -29,6 +29,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "ShapeParticle.h"
 
 #include <iostream>
 #include <fstream>
@@ -78,7 +79,7 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
-	
+
 
 	// Wave 1st
 	//{
@@ -223,8 +224,8 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	/*if (nullptr != pPlane)
-		return S_OK;*/
+	//if (nullptr != pPlane)
+	//	return S_OK;
 
 	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
 	//Physics::AddActor(UniqueID, *pPlane);
@@ -333,6 +334,18 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//		}
 	//	}
 	//}
+
+	if (Input::GetKeyDown(DIK_NUMPAD1))
+	{
+		(_Player.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 1.f);
+	}
+	if (Input::GetKeyDown(DIK_NUMPAD2))
+	{
+		(_Player.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -1.f);
+	}
+
+
+
 
 	return S_OK;
 }

@@ -216,7 +216,7 @@ void Nero_RWing::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
 			_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());
 			_Info.Fx->SetTexture("GradationMap", m_GradationTex->GetTexture());
-			_Info.Fx->SetFloat("_BrightScale", 0.02f);
+			_Info.Fx->SetFloat("_BrightScale", 0.015f);
 			_Info.Fx->SetFloat("_SliceAmount", 0.f);
 			_Info.Fx->SetFloat("_AccumulationTexV", m_fAccTime * 0.6f);
 

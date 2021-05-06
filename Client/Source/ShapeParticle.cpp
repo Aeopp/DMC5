@@ -22,7 +22,7 @@ void ShapeParticle::SetColorIdx(ShapeParticle::COLOR Idx)
 	{
 	case RED:
 		_ExtraColor = Vector3(0.518f, 0.019f, 0.051f);
-		_BrightScale = 0.25f;
+		_BrightScale = 0.3f;
 		break;
 	case GREEN:
 		_ExtraColor = Vector3(0.09f, 0.596f, 0.518f);
@@ -34,7 +34,9 @@ void ShapeParticle::SetColorIdx(ShapeParticle::COLOR Idx)
 		break;
 	}
 
-	Reset();
+	_ColorIdx = Idx;
+
+	//Reset();
 }
 
 void ShapeParticle::SetCtrlIdx(ShapeParticle::CONTROLPT Idx)
@@ -100,9 +102,9 @@ void ShapeParticle::Reset()
 			case PIPE01:
 				divide = 1;
 				break;
-			case NSG:
-				divide = 5;
-				break;
+			//case NSG:
+			//	divide = 5;
+			//	break;
 			}
 
 			_BezierCurveDescVec.clear();
@@ -127,11 +129,9 @@ void ShapeParticle::Reset()
 				case PIPE01:
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
-				case NSG :
-					//
-
-					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
-					break;
+				//case NSG:
+				//	EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
+				//	break;
 				}
 
 				_BezierCurveDescVec.push_back({ StartPos, EndPos, Vector3(0.f, 0.f, 0.f) });
@@ -156,17 +156,19 @@ void ShapeParticle::Reset()
 				case PIPE01:
 					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
 					break;
-				case NSG :
-					EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
-					break;
+				//case NSG :
+				//	EndPos = FMath::Random<Vector3>(Vector3(-100.f, -100.f, -100.f), Vector3(100.f, 100.f, 100.f));
+				//	break;
 				}
 
 				Element.EndPos = EndPos;
+				Element.DeltaPos = Element.StartPos;
 			}
 		}
 	}
 
 	_SliceAmount = 0.f;
+	SetColorIdx(_ColorIdx);	// BrightScale 초기화
 
 	Effect::Reset();
 }
@@ -296,12 +298,12 @@ HRESULT ShapeParticle::Ready()
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info));
-	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info));
+	//_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info));
 
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
 
-	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
 
 	//
 	SetShapeIdx(_ShapeIdx);
@@ -336,8 +338,8 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 	else
 	{
 		// 밝기, 알파 감소
-		_SliceAmount += 0.2f * _fDeltaTime;
-		_BrightScale -= 0.003f * _fDeltaTime;
+		_SliceAmount += 0.2f * _PlayingSpeed * _fDeltaTime;
+		_BrightScale -= 0.003f * _PlayingSpeed * _fDeltaTime;
 
 		// 빌보드
 		Matrix ViewMat, BillMat, InvRotMat;
@@ -349,7 +351,7 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 		D3DXMatrixInverse(&BillMat, 0, &BillMat);
 		D3DXMatrixInverse(&InvRotMat, 0, &GetComponent<Transform>().lock()->GetRotationMatrix());
 
-		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
 		_DustSingleChildWorldMatrix = _DustSingleChildWorldMatrix * BillMat * InvRotMat;
 	
 		// BezierCurve
@@ -366,9 +368,6 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 		}
 	}
 
-	//
-	// Imgui_Modify();
-
 	return 0;
 }
 
@@ -383,7 +382,7 @@ void ShapeParticle::Editor()
 
 	if (bEdit)
 	{
-
+		Imgui_Modify();
 	}
 }
 

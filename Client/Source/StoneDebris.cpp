@@ -5,6 +5,7 @@
 #include "TextureType.h"
 #include "Renderer.h"
 #include "BtlPanel.h"
+#include "Nero.h"
 
 
 void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
@@ -95,6 +96,8 @@ void StoneDebris::Reset()
 		Sptransform->SetPosition(_BeginPos);
 		Sptransform->UpdateTransform();
 	}
+
+	_PlayerEffectStart = false;
 
 	Effect::Reset();
 
@@ -291,7 +294,7 @@ HRESULT StoneDebris::Ready()
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
 
 	D3DXMatrixScaling(&_SmokeChildWorldMatrix, 0.2f, 0.2f, 0.2f);
-	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
 
 	uint32 DustSingleIdx = FMath::Random<uint32>(0u, 3u);
 	_DustSingleMinTexUV = Vector2(DustSingleIdx * 0.25f, 0.f);
@@ -343,19 +346,6 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 
 				std::static_pointer_cast<BtlPanel>(pBtlPanel.lock())->AccumulateRedOrb(RedOrbAmount);
 			}
-
-			// + 플레이어 빨강 파티클 
-
-			break;
-		case GREENORB_0:
-		case GREENORB_1:
-		case GREENORB_2:
-		case GREENORB_3:
-
-			// + 플레이어 체력 회복
-
-			// + 플레이어 초록 파티클 
-
 			break;
 		}
 
@@ -397,7 +387,7 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		_SmokeChildWorldMatrix._42 = _SmokeDeltaPosY;
 
 		// Single Dust
-		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
 		_DustSingleChildWorldMatrix = _DustSingleChildWorldMatrix * BillMat * InvRotMat;
 	
 		_DustSingleVelocity.x = 0.01f * cosf(_AccumulateTime * 2.f);
@@ -407,6 +397,37 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		_DustSingleDeltaPos.x += _DustSingleVelocity.x * _fDeltaTime;
 		_DustSingleDeltaPos.y += _DustSingleVelocity.y * _fDeltaTime;
 		_DustSingleDeltaPos.z += _DustSingleVelocity.z * _fDeltaTime;
+
+		if (!_PlayerEffectStart)
+		{
+			switch (_VariationIdx)
+			{
+			case REDORB_0:
+			case REDORB_1:
+			case REDORB_2:
+			case REDORB_3:
+				if (auto pPlayer = FindGameObjectWithTag(Player);
+					!pPlayer.expired())
+				{
+					std::static_pointer_cast<Nero>(pPlayer.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 1.f);
+				}
+				break;
+			case GREENORB_0:
+			case GREENORB_1:
+			case GREENORB_2:
+			case GREENORB_3:
+				if (auto pPlayer = FindGameObjectWithTag(Player);
+					!pPlayer.expired())
+				{
+					std::static_pointer_cast<Nero>(pPlayer.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -1.f);
+
+					// + 플레이어 체력 회복
+				}
+				break;
+			}
+
+			_PlayerEffectStart = true;
+		}
 	}
 	else
 	{
