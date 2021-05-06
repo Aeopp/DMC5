@@ -73,11 +73,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
 	
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
+	
 
 	// Wave 1st
 	//{
@@ -126,7 +127,7 @@ HRESULT TestScene::LoadScene()
 	//}
 
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅

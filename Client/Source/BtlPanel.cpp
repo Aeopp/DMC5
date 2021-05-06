@@ -929,6 +929,14 @@ void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon)
 	_CurWeaponIdx = NextWeapon;
 }
 
+void BtlPanel::AccumulateRedOrb(const uint32 Amount)
+{
+	_RedOrbCount += Amount;
+
+	if (_RedOrbCount > 99999999u)
+		_RedOrbCount = 99999999u;
+}
+
 void BtlPanel::Init_UIDescs()
 {
 	if (!_UIDescs)

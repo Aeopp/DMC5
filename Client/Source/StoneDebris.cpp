@@ -4,6 +4,7 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include "BtlPanel.h"
 
 
 void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
@@ -96,6 +97,8 @@ void StoneDebris::Reset()
 	}
 
 	Effect::Reset();
+
+	_AccumulateTime += FMath::Random<float>(-0.2f, 0.2f);	// 재생시간 살짝씩 다르게 하기 위함
 }
 
 void StoneDebris::Imgui_Modify()
@@ -297,6 +300,8 @@ HRESULT StoneDebris::Ready()
 	_PlayingSpeed = 1.f;
 	_BrightScale = 1.f;
 
+	_AccumulateTime += FMath::Random<float>(-0.2f, 0.2f);	// 재생시간 살짝씩 다르게 하기 위함
+
 	return S_OK;
 };
 
@@ -319,6 +324,41 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 
 	if (4.f < _AccumulateTime)
 	{
+		switch (_VariationIdx)
+		{
+		case REDORB_0:
+		case REDORB_1:
+		case REDORB_2:
+		case REDORB_3:
+			if (auto pBtlPanel = FindGameObjectWithTag(UI_BtlPanel);
+				!pBtlPanel.expired())
+			{
+				uint32 RedOrbAmount = FMath::Random<uint32>(0u, 9u);
+
+				if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+					Sptransform)
+				{
+					RedOrbAmount += static_cast<uint32>(Sptransform->GetScale().x / 0.001f) * 10u;	// 몬스터가 뿌리는 scale 0.0015 ~ 0.004
+				}
+
+				std::static_pointer_cast<BtlPanel>(pBtlPanel.lock())->AccumulateRedOrb(RedOrbAmount);
+			}
+
+			// + 플레이어 빨강 파티클 
+
+			break;
+		case GREENORB_0:
+		case GREENORB_1:
+		case GREENORB_2:
+		case GREENORB_3:
+
+			// + 플레이어 체력 회복
+
+			// + 플레이어 초록 파티클 
+
+			break;
+		}
+
 		Reset();
 	}
 	else if (2.f < _AccumulateTime)

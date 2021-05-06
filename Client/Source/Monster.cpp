@@ -85,7 +85,7 @@ void Monster::StoneDebrisInit()
 		p.lock()->SetScale(FMath::Random<float>(0.0015f, 0.004f));
 		p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
 		// position은 죽을 때 위치
-		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.1f, 0.075f, -0.1f), Vector3(0.1f, 0.09f, 0.1f)));
+		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.08f, 0.075f, -0.08f), Vector3(0.08f, 0.09f, 0.08f)));
 		p.lock()->SetActive(false);
 		m_pStoneDebrisVec.push_back(p);
 	}
@@ -97,7 +97,7 @@ void Monster::StoneDebrisInit()
 		p.lock()->SetScale(FMath::Random<float>(0.0015f, 0.004f));
 		p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
 		// position은 죽을 때 위치
-		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.1f, 0.075f, -0.1f), Vector3(0.1f, 0.09f, 0.1f)));
+		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.08f, 0.075f, -0.08f), Vector3(0.08f, 0.09f, 0.08f)));
 		p.lock()->SetActive(false);
 		m_pStoneDebrisVec.push_back(p);
 	}
