@@ -197,7 +197,7 @@ private:
 	};
 	std::vector<std::weak_ptr<Font>> _FontVec;
 
-	uint32 _RedOrbCount = 9999999u;
+	uint32 _RedOrbCount = 0u;
 
 private:
 	explicit BtlPanel() = default;
@@ -251,6 +251,8 @@ public:
 	void UseExGauge(const uint32 Count);
 
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon);
+
+	void AccumulateRedOrb(const uint32 Amount);
 
 };
 #endif // !__UI_BTL_PANEL__

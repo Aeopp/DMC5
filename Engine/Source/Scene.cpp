@@ -142,7 +142,9 @@ void Scene::Destroy()
 	if (0 == m_Pool[OBJECTPOOLTYPE::POOL_DESTROY].size())
 		return;
 
-	m_Pool[OBJECTPOOLTYPE::POOL_DESTROY].clear();
+	OBJECTPOOL listTemp = m_Pool[OBJECTPOOLTYPE::POOL_DESTROY];	// 임시로 refcnt를 1 늘림
+	m_Pool[OBJECTPOOLTYPE::POOL_DESTROY].clear();				// refcnt가 0이 됨
+	listTemp.clear();											// 이때 개체들의 Free 호출
 }
 
 void Scene::TransferStatic(std::weak_ptr<Scene> const _pDestScene)

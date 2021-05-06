@@ -99,7 +99,7 @@ void Camera::UpdateCamera()
 
 	g_pDevice->SetTransform(D3DTS_VIEW, &Instance.m_matView);
 	g_pDevice->SetTransform(D3DTS_PROJECTION, &Instance.m_matProjection);
-
+	g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 }
 
 void Camera::ShowCameraInfo()

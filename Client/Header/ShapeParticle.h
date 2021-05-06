@@ -12,7 +12,7 @@ public:
 		SPHERE = 0u,
 		PIPE00,
 		PIPE01,
-		NSG,
+		//NSG,
 
 		MAX_SHAPE_IDX
 	};

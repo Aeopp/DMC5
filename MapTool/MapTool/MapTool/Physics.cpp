@@ -43,7 +43,7 @@ Physics::~Physics()
 HRESULT Physics::Ready()
 {
 	//Foundation
-	Instance.m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, Instance.m_Allocator, Instance.m_ErrorCallback);
+	Instance.m_pFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, Instance.m_Allocator, Instance.m_ErrorCallback);
 
 	if (nullptr == Instance.m_pFoundation)
 	{		
