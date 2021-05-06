@@ -10,6 +10,8 @@
 
 void Monster::Free()
 {
+	for (auto& Element : m_pStoneDebrisVec)
+		Destroy(Element);
 	m_pStoneDebrisVec.clear();
 	m_pStoneDebrisVec.shrink_to_fit();
 

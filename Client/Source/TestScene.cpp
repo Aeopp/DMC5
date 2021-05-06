@@ -29,14 +29,11 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-#include "CircleWave.h"
-#include "AirHike.h"
-#include "FireCircle.h"
-#include "IceAge.h"
+
 #include <iostream>
 #include <fstream>
-
 using namespace std;
+
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -56,26 +53,31 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
-	//AddGameObject<WingSword1st>();
-	//AddGameObject<WingSword2nd>();
-	//AddGameObject<WingSword3rd>();
-	//AddGameObject<WingSword4th>();
-	/*AddGameObject<MainCamera>();
+	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = true;
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
+	/*--------------------------------------------------------- */
+
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();*/
+	AddGameObject<BtlPanel>();
+	AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
+	
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
-
-	AddGameObject<CircleWave>();
-	AddGameObject<AirHike>();
-	AddGameObject<FireCircle>();
-	AddGameObject<IceAge>();
-
-	// AddGameObject<Em5300>();
-	
-
 	//AddGameObject<Em5300>();
+
+	//AddGameObject<CircleWave>();
+	//AddGameObject<AirHike>();
 
 	// Wave 1st
 	//{
@@ -124,22 +126,13 @@ HRESULT TestScene::LoadScene()
 	//}
 
 
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
-
-	//AddGameObject<Glint>();
-	//AddGameObject<OvertureHand>();
-	//AddGameObject<Liquid>();
-	//AddGameObject<QliphothBlock>();
-	//AddGameObject<AppearGroundMonster>();
-
-	// 수정필요
-	//AddGameObject<DashImpact>();
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;
@@ -147,11 +140,8 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
 	_Renderer->SoftParticleDepthScale = 0.7f;
-	_Renderer->SkyRotationSpeed = 1.5f; 
-	_Renderer->StarScale = 4.f;
-	_Renderer->StarFactor = 0.9f;
+	_Renderer->SkyRotationSpeed = 1.5f;
 
-	
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
 	//	pSmoke)
@@ -235,8 +225,8 @@ HRESULT TestScene::Awake()
 	/*if (nullptr != pPlane)
 		return S_OK;*/
 
-		//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-		//Physics::AddActor(UniqueID, *pPlane);
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
@@ -250,7 +240,6 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
 	//cout << "SceneUpdate" << endl;
 
 
@@ -291,21 +280,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//}
 
 
-	//if (Input::GetKeyDown(DIK_NUMPAD2))
-	//{
-
-	//	for (int i = 1; i < 4; ++i)
-	//	{
-	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-	//		{
-	//			m_vecQliphothBlock[i].lock()->SetActive(true);
-	//			m_vecQliphothBlock[i].lock()->PlayStart();
-	//		}
-	//	}
-	//}
-
-
-
 	//if (bfirst && m_vecQliphothBlock[1].lock()->IsPlaying())
 	//{
 	//	int count = Wavefirst.size();
@@ -332,11 +306,21 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	(const weak_ptr<GameObject>& target)
 	//		return target.experiod();
 	//		{});*/
-
-
 	//}
 
 
+	//if (Input::GetKeyDown(DIK_NUMPAD2))
+	//{
+	//	for (int i = 1; i < 4; ++i)
+	//	{
+	//		if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+	//		{
+	//			m_vecQliphothBlock[i].lock()->SetActive(true);
+	//			m_vecQliphothBlock[i].lock()->PlayStart();
+	//		}
+	//	}
+	//}
+	// 
 	//if (Input::GetKeyDown(DIK_NUMPAD8))
 	//{
 	//	for (int i = 1; i < 4; ++i)

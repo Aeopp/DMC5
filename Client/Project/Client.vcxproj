@@ -180,6 +180,7 @@
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\IceAge.h" />
+    <ClInclude Include="..\Header\Font.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
+    <ClCompile Include="..\Source\Font.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
@@ -408,6 +410,11 @@
     <None Include="..\..\Resource\Shader\Effect\IceParticle.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\UI\Font.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
