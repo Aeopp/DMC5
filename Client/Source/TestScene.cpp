@@ -75,10 +75,42 @@ HRESULT TestScene::LoadScene()
 
 	// 메시
 	{
+	
+	};
+
+	{
+		ENGINE::ParticleSystem::Particle _PushParticle{};
+
 		Mesh::InitializeInfo _Info{};
 		_Info.bLocalVertexLocationsStorage = true;
-		Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info);
-	};
+
+		_PushParticle._Mesh = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info);
+		_PushParticle.bLerpTimeNormalized = false;
+		// Particle 정보 채워주기 
+		_PushParticle._ShaderKey = "IceParticle";
+		// 공유 정보 바인드 
+		_PushParticle.SharedResourceBind = [](
+			ENGINE::ParticleSystem::Particle& TargetParticle,
+			ID3DXEffect* const Fx)
+		{
+			if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
+				Subset)
+			{
+				Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
+				Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
+			}
+		};
+
+		_PushParticle.InstanceBind = [](/*const std::any& _InstanceVariable,*/ ID3DXEffect* const Fx)
+		{
+			// const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+			Fx->SetFloat("ColorIntencity", 0.33f);
+			return;
+		};
+
+		const uint64 PoolSize = 10000;
+		ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
+	}
 
 	
 	// AddGameObject<Em5300>();

@@ -123,34 +123,7 @@ void IceAge::RenderInit()
 	ColorIntencity = 0.059f;
 	DistortionIntencity = 1.2f;
 
-	{
-		ENGINE::ParticleSystem::Particle _PushParticle{};
-		_PushParticle.bLerpTimeNormalized = false;
-		// Particle 정보 채워주기 
-		_PushParticle._ShaderKey = "IceParticle";
-		// 공유 정보 바인드 
-		_PushParticle.SharedResourceBind = [](
-			ENGINE::ParticleSystem::Particle& TargetParticle,
-			ID3DXEffect* const Fx)
-		{
-			if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
-				Subset)
-			{
-				Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
-				Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
-			}
-		};
-
-		_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
-		{
-			const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
-			Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
-			return;
-		};
-
-		const uint64 PoolSize = 10000;
-		ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
-	}
+	
 
 	// 얼음 보숭이 
 	// _GeneratorParticle = AddGameObject<ShapeParticle>();
@@ -183,10 +156,9 @@ void IceAge::PlayStart(
 
 			{
 				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayableParticles("Ice", AllParticleLifeTime);
-				for (auto iter = std::begin(_PlayableParticle);
-					iter != std::end(_PlayableParticle);)
+				for (int32 i = 0; i < _PlayableParticle.size(); i+=JumpOffset)
 				{
-					auto& _PlayInstance = *iter;
+					auto& _PlayInstance = _PlayableParticle[i];
 
 					Vector2 Range{ -0.1f,0.1f };
 					const Vector3& TargetLocation =
@@ -213,17 +185,16 @@ void IceAge::PlayStart(
 
 					ParticleInstance::Ice _IceValue{};
 
-					_IceValue.ColorIntencity = FMath::Random(0.01f, 1.f);
+					_IceValue.ColorIntencity = FMath::Random(1.f, 3.f);
 
 					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
 
 					_PlayInstance->PlayDescBind(
 						{ TargetLocation ,Cp0,Cp1,End },
 						{ StartRot ,RotCp0,RotCp1,EndRot },
-						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue);
-
-					std::advance(iter, JumpOffset);
+						{ PScale,PScale,PScale }, LifeTime, 0.0f/*, _IceValue*/);
 				}
+				
 			}
 
 		}

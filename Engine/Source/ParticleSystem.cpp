@@ -120,7 +120,7 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 								const Matrix matWorld = _ParticleInstance.CalcWorld();
 								CurFx->SetMatrix("matWorld", &matWorld);
 
-								_TargetParticle.InstanceBind(_ParticleInstance.GetInstanceValue(), CurFx);
+								_TargetParticle.InstanceBind(/*_ParticleInstance.GetInstanceValue(),*/ CurFx);
 								_Subset->Render(CurFx);
 							}
 						}
