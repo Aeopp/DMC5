@@ -998,6 +998,32 @@ void Renderer::RenderGBuffer()
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("matViewProj", &_RenderInfo.ViewProjection);
 		_DrawInfo.Fx = Fx;
+
+		std::sort(std::begin(Entitys), std::end(Entitys), [EyePos = _RenderInfo.Eye](
+			const RenderEntityType& Lhs,
+			const RenderEntityType& Rhs
+			) 
+			{
+			const Vector3 LhsLocation
+				=
+			{
+				Lhs.first->_RenderUpdateInfo.World._41,
+				Lhs.first->_RenderUpdateInfo.World._42,
+				Lhs.first->_RenderUpdateInfo.World._43
+			};
+
+			const Vector3 RhsLocation
+				=
+			{ Rhs.first->_RenderUpdateInfo.World._41,
+				Rhs.first->_RenderUpdateInfo.World._42,
+				Rhs.first->_RenderUpdateInfo.World._43
+			};
+
+			return FMath::LengthSq((Vector3&)(EyePos)-LhsLocation)
+				<
+				FMath::LengthSq((Vector3&)(EyePos)-RhsLocation);
+			});
+
 		for (auto& [Entity, Call] : Entitys)
 		{
 			UINT Passes{ 0u };

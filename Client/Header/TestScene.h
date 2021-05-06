@@ -11,7 +11,6 @@ private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class Em1000> _Em1000{};
 	std::vector<weak_ptr<GameObject>> Wavefirst{};
-	Vector3 WavefirstTriggerPos { -0.47842f , 0.02297f ,-2.57254f};
 	bool bfirst = false;
 	std::vector<weak_ptr<GameObject>> Wavesecond{};
 	Vector3 WavesecondTriggerPos { -1.80262f,0.01168f,1.4464f};

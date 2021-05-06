@@ -148,7 +148,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	// LoadMap();
+	LoadMap();
 	// AddGameObject<TempMap>();
 
 	//AddGameObject<CircleWave>();
@@ -416,7 +416,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Stage2.json" };
+	std::ifstream inputStream{ "../../Data/Hotel.json" };
 
 	if (false == inputStream.is_open())
 		return;
