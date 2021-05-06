@@ -430,7 +430,6 @@
     <ClInclude Include="..\..\Resource\Shader\UI\Font.hlsl">
       <Filter>02.GameObject\UI\Font</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\ParticleInstanceDesc.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

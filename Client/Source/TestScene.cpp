@@ -34,6 +34,8 @@
 #include "FireCircle.h"
 #include "IceAge.h"
 #include "ParticleSystem.h"
+#include "ParticleInstanceDesc.hpp"
+
 #include <iostream>
 #include <fstream>
 
@@ -84,7 +86,7 @@ HRESULT TestScene::LoadScene()
 		Mesh::InitializeInfo _Info{};
 		_Info.bLocalVertexLocationsStorage = true;
 
-		_PushParticle._Mesh = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info);
+		_PushParticle._Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
 		_PushParticle.bLerpTimeNormalized = false;
 		// Particle 정보 채워주기 
 		_PushParticle._ShaderKey = "IceParticle";
@@ -101,10 +103,10 @@ HRESULT TestScene::LoadScene()
 			}
 		};
 
-		_PushParticle.InstanceBind = [](/*const std::any& _InstanceVariable,*/ ID3DXEffect* const Fx)
+		_PushParticle.InstanceBind = [](const std::any& _InstanceVariable,ID3DXEffect* const Fx)
 		{
-			// const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
-			Fx->SetFloat("ColorIntencity", 0.33f);
+			const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+			Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
 			return;
 		};
 

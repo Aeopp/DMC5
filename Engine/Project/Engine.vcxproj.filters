@@ -425,6 +425,7 @@
       <Filter>98.UnLabeld</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\ParticleSystem.h" />
+    <ClInclude Include="..\Header\ParticleInstanceDesc.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">

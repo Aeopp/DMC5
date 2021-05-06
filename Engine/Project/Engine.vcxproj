@@ -221,6 +221,7 @@ call Engine.bat</Command>
     <ClInclude Include="..\Header\MathStruct.hpp" />
     <ClInclude Include="..\Header\Mesh.h" />
     <ClInclude Include="..\Header\Object.h" />
+    <ClInclude Include="..\Header\ParticleInstanceDesc.hpp" />
     <ClInclude Include="..\Header\ParticleSystem.h" />
     <ClInclude Include="..\Header\Physics.h" />
     <ClInclude Include="..\Header\PhysicsSystem.h" />

@@ -185,18 +185,16 @@ void IceAge::PlayStart(
 
 					ParticleInstance::Ice _IceValue{};
 
-					_IceValue.ColorIntencity = FMath::Random(1.f, 3.f);
+					_IceValue.ColorIntencity = FMath::Random(0.1f, 0.3f);
 
 					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
 
 					_PlayInstance->PlayDescBind(
 						{ TargetLocation ,Cp0,Cp1,End },
 						{ StartRot ,RotCp0,RotCp1,EndRot },
-						{ PScale,PScale,PScale }, LifeTime, 0.0f/*, _IceValue*/);
+						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue);
 				}
-				
 			}
-
 		}
 	}
 

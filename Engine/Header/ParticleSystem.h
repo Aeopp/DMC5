@@ -18,8 +18,8 @@ public:
 						const std::array<Vector3, 4u>& CurveControlRotationPoints ,
 						const Vector3& Scale,
 							const float LifeTime,
-							const float T /*,
-							const std::any& InstanceVariable*/)
+							const float T ,
+							const std::any& InstanceVariable)
 		{
 			CurrentLocation= CurveControlPoints[0];
 			CurRotation = CurveControlRotationPoints[0];
@@ -28,14 +28,14 @@ public:
 			this->Scale = Scale;
 			this->LifeTime = LifeTime;
 			this->T = T;
-		/*	this->InstanceVariable = InstanceVariable;*/
+			this->InstanceVariable = InstanceVariable;
 		};
 		
 		Matrix CalcWorld() { return FMath::WorldMatrix(Scale, CurRotation, CurrentLocation); };
 
 		const Vector3& GetCurLocation() { return CurrentLocation; };
 		const Vector3& GetCurRotation() { return CurRotation; };
-		// const std::any& GetInstanceValue() {return InstanceVariable;};
+		 const std::any& GetInstanceValue() {return InstanceVariable;};
 		float GetT() { return T; };
 		const std::optional<float>& GetLifeTime(){return LifeTime;}
 		void Reset()
@@ -67,7 +67,7 @@ public:
 		}
 	private:
 
-		// std::any InstanceVariable{};
+		std::any InstanceVariable{};
 
 
 
@@ -100,7 +100,7 @@ public:
 		std::string _ShaderKey{};
 		// 개수 . 
 		std::function<void(Particle&,ID3DXEffect*const)> SharedResourceBind{};
-		std::function<void(/*const std::any& _InstanceValue,*/ID3DXEffect* const Fx)> InstanceBind{};
+		std::function<void(const std::any& _InstanceValue,ID3DXEffect* const Fx)> InstanceBind{};
 		// 켤 경우 파티클 인스턴스 운동 T는 반드시 0~1이고 안 켰고 PlayTime이 1을 초과하는 경우 T도 1을 초과함.
 		bool bLerpTimeNormalized = false;
 

@@ -114,14 +114,17 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 
 						for (auto& _ParticleInstance : _RefTargetParticleInstances)
 						{
-							if (auto _Subset = _TargetParticle._Mesh->GetSubset(0).lock();
-								_Subset)
+							if (_ParticleInstance.GetLifeTime().has_value())
 							{
-								const Matrix matWorld = _ParticleInstance.CalcWorld();
-								CurFx->SetMatrix("matWorld", &matWorld);
+								if (auto _Subset = _TargetParticle._Mesh->GetSubset(0).lock();
+									_Subset)
+								{
+									const Matrix matWorld = _ParticleInstance.CalcWorld();
+									CurFx->SetMatrix("matWorld", &matWorld);
 
-								_TargetParticle.InstanceBind(/*_ParticleInstance.GetInstanceValue(),*/ CurFx);
-								_Subset->Render(CurFx);
+									_TargetParticle.InstanceBind(_ParticleInstance.GetInstanceValue(), CurFx);
+									_Subset->Render(CurFx);
+								}
 							}
 						}
 

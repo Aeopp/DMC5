@@ -181,7 +181,6 @@
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
-    <ClInclude Include="..\Header\ParticleInstanceDesc.hpp" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
