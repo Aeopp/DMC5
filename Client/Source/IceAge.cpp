@@ -137,7 +137,6 @@ void IceAge::PlayStart(
 			SpTransform->SetScale(Scale);
 			SpTransform->SetPosition(Location.value()); 
 			// Àç»ý ..
-
 		}
 	}
 
@@ -343,7 +342,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 			const Matrix Mat = SpTransform->GetRenderMatrix();
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-			const uint32 JumpOffset = 25u;
+			const uint32 JumpOffset = 75u;
 
 			const float AllParticleLifeTime = 4.f;
 			{
@@ -352,7 +351,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 				{
 					auto& _PlayInstance = _PlayableParticle[i];
 
-					Vector2 Range{ -0.1f,0.1f };
+					Vector2 Range{ -0.05f,0.05f };
 					const Vector3& TargetLocation =
 						FMath::Mul((*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)], Mat);
 					const Vector3 Cp0 = TargetLocation + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x },

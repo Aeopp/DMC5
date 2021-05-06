@@ -59,14 +59,14 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 	//AddGameObject<WingSword1st>();
 	//AddGameObject<WingSword2nd>();
 	//AddGameObject<WingSword3rd>();
 	//AddGameObject<WingSword4th>();
-	/*AddGameObject<MainCamera>();
+	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();*/
+	AddGameObject<BtlPanel>();
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 

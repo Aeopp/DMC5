@@ -42,9 +42,9 @@ public:
 public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
-		const Vector3 Scale = { 0.005f ,0.005f ,0.005f },
+		const Vector3 Scale = { 0.0008f ,0.0008f ,0.0008f },
 		const float YawRotationSpeed = FMath::PI,
-		const float PlayTime = 2.f);
+		const float PlayTime = 2.5f);
 	void PlayEnd();
 public:
 	void ParticlePoolReserve();
