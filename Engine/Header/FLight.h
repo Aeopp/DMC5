@@ -35,12 +35,13 @@ public:
 	void CalculateViewProjection(D3DXMATRIX& Out);
 	void CalculateScissorRect(RECT& Out, const D3DXMATRIX& View, const D3DXMATRIX& Projection, float Radius, int32_t Width, int32_t Height);
 
-
 	void InitRender();
 	void Render(const DrawInfo& _Info);
 
 	void CreateShadowMap(LPDIRECT3DDEVICE9 _Device, const uint16_t Size);
 	void RenderShadowMap(LPDIRECT3DDEVICE9 _Device, std::function<void(FLight*)> CallBack);
+	void CacheShadowMapBake(
+		LPDIRECT3DDEVICE9 _Device, std::function<void(FLight*)> CallBack);
 
 	Matrix GetWorld();
 	// 다른 라이팅ㅇ으로부터 쉐오둥 블러 . 
@@ -65,7 +66,7 @@ public:
 	inline void  SetPointRadius(const float _PtRadius)& { PointRadius = _PtRadius;  };
 	inline bool IsPerspective()const& {return _Type!=Directional;};
 	inline LPDIRECT3DTEXTURE9 GetShadowMap() { return (Blurred ? Blurredshadowmap : Shadowmap); }
-	inline LPDIRECT3DCUBETEXTURE9 GetCubeShadowMap() { return (Blurred ? Blurredcubeshadowmap : Cubeshadowmap); }
+	inline LPDIRECT3DCUBETEXTURE9 GetCubeShadowMap() { return (Blurred ? Cubeshadowmap : Cubeshadowmap); }
 
 	void Save();
 	void Load();
@@ -84,17 +85,31 @@ public:
 			FMath::ToRadian(Direction.y),
 			FMath::ToRadian(Direction.z) })));
 	}
-	D3DXVECTOR4				Position;	// or direction
 
+	D3DXVECTOR4				Position;	// or direction
 	D3DXVECTOR3				Spotdirection;
 	D3DXVECTOR2				Spotparams;	// cos(inner), cos(outer)
 	float				    PointRadius;
 	D3DXCOLOR				Color;
+
 	LPDIRECT3DCUBETEXTURE9	Cubeshadowmap;
-	LPDIRECT3DCUBETEXTURE9	Blurredcubeshadowmap;
+	std::array<LPDIRECT3DSURFACE9,6u> CubeshadowmapSurface;
+	std::array<LPDIRECT3DSURFACE9, 6u>      CubeDepthStencil{};
+
+	LPDIRECT3DCUBETEXTURE9	CubeCacheshadowmap{ nullptr };
+	std::array<LPDIRECT3DSURFACE9, 6u> CubeCacheshadowmapSurface;
+	std::array<LPDIRECT3DSURFACE9, 6u>      CubeCacheDepthStencil{};
+
 	LPDIRECT3DTEXTURE9		Shadowmap;
+	LPDIRECT3DSURFACE9      ShadowmapSurface{ nullptr };
+	LPDIRECT3DTEXTURE9      CacheShadowMap{ nullptr };
+	LPDIRECT3DSURFACE9      CacheShadowMapSurface{ nullptr };
 	LPDIRECT3DTEXTURE9		Blurredshadowmap;
+	LPDIRECT3DSURFACE9      BlurredshadowmapSurface{nullptr};
+
 	LPDIRECT3DSURFACE9      DepthStencil{};
+	LPDIRECT3DSURFACE9      CacheDepthStencil{nullptr};
+
 
 
 	
@@ -103,7 +118,7 @@ public:
 
 	uint16_t				ShadowMapSize;
 	bool					Blurred;
-
+	bool                    bCurrentShadowRender = false;
 
 	Type				    _Type;
 	bool bRemove = false;

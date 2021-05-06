@@ -358,7 +358,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Stage2.json" };
+	std::ifstream inputStream{ "../../Data/Hotel.json" };
 
 	if (false == inputStream.is_open())
 		return;

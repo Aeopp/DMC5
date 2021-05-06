@@ -33,7 +33,7 @@ void AirHike::RenderReady()
 			SpTransform)
 		{
 			SpTransform->SetScale({ CurScale ,CurScale ,CurScale });
-			SpTransform->SetRotation({ 0,0,0 });
+			SpTransform->SetRotation({ 90.f,0,0 });
 			_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 			if (_StaticMesh)
 			{
@@ -203,6 +203,7 @@ HRESULT AirHike::Ready()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
 	InitTransform.lock()->SetPosition(Vector3{0.f,0.11544f,0.f });
+	InitTransform.lock()->SetRotation(Vector3{0.f ,0.f ,90.f});
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
