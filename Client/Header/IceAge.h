@@ -47,6 +47,7 @@ public:
 		const float PlayTime = 2.f);
 	void PlayEnd();
 public:
+	void ParticlePoolReserve();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderEftIceParticle(const DrawInfo& _Info);

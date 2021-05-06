@@ -84,13 +84,6 @@ void IceAge::RenderInit()
 			}
 		}
 
-		/*,
-		{
-			"IceParticle",[this](const DrawInfo& _Info)
-			{
-				this->RenderEftIceParticle(_Info);
-			}
-		}*/
 	};
 
 	RenderInterface::Initialize(_InitRenderProp);
@@ -100,7 +93,6 @@ void IceAge::RenderInit()
 	// 메시
 	{
 		Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
-		// IceParticle = Resources::Load<StaticMesh>("..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx");
 	}
 	
 	// 텍스쳐 
@@ -123,10 +115,7 @@ void IceAge::RenderInit()
 	ColorIntencity = 0.059f;
 	DistortionIntencity = 1.2f;
 
-	
-
-	// 얼음 보숭이 
-	// _GeneratorParticle = AddGameObject<ShapeParticle>();
+	ParticlePoolReserve();
 };
 
 void IceAge::PlayStart(
@@ -239,6 +228,42 @@ void IceAge::RenderEftIceParticle(const DrawInfo& _Info)
 	//	};
 	//}
 };
+
+void IceAge::ParticlePoolReserve()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "IceParticle";
+	// 공유 정보 바인드 
+	_PushParticle.SharedResourceBind = [](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
+			Subset)
+		{
+			Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
+			Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
+		}
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 10000;
+	ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
+}
 
 void IceAge::RenderDebug(const DrawInfo& _Info)
 {
