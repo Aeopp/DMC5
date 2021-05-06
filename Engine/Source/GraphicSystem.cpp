@@ -50,8 +50,8 @@ HRESULT GraphicSystem::ReadyGraphicSystem(
 		현재 그래픽 사양에서
 		그림자 캐싱이 불가능하므로 심각한 퍼포먼스 저하가 예상됨.
 		*/
-		PRINT_LOG(TEXT("Warning"), TEXT(
-			"Hardware that cannot copy depth stencil buffer In the current graphics specification, shadow caching is not possible, so serious performance degradation is expected."));
+		/*PRINT_LOG(TEXT("Warning"), TEXT(
+			"Hardware that cannot copy depth stencil buffer In the current graphics specification, shadow caching is not possible, so serious performance degradation is expected."));*/
 	};
 
 	DWORD dwVertexProcessing = 0;

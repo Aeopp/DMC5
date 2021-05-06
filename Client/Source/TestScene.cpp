@@ -29,12 +29,17 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-#include "ShapeParticle.h"
+#include "CircleWave.h"
+#include "AirHike.h"
+#include "FireCircle.h"
+#include "IceAge.h"
+#include "ParticleSystem.h"
+#include "ParticleInstanceDesc.hpp"
 
 #include <iostream>
 #include <fstream>
-using namespace std;
 
+using namespace std;
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -71,14 +76,15 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
-	
 	//AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
+	//AddGameObject<FireCircle>();
+	//AddGameObject<IceAge>();
+\
 
 
 	// Wave 1st
@@ -127,14 +133,13 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-
 	LoadMap();
 	AddGameObject<TempMap>();
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;
@@ -143,6 +148,9 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
 	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f;
+	_Renderer->StarScale = 4.f;
+	_Renderer->StarFactor = 0.9f;
+
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -242,6 +250,17 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);
+	for (auto& _PlayInstance : _RefParticles)
+	{
+		_PlayInstance->LifeTime = 3.f;
+		_PlayInstance->Scale = { GScale,GScale,GScale };
+		_PlayInstance->CurveControlPoints = {};
+		_PlayInstance->CurveControlRotationPoints = {};
+	}*/
+
+
+
 	//cout << "SceneUpdate" << endl;
 
 

@@ -744,4 +744,7 @@
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
 </Project>
