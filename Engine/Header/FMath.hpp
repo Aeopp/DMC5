@@ -118,6 +118,9 @@ public:
 		Vector3& IntersectPointLhs,
 		Vector3& IntersectPointRhs);
 
+
+	static inline Vector3 BezierCurve(const Vector3& Start,const Vector3& End, const float t);
+
 	static inline Vector3 BezierCurve(const Vector3& Start,
 		const Vector3& CP0, const Vector3& CP1,
 		const Vector3& End,const float t);
@@ -254,6 +257,11 @@ auto& FMath::GetGenerator()
 
 	return gen;
 };
+
+Vector3 FMath::BezierCurve(const Vector3& Start, const Vector3& End, const float t)
+{
+	return FMath::Lerp(Start, End, t);
+}
 
 inline Vector3 FMath::BezierCurve(
 	const Vector3& Start,

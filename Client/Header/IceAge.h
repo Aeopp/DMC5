@@ -12,25 +12,9 @@ class IceAge :     public ENGINE::GameObject,
 			       public ENGINE::RenderInterface
 {
 public:
-	//struct Particle
-	//{
-	//	static inline float  ColorIntencity = 1.f;
-	//	static inline float  EmissiveIntencity = 1.f;
-	//	static inline float  AlphaFactor = 1.f;
-	//	static inline float  SpecularPow = 20.f;
-
-	//	float  ColorIntencity = 1.f;
-	//	float  EmissiveIntencity = 1.f;
-	//	float  AlphaFactor = 1.f;
-	//	float  SpecularPow = 20.f;
-
-	//	Vector3 Scale{1.f,1.f,1.f};
-	//	Vector3 Rotation{0.f,0.f,0.f};
-	//	Vector3 Location{0.f,0.f,0.f};
-	//};
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Inner{};
-	std::shared_ptr<ENGINE::StaticMesh> IceParticle{};
+// 	std::shared_ptr<ENGINE::StaticMesh> IceParticle{};
 	std::shared_ptr<ENGINE::Texture>    Albedo{};
 	std::shared_ptr<ENGINE::Texture>    TrailMap{};
 	std::shared_ptr<ENGINE::Texture>    EmssiveMskMap{};
@@ -67,6 +51,8 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderEftIceParticle(const DrawInfo& _Info);
 private:
+	float ParticleCycle = 0.08f;
+	float CurParticleTime = 0.0f;
 	// std::weak_ptr< ShapeParticle> _GeneratorParticle{};
 	// std::vector<Particle> _IceParticles{};
 

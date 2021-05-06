@@ -17,6 +17,7 @@
 #include <d3dx9.h>
 #include "StaticMesh.h"
 #include "Subset.h"
+#include "ParticleSystem.h"
 #include <string_view>
 
 
@@ -668,24 +669,20 @@ void Renderer::Editor()&
 		ImGui::SliderFloat("FogDensity", &FogDensity, 0.0f,10.f);
 		ImGui::InputFloat("In FogDensity", &FogDensity);
 
-
-
 		ImGui::SliderFloat("SkySphereScale", &SkysphereScale, 0.f, 10.f);
 		ImGui::SliderFloat3("SkySphereRot", SkysphereRot, -360.f, 360.f);
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
 		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
 
-		
-
-
-		static bool  DepthBiasButton = true;
-		static float ZeroDotOne = 0.000001f;
+		/*static bool  DepthBiasButton = true;
+		static float ZeroDotOne = 0.000001f;*/
 
 		{
-			ImGui::InputScalar("SlpoeScaleDepthBias", ImGuiDataType_Float, &SlpoeScaleDepthBias, DepthBiasButton ? &ZeroDotOne : NULL, nullptr,
-				"%1.7f");
-			ImGui::InputScalar("DepthBias", ImGuiDataType_Float, &DepthBias, DepthBiasButton ? &ZeroDotOne : NULL
-				, nullptr, "%1.7f");
+			ImGui::SliderFloat("SlpoeScaleDepthBias", &SlpoeScaleDepthBias, 0.f, 1.0f);
+			ImGui::InputFloat("In SlpoeScaleDepthBias", &SlpoeScaleDepthBias);
+
+			ImGui::SliderFloat("DepthBias", &DepthBias, 0.f, 10.f);
+			ImGui::InputFloat("In DepthBias", &DepthBias);
 		}
 
 		if (ImGui::CollapsingHeader("AdaptLuminance"))
@@ -1762,7 +1759,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	EffectInfo _EffInfo{};
 	_EffInfo.SoftParticleDepthBiasScale = SoftParticleDepthScale;
 	_DrawInfo.BySituation = _EffInfo;
-	_DrawInfo._Device = Device;
+	_DrawInfo._Device  = Device;
 	_DrawInfo._Frustum = CameraFrustum.get();
 
 	for (auto& [_RefStr,_RefEntity] : AlphaSortArr)
@@ -1801,6 +1798,13 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		}
 		Fx->End();
 	}
+
+	auto ParSys =ParticleSystem::GetInstance();
+	if (ParSys)
+	{
+		ParSys->Render(this);
+	}
+
 
 	/*for (auto& [ShaderKey, Entitys] : _Group)
 	{

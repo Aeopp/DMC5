@@ -221,6 +221,7 @@ call Engine.bat</Command>
     <ClInclude Include="..\Header\MathStruct.hpp" />
     <ClInclude Include="..\Header\Mesh.h" />
     <ClInclude Include="..\Header\Object.h" />
+    <ClInclude Include="..\Header\ParticleSystem.h" />
     <ClInclude Include="..\Header\Physics.h" />
     <ClInclude Include="..\Header\PhysicsSystem.h" />
     <ClInclude Include="..\Header\Renderer.h" />
@@ -287,6 +288,7 @@ call Engine.bat</Command>
     <ClCompile Include="..\Source\InputSystem.cpp" />
     <ClCompile Include="..\Source\Mesh.cpp" />
     <ClCompile Include="..\Source\Object.cpp" />
+    <ClCompile Include="..\Source\ParticleSystem.cpp" />
     <ClCompile Include="..\Source\Physics.cpp" />
     <ClCompile Include="..\Source\PhysicsSystem.cpp" />
     <ClCompile Include="..\Source\Renderer.cpp" />

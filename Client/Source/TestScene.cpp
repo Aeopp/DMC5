@@ -33,6 +33,7 @@
 #include "AirHike.h"
 #include "FireCircle.h"
 #include "IceAge.h"
+#include "ParticleSystem.h"
 #include <iostream>
 #include <fstream>
 
@@ -72,6 +73,14 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<FireCircle>();
 	AddGameObject<IceAge>();
 
+	// 메시
+	{
+		Mesh::InitializeInfo _Info{};
+		_Info.bLocalVertexLocationsStorage = true;
+		Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info);
+	};
+
+	
 	// AddGameObject<Em5300>();
 
 
@@ -250,6 +259,18 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);
+	for (auto& _PlayInstance : _RefParticles)
+	{
+		_PlayInstance->LifeTime = 3.f;
+		_PlayInstance->Scale = { GScale,GScale,GScale };
+		_PlayInstance->CurveControlPoints = {};
+		_PlayInstance->CurveControlRotationPoints = {};
+
+	}*/
+	
+	
+
 	//cout << "SceneUpdate" << endl;
 
 
@@ -415,3 +436,4 @@ void TestScene::LoadMap()
 		}
 	}
 }
+

@@ -175,6 +175,7 @@
     <ClCompile Include="..\Source\DxHelper.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Header\Object.h">
@@ -423,6 +424,7 @@
     <ClInclude Include="..\Header\FileHelper.h">
       <Filter>98.UnLabeld</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">

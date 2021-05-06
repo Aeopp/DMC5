@@ -70,6 +70,7 @@ void Subset::Render(ID3DXEffect*const Fx)
 
 	if (nullptr == m_pVertexBuffer || nullptr == m_pIndexBuffer)
 		return;
+
 	if (Fx)
 	{
 		if (m_tVertexBufferDesc.bHasBone)
@@ -77,7 +78,7 @@ void Subset::Render(ID3DXEffect*const Fx)
 			Fx->SetInt("nMaxBonesRefPerVtx", m_tVertexBufferDesc.nMaxBonesRefPerVtx);
 		}
 	}
-	
+
 	m_pDevice->SetStreamSource(0, m_pVertexBuffer, 0, m_tVertexBufferDesc.nStride);
 	m_pDevice->SetVertexDeclaration(m_tVertexBufferDesc.pVertexDecl);
 	m_pDevice->SetIndices(m_pIndexBuffer);
