@@ -335,18 +335,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//	}
 	//}
 
-	if (Input::GetKeyDown(DIK_NUMPAD1))
-	{
-		(_Player.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 1.f);
-	}
-	if (Input::GetKeyDown(DIK_NUMPAD2))
-	{
-		(_Player.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -1.f);
-	}
-
-
-
-
 	return S_OK;
 }
 
@@ -358,6 +346,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
+	//std::ifstream inputStream{ "../../Data/Stage2.json" };
 	std::ifstream inputStream{ "../../Data/Hotel.json" };
 
 	if (false == inputStream.is_open())
