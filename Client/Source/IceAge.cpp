@@ -342,7 +342,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 			const Matrix Mat = SpTransform->GetRenderMatrix();
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-			const uint32 JumpOffset = 75u;
+			const uint32 JumpOffset = 80u;
 
 			const float AllParticleLifeTime = 4.f;
 			{
@@ -376,7 +376,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 					ParticleInstance::Ice _IceValue{};
 
-					_IceValue.ColorIntencity = FMath::Random(0.05f, 0.2f);
+					_IceValue.ColorIntencity = FMath::Random(0.03f, 0.15f);
 
 					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
 
