@@ -21,7 +21,7 @@ private:
 
 	Vector4 FinalColor{ 100.f /255.f,100.f/255.f,255.f/255.f,0.f};
 	float   FinalIntencity{ 0.082540f};
-	float   FinalScale{ 0.008031f};
+	float   FinalScale{ 0.008031f };
 	float Speed = 5.5f;
 
 	float T = 0.0f;
@@ -47,10 +47,15 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const std::optional<Vector3> & Location = std::nullopt);
-private:
+	void PlayStart(
+		const std::optional<Vector3>& Location = std::nullopt,
+		const float StartScale = 0.005170f,
+		const float FinalScale= 0.008031f,
+		const float PlayTime = FMath::PI/2.f);
 	void PlayEnd();
+private:
 public:
+	float PlayTime = FMath::PI / 2.f;
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 };

@@ -4,7 +4,6 @@
 #pragma once
 #include "Unit.h"
 #include "RenderInterface.h"
-
 class NeroFSM;
 class RedQueen;
 class Nero_LWing;
@@ -24,6 +23,12 @@ class Liquid;
 class Cbs_Short;
 class Cbs_Middle;
 class Cbs_Long;
+class WingSword;
+class AirHike;
+class CircleWave;
+class FireCircle;
+class IceAge;
+class Trail;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -407,6 +412,14 @@ public:
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
 	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
+	void ChangeAnimationWingSword(const std::string& InitAnimName, const bool  bLoop);
+	//Effect
+	void PlayEffect(GAMEOBJECTTAG _eTag,
+		const Vector3& Rotation = { 0.f,0.f,0.f }, 
+		const float CurRoll = 0.0f);
+	void StopEffect(GAMEOBJECTTAG _eTag);
+public:
+
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -457,6 +470,13 @@ private:
 	std::weak_ptr<Cbs_Long>			m_pCbsLong;
 	std::weak_ptr<Monster>			m_pTargetMonster;
 	std::weak_ptr<Monster>			m_pLetMeFlyMonster;
+	std::weak_ptr<AirHike>			m_pAirHike;
+	std::weak_ptr<Trail>			m_pTrail;
+	std::weak_ptr<IceAge>			m_pIceAge;
+	std::weak_ptr<FireCircle>		m_pFireCircle;
+	std::weak_ptr<CircleWave>		m_pCircleWave;
+
+	std::vector<std::weak_ptr<WingSword>>	m_vecWingSwords;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

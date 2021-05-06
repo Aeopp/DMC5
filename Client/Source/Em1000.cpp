@@ -10,10 +10,15 @@
 #include "RedQueen.h"
 #include "NeroFSM.h"
 #include "Em1000Hand.h"
+#include "Liquid.h"
+#include "AppearEm1000.h"
 
 void Em1000::Free()
 {
-	Unit::Free();
+	Destroy(m_pBlood);
+	Destroy(m_pAppear);
+
+	Monster::Free();
 }
 
 std::string Em1000::GetName()
@@ -177,6 +182,10 @@ void Em1000::State_Change(const float _fDeltaTime)
 				Update_Angle();
 				Set_Rotate();
 
+				m_pAppear.lock()->SetPosition(m_pTransform.lock()->GetPosition());
+				m_pAppear.lock()->SetScale(1.5f);
+				m_pAppear.lock()->PlayStart(1.3f);
+
 				m_bEnterGround = true;
 			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground_Floor" && m_pMesh->IsAnimationEnd())
@@ -220,6 +229,10 @@ void Em1000::State_Change(const float _fDeltaTime)
 		case Em1000::Dead_Floor:
 			if (m_bIng == true)
 				m_pMesh->PlayAnimation("Dead_Floor", false, {}, 1.f, 20.f, true);
+		
+			// 돌뿌리기!
+			StoneDebrisPlayStart();
+
 			break;
 		}
 	}
@@ -300,6 +313,12 @@ HRESULT Em1000::Awake()
 		m_eState = Enter_Ground_Wall;
 	else
 		m_eState =Enter_Ground_Floor;
+
+	////////////
+	m_pBlood = AddGameObject<Liquid>();
+	m_pAppear = AddGameObject<AppearEm1000>();
+	StoneDebrisInit();	// 돌초기화!
+	///////////
 
 	return S_OK;
 }
@@ -412,6 +431,22 @@ void Em1000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	//////////////////////////
+	if (!m_pBlood.expired())
+	{
+		int iRandom = FMath::Random<int>(0, 6);
+		if (iRandom >= 4)
+			++iRandom;
+
+		auto pBlood = m_pBlood.lock();
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Vine01_IK"));
+		pBlood->SetScale(0.008f);
+		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
+		pBlood->PlayStart(40.f);
+	}
+	///////////////////////////////////////////////////
 
 	//공격준비 or 공격중일댄 피격모션으로 안바뀜 바뀌면 너무 호구임
 	if (m_eState == Attack_Ready_Floor || m_eState == Attack_Ready_Wall

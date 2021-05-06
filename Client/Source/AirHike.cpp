@@ -28,30 +28,29 @@ void AirHike::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		
-			const float CurScale = FMath::Lerp(StartScale, FinalScale, Sin);
-			if (auto SpTransform = GetComponent<Transform>().lock();
-				SpTransform)
+		const float CurScale = FMath::Lerp(StartScale, FinalScale, Sin);
+		if (auto SpTransform = GetComponent<Transform>().lock();
+			SpTransform)
+		{
+			SpTransform->SetScale({ CurScale ,CurScale ,CurScale });
+			SpTransform->SetRotation({ 90.f,0,0 });
+			_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+			if (_StaticMesh)
 			{
-				SpTransform->SetScale({ CurScale ,CurScale ,CurScale });
-				SpTransform->SetRotation({ 0,0,0 });
-				_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-				if (_StaticMesh)
+				const uint32  Numsubset = _StaticMesh->GetNumSubset();
+				_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+
+				for (uint32 i = 0; i < Numsubset; ++i)
 				{
-					const uint32  Numsubset = _StaticMesh->GetNumSubset();
-					_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+					const auto& _Subset = _StaticMesh->GetSubset(i);
+					const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-					for (uint32 i = 0; i < Numsubset; ++i)
-					{
-						const auto& _Subset = _StaticMesh->GetSubset(i);
-						const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
-
-						_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, CurScale);
-					}
+					_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, CurScale);
 				}
 			}
-		
+		}
 	}
+
 };
 
 void AirHike::RenderInit()
@@ -113,26 +112,32 @@ void AirHike::RenderInit()
 	PushEditEntity(_StaticMesh.get());
 };
 
-
-
-void AirHike::PlayStart(const std::optional<Vector3>& Location)
+void AirHike::PlayStart(
+	const std::optional<Vector3>& Location,
+	const float StartScale,
+	const float FinalScale,
+	const float PlayTime)
 {
-	if (Location)
+	if (auto SpTransform = GetComponent<Transform>().lock();
+		SpTransform)
 	{
-		GetComponent<Transform>().lock()->SetPosition(Location.value());
+		if (Location)
+		{
+			SpTransform->SetPosition(Location.value());
+		}
 	}
 
-	
+	this->StartScale = StartScale;
+	this->FinalScale = FinalScale;
+	this->PlayTime = PlayTime;
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 };
 
 void AirHike::PlayEnd()
 {
-
 	_RenderProperty.bRender = false;
-		T = 0.0f;
-
+    T = 0.0f;
 };
 
 void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -198,6 +203,7 @@ HRESULT AirHike::Ready()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
 	InitTransform.lock()->SetPosition(Vector3{0.f,0.11544f,0.f });
+	InitTransform.lock()->SetRotation(Vector3{0.f ,0.f ,90.f});
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -228,7 +234,7 @@ UINT AirHike::Update(const float _fDeltaTime)
 	Sin = std::sinf(T);
 
 	// 끝날 쯔음 .
-	if (T >= FMath::PI / 2.f)
+	if (T >= PlayTime)
 	{
 		PlayEnd();
 	};
@@ -280,4 +286,6 @@ void AirHike::OnDisable()
 {
 	GameObject::OnDisable();
 }
+
+
 

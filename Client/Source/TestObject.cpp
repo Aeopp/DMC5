@@ -68,6 +68,7 @@ void TestObject::RenderInit()
 			}
 		},
 	};
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
 		=
 	{
@@ -102,10 +103,8 @@ void TestObject::RenderInit()
 	} };
 
 
-
-
-
-
+	/*움직임이 없는 정적 오브젝트는 그림자맵 캐쉬를 켜고 그렇지않다면 꺼주세요. */
+	_InitRenderProp.bShadowCache = false;
 
 	RenderInterface::Initialize(_InitRenderProp);
 
@@ -131,7 +130,6 @@ void TestObject::RenderGBuffer(const DrawInfo& _Info)
 			{
 				continue; 
 			}
-			
 
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);

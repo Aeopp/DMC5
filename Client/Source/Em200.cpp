@@ -15,7 +15,10 @@
 
 void Em200::Free()
 {
-	Unit::Free();
+	Destroy(m_pBlood);
+	Destroy(m_pAppear);
+
+	Monster::Free();
 }
 
 std::string Em200::GetName()
@@ -250,6 +253,7 @@ void Em200::State_Change(const float _fDeltaTime)
 	case Em200::Dead:
 		if (m_bIng == true)
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+		StoneDebrisPlayStart();
 		break;
 	case Em200::Hit_Air:
 		if (m_bHit && m_bAir == true)
@@ -769,9 +773,10 @@ HRESULT Em200::Awake()
 
 	
 
-	/*--- «« ¿Ã∆Â∆Æ ---*/
+	/*--- ¿Ã∆Â∆Æ ---*/
 	m_pBlood = AddGameObject<Liquid>();
 	m_pAppear = AddGameObject<AppearGroundMonster>();
+	StoneDebrisInit();
 	/*----------------*/
 
 	return S_OK;

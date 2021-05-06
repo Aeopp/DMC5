@@ -226,13 +226,13 @@ PsOut PsMain1(PsIn In)
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
              
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
-    float4 c1 = float4(Diffuse * ATOSSample.g * _BrightScale * exposure_corr * 0.1f * float3(0.106f, 0.f, 0.f), 1.f);
+    float4 c1 = float4(Diffuse * ATOSSample.g * _BrightScale * exposure_corr * 0.1f * float3(0.969f, 0.431f, 0.267f), 1.f);
     c1.a = saturate(ATOSSample.g);
     
-    float4 c2 = float4(ATOSSample.r * _BrightScale * exposure_corr * float3(0.55f, 0.001f, 0.f), 1.f);
+    float4 c2 = float4(ATOSSample.r * _BrightScale * exposure_corr * float3(0.996f, 0.023f, 0.009f), 1.f);
     c2.a = saturate(ATOSSample.r);
    
-    float4 c3 = float4(ATOSSample.b * _BrightScale * exposure_corr * float3(0.121f, 0.002f, 0.f), 1.f);
+    float4 c3 = float4(ATOSSample.b * _BrightScale * exposure_corr * float3(0.923f, 0.109f, 0.015f), 1.f);
     c3.a = saturate(ATOSSample.b);
 
     float crr = saturate(tex2D(Gradation, -float2(0.f, _AccumulationTexV)).r);

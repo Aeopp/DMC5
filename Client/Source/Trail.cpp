@@ -80,7 +80,7 @@ void Trail::RenderInit()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 24;
+	const int32 TriCnt = 32;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt+2;
@@ -96,17 +96,18 @@ void Trail::RenderInit()
 
 	Device = g_pDevice;
 
+	
 	VtxDecl = Vertex::TrailVertex::GetVertexDecl(Device);
 	Device->CreateVertexBuffer
-	(_Desc.VtxSize * _Desc.VtxCnt, 0, 
+	(_Desc.VtxSize * _Desc.VtxCnt, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
 		NULL, 
-		D3DPOOL_MANAGED, 
+		D3DPOOL_DEFAULT,
 		&VtxBuffer, nullptr);
 
 	Device->CreateIndexBuffer
 	(_Desc.IdxSize* _Desc.TriCnt
-		, 0, _Desc.IdxFmt, 
-		D3DPOOL_MANAGED, &IdxBuffer, nullptr);
+		, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, _Desc.IdxFmt,
+		D3DPOOL_DEFAULT, &IdxBuffer, nullptr);
 
 	TrailMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
@@ -125,6 +126,8 @@ void Trail::RenderInit()
 
 	Scale = { 1.f,2.f,3.f };
 	ScrollSpeed = { 1.f,2.f,3.f };
+
+	EmissiveIntencity = 0.0f;
 };
 
 void Trail::PlayStart(const Mode _Mode,
@@ -137,8 +140,36 @@ void Trail::PlayStart(const Mode _Mode,
 
 	Vertex::TrailVertex* VtxPtr{nullptr};
 	VtxBuffer->Lock(0, 0, (void**)&VtxPtr, NULL);
-	ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
+
+	if (auto _GameObject = FindGameObjectWithTag(TAG_RedQueen).lock();
+		_GameObject)
+	{
+		if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
+			RQ)
+		{
+			const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
+
+			auto Low = RQ->Get_BoneMatrixPtr("_000");
+			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
+
+			auto High = RQ->Get_BoneMatrixPtr("_001");
+			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
+
+			for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+			{
+				VtxPtr[i +1].Location = HighPos;
+				VtxPtr[i].Location = LowPos;
+			}
+		}
+	};
+
+	// ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
 	VtxBuffer->Unlock();
+
+	void* IdxPtr{ nullptr };
+	IdxBuffer->Lock(0, 0, (void**)&IdxPtr, NULL);
+	ZeroMemory(IdxPtr, _Desc.IdxSize * _Desc.TriCnt);
+	IdxBuffer->Unlock();
 
 	CurMode = _Mode;
 	_RenderProperty.bRender = true;
@@ -190,7 +221,8 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 	Device->SetVertexDeclaration(VtxDecl);
 	Device->SetIndices(IdxBuffer);
 	_Info.Fx->CommitChanges();
-	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
+
+	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
 }
 void Trail::SpriteUpdate(const float DeltaTime)
 {
@@ -458,18 +490,22 @@ void Trail::Editor()
 				ImGui::Text(" UV1 %9.6f ,%9.6f", _Vtx.UV1.x, _Vtx.UV1.y);
 			}
 
+			
 			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
+
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+
 			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
+
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");
 			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
