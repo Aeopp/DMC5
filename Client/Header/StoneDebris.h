@@ -56,6 +56,7 @@ private:
 	Vector3 _ExtraColor = Vector3(0.f, 0.f, 0.f);
 
 	float _PlayerEffectStart = false;
+	int _PlayerIncreaseHpAmount = 5;
 
 private:
 	explicit StoneDebris() = default;

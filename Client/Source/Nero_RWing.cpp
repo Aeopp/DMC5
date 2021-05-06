@@ -132,6 +132,15 @@ void Nero_RWing::RenderInit()
 			}
 		},
 	};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_dsSK",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBufferSK(_Info);
+	//		}
+	//	},
+	//};
 	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
 	//	=
 	//{

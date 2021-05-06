@@ -30,6 +30,7 @@ public:
 	float Get_PlayingAccTime();
 public:
 	void RenderInit();
+	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
@@ -37,7 +38,6 @@ public:
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
-
 	virtual void Editor()override;
 
 private:
@@ -47,6 +47,13 @@ private:
 	Matrix*								m_pParentBoneMat;
 	bool								m_bIsRender;
 	bool								m_bLoop;
+
+	std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
+	std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};
+	std::shared_ptr<ENGINE::Texture>		m_GradationTex{};
+
+	float	m_fAccTime = 0.f;
+
 };
 
 
