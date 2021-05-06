@@ -76,8 +76,10 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
+	AddGameObject<Font>().lock()->SetText("D 20, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
+
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 
 	//AddGameObject<CircleWave>();
