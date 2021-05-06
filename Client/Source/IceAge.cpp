@@ -136,6 +136,7 @@ void IceAge::PlayStart(
 	const float PlayTime)
 {
 	Vector3 MyLocation = { 0,0,0 };
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -148,53 +149,6 @@ void IceAge::PlayStart(
 			SpTransform->SetPosition(Location.value()); 
 			// 재생 ..
 
-			const Matrix Mat = SpTransform->GetRenderMatrix();
-			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-			const uint32 JumpOffset = 30u;
-
-			const float AllParticleLifeTime = 3.f;
-
-			{
-				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayableParticles("Ice", AllParticleLifeTime);
-				for (int32 i = 0; i < _PlayableParticle.size(); i+=JumpOffset)
-				{
-					auto& _PlayInstance = _PlayableParticle[i];
-
-					Vector2 Range{ -0.1f,0.1f };
-					const Vector3& TargetLocation =
-						FMath::Mul((*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)], Mat);
-					const Vector3 Cp0 = TargetLocation + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x },
-						{ Range.y,Range.y,Range.y });
-					const Vector3 Cp1 = Cp0 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
-					const Vector3 End = Cp1 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
-
-					Vector2 ScaleRange{ 0.01f,0.1f };
-					const float PScale = FMath::Random(ScaleRange.x, ScaleRange.y) * GScale;
-
-					const Vector3 StartRot = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					const Vector3 RotCp0 = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					const Vector3 RotCp1 = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					const Vector3 EndRot = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					ParticleInstance::Ice _IceValue{};
-
-					_IceValue.ColorIntencity = FMath::Random(0.1f, 0.3f);
-
-					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
-
-					_PlayInstance->PlayDescBind(
-						{ TargetLocation ,Cp0,Cp1,End },
-						{ StartRot ,RotCp0,RotCp1,EndRot },
-						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue);
-				}
-			}
 		}
 	}
 
@@ -362,35 +316,56 @@ UINT IceAge::Update(const float _fDeltaTime)
 		{
 			CurParticleTime += ParticleCycle;
 
-			// 파티클 재생 
+			const Matrix Mat = SpTransform->GetRenderMatrix();
+			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
+			const uint32 JumpOffset = 25u;
+
+			const float AllParticleLifeTime = 4.f;
+			{
+				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayableParticles("Ice", AllParticleLifeTime);
+				for (int32 i = 0; i < _PlayableParticle.size(); i += JumpOffset)
+				{
+					auto& _PlayInstance = _PlayableParticle[i];
+
+					Vector2 Range{ -0.1f,0.1f };
+					const Vector3& TargetLocation =
+						FMath::Mul((*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)], Mat);
+					const Vector3 Cp0 = TargetLocation + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x },
+						{ Range.y,Range.y,Range.y });
+					const Vector3 Cp1 = Cp0 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
+					const Vector3 End = Cp1 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
+
+					Vector2 ScaleRange{ 0.1f,0.18f };
+					const float PScale = FMath::Random(ScaleRange.x, ScaleRange.y) * GScale;
+
+					const Vector3 StartRot = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					const Vector3 RotCp0 = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					const Vector3 RotCp1 = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					const Vector3 EndRot = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					ParticleInstance::Ice _IceValue{};
+
+					_IceValue.ColorIntencity = FMath::Random(0.05f, 0.2f);
+
+					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
+
+					_PlayInstance->PlayDescBind(
+						{ TargetLocation ,Cp0,Cp1,End },
+						{ StartRot ,RotCp0,RotCp1,EndRot },
+						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue);
+				}
+			}
 
 		}
 	}
 
-	//if (auto _ParticleG = _GeneratorParticle.lock();
-	//	_ParticleG)
-	//{
-	//	if (false == _ParticleG->IsPlaying())
-	//	{
-	//		{
-	//			{
-	//				const Vector3 Location = FMath::Mul(*VtxIter, _RenderUpdateInfo.World);
-	//				_ParticleG->SetPosition(Location);
-	//				_ParticleG->SetShapeIdx(ShapeParticle::SPHERE);
-	//				_ParticleG->SetColorIdx(ShapeParticle::COLOR::RED);
-	//				// _ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::ZERO);
-	//				// _ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::ZERO);
-	//				_ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::HALF);
-	//				_ParticleG->SetScale(0.003f);
-	//				//_ParticleG->SetLoop(true);
-	//				_ParticleG->PlayStart(1.f);
-	//			}
-	//		};
-	//	}
-	//};
-
-	//static constexpr uint32 Jump = 30;
-	//}
 
 	return 0;
 }
