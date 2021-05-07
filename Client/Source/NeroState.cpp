@@ -1831,6 +1831,8 @@ HRESULT Jump_Twice::StateEnter()
 	}
 	m_pNero.lock()->SetLinearVelocity();
 	m_pNero.lock()->SetAddForce({ 0.f,120.f,0.f });
+	m_pNero.lock()->PlayEffect(Eff_CircleWave);
+	m_pNero.lock()->PlayEffect(Eff_AirHike);
 	return S_OK;
 }
 
@@ -4723,6 +4725,7 @@ HRESULT BT_Att1::StateEnter()
 	}
 	m_pNero.lock()->CheckAutoRotate();
 	NeroState::ActiveTrail(true);
+
 	return S_OK;
 }
 
@@ -6570,6 +6573,7 @@ HRESULT Skill_Streak_Ex3::StateEnter()
 	NeroState::ActiveTrail(true);
 	m_pNero.lock()->Use_ExGauge(1);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
+	m_pNero.lock()->PlayEffect(Eff_FireCircle, {90.f,0.f,0.f});
 	return S_OK;
 }
 
@@ -7965,12 +7969,14 @@ HRESULT Cbs_SKill_IceAge_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Cbs_SKill_IceAge_Start", false, Nero::ANI_CBS_SKILL_ICEAGE_START);
 	//m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Battle);
 	//m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Short, "Cbs_IceAge_Start", true);
+	m_pNero.lock()->PlayEffect(Eff_IceAge);
 	return S_OK;
 }
 
 HRESULT Cbs_SKill_IceAge_Start::StateExit()
 {
 	NeroState::StateExit();
+
 	return S_OK;
 }
 
