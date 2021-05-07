@@ -129,8 +129,8 @@ public:
 		const Vector3& CP0,
 		const Vector3& End, const float t);
 
-	static bool IsNan(const Vector3& Lhs);
-	static bool IsNan(const Quaternion& Quat);
+	static inline bool IsNan(const Vector3& Lhs);
+	static inline bool IsNan(const Quaternion& Quat);
 
 	static inline bool IsRayToSphere(
 		const Ray& Lhs, const Sphere& Rhs,
@@ -183,12 +183,12 @@ inline float FMath::MaxScala(const Vector3& Lhs)
 	return (std::max)({ Lhs.x,Lhs.y,Lhs.z });
 };
 
-bool FMath::IsNan(const Vector3& Lhs)
+inline bool FMath::IsNan(const Vector3& Lhs)
 {
 	return std::isnan(Lhs.x) || std::isnan(Lhs.y) || std::isnan(Lhs.z);
 };
 
-bool FMath::IsNan(const Quaternion& Quat)
+inline bool FMath::IsNan(const Quaternion& Quat)
 {
 	return std::isnan(Quat.x) || std::isnan(Quat.y) || std::isnan(Quat.z) || std::isnan(Quat.w);
 }
