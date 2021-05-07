@@ -94,7 +94,7 @@ void IceAge::RenderInit()
 	{
 		Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
 	}
-	
+
 	// 텍스쳐 
 	Albedo = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\mesh_03_debris_ice00_00_albm.tga");
 	TrailMap = Resources::Load<Texture>("..\\..\\Usable\\mesh_03_cs_noise_00_00_alb.tga");
@@ -199,69 +199,42 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	}
 };
 
-void IceAge::RenderEftIceParticle(const DrawInfo& _Info)
-{
-	//{
-	//	const uint32 Numsubset = IceParticle->GetNumSubset();
-	//	for (uint32 i = 0; i < Numsubset; ++i)
-	//	{
-	//		if (auto SpSubset = IceParticle->GetSubset(i).lock();
 
-	//			SpSubset)
-	//		{
-	//			SpSubset->BindProperty(TextureType::DIFFUSE, 0, "AlbedoMap", _Info.Fx);
-	//			SpSubset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", _Info.Fx);
-	//			_Info.Fx->SetTexture("EmssiveMskMap", EmssiveMskMap->GetTexture());
-	//			
-	//			/*for (auto& _Element : _IceParticles)
-	//			{
-	//				_Info.Fx->SetFloat("ColorIntencity", _Element.ColorIntencity);
-	//				_Info.Fx->SetFloat("EmissiveIntencity", _Element.EmissiveIntencity);
-	//				_Info.Fx->SetFloat("AlphaFactor", _Element.AlphaFactor);
-	//				_Info.Fx->SetFloat("SpecularPow", _Element.SpecularPow);
-	//				const auto _World= FMath::WorldMatrix(_Element.Scale , _Element.Rotation  , _Element.Location);
-	//				_Info.Fx->SetMatrix("matWorld", &_World);
-	//				SpSubset->Render(_Info.Fx);
-	//			}*/
-	//		};
-	//	};
-	//}
-};
 
 void IceAge::ParticlePoolReserve()
 {
-	ENGINE::ParticleSystem::Particle _PushParticle{};
+	//ENGINE::ParticleSystem::Particle _PushParticle{};
 
-	Mesh::InitializeInfo _Info{};
-	_Info.bLocalVertexLocationsStorage = false;
-	_PushParticle._Mesh = Resources::Load<StaticMesh>(
-		"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
+	//Mesh::InitializeInfo _Info{};
+	//_Info.bLocalVertexLocationsStorage = false;
+	//_PushParticle._Mesh = Resources::Load<StaticMesh>(
+	//	"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
 
-	_PushParticle.bLerpTimeNormalized = false;
-	// Particle 정보 채워주기 
-	_PushParticle._ShaderKey = "IceParticle";
-	// 공유 정보 바인드 
-	_PushParticle.SharedResourceBind = [](
-		ENGINE::ParticleSystem::Particle& TargetParticle,
-		ID3DXEffect* const Fx)
-	{
-		if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
-			Subset)
-		{
-			Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
-			Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
-		}
-	};
+	//_PushParticle.bLerpTimeNormalized = false;
+	//// Particle 정보 채워주기 
+	//_PushParticle._ShaderKey = "IceParticle";
+	//// 공유 정보 바인드 
+	//_PushParticle.SharedResourceBind = [](
+	//	ENGINE::ParticleSystem::Particle& TargetParticle,
+	//	ID3DXEffect* const Fx)
+	//{
+	//	if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
+	//		Subset)
+	//	{
+	//		Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
+	//		Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
+	//	}
+	//};
 
-	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
-	{
-		const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
-		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
-		return;
-	};
+	//_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	//{
+	//	const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+	//	Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+	//	return;
+	//};
 
-	const uint64 PoolSize = 10000;
-	ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
+	//const uint64 PoolSize = 10000;
+	//ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
 }
 
 void IceAge::RenderDebug(const DrawInfo& _Info)
@@ -342,7 +315,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 			const Matrix Mat = SpTransform->GetRenderMatrix();
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-			const uint32 JumpOffset = 75u;
+			const uint32 JumpOffset = 80u;
 
 			const float AllParticleLifeTime = 4.f;
 			{
@@ -376,14 +349,14 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 					ParticleInstance::Ice _IceValue{};
 
-					_IceValue.ColorIntencity = FMath::Random(0.05f, 0.2f);
+					_IceValue.ColorIntencity = FMath::Random(0.03f, 0.15f);
 
 					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
 
 					_PlayInstance->PlayDescBind(
 						{ TargetLocation ,Cp0,Cp1,End },
 						{ StartRot ,RotCp0,RotCp1,EndRot },
-						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue);
+						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue,std::nullopt);
 				}
 			}
 

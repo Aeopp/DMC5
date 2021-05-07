@@ -7,14 +7,12 @@
 #include <vector>
 #include "ShapeParticle.h"
 
-
 class IceAge :     public ENGINE::GameObject,
 			       public ENGINE::RenderInterface
 {
 public:
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Inner{};
-// 	std::shared_ptr<ENGINE::StaticMesh> IceParticle{};
 	std::shared_ptr<ENGINE::Texture>    Albedo{};
 	std::shared_ptr<ENGINE::Texture>    TrailMap{};
 	std::shared_ptr<ENGINE::Texture>    EmssiveMskMap{};
@@ -42,17 +40,16 @@ public:
 public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
-		const Vector3 Scale = { 0.0008f ,0.0008f ,0.0008f },
-		const float YawRotationSpeed = FMath::PI,
+		const Vector3 Scale = { 0.0016f ,0.0016f ,0.0016f },
+		const float YawRotationSpeed = FMath::PI *3.f,
 		const float PlayTime = 2.5f);
 	void PlayEnd();
 public:
 	void ParticlePoolReserve();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
-	void RenderEftIceParticle(const DrawInfo& _Info);
 private:
-	float ParticleCycle = 0.08f;
+	float ParticleCycle = 0.1f;
 	float CurParticleTime = 0.0f;
 	// std::weak_ptr< ShapeParticle> _GeneratorParticle{};
 	// std::vector<Particle> _IceParticles{};
