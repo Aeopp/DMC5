@@ -45,8 +45,7 @@ public:
 	bool bEnvironmentRender = false;
 	void LightSave(std::filesystem::path path);
 	void LightLoad(const std::filesystem::path & path);
-	const std::vector< std::shared_ptr<FLight> >& 
-		GetDirLights() { return DirLights; }
+	const std::vector< std::shared_ptr<FLight> >& GetDirLights() { return DirLights; }
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -94,6 +93,11 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
+
+	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
+	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
+	FLight* CurDirLight{ nullptr };
+
 	bool    bDistortion = true;
 	float   DistortionIntencity = 0.05f;
 	float   exposure = 1.f;
@@ -164,10 +168,8 @@ private:
 	std::shared_ptr<Texture> DistortionTex{};
 	std::set<RenderInterface* > RenderEntitySet{};
 	std::shared_ptr<Quad> _Quad;
-	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
-	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
+
 	std::vector< std::shared_ptr<FLight> > DirLights{};
-	FLight* CurDirLight{ nullptr };
 	std::vector<std::shared_ptr<FLight>> PointLights{};
 
 	std::shared_ptr<Texture> SkyNoiseMap{};

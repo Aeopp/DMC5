@@ -4,6 +4,8 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include "BtlPanel.h"
+#include "Nero.h"
 
 
 void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
@@ -95,7 +97,11 @@ void StoneDebris::Reset()
 		Sptransform->UpdateTransform();
 	}
 
+	_PlayerEffectStart = false;
+
 	Effect::Reset();
+
+	_AccumulateTime += FMath::Random<float>(-0.2f, 0.2f);	// 재생시간 살짝씩 다르게 하기 위함
 }
 
 void StoneDebris::Imgui_Modify()
@@ -288,7 +294,7 @@ HRESULT StoneDebris::Ready()
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
 
 	D3DXMatrixScaling(&_SmokeChildWorldMatrix, 0.2f, 0.2f, 0.2f);
-	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
 
 	uint32 DustSingleIdx = FMath::Random<uint32>(0u, 3u);
 	_DustSingleMinTexUV = Vector2(DustSingleIdx * 0.25f, 0.f);
@@ -296,6 +302,8 @@ HRESULT StoneDebris::Ready()
 
 	_PlayingSpeed = 1.f;
 	_BrightScale = 1.f;
+
+	_AccumulateTime += FMath::Random<float>(-0.2f, 0.2f);	// 재생시간 살짝씩 다르게 하기 위함
 
 	return S_OK;
 };
@@ -319,6 +327,28 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 
 	if (4.f < _AccumulateTime)
 	{
+		switch (_VariationIdx)
+		{
+		case REDORB_0:
+		case REDORB_1:
+		case REDORB_2:
+		case REDORB_3:
+			if (auto pBtlPanel = FindGameObjectWithTag(UI_BtlPanel);
+				!pBtlPanel.expired())
+			{
+				uint32 RedOrbAmount = FMath::Random<uint32>(0u, 9u);
+
+				if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
+					Sptransform)
+				{
+					RedOrbAmount += static_cast<uint32>(Sptransform->GetScale().x / 0.001f) * 10u;	// 몬스터가 뿌리는 scale 0.0015 ~ 0.004
+				}
+
+				std::static_pointer_cast<BtlPanel>(pBtlPanel.lock())->AccumulateRedOrb(RedOrbAmount);
+			}
+			break;
+		}
+
 		Reset();
 	}
 	else if (2.f < _AccumulateTime)
@@ -357,7 +387,7 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		_SmokeChildWorldMatrix._42 = _SmokeDeltaPosY;
 
 		// Single Dust
-		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000015f, 0.000015f, 0.000015f);
+		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
 		_DustSingleChildWorldMatrix = _DustSingleChildWorldMatrix * BillMat * InvRotMat;
 	
 		_DustSingleVelocity.x = 0.01f * cosf(_AccumulateTime * 2.f);
@@ -367,6 +397,37 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		_DustSingleDeltaPos.x += _DustSingleVelocity.x * _fDeltaTime;
 		_DustSingleDeltaPos.y += _DustSingleVelocity.y * _fDeltaTime;
 		_DustSingleDeltaPos.z += _DustSingleVelocity.z * _fDeltaTime;
+
+		if (!_PlayerEffectStart)
+		{
+			switch (_VariationIdx)
+			{
+			case REDORB_0:
+			case REDORB_1:
+			case REDORB_2:
+			case REDORB_3:
+				if (auto pPlayer = FindGameObjectWithTag(Player);
+					!pPlayer.expired())
+				{
+					std::static_pointer_cast<Nero>(pPlayer.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 1.f);
+				}
+				break;
+			case GREENORB_0:
+			case GREENORB_1:
+			case GREENORB_2:
+			case GREENORB_3:
+				if (auto pPlayer = FindGameObjectWithTag(Player);
+					!pPlayer.expired())
+				{
+					auto pNero = std::static_pointer_cast<Nero>(pPlayer.lock());
+					pNero->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -1.f);
+					pNero->IncreaseHp(_PlayerIncreaseHpAmount);
+				}
+				break;
+			}
+
+			_PlayerEffectStart = true;
+		}
 	}
 	else
 	{

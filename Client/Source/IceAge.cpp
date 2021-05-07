@@ -7,6 +7,8 @@
 #include <iostream>
 #include "GraphicSystem.h"
 #include "RedQueen.h"
+#include "ParticleSystem.h"
+#include "ParticleInstanceDesc.hpp"
 
 IceAge::IceAge()
 {};
@@ -82,24 +84,15 @@ void IceAge::RenderInit()
 			}
 		}
 
-		/*,
-		{
-			"IceParticle",[this](const DrawInfo& _Info)
-			{
-				this->RenderEftIceParticle(_Info);
-			}
-		}*/
 	};
 
 	RenderInterface::Initialize(_InitRenderProp);
 
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = true;
-
 	// 메시
 	{
 		Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
-		IceParticle = Resources::Load<StaticMesh>("..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx");
 	}
 	
 	// 텍스쳐 
@@ -122,8 +115,7 @@ void IceAge::RenderInit()
 	ColorIntencity = 0.059f;
 	DistortionIntencity = 1.2f;
 
-	// 얼음 보숭이 
-	// _GeneratorParticle = AddGameObject<ShapeParticle>();
+	ParticlePoolReserve();
 };
 
 void IceAge::PlayStart(
@@ -133,31 +125,22 @@ void IceAge::PlayStart(
 	const float PlayTime)
 {
 	Vector3 MyLocation = { 0,0,0 };
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
 		MyLocation = SpTransform->GetPosition();
+
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
+		{
+			SpTransform->SetScale(Scale);
+			SpTransform->SetPosition(Location.value()); 
+			// 재생 ..
+		}
 	}
 
-	//_IceParticles.resize(100);
-	//for (auto& _Element : _IceParticles)
-	//{
-	//	_Element.Scale = { 0.001f,0.001f,0.001f };
-	//	_Element.Rotation = { 0.f,0.f,0.f };
-	//	_Element.Location = MyLocation + FMath::Random<Vector3>({ -0.1f,-0.1f,-0.1f }, { 0.1f,0.1f,0.1f });;
-	//	/*_Element.Location = MyLocation + FMath::Random<Vector3> ({-1.f,-1.f,-1.f }, { 1.f,1.f,1.f });
-	//	_Element.Rotation = FMath::Random<Vector3>({ -3.14f,-3.14f,-3.14f }, { 3.14f,3.14f,3.14f });
-	//	_Element.Scale = FMath::Random<Vector3>({1,1,1},{  3,3,3} );*/
-	//}
-
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
-	{
-		SpTransform->SetScale(Scale);
-		SpTransform->SetPosition( Location.value() );
-		// SpTransform->Rotate({ 0.f,RollRotateSpeed,0.f });
-	}
-
+	CurParticleTime = ParticleCycle;
 	this->PlayTime = PlayTime;
 	this->RollRotationSpeed = RollRotateSpeed;
 	_RenderProperty.bRender = true;
@@ -245,6 +228,42 @@ void IceAge::RenderEftIceParticle(const DrawInfo& _Info)
 	//}
 };
 
+void IceAge::ParticlePoolReserve()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "IceParticle";
+	// 공유 정보 바인드 
+	_PushParticle.SharedResourceBind = [](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
+			Subset)
+		{
+			Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
+			Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
+		}
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 10000;
+	ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
+}
+
 void IceAge::RenderDebug(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
@@ -309,36 +328,68 @@ UINT IceAge::Update(const float _fDeltaTime)
 		return 0;
 	}
 
-	if (auto spTransform = GetComponent<ENGINE::Transform>().lock();
-		spTransform)
+	CurParticleTime -= _fDeltaTime;
+
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
 	{
-		spTransform->Rotate(Vector3{ 0.f,RollRotationSpeed * _fDeltaTime , 0.f});
+		const Vector3 CurRotation = Vector3{ 0.f,RollRotationSpeed * _fDeltaTime , 0.f };
+		SpTransform->Rotate(CurRotation);
+
+		if (CurParticleTime < 0.0f)
+		{
+			CurParticleTime += ParticleCycle;
+
+			const Matrix Mat = SpTransform->GetRenderMatrix();
+			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
+			const uint32 JumpOffset = 75u;
+
+			const float AllParticleLifeTime = 4.f;
+			{
+				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayableParticles("Ice", AllParticleLifeTime);
+				for (int32 i = 0; i < _PlayableParticle.size(); i += JumpOffset)
+				{
+					auto& _PlayInstance = _PlayableParticle[i];
+
+					Vector2 Range{ -0.05f,0.05f };
+					const Vector3& TargetLocation =
+						FMath::Mul((*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)], Mat);
+					const Vector3 Cp0 = TargetLocation + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x },
+						{ Range.y,Range.y,Range.y });
+					const Vector3 Cp1 = Cp0 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
+					const Vector3 End = Cp1 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
+
+					Vector2 ScaleRange{ 0.1f,0.18f };
+					const float PScale = FMath::Random(ScaleRange.x, ScaleRange.y) * GScale;
+
+					const Vector3 StartRot = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					const Vector3 RotCp0 = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					const Vector3 RotCp1 = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					const Vector3 EndRot = {
+						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+
+					ParticleInstance::Ice _IceValue{};
+
+					_IceValue.ColorIntencity = FMath::Random(0.05f, 0.2f);
+
+					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
+
+					_PlayInstance->PlayDescBind(
+						{ TargetLocation ,Cp0,Cp1,End },
+						{ StartRot ,RotCp0,RotCp1,EndRot },
+						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue);
+				}
+			}
+
+		}
 	}
 
-	//if (auto _ParticleG = _GeneratorParticle.lock();
-	//	_ParticleG)
-	//{
-	//	if (false == _ParticleG->IsPlaying())
-	//	{
-	//		{
-	//			{
-	//				const Vector3 Location = FMath::Mul(*VtxIter, _RenderUpdateInfo.World);
-	//				_ParticleG->SetPosition(Location);
-	//				_ParticleG->SetShapeIdx(ShapeParticle::SPHERE);
-	//				_ParticleG->SetColorIdx(ShapeParticle::COLOR::RED);
-	//				// _ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::ZERO);
-	//				// _ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::ZERO);
-	//				_ParticleG->SetCtrlIdx(ShapeParticle::CONTROLPT::HALF);
-	//				_ParticleG->SetScale(0.003f);
-	//				//_ParticleG->SetLoop(true);
-	//				_ParticleG->PlayStart(1.f);
-	//			}
-	//		};
-	//	}
-	//};
-
-	//static constexpr uint32 Jump = 30;
-	//}
 
 	return 0;
 }

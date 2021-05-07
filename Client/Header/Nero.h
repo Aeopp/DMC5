@@ -29,6 +29,7 @@ class CircleWave;
 class FireCircle;
 class IceAge;
 class Trail;
+class ShapeParticle;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -384,6 +385,7 @@ public:
 	//ī�޶�
 	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
 	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
+	void IncreaseHp(int _Hp);
 	//�׽�Ʈ
 
 public:
@@ -464,7 +466,7 @@ private:
 	std::weak_ptr<GT_Overture>		m_pOverture;
 	std::weak_ptr<GT_Rockman>		m_pRockman;
 	std::weak_ptr<Effect>			m_pEffOverture;
-	std::weak_ptr<Liquid>		m_pBlood;
+	std::weak_ptr<Liquid>			m_pBlood;
 	std::weak_ptr<Cbs_Short>		m_pCbsShort;
 	std::weak_ptr<Cbs_Middle>		m_pCbsMiddle;
 	std::weak_ptr<Cbs_Long>			m_pCbsLong;
@@ -475,6 +477,8 @@ private:
 	std::weak_ptr<IceAge>			m_pIceAge;
 	std::weak_ptr<FireCircle>		m_pFireCircle;
 	std::weak_ptr<CircleWave>		m_pCircleWave;
+	enum { SP_RED = 0, SP_GREEN, SP_END };	// ShapeParticle
+	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 
 	std::vector<std::weak_ptr<WingSword>>	m_vecWingSwords;
 

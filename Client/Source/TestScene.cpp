@@ -30,11 +30,17 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "CircleWave.h"
+#include "AirHike.h"
+#include "FireCircle.h"
+#include "IceAge.h"
+#include "ParticleSystem.h"
+#include "ParticleInstanceDesc.hpp"
 
 #include <iostream>
 #include <fstream>
-using namespace std;
 
+using namespace std;
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -79,6 +85,10 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
+	//AddGameObject<FireCircle>();
+	//AddGameObject<IceAge>();
+\
+
 
 	// Wave 1st
 	//{
@@ -126,14 +136,13 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;
@@ -142,6 +151,9 @@ HRESULT TestScene::LoadScene()
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
 	_Renderer->SoftParticleDepthScale = 0.7f;
 	_Renderer->SkyRotationSpeed = 1.5f;
+	_Renderer->StarScale = 4.f;
+	_Renderer->StarFactor = 0.9f;
+
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -223,8 +235,8 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	/*if (nullptr != pPlane)
-		return S_OK;*/
+	//if (nullptr != pPlane)
+	//	return S_OK;
 
 	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
 	//Physics::AddActor(UniqueID, *pPlane);
@@ -241,6 +253,17 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);
+	for (auto& _PlayInstance : _RefParticles)
+	{
+		_PlayInstance->LifeTime = 3.f;
+		_PlayInstance->Scale = { GScale,GScale,GScale };
+		_PlayInstance->CurveControlPoints = {};
+		_PlayInstance->CurveControlRotationPoints = {};
+	}*/
+
+
+
 	//cout << "SceneUpdate" << endl;
 
 
@@ -345,7 +368,8 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Hotel.json" };
+	std::ifstream inputStream{ "../../Data/Stage2.json" };
+	//std::ifstream inputStream{ "../../Data/Hotel.json" };
 
 	if (false == inputStream.is_open())
 		return;

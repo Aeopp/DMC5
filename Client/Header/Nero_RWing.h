@@ -1,5 +1,4 @@
 #pragma once
-
 #ifndef Nero_RWing_h__
 #define Nero_RWing_h__
 
@@ -12,7 +11,6 @@ class Nero_RWing :	public GameObject,
 private:
 	explicit Nero_RWing();
 	virtual ~Nero_RWing() = default;
-
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
 public:
@@ -25,7 +23,7 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 
-	// 렌더링 함수 .
+	// 렌더링 함수...
 	void RenderInit();
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderGBufferSK(const DrawInfo& _Info);

@@ -408,11 +408,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\IceParticle.hlsl">
-      <FileType>Document</FileType>
+      <FileType>HLSL</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\UI\Font.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingArmSK.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

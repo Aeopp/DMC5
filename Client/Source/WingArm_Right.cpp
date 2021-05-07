@@ -25,6 +25,11 @@ HRESULT WingArm_Right::Ready()
 {
 	RenderInit();
 
+	m_NRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing_Arm\\pl0010_01_NRMR.tga");
+	m_ATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing_Arm\\pl0010_01_Wing_ATOS.tga");
+	//m_GradationTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing_Arm\\pl0010_04_Gradation_MSK1.tga");
+	m_GradationTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\grad.png");
+
 	m_pTransform.lock()->SetScale({ 0.025f,0.025f,0.025f });
 
 	PushEditEntity(m_pTransform.lock().get());
@@ -37,7 +42,10 @@ HRESULT WingArm_Right::Ready()
 HRESULT WingArm_Right::Awake()
 {
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
-	m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Shoulder");
+	
+	if (!m_pNero.expired())
+		m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Shoulder");
+
 	return S_OK;
 }
 
@@ -68,6 +76,9 @@ UINT WingArm_Right::Update(const float _fDeltaTime)
 		if(m_pNero.lock()->Get_IsMajinMode())
 			m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
 	}
+
+	//
+	m_fAccTime += _fDeltaTime;
 
 	return 0;
 }
@@ -141,25 +152,34 @@ void WingArm_Right::RenderInit()
 	// 렌더 속성 전체 초기화 
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
-	_InitRenderProp.bRender = m_bIsRender;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//_InitRenderProp.bRender = m_bIsRender;
+	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"gbuffer_dsSK",
+		{"NeroWingArmSK",
 		[this](const DrawInfo& _Info)
 			{
-				RenderGBufferSK(_Info);
+				RenderAlphaBlendEffect(_Info);
 			}
 		},
 	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"ShadowSK" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadowSK(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_dsSK",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBufferSK(_Info);
+	//		}
+	//	},
+	//};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+	//	=
+	//{
+	//	{"ShadowSK" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderShadowSK(_Info);
+	//	}
+	//} };
 	_InitRenderProp.RenderOrders[RenderProperty::Order::DebugBone]
 		=
 	{
@@ -186,10 +206,32 @@ void WingArm_Right::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing_Arm\\Wing_Arm_Right.fbx");
-
 	m_pMesh->EnableToRootMatricies();
-
 	PushEditEntity(m_pMesh.get());
+}
+
+void WingArm_Right::RenderAlphaBlendEffect(const DrawInfo& _Info)
+{
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
+	m_pMesh->BindVTF(_Info.Fx);
+
+	auto WeakSubset = m_pMesh->GetSubset(0u);
+	if (auto SharedSubset = WeakSubset.lock();
+		SharedSubset)
+	{
+		const Matrix World = _RenderUpdateInfo.World;
+		_Info.Fx->SetMatrix("World", &World);
+		_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
+		_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());
+		_Info.Fx->SetTexture("GradationMap", m_GradationTex->GetTexture());
+		_Info.Fx->SetFloat("_BrightScale", 0.015f);
+		_Info.Fx->SetFloat("_SliceAmount", 0.f);
+		_Info.Fx->SetFloat("_AccumulationTexV", m_fAccTime * 0.6f);
+
+		SharedSubset->Render(_Info.Fx);
+	}
 }
 
 void WingArm_Right::RenderGBufferSK(const DrawInfo& _Info)
@@ -306,6 +348,6 @@ void WingArm_Right::Editor()
 		//if (ImGui::Button("ChangeBone"))
 		//{
 		//	m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr(BoneName);
-		//}
+		//}        
 	}
 }

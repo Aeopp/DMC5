@@ -30,6 +30,7 @@
 #include "IceAge.h"
 #include "FireCircle.h"
 #include "CircleWave.h"
+#include "ShapeParticle.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -224,6 +225,22 @@ HRESULT Nero::Ready()
 	m_pIceAge = AddGameObject<IceAge>();
 	m_pFireCircle = AddGameObject<FireCircle>();
 	m_pCircleWave = AddGameObject<CircleWave>();
+	m_pShapeParticle[SP_RED] = AddGameObject<ShapeParticle>();
+	if (!m_pShapeParticle[SP_RED].expired())
+	{
+		m_pShapeParticle[SP_RED].lock()->SetShapeIdx(ShapeParticle::SPHERE);
+		m_pShapeParticle[SP_RED].lock()->SetColorIdx(ShapeParticle::RED);
+		m_pShapeParticle[SP_RED].lock()->SetCtrlIdx(ShapeParticle::ZERO);
+		m_pShapeParticle[SP_RED].lock()->SetScale(0.0009f);
+	}
+	m_pShapeParticle[SP_GREEN] = AddGameObject<ShapeParticle>();
+	if (!m_pShapeParticle[SP_GREEN].expired())
+	{
+		m_pShapeParticle[SP_GREEN].lock()->SetShapeIdx(ShapeParticle::SPHERE);
+		m_pShapeParticle[SP_GREEN].lock()->SetColorIdx(ShapeParticle::GREEN);
+		m_pShapeParticle[SP_GREEN].lock()->SetCtrlIdx(ShapeParticle::ZERO);
+		m_pShapeParticle[SP_GREEN].lock()->SetScale(0.0009f);
+	}
 
 	//m_vecWingSwords.reserve(4);
 	//m_vecWingSwords.emplace_back(AddGameObject<WingSword1st>());
@@ -306,6 +323,18 @@ UINT Nero::Update(const float _fDeltaTime)
 
 
 	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
+	//m_pBtlPanel.lock()->AccumulateTDTGauge(1.f);
+
+
+	/* ShapeParticle이 재생중이면 위치 갱신 */
+	for (int i = 0; i < SP_END; ++i)
+	{
+		if (m_pShapeParticle[i].lock()->IsPlaying())
+			m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
+	}
+	/* ----------------------------------- */
+
+
 	static bool Test = false;
 	//if (Input::GetKeyDown(DIK_RCONTROL))
 	//{
@@ -765,8 +794,6 @@ void Nero::SetAngleFromCamera(float _fAddAngle)
 	m_fAngle = m_pCamera.lock()->Get_Angle(_fAddAngle);
 	vDegree.y = m_fAngle;
 	vRotationDegree.y = m_fRotationAngle;
-
-
 }
 
 void Nero::SetAddForce(Vector3 _vJumpPos)
@@ -932,11 +959,18 @@ void Nero::Locking()
 	if (m_pTargetMonster.expired())
 		return;
 	float fHpRatio = float(float(m_pTargetMonster.lock()->Get_BattleInfo().iHp) / float(m_pTargetMonster.lock()->Get_BattleInfo().iMaxHp));
-	m_pBtlPanel.lock()->SetTargetCursor(
-		m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
-		fHpRatio);
-	
-	
+	if (GAMEOBJECTTAG::Monster1000 != m_pTargetMonster.lock()->m_nTag)
+	{
+		m_pBtlPanel.lock()->SetTargetCursor(
+			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
+			fHpRatio);
+	}
+	else
+	{
+		m_pBtlPanel.lock()->SetTargetCursor(
+			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Vine01_IK"),
+			fHpRatio);
+	}
 }
 
 Nero::NeroDirection Nero::RotateToTargetMonster()
@@ -1104,6 +1138,14 @@ void Nero::IncreaseDistance(float _GoalDis, float _fDeltaTime)
 	if (m_pCamera.expired())
 		return;
 	m_pCamera.lock()->IncreaseDistance(_GoalDis, _fDeltaTime);
+}
+
+void Nero::IncreaseHp(int _Hp)
+{
+	m_BattleInfo.iHp += _Hp;
+
+	if (m_BattleInfo.iHp >= m_BattleInfo.iMaxHp)
+		m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 }
 
 float Nero::Get_ExGauge()
@@ -1296,6 +1338,18 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		break;
 	case Eff_DashTrail:
 		break;
+	case Eff_ShapeParticle:	// 오브 획득시 이펙트
+		if (0.f < CurRoll)	// 임시. 양수면 빨강 음수는 초록
+		{
+			if (!m_pShapeParticle[SP_RED].lock()->IsPlaying())
+				m_pShapeParticle[SP_RED].lock()->PlayStart(2.8f);
+		}
+		else
+		{
+			if (!m_pShapeParticle[SP_GREEN].lock()->IsPlaying())
+				m_pShapeParticle[SP_GREEN].lock()->PlayStart(2.8f);
+		}
+		break;
 	default:
 		break;
 	}
@@ -1321,6 +1375,10 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		m_pCircleWave.lock()->PlayEnd();
 		break;
 	case Eff_DashTrail:
+		break;
+	case Eff_ShapeParticle:
+		m_pShapeParticle[SP_GREEN].lock()->Reset();
+		m_pShapeParticle[SP_RED].lock()->Reset();
 		break;
 	default:
 		break;
