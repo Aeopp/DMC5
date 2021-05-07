@@ -15,6 +15,9 @@
 
 void Em1000::Free()
 {
+	Destroy(m_pBlood);
+	Destroy(m_pAppear);
+
 	Monster::Free();
 }
 
@@ -432,10 +435,7 @@ void Em1000::Hit(BT_INFO _BattleInfo, void* pArg)
 	//////////////////////////
 	if (!m_pBlood.expired())
 	{
-		int iRandom = FMath::Random<int>(0, 6);
-		if (iRandom >= 4)
-			++iRandom;
-
+		int iRandom = FMath::Random<int>(6, 7);
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
 		pBlood->SetPosition(GetMonsterBoneWorldPos("Vine01_IK"));

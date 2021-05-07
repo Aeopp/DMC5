@@ -15,8 +15,6 @@
 #include "Quad.h"
 #include "basiccamera.h"
 
-// TODO :: 절두체 컬링 (포인트 라이트도 ) 
-// TODO :: 시저렉트 계산 
 BEGIN(ENGINE)
 class ENGINE_DLL Renderer final : public Object
 {
@@ -95,11 +93,20 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
+
+	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
+	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
+	FLight* CurDirLight{ nullptr };
+
 	bool    bDistortion = true;
 	float   DistortionIntencity = 0.05f;
 	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
+	float   StarScale = 4.f;
+	float   StarFactor = 0.9f;
+
+	bool bShadowMapBake = false;
 	
 	
 	Vector4 DistortionColor { 246.f/255.f,10.f/255.f,10.f/255.f,1.f };
@@ -116,7 +123,9 @@ private:
 	
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
+	float FogStart = 1.f;
 	float FogDistance = 100.f;
+	float FogDensity = 1.f;
 	float SlpoeScaleDepthBias = 0.0f;
 	float DepthBias = 0.0f;
 	float DefaultDepthBias = 0.0f;
@@ -159,8 +168,7 @@ private:
 	std::shared_ptr<Texture> DistortionTex{};
 	std::set<RenderInterface* > RenderEntitySet{};
 	std::shared_ptr<Quad> _Quad;
-	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
-	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
+
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
 
@@ -174,6 +182,7 @@ private:
 	void TestShaderRelease();
 	void TestLightRotation();
 	void RenderShadowMaps();
+	void ShadowCacheBake();
 	void RenderGBuffer();
 	void DeferredShading();
 

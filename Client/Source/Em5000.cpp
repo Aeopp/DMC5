@@ -543,14 +543,71 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Groggy_Loop:
 		break;
 	case Em5000::Hit_Buster_Start:
+		if (m_bHit)
+		{
+			if (m_bBuster == false)
+			{
+				Vector3 PlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+				Vector3 vResult = PlayerPos + (-vLook * 0.1f);
+				vResult.y = m_pTransform.lock()->GetPosition().y;
+				m_pTransform.lock()->SetPosition(vResult);
+
+				Update_Angle();
+				Set_Rotate();
+				m_bBuster = true;
+			}
+			m_pMesh->PlayAnimation("Hit_Buster_Start", false, {}, 1.f, 20.f, true);
+			m_pCollider.lock()->SetTrigger(true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_Buster_Swing_Start;
+		
+		}
 		break;
 	case Em5000::Hit_Buster_Swing_Start:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_Buster_Swing_Start", true, {}, 1.f, 1.f, true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
+				m_eState = Hit_Buster_Swing_Loop;
+		}
 		break;
 	case Em5000::Hit_Buster_Swing_Loop:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_Buster_Swing_Loop", true, {}, 1.f, 1.f, true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
+				m_eState = Hit_Buster_Swing_Throw;
+		}
 		break;
 	case Em5000::Hit_Buster_Swing_Throw:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Hit_Buster_Swing_Throw", true, {}, 1.f, 1.f, true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
+				m_eState = Hit_Buster_Swing_End;
+		}
 		break;
 	case Em5000::Hit_Buster_Swing_End:
+		if (m_bHit)
+		{
+			m_pMesh->PlayAnimation("Hit_Buster_Swing_End", false, {}, 1.f, 1.f, true);
+			Vector3 vRot(0.f, 0.f, 0.f);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_End" && m_pMesh->PlayingTime() >= 0.6f)
+			{
+				m_pCollider.lock()->SetRigid(true);
+				m_pCollider.lock()->SetTrigger(false);
+			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_End" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bBuster = false;
+			}
+
+		}
 		break;
 	case Em5000::Howling:
 		break;
@@ -798,7 +855,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ -0.2f, 1.f, -0.5f });
+	m_pTransform.lock()->SetPosition({ 0.3f, 1.f, -1.22f });
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -832,7 +889,7 @@ HRESULT Em5000::Awake()
 	
 	m_pCollider.lock()->SetRadius(0.4f);
 	m_pCollider.lock()->SetHeight(0.f);
-	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
+	m_pCollider.lock()->SetCenter({ 0.f,0.4f,-0.1f });
 
 	m_pBlood = AddGameObject<Liquid>();
 	return S_OK;
@@ -939,6 +996,12 @@ void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	m_bHit = true;
+	m_pCollider.lock()->SetRigid(false);
+
+	m_eState = Hit_Buster_Start;
 }
 
 void Em5000::Snatch(BT_INFO _BattleInfo, void* pArg)
@@ -1192,8 +1255,8 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
-		//_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		//Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
+		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::Overture:
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;

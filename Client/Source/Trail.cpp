@@ -127,7 +127,7 @@ void Trail::RenderInit()
 	Scale = { 1.f,2.f,3.f };
 	ScrollSpeed = { 1.f,2.f,3.f };
 
-	EmissiveIntencity = 0.9f;
+	EmissiveIntencity = 0.0f;
 };
 
 void Trail::PlayStart(const Mode _Mode,
@@ -140,8 +140,36 @@ void Trail::PlayStart(const Mode _Mode,
 
 	Vertex::TrailVertex* VtxPtr{nullptr};
 	VtxBuffer->Lock(0, 0, (void**)&VtxPtr, NULL);
-	ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
+
+	if (auto _GameObject = FindGameObjectWithTag(TAG_RedQueen).lock();
+		_GameObject)
+	{
+		if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
+			RQ)
+		{
+			const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
+
+			auto Low = RQ->Get_BoneMatrixPtr("_000");
+			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
+
+			auto High = RQ->Get_BoneMatrixPtr("_001");
+			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
+
+			for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+			{
+				VtxPtr[i +1].Location = HighPos;
+				VtxPtr[i].Location = LowPos;
+			}
+		}
+	};
+
+	// ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
 	VtxBuffer->Unlock();
+
+	void* IdxPtr{ nullptr };
+	IdxBuffer->Lock(0, 0, (void**)&IdxPtr, NULL);
+	ZeroMemory(IdxPtr, _Desc.IdxSize * _Desc.TriCnt);
+	IdxBuffer->Unlock();
 
 	CurMode = _Mode;
 	_RenderProperty.bRender = true;
@@ -193,7 +221,8 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 	Device->SetVertexDeclaration(VtxDecl);
 	Device->SetIndices(IdxBuffer);
 	_Info.Fx->CommitChanges();
-	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
+
+	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
 }
 void Trail::SpriteUpdate(const float DeltaTime)
 {

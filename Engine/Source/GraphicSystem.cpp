@@ -39,6 +39,21 @@ HRESULT GraphicSystem::ReadyGraphicSystem(
 		return E_FAIL;
 	}
 
+	// 깊이 스텐실 복사 가능한 하드웨어 인가 ?? 
+	m_bCopyDepthStencil =
+		(tD3DCaps.Caps2 & D3DDEVCAPS2_CAN_STRETCHRECT_FROM_TEXTURES);
+
+	if (!m_bCopyDepthStencil)
+	{
+		/*
+		깊이스텐실 버퍼 복사 불가능한 하드웨어
+		현재 그래픽 사양에서
+		그림자 캐싱이 불가능하므로 심각한 퍼포먼스 저하가 예상됨.
+		*/
+		/*PRINT_LOG(TEXT("Warning"), TEXT(
+			"Hardware that cannot copy depth stencil buffer In the current graphics specification, shadow caching is not possible, so serious performance degradation is expected."));*/
+	};
+
 	DWORD dwVertexProcessing = 0;
 	if ((D3DDEVCAPS_HWTRANSFORMANDLIGHT & tD3DCaps.DevCaps))
 	{
@@ -107,7 +122,6 @@ HRESULT GraphicSystem::ReadyGraphicSystem(
 	{
 		m_bDepthBiasCap = true;
 	}
-
 
 	g_pDevice = m_pDevice;
 

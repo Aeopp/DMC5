@@ -45,6 +45,7 @@ public :
 		DebugBone,
 	};
 	bool bRender = true;
+	bool bShadowCache = false;
 	using CallType = std::function<void(const DrawInfo&)>;
 	std::map<Order,std::map<std::string, CallType>> RenderOrders{};
 };  

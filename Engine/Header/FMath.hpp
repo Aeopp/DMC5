@@ -118,6 +118,9 @@ public:
 		Vector3& IntersectPointLhs,
 		Vector3& IntersectPointRhs);
 
+
+	static inline Vector3 BezierCurve(const Vector3& Start,const Vector3& End, const float t);
+
 	static inline Vector3 BezierCurve(const Vector3& Start,
 		const Vector3& CP0, const Vector3& CP1,
 		const Vector3& End,const float t);
@@ -126,6 +129,8 @@ public:
 		const Vector3& CP0,
 		const Vector3& End, const float t);
 
+	static inline bool IsNan(const Vector3& Lhs);
+	static inline bool IsNan(const Quaternion& Quat);
 
 	static inline bool IsRayToSphere(
 		const Ray& Lhs, const Sphere& Rhs,
@@ -178,7 +183,15 @@ inline float FMath::MaxScala(const Vector3& Lhs)
 	return (std::max)({ Lhs.x,Lhs.y,Lhs.z });
 };
 
+inline bool FMath::IsNan(const Vector3& Lhs)
+{
+	return std::isnan(Lhs.x) || std::isnan(Lhs.y) || std::isnan(Lhs.z);
+};
 
+inline bool FMath::IsNan(const Quaternion& Quat)
+{
+	return std::isnan(Quat.x) || std::isnan(Quat.y) || std::isnan(Quat.z) || std::isnan(Quat.w);
+}
 
 inline void FMath::DebugPrintMatrix(const Matrix& _Matrix)
 {
@@ -254,6 +267,12 @@ auto& FMath::GetGenerator()
 
 	return gen;
 };
+
+Vector3 FMath::BezierCurve(const Vector3& Start, const Vector3& End, const float t)
+{
+	return FMath::Lerp(Start, End, t);
+}
+
 
 inline Vector3 FMath::BezierCurve(
 	const Vector3& Start,

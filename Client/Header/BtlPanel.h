@@ -2,6 +2,7 @@
 #define __UI_BTL_PANEL__
 #include "GameObject.h"
 #include "RenderInterface.h"
+#include "Font.h"
 #include "Nero.h"
 
 class BtlPanel : public ENGINE::GameObject,
@@ -43,8 +44,7 @@ private:
 	std::shared_ptr<ENGINE::Texture> _RedOrbATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};
 
-	// 더미 나중에 폰트 제대로 만들자~
-	std::shared_ptr<ENGINE::Texture> _Dummy0000Tex{};
+	//std::shared_ptr<ENGINE::Texture> _Dummy0000Tex{};
 
 	std::shared_ptr<ENGINE::Texture> _TargetCursorTex{};
 	std::shared_ptr<ENGINE::Texture> _EnemyHPTex{};
@@ -189,6 +189,16 @@ private:
 
 	Vector3 _Rot = Vector3(0.f, 0.f, 0.f);	// 디버그용 회전벡터(Degree). 회전값이 들어간게 예외케이스라 생각해서 UI_DESC에 없음
 
+	enum FONT_ID
+	{
+		REDORBCOUNT,
+
+		FONT_END
+	};
+	std::vector<std::weak_ptr<Font>> _FontVec;
+
+	uint32 _RedOrbCount = 0u;
+
 private:
 	explicit BtlPanel() = default;
 	virtual ~BtlPanel() = default;
@@ -241,6 +251,8 @@ public:
 	void UseExGauge(const uint32 Count);
 
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon);
+
+	void AccumulateRedOrb(const uint32 Amount);
 
 };
 #endif // !__UI_BTL_PANEL__

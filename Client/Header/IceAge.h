@@ -7,30 +7,12 @@
 #include <vector>
 #include "ShapeParticle.h"
 
-
 class IceAge :     public ENGINE::GameObject,
 			       public ENGINE::RenderInterface
 {
 public:
-	//struct Particle
-	//{
-	//	static inline float  ColorIntencity = 1.f;
-	//	static inline float  EmissiveIntencity = 1.f;
-	//	static inline float  AlphaFactor = 1.f;
-	//	static inline float  SpecularPow = 20.f;
-
-	//	float  ColorIntencity = 1.f;
-	//	float  EmissiveIntencity = 1.f;
-	//	float  AlphaFactor = 1.f;
-	//	float  SpecularPow = 20.f;
-
-	//	Vector3 Scale{1.f,1.f,1.f};
-	//	Vector3 Rotation{0.f,0.f,0.f};
-	//	Vector3 Location{0.f,0.f,0.f};
-	//};
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Inner{};
-	std::shared_ptr<ENGINE::StaticMesh> IceParticle{};
 	std::shared_ptr<ENGINE::Texture>    Albedo{};
 	std::shared_ptr<ENGINE::Texture>    TrailMap{};
 	std::shared_ptr<ENGINE::Texture>    EmssiveMskMap{};
@@ -58,15 +40,17 @@ public:
 public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
-		const Vector3 Scale = { 0.005f ,0.005f ,0.005f },
-		const float YawRotationSpeed = FMath::PI,
-		const float PlayTime = 2.f);
+		const Vector3 Scale = { 0.0016f ,0.0016f ,0.0016f },
+		const float YawRotationSpeed = FMath::PI *3.f,
+		const float PlayTime = 2.5f);
 	void PlayEnd();
 public:
+	void ParticlePoolReserve();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
-	void RenderEftIceParticle(const DrawInfo& _Info);
 private:
+	float ParticleCycle = 0.1f;
+	float CurParticleTime = 0.0f;
 	// std::weak_ptr< ShapeParticle> _GeneratorParticle{};
 	// std::vector<Particle> _IceParticles{};
 

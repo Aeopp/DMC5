@@ -60,7 +60,7 @@ private:
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
 	float ColorIntencity = 40.f;
-	float EmissiveIntencity= 0.9f;
+	float EmissiveIntencity= 0.0f;
 
 	Vector3 Scale{ 1.f,2.f,3.f };
 	Vector3 ScrollSpeed{ 1.f,2.f,3.f };

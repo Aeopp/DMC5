@@ -49,6 +49,7 @@ private:
 		Hit_Snatch_End,
 		Hit_Split_Start,
 		Hit_Air_Buster_Start,
+		Hit_Air_Buster_Loop,
 		Hit_Air_Buster_End,
 		Enter_Ground,
 		State_END
@@ -128,6 +129,8 @@ private:
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
+
+	bool								  m_bBuster = false;
 	////////////////
 
 

@@ -132,6 +132,15 @@ void Nero_RWing::RenderInit()
 			}
 		},
 	};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_dsSK",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBufferSK(_Info);
+	//		}
+	//	},
+	//};
 	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
 	//	=
 	//{
@@ -206,17 +215,17 @@ void Nero_RWing::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			const Matrix World = _RenderUpdateInfo.World;
 			_Info.Fx->SetMatrix("World", &World);
 
-			if (!Renderer::GetInstance()->GetDirLights().empty())
-			{
-				// ぞぞ
-				auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
-				_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
-			}
+			//if (!Renderer::GetInstance()->GetDirLights().empty())
+			//{
+			//	// ぞぞ
+			//	auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
+			//	_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
+			//}
 
 			_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
 			_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());
 			_Info.Fx->SetTexture("GradationMap", m_GradationTex->GetTexture());
-			_Info.Fx->SetFloat("_BrightScale", 0.04f);
+			_Info.Fx->SetFloat("_BrightScale", 0.015f);
 			_Info.Fx->SetFloat("_SliceAmount", 0.f);
 			_Info.Fx->SetFloat("_AccumulationTexV", m_fAccTime * 0.6f);
 

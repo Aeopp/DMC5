@@ -424,6 +424,15 @@
     <ClInclude Include="..\Header\SpriteEffect.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Font.h">
+      <Filter>02.GameObject\UI\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\UI\Font.hlsl">
+      <Filter>02.GameObject\UI\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingArmSK.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -673,6 +682,9 @@
     <ClCompile Include="..\Source\DashTrail.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Font.cpp">
+      <Filter>02.GameObject\UI\Font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -731,5 +743,8 @@
     <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
   </ItemGroup>
 </Project>

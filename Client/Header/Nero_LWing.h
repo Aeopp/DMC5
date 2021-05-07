@@ -25,6 +25,7 @@ public:
 
 	// 렌더링 함수...
 	void RenderInit();
+	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
@@ -37,11 +38,24 @@ public:
 public:
 	bool	Set_RenderState(bool _DrawOrNot) { m_bIsRender = _DrawOrNot; }
 private:
-	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
-	std::weak_ptr<Nero>					m_pNero;
+	std::shared_ptr<ENGINE::SkeletonMesh>	m_pMesh;
+	std::weak_ptr<Nero>						m_pNero;
 
-	Matrix*								m_pParentBoneMat;
-	bool								m_bIsRender;
+	Matrix*		m_pParentBoneMat;
+	bool		m_bIsRender;
+
+	std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
+	std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};
+	std::shared_ptr<ENGINE::Texture>		m_GradationTex{};
+	std::shared_ptr<ENGINE::SkeletonMesh>	m_AuraMesh{};
+	std::shared_ptr<ENGINE::Texture>		m_ClothAuraALBTex{};
+
+	float	m_fAccTime = 0.f;
+	Matrix	m_WingCloth01Matrix = Matrix();	// Aura의 ParentBoneMat
+	Matrix	m_AuraOffsetMatrix = Matrix();
+	Matrix	m_AuraWorldMatrix = Matrix();
+
+	//Vector3 m_AuraRot = Vector3(0.f, 0.f, 0.f);
 
 };
 

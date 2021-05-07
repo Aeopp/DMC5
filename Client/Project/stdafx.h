@@ -38,6 +38,7 @@ enum GAMEOBJECTTAG
 	Monster1000,
 	MonsterWeapon,
 	UI_BtlPanel,
+	UI_Font,
 	Eff_Glint,
 	Eff_OvertureHand,
 	Eff_Liquid,

@@ -9,14 +9,22 @@ uniform sampler2D blurtarget3 : register(s3);
 uniform sampler2D blurtarget4 : register(s4);
 
 uniform sampler2D depth : register(s5);
+
 uniform float4x4  matViewProjInv;
 uniform float3 eyepos;
 uniform float3 fogcolor;
+uniform float fogstart;
+uniform float fogdistance;
+uniform float fogdensity;
+
+uniform float StarScale;
+uniform float StarFactor;
+ 
 
 uniform float2 pixelSize;
 uniform float2 texelSize;
 uniform float  exposure;
-uniform float fogdistance;
+
 
 uniform int blurDirection;
 uniform int starDirection;
@@ -147,8 +155,8 @@ void ps_star(
 {
     color = 0;
 
-    float b = pow(4.0f, starPass);
-    float a = 0.9f;
+    float b = pow(abs(StarScale), abs(starPass));
+    float a = StarFactor;
 
     float2 off = starOffsets[starDirection];
     float2 offtex;
@@ -156,7 +164,7 @@ void ps_star(
     for (int i = 0; i < 4; ++i)
     {
         offtex = tex + b * i * texelSize * off;
-        color += tex2D(renderedscene, offtex) * pow(a, b * i);
+        color += tex2D(renderedscene, offtex) * pow(abs(a), abs(b * i));
     }
 
     color.a = 1;
@@ -268,11 +276,7 @@ void ps_tonemap(
     float4 star = tex2D(blurtarget2, tex);
     float4 ghost = tex2D(blurtarget3, tex);
     float4 afterimg = tex2D(blurtarget4, tex);
-    float4 depthsample = tex2D(depth, tex);
-    
-    float4 wpos = (tex.x * 2.f - 1.f, 1-2 * tex.y , depthsample.r, 1.f);
-    wpos = mul(wpos, matViewProjInv);
-    wpos /= wpos.w;
+  
     
     float3 lincolor = FilmicTonemap(scene.rgb * exposure);
     float3 invlinwhite = 1.0f / FilmicTonemap(float3(W, W, W));
@@ -284,6 +288,21 @@ void ps_tonemap(
     float vignette = 1 - dot(tex, tex);
 
     color.rgb *= vignette * vignette * vignette;
+    
+    //// 안개
+    //float4 depthsample = tex2D(depth, tex);
+    //float4 wpos = (tex.x * 2.f - 1.f, 1 - 2 * tex.y, depthsample.r, 1.f);
+    //wpos = mul(wpos, matViewProjInv);
+    //wpos /= wpos.w;
+    
+    //float distance = length(wpos.xyz - eyepos.xyz);
+    //// 선형
+    //float fogfactor = (fogdistance - distance) / (fogdistance - fogstart);
+    
+    ////float factor = distance * fogdensity;
+    ////float fogfactor = pow(1.0 / 2.71828, factor * factor);
+    
+    //color.rgb = fogfactor * color.rgb + (1.0 - fogfactor) * fogcolor;
     
     color.a = 1.0f;
 }

@@ -363,6 +363,25 @@ std::tuple<Vector3, Quaternion, Vector3> SkeletonMesh::AnimationUpdateImplementa
 		AnimationEnd();
 	}
 
+	if (FMath::IsNan(RootMotionLastCalcDeltaScale))
+	{
+		PRINT_LOG(L"Wanring!", L"RootMotion Scale Nan");
+		RootMotionLastCalcDeltaScale = {0.f,0.f,0.f};
+	}
+
+	if (FMath::IsNan(RootMotionLastCalcDeltaQuat))
+	{
+		PRINT_LOG(L"Wanring!", L"RootMotion Quat Nan");
+		RootMotionLastCalcDeltaQuat = { 0.f,0.f,0.f,1.f };
+	}
+
+	if (FMath::IsNan(RootMotionLastCalcDeltaPos))
+	{
+		PRINT_LOG(L"Wanring!", L"RootMotion Pos Nan");
+		RootMotionLastCalcDeltaPos = { 0.f,0.f,0.f };
+	}
+
+
 	return { RootMotionLastCalcDeltaScale
 			* RootMotionDeltaFactor,
 			RootMotionLastCalcDeltaQuat

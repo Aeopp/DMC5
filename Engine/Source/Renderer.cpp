@@ -17,6 +17,7 @@
 #include <d3dx9.h>
 #include "StaticMesh.h"
 #include "Subset.h"
+#include "ParticleSystem.h"
 #include <string_view>
 
 
@@ -79,60 +80,7 @@ void Renderer::ReadySky()
 
 void Renderer::ReadyLights()
 {
-	// 달빛
-	//DirLights.resize(1u);
-	//DirLights[0] = std::make_shared<FLight>
-	//	(FLight(FLight::Type::Directional,
-	//	{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250)));
-	//DirLights[0]->InitRender();
-	//DirLights[0]->CreateShadowMap(Device, 2048);
-	//DirLights[0]->GetPosition().x = -9.f;
-	//DirLights[0]->GetPosition().y = 105.f;
-	//DirLights[0]->GetPosition().z = -22.f;
-	//DirLights[0]->Direction.x = 71.f;
-	//DirLights[0]->Direction.y = -2.f;
-	//DirLights[0]->Direction.z = -83.f;
 
-	//DirLights[0]->SetProjectionParameters(60.f,60.f,-1.f,300.f);
-	//DirLights[0]->lightFlux = 10.0f;
-	//DirLights[0]->lightIlluminance = 1.5f;
-	//DirLights[0]->specularPower = 80.0f;
-	//DirLights[0]->SetPointRadius (5.0f); // meter
-
-	// PointLights.resize(1u);
-
-
-
-	//PointLights[0] = std::make_shared<FLight>(
-	//	FLight(
-	//		FLight::Type::Point, { 1.5f,0.5f, 0.0f ,1 },
-	//		{ 1,0,0,1 }));
-	//PointLights[0]->SetPointRadius(7.1f);
-
-	//PointLights[1] = std::make_shared<FLight>(
-	//	FLight(
-	//		FLight::Type::Point, { -0.7f , 0.5f , 1.2f , 1.f },
-	//		{ 0,1,0,1 }));
-	//PointLights[1]->SetPointRadius(7.1f);
-
-	//PointLights[2] = std::make_shared<FLight>(
-	//	FLight(
-	//		FLight::Type::Point,
-	//		{ 0.0f,0.5f,0.0f,1 },
-	//		{ 0,0,1,1 }));
-	//PointLights[2]->SetPointRadius(7.1f);
-
-	// 그림자맵 512 로 생성
-	// DirLights[0]->CreateShadowMap(Device, 1024);
-	// DirLights[0]->SetProjectionParameters(7.1f, 7.1f, -20.f, +20.f);
-
-	// PointLights[0]->CreateShadowMap(Device, 512);
-	/*PointLights[1]->CreateShadowMap(Device, 512);
-	PointLights[2]->CreateShadowMap(Device, 512);*/
-
-	// PointLights[0]->SetProjectionParameters(0, 0, 0.1f, 10.0f);
-	/*PointLights[1]->SetProjectionParameters(0, 0, 0.1f, 10.0f);
-	PointLights[2]->SetProjectionParameters(0, 0, 0.1f, 10.0f);*/
 }
 
 void Renderer::ReadyRenderTargets()
@@ -531,7 +479,15 @@ HRESULT Renderer::Render()&
 	}
 
 	//  쉐도우 패스 
-	RenderShadowMaps();
+	if (bShadowMapBake)
+	{
+		ShadowCacheBake();
+	}
+	else
+	{
+		RenderShadowMaps();
+	}
+	
 	EnableDepthBias();
 	// 기하 패스
 	RenderGBuffer();
@@ -662,10 +618,23 @@ void Renderer::Editor()&
 			LightLoad(FileHelper::OpenDialogBox());
 		}
 
+		if (ImGui::Button("Shadow Cache Bake"))
+		{
+			bShadowMapBake = true;
+		}
+
 		ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 1.f,
 			"%3.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
 		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
+
+		ImGui::SliderFloat("StarScale", &StarScale, -10.f, 10.f);
+		ImGui::SliderFloat("StarFactor", &StarFactor, -10.f, 10.f);
+		;
+
+
+		;
+
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("Distortion", &bDistortion);
@@ -689,21 +658,31 @@ void Renderer::Editor()&
 		}
 
 		ImGui::SliderFloat("SkyIntencity", &SkyIntencity, 0.0f, 2.f);
+
+		ImGui::SliderFloat("FogStart", &FogStart, 0.0f, 1000.f);
+		ImGui::InputFloat("In FogStart", &FogStart);
+
 		ImGui::SliderFloat("FogDistance", &FogDistance, 0.0f, 1000.f);
+		ImGui::InputFloat("In FogDistance", &FogDistance);
+
+		ImGui::ColorEdit3("FogColor", FogColor);
+		ImGui::SliderFloat("FogDensity", &FogDensity, 0.0f,10.f);
+		ImGui::InputFloat("In FogDensity", &FogDensity);
+
 		ImGui::SliderFloat("SkySphereScale", &SkysphereScale, 0.f, 10.f);
 		ImGui::SliderFloat3("SkySphereRot", SkysphereRot, -360.f, 360.f);
 		ImGui::SliderFloat3("SkySphereLoc", SkysphereLoc, -10.f, 10.f);
 		ImGui::SliderFloat("SkySphereRotSpeed", &SkyRotationSpeed, 0.0f, 1.f, "%1.6f", 0.0001f);
-		//ImGui::ColorEdit3("FogColor", FogColor);
 
-		static bool  DepthBiasButton = true;
-		static float ZeroDotOne = 0.000001f;
+		/*static bool  DepthBiasButton = true;
+		static float ZeroDotOne = 0.000001f;*/
 
 		{
-			ImGui::InputScalar("SlpoeScaleDepthBias", ImGuiDataType_Float, &SlpoeScaleDepthBias, DepthBiasButton ? &ZeroDotOne : NULL, nullptr,
-				"%1.7f");
-			ImGui::InputScalar("DepthBias", ImGuiDataType_Float, &DepthBias, DepthBiasButton ? &ZeroDotOne : NULL
-				, nullptr, "%1.7f");
+			ImGui::SliderFloat("SlpoeScaleDepthBias", &SlpoeScaleDepthBias, 0.f, 1.0f);
+			ImGui::InputFloat("In SlpoeScaleDepthBias", &SlpoeScaleDepthBias);
+
+			ImGui::SliderFloat("DepthBias", &DepthBias, 0.f, 10.f);
+			ImGui::InputFloat("In DepthBias", &DepthBias);
 		}
 
 		if (ImGui::CollapsingHeader("AdaptLuminance"))
@@ -736,7 +715,10 @@ void Renderer::Editor()&
 						{ 0,0,0,0 }, (const D3DXCOLOR&)Color::sRGBToLinear(250, 250, 250))
 					);
 				DirLights.push_back(_Insert);
-				_Insert->CreateShadowMap(Device, ShadowMapSize);
+				if (ShadowMapSize > 0)
+				{
+					_Insert->CreateShadowMap(Device, ShadowMapSize);
+				}
 				_Insert->SetProjectionParameters(7.1f, 7.1f, -20.f, +20.f);
 				_Insert->InitRender();
 			}
@@ -749,7 +731,10 @@ void Renderer::Editor()&
 						{ 1,1,1,1 }));
 
 				PointLights.push_back(_Insert);
-				_Insert->CreateShadowMap(Device, ShadowMapSize);
+				if (ShadowMapSize > 0)
+				{
+					_Insert->CreateShadowMap(Device, ShadowMapSize);
+				}
 				_Insert->SetProjectionParameters(0, 0, 0.1f, 10.0f);
 				_Insert->InitRender();
 			};
@@ -781,6 +766,68 @@ void Renderer::RenderReady()&
 
 void Renderer::RenderBegin()&
 {
+	if (g_bOptRender == false)
+	{
+		if (CurDirLight)
+		{
+			if (CurDirLight->ShadowMapSize > 0)
+			{
+				CurDirLight->bCurrentShadowRender = true;
+
+				if (FAILED(g_pDevice->StretchRect
+				(CurDirLight->CacheDepthStencil, nullptr,
+					CurDirLight->DepthStencil, nullptr, D3DTEXF_POINT)))
+				{
+					PRINT_LOG(TEXT("Warning"),
+						TEXT("Depth stencil copy failure."));
+				}
+			}
+			else
+			{
+				CurDirLight->bCurrentShadowRender = false;
+			}
+		}
+
+
+		for (auto& PointLight : PointLights)
+		{
+			if ((PointLight->GetShadowMapSize() > 0) == false)
+			{
+				PointLight->bCurrentShadowRender = false;
+				continue;
+			}
+
+			Sphere PtlightSphere{};
+			PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
+			PtlightSphere.Radius = PointLight->GetFarPlane();
+			if (false == CameraFrustum->IsIn(PtlightSphere))
+			{
+				PointLight->bCurrentShadowRender = false;
+				continue;
+			}
+
+			PtlightSphere.Radius = PointLight->GetPointRadius();
+			if (false == CameraFrustum->IsIn(PtlightSphere))
+			{
+				PointLight->bCurrentShadowRender = false;
+				continue;
+			}
+
+			for (int i = 0; i < 6; ++i)
+			{
+				if (FAILED(g_pDevice->StretchRect
+				(PointLight->CubeCacheDepthStencil[i], nullptr,
+					PointLight->CubeDepthStencil[i], nullptr, D3DTEXF_POINT)))
+				{
+					PRINT_LOG(TEXT("Warning"), TEXT(
+						"Depth stencil copy failure."));
+				}
+			}
+			PointLight->bCurrentShadowRender = true;
+		}
+	}
+	
+
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
 	Device->GetDepthStencilSurface(&BackBufferZBuffer);
@@ -825,7 +872,14 @@ void Renderer::RenderEnd()&
 	for (auto iter = DirLights.begin(); iter != DirLights.end(); )
 	{
 		if (iter->get()->bRemove)
+		{
+			if (iter->get() == CurDirLight)
+			{
+				CurDirLight = nullptr;
+			}
+
 			iter = DirLights.erase(iter);
+		}
 		else
 			++iter;
 	}
@@ -846,26 +900,33 @@ void Renderer::RenderEntityClear()&
 
 void Renderer::RenderShadowMaps()
 {
+	if (bShadowMapBake)return;
+
 	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	auto shadowmap = Shaders["Shadow"]->GetEffect();
 
-	for (auto& DirLight : DirLights)
+	if(
+		CurDirLight && 
+		(CurDirLight->GetShadowMapSize() > 0) 
+		&& CurDirLight->bCurrentShadowRender)
 	{
-		if (DirLight->GetShadowMapSize() <= 0) continue;
-
-		DirLight->RenderShadowMap(Device, [&](FLight* light) {
+		CurDirLight->RenderShadowMap(
+			Device, [&](FLight* light) {
 			D3DXMATRIX  viewproj;
-			D3DXVECTOR4 clipplanes(light->GetNearPlane(), light->GetFarPlane(), 0, 0);
+			D3DXVECTOR4 clipplanes(
+				light->GetNearPlane(),
+				light->GetFarPlane(), 0, 0);
 
 			light->CalculateViewProjection(viewproj);
 
 			shadowmap->SetTechnique("variance");
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 			shadowmap->SetBool("isPerspective", FALSE);
-		
-			Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+
+			//Device->Clear(0, NULL, 
+			//	D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			// 렌더 시작 ... 
 			DrawInfo _DrawInfo{};
@@ -886,7 +947,10 @@ void Renderer::RenderShadowMaps()
 					Fx->BeginPass(i);
 					for (auto& [_Entity, _Call] : EntityArr)
 					{
-						_Call(_DrawInfo);
+						if (_Entity->_RenderProperty.bShadowCache == false)
+						{
+							_Call(_DrawInfo);
+						}
 					}
 					Fx->EndPass();
 				}
@@ -896,18 +960,12 @@ void Renderer::RenderShadowMaps()
 
 			});
 	};
-	//Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
 	shadowmap->SetBool("isPerspective", TRUE);
 	for (auto& PointLight : PointLights)
 	{
-		Sphere PtlightSphere{};
-		PtlightSphere.Center = (D3DXVECTOR3&)PointLight->GetPosition();
-		PtlightSphere.Radius = PointLight->GetFarPlane();
-		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
-		PtlightSphere.Radius = PointLight->GetPointRadius();
-		if (false == CameraFrustum->IsIn(PtlightSphere))continue;
-
-		if (PointLight->GetShadowMapSize() <= 0) continue;
+		if (PointLight->bCurrentShadowRender == false) 
+			continue;
 
 		PointLight->RenderShadowMap(Device, [&](FLight* light) {
 			D3DXMATRIX viewproj;
@@ -920,7 +978,7 @@ void Renderer::RenderShadowMaps()
 			shadowmap->SetVector("lightPos", &light->GetPosition());
 			shadowmap->SetVector("clipPlanes", &clipplanes);
 
-			Device->Clear(0,NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+			//Device->Clear(0,NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
 			CurShadowFrustum->Make(light->viewinv, light->proj);
 			// 렌더 시작 ... 
@@ -942,7 +1000,10 @@ void Renderer::RenderShadowMaps()
 					Fx->BeginPass(i);
 					for (auto& [_Entity, _Call] : EntityArr)
 					{
-						_Call(_DrawInfo);
+						if (_Entity->_RenderProperty.bShadowCache == false)
+						{
+							_Call(_DrawInfo);
+						}
 					}
 					Fx->EndPass();
 				}
@@ -951,7 +1012,127 @@ void Renderer::RenderShadowMaps()
 		});
 	};
 
-	 //Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	Device->SetDepthStencilSurface(BackBufferZBuffer);
+	Device->SetViewport(&_RenderInfo.Viewport);
+}
+void Renderer::ShadowCacheBake()
+{
+	if (!bShadowMapBake)return;
+
+	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	auto shadowmap = Shaders["Shadow"]->GetEffect();
+
+	for (auto& _DirLight : DirLights)
+	{
+		if ((_DirLight->ShadowMapSize >= 0) == false)continue;
+
+		_DirLight->CacheShadowMapBake(
+			Device, [&](FLight* light) {
+				D3DXMATRIX  viewproj;
+				D3DXVECTOR4 clipplanes(
+					light->GetNearPlane(),
+					light->GetFarPlane(), 0, 0);
+
+				light->CalculateViewProjection(viewproj);
+
+				shadowmap->SetTechnique("variance");
+				shadowmap->SetVector("clipPlanes", &clipplanes);
+				shadowmap->SetBool("isPerspective", FALSE);
+
+				Device->Clear(0, NULL,
+					D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+
+				// 렌더 시작 ... 
+				DrawInfo _DrawInfo{};
+				_DrawInfo._Device = Device;
+				CurShadowFrustum->Make(light->viewinv, light->proj);
+				_DrawInfo._Frustum = CurShadowFrustum.get();
+				_DrawInfo.BySituation.reset();
+				for (auto& [ShaderKey, EntityArr] : RenderEntitys[RenderProperty::Order::Shadow])
+				{
+					auto Fx = Shaders[ShaderKey]->GetEffect();
+					Fx->SetMatrix("matViewProj", &viewproj);
+					_DrawInfo.Fx = Fx;
+					UINT Passes = 0u;
+					Fx->Begin(&Passes, NULL);
+					for (int32 i = 0; i < Passes; ++i)
+					{
+						_DrawInfo.PassIndex = i;
+						Fx->BeginPass(i);
+						for (auto& [_Entity, _Call] : EntityArr)
+						{
+							if (_Entity->_RenderProperty.bShadowCache)
+							{
+								_Call(_DrawInfo);
+							}
+						}
+						Fx->EndPass();
+					}
+					Fx->End();
+				}
+
+			});
+	}
+
+	shadowmap->SetBool("isPerspective", TRUE);
+	for (auto& PointLight : PointLights)
+	{
+		if ((PointLight->ShadowMapSize >= 0) == false) continue;
+
+		PointLight->CacheShadowMapBake(Device, [&](FLight* light) {
+			D3DXMATRIX viewproj;
+			D3DXVECTOR4 clipplanes(
+				light->GetNearPlane(), light->GetFarPlane(), 0, 0);
+
+			light->CalculateViewProjection(viewproj);
+
+			shadowmap->SetTechnique("variance");
+			shadowmap->SetVector("lightPos", &light->GetPosition());
+			shadowmap->SetVector("clipPlanes", &clipplanes);
+
+			Device->Clear(0,
+				NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+
+			CurShadowFrustum->Make(light->viewinv, light->proj);
+			// 렌더 시작 ... 
+			DrawInfo _DrawInfo{};
+			_DrawInfo._Device = Device;
+			_DrawInfo._Frustum = CurShadowFrustum.get();
+			// 여기까지 했음 . 내일 화이팅
+			for (auto& [ShaderKey, EntityArr] :
+				RenderEntitys[RenderProperty::Order::Shadow])
+			{
+				auto Fx = Shaders[ShaderKey]->GetEffect();
+				_DrawInfo.Fx = Fx;
+				UINT Passes = 0u;
+				Fx->SetMatrix("matViewProj", &viewproj);
+				Fx->Begin(&Passes, NULL);
+				for (int32 i = 0; i < Passes; ++i)
+				{
+					_DrawInfo.PassIndex = i;
+					Fx->BeginPass(i);
+					for (auto& [_Entity, _Call] : EntityArr)
+					{
+						if (_Entity->_RenderProperty.bShadowCache)
+						{
+							_Call(_DrawInfo);
+						}
+					}
+					Fx->EndPass();
+				}
+				Fx->End();
+			}
+			});
+	};
+
+	Device->SetDepthStencilSurface(BackBufferZBuffer);
+	Device->SetViewport(&_RenderInfo.Viewport);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+	bShadowMapBake = false;
 };
 
 void Renderer::RenderGBuffer()
@@ -998,6 +1179,32 @@ void Renderer::RenderGBuffer()
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		Fx->SetMatrix("matViewProj", &_RenderInfo.ViewProjection);
 		_DrawInfo.Fx = Fx;
+
+		std::sort(std::begin(Entitys), std::end(Entitys), [EyePos = _RenderInfo.Eye](
+			const RenderEntityType& Lhs,
+			const RenderEntityType& Rhs
+			) 
+			{
+			const Vector3 LhsLocation
+				=
+			{
+				Lhs.first->_RenderUpdateInfo.World._41,
+				Lhs.first->_RenderUpdateInfo.World._42,
+				Lhs.first->_RenderUpdateInfo.World._43
+			};
+
+			const Vector3 RhsLocation
+				=
+			{ Rhs.first->_RenderUpdateInfo.World._41,
+				Rhs.first->_RenderUpdateInfo.World._42,
+				Rhs.first->_RenderUpdateInfo.World._43
+			};
+
+			return FMath::LengthSq((Vector3&)(EyePos)-LhsLocation)
+				<
+				FMath::LengthSq((Vector3&)(EyePos)-RhsLocation);
+			});
+
 		for (auto& [Entity, Call] : Entitys)
 		{
 			UINT Passes{ 0u };
@@ -1124,8 +1331,9 @@ void Renderer::DeferredShading()
 		D3DXMATRIX lightviewproj;
 		D3DXVECTOR4 clipplanes(0, 0, 0, 0);
 
-		for (auto& DirLight : DirLights)
+		if(CurDirLight)
 		{
+			auto& DirLight = CurDirLight;
 			DirLight->CalculateViewProjection(lightviewproj);
 			{
 				// directional light
@@ -1577,7 +1785,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	EffectInfo _EffInfo{};
 	_EffInfo.SoftParticleDepthBiasScale = SoftParticleDepthScale;
 	_DrawInfo.BySituation = _EffInfo;
-	_DrawInfo._Device = Device;
+	_DrawInfo._Device  = Device;
 	_DrawInfo._Frustum = CameraFrustum.get();
 
 	for (auto& [_RefStr,_RefEntity] : AlphaSortArr)
@@ -1591,12 +1799,9 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		
 		Vector3  LightDirection = { 0,-1,0 };
 
-		if (DirLights.empty() == false)
+		if (CurDirLight)
 		{
-			if (DirLights[0])
-			{
-				LightDirection = DirLights[0]->GetDirection(); 
-			}
+			LightDirection = CurDirLight->GetDirection();
 		}
 
 		LightDirection = FMath::Normalize(LightDirection);
@@ -1619,6 +1824,13 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		}
 		Fx->End();
 	}
+
+	auto ParSys =ParticleSystem::GetInstance();
+	if (ParSys)
+	{
+		ParSys->Render(this);
+	}
+
 
 	/*for (auto& [ShaderKey, Entitys] : _Group)
 	{
@@ -2135,7 +2347,10 @@ HRESULT Renderer::Stars()
 	hdreffects->SetTechnique("star");
 	hdreffects->SetVector("pixelSize", &pixelsize);
 	hdreffects->SetVector("texelSize", &texelsize);
+	hdreffects->SetFloat("StarScale", StarScale);
+	hdreffects->SetFloat("StarFactor", StarFactor);
 
+	
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
 	{
@@ -2422,6 +2637,11 @@ HRESULT Renderer::ToneMap()
 	hdreffects->SetFloatArray("eyepos", _RenderInfo.Eye, 3u);
 	hdreffects->SetFloatArray("fogcolor", FogColor, 3u);
 	hdreffects->SetFloat("fogdistance", FogDistance);
+	hdreffects->SetFloat("fogdensity", FogDensity);
+	hdreffects->SetFloat("fogstart", FogStart);
+
+	;
+	;
 
 	hdreffects->Begin(NULL, 0);
 	hdreffects->BeginPass(0);
@@ -2433,6 +2653,11 @@ HRESULT Renderer::ToneMap()
 		Device->SetTexture(4, RenderTargets["afterimagetargets" +
 			std::to_string(1 - currentafterimage)]->GetTexture());
 		Device->SetTexture(5, RenderTargets["Depth"]->GetTexture());
+
+		Device->SetSamplerState(5, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(5, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		Device->SetSamplerState(5, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+
 
 		_Quad->Render(Device, 1.f, 1.f, hdreffects);
 	}
@@ -2771,6 +2996,11 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 		}
 	};
 
+
+	if (DirLights.empty() == false)
+	{
+		CurDirLight = DirLights[0].get();
+	}
 };
 
 

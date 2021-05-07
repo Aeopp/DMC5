@@ -21,6 +21,9 @@ extern ENGINE_DLL bool					g_bRenderEdit;
 extern ENGINE_DLL bool					g_bRenderPtLightScissorTest;
 extern ENGINE_DLL bool					g_bTime;
 extern ENGINE_DLL bool					g_bOptRender;
+extern ENGINE_DLL bool					g_bFrameLimit;
+extern ENGINE_DLL bool					g_bParticleEditor;
+
 
 extern ENGINE_DLL LPDIRECT3D9			g_pSDK;
 extern ENGINE_DLL LPDIRECT3DDEVICE9		g_pDevice;

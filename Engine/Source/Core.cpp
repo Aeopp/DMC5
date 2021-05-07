@@ -24,6 +24,10 @@ ENGINE_DLL bool                 g_bRenderEdit;
 ENGINE_DLL bool                 g_bRenderPtLightScissorTest;
 ENGINE_DLL bool                 g_bTime;
 ENGINE_DLL bool                 g_bOptRender;
+ENGINE_DLL bool                 g_bFrameLimit;
+ENGINE_DLL bool                 g_bParticleEditor;
+
+
 ENGINE_DLL ID3DXMesh*		    g_pSphereMesh;
 
 ENGINE_DLL std::vector<std::string> g_Logs;

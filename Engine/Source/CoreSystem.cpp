@@ -10,6 +10,8 @@
 #include "Renderer.h"
 #include "IconsFontAwesome5.h"
 #include "PhysicsSystem.h"
+#include "ParticleSystem.h"
+
 
 USING(ENGINE)
 IMPLEMENT_SINGLETON(CoreSystem)
@@ -99,7 +101,9 @@ static void GlobalVariableSetup()
 	g_bDebugRender = false;
 	g_bRenderEdit = false;
 	g_bTime = false;
-	g_bOptRender = false;
+	g_bOptRender = true;
+	g_bFrameLimit = true;
+	g_bParticleEditor = false;
 
 	ID3DXBuffer* SphereMeshAdjacency{ nullptr };
 	D3DXCreateSphere(g_pDevice, 0.00001f, 8, 8, &g_pSphereMesh, &SphereMeshAdjacency);
@@ -143,6 +147,9 @@ void CoreSystem::Free()
 
 	m_pRenderer.reset();
 	Renderer::DeleteInstance();
+
+	m_pParticleSystem.reset();
+	ParticleSystem::DeleteInstance();
 
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -223,6 +230,13 @@ HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 		return E_FAIL;
 	}
 
+	m_pParticleSystem = ParticleSystem::GetInstance();
+	if (nullptr == m_pParticleSystem.lock() || FAILED(m_pParticleSystem.lock()->ReadyParticleSystem()))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to ParticleSystem."));
+		return E_FAIL;
+	}
+
 	GlobalVariableSetup();
 	ImGuiSetUp();
 
@@ -243,6 +257,7 @@ static void GlobalVariableEditor()
 		if (g_bDebugMode)
 		{			
 			ImGui::Checkbox("CollisionVisible", &g_bCollisionVisible);
+			ImGui::Checkbox("ParticleEdit", &g_bParticleEditor);
 			ImGui::Checkbox("Render", &g_bDebugRender);
 			ImGui::Checkbox("RenderBoneToRoot", &g_bDebugBoneToRoot);
 			ImGui::Checkbox("RenderCollider", &g_bRenderCollider);
@@ -280,6 +295,12 @@ HRESULT CoreSystem::UpdateEngine(const float Delta)
 		return E_FAIL;
 	}
 
+	if (FAILED(m_pParticleSystem.lock()->UpdateParticleSystem(m_pTimeSystem.lock()->DeltaTime())))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateParticleSystem."));
+		return E_FAIL;
+	}
+
 	Editor();
 
 	m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
@@ -314,6 +335,11 @@ void CoreSystem::Editor()
 		if (g_bRenderEdit)
 		{
 			m_pRenderer.lock()->Editor();
+		}
+
+		if (g_bParticleEditor)
+		{
+			m_pParticleSystem.lock()->Editor();
 		}
 
 

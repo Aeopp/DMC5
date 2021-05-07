@@ -11,7 +11,6 @@ private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class Em1000> _Em1000{};
 	std::vector<weak_ptr<GameObject>> Wavefirst{};
-	Vector3 WavefirstTriggerPos { -0.47842f , 0.02297f ,-2.57254f};
 	bool bfirst = false;
 	std::vector<weak_ptr<GameObject>> Wavesecond{};
 	Vector3 WavesecondTriggerPos { -1.80262f,0.01168f,1.4464f};
@@ -20,7 +19,6 @@ private:
 	/*vector<weak_ptr<GameObject>> m_vecEm100;
 	vector<weak_ptr<GameObject>> m_vecEm0000;*/
 	vector<weak_ptr<class Effect>> m_vecQliphothBlock;
-
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;
@@ -38,5 +36,7 @@ public:
 
 public:
 	void LoadMap();
+
+	void RenderDataSetUp();
 };
 #endif // !__TEST_SCENE_H__
