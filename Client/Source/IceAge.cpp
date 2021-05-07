@@ -88,10 +88,10 @@ void IceAge::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 
-	Mesh::InitializeInfo _Info{};
-	_Info.bLocalVertexLocationsStorage = true;
 	// ¸Þ½Ã
 	{
+		Mesh::InitializeInfo _Info{};
+		_Info.bLocalVertexLocationsStorage = true;
 		Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
 	}
 
@@ -317,49 +317,45 @@ UINT IceAge::Update(const float _fDeltaTime)
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
 			const uint32 JumpOffset = 80u;
 
-			const float AllParticleLifeTime = 4.f;
+			// const float AllParticleLifeTime = 4.f;
 			{
-				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayableParticles("Ice", AllParticleLifeTime);
+				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("Ice");
 				for (int32 i = 0; i < _PlayableParticle.size(); i += JumpOffset)
 				{
 					auto& _PlayInstance = _PlayableParticle[i];
+					
+					//Vector2 Range{ -0.05f,0.05f };
+					//const Vector3& TargetLocation =
+					//	FMath::Mul((*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)], Mat);
+					//const Vector3 Cp0 = TargetLocation + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x },
+					//	{ Range.y,Range.y,Range.y });
+					//const Vector3 Cp1 = Cp0 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
+					//const Vector3 End = Cp1 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
 
-					Vector2 Range{ -0.05f,0.05f };
-					const Vector3& TargetLocation =
-						FMath::Mul((*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)], Mat);
-					const Vector3 Cp0 = TargetLocation + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x },
-						{ Range.y,Range.y,Range.y });
-					const Vector3 Cp1 = Cp0 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
-					const Vector3 End = Cp1 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
+					//Vector2 ScaleRange{ 0.1f,0.18f };
+					//const float PScale = FMath::Random(ScaleRange.x, ScaleRange.y) * GScale;
 
-					Vector2 ScaleRange{ 0.1f,0.18f };
-					const float PScale = FMath::Random(ScaleRange.x, ScaleRange.y) * GScale;
+					//const Vector3 StartRot = {
+					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
 
-					const Vector3 StartRot = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+					//const Vector3 RotCp0 = {
+					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
 
-					const Vector3 RotCp0 = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+					//const Vector3 RotCp1 = {
+					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
 
-					const Vector3 RotCp1 = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+					//const Vector3 EndRot = {
+					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
 
-					const Vector3 EndRot = {
-						FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+					//ParticleInstance::Ice _IceValue{};
 
-					ParticleInstance::Ice _IceValue{};
+					//_IceValue.ColorIntencity = FMath::Random(0.03f, 0.15f);
 
-					_IceValue.ColorIntencity = FMath::Random(0.03f, 0.15f);
+					//const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
 
-					const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
-
-					_PlayInstance->PlayDescBind(
-						{ TargetLocation ,Cp0,Cp1,End },
-						{ StartRot ,RotCp0,RotCp1,EndRot },
-						{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue,std::nullopt);
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
 				}
 			}
-
 		}
 	}
 
@@ -435,5 +431,6 @@ void IceAge::OnDisable()
 {
 	GameObject::OnDisable();
 };
+
 
 

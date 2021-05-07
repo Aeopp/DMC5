@@ -53,7 +53,8 @@ HRESULT StaticMesh::LoadMeshImplementation(const aiScene* AiScene,
 	Mesh::InitializeInfo _InitInfo{};
 	if (InitParams.has_value())
 	{
-		_InitInfo = std::any_cast<Mesh::InitializeInfo>(InitParams);
+		const auto& CRefInitParam = std::any_cast<const Mesh::InitializeInfo&>(InitParams);
+		_InitInfo = CRefInitParam;
 	}
 
 	//Subset을 보관하는 vector 메모리 공간 확보.

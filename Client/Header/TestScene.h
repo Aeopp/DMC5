@@ -36,7 +36,6 @@ public:
 
 public:
 	void LoadMap();
-
 	void RenderDataSetUp();
 };
 #endif // !__TEST_SCENE_H__
