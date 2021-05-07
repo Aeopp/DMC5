@@ -11,16 +11,34 @@ public:
 	{
 		DMC5_BLACK_GRAD,
 		DMC5_GREEN_GRAD,
+		
 		FONTTEX_ID_END
 	};
-	void SetFontTex(Font::TEX_ID ID);
+
+	enum FADE_ID : uint32
+	{
+		NONE,
+		ALPHA_LINEAR,
+		DISOLVE_TORIGHT,
+
+		FADE_ID_END
+	};
+
+	void SetText(const std::string& Text, 
+		Font::TEX_ID TexID,
+		const Vector2& ScreenPos, 
+		const Vector2& Scale = Vector2(1.f, 1.f), 
+		bool UsingShadow = false);
+	
+	void SetRenderFlag(bool IsRender, 
+		Font::FADE_ID ID = FADE_ID::NONE);
 
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
 	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
 
 	std::vector<std::shared_ptr<ENGINE::Texture>> _FontTexVec{};
-	TEX_ID _FontTexID = FONTTEX_ID_END;
+	TEX_ID _FontTexID = DMC5_BLACK_GRAD;
 
 	// 문자열의 시작위치, 공통 크기, 회전
 	Vector3 _Pos = Vector3(640.f, 360.f, 0.02f);
@@ -53,6 +71,10 @@ private:
 	enum SCREENMAT_OPT { NOOPT = 0u, USINGSHADOW };
 	bool _UsingShadow = false;
 
+	bool _IsRender = false;
+	FADE_ID _FadeID = FADE_ID::NONE;
+	float _SliceAmount = 0.f;
+	
 private:
 	explicit Font() = default;
 	virtual ~Font() = default;
@@ -78,7 +100,5 @@ public:
 	virtual void    Editor() override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
-public:
-	void SetText(const std::string& text, const Vector2& ScreenPos, const Vector2& Scale = Vector2(1.f, 1.f), bool UsingShadow = false);
 };
 #endif // !__UI_FONT__

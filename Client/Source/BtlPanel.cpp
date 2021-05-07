@@ -6,14 +6,6 @@
 #include "Renderer.h"
 
 
-// test
-//#include "Glint.h"
-//#include "OvertureHand.h"
-//#include "Liquid.h"
-//#include "AppearGroundMonster.h"
-//#include "QliphothBlock.h"
-
-
 void BtlPanel::Free()
 {
 	SafeDeleteArray(_UIDescs);
@@ -241,21 +233,6 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->BeginPass(0);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
-
-			////////////////////////////////////////////////////////////
-			//_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _Dummy0000Tex->GetTexture());
-
-			//Create_ScreenMat(CurID, ScreenMat, 1);
-
-			//_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
-			//_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
-
-			//_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
-			//_ImplInfo.Fx->BeginPass(12);
-			//SharedSubset->Render(_ImplInfo.Fx);
-			//_ImplInfo.Fx->EndPass();
-			////////////////////////////////////////////////////////////
 		}
 
 		//
@@ -660,8 +637,6 @@ HRESULT BtlPanel::Ready()
 	_RedOrbATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_atos.tga");
 	_RedOrbNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_nrmr.tga");
 
-	//_Dummy0000Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\dummy0000.png");
-
 	_TargetCursorTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Cursor_MET.tga");
 	_EnemyHPTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Enemy_HP_Target_01_IM.tga");
 
@@ -725,7 +700,11 @@ HRESULT BtlPanel::Ready()
 	Init_UIDescs();
 
 	_FontVec.reserve(FONT_END);
-	_FontVec.push_back(static_pointer_cast<Font>(AddGameObject<Font>().lock()));
+	for (uint32 i = 0u; i < FONT_END; ++i)
+		_FontVec.push_back(static_pointer_cast<Font>(AddGameObject<Font>().lock()));
+	_FontVec[REDORBCOUNT].lock()->SetRenderFlag(true);
+	_FontVec[STYLISH_PTS_TITLE].lock()->SetRenderFlag(false);
+	_FontVec[STYLISH_PTS_SCORE].lock()->SetRenderFlag(false);
 
 	return S_OK;
 }
@@ -752,14 +731,9 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 	Update_PlayerHP(_fDeltaTime);
 	Update_ExGauge(_fDeltaTime);
 	Update_Rank(_fDeltaTime);
-	Update_Gauge(_fDeltaTime);
+	Update_Font(_fDeltaTime);
+	Update_Etc(_fDeltaTime);
 	Check_KeyInput(_fDeltaTime);
-
-	//
-	_FontVec[REDORBCOUNT].lock()->SetText(std::string(std::to_string(_RedOrbCount)), { 1125.f, 50.f }, { 0.8f, 0.8f }, true);
-
-	//
-	//Imgui_ModifyUI(HP_GLASS);
 
 	//POINT pt{};
 	//GetCursorPos(&pt);
@@ -779,6 +753,11 @@ UINT BtlPanel::LateUpdate(const float _fDeltaTime)
 void BtlPanel::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_ModifyUI(STYLISH_POINTS);
+	}
 }
 
 void BtlPanel::OnEnable()
@@ -868,12 +847,30 @@ void BtlPanel::AddRankScore(float Score)
 		return;
 
 	if (_PreRank < static_cast<int>((_RankScore + Score) / 100.f))
-	{
 		_RankScore = (_PreRank * 100.f + 150.f);
-		return;
-	}
+	else
+		_RankScore += Score;
 
-	_RankScore += Score;
+	// 
+	if (_StylishPtsAccumulateStart)
+	{
+		if (_CurRank >= 0)
+			_StylishPoints += static_cast<uint32>(Score) * static_cast<uint32>(_CurRank + 1);
+	}
+	else
+	{
+		//_StylishPoints = 1000u;
+		_StylishPtsAccumulateStart = true;
+	}
+}
+
+void BtlPanel::ResetRankScore()
+{
+	_StylishPtsAccumulateStart = false;
+	_RankScore = 0.f;
+	// + Stylish pts 누적
+
+	_StylishPtsAlive = true;
 }
 
 void BtlPanel::AddExGauge(float ExGauge)
@@ -957,6 +954,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[RANK_BACK] = { false, Vector3(1120.f, 270.f, 0.8f), Vector3(_RankBackMaxScale, _RankBackMaxScale, 1.f) };
 	_UIDescs[RANK] = { false, Vector3(6.5f, 1.3f, 15.f), Vector3(0.08f, 0.08f, 0.08f) };
 	_UIDescs[RANK_LETTER] = { false, Vector3(1120.f, 330.f, 0.8f), Vector3(1.5f, 1.5f, 1.f) };
+	_UIDescs[STYLISH_POINTS] = { false, Vector3(1060.f, 390.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
 }
 
 void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -1849,7 +1847,74 @@ void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 	}
 }
 
-void BtlPanel::Update_Gauge(const float _fDeltaTime)
+void BtlPanel::Update_Font(const float _fDeltaTime)
+{
+	// RedOrb
+	if (auto pFont = _FontVec[REDORBCOUNT].lock();
+		pFont)
+	{
+		if (_UIDescs[REDORB].Using)
+		{
+			pFont->SetText(
+				std::to_string(_RedOrbCount),
+				Font::TEX_ID::DMC5_BLACK_GRAD,
+				{ _UIDescs[REDORB].Pos.x + 35.f, _UIDescs[REDORB].Pos.y },
+				{ 0.8f, 0.8f },
+				true);
+
+			pFont->SetRenderFlag(true);
+		}
+		else
+		{
+			pFont->SetRenderFlag(false);
+		}
+	}
+
+	// Stylish Pts
+	if (_StylishPtsAlive)
+	{
+		_StylishPtsAliveTime += _fDeltaTime;
+
+		auto pFont_Title = _FontVec[STYLISH_PTS_TITLE].lock();
+		auto pFont_Score = _FontVec[STYLISH_PTS_SCORE].lock();
+
+		if (!_UIDescs[STYLISH_POINTS].Using && pFont_Title && pFont_Score)
+		{
+			pFont_Title->SetText(
+				"STYLISH PTS",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[STYLISH_POINTS].Pos.x, _UIDescs[STYLISH_POINTS].Pos.y },
+				{ _UIDescs[STYLISH_POINTS].Scale.x, _UIDescs[STYLISH_POINTS].Scale.y },
+				false);
+			pFont_Title->SetRenderFlag(true);
+
+			pFont_Score->SetText(
+				std::to_string(_StylishPoints),
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[STYLISH_POINTS].Pos.x + 28.f, _UIDescs[STYLISH_POINTS].Pos.y + 50.f },
+				{ _UIDescs[STYLISH_POINTS].Scale.x * 2.f, _UIDescs[STYLISH_POINTS].Scale.y * 2.f },
+				false);
+			pFont_Score->SetRenderFlag(true);
+
+			_UIDescs[STYLISH_POINTS].Using = true;
+		}
+
+		if (5.f < _StylishPtsAliveTime && pFont_Title && pFont_Score)
+		{
+			pFont_Title->SetRenderFlag(false);
+			pFont_Score->SetRenderFlag(false);
+
+			// _StylishPoints 누적
+			_StylishPoints = 1000u;
+
+			_UIDescs[STYLISH_POINTS].Using = false;
+			_StylishPtsAliveTime = 0.f;
+			_StylishPtsAlive = false;
+		}
+	}
+}
+
+void BtlPanel::Update_Etc(const float _fDeltaTime)
 {
 	float BossGaugeOrthoOffsetToCenter = 0.344f; // 직접 수작업으로 찾아야 하나 ㅠㅠ
 	// + 적 체력 받아와서 degree 같은 애들 갱신하자
@@ -1959,40 +2024,23 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F4))
 	{
 		AddExGauge(0.333f);
-
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->PlayStart(40.f);
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(true);
-		//static uint32 idx = Liquid::MAX_VARIATION_IDX;
-		//++idx;
-		//if (idx >= Liquid::MAX_VARIATION_IDX)
-		//	idx = 0u;
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetVariationIdx((Liquid::VARIATION)idx);
-		//std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
-
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
-		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
-		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->SetLoop(true);
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		//AccumulateTDTGauge(1.f);
-		ChangeWeaponUI(Nero::WeaponList::RQ);
-
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
+		AccumulateTDTGauge(0.5f);
+		//ChangeWeaponUI(Nero::WeaponList::RQ);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
 		//ConsumeTDTGauge(0.5f);
-		ChangeWeaponUI(Nero::WeaponList::Cbs);
-
-		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->Reset();
+		//ChangeWeaponUI(Nero::WeaponList::Cbs);
+		ResetRankScore();
 	}
 	////////////////////////////
 

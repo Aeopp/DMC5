@@ -76,7 +76,18 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<MainCamera>();
 	//_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	AddGameObject<Font>().lock()->SetText("D 20, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
+
+	if (auto pFont = AddGameObject<Font>().lock();
+		pFont)
+	{
+		pFont->SetText("D 20, Until Dooms Day", 
+			Font::TEX_ID::DMC5_BLACK_GRAD, 
+			Vector2(245.f, 130.f), 
+			Vector2(0.6f, 0.6f), 
+			true);
+
+		pFont->SetRenderFlag(true);
+	}
 
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
@@ -86,7 +97,6 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
 	//AddGameObject<IceAge>();
-\
 
 
 	// Wave 1st
