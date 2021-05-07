@@ -37,11 +37,11 @@ void Em200::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	if (m_BattleInfo.iHp <= 0.f)
+	/*if (m_BattleInfo.iHp <= 0.f)
 	{
 		m_eState = Dead;
 		m_bIng = true;
-	}
+	}*/
 
 	//몬스터 움직이는 방향 정해주는 놈
 	if (fDir >= 0.5f)
@@ -519,35 +519,42 @@ void Em200::State_Change(const float _fDeltaTime)
 	case Em200::Hit_Buster_Start:
 		if (m_bHit)
 		{
-			m_pMesh->PlayAnimation("Buster_Start", true, {}, 1.f, 20.f, true);
+			Update_Angle();
+			Set_Rotate();
 
-			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_BUSTER_STRIKE_COMMON
-				&&m_pPlayer.lock()->Get_PlayingTime() >= 0.4f)
-			{
+			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 1.f, true);
+			m_pCollider.lock()->SetTrigger(true);
+
+			//if (m_pMesh->PlayingTime() >= 0.1f && m_pMesh->PlayingTime() <= 0.13f)
+
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_Buster_Loop;
+		}
+		break;
+	case Em200::Hit_Buster_Loop:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Buster_Loop", true, {}, 1.f, 1.f, true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
 				m_eState = Hit_Buster_End;
-				Vector3 vRot(0.f, 0.f, 0.f);
-				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
-				Vector3 vPos = m_pTransform.lock()->GetPosition();
-
-				m_pTransform.lock()->SetRotation(vRot);
-				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
-
-				m_pCollider.lock()->SetRigid(true);
-			}
+			
 		}
 		break;
 	case Em200::Hit_Buster_End:
 		if (m_bHit)
 		{
-			if (fDot < 0)
-				m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
-			else
-				m_pMesh->PlayAnimation("Blown_Front_Landing", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Buster_Finish", false, {}, 1.f, 1.f, true);
+			Vector3 vRot(0.f, 0.f, 0.f);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_End" && m_pMesh->IsAnimationEnd())
-				m_eState = Downword_Down_StandUp;
-			else if (m_pMesh->CurPlayAnimInfo.Name == "Blown_Front_Landing" && m_pMesh->IsAnimationEnd())
-				m_eState = Downword_Down_StandUp;
+			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Finish" && m_pMesh->PlayingTime() >= 0.6f)
+			{
+				m_pCollider.lock()->SetRigid(true);
+				m_pCollider.lock()->SetTrigger(false);
+			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Finish" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_End_Front;
+
 		}
 		break;
 	case Em200::Hit_Air_Buster_Start:
@@ -602,7 +609,7 @@ void Em200::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_SPLIT_LANDING
 				&& m_pCollider.lock()->IsGround())
 			{
-				m_eState = Hit_Buster_End;
+				m_eState = Hit_End_Front;
 				Vector3 vRot(0.f, 0.f, 0.f);
 				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
 				Vector3 vPos = m_pTransform.lock()->GetPosition();
@@ -766,7 +773,7 @@ HRESULT Em200::Awake()
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 	
-	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("R_MiddleF1");
+	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Hip");
 
 	//몬스터 초기상태 Idle
 	m_eState = Enter_Ground;
@@ -847,9 +854,8 @@ UINT Em200::Update(const float _fDeltaTime)
 	{
 		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
 		m_Result = (*m_pPlayerBone * m_PlayerWorld);
-		m_pTransform.lock()->SetWorldMatrix(m_Result);
 
-		m_pCollider.lock()->SetRigid(false);
+		m_pTransform.lock()->SetPosition({ m_Result._41, m_Result._42, m_Result._43 });
 	}
 	if (m_eState == Hit_Split_Start)
 	{
@@ -858,6 +864,11 @@ UINT Em200::Update(const float _fDeltaTime)
 	}
 
 
+
+
+
+
+	/////////////////////////////
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
 	{
@@ -865,6 +876,7 @@ UINT Em200::Update(const float _fDeltaTime)
 			Destroy(m_pHand[i]);
 		Destroy(m_pGameObject);
 	}
+	/////////////////////////////
 
 	return 0;
 }
@@ -1177,6 +1189,7 @@ void Em200::Buster(BT_INFO _BattleInfo, void* pArg)
 
 	m_bHit = true;
 	m_bDown = true;
+	m_pCollider.lock()->SetRigid(false);
 
 	if (m_bAir)
 		m_eState = Hit_Air_Buster_Start;

@@ -15,7 +15,13 @@ void Scene::Free()
 			m_Loop[i][j].clear();
 
 	for (UINT i = 0; i < POOL_END; ++i)
+	{
+		for (auto& rGameObject : m_Pool[i])
+			rGameObject.reset();
+
 		m_Pool[i].clear();
+	}
+
 	Object::Free();
 }
 
@@ -141,8 +147,9 @@ void Scene::Destroy()
 {
 	if (0 == m_Pool[OBJECTPOOLTYPE::POOL_DESTROY].size())
 		return;
-
+	OBJECTPOOL listTemp = m_Pool[OBJECTPOOLTYPE::POOL_DESTROY];
 	m_Pool[OBJECTPOOLTYPE::POOL_DESTROY].clear();
+	listTemp.clear();
 }
 
 void Scene::TransferStatic(std::weak_ptr<Scene> const _pDestScene)
