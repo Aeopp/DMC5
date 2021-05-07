@@ -10,13 +10,10 @@
 
 void Monster::Free()
 {
-	if (!m_pStoneDebrisVec.empty())
-	{
-		for (auto& Element : m_pStoneDebrisVec)
-			Destroy(Element);
-		m_pStoneDebrisVec.clear();
-		m_pStoneDebrisVec.shrink_to_fit();
-	}
+	for (auto& Element : m_pStoneDebrisVec)
+		Destroy(Element);
+	m_pStoneDebrisVec.clear();
+	m_pStoneDebrisVec.shrink_to_fit();
 
 	Unit::Free();
 }
@@ -77,7 +74,10 @@ void Monster::AddRankScore(float _fRankScore)
 
 void Monster::StoneDebrisInit()
 {
+	for (auto& Element : m_pStoneDebrisVec)
+		Destroy(Element);
 	m_pStoneDebrisVec.clear();
+
 	m_pStoneDebrisVec.reserve(15u);
 
 	uint32 StoneDebrisCnt = FMath::Random<uint32>(4u, 12u);

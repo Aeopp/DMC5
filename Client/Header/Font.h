@@ -4,13 +4,23 @@
 #include "RenderInterface.h"
 
 class Font : public ENGINE::GameObject,
-			 public ENGINE::RenderInterface				
+	public ENGINE::RenderInterface
 {
+public:
+	enum TEX_ID : uint32
+	{
+		DMC5_BLACK_GRAD,
+		DMC5_GREEN_GRAD,
+		FONTTEX_ID_END
+	};
+	void SetFontTex(Font::TEX_ID ID);
+
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
 	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
 
-	std::shared_ptr<ENGINE::Texture> _Dmc5FontTex{};
+	std::vector<std::shared_ptr<ENGINE::Texture>> _FontTexVec{};
+	TEX_ID _FontTexID = FONTTEX_ID_END;
 
 	// 문자열의 시작위치, 공통 크기, 회전
 	Vector3 _Pos = Vector3(640.f, 360.f, 0.02f);
@@ -40,6 +50,7 @@ private:
 	bool _UsingNoise = false;
 
 	std::string _Text = "";
+	enum SCREENMAT_OPT { NOOPT = 0u, USINGSHADOW };
 	bool _UsingShadow = false;
 
 private:
@@ -52,8 +63,8 @@ private:
 	void	RenderFont(const DrawInfo& _Info);
 private:
 	void	LoadFontDesc(const std::filesystem::path& path);
-	void	CreateScreenMat(int Opt = 0);
-	void	SetFontUV(/*char index*/);
+	void	CreateScreenMat(SCREENMAT_OPT Opt = NOOPT);
+	void	SetFontUV();
 public:
 	static Font* Create();
 public:
@@ -69,6 +80,5 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void SetText(const std::string& text, const Vector2& ScreenPos, const Vector2& Scale = Vector2(1.f, 1.f), bool UsingShadow = false);
-
 };
 #endif // !__UI_FONT__

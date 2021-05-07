@@ -4,13 +4,22 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-//#include "EngineStdafx.h"
-//#include <filesystem>
 #include <istream>
 #include <fstream>
 
+void Font::SetFontTex(Font::TEX_ID ID)
+{
+	if (ID >= FONTTEX_ID_END)
+		return;
+
+	_FontTexID = ID;
+}
+
 void Font::Free()
 {
+	_FontTexVec.clear();
+	_FontTexVec.shrink_to_fit();
+
 	for (auto& Element : _FontDescVec)
 		SafeDelete(Element);
 	_FontDescVec.clear();
@@ -37,7 +46,7 @@ void Font::RenderFont(const DrawInfo& _Info)
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)
 		{
-			_Info.Fx->SetTexture("ALB0Map", _Dmc5FontTex->GetTexture());
+			_Info.Fx->SetTexture("ALB0Map", _FontTexVec[_FontTexID]->GetTexture());
 			_Info.Fx->SetFloat("_UsingNoise", _UsingNoise);
 			if (_UsingNoise)
 				_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
@@ -55,7 +64,7 @@ void Font::RenderFont(const DrawInfo& _Info)
 					{
 						_CurCharID = static_cast<uint32>(_Text.at(i));
 
-						CreateScreenMat(1);
+						CreateScreenMat(USINGSHADOW);
 						_Info.Fx->SetMatrix("ScreenMat", &_ScreenMat);
 
 						SetFontUV();
@@ -151,18 +160,25 @@ void Font::LoadFontDesc(const std::filesystem::path& path)
 	}
 }
 
-void Font::CreateScreenMat(int Opt/*= 0*/)
+void Font::CreateScreenMat(SCREENMAT_OPT Opt/*= NOOPT*/)
 {
+	if (MAX_CHAR_ID < _CurCharID)
+		_CurCharID = '?';
+
 	FontDesc* pDesc = _FontDescVec[_CurCharID];
 	if (!pDesc)
 		pDesc = _FontDescVec['?'];
 
+	float Interval = 2.f;
+	if (pDesc->CharID == 'i' || pDesc->CharID == 'j' || pDesc->CharID == 'l')	// ¤Ð¤Ð
+		Interval = 5.f;
+
 	Matrix RotMat;
 	D3DXMatrixIdentity(&_ScreenMat);
 
-	float crr = 5.5f;
-	_ScreenMat._11 = _Scale.x * pDesc->CharScale.x * crr;
-	_ScreenMat._22 = _Scale.y * pDesc->CharScale.y * crr;
+	float Crr = 6.f;
+	_ScreenMat._11 = _Scale.x * pDesc->CharScale.x * Crr;
+	_ScreenMat._22 = _Scale.y * pDesc->CharScale.y * Crr;
 	_ScreenMat._33 = _Scale.z;
 	if (_UsingPerspective)
 	{
@@ -175,15 +191,15 @@ void Font::CreateScreenMat(int Opt/*= 0*/)
 	_ScreenMat *= RotMat;
 	
 	float ShadowPos = 0.f;
-	if (1 == Opt)
+	if (USINGSHADOW == Opt)
 		ShadowPos = 3.f;
 
 	_ScreenMat._41 = _Pos.x + ShadowPos - (g_nWndCX >> 1) + _PosOffset.x;
 	_ScreenMat._42 = -(_Pos.y + ShadowPos - (g_nWndCY >> 1)) /*+ _PosOffset.y*/;
 	_ScreenMat._43 = _Pos.z;
 
-	crr = 75.f;
-	_PosOffset.x += (_ScreenMat._11 * crr + 2.f);
+	Crr = 75.f;
+	_PosOffset.x += (_ScreenMat._11 * Crr + Interval);
 }
 
 void Font::SetFontUV()
@@ -222,11 +238,15 @@ HRESULT Font::Ready()
 
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\noiseInput_ATOS.tga");
-	_Dmc5FontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font.tga");
+
+	_FontTexVec.reserve(FONTTEX_ID_END);
+	_FontTexVec.push_back(Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font_0.png"));
+	_FontTexVec.push_back(Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font_1.png"));
 
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
 
 	LoadFontDesc("..\\..\\Resource\\Font\\Data\\dmc5font.json");
+	SetFontTex(DMC5_BLACK_GRAD);
 
 	return S_OK;
 }
@@ -268,8 +288,15 @@ void Font::Editor()
 		static Vector2 scale = { 1.f, 1.f };
 		ImGui::SliderFloat2("scale##Font", scale, 0.1f, 10.f);
 
+		static int isShadow = _UsingShadow;
+		ImGui::SliderInt("Shadow##Font", &isShadow, 0, 1);
+
 		if (ImGui::Button("Apply##Font"))
-			SetText(buf, Vector2((float)pos[0], (float)pos[1]), scale);
+			SetText(buf, Vector2((float)pos[0], (float)pos[1]), scale, isShadow);
+
+		static int TexID = _FontTexID;
+		ImGui::SliderInt("Tex##Font", &TexID, 0, FONTTEX_ID_END - 1);
+		SetFontTex((Font::TEX_ID)TexID);
 	}
 }
 
