@@ -42,8 +42,8 @@ public:
 public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
-		const Vector3 Scale = { 0.0008f ,0.0008f ,0.0008f },
-		const float YawRotationSpeed = FMath::PI,
+		const Vector3 Scale = { 0.0016f ,0.0016f ,0.0016f },
+		const float YawRotationSpeed = FMath::PI *3.f,
 		const float PlayTime = 2.5f);
 	void PlayEnd();
 public:

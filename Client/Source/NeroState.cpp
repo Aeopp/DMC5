@@ -7968,6 +7968,7 @@ HRESULT Cbs_SKill_IceAge_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Cbs_SKill_IceAge_Start", false, Nero::ANI_CBS_SKILL_ICEAGE_START);
 	//m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Battle);
 	//m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Short, "Cbs_IceAge_Start", true);
+	m_pNero.lock()->PlayEffect(GAMEOBJECTTAG::Eff_IceAge);
 	return S_OK;
 }
 
