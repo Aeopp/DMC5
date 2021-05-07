@@ -5,6 +5,7 @@
 #include <optional>
 #include "FMath.hpp"
 #include <any>
+#include <tuple>
 
 BEGIN(ENGINE)
 class ENGINE_DLL ParticleSystem final : public Object
@@ -14,12 +15,91 @@ public:
 	struct ENGINE_DLL ParticleInstance
 	{
 	public:
+		struct SpriteDesc
+		{
+		public:
+			static SpriteDesc Make(
+						const float SpriteColCnt,
+						const float SpriteRowCnt,
+						const float SpriteCurCol,
+						const float SpriteCurRow,
+						const float Interval ,
+						const bool bColLoop,
+						const bool bRowLoop)
+			{
+				SpriteDesc _SpriteDesc{};
+				_SpriteDesc.SpriteColCnt = SpriteColCnt;
+				_SpriteDesc.SpriteRowCnt = SpriteRowCnt;
+				_SpriteDesc.SpriteCurCol = SpriteCurCol;
+				_SpriteDesc.SpriteCurRow = SpriteCurRow;
+				_SpriteDesc.CurInterval = _SpriteDesc.Interval = Interval;
+				_SpriteDesc.bColLoop = bColLoop;
+				_SpriteDesc.bRowLoop = bRowLoop;
+			};
+
+			void Update(const float Delta)
+			{
+				CurInterval -= Delta;
+
+				if (CurInterval < 0.0f)
+				{
+					CurInterval += Interval;
+
+					SpriteCurCol += 1.f;
+
+					if (SpriteCurCol >= SpriteColCnt)
+					{
+						if (bColLoop)
+						{
+							SpriteCurCol = 0.0f;
+						}
+						else
+						{
+							SpriteCurCol  = SpriteColCnt - 1.f;
+						}
+
+						if (bRowLoop)
+						{
+							SpriteCurRow += 1.f;
+						}
+
+						if (SpriteCurRow >= SpriteRowCnt)
+						{
+							SpriteCurRow = 0.0f;
+						}
+					}
+				}
+
+				return;
+			}
+
+			// x(0) ~ x(1)'  y(0) ~ y'(1)
+			std::tuple<float, float, float, float> GetUVRatio()const&
+			{
+				return { SpriteCurCol / SpriteColCnt, (SpriteCurCol + 1.f) / SpriteColCnt, SpriteCurRow / SpriteRowCnt, (SpriteCurRow + 1.f) / SpriteRowCnt };
+			}
+		private:
+			float SpriteRowCnt;
+			float SpriteColCnt;
+
+			float SpriteCurRow;
+			float SpriteCurCol;
+
+			float Interval;
+			float CurInterval;
+
+			// Sprite 끝에 다다랐을때 (CurCol == ColCnt) 스톱 할지 아니면 루프할지
+			bool bColLoop=true;
+			bool bRowLoop=true;
+		};
+
 		void PlayDescBind(const std::array<Vector3, 4u>& CurveControlPoints,
 						const std::array<Vector3, 4u>& CurveControlRotationPoints ,
 						const Vector3& Scale,
-							const float LifeTime,
-							const float T ,
-							const std::any& InstanceVariable)
+						const float LifeTime,
+						const float T ,
+						const std::any& InstanceVariable ,
+						const std::optional<SpriteDesc>& _SpriteDesc)
 		{
 			CurrentLocation= CurveControlPoints[0];
 			CurRotation = CurveControlRotationPoints[0];
@@ -29,10 +109,12 @@ public:
 			this->LifeTime = LifeTime;
 			this->T = T;
 			this->InstanceVariable = InstanceVariable;
+			this->_SpriteDesc = _SpriteDesc;
 		};
 		
 		Matrix CalcWorld() { return FMath::WorldMatrix(Scale, CurRotation, CurrentLocation); };
 
+		const std::optional<SpriteDesc>& GetSpriteDesc(){ return _SpriteDesc; };
 		const Vector3& GetCurLocation() { return CurrentLocation; };
 		const Vector3& GetCurRotation() { return CurRotation; };
 		 const std::any& GetInstanceValue() {return InstanceVariable;};
@@ -43,6 +125,7 @@ public:
 			LifeTime.reset();
 			T = 0.0f;
 		};
+
 		void Update(const float Delta,
 			const float LerpTimeNormalize)
 		{
@@ -63,13 +146,16 @@ public:
 
 				CurrentLocation = FMath::BezierCurve((CurveControlPoints)[0], (CurveControlPoints)[1], (CurveControlPoints)[2], (CurveControlPoints)[3], VelocityTime);
 				CurRotation = FMath::BezierCurve((CurveControlRotationPoints)[0], (CurveControlRotationPoints)[1], (CurveControlRotationPoints)[2], (CurveControlRotationPoints)[3], VelocityTime);
+
+				if (_SpriteDesc)
+				{
+					_SpriteDesc->Update(Delta);
+				}
 			}
 		}
 	private:
-
+		std::optional<SpriteDesc> _SpriteDesc{};
 		std::any InstanceVariable{};
-
-
 
 		// LifeTime 세팅하는 경우 재생 바로 시작 .
 		// LifeTime 0 보다 작아지는 경우 바로 재생 정지하고 풀로 돌아감.
@@ -81,15 +167,9 @@ public:
 		std::array<Vector3, 4u> CurveControlPoints{};
 		std::array<Vector3, 4u> CurveControlRotationPoints{};
 
-
-
-
 		float T = 0.0f;
 		Vector3 CurrentLocation{0.f,0.f,0.f};
 		Vector3 CurRotation{ 0.0f,0.0f,0.0f };
-
-		
-
 	};
 
 	struct ENGINE_DLL Particle

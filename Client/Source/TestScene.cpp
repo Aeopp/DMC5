@@ -81,12 +81,11 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-
+	
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
 	//AddGameObject<IceAge>();
-\
 
 
 	// Wave 1st
@@ -137,21 +136,7 @@ HRESULT TestScene::LoadScene()
 
 	LoadMap();
 	AddGameObject<TempMap>();
-
-	// 렌더러 씬 맵 특성에 맞춘 세팅
-	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005;
-	_Renderer->SkyIntencity = 0.005f;
-	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
-	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
-	_Renderer->SoftParticleDepthScale = 0.7f;
-	_Renderer->SkyRotationSpeed = 1.5f;
-	_Renderer->StarScale = 4.f;
-	_Renderer->StarFactor = 0.9f;
+	RenderDataSetUp();
 
 
 	//// Stage2 안개
@@ -423,4 +408,22 @@ void TestScene::LoadMap()
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
+}
+
+void TestScene::RenderDataSetUp()
+{
+	// 렌더러 씬 맵 특성에 맞춘 세팅
+	auto _Renderer = Renderer::GetInstance();
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+	_Renderer->ao = 0.0005;
+	_Renderer->SkyIntencity = 0.005f;
+	_Renderer->SkysphereScale = 0.078f;
+	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
+	_Renderer->SoftParticleDepthScale = 0.7f;
+	_Renderer->SkyRotationSpeed = 1.5f;
+	_Renderer->StarScale = 4.f;
+	_Renderer->StarFactor = 0.9f;
 }

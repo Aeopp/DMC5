@@ -11,7 +11,7 @@
 FireCircle::FireCircle()
 {
 
-}
+};
 
 void FireCircle::Free()
 {
@@ -180,7 +180,6 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetFloat("SpriteProgressTime", SpriteProgressTime);
 	_Info.Fx->SetFloat("ClipRange", ClipRange);
-
 
 	_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
 	const Vector3 Speed = NoiseScrollSpeed * T;

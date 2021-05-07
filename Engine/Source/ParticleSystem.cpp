@@ -89,7 +89,7 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 				CurFx->SetTexture("DepthMap", _Renderer->RenderTargets["Depth"]->GetTexture());
 				CurFx->SetFloat("SoftParticleDepthScale", _Renderer->SoftParticleDepthScale);
 				CurFx->SetFloat("exposure_corr", 1.f / (_Renderer->exposure * 0.002f));
-
+				
 				Vector3  LightDirection = { 0,-1,0 };
 				if (_Renderer->CurDirLight)
 				{
@@ -121,6 +121,15 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 								{
 									const Matrix matWorld = _ParticleInstance.CalcWorld();
 									CurFx->SetMatrix("matWorld", &matWorld);
+									if (const auto& bTargetSprite = _ParticleInstance.GetSpriteDesc();
+										bTargetSprite)
+									{
+										const auto [XStart,XEnd,YStart,YEnd]=bTargetSprite->GetUVRatio();
+										CurFx->SetFloat("SpriteXStart", XStart);
+										CurFx->SetFloat("SpriteXEnd", XEnd);
+										CurFx->SetFloat("SpriteYStart", YStart);
+										CurFx->SetFloat("SpriteYEnd", YEnd);
+									}
 
 									_TargetParticle.InstanceBind(_ParticleInstance.GetInstanceValue(), CurFx);
 									_Subset->Render(CurFx);
