@@ -179,6 +179,17 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		_RenderProperty.bRender = m_bIsRender = false;
 	}
 	break;
+	case GAMEOBJECTTAG::Monster1000:
+	{
+		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
+		m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
+		m_pCollider.lock()->SetActive(false);
+
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
+		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Vine01_IK");
+		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+	}
+	break;
 	case GAMEOBJECTTAG::Monster5300:
 	{
 		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
@@ -190,6 +201,17 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
 	}
 		break;
+	case GAMEOBJECTTAG::Monster5000:
+	{
+		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
+		m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
+		m_pCollider.lock()->SetActive(false);
+
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
+		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Hip");
+		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+	}
+	break;
 	default:
 		break;
 	}

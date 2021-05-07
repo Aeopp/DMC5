@@ -5963,7 +5963,7 @@ BT_Air_ComboB* BT_Air_ComboB::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 HRESULT BT_Air_ComboB::StateEnter()
 {
 	NeroState::StateEnter();
-	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
 	m_pNero.lock()->ChangeAnimation("ComboB_Air", false, Nero::ANI_COMBOB_AIR);
 
 	if (m_pNero.lock()->Get_IsMajinMode())
@@ -5994,7 +5994,7 @@ HRESULT BT_Air_ComboB::StateUpdate(const float _fDeltaTime)
 	}
 	else if (0.29f <= fCurAnimationTime)
 	{
-		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
+		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air);
 		ActiveColl_RedQueen(true);
 	}
 	else if (0.21f <= fCurAnimationTime)
@@ -11182,7 +11182,8 @@ em5000_Buster_Swing_Loop* em5000_Buster_Swing_Loop::Create(FSMBase* const _pFSM,
 HRESULT em5000_Buster_Swing_Loop::StateEnter()
 {
 	NeroState::StateEnter();
-	m_pNero.lock()->ChangeAnimation("em5000_Buster_Swing_Loop", true, Nero::ANI_EM5000_BUSTER_SWING_LOOP);
+	//m_pNero.lock()->ChangeAnimation("em5000_Buster_Swing_Loop", true, Nero::ANI_EM5000_BUSTER_SWING_LOOP);
+	m_pNero.lock()->ChangeAnimation("em5000_Buster_Swing_Loop", false, Nero::ANI_EM5000_BUSTER_SWING_LOOP);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "em5000_Buster_Swing_Loop", true);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm_Left, "em5000_Buster_Swing_Loop", true);
 	return S_OK;
@@ -11200,7 +11201,12 @@ HRESULT em5000_Buster_Swing_Loop::StateUpdate(const float _fDeltaTime)
 
 	float fAccAnimationTime = m_pNero.lock()->Get_PlayingAccTime();
 
-	if (2.97 <= fAccAnimationTime)
+	//if (2.97 <= fAccAnimationTime)
+	//{
+	//	m_pFSM->ChangeState(NeroFSM::EM5000_BUSTER_FINISH);
+	//	return S_OK;
+	//}
+	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::EM5000_BUSTER_FINISH);
 		return S_OK;
@@ -11242,6 +11248,11 @@ HRESULT em5000_Buster_Finish::StateUpdate(const float _fDeltaTime)
 	NeroState::StateUpdate(_fDeltaTime);
 
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.15f <= fCurAnimationTime)
+	{
+		//요기가 날리는 타이밍임 
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{

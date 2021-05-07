@@ -79,7 +79,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 	//AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
 	
-	AddGameObject<Em200>();
+	AddGameObject<Em5000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	

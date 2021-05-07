@@ -1224,6 +1224,18 @@ void Em100::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 
 	}
 	break;
+	case ATTACKTYPE::Attack_Air_Start:
+	{
+		m_eState = Hit_Air_Start;
+		m_bHit = true;
+
+		Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
+		D3DXVec3Normalize(&vLook, &vLook);
+		Vector3	vDir(vLook.x * 0.03f, 0.32f, vLook.z * 0.03f);
+
+		m_pCollider.lock()->AddForce(vDir * m_fPower);
+	}
+	break;
 	case ATTACKTYPE::Attack_KnocBack:
 	{
 		m_eState = Hit_KnocBack;

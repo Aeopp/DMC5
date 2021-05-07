@@ -136,6 +136,8 @@ private:
 	//µ¹¸®±â
 	bool		m_bTurn = false;
 	float		m_fTurnTime = 0.f;
+
+	bool		m_bBuster = false;
 	
 
 

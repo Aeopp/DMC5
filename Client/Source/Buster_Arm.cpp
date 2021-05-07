@@ -188,6 +188,9 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case Monster5000:
 		//그로기 상태일때만
+
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM5000_BUSTER_START);
+		m_pCollider.lock()->SetActive(false);
 		break;
 	default:
 		break;
