@@ -519,15 +519,22 @@ void Em200::State_Change(const float _fDeltaTime)
 	case Em200::Hit_Buster_Start:
 		if (m_bHit)
 		{
-			Update_Angle();
-			Set_Rotate();
+			if (m_bBuster == false)
+			{
+				Vector3 PlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+				Vector3 vResult = PlayerPos + (-vLook * 0.1f);
+				vResult.y = m_pTransform.lock()->GetPosition().y;
+				m_pTransform.lock()->SetPosition(vResult);
+
+				Update_Angle();
+				Set_Rotate();
+				m_bBuster = true;
+			}
 
 			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 1.f, true);
 			m_pCollider.lock()->SetTrigger(true);
-
-			//if (m_pMesh->PlayingTime() >= 0.1f && m_pMesh->PlayingTime() <= 0.13f)
-
-
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Start" && m_pMesh->IsAnimationEnd())
 				m_eState = Hit_Buster_Loop;
 		}
@@ -553,7 +560,10 @@ void Em200::State_Change(const float _fDeltaTime)
 				m_pCollider.lock()->SetTrigger(false);
 			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Finish" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_End_Front;
+				m_bBuster = false;
+			}
 
 		}
 		break;
@@ -563,41 +573,67 @@ void Em200::State_Change(const float _fDeltaTime)
 			m_pCollider.lock()->SetGravity(false);
 			m_pCollider.lock()->SetTrigger(true);
 
-			Update_Angle();
-			Set_Rotate();
-			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 20.f, true);
 
-			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_BUSTER_STRIKE_COMMON_AIR &&
-				m_pPlayer.lock()->Get_PlayingTime() >= 0.5f)
+			if (m_bBuster == false)
 			{
+				Vector3 PlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+				Vector3 vResult = PlayerPos + (-vLook * 0.1f);
+				vResult.y = m_pTransform.lock()->GetPosition().y;
+				m_pTransform.lock()->SetPosition(vResult);
+
+				Update_Angle();
+				Set_Rotate();
+				m_bBuster = true;
+			}
+
+
+			m_pMesh->PlayAnimation("Air_Buster_Start", false, {}, 1.f, 1.f, true);
+			m_pCollider.lock()->SetTrigger(true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_Air_Buster_Loop;
+		}
+		break;
+	case Em200::Hit_Air_Buster_Loop:
+		if (m_bHit == true)
+		{
+			m_pMesh->PlayAnimation("Air_Buster_Loop", true, {}, 1.f, 1.f, true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_AIR_FINISH)
 				m_eState = Hit_Air_Buster_End;
 
-				Vector3 vRot(0.f, 0.f, 0.f);
-				m_pTransform.lock()->SetRotation(vRot);
-				m_pCollider.lock()->SetGravity(true);
-			}
 		}
 		break;
 	case Em200::Hit_Air_Buster_End:
 		if (m_bHit)
 		{
-			m_eState = Hit_KnocBack;
+			m_pMesh->PlayAnimation("Air_Buster_Finish", false, {}, 1.f, 1.f, true);
+			Vector3 vRot(0.f, 0.f, 0.f);
 
-			m_pCollider.lock()->SetTrigger(false);
-			m_pCollider.lock()->SetRigid(true);
-			Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Finish" && m_pMesh->PlayingTime() >= 0.6f)
+			{
 
-			m_vPower += -vLook;
-			m_vPower.y = -2.f;
+				m_eState = Hit_KnocBack;
+				Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
-			m_fPower = 200.f;
+				m_vPower += -vLook;
+				m_vPower.y = 2.f;
 
-			D3DXVec3Normalize(&m_vPower, &m_vPower);
-			m_pCollider.lock()->AddForce(m_vPower* m_fPower);
+				D3DXVec3Normalize(&m_vPower, &m_vPower);
+				m_fPower = 120.f;
+				m_pCollider.lock()->AddForce(m_vPower * m_fPower);
 
-			m_vPower.x = 0.f;
-			m_vPower.z = 0.f;
-			m_fPower = 100.f;
+				m_vPower.x = 0.f;
+				m_vPower.z = 0.f;
+				m_fPower = 100.f;
+
+
+				m_pCollider.lock()->SetRigid(true);
+				m_pCollider.lock()->SetTrigger(false);
+				m_pCollider.lock()->SetGravity(true);
+				
+			}
+
 		}
 		break;
 	case Em200::Hit_Split_Start:
@@ -765,7 +801,7 @@ HRESULT Em200::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 
-	m_pCollider.lock()->SetRadius(0.09f);
+	m_pCollider.lock()->SetRadius(0.07f);
 	m_pCollider.lock()->SetHeight(0.14f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
 
@@ -773,7 +809,7 @@ HRESULT Em200::Awake()
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	m_pRedQueen = std::static_pointer_cast<RedQueen>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_RedQueen).lock());
 	
-	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("Hip");
+	m_pPlayerBone = m_pPlayer.lock()->Get_BoneMatrixPtr("CoatCloth_04_03");
 
 	//몬스터 초기상태 Idle
 	m_eState = Enter_Ground;
@@ -834,11 +870,6 @@ UINT Em200::Update(const float _fDeltaTime)
 
 	if (m_bHit)
 		m_bIng = true;
-	if (Input::GetKeyDown(DIK_Y))
-	{
-		Update_Angle();
-		Set_Rotate();
-	}
 
 
 	if (m_bEnterGround == true)
@@ -850,13 +881,6 @@ UINT Em200::Update(const float _fDeltaTime)
 	State_Change(_fDeltaTime);
 
 
-	if (m_eState == Hit_Buster_Start || m_eState == Hit_Air_Buster_Start)
-	{
-		m_PlayerWorld = m_pPlayerTrans.lock()->GetWorldMatrix();
-		m_Result = (*m_pPlayerBone * m_PlayerWorld);
-
-		m_pTransform.lock()->SetPosition({ m_Result._41, m_Result._42, m_Result._43 });
-	}
 	if (m_eState == Hit_Split_Start)
 	{
 		Vector3 vRedQueenPos = m_pRedQueen.lock()->GetRedQueenBoneWorldPos("_001");

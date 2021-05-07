@@ -136,7 +136,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
 
 	// 렌더러 씬 맵 특성에 맞춘 세팅
