@@ -98,7 +98,7 @@ void Application::IceParticlePoolLoad()
 
 	for (auto& _ParticleInstance : *ParticlePool)
 	{
-		Vector2 Range{ -0.05f,0.05f };
+		Vector2 Range{ -1.f,1.f};
 
 		const Vector3 TargetLocation = (*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)];
 
@@ -106,8 +106,7 @@ void Application::IceParticlePoolLoad()
 		const Vector3 Right = FMath::Normalize(FMath::Cross(Vector3{ 0.f,1.f,0.f }, LocalVtxDir));
 		const Vector3 Up = FMath::Normalize(FMath::Cross(Up, LocalVtxDir));
 
-
-		static constexpr std::pair<float, float> StartScaleRange = { 0.1f,0.2f};
+		static constexpr std::pair<float, float> StartScaleRange = { 100.f,200.f};
 
 		static constexpr std::pair<float, float> SecondScaleRange = { StartScaleRange.second * 0.9f * 0.5f,
 																   StartScaleRange.second * 0.9f             };
@@ -116,9 +115,9 @@ void Application::IceParticlePoolLoad()
 																   SecondScaleRange.second * 0.9f };
 
 		const std::pair<float, float> UpRotation = (FMath::Random(0, 1) == 0) ? 
-			std::pair<float, float>{-FMath::QuadPI, 0.f} : std::pair<float, float>{0.f, FMath::QuadPI};
+			std::pair<float, float>{-FMath::HalfPI, 0.f} : std::pair<float, float>{0.f, FMath::HalfPI };
 
-		const float Cp0Pitch = FMath::Random(0.f, FMath::QuadPI);
+		const float Cp0Pitch = FMath::Random(0.f, FMath::HalfPI);
 		const float Cp0Yaw =   FMath::Random(UpRotation.first, UpRotation.second);
 		const float Cp0Scale = FMath::Random(StartScaleRange.first, StartScaleRange.second);
 
@@ -126,7 +125,7 @@ void Application::IceParticlePoolLoad()
 		LocalVtxDir = FMath::RotationVecNormal(LocalVtxDir, Up, Cp0Yaw);
 		const Vector3 Cp0 = TargetLocation + (LocalVtxDir * Cp0Scale);
 
-		const float Cp1Pitch = FMath::Random(0.f, FMath::QuadPI);
+		const float Cp1Pitch = FMath::Random(0.f, FMath::HalfPI);
 		const float Cp1Yaw =   FMath::Random(UpRotation.first, UpRotation.second);
 		const float Cp1Scale = FMath::Random(SecondScaleRange.first, SecondScaleRange.second);
 
@@ -134,7 +133,7 @@ void Application::IceParticlePoolLoad()
 		LocalVtxDir = FMath::RotationVecNormal(LocalVtxDir, Up, Cp1Yaw);
 		const Vector3 Cp1 = Cp0 + (LocalVtxDir * Cp1Scale);
 
-		const float Cp2Pitch = FMath::Random(0.f, FMath::QuadPI);
+		const float Cp2Pitch = FMath::Random(0.f, FMath::HalfPI);
 		const float Cp2Yaw =   FMath::Random(UpRotation.first, UpRotation.second);
 		const float Cp2Scale = FMath::Random(ThirdScaleRange.first, ThirdScaleRange.second);
 
@@ -153,9 +152,9 @@ void Application::IceParticlePoolLoad()
 
 		ParticleInstance::Ice _IceValue{};
 
-		_IceValue.ColorIntencity = FMath::Random(0.01f, 0.05f);
+		_IceValue.ColorIntencity = FMath::Random(0.02f, 0.08f);
 
-		const float LifeTime = FMath::Random(0.1f, 0.5f);
+		const float LifeTime = FMath::Random(0.8f, 1.3f);
 
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },

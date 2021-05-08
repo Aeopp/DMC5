@@ -49,7 +49,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	float ParticleCycle = 0.1f;
+	float ParticleCycle = 0.15f;
 	float CurParticleTime = 0.0f;
 	// std::weak_ptr< ShapeParticle> _GeneratorParticle{};
 	// std::vector<Particle> _IceParticles{};

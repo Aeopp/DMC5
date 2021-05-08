@@ -315,9 +315,8 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 			const Matrix Mat = SpTransform->GetRenderMatrix();
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-			const uint32 JumpOffset = 80u;
+			const uint32 JumpOffset = 20u;
 
-			// const float AllParticleLifeTime = 4.f;
 			{
 				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("Ice");
 				for (int32 i = 0; i < _PlayableParticle.size(); i += JumpOffset)

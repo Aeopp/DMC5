@@ -51,6 +51,7 @@ enum GAMEOBJECTTAG
 	Eff_ShapeParticle,
 	Eff_AirHike,
 	Eff_Trail,
+	Eff_CbsTrail,
 	Eff_FireCircle,
 	Eff_IceAge,
 	Eff_CircleWave,
