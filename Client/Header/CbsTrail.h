@@ -26,8 +26,7 @@ public:
 	enum  Mode : uint32
 	{
 		Non,
-		Ice,
-		Eletric,
+		Ice
 	};
 private:
 	// F -> Low S -> High
@@ -36,14 +35,14 @@ private:
 		// Non
 		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} },
 		// Ice
-		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} },
-		//Eletric
 		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} }
 	};
-	static constexpr uint32 TrailCnt = 3u;
-	std::array<std::string, 3u> BoneNames{  "pole01","pole02","pole03"};
-	std::array< IDirect3DVertexBuffer9*, TrailCnt > VtxBuffers{};
-	std::array< IDirect3DIndexBuffer9*, TrailCnt > IdxBuffers{};
+	static constexpr uint32 TrailCnt = 2u;
+	static constexpr uint32 BoneCnt = 3u;
+
+	std::array<std::string, BoneCnt > BoneNames{  "pole01","pole02","pole03"};
+	std::array< IDirect3DVertexBuffer9*,TrailCnt> VtxBuffers{};
+	std::array< IDirect3DIndexBuffer9*,TrailCnt> IdxBuffers{};
 	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
 	IDirect3DDevice9* Device{ nullptr };
 
@@ -79,8 +78,14 @@ private:
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 
-	std::array<std::vector<Vertex::Index32>,3u> _IdxLog{};
-	std::array<std::vector<Vertex::TrailVertex>,3u> _VtxLog{};
+	std::array<std::vector<Vertex::Index32>,TrailCnt> _IdxLog{};
+	std::array<std::vector<Vertex::TrailVertex>, TrailCnt> _VtxLog{};
+
+	// Low High
+	std::array<std::pair<Vector3, Vector3>, BoneCnt >  LatelyOffsets{};
+
+	float ParticleCycle = 0.1f;
+	float CurParticleCycle = 0.0f;
 private:
 	explicit CbsTrail()  ;
 	virtual ~CbsTrail() = default;
@@ -109,6 +114,7 @@ public:
 private:
 	void SpriteUpdate(const float DeltaTime);
 	void BufferUpdate(const float DeltaTime);
+	void ParticleUpdate(const float DeltaTime);
 	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
 	void VtxUVCalc(Vertex::TrailVertex* const VtxPtr);
 	void VertexBufUpdate();

@@ -8,6 +8,7 @@
 #include <iostream>
 #include "GraphicSystem.h"
 #include "Cbs_Short.h"
+#include "ParticleSystem.h"
 
 CbsTrail::CbsTrail()
 {
@@ -167,17 +168,14 @@ void CbsTrail::PlayStart(const Mode _Mode,
 				const auto CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
-				const Vector3 LowPos = FMath::Mul(Offset[CurMode].first, *Low * CbsWorld);
-
-				const Vector3 HighPos = FMath::Mul(Offset[CurMode].second, *Low * CbsWorld);
-
-				/*auto High = RQ->Get_BoneMatrixPtr("pole03");
-				const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);*/
+				
+				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * CbsWorld);
+				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *Low * CbsWorld);
 
 				for (int32 i = 0; i < _Desc.VtxCnt; ++i)
 				{
-					VtxPtr[i + 1].Location = HighPos;
-					VtxPtr[i].Location = LowPos;
+					VtxPtr[i + 1].Location = LatelyOffsets[i].second;
+					VtxPtr[i].Location = LatelyOffsets[i].first;
 				}
 			}
 		};
@@ -282,6 +280,29 @@ void CbsTrail::BufferUpdate(const float DeltaTime)
 		VertexBufUpdate();
 	}
 }
+void CbsTrail::ParticleUpdate(const float DeltaTime)
+{
+	CurParticleCycle-= DeltaTime;
+
+	if (CurParticleCycle)
+	{
+		CurParticleCycle += ParticleCycle;
+
+		if (auto SpTransform = m_pTransform.lock();
+			SpTransform)
+		{
+			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("IceCbsMid");
+			// ¾óÀ½ »Ñ¸®¼À
+			for (int32 i = 0; i < BoneCnt; ++i)
+			{
+				const Vector3& Low  = LatelyOffsets[i].first;
+				const Vector3& High = LatelyOffsets[i].second;
+
+
+			}			
+		}
+	}
+}
 void CbsTrail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr)
 {
 	// °î¼± º¸°£ .....
@@ -358,13 +379,14 @@ void CbsTrail::VertexBufUpdate()
 				const auto SwordWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
-				const Vector3 LowPos = FMath::Mul(Offset[CurMode].first, *Low * SwordWorld);
+				
+				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * SwordWorld);
 
 				auto High = Low;
-				const Vector3 HighPos = FMath::Mul(Offset[CurMode].second, *High * SwordWorld);
+				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * SwordWorld);
 
-				VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-				VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
+				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[i].second;
+				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[i].first;
 			}
 		};
 
@@ -501,6 +523,7 @@ UINT CbsTrail::Update(const float _fDeltaTime)
 
 	SpriteUpdate(_fDeltaTime);
 	BufferUpdate(_fDeltaTime);
+	ParticleUpdate(_fDeltaTime);
 
 	return 0;
 }

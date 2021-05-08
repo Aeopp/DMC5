@@ -7,8 +7,8 @@
 #include <vector>
 #include "ShapeParticle.h"
 
-class IceAge :     public ENGINE::GameObject,
-			       public ENGINE::RenderInterface
+class IceAge : public ENGINE::GameObject,
+			   public ENGINE::RenderInterface
 {
 public:
 private:
