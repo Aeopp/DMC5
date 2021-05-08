@@ -92,14 +92,19 @@ void IceAge::RenderInit()
 	{
 		Mesh::InitializeInfo _Info{};
 		_Info.bLocalVertexLocationsStorage = true;
-		Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
+		Inner = Resources::Load<StaticMesh>(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
 	}
 
 	// ÅØ½ºÃÄ 
-	Albedo = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\mesh_03_debris_ice00_00_albm.tga");
-	TrailMap = Resources::Load<Texture>("..\\..\\Usable\\mesh_03_cs_noise_00_00_alb.tga");
-	EmssiveMskMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
-	NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\water_new_height.png");
+	Albedo = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\mesh_03_debris_ice00_00_albm.tga");
+	TrailMap = Resources::Load<Texture>(
+		"..\\..\\Usable\\tex_03_common_000_0002_alpg.tga");
+	EmssiveMskMap = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
+	NoiseMap = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\water_new_height.png");
 
 	PushEditEntity(Inner.get());
 	PushEditEntity(Albedo.get());

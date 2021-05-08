@@ -40,7 +40,7 @@ public:
 public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
-		const Vector3 Scale = { 0.002f ,0.002f  ,0.002f  },
+		const Vector3 Scale = { 0.0017f ,0.0017f  ,0.0017f },
 		const float YawRotationSpeed =1000.f,
 		const float PlayTime = 2.5f);
 	void PlayEnd();

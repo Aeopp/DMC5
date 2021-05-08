@@ -1,5 +1,6 @@
 matrix matWorld;
 matrix ViewProjection;
+
 uniform float DistortionIntencity;
 uniform float exposure_corr;
 uniform vector _Color;
@@ -14,10 +15,12 @@ uniform float SpriteXEnd;
 uniform float SpriteYStart;
 uniform float SpriteYEnd;
 
-//uniform float3 ScrollSpeed;
-//uniform float3 Scale;
+uniform float3 ScrollSpeed;
+uniform float3 Scale;
 
-
+uniform float2 NoiseDistortion0 = float2(1, 1);
+uniform float2 NoiseDistortion1 = float2(2, 2);
+uniform float2 NoiseDistortion2 = float2(3, 3);
 
 texture DepthMap;
 sampler Depth = sampler_state
@@ -30,10 +33,10 @@ sampler Depth = sampler_state
 };
 
 
-texture SpriteMap;
-sampler Sprite = sampler_state
+texture AlbmMap;
+sampler Albm = sampler_state
 {
-    texture = SpriteMap;
+    texture = AlbmMap;
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
@@ -66,33 +69,33 @@ sampler Emissive = sampler_state
     sRGBTexture = false;
 };
 
-//texture NoiseMap;
-//sampler Noise = sampler_state
-//{
-//    texture = NoiseMap;
-//    minfilter = linear;
-//    magfilter = linear;
-//    mipfilter = linear;
-//    AddressU = wrap;
-//    AddressV = wrap;
-//    sRGBTexture = false;
-//};
+texture NoiseMap;
+sampler Noise = sampler_state
+{
+    texture = NoiseMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
+};
 
 
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV0 : TEXCOORD0,
             in out float2 UV1 : TEXCOORD1 ,
-            out float4 ClipPosition : TEXCOORD2)
-            //out float2 UV2 : TEXCOORD2,
-            //out float2 UV3 : TEXCOORD3,
-            //out float2 UV4 : TEXCOORD4)
+            out float4 ClipPosition : TEXCOORD2,
+            out float2 UV2 : TEXCOORD3,
+            out float2 UV3 : TEXCOORD4,
+            out float2 UV4 : TEXCOORD5   )
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
     
-    //UV2 = UV0 * Scale.x + ScrollSpeed.x;
-    //UV3 = UV0 * Scale.y + ScrollSpeed.y;
-    //UV4 = UV0 * Scale.z + ScrollSpeed.z;
+    UV2 = UV0 * Scale.x + ScrollSpeed.x;
+    UV3 = UV0 * Scale.y + ScrollSpeed.y;
+    UV4 = UV0 * Scale.z + ScrollSpeed.z;
 };
 
 
@@ -100,22 +103,44 @@ void PsMain(out float4 Color : COLOR0,
             out float4 Color1 : COLOR1 ,
             in float2 UV0 : TEXCOORD0 ,
             in float2 UV1 : TEXCOORD1 ,
-            in float4 ClipPosition : TEXCOORD2
-            //int float2 UV2 :TEXCOORD2 ,
+            in float4 ClipPosition : TEXCOORD2 ,
+
+            in float2 UV2 : TEXCOORD3,
+            in float2 UV3 : TEXCOORD4,
+            in float2 UV4 : TEXCOORD5
 )
 {
+    float2 finalNoise = float2(0, 0);
+    
+    // 노이즈 시작 
+    
+    float4 Noise1 = tex2D(Noise, UV2);
+    float4 Noise2 = tex2D(Noise, UV3);
+    float4 Noise3 = tex2D(Noise, UV4);
+
+    Noise1 = (Noise1 - 0.5f) * 2.0f;
+    Noise2 = (Noise2 - 0.5f) * 2.0f;
+    Noise3 = (Noise3 - 0.5f) * 2.0f;
+    
+    Noise1.xy = Noise1.xy * NoiseDistortion0.xy;
+    Noise2.xy = Noise2.xy * NoiseDistortion1.xy;
+    Noise3.xy = Noise3.xy * NoiseDistortion2.xy;
+    
+    finalNoise = Noise1 + Noise2 + Noise3;
+    // 노이즈 끝.
+    
     // Color = float4(1.0f, 0.0f, 0.0f, 0.5f);
-    UV0.x = 1.0f - UV0.x;
+    // UV0.x = 1.0f - UV0.x;
     float2 OriginUV0 = UV0;
     float4 EmissiveSample = tex2D(Emissive, OriginUV0);
     EmissiveSample.rgb *= EmissiveIntencity;
     
-    UV1.x = 1.0f - UV1.x;
+    // UV1.x = 1.0f - UV1.x;
     
     UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
     UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
 
-    Color = tex2D(Sprite, UV0);
+    Color = tex2D(Albm, UV0 + finalNoise);
     
     Color *= _Color;
     Color.rgb *= ColorIntencity;

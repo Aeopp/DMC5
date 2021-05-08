@@ -108,7 +108,7 @@ void CbsTrail::RenderInit()
 	Device = g_pDevice;
 	VtxDecl = Vertex::TrailVertex::GetVertexDecl(Device);
 
-	for (uint32 i = 0; i < TrailCnt; ++i)
+	for (uint32 i = 0; i < BoneCnt; ++i)
 	{
 		Device->CreateVertexBuffer
 		(_Desc.VtxSize * _Desc.VtxCnt, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
@@ -124,24 +124,16 @@ void CbsTrail::RenderInit()
 
 
 	TrailMap = Resources::Load<Texture>(
-		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
-	FireSpriteMap = Resources::Load<Texture >(
-		  "..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
-	ExplosionTrailMap =Resources::Load<Texture >(
-		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
-
+		"..\\..\\Usable\\tex_03_common_000_0002_alpg.tga");
+	IceMap = Resources::Load<Texture >(
+		  "..\\..\\Resource\\Texture\\Effect\\mesh_03_debris_ice00_00_albm.tga");
+	IceTrailMap =Resources::Load<Texture >(
+		"..\\..\\Usable\\tex_03_common_000_0001_alpg.tga");
 	EmissiveMskMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
-	//NoiseMap = Resources::Load<Texture>(
-	//	"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
-	//	
-	SpriteCol = 8;
-	SpriteRow = 8;
+	NoiseMap = Resources::Load<Texture>(
+		"..\\..\\Usable\\noisesample_msk.tga");
 
-	Scale = { 1.f,2.f,3.f };
-	ScrollSpeed = { 1.f,2.f,3.f };
-
-	EmissiveIntencity = 0.0f;
 };
 
 void CbsTrail::PlayStart(const Mode _Mode,
@@ -152,37 +144,36 @@ void CbsTrail::PlayStart(const Mode _Mode,
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
 	}
 
-	for (uint32 i=0;i<TrailCnt;++i)
+	if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
+		_GameObject)
 	{
-		auto& _VtxBuffer = VtxBuffers[i];
-
-		Vertex::TrailVertex* VtxPtr{ nullptr };
-		_VtxBuffer->Lock(0, 0, (void**)&VtxPtr, NULL);
-
-		if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
-			_GameObject)
+		if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
+			_CbsShort)
 		{
-			if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
-				_CbsShort)
+			const auto _CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+
+			for (int32 i = 0; i < BoneCnt; ++i)
 			{
-				const auto CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+				Vertex::TrailVertex* VtxPtr{};
+				auto& VtxBuffer = VtxBuffers[i];
+				VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
 
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
-				
-				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * CbsWorld);
-				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *Low * CbsWorld);
+				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
 
-				for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+				auto High = Low;
+				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
+
+				for (int32 j = 0; j  < _Desc.VtxCnt; j+=2)
 				{
-					VtxPtr[i + 1].Location = LatelyOffsets[i].second;
-					VtxPtr[i].Location = LatelyOffsets[i].first;
-				}
-			}
-		};
+					VtxPtr[j + 1].Location = LatelyOffsets[i].second;
+					VtxPtr[j].Location = LatelyOffsets[i].first;
 
-		// ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
-		_VtxBuffer->Unlock();
-	}
+				};
+				VtxBuffer->Unlock();
+			}
+		}
+	};
 
 	for (auto& _IdxBuffer : IdxBuffers)
 	{
@@ -197,9 +188,7 @@ void CbsTrail::PlayStart(const Mode _Mode,
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
 	_Desc.UpdateCycle = _Desc.CurVtxUpdateCycle;
-	SpriteCurUpdateCycle = SpriteUpdateCycle;
-	SpriteRowIdx = 0;
-	SpriteColIdx = 0;
+
 };
 
 void CbsTrail::PlayEnd()
@@ -211,36 +200,37 @@ void CbsTrail::RenderTrail(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
-	if (CurMode == Mode::Ice)
+	if (CurMode == Mode::IceAge)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
-		_Info.Fx->SetTexture("TrailMap", ExplosionTrailMap->GetTexture());
-		_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
-		/*_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
+		_Info.Fx->SetTexture("TrailMap", IceTrailMap->GetTexture());
+		_Info.Fx->SetTexture("AlbmMap", IceMap->GetTexture());
+
+		_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
 		_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed, 3);
-		_Info.Fx->SetFloatArray("Scale", Scale, 3);*/
-		
+		_Info.Fx->SetFloatArray("Scale", Scale, 3);
+
+		_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0,2u);
+		_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1,2u);
+		_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2,2u);
+
+		_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
 	}
 	else if (CurMode == Mode::Non)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", NonDistortionIntencity);
 		_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
-		_Info.Fx->SetTexture("SpriteMap", nullptr);
+		_Info.Fx->SetTexture("AlbmMap", nullptr);
+		_Info.Fx->SetFloat("EmissiveIntencity", 0.0f);
 	}
 
-
 	_Info.Fx->SetTexture("EmissiveMskMap", EmissiveMskMap->GetTexture());
-	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
+	
 
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 
-	_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / SpriteCol);
-	_Info.Fx->SetFloat("SpriteXEnd",  ( SpriteColIdx + 1)/ SpriteCol);
-	_Info.Fx->SetFloat("SpriteYStart",SpriteRowIdx/ SpriteRow );
-	_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
-
-	for (int32 i = 0; i < TrailCnt; ++i)
+	for (int32 i = 0; i < BoneCnt; ++i)
 	{
 		Device->SetStreamSource(0, VtxBuffers[i], 0, _Desc.VtxSize);
 		Device->SetVertexDeclaration(VtxDecl);
@@ -248,26 +238,8 @@ void CbsTrail::RenderTrail(const DrawInfo& _Info)
 		_Info.Fx->CommitChanges();
 		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
 	}
-	
 }
-void CbsTrail::SpriteUpdate(const float DeltaTime)
-{
-	SpriteCurUpdateCycle -= DeltaTime;
-	if (SpriteCurUpdateCycle < 0.0f)
-	{
-		++SpriteColIdx;
-		if (SpriteColIdx >= SpriteCol)
-		{
-			SpriteColIdx = 0;
-			++SpriteRowIdx;
-			if (SpriteRowIdx >= SpriteRow)
-			{
-				SpriteRowIdx = 0;
-			}
-		}
-		SpriteCurUpdateCycle += SpriteUpdateCycle;
-	}
-}
+
 void CbsTrail::BufferUpdate(const float DeltaTime)
 {
 	_Desc.CurVtxUpdateCycle -= DeltaTime;
@@ -278,6 +250,8 @@ void CbsTrail::BufferUpdate(const float DeltaTime)
 
 		IndexBufUpdate();
 		VertexBufUpdate();
+		
+		
 	}
 }
 void CbsTrail::ParticleUpdate(const float DeltaTime)
@@ -295,7 +269,7 @@ void CbsTrail::ParticleUpdate(const float DeltaTime)
 				ParticleSystem::GetInstance()->PlayParticle("IceCbsMid",true);
 			// ¾óÀ½ »Ñ¸®¼À
 			const uint32 JumpOffset = 350u;
-
+			
 			for (int32 i = 0; i < _PlayableParticle.size();
 				i += JumpOffset)
 			{
@@ -364,7 +338,7 @@ void CbsTrail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr)
 
 void CbsTrail::VertexBufUpdate()
 {
-	for (int32 i = 0; i < TrailCnt; ++i)
+	for (int32 i = 0; i < BoneCnt; ++i)
 	{
 		auto& VtxBuffer = VtxBuffers[i];
 
@@ -410,7 +384,7 @@ void CbsTrail::VertexBufUpdate()
 
 		if (bEdit)
 		{
-			for (int32 i = 0; i < TrailCnt; ++i)
+			for (int32 i = 0; i < BoneCnt; ++i)
 			{
 				auto& _CurVtxLog = _VtxLog[i];
 				_CurVtxLog.resize(_Desc.NewVtxCnt);
@@ -442,7 +416,7 @@ void CbsTrail::IndexBufUpdate()
 		 ¢Ö ¡é
 		0 ¡ç 2
 		*/
-	for (uint32 i = 0; i < TrailCnt; ++i)
+	for (uint32 i = 0; i < BoneCnt; ++i)
 	{
 		Vertex::Index32* IdxPtr{ nullptr };
 		auto& IdxBuffer = IdxBuffers[i];
@@ -489,7 +463,7 @@ void CbsTrail::RenderDebug(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 
-	for (int32 i = 0; i < TrailCnt; ++i)
+	for (int32 i = 0; i < BoneCnt; ++i)
 	{
 		auto& VtxBuffer = VtxBuffers[i];
 		auto& IdxBuffer = IdxBuffers[i];
@@ -535,7 +509,6 @@ UINT CbsTrail::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
-	SpriteUpdate(_fDeltaTime);
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
 
@@ -568,8 +541,7 @@ void CbsTrail::Editor()
 			{
 				PlayEnd();
 			}
-			ImGui::Text("Cur Col Idx : %d", (int32)SpriteColIdx);
-			ImGui::Text("Cur Row Idx : %d", (int32)SpriteRowIdx);
+		
 
 			for (auto& _Vtx : _VtxLog)
 			{
@@ -586,7 +558,6 @@ void CbsTrail::Editor()
 			ImGui::SliderFloat3("LowOffset",Offset[CurMode].first, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", Offset[CurMode].second, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
-			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
@@ -597,6 +568,15 @@ void CbsTrail::Editor()
 
 			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
+
+			ImGui::SliderFloat2("NoiseDistortion0", NoiseDistortion0, FLT_MIN, 100.f, "%9.6f");
+			ImGui::SliderFloat2("In NoiseDistortion0", NoiseDistortion0, FLT_MIN, 100.f, "%9.6f");
+
+			ImGui::SliderFloat2("NoiseDistortion1", NoiseDistortion1, FLT_MIN, 100.f, "%9.6f");
+			ImGui::SliderFloat2("In NoiseDistortion1", NoiseDistortion1, FLT_MIN, 100.f, "%9.6f");
+
+			ImGui::SliderFloat2("NoiseDistortion2", NoiseDistortion2, FLT_MIN, 100.f, "%9.6f");
+			ImGui::SliderFloat2("In NoiseDistortion2", NoiseDistortion2, FLT_MIN, 100.f, "%9.6f");
 
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");

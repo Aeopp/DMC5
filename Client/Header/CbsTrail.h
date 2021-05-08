@@ -26,7 +26,7 @@ public:
 	enum  Mode : uint32
 	{
 		Non,
-		Ice
+		IceAge
 	};
 private:
 	// F -> Low S -> High
@@ -37,49 +37,43 @@ private:
 		// Ice
 		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} }
 	};
-	static constexpr uint32 TrailCnt = 2u;
+
 	static constexpr uint32 BoneCnt = 3u;
 
 	std::array<std::string, BoneCnt > BoneNames{  "pole01","pole02","pole03"};
-	std::array< IDirect3DVertexBuffer9*,TrailCnt> VtxBuffers{};
-	std::array< IDirect3DIndexBuffer9*,TrailCnt> IdxBuffers{};
+	std::array< IDirect3DVertexBuffer9*, BoneCnt> VtxBuffers{};
+	std::array< IDirect3DIndexBuffer9*, BoneCnt> IdxBuffers{};
 	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
 	IDirect3DDevice9* Device{ nullptr };
 
 	std::shared_ptr<Texture> TrailMap{};
-	std::shared_ptr<Texture> ExplosionTrailMap{};
-	std::shared_ptr<Texture> FireSpriteMap{};
+	std::shared_ptr<Texture> IceTrailMap{};
+	std::shared_ptr<Texture> IceMap{};
 	std::shared_ptr<Texture> EmissiveMskMap{};
-	/*std::shared_ptr<Texture> NoiseMap{};*/
+	std::shared_ptr<Texture> NoiseMap{};
 
 	uint32  CurMode = static_cast<uint32>(Mode::Non);
-
-	float SpriteRow;
-	float SpriteCol;
-	float SpriteRowIdx = 0.f;
-	float SpriteColIdx = 0.f;
-
-	float SpriteCurUpdateCycle = 0.0f;
-	float SpriteUpdateCycle = 0.000001f;
-
-	
 	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
 
 	float NonDistortionIntencity = 1.f;
 	float DistortionIntencity = 10000.f;
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
-	float ColorIntencity = 40.f;
-	float EmissiveIntencity= 0.0f;
+	float ColorIntencity = 0.5f;
+	float EmissiveIntencity = 100.f;
 
-	Vector3 Scale{ 1.f,2.f,3.f };
-	Vector3 ScrollSpeed{ 1.f,2.f,3.f };
+	Vector3 Scale{ 48.f,49.f,80.f};
+	Vector3 ScrollSpeed{ 15.f,28.f,20.f};
+
+	Vector2 NoiseDistortion0{ 78.f,50.f};
+	Vector2 NoiseDistortion1{ 22.5f,100.f};
+	Vector2 NoiseDistortion2{ 55.f,10.f};
 
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 
-	std::array<std::vector<Vertex::Index32>,TrailCnt> _IdxLog{};
-	std::array<std::vector<Vertex::TrailVertex>, TrailCnt> _VtxLog{};
+	std::array<std::vector<Vertex::Index32>, BoneCnt> _IdxLog{};
+	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _VtxLog{};
 
 	// Low High
 	std::array<std::pair<Vector3, Vector3>, BoneCnt >  LatelyOffsets{};
@@ -112,7 +106,6 @@ public:
 				const std::optional<Vector3>& Location = std::nullopt);
 	void PlayEnd();
 private:
-	void SpriteUpdate(const float DeltaTime);
 	void BufferUpdate(const float DeltaTime);
 	void ParticleUpdate(const float DeltaTime);
 	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
