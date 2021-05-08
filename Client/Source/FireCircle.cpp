@@ -7,6 +7,7 @@
 #include <iostream>
 #include "GraphicSystem.h"
 #include "RedQueen.h"
+#include "ParticleSystem.h"
 
 FireCircle::FireCircle()
 {
@@ -163,6 +164,8 @@ void FireCircle::PlayStart(const Vector3& Rotation,
 
 	SpritePrevRowIdx = SpriteRowIdx = static_cast<float>(StartSpriteRow);
 	SpritePrevColIdx = SpriteColIdx = static_cast<float>(StartSpriteCol);
+
+	CurParticleTime= 0.0f;
 };
 
 void FireCircle::PlayEnd()
@@ -256,6 +259,28 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		};
 	}
 };
+
+void FireCircle::PlayParticle()
+{
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		const Matrix Mat = SpTransform->GetRenderMatrix();
+		const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
+		const uint32 JumpOffset = 2u;
+
+		{
+			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("FireParticle", true);
+			for (int32 i = 0; i < _PlayableParticle.size();
+				i += JumpOffset)
+			{
+				auto& _PlayInstance = _PlayableParticle[i];
+				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+			}
+		}
+	};
+	
+}
 
 void FireCircle::SpriteUpdate(const float DeltaTime)
 {
@@ -373,14 +398,19 @@ UINT FireCircle::Update(const float _fDeltaTime)
 		_RenderUpdateInfo.World =
 			FMath::Scale(spTransform->GetScale())* FMath::Rotation({ 0.f,0.f,CurRoll })
 			* FMath::Rotation(_Rotation)* FMath::Translation(spTransform->GetPosition());
-		
-		/*const Vector3 RotateAxis =	spTransform->GetLook()* RollRotationSpeed* _fDeltaTime;
-		spTransform->Rotate(RotateAxis);*/
 
 		spTransform->SetWorldMatrix(_RenderUpdateInfo.World);
 	}
 
 	SpriteUpdate(_fDeltaTime);
+
+	CurParticleTime -= _fDeltaTime;
+	if (CurParticleTime < 0.0f)
+	{
+		CurParticleTime += ParticleTime;
+
+		PlayParticle();
+	}
 	return 0;
 }
 

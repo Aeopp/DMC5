@@ -62,11 +62,11 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
-	/*AddGameObject<FireCircle>();
-	AddGameObject<CbsTrail>();*/
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
+	//AddGameObject<BtlPanel>();
+	AddGameObject<FireCircle>();
+	AddGameObject<CbsTrail>();
 
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();

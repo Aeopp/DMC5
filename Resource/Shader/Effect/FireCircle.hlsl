@@ -23,11 +23,6 @@ uniform float SpriteProgressTime;
 uniform float AlphaFactor;
 ;
 
-//uniform float SpritePrevXStart;
-//uniform float SpritePrevXEnd;
-//uniform float SpritePrevYStart;
-//uniform float SpritePrevYEnd;
-
 uniform float SpriteXStart;
 uniform float SpriteXEnd;
 uniform float SpriteYStart;
@@ -109,6 +104,10 @@ void VsMain(in out float4 Position : POSITION0,
     UV2 = (UV0 * NoiseScale.x) + NoiseScrollSpeed.x;
     UV3 = (UV0 * NoiseScale.y) + NoiseScrollSpeed.y;
     UV4 = (UV0 * NoiseScale.z) + NoiseScrollSpeed.z;
+    
+    
+    UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
+    UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
 };
 
 
@@ -149,9 +148,6 @@ void PsMain(out float4 Color : COLOR0,
     //            lerp(SpritePrevYStart, SpritePrevYEnd, UV0.y));
     
     // float4 PrevColor = tex2D(Sprite, PrevUV0 + finalNoise);
-    
-    UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
-    UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
     
     
     float4 EmissiveSample = tex2D(Emissive, UV0);

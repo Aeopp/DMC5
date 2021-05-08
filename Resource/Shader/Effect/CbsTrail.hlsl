@@ -137,9 +137,6 @@ void PsMain(out float4 Color : COLOR0,
     
     // UV1.x = 1.0f - UV1.x;
     
-    UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
-    UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
-
     Color = tex2D(Albm, UV0 + finalNoise);
     
     Color *= _Color;

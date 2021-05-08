@@ -35,6 +35,8 @@ public:
 				_SpriteDesc.CurInterval = _SpriteDesc.Interval = Interval;
 				_SpriteDesc.bColLoop = bColLoop;
 				_SpriteDesc.bRowLoop = bRowLoop;
+
+				return _SpriteDesc;
 			};
 
 			void Update(const float Delta)
@@ -250,10 +252,11 @@ public:
 	std::vector<ParticleSystem::ParticleInstance>* 
 		PreGenerated
 	(const std::string& Identifier /*등록한 이름으로 제어하세요*/,
-				 const Particle& _Particle ,
+				const Particle& _Particle ,
 				const uint64 PoolSize);
 	// Reserve 한 파티클중 현재 Reset 상태에 들어간 파티클들.
-	std::vector<ParticleInstance*>PlayParticle(const std::string& Identifier ,
+	std::vector<ParticleInstance*>PlayParticle(
+		const std::string& Identifier ,
 		const bool bLifeTimeAlphaFactor);
 	Particle* PtrParticle(const std::string& Identifier);
 private:

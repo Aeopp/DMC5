@@ -50,6 +50,7 @@ public:
 		const Vector3& Scale = { 0.004f, 0.004f,0.004f });
 	void PlayEnd();
 public:
+	void PlayParticle();
 	void SpriteUpdate(const float DeltaTime);
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
@@ -93,6 +94,9 @@ private:
 	float PlayTime = 1.f;
 	float CurRoll{ 0.f };
 	Vector3 _Rotation{ 0.f,0.f,0.f };
+
+	float ParticleTime = 0.1f;
+	float CurParticleTime = 0.0f;
 
 	float EditPlayStartPlayTime = 1.f;
 	float EditStartRoll{ 0.0f };

@@ -67,6 +67,7 @@ void Application::IceParticlePoolLoad()
 {
 	IceAgeParticlePoolLoad();
 	IceCbsMidParticlePoolLoad();
+	FireParticlePoolLoad();
 };
 
 void Application::IceCbsMidParticlePoolLoad()
@@ -266,27 +267,25 @@ void Application::FireParticlePoolLoad()
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = false;
 	_PushParticle._Mesh = Resources::Load<StaticMesh>(
-		"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
 
 	_PushParticle.bLerpTimeNormalized = false;
 	// Particle 정보 채워주기 
 	_PushParticle._ShaderKey = "FireParticle";
 	// 공유 정보 바인드 
-	_PushParticle.SharedResourceBind = [](
+
+	auto _Tex = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\10.tga");
+
+	_PushParticle.SharedResourceBind = [_Tex](
 		ENGINE::ParticleSystem::Particle& TargetParticle,
 		ID3DXEffect* const Fx)
 	{
-		if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
-			Subset)
-		{
-			Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
-			Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
-		}
+		Fx->SetTexture("AlbmMap", _Tex->GetTexture());
 	};
 
 	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
 	{
-		const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+		const auto& _Value = std::any_cast<const ParticleInstance::Fire&>(_InstanceVariable);
 		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
 		return;
 	};
@@ -294,7 +293,7 @@ void Application::FireParticlePoolLoad()
 	const uint64 PoolSize = 300;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated("IceCbsMid", std::move(_PushParticle), PoolSize);
+		ParticleSystem::GetInstance()->PreGenerated("FireParticle", std::move(_PushParticle), PoolSize);
 
 	for (auto& _ParticleInstance : *ParticlePool)
 	{
@@ -302,17 +301,16 @@ void Application::FireParticlePoolLoad()
 
 		const Vector3 TargetLocation = Vector3{ 0.f,0.f,0.f };
 
-		static constexpr float StartVelocityScale = 0.075f;
-		static constexpr float SecondVelocityScale = 0.115f;
-		static constexpr float ThirdVelocityScale = 0.15f;
+		static constexpr float StartVelocityScale = 100.f;
+		static constexpr float SecondVelocityScale = 200.f;
+		static constexpr float ThirdVelocityScale = 300.f;
 
-		ParticleInstance::Ice _IceValue{};
-		_IceValue.ColorIntencity = FMath::Random(0.01f, 0.04f);
+		ParticleInstance::Fire _FireValue{};
+		_FireValue.ColorIntencity = FMath::Random(0.01f, 0.04f);
 		const float LifeTime = FMath::Random(0.20f, 1.f);
 		const Vector3 ParticleScale =
 			FMath::Random(Vector3{ 0.05f ,0.05f ,0.05f },
 				Vector3{ 0.067,0.067,0.067f }) * GScale;
-
 
 		const Vector3 Cp0 = TargetLocation + FMath::Random(Vector3{ -1.f,-1.f,-1.f } *StartVelocityScale,
 			Vector3{ 1.f,1.f,1.f }    *StartVelocityScale);
@@ -330,10 +328,14 @@ void Application::FireParticlePoolLoad()
 		const Vector3 RotCp1 = RotCp0 + EulerVelocity * SecondVelocityScale;
 		const Vector3 EndRot = RotCp1 + EulerVelocity * ThirdVelocityScale;
 
+		const auto _SpriteDesc = 
+			ParticleSystem::ParticleInstance::SpriteDesc::Make(8, 8, 0, FMath::Random(0.f, 7.f), 0.008f, 
+				false, false);
+
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },
 			ParticleScale,
-			LifeTime, 0.0f, _IceValue, std::nullopt);
+			LifeTime, 0.0f, _FireValue, _SpriteDesc);
 	}
 }
 
