@@ -251,6 +251,7 @@ public:
 	void SetTargetCursor(const Vector3& TargetPos, const float HPRatio = 1.f);	/* HPRatio = 현재 HP / 최대 HP */
 	void SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass = true);		/* HPRatio = 현재 HP / 최대 HP */
 
+
 	float GetTDTGauge() const { return _TDTGauge; } /* 0 ~ 1 */
 	void AccumulateTDTGauge(const float Amount);
 	void ConsumeTDTGauge(const float Speed = 1.f);	/* 0이 될때까지 Speed * DeltaTime 만큼 TDTGauge 감소 */
@@ -266,7 +267,7 @@ public:
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count);
 
-	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Fire, 1: Ice, 2: Thunder
+	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
 	void AccumulateRedOrb(const uint32 Amount);
 

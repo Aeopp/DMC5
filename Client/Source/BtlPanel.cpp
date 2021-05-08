@@ -164,13 +164,13 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 						switch (_CbsColor)
 						{
 						case 1:
-							ExtraColor = Vector3(0.f, 0.819f, 0.847f);
+							ExtraColor = Vector3(0.627f, 0.f, 0.937f);		
 							break;
 						case 2:
-							ExtraColor = Vector3(0.627f, 0.f, 0.937f);
+							ExtraColor = Vector3(1.f, 0.f, 0.f);
 							break;
 						case 0: default:
-							ExtraColor = Vector3(1.f, 0.f, 0.f);
+							ExtraColor = Vector3(0.f, 0.819f, 0.847f);
 							break;
 						}
 
