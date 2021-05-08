@@ -90,7 +90,7 @@ void Trail::RenderInit()
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 
-	_Desc.UpdateCycle = 0.0f;
+	_Desc.UpdateCycle = 0.016f;
 	_Desc.NewVtxCnt = 0;
 	UV0Multiply = 1.f;
 

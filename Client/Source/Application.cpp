@@ -101,7 +101,7 @@ void Application::IceCbsMidParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 1000;
+	const uint64 PoolSize = 300;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("IceCbsMid", std::move(_PushParticle), PoolSize);
@@ -119,7 +119,10 @@ void Application::IceCbsMidParticlePoolLoad()
 		ParticleInstance::Ice _IceValue{};
 		_IceValue.ColorIntencity = FMath::Random(0.01f, 0.04f);
 		const float LifeTime = FMath::Random(0.20f, 1.f);
-		static const float ParticleScale = FMath::Random(0.018f,0.036f) * GScale;
+		const Vector3 ParticleScale =
+			FMath::Random(Vector3{ 0.05f ,0.05f ,0.05f }, 
+				Vector3{ 0.067,0.067,0.067f }) * GScale;
+
 
 		const Vector3 Cp0 = TargetLocation + FMath::Random(Vector3{-1.f,-1.f,-1.f} *StartVelocityScale,
 														   Vector3{1.f,1.f,1.f}    *StartVelocityScale);
@@ -139,7 +142,7 @@ void Application::IceCbsMidParticlePoolLoad()
 
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },
-			{ ParticleScale,ParticleScale,ParticleScale }, 
+			ParticleScale , 
 			LifeTime, 0.0f, _IceValue, std::nullopt);
 	}
 }
@@ -234,7 +237,9 @@ void Application::IceAgeParticlePoolLoad()
 		const Vector3 End = Cp1 + (LocalVtxDir * Cp2Scale);
 
 		Vector2 ScaleRange{ 0.05f,0.09f };
-		const float PScale = FMath::Random(ScaleRange.x, ScaleRange.y) * GScale;
+		const Vector3 PScale = FMath::Random(
+			Vector3(0.05f, 0.05f, 0.05f),
+			Vector3(0.09f, 0.09f, 0.09f)) * GScale;
 
 		const Vector3 StartRot = {
 			FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
@@ -250,9 +255,8 @@ void Application::IceAgeParticlePoolLoad()
 
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },
-			{ PScale,PScale,PScale }, LifeTime, 0.0f, _IceValue, std::nullopt);
+			PScale, LifeTime, 0.0f, _IceValue, std::nullopt);
 	}
-
 }
 
 void Application::FireParticlePoolLoad()
@@ -262,7 +266,7 @@ void Application::FireParticlePoolLoad()
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = false;
 	_PushParticle._Mesh = Resources::Load<StaticMesh>(
-		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+		"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
 
 	_PushParticle.bLerpTimeNormalized = false;
 	// Particle 정보 채워주기 
@@ -287,7 +291,49 @@ void Application::FireParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 1000;
-	ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
+	const uint64 PoolSize = 300;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("IceCbsMid", std::move(_PushParticle), PoolSize);
+
+	for (auto& _ParticleInstance : *ParticlePool)
+	{
+		Vector2 Range{ -1.f,1.f };
+
+		const Vector3 TargetLocation = Vector3{ 0.f,0.f,0.f };
+
+		static constexpr float StartVelocityScale = 0.075f;
+		static constexpr float SecondVelocityScale = 0.115f;
+		static constexpr float ThirdVelocityScale = 0.15f;
+
+		ParticleInstance::Ice _IceValue{};
+		_IceValue.ColorIntencity = FMath::Random(0.01f, 0.04f);
+		const float LifeTime = FMath::Random(0.20f, 1.f);
+		const Vector3 ParticleScale =
+			FMath::Random(Vector3{ 0.05f ,0.05f ,0.05f },
+				Vector3{ 0.067,0.067,0.067f }) * GScale;
+
+
+		const Vector3 Cp0 = TargetLocation + FMath::Random(Vector3{ -1.f,-1.f,-1.f } *StartVelocityScale,
+			Vector3{ 1.f,1.f,1.f }    *StartVelocityScale);
+
+		const Vector3 Cp1 = Cp0 + FMath::Random(Vector3{ -1.f,-1.f,-1.f } *SecondVelocityScale,
+			Vector3{ 1.f,1.f,1.f }    *SecondVelocityScale);
+
+		const Vector3 End = Cp1 + FMath::Random(Vector3{ -1.f,-1.f,-1.f } *ThirdVelocityScale,
+			Vector3{ 1.f,1.f,1.f }    *ThirdVelocityScale);
+
+		const Vector3 StartRot = FMath::RandomEuler(1.f);
+		const Vector3 EulerVelocity = FMath::RandomEuler(StartVelocityScale);
+
+		const Vector3 RotCp0 = StartRot + EulerVelocity;
+		const Vector3 RotCp1 = RotCp0 + EulerVelocity * SecondVelocityScale;
+		const Vector3 EndRot = RotCp1 + EulerVelocity * ThirdVelocityScale;
+
+		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
+			{ StartRot,RotCp0,RotCp1,EndRot },
+			ParticleScale,
+			LifeTime, 0.0f, _IceValue, std::nullopt);
+	}
 }
 

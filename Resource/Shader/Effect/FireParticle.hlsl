@@ -34,13 +34,13 @@ void VsMain(in out float4 Position : POSITION0,
             in out float2 UV1 : TEXCOORD1)
 {
     Position = mul(Position, matWorld);
-     Position = mul(Position, ViewProjection);
+    Position = mul(Position, ViewProjection);
     
 };
 
-void PsMain(out float4 Color : COLOR0 ,
-            in  float2 UV0 : TEXCOORD0 ,
-            in  float2 UV1 : TEXCOORD1 )
+void PsMain(out float4 Color : COLOR0,
+            in float2 UV0 : TEXCOORD0,
+            in float2 UV1 : TEXCOORD1)
 {
     Color = tex2D(Albm, UV0);
     Color.rgb *= ColorIntencity;
@@ -57,9 +57,9 @@ technique Default
         srcblend = srcalpha;
         destblend = invsrcalpha;
         //zenable = false;
-        zwriteenable = false;
+        zwriteenable = true;
         sRGBWRITEENABLE = false;
-        cullmode = ccw;
+        cullmode = none;
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();
     }

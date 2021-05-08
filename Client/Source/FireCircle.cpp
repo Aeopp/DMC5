@@ -39,7 +39,7 @@ void FireCircle::RenderReady()
 		// _RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (Inner)
 		{
-			const uint32  Numsubset = Inner->GetNumSubset();
+			const uint32 Numsubset = Inner->GetNumSubset();
 			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
 
 			for (uint32 i = 0; i < Numsubset; ++i)
@@ -64,7 +64,6 @@ void FireCircle::RenderReady()
 				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
 			}
 		}
-
 	}
 
 };
@@ -105,7 +104,9 @@ void FireCircle::RenderInit()
 	// 메시
 	// Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
 	Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
+
 	Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
+	// Inner = Resources::Load<StaticMesh>("..\\..\\Usable\\Convex2.fbx");
 
 	// Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\halfpipe.fbx");
 	// 텍스쳐 
@@ -162,8 +163,6 @@ void FireCircle::PlayStart(const Vector3& Rotation,
 
 	SpritePrevRowIdx = SpriteRowIdx = static_cast<float>(StartSpriteRow);
 	SpritePrevColIdx = SpriteColIdx = static_cast<float>(StartSpriteCol);
-
-	
 };
 
 void FireCircle::PlayEnd()
