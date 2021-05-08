@@ -60,13 +60,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -201,7 +201,7 @@ HRESULT TestScene::LoadScene()
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
 
-	// DOOMDAY
+	// DOOMSDAY
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{

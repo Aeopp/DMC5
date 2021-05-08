@@ -272,26 +272,33 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _BossGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _BossGaugeNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
-
-			_ImplInfo.Fx->SetFloat("_HP_Degree", _TargetHP_Degree);
+	
 			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrtho);
 
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.002f);
 			_ImplInfo.Fx->BeginPass(3);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0005f);
 			_ImplInfo.Fx->BeginPass(4);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.005f);
+			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrthoDelay);
+			_ImplInfo.Fx->BeginPass(19);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrtho);
 			_ImplInfo.Fx->BeginPass(5);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
 			_ImplInfo.Fx->BeginPass(6);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
@@ -623,10 +630,13 @@ void BtlPanel::RenderReady()
 
 HRESULT BtlPanel::Ready()
 {
+	//
 	SetRenderEnable(true);
 
+	//
 	m_nTag = GAMEOBJECTTAG::UI_BtlPanel;
 
+	//
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::UI] =
@@ -640,6 +650,7 @@ HRESULT BtlPanel::Ready()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
+	//
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_Pipe0Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
 
@@ -707,10 +718,13 @@ HRESULT BtlPanel::Ready()
 	_RankBAAlbTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\RankBA.png");
 	_RankSAlbTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\RankS.png");
 
+	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
-		 
+	
+	//
 	Init_UIDescs();
 
+	//
 	_FontVec.reserve(FONT_END);
 	for (uint32 i = 0u; i < FONT_END; ++i)
 		_FontVec.push_back(static_pointer_cast<Font>(AddGameObject<Font>().lock()));
@@ -747,12 +761,12 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 	Update_Etc(_fDeltaTime);
 	Check_KeyInput(_fDeltaTime);
 
+	//
 	//POINT pt{};
 	//GetCursorPos(&pt);
 	//ScreenToClient(g_hWnd, &pt);
 	//Vector2 TargetPos = Vector2(static_cast<float>(pt.x), static_cast<float>(pt.y));
-	//
-	//std::cout << ScreenPosToOrtho(0.f, TargetPos.y).y << std::endl;
+	//std::cout << ScreenPosToOrtho(TargetPos.x, TargetPos.y).x << std::endl;
 
 	return 0;
 }          
@@ -828,6 +842,25 @@ void BtlPanel::SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass/*= true
 		_PlayerHPRatio = 1.f;
 	else if (_PlayerHPRatio < 0.f)
 		_PlayerHPRatio = 0.f;
+}
+
+void BtlPanel::SetBossGaugeActive(bool IsActive)
+{
+	_UIDescs[BOSS_GUAGE].Using = IsActive;
+}
+
+void BtlPanel::SetBossGaugeHPRatio(const float HPRatio)
+{
+	if (_BossGaugeHPRatio > HPRatio)
+		_BossGaugeHPRatioDelay = _BossGaugeHPRatio;
+	else
+		_BossGaugeHPRatioDelay = 0.f;
+
+	_BossGaugeHPRatio = HPRatio;
+	if (_BossGaugeHPRatio > 1.f)
+		_BossGaugeHPRatio = 1.f;
+	else if (_BossGaugeHPRatio < 0.f)
+		_BossGaugeHPRatio = 0.f;
 }
 
 void BtlPanel::AccumulateTDTGauge(const float Amount)
@@ -961,7 +994,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[REDORB] = { true, Vector3(1090.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
 	_UIDescs[TARGET_CURSOR] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.4f, 0.4f, 1.f) };
 	_UIDescs[TARGET_HP] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.56f, 0.56f, 1.f) };	// 0.46
-	_UIDescs[BOSS_GUAGE] = { false, Vector3(640.f, 670.f, 0.5f), Vector3(4.7f, 5.f, 1.f) };
+	_UIDescs[BOSS_GUAGE] = { true, Vector3(640.f, 660.f, 0.5f), Vector3(5.6f, 5.f, 1.f) };
 	_UIDescs[HP_GLASS] = { true, Vector3(-30.f, 14.f, 30.f), Vector3(0.01f, 0.01f, 0.01f) };
 	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(80.f, 91.f, 0.5f), Vector3(2.4f, 1.8f, 1.f) };
 	_UIDescs[EX_GAUGE] = { true, Vector3(-7.55f, 3.15f, 15.f), Vector3(0.01f, 0.01f, 0.01f) };
@@ -1627,9 +1660,7 @@ void BtlPanel::Update_PlayerHP(const float _fDeltaTime)
 {
 	//
 	if (_PlayerHPRatioDelay > _PlayerHPRatio)
-	{
 		_PlayerHPRatioDelay -= _fDeltaTime * 0.5f;
-	}
 
 	//
 	float HPGaugeOrthoWidth = 0.078125f;
@@ -1947,12 +1978,18 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 
 void BtlPanel::Update_Etc(const float _fDeltaTime)
 {
-	float BossGaugeOrthoOffsetToCenter = 0.344f; // 직접 수작업으로 찾아야 하나 ㅠㅠ
-	// + 적 체력 받아와서 degree 같은 애들 갱신하자
-	// 일단 임시. 보스게이지가 한가운데 있어서 밑 로직 가능
-	_BossGauge_CurXPosOrtho = -BossGaugeOrthoOffsetToCenter + ((360.f - _TargetHP_Degree) / 360.f * 2.f * BossGaugeOrthoOffsetToCenter);
+	// Boss HP
+	if (_BossGaugeHPRatioDelay > _BossGaugeHPRatio)
+		_BossGaugeHPRatioDelay -= _fDeltaTime * 1.5f;
+	else
+		_BossGaugeHPRatioDelay = 0.f;
 
-	//
+	float BossGaugeOrthoOffsetToCenter = 0.414f;
+	// 보스게이지가 한가운데 있어서 밑 로직 가능
+	_BossGauge_CurXPosOrtho = -BossGaugeOrthoOffsetToCenter + (_BossGaugeHPRatio * 2.f * BossGaugeOrthoOffsetToCenter);
+	_BossGauge_CurXPosOrthoDelay = -BossGaugeOrthoOffsetToCenter + (_BossGaugeHPRatioDelay * 2.f * BossGaugeOrthoOffsetToCenter);
+
+	// TDT Gauge
 	float TDTGaugeOrthoStartX = -0.685938f;
 	float TDTGaugeOrthoEndX = -0.33125f;
 	_TDTGauge_CurXPosOrtho = TDTGaugeOrthoStartX + _TDTGauge * (TDTGaugeOrthoEndX - TDTGaugeOrthoStartX);
@@ -2022,20 +2059,6 @@ Vector2 BtlPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 {
 	////////////////////////////
-	// 임시
-	//if (Input::GetKey(DIK_LEFTARROW))
-	//{
-	//	_TargetHP_Degree += 150.f * _fDeltaTime;
-	//	if (360.f < _TargetHP_Degree)
-	//		_TargetHP_Degree = 360.f;
-	//}
-	//if (Input::GetKey(DIK_RIGHTARROW))
-	//{
-	//	_TargetHP_Degree -= 150.f * _fDeltaTime;
-	//	if (0.f > _TargetHP_Degree)
-	//		_TargetHP_Degree = 0.f;
-	//}
-
 	if (Input::GetKeyDown(DIK_F1))
 	{
 		static bool bActive = _UIDescs[KEYBOARD].Using;
@@ -2066,6 +2089,11 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
 		AccumulateTDTGauge(0.5f);
 		//ChangeWeaponUI(Nero::WeaponList::RQ);
+
+		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
+		//bActive = !bActive;
+		//SetBossGaugeActive(bActive);
+
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
@@ -2075,6 +2103,12 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//	temp = 0;
 		//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
 		ResetRankScore();
+
+		//static float Ratio = 1.f;
+		//Ratio -= 0.1f;
+		//if (0.f > Ratio)
+		//	Ratio = 1.f;
+		//SetBossGaugeHPRatio(Ratio);
 	}
 	////////////////////////////
 

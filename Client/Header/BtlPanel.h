@@ -124,7 +124,11 @@ private:
 	float _HPGlassDirtAccTime = 999.f;
 	float _HPGlassRotY = 0.f;
 
+	/* 0 ~ 1 */
+	float _BossGaugeHPRatio = 1.f;
+	float _BossGaugeHPRatioDelay = 0.f;
 	float _BossGauge_CurXPosOrtho = 0.f;
+	float _BossGauge_CurXPosOrthoDelay = 0.f;
 
 	/* 0 ~ 1 */
 	float _TDTGauge = 0.f;
@@ -250,7 +254,9 @@ public:
 	void SetTargetCursorActive(bool IsActive);
 	void SetTargetCursor(const Vector3& TargetPos, const float HPRatio = 1.f);	/* HPRatio = 현재 HP / 최대 HP */
 	void SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass = true);		/* HPRatio = 현재 HP / 최대 HP */
-
+	
+	void SetBossGaugeActive(bool IsActive);
+	void SetBossGaugeHPRatio(const float HPRatio);	/* HPRatio = 현재 HP / 최대 HP */
 
 	float GetTDTGauge() const { return _TDTGauge; } /* 0 ~ 1 */
 	void AccumulateTDTGauge(const float Amount);
@@ -260,7 +266,7 @@ public:
 	
 	void AddRankScore(float Score);	// 처음 호출시 StylishPoints 누적 시작
 	void ResetRankScore();			// wave 하나가 끝나면 반드시 호출
-	int GetRank() const		{ return _CurRank; }	/* -1 ~ 6 */
+	int GetRank() const	{ return _CurRank; }	/* -1 ~ 6 */
 
 	float GetExGauge() const { return _ExGauge; }
 	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
