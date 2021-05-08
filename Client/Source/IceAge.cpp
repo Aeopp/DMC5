@@ -109,13 +109,11 @@ void IceAge::RenderInit()
 
 	NoiseScale = { 0.005f,0.02f,0.0f};
 	NoiseScrollSpeed = { 0.0005f,0.005f,0.00f};
-	EditRotationSpeed = 500.f;
+	EditRotationSpeed = 1000.f;
 	RollRotationSpeed = FMath::PI;
 	EmissiveIntencity = 0.01f;
 	ColorIntencity = 0.059f;
 	DistortionIntencity = 1.2f;
-
-	ParticlePoolReserve();
 };
 
 void IceAge::PlayStart(
@@ -153,8 +151,6 @@ void IceAge::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
-	/*_IceParticles.clear();
-	_IceParticles.shrink_to_fit();*/
 };
 
 void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -200,42 +196,6 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 };
 
 
-
-void IceAge::ParticlePoolReserve()
-{
-	//ENGINE::ParticleSystem::Particle _PushParticle{};
-
-	//Mesh::InitializeInfo _Info{};
-	//_Info.bLocalVertexLocationsStorage = false;
-	//_PushParticle._Mesh = Resources::Load<StaticMesh>(
-	//	"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
-
-	//_PushParticle.bLerpTimeNormalized = false;
-	//// Particle 정보 채워주기 
-	//_PushParticle._ShaderKey = "IceParticle";
-	//// 공유 정보 바인드 
-	//_PushParticle.SharedResourceBind = [](
-	//	ENGINE::ParticleSystem::Particle& TargetParticle,
-	//	ID3DXEffect* const Fx)
-	//{
-	//	if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
-	//		Subset)
-	//	{
-	//		Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
-	//		Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
-	//	}
-	//};
-
-	//_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
-	//{
-	//	const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
-	//	Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
-	//	return;
-	//};
-
-	//const uint64 PoolSize = 10000;
-	//ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
-}
 
 void IceAge::RenderDebug(const DrawInfo& _Info)
 {
@@ -315,43 +275,14 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 			const Matrix Mat = SpTransform->GetRenderMatrix();
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-			const uint32 JumpOffset = 20u;
+			const uint32 JumpOffset = 2u;
 
 			{
-				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("Ice");
-				for (int32 i = 0; i < _PlayableParticle.size(); i += JumpOffset)
+				auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("Ice",true);
+				for (int32 i = 0; i < _PlayableParticle.size(); 
+					i += JumpOffset)
 				{
 					auto& _PlayInstance = _PlayableParticle[i];
-					
-					//Vector2 Range{ -0.05f,0.05f };
-					//const Vector3& TargetLocation =
-					//	FMath::Mul((*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)], Mat);
-					//const Vector3 Cp0 = TargetLocation + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x },
-					//	{ Range.y,Range.y,Range.y });
-					//const Vector3 Cp1 = Cp0 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
-					//const Vector3 End = Cp1 + FMath::Random<Vector3>({ Range.x ,Range.x,Range.x }, { Range.y,Range.y,Range.y });
-
-					//Vector2 ScaleRange{ 0.1f,0.18f };
-					//const float PScale = FMath::Random(ScaleRange.x, ScaleRange.y) * GScale;
-
-					//const Vector3 StartRot = {
-					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					//const Vector3 RotCp0 = {
-					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					//const Vector3 RotCp1 = {
-					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					//const Vector3 EndRot = {
-					//	FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-
-					//ParticleInstance::Ice _IceValue{};
-
-					//_IceValue.ColorIntencity = FMath::Random(0.03f, 0.15f);
-
-					//const float LifeTime = FMath::Random(1.f, AllParticleLifeTime);
-
 					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
 				}
 			}

@@ -291,15 +291,29 @@ void CbsTrail::ParticleUpdate(const float DeltaTime)
 		if (auto SpTransform = m_pTransform.lock();
 			SpTransform)
 		{
-			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("IceCbsMid");
+			auto _PlayableParticle = 
+				ParticleSystem::GetInstance()->PlayParticle("IceCbsMid",true);
 			// ¾óÀ½ »Ñ¸®¼À
-			for (int32 i = 0; i < BoneCnt; ++i)
+			const uint32 JumpOffset = 350u;
+
+			for (int32 i = 0; i < _PlayableParticle.size();
+				i += JumpOffset)
 			{
-				const Vector3& Low  = LatelyOffsets[i].first;
-				const Vector3& High = LatelyOffsets[i].second;
+				auto& _PlayInstance = _PlayableParticle[i];
 
+				const uint32 BoneIdx = FMath::Random(0u, BoneCnt - 1); 
+				
+				const Vector3 WorldLocation = 
+					FMath::Lerp(LatelyOffsets[BoneIdx].first,
+					LatelyOffsets[BoneIdx].second,
+					FMath::Random(0.5f,1.f) );
 
-			}			
+				const Vector3 Scale = SpTransform->GetScale();
+				const Vector3 Rotation = Vector3{ 0.f,0.f,0.f };
+
+				_PlayInstance->PlayDescBind(
+					FMath::WorldMatrix(Scale, Rotation, WorldLocation));
+			}		
 		}
 	}
 }

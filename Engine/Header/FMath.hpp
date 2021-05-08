@@ -120,6 +120,8 @@ public:
 		Vector3& IntersectPointLhs,
 		Vector3& IntersectPointRhs);
 
+	static inline Vector3 RandomEuler(const float PiScale);
+
 
 	static inline Vector3 BezierCurve(const Vector3& Start,const Vector3& End, const float t);
 
@@ -694,6 +696,12 @@ bool FMath::IsSphereToSphere(const Sphere& Lhs, const Sphere& Rhs,
 	}
 
 	return false;
+}
+
+inline Vector3 FMath::RandomEuler(const float Scale)
+{
+	return FMath::Random(Vector3{-FMath::PI, -FMath::PI ,-FMath::PI } *Scale,
+						 Vector3{ FMath::PI,  FMath::PI , FMath::PI } *Scale);
 };
 
 bool FMath::IsRayToSphere(

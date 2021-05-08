@@ -93,12 +93,8 @@ public:
 			bool bRowLoop = true;
 		};
 
-		void PlayDescBind(/*const Vector3& StartLocation,
-					      const Vector3& StartRotation ,*/
-						  const Matrix& World)
+		void PlayDescBind(const Matrix& World)
 		{
-			/*this->StartLocation = StartLocation;
-			this->StartRotation = StartRotation;*/
 			LifeTime = StartLifeTime;
 			CurWorld = World;
 		};
@@ -127,6 +123,7 @@ public:
 		const std::any& GetInstanceValue() {return InstanceVariable;};
 		float GetT() { return T; };
 		const std::optional<float>& GetLifeTime(){return LifeTime;}
+		const float GetLifeTimeAlphaFactor() const { return LifeTime.value() / StartLifeTime; };
 
 		void Reset()
 		{
@@ -197,9 +194,6 @@ public:
 		float StartT = 0.0f;
 		float T = 0.0f;
 
-		/*Vector3 StartLocation{ 0.0f,0.0f,0.0f };
-		Vector3 StartRotation{ 0.0f,0.0f,0.0f };*/
-
 		Vector3 CurrentLocation{0.f,0.f,0.f};
 		Vector3 CurRotation{ 0.0f,0.0f,0.0f };
 	};
@@ -216,18 +210,6 @@ public:
 		// 켤 경우 파티클 인스턴스 운동 T는 반드시 0~1이고 안 켰고 PlayTime이 1을 초과하는 경우 T도 1을 초과함.
 		bool bLerpTimeNormalized = false;
 
-		//float GetDuration()const
-		//{
-		//	return Duration;
-		//}
-		//float GetPlayTime()const
-		//{
-		//	return PlayTime;
-		//}
-		/*void SetPlayTime(const float PlayTime)
-		{
-			Duration =this->PlayTime = PlayTime;
-		}*/
 		std::vector<ParticleInstance>& RefInstances()
 		{
 			return _Instances;
@@ -271,9 +253,11 @@ public:
 				 const Particle& _Particle ,
 				const uint64 PoolSize);
 	// Reserve 한 파티클중 현재 Reset 상태에 들어간 파티클들.
-	std::vector<ParticleInstance*>PlayParticle(const std::string& Identifier);
+	std::vector<ParticleInstance*>PlayParticle(const std::string& Identifier ,
+		const bool bLifeTimeAlphaFactor);
 	Particle* PtrParticle(const std::string& Identifier);
 private:
+	bool bLifeTimeAlphaFactor = false;
 	 // 파티클 식별 이름과 매핑 . 
 	std::map<std::string, Particle> _Particles{};
 };

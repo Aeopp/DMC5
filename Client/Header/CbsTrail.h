@@ -84,7 +84,7 @@ private:
 	// Low High
 	std::array<std::pair<Vector3, Vector3>, BoneCnt >  LatelyOffsets{};
 
-	float ParticleCycle = 0.1f;
+	float ParticleCycle = 0.25f;
 	float CurParticleCycle = 0.0f;
 private:
 	explicit CbsTrail()  ;

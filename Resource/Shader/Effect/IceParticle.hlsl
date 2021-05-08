@@ -3,6 +3,7 @@ matrix ViewProjection;
 
 uniform float exposure_corr;
 uniform float ColorIntencity;
+uniform float LifeTimeAlphaFactor;
 
 texture AlbmMap;
 sampler Albm = sampler_state
@@ -44,6 +45,9 @@ void PsMain(out float4 Color : COLOR0 ,
     Color = tex2D(Albm, UV0);
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;
+    
+    Color.a *= LifeTimeAlphaFactor;
+    
 };
 
 technique Default

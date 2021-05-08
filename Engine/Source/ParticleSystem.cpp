@@ -130,7 +130,9 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 									_Subset)
 								{
 									const Matrix matWorld = _ParticleInstance.CalcWorld();
+									CurFx->SetFloat("LifeTimeAlphaFactor", _ParticleInstance.GetLifeTimeAlphaFactor());
 									CurFx->SetMatrix("matWorld", &matWorld);
+
 									if (const auto& bTargetSprite = _ParticleInstance.GetSpriteDesc();
 										bTargetSprite)
 									{
@@ -166,7 +168,8 @@ void ParticleSystem::Editor()
 };
 
 std::vector<ParticleSystem::ParticleInstance*> ParticleSystem::PlayParticle(
-	const std::string& Identifier)
+	const std::string& Identifier ,
+	const bool bLifeTimeAlphaFactor)
 {
 	std::vector<ParticleSystem::ParticleInstance*> _Particles{};
 
@@ -188,6 +191,7 @@ std::vector<ParticleSystem::ParticleInstance*> ParticleSystem::PlayParticle(
 		if (_Particles.empty() == false)
 		{
 			_PtrParticle->Play();
+			this->bLifeTimeAlphaFactor = bLifeTimeAlphaFactor;
 		}
 	}
 
