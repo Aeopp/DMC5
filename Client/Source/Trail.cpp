@@ -155,7 +155,7 @@ void Trail::PlayStart(const Mode _Mode,
 			auto High = RQ->Get_BoneMatrixPtr("_001");
 			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
 
-			for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+			for (int32 i = 0; i < _Desc.VtxCnt; i+=2)
 			{
 				VtxPtr[i +1].Location = HighPos;
 				VtxPtr[i].Location = LowPos;

@@ -36,6 +36,7 @@
 #include "IceAge.h"
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
+#include "CbsTrail.h"
 
 #include <iostream>
 #include <fstream>
@@ -72,6 +73,8 @@ HRESULT TestScene::LoadScene()
 	Resources::Load<ENGINE::StaticMesh>(
 		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
 	/*--------------------------------------------------------- */
+
+	AddGameObject<CbsTrail>();
 
 	AddGameObject<Camera>();
 	AddGameObject<MainCamera>();

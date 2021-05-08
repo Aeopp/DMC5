@@ -164,6 +164,7 @@
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
     <ClInclude Include="..\Header\Buster_Arm_Left.h" />
+    <ClInclude Include="..\Header\CbsTrail.h" />
     <ClInclude Include="..\Header\Cbs_Long.h" />
     <ClInclude Include="..\Header\Cbs_Middle.h" />
     <ClInclude Include="..\Header\Cbs_Short.h" />
@@ -245,6 +246,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
+    <ClCompile Include="..\Source\CbsTrail.cpp" />
     <ClCompile Include="..\Source\Cbs_Long.cpp" />
     <ClCompile Include="..\Source\Cbs_Middle.cpp" />
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
@@ -426,6 +428,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\FireParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

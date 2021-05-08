@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "..\Header\CbsTrail.h"
 #include "Transform.h"
 #include "Subset.h"
@@ -10,21 +11,29 @@
 
 CbsTrail::CbsTrail()
 {
-
+	VtxBuffers.fill(nullptr);
+	IdxBuffers.fill(nullptr);
 }
 
 void CbsTrail::Free()
 {
 	GameObject::Free();
 
-	if (VtxBuffer)
+	for (auto& _VtxBuf : VtxBuffers)
 	{
-		VtxBuffer->Release();
+		if (_VtxBuf)
+		{
+			_VtxBuf->Release();
+		}
 	}
-	if (IdxBuffer)
+	for (auto& _IdxBuf : IdxBuffers)
 	{
-		IdxBuffer->Release();
+		if (_IdxBuf)
+		{
+			_IdxBuf->Release();
+		}
 	}
+
 	if (VtxDecl)
 	{
 		VtxDecl->Release();
@@ -95,19 +104,23 @@ void CbsTrail::RenderInit()
 	UV0Multiply = 1.f;
 
 	Device = g_pDevice;
-
 	
 	VtxDecl = Vertex::TrailVertex::GetVertexDecl(Device);
-	Device->CreateVertexBuffer
-	(_Desc.VtxSize * _Desc.VtxCnt, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
-		NULL, 
-		D3DPOOL_DEFAULT,
-		&VtxBuffer, nullptr);
 
-	Device->CreateIndexBuffer
-	(_Desc.IdxSize* _Desc.TriCnt
-		, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, _Desc.IdxFmt,
-		D3DPOOL_DEFAULT, &IdxBuffer, nullptr);
+	for (uint32 i = 0; i < TrailCnt; ++i)
+	{
+		Device->CreateVertexBuffer
+		(_Desc.VtxSize * _Desc.VtxCnt, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
+			NULL,
+			D3DPOOL_DEFAULT,
+			&VtxBuffers[i], nullptr);
+
+		Device->CreateIndexBuffer
+		(_Desc.IdxSize * _Desc.TriCnt
+			, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, _Desc.IdxFmt,
+			D3DPOOL_DEFAULT, &IdxBuffers[i], nullptr);
+	}
+
 
 	TrailMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
@@ -138,38 +151,48 @@ void CbsTrail::PlayStart(const Mode _Mode,
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
 	}
 
-	Vertex::TrailVertex* VtxPtr{nullptr};
-	VtxBuffer->Lock(0, 0, (void**)&VtxPtr, NULL);
-
-	if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
-		_GameObject)
+	for (uint32 i=0;i<TrailCnt;++i)
 	{
-		if (auto RQ = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
-			RQ)
+		auto& _VtxBuffer = VtxBuffers[i];
+
+		Vertex::TrailVertex* VtxPtr{ nullptr };
+		_VtxBuffer->Lock(0, 0, (void**)&VtxPtr, NULL);
+
+		if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
+			_GameObject)
 		{
-			const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
-
-			auto Low = RQ->Get_BoneMatrixPtr("pole02");
-			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
-
-			auto High = RQ->Get_BoneMatrixPtr("pole03");
-			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
-
-			for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+			if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
+				_CbsShort)
 			{
-				VtxPtr[i +1].Location = HighPos;
-				VtxPtr[i].Location = LowPos;
+				const auto CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+
+				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
+				const Vector3 LowPos = FMath::Mul(LowOffset, *Low * CbsWorld);
+
+				const Vector3 HighPos = FMath::Mul(HighOffset, *Low * CbsWorld);
+
+				/*auto High = RQ->Get_BoneMatrixPtr("pole03");
+				const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);*/
+
+				for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+				{
+					VtxPtr[i + 1].Location = HighPos;
+					VtxPtr[i].Location = LowPos;
+				}
 			}
-		}
-	};
+		};
 
-	// ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
-	VtxBuffer->Unlock();
+		// ZeroMemory(VtxPtr, sizeof(Vertex::TrailVertex) * _Desc.VtxCnt);
+		_VtxBuffer->Unlock();
+	}
 
-	void* IdxPtr{ nullptr };
-	IdxBuffer->Lock(0, 0, (void**)&IdxPtr, NULL);
-	ZeroMemory(IdxPtr, _Desc.IdxSize * _Desc.TriCnt);
-	IdxBuffer->Unlock();
+	for (auto& _IdxBuffer : IdxBuffers)
+	{
+		void* IdxPtr{ nullptr };
+		_IdxBuffer->Lock(0, 0, (void**)&IdxPtr, NULL);
+		ZeroMemory(IdxPtr, _Desc.IdxSize * _Desc.TriCnt);
+		_IdxBuffer->Unlock();
+	}
 
 	CurMode = _Mode;
 	_RenderProperty.bRender = true;
@@ -216,13 +239,16 @@ void CbsTrail::RenderTrail(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("SpriteXEnd",  ( SpriteColIdx + 1)/ SpriteCol);
 	_Info.Fx->SetFloat("SpriteYStart",SpriteRowIdx/ SpriteRow );
 	_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
-	
-	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
-	Device->SetVertexDeclaration(VtxDecl);
-	Device->SetIndices(IdxBuffer);
-	_Info.Fx->CommitChanges();
 
-	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
+	for (int32 i = 0; i < TrailCnt; ++i)
+	{
+		Device->SetStreamSource(0, VtxBuffers[i], 0, _Desc.VtxSize);
+		Device->SetVertexDeclaration(VtxDecl);
+		Device->SetIndices(IdxBuffers[i]);
+		_Info.Fx->CommitChanges();
+		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
+	}
+	
 }
 void CbsTrail::SpriteUpdate(const float DeltaTime)
 {
@@ -301,55 +327,66 @@ void CbsTrail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr)
 
 void CbsTrail::VertexBufUpdate()
 {
-	Vertex::TrailVertex* VtxPtr{};
-	VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
-	// 최대 버텍스 카운트를 초과한 경우 .
-
 	if (_Desc.NewVtxCnt > _Desc.VtxCnt)
 	{
 		static constexpr uint32 RemoveCount = 2;
 		_Desc.NewVtxCnt -= RemoveCount;
 
-		for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
+		for (int32 i = 0; i < TrailCnt; ++i)
 		{
-			VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
-			VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
-		}
+			auto& VtxBuffer = VtxBuffers[i];
+
+			Vertex::TrailVertex* VtxPtr{};
+			VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
+			// 최대 버텍스 카운트를 초과한 경우 .
+
+			for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
+			{
+				VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
+				VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
+			}
+
+			if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
+				_GameObject)
+			{
+				if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
+					_CbsShort)
+				{
+					const auto SwordWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+
+					auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
+					const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
+
+					auto High = Low;
+					const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
+
+					VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
+					VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
+				}
+			};
+
+			_Desc.NewVtxCnt += 2;
+			VtxUVCalc(VtxPtr);
+			VtxSplineInterpolation(VtxPtr);
+
+			if (bEdit)
+			{
+				for (int32 i = 0; i < TrailCnt; ++i)
+				{
+					auto& _CurVtxLog = _VtxLog[i];
+					_CurVtxLog.resize(_Desc.NewVtxCnt);
+					for (size_t j = 0; j < _CurVtxLog.size(); ++i)
+					{
+						_CurVtxLog[j] = VtxPtr[j];
+					}
+				}
+			}
+
+			VtxBuffer->Unlock();
+		};
 	}
+};
 
-	if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
-		_GameObject)
-	{
-		if (auto RQ = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
-			RQ)
-		{
-			const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
-
-			auto Low = RQ->Get_BoneMatrixPtr("pole02");
-			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
-
-			auto High = RQ->Get_BoneMatrixPtr("pole03");
-			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
-
-			VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-			VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
-		}
-	};
-
-	_Desc.NewVtxCnt += 2;
-	VtxUVCalc(VtxPtr);
-	VtxSplineInterpolation(VtxPtr);
-
-	if (bEdit)
-	{
-		_VtxLog.resize(_Desc.NewVtxCnt);
-		for (size_t i = 0; i < _VtxLog.size(); ++i)
-		{
-			_VtxLog[i]   = VtxPtr[i];
-		}
-	}
-	VtxBuffer->Unlock();
-}
 void CbsTrail::IndexBufUpdate()
 {
 	/*
@@ -366,31 +403,35 @@ void CbsTrail::IndexBufUpdate()
 		 ↗ ↓
 		0 ← 2
 		*/
-
-	Vertex::Index32* IdxPtr{ nullptr };
-	IdxBuffer->Lock(0, 0, (void**)&IdxPtr, 0);
-
-	for (uint32 i = 0; i < _Desc.TriCnt; i += 2)
+	for (uint32 i = 0; i < TrailCnt; ++i)
 	{
-		IdxPtr[i]._0 = i;
-		IdxPtr[i]._1 = i + 1;
-		IdxPtr[i]._2 = i + 3;
+		Vertex::Index32* IdxPtr{ nullptr };
+		auto& IdxBuffer = IdxBuffers[i];
+		IdxBuffer->Lock(0, 0, (void**)&IdxPtr, 0);
 
-		IdxPtr[i + 1]._0 = i;
-		IdxPtr[i + 1]._1 = i + 3;
-		IdxPtr[i + 1]._2 = i + 2;
-	}
-
-	if (bEdit)
-	{
-		_IdxLog.resize(_Desc.TriCnt);
-		for (size_t i = 0; i < _IdxLog.size(); ++i)
+		for (uint32 i = 0; i < _Desc.TriCnt; i += 2)
 		{
-			_IdxLog[i] = IdxPtr[i];
-		}
-	}
+			IdxPtr[i]._0 = i;
+			IdxPtr[i]._1 = i + 1;
+			IdxPtr[i]._2 = i + 3;
 
-	IdxBuffer->Unlock();
+			IdxPtr[i + 1]._0 = i;
+			IdxPtr[i + 1]._1 = i + 3;
+			IdxPtr[i + 1]._2 = i + 2;
+		}
+
+		if (bEdit)
+		{
+			auto& _CurIdxLog = _IdxLog[i];
+			_CurIdxLog.resize(_Desc.TriCnt);
+			for (size_t j = 0; j < _CurIdxLog.size(); ++j)
+			{
+				_CurIdxLog[j] = IdxPtr[j];
+			}
+		}
+
+		IdxBuffer->Unlock();
+	}
 };
 
 void CbsTrail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
@@ -408,11 +449,18 @@ void CbsTrail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
 void CbsTrail::RenderDebug(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
-	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
-	Device->SetVertexDeclaration(VtxDecl);
-	Device->SetIndices(IdxBuffer);
-	_Info.Fx->CommitChanges();
-	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
+
+	for (int32 i = 0; i < TrailCnt; ++i)
+	{
+		auto& VtxBuffer = VtxBuffers[i];
+		auto& IdxBuffer = IdxBuffers[i];
+
+		Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
+		Device->SetVertexDeclaration(VtxDecl);
+		Device->SetIndices(IdxBuffer);
+		_Info.Fx->CommitChanges();
+		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
+	}
 };
 
 
@@ -448,7 +496,6 @@ UINT CbsTrail::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
-
 	SpriteUpdate(_fDeltaTime);
 	BufferUpdate(_fDeltaTime);
 
@@ -471,7 +518,6 @@ void CbsTrail::Editor()
 		const std::string ChildName = GetName() + "_Play";
 		ImGui::BeginChild(ChildName.c_str());
 		{
-		
 			static int32 _Mode;
 			ImGui::InputInt("Mode", &_Mode);
 			if (ImGui::SmallButton("Play"))
@@ -484,12 +530,17 @@ void CbsTrail::Editor()
 			}
 			ImGui::Text("Cur Col Idx : %d", (int32)SpriteColIdx);
 			ImGui::Text("Cur Row Idx : %d", (int32)SpriteRowIdx);
+
 			for (auto& _Vtx : _VtxLog)
 			{
-				ImGui::Text(" UV0 %9.6f ,%9.6f", _Vtx.UV0.x, _Vtx.UV0.y);
-				ImGui::Text(" UV1 %9.6f ,%9.6f", _Vtx.UV1.x, _Vtx.UV1.y);
+				for (auto& _CurVtx : _Vtx)
+				{
+					ImGui::Text("Location x %9.6f y %9.6f z %9.6f", 
+							_CurVtx.Location.x, _CurVtx.Location.y ,_CurVtx.Location.z);
+					ImGui::Text(" UV0 %9.6f ,%9.6f", _CurVtx.UV0.x, _CurVtx.UV0.y);
+					ImGui::Text(" UV1 %9.6f ,%9.6f", _CurVtx.UV1.x, _CurVtx.UV1.y);
+				}
 			}
-
 			
 			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");

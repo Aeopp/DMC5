@@ -30,8 +30,10 @@ public:
 		Eletric,
 	};
 private:
-	IDirect3DVertexBuffer9* VtxBuffer{nullptr};
-	IDirect3DIndexBuffer9*  IdxBuffer{ nullptr };
+	static constexpr uint32 TrailCnt = 3u;
+	std::array<std::string, 3u> BoneNames{  "pole01","pole02","pole03"};
+	std::array< IDirect3DVertexBuffer9*, TrailCnt > VtxBuffers{};
+	std::array< IDirect3DIndexBuffer9*, TrailCnt > IdxBuffers{};
 	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
 	IDirect3DDevice9* Device{ nullptr };
 
@@ -69,8 +71,8 @@ private:
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 
-	std::vector<Vertex::Index32> _IdxLog{};
-	std::vector<Vertex::TrailVertex> _VtxLog{};
+	std::array<std::vector<Vertex::Index32>,3u> _IdxLog{};
+	std::array<std::vector<Vertex::TrailVertex>,3u> _VtxLog{};
 private:
 	explicit CbsTrail()  ;
 	virtual ~CbsTrail() = default;
