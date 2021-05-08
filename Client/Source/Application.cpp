@@ -8,6 +8,7 @@
 
 Application::Application()
 {
+
 }
 
 HRESULT Application::ReadyApplication(const bool bWindowed,
