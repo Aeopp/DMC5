@@ -23,13 +23,23 @@ class CbsTrail : public ENGINE::GameObject,
 			     public ENGINE::RenderInterface
 {
 public:
-	enum class Mode : int32
+	enum  Mode : uint32
 	{
 		Non,
 		Ice,
 		Eletric,
 	};
 private:
+	// F -> Low S -> High
+	static  inline std::array<std::pair<Vector3,Vector3>,3u> Offset
+	{
+		// Non
+		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} },
+		// Ice
+		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} },
+		//Eletric
+		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} }
+	};
 	static constexpr uint32 TrailCnt = 3u;
 	std::array<std::string, 3u> BoneNames{  "pole01","pole02","pole03"};
 	std::array< IDirect3DVertexBuffer9*, TrailCnt > VtxBuffers{};
@@ -43,7 +53,7 @@ private:
 	std::shared_ptr<Texture> EmissiveMskMap{};
 	/*std::shared_ptr<Texture> NoiseMap{};*/
 
-	Mode CurMode = Mode::Non;
+	uint32  CurMode = static_cast<uint32>(Mode::Non);
 
 	float SpriteRow;
 	float SpriteCol;
@@ -53,9 +63,7 @@ private:
 	float SpriteCurUpdateCycle = 0.0f;
 	float SpriteUpdateCycle = 0.000001f;
 
-	Vector3 LowOffset{ 0.f,0.f,143.f};
-	Vector3 HighOffset{ 0.f,0.f,-231.f };
-
+	
 	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
 
 	float NonDistortionIntencity = 1.f;

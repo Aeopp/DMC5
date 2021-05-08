@@ -89,7 +89,7 @@ void CbsTrail::RenderInit()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 32;
+	const int32 TriCnt = 20;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt+2;
@@ -167,9 +167,9 @@ void CbsTrail::PlayStart(const Mode _Mode,
 				const auto CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
-				const Vector3 LowPos = FMath::Mul(LowOffset, *Low * CbsWorld);
+				const Vector3 LowPos = FMath::Mul(Offset[CurMode].first, *Low * CbsWorld);
 
-				const Vector3 HighPos = FMath::Mul(HighOffset, *Low * CbsWorld);
+				const Vector3 HighPos = FMath::Mul(Offset[CurMode].second, *Low * CbsWorld);
 
 				/*auto High = RQ->Get_BoneMatrixPtr("pole03");
 				const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);*/
@@ -194,7 +194,7 @@ void CbsTrail::PlayStart(const Mode _Mode,
 		_IdxBuffer->Unlock();
 	}
 
-	CurMode = _Mode;
+	CurMode = static_cast<uint32>(_Mode);
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
@@ -213,7 +213,7 @@ void CbsTrail::RenderTrail(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
-	if (CurMode ==Mode::Ice)
+	if (CurMode == Mode::Ice)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 		_Info.Fx->SetTexture("TrailMap", ExplosionTrailMap->GetTexture());
@@ -229,6 +229,8 @@ void CbsTrail::RenderTrail(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
 		_Info.Fx->SetTexture("SpriteMap", nullptr);
 	}
+
+
 	_Info.Fx->SetTexture("EmissiveMskMap", EmissiveMskMap->GetTexture());
 	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
 
@@ -327,64 +329,65 @@ void CbsTrail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr)
 
 void CbsTrail::VertexBufUpdate()
 {
-	if (_Desc.NewVtxCnt > _Desc.VtxCnt)
+	for (int32 i = 0; i < TrailCnt; ++i)
 	{
-		static constexpr uint32 RemoveCount = 2;
-		_Desc.NewVtxCnt -= RemoveCount;
+		auto& VtxBuffer = VtxBuffers[i];
 
-		for (int32 i = 0; i < TrailCnt; ++i)
+		Vertex::TrailVertex* VtxPtr{};
+		VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
+		// 최대 버텍스 카운트를 초과한 경우 .
+
+		if (_Desc.NewVtxCnt > _Desc.VtxCnt)
 		{
-			auto& VtxBuffer = VtxBuffers[i];
-
-			Vertex::TrailVertex* VtxPtr{};
-			VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
-			// 최대 버텍스 카운트를 초과한 경우 .
+			static constexpr uint32 RemoveCount = 2;
+			_Desc.NewVtxCnt -= RemoveCount;
 
 			for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 			{
 				VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
 				VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
 			}
+		}
 
-			if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
-				_GameObject)
+		if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Short).lock();
+			_GameObject)
+		{
+			if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
+				_CbsShort)
 			{
-				if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
-					_CbsShort)
-				{
-					const auto SwordWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+				const auto SwordWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
 
-					auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
-					const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
+				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
+				const Vector3 LowPos = FMath::Mul(Offset[CurMode].first, *Low * SwordWorld);
 
-					auto High = Low;
-					const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
+				auto High = Low;
+				const Vector3 HighPos = FMath::Mul(Offset[CurMode].second, *High * SwordWorld);
 
-					VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-					VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
-				}
-			};
+				VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
+				VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
+			}
+		};
 
-			_Desc.NewVtxCnt += 2;
-			VtxUVCalc(VtxPtr);
-			VtxSplineInterpolation(VtxPtr);
+		_Desc.NewVtxCnt += 2;
+		VtxUVCalc(VtxPtr);
+		VtxSplineInterpolation(VtxPtr);
 
-			if (bEdit)
+		if (bEdit)
+		{
+			for (int32 i = 0; i < TrailCnt; ++i)
 			{
-				for (int32 i = 0; i < TrailCnt; ++i)
+				auto& _CurVtxLog = _VtxLog[i];
+				_CurVtxLog.resize(_Desc.NewVtxCnt);
+				for (size_t j = 0; j < _CurVtxLog.size(); ++j)
 				{
-					auto& _CurVtxLog = _VtxLog[i];
-					_CurVtxLog.resize(_Desc.NewVtxCnt);
-					for (size_t j = 0; j < _CurVtxLog.size(); ++i)
-					{
-						_CurVtxLog[j] = VtxPtr[j];
-					}
+					_CurVtxLog[j] = VtxPtr[j];
 				}
 			}
+		}
 
-			VtxBuffer->Unlock();
-		};
-	}
+		VtxBuffer->Unlock();
+	};
+
 };
 
 void CbsTrail::IndexBufUpdate()
@@ -542,8 +545,9 @@ void CbsTrail::Editor()
 				}
 			}
 			
-			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
-			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
+			
+			ImGui::SliderFloat3("LowOffset",Offset[CurMode].first, -300.f, 300.f, "%9.6f");
+			ImGui::SliderFloat3("HighOffset", Offset[CurMode].second, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
