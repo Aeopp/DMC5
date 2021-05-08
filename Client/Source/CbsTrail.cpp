@@ -87,6 +87,7 @@ void CbsTrail::RenderInit()
 			}
 		}
 	};
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	const int32 TriCnt = 20;
@@ -104,7 +105,6 @@ void CbsTrail::RenderInit()
 	UV0Multiply = 1.f;
 
 	Device = g_pDevice;
-	
 	VtxDecl = Vertex::TrailVertex::GetVertexDecl(Device);
 
 	for (uint32 i = 0; i < TrailCnt; ++i)
