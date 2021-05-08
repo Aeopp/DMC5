@@ -25,6 +25,7 @@ private:
 		RANK_BACK,
 		RANK,
 		RANK_LETTER,
+		STYLISH_POINTS,
 		DESC_END
 	};
 	struct UI_DESC
@@ -43,8 +44,6 @@ private:
 	std::shared_ptr<ENGINE::Texture> _RedOrbALBMTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};
-
-	//std::shared_ptr<ENGINE::Texture> _Dummy0000Tex{};
 
 	std::shared_ptr<ENGINE::Texture> _TargetCursorTex{};
 	std::shared_ptr<ENGINE::Texture> _EnemyHPTex{};
@@ -160,6 +159,17 @@ private:
 	float _RankLetter_GlintAccumulateTime = 0.f;
 	float _RankDissolveAmount = 0.f;
 
+	/*
+	0 ~ 99999999
+	_CurRank에 따라서 배율 증가
+	*/
+	uint32 _StylishPoints = 0u;
+	bool _StylishPtsAccumulateStart = false;
+	// + 결과창에 보여줄 누적 StylishPoints
+	bool _StylishPtsAlive = false;
+	float _StylishPtsAliveTime = 0.f;
+	bool _StylishPtsAlive2ndCheck = false;
+
 	/* 0 ~ 3 */
 	float _ExGauge = 0.f;
 	float _ExGauge_EmissivePower[3] = { 0.f, };
@@ -177,6 +187,7 @@ private:
 	bool _KeyboardInput[KEY_INPUT_END] = { false, };
 
 	Nero::WeaponList _CurWeaponIdx = Nero::WeaponList::RQ;
+	int _CbsColor = 0;	// 0: Fire, 1: Ice, 2: Thunder
 
 	Matrix _PerspectiveProjMatrix = Matrix();
 
@@ -192,6 +203,8 @@ private:
 	enum FONT_ID
 	{
 		REDORBCOUNT,
+		STYLISH_PTS_TITLE,
+		STYLISH_PTS_SCORE,
 
 		FONT_END
 	};
@@ -214,7 +227,8 @@ private:
 	void	Update_PlayerHP(const float _fDeltaTime);
 	void	Update_Rank(const float _fDeltaTime);
 	void	Update_ExGauge(const float _fDeltaTime);
-	void	Update_Gauge(const float _fDeltaTime);	// 위를 제외한 나머지 
+	void	Update_Font(const float _fDeltaTime);
+	void	Update_Etc(const float _fDeltaTime);	// 위를 제외한 나머지 
 	Vector2	WorldPosToScreenPos(const Vector3& WorldPos);
 	Vector2	ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY);
 	void	Check_KeyInput(const float _fDeltaTime);
@@ -237,20 +251,23 @@ public:
 	void SetTargetCursor(const Vector3& TargetPos, const float HPRatio = 1.f);	/* HPRatio = 현재 HP / 최대 HP */
 	void SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass = true);		/* HPRatio = 현재 HP / 최대 HP */
 
+
 	float GetTDTGauge() const { return _TDTGauge; } /* 0 ~ 1 */
 	void AccumulateTDTGauge(const float Amount);
 	void ConsumeTDTGauge(const float Speed = 1.f);	/* 0이 될때까지 Speed * DeltaTime 만큼 TDTGauge 감소 */
 
 	void SetKeyInputActive(bool IsActive);
 	
-	void AddRankScore(float Score);
-	
+	void AddRankScore(float Score);	// 처음 호출시 StylishPoints 누적 시작
+	void ResetRankScore();			// wave 하나가 끝나면 반드시 호출
+	int GetRank() const		{ return _CurRank; }	/* -1 ~ 6 */
+
 	float GetExGauge() const { return _ExGauge; }
 	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count);
 
-	void ChangeWeaponUI(Nero::WeaponList NextWeapon);
+	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
 	void AccumulateRedOrb(const uint32 Amount);
 

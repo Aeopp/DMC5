@@ -18,7 +18,6 @@ void Scene::Free()
 	{
 		for (auto& rGameObject : m_Pool[i])
 			rGameObject.reset();
-
 		m_Pool[i].clear();
 	}
 

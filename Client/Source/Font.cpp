@@ -4,17 +4,54 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-//#include "EngineStdafx.h"
-//#include <filesystem>
 #include <istream>
 #include <fstream>
 
+
+void Font::SetText(const std::string& Text, Font::TEX_ID TexID, const Vector2& ScreenPos, const Vector2& Scale/*= Vector2(1.f, 1.f)*/, bool UsingShadow/*= false*/)
+{
+	_Text = Text;
+	
+	if (TexID >= FONTTEX_ID_END)
+		_FontTexID = DMC5_BLACK_GRAD;
+	else
+		_FontTexID = TexID;
+
+	_Pos = { ScreenPos.x, ScreenPos.y, 0.02f };
+	_Scale = { Scale.x, Scale.y, 1.f };
+	_UsingShadow = UsingShadow;
+}
+
+void Font::SetRenderFlag(bool IsRender, Font::FADE_ID ID/*= FADE_ID::NONE*/)
+{
+	if (IsRender != _IsRender)
+	{
+		if (ID >= FADE_ID::FADE_ID_END)
+			_FadeID = FADE_ID::NONE;
+		else
+			_FadeID = ID;
+
+		if (FADE_ID::DISOLVE_TORIGHT == _FadeID)
+			_UsingNoise = true;
+		else
+			_UsingNoise = false;
+
+		_IsRender = IsRender;
+	}
+}
+
 void Font::Free()
 {
+	_FontTexVec.clear();
+	_FontTexVec.shrink_to_fit();
+
 	for (auto& Element : _FontDescVec)
 		SafeDelete(Element);
 	_FontDescVec.clear();
 	_FontDescVec.shrink_to_fit();
+
+	_CharSliceAmount.clear();
+	_CharSliceAmount.shrink_to_fit();
 
 	GameObject::Free();
 }
@@ -37,15 +74,17 @@ void Font::RenderFont(const DrawInfo& _Info)
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)
 		{
-			_Info.Fx->SetTexture("ALB0Map", _Dmc5FontTex->GetTexture());
+			_Info.Fx->SetTexture("ALB0Map", _FontTexVec[_FontTexID]->GetTexture());
 			_Info.Fx->SetFloat("_UsingNoise", _UsingNoise);
 			if (_UsingNoise)
 				_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
-			_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
 			if (!_UsingPerspective)
 			{
 				size_t textLength = _Text.length();
+				if (MAX_CHAR_CNT < textLength)
+					textLength = MAX_CHAR_CNT;
 
 				if (_UsingShadow)
 				{
@@ -55,12 +94,18 @@ void Font::RenderFont(const DrawInfo& _Info)
 					{
 						_CurCharID = static_cast<uint32>(_Text.at(i));
 
-						CreateScreenMat(1);
+						CreateScreenMat(USINGSHADOW);
 						_Info.Fx->SetMatrix("ScreenMat", &_ScreenMat);
 
 						SetFontUV();
 						_Info.Fx->SetFloatArray("_MinTexUV", *_CurMinUV, 2u);
 						_Info.Fx->SetFloatArray("_MaxTexUV", *_CurMaxUV, 2u);
+
+						if (FADE_ID::DISOLVE_TORIGHT == _FadeID)
+						{
+							// SliceAmount 재지정
+							_Info.Fx->SetFloat("_SliceAmount", _CharSliceAmount[i]);
+						}
 
 						_Info.Fx->BeginPass(0);
 						SharedSubset->Render(_Info.Fx);
@@ -80,6 +125,12 @@ void Font::RenderFont(const DrawInfo& _Info)
 					SetFontUV();
 					_Info.Fx->SetFloatArray("_MinTexUV", *_CurMinUV, 2u);
 					_Info.Fx->SetFloatArray("_MaxTexUV", *_CurMaxUV, 2u);
+
+					if (FADE_ID::DISOLVE_TORIGHT == _FadeID)
+					{
+						// SliceAmount 재지정
+						_Info.Fx->SetFloat("_SliceAmount", _CharSliceAmount[i]);
+					}
 
 					_Info.Fx->BeginPass(0);
 					SharedSubset->Render(_Info.Fx);
@@ -151,18 +202,25 @@ void Font::LoadFontDesc(const std::filesystem::path& path)
 	}
 }
 
-void Font::CreateScreenMat(int Opt/*= 0*/)
+void Font::CreateScreenMat(SCREENMAT_OPT Opt/*= NOOPT*/)
 {
+	if (MAX_CHAR_ID < _CurCharID)
+		_CurCharID = '?';
+
 	FontDesc* pDesc = _FontDescVec[_CurCharID];
 	if (!pDesc)
 		pDesc = _FontDescVec['?'];
 
+	float Interval = 2.f;
+	if (pDesc->CharID == 'i' || pDesc->CharID == 'j' || pDesc->CharID == 'l')	// ㅠㅠ
+		Interval = 4.f;
+
 	Matrix RotMat;
 	D3DXMatrixIdentity(&_ScreenMat);
 
-	float crr = 5.5f;
-	_ScreenMat._11 = _Scale.x * pDesc->CharScale.x * crr;
-	_ScreenMat._22 = _Scale.y * pDesc->CharScale.y * crr;
+	float Crr = 6.f;
+	_ScreenMat._11 = _Scale.x * pDesc->CharScale.x * Crr;
+	_ScreenMat._22 = _Scale.y * pDesc->CharScale.y * Crr;
 	_ScreenMat._33 = _Scale.z;
 	if (_UsingPerspective)
 	{
@@ -175,15 +233,15 @@ void Font::CreateScreenMat(int Opt/*= 0*/)
 	_ScreenMat *= RotMat;
 	
 	float ShadowPos = 0.f;
-	if (1 == Opt)
+	if (USINGSHADOW == Opt)
 		ShadowPos = 3.f;
 
 	_ScreenMat._41 = _Pos.x + ShadowPos - (g_nWndCX >> 1) + _PosOffset.x;
 	_ScreenMat._42 = -(_Pos.y + ShadowPos - (g_nWndCY >> 1)) /*+ _PosOffset.y*/;
 	_ScreenMat._43 = _Pos.z;
 
-	crr = 75.f;
-	_PosOffset.x += (_ScreenMat._11 * crr + 2.f);
+	Crr = 75.f;
+	_PosOffset.x += (_ScreenMat._11 * Crr + Interval);
 }
 
 void Font::SetFontUV()
@@ -208,7 +266,7 @@ HRESULT Font::Ready()
 	m_nTag = GAMEOBJECTTAG::UI_Font;
 
 	ENGINE::RenderProperty _InitRenderProp;
-	_InitRenderProp.bRender = true;
+	_InitRenderProp.bRender = false;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::UI] =
 	{
 		{"Font",
@@ -222,11 +280,18 @@ HRESULT Font::Ready()
 
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\noiseInput_ATOS.tga");
-	_Dmc5FontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font.tga");
+
+	_FontTexVec.reserve(FONTTEX_ID_END);
+	_FontTexVec.push_back(Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font_0.png"));
+	_FontTexVec.push_back(Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font_1.png"));
 
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
 
 	LoadFontDesc("..\\..\\Resource\\Font\\Data\\dmc5font.json");
+
+	_CharSliceAmount.resize(MAX_CHAR_CNT);
+	for (auto& Element : _CharSliceAmount)
+		Element = 1.f;
 
 	return S_OK;
 }
@@ -244,6 +309,101 @@ HRESULT Font::Start()
 UINT Font::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+
+	switch (_FadeID)
+	{
+	case FADE_ID::NONE:
+	default:
+		if (_IsRender)
+		{
+			_SliceAmount = 0.f;
+			_RenderProperty.bRender = true;
+		}
+		else
+		{
+			_SliceAmount = 1.f;
+			_RenderProperty.bRender = false;
+		}
+
+		break;
+
+	case FADE_ID::ALPHA_LINEAR:
+		if (_IsRender)
+		{
+			if (0.f < _SliceAmount)
+			{
+				_SliceAmount -= 2.f * _fDeltaTime;
+				if (0.f > _SliceAmount)
+					_SliceAmount = 0.f;
+			}
+		}
+		else
+		{
+			if (1.f > _SliceAmount)
+			{
+				_SliceAmount += 2.f * _fDeltaTime;
+				if (1.f < _SliceAmount)
+					_SliceAmount = 1.f;
+			}
+		}
+
+		if (1.f > _SliceAmount)
+			_RenderProperty.bRender = true;
+		else
+			_RenderProperty.bRender = false;
+
+		break;
+
+	case FADE_ID::DISOLVE_TORIGHT:
+		if (_IsRender)
+		{
+			if (0.f < _SliceAmount)
+			{
+				_SliceAmount -= 0.45f * _fDeltaTime;
+				if (0.f > _SliceAmount)
+					_SliceAmount = 0.f;
+
+				uint32 idx = static_cast<uint32>((1.f - _SliceAmount) * static_cast<float>(MAX_CHAR_CNT));
+				if (idx > MAX_CHAR_CNT)
+					idx = MAX_CHAR_CNT;
+
+				for (uint32 i = 0u; i < idx; ++i)
+				{
+					_CharSliceAmount[i] -= 0.75f * _fDeltaTime;
+					if (0.f > _CharSliceAmount[i])
+						_CharSliceAmount[i] = 0.f;
+				}
+			}
+		}
+		else
+		{
+			if (1.f > _SliceAmount)
+			{
+				_SliceAmount += 0.45f * _fDeltaTime;
+				if (1.f < _SliceAmount)
+					_SliceAmount = 1.f;
+
+				int idx = static_cast<int>((_SliceAmount) * static_cast<float>(MAX_CHAR_CNT));
+				if (idx > MAX_CHAR_CNT)
+					idx = MAX_CHAR_CNT;
+
+				for (int i = idx - 1; i >= 0; --i)
+				{
+					_CharSliceAmount[i] += 0.75f * _fDeltaTime;
+					if (1.f < _CharSliceAmount[i])
+						_CharSliceAmount[i] = 1.f;
+				}
+			}
+		}
+
+		if (1.f > _SliceAmount)
+			_RenderProperty.bRender = true;
+		else
+			_RenderProperty.bRender = false;
+
+		break;
+		
+	}
 
 	return 0;
 }          
@@ -268,8 +428,14 @@ void Font::Editor()
 		static Vector2 scale = { 1.f, 1.f };
 		ImGui::SliderFloat2("scale##Font", scale, 0.1f, 10.f);
 
+		static int isShadow = _UsingShadow;
+		ImGui::SliderInt("Shadow##Font", &isShadow, 0, 1);
+
+		static int TexID = _FontTexID;
+		ImGui::SliderInt("Tex##Font", &TexID, 0, FONTTEX_ID_END - 1);
+
 		if (ImGui::Button("Apply##Font"))
-			SetText(buf, Vector2((float)pos[0], (float)pos[1]), scale);
+			SetText(buf, (Font::TEX_ID)TexID, Vector2((float)pos[0], (float)pos[1]), scale, isShadow);
 	}
 }
 
@@ -281,12 +447,4 @@ void Font::OnEnable()
 void Font::OnDisable()
 {
 	GameObject::OnDisable();
-}
-
-void Font::SetText(const std::string& text, const Vector2& ScreenPos, const Vector2& Scale/*= Vector2(1.f, 1.f)*/, bool UsingShadow/*= false*/)
-{
-	_Text = text;
-	_Pos = { ScreenPos.x, ScreenPos.y, 0.02f };
-	_Scale = { Scale.x, Scale.y, 1.f };
-	_UsingShadow = UsingShadow;
 }

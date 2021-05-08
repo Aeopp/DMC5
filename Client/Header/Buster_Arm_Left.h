@@ -31,6 +31,7 @@ public:
 	virtual void Editor()override;
 public:
 	void RenderInit();
+	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
@@ -45,6 +46,13 @@ public:
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;
+
+	std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
+	std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};
+	std::shared_ptr<ENGINE::Texture>		m_GradationTex{};
+
+	float	m_fAccTime = 0.f;
+
 };
 
 

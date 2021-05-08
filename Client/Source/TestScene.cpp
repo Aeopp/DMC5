@@ -60,29 +60,16 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
-	Mesh::InitializeInfo _Info{};
-	_Info.bLocalVertexLocationsStorage = true;
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
-	/*--------------------------------------------------------- */
-
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	//AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
-	
-	AddGameObject<Em5000>();
-	//AddGameObject<Em1000>();
+
+	//AddGameObject<Em0000>();
+	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	
+	//AddGameObject<Em5000>();
+
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
@@ -135,8 +122,9 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//LoadMap();
-	//AddGameObject<TempMap>();
+
+	LoadMap();
+	AddGameObject<TempMap>();
 	RenderDataSetUp();
 
 
@@ -212,6 +200,19 @@ HRESULT TestScene::LoadScene()
 	//	ptr.lock()->SetActive(false);
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
+
+	// DOOMDAY
+	if (auto pFont = AddGameObject<Font>().lock();
+		pFont)
+	{
+		pFont->SetText("D 18, Until Dooms Day",
+			Font::TEX_ID::DMC5_BLACK_GRAD,
+			Vector2(245.f, 130.f),
+			Vector2(0.6f, 0.6f),
+			true);
+
+		pFont->SetRenderFlag(true);
+	}
 
 	return S_OK;
 }
