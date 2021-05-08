@@ -160,15 +160,16 @@ private:
 	float _RankDissolveAmount = 0.f;
 
 	/*
-	1000 ~ 9999
+	0 ~ 99999999
 	_CurRank에 따라서 배율 증가
 	*/
-	uint32 _StylishPoints = 1000u;
+	uint32 _StylishPoints = 0u;
 	bool _StylishPtsAccumulateStart = false;
 	// + 결과창에 보여줄 누적 StylishPoints
 	bool _StylishPtsAlive = false;
 	float _StylishPtsAliveTime = 0.f;
-	
+	bool _StylishPtsAlive2ndCheck = false;
+
 	/* 0 ~ 3 */
 	float _ExGauge = 0.f;
 	float _ExGauge_EmissivePower[3] = { 0.f, };

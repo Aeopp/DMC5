@@ -867,11 +867,15 @@ void BtlPanel::AddRankScore(float Score)
 	if (_StylishPtsAccumulateStart)
 	{
 		if (_CurRank >= 0)
+		{
 			_StylishPoints += static_cast<uint32>(Score) * static_cast<uint32>(_CurRank + 1);
+			if (99999999u < _StylishPoints)
+				_StylishPoints = 99999999u;
+		}
 	}
 	else
 	{
-		//_StylishPoints = 1000u;
+		//_StylishPoints = 0u;
 		_StylishPtsAccumulateStart = true;
 	}
 }
@@ -1892,7 +1896,7 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 		auto pFont_Title = _FontVec[STYLISH_PTS_TITLE].lock();
 		auto pFont_Score = _FontVec[STYLISH_PTS_SCORE].lock();
 
-		if (!_UIDescs[STYLISH_POINTS].Using && pFont_Title && pFont_Score)
+		if (!_UIDescs[STYLISH_POINTS].Using && pFont_Title)
 		{
 			pFont_Title->SetText(
 				"STYLISH PTS",
@@ -1900,30 +1904,43 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 				{ _UIDescs[STYLISH_POINTS].Pos.x, _UIDescs[STYLISH_POINTS].Pos.y },
 				{ _UIDescs[STYLISH_POINTS].Scale.x, _UIDescs[STYLISH_POINTS].Scale.y },
 				false);
-			pFont_Title->SetRenderFlag(true);
+			pFont_Title->SetRenderFlag(true, Font::FADE_ID::DISOLVE_TORIGHT);
+
+			_UIDescs[STYLISH_POINTS].Using = true;
+		}
+		else if (!_StylishPtsAlive2ndCheck && 4.5f > _StylishPtsAliveTime && 1.2f < _StylishPtsAliveTime && pFont_Score)
+		{
+			string scoreStr = std::to_string(_StylishPoints);
+			while (8 > scoreStr.length())
+				scoreStr = string("0") + scoreStr;
 
 			pFont_Score->SetText(
-				std::to_string(_StylishPoints),
+				scoreStr,
 				Font::TEX_ID::DMC5_GREEN_GRAD,
 				{ _UIDescs[STYLISH_POINTS].Pos.x + 28.f, _UIDescs[STYLISH_POINTS].Pos.y + 50.f },
 				{ _UIDescs[STYLISH_POINTS].Scale.x * 2.f, _UIDescs[STYLISH_POINTS].Scale.y * 2.f },
 				false);
-			pFont_Score->SetRenderFlag(true);
+			pFont_Score->SetRenderFlag(true, Font::FADE_ID::DISOLVE_TORIGHT);
 
-			_UIDescs[STYLISH_POINTS].Using = true;
+			_StylishPtsAlive2ndCheck = true;
 		}
-
-		if (5.f < _StylishPtsAliveTime && pFont_Title && pFont_Score)
+		else if (_StylishPtsAlive2ndCheck && 4.5f < _StylishPtsAliveTime && pFont_Title)
 		{
-			pFont_Title->SetRenderFlag(false);
-			pFont_Score->SetRenderFlag(false);
+			pFont_Title->SetRenderFlag(false, Font::FADE_ID::DISOLVE_TORIGHT);
 
+			_StylishPtsAlive2ndCheck = false;
+		}
+		else if (5.f < _StylishPtsAliveTime && pFont_Score)
+		{
+			pFont_Score->SetRenderFlag(false, Font::FADE_ID::DISOLVE_TORIGHT);
+	
 			// _StylishPoints ´©Àû
-			_StylishPoints = 1000u;
+			_StylishPoints = 0u;
 
 			_UIDescs[STYLISH_POINTS].Using = false;
 			_StylishPtsAliveTime = 0.f;
 			_StylishPtsAlive = false;
+			_StylishPtsAlive2ndCheck = false;
 		}
 	}
 }

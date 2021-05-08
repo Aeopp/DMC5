@@ -31,6 +31,11 @@ void Font::SetRenderFlag(bool IsRender, Font::FADE_ID ID/*= FADE_ID::NONE*/)
 		else
 			_FadeID = ID;
 
+		if (FADE_ID::DISOLVE_TORIGHT == _FadeID)
+			_UsingNoise = true;
+		else
+			_UsingNoise = false;
+
 		_IsRender = IsRender;
 	}
 }
@@ -44,6 +49,9 @@ void Font::Free()
 		SafeDelete(Element);
 	_FontDescVec.clear();
 	_FontDescVec.shrink_to_fit();
+
+	_CharSliceAmount.clear();
+	_CharSliceAmount.shrink_to_fit();
 
 	GameObject::Free();
 }
@@ -75,6 +83,8 @@ void Font::RenderFont(const DrawInfo& _Info)
 			if (!_UsingPerspective)
 			{
 				size_t textLength = _Text.length();
+				if (MAX_CHAR_CNT < textLength)
+					textLength = MAX_CHAR_CNT;
 
 				if (_UsingShadow)
 				{
@@ -90,6 +100,12 @@ void Font::RenderFont(const DrawInfo& _Info)
 						SetFontUV();
 						_Info.Fx->SetFloatArray("_MinTexUV", *_CurMinUV, 2u);
 						_Info.Fx->SetFloatArray("_MaxTexUV", *_CurMaxUV, 2u);
+
+						if (FADE_ID::DISOLVE_TORIGHT == _FadeID)
+						{
+							// SliceAmount 재지정
+							_Info.Fx->SetFloat("_SliceAmount", _CharSliceAmount[i]);
+						}
 
 						_Info.Fx->BeginPass(0);
 						SharedSubset->Render(_Info.Fx);
@@ -109,6 +125,12 @@ void Font::RenderFont(const DrawInfo& _Info)
 					SetFontUV();
 					_Info.Fx->SetFloatArray("_MinTexUV", *_CurMinUV, 2u);
 					_Info.Fx->SetFloatArray("_MaxTexUV", *_CurMaxUV, 2u);
+
+					if (FADE_ID::DISOLVE_TORIGHT == _FadeID)
+					{
+						// SliceAmount 재지정
+						_Info.Fx->SetFloat("_SliceAmount", _CharSliceAmount[i]);
+					}
 
 					_Info.Fx->BeginPass(0);
 					SharedSubset->Render(_Info.Fx);
@@ -267,6 +289,10 @@ HRESULT Font::Ready()
 
 	LoadFontDesc("..\\..\\Resource\\Font\\Data\\dmc5font.json");
 
+	_CharSliceAmount.resize(MAX_CHAR_CNT);
+	for (auto& Element : _CharSliceAmount)
+		Element = 1.f;
+
 	return S_OK;
 }
 
@@ -287,23 +313,97 @@ UINT Font::Update(const float _fDeltaTime)
 	switch (_FadeID)
 	{
 	case FADE_ID::NONE:
-		if (_IsRender)
-			_SliceAmount = 0.f;
-		else
-			_SliceAmount = 1.f;
-		break;
-	case FADE_ID::ALPHA_LINEAR:
-		break;
-	case FADE_ID::DISOLVE_TORIGHT:
-		break;
 	default:
-		break;
-	}
+		if (_IsRender)
+		{
+			_SliceAmount = 0.f;
+			_RenderProperty.bRender = true;
+		}
+		else
+		{
+			_SliceAmount = 1.f;
+			_RenderProperty.bRender = false;
+		}
 
-	if (1.f > _SliceAmount)
-		_RenderProperty.bRender = true;
-	else
-		_RenderProperty.bRender = false;
+		break;
+
+	case FADE_ID::ALPHA_LINEAR:
+		if (_IsRender)
+		{
+			if (0.f < _SliceAmount)
+			{
+				_SliceAmount -= 2.f * _fDeltaTime;
+				if (0.f > _SliceAmount)
+					_SliceAmount = 0.f;
+			}
+		}
+		else
+		{
+			if (1.f > _SliceAmount)
+			{
+				_SliceAmount += 2.f * _fDeltaTime;
+				if (1.f < _SliceAmount)
+					_SliceAmount = 1.f;
+			}
+		}
+
+		if (1.f > _SliceAmount)
+			_RenderProperty.bRender = true;
+		else
+			_RenderProperty.bRender = false;
+
+		break;
+
+	case FADE_ID::DISOLVE_TORIGHT:
+		if (_IsRender)
+		{
+			if (0.f < _SliceAmount)
+			{
+				_SliceAmount -= 0.45f * _fDeltaTime;
+				if (0.f > _SliceAmount)
+					_SliceAmount = 0.f;
+
+				uint32 idx = static_cast<uint32>((1.f - _SliceAmount) * static_cast<float>(MAX_CHAR_CNT));
+				if (idx > MAX_CHAR_CNT)
+					idx = MAX_CHAR_CNT;
+
+				for (uint32 i = 0u; i < idx; ++i)
+				{
+					_CharSliceAmount[i] -= 0.75f * _fDeltaTime;
+					if (0.f > _CharSliceAmount[i])
+						_CharSliceAmount[i] = 0.f;
+				}
+			}
+		}
+		else
+		{
+			if (1.f > _SliceAmount)
+			{
+				_SliceAmount += 0.45f * _fDeltaTime;
+				if (1.f < _SliceAmount)
+					_SliceAmount = 1.f;
+
+				int idx = static_cast<int>((_SliceAmount) * static_cast<float>(MAX_CHAR_CNT));
+				if (idx > MAX_CHAR_CNT)
+					idx = MAX_CHAR_CNT;
+
+				for (int i = idx - 1; i >= 0; --i)
+				{
+					_CharSliceAmount[i] += 0.75f * _fDeltaTime;
+					if (1.f < _CharSliceAmount[i])
+						_CharSliceAmount[i] = 1.f;
+				}
+			}
+		}
+
+		if (1.f > _SliceAmount)
+			_RenderProperty.bRender = true;
+		else
+			_RenderProperty.bRender = false;
+
+		break;
+		
+	}
 
 	return 0;
 }          

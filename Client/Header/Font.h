@@ -73,7 +73,10 @@ private:
 
 	bool _IsRender = false;
 	FADE_ID _FadeID = FADE_ID::NONE;
-	float _SliceAmount = 0.f;
+	float _SliceAmount = 1.f;
+
+	enum { MAX_CHAR_CNT = 32 };
+	vector<float> _CharSliceAmount{};
 	
 private:
 	explicit Font() = default;
