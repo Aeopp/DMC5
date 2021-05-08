@@ -36,6 +36,7 @@
 #include "IceAge.h"
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
+#include "CbsTrail.h"
 
 #include <iostream>
 #include <fstream>
@@ -60,13 +61,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	// AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -74,6 +75,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
 	//AddGameObject<IceAge>();
+	//AddGameObject<CbsTrail>();
 
 
 	// Wave 1st
@@ -221,11 +223,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	//if (nullptr != pPlane)
-	//	return S_OK;
+	if (nullptr != pPlane)
+		return S_OK;
 
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	//Physics::AddActor(UniqueID, *pPlane);
+	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
 }
@@ -416,8 +418,8 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;

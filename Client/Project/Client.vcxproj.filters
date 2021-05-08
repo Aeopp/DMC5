@@ -433,6 +433,9 @@
     <ClInclude Include="..\..\Resource\Shader\Effect\NeroWingArmSK.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\CbsTrail.h">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -685,6 +688,9 @@
     <ClCompile Include="..\Source\Font.cpp">
       <Filter>02.GameObject\UI\Font</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CbsTrail.cpp">
+      <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -741,6 +747,10 @@
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
     <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\FireParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
   </ItemGroup>

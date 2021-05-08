@@ -52,6 +52,7 @@ private:
 	std::weak_ptr<SphereCollider> m_pCollider;
 
 	bool								  m_bIsRender;
+	bool								  m_bHitOnce_Em5000 = true;
 
 	std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
 	std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};

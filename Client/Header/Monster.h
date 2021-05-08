@@ -49,6 +49,7 @@ public:
 	virtual void	SetGravity(bool _bActiveOrNot);
 	void	Set_Snatch(bool _bSnatch);
 	void	AddRankScore(float _fRankScore);
+	bool	Get_Groggy() { return m_bGroggy; }
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
 	virtual void   Update_Angle() PURE;
@@ -64,6 +65,7 @@ protected:
 	bool	m_bSnatch = true;
 	bool	m_bEnterGround = false;
 	bool	m_bAir = false;
+	bool	m_bGroggy = false;
 
 	//플레이어 방향 회전하기 용
 	bool	m_bInteraction = false;;

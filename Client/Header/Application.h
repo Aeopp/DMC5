@@ -16,5 +16,9 @@ private:
 
 private:
 	void ParticlePoolLoad();
+	void IceParticlePoolLoad();
+	void IceCbsMidParticlePoolLoad();
+	void IceAgeParticlePoolLoad();
+	void FireParticlePoolLoad();
 };
 #endif // !__APPLICATION_H__
