@@ -65,9 +65,10 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
+	AddGameObject<CbsTrail>();
 
 	//AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
+	// AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -225,8 +226,8 @@ HRESULT TestScene::Awake()
 	if (nullptr != pPlane)
 		return S_OK;
 
-	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	Physics::AddActor(UniqueID, *pPlane);
+	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
 }
