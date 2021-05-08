@@ -161,7 +161,19 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 				{
 					if (i == 0)
 					{
-						ExtraColor = Vector3(1.f, 0.f, 0.f);
+						switch (_CbsColor)
+						{
+						case 1:
+							ExtraColor = Vector3(0.f, 0.819f, 0.847f);
+							break;
+						case 2:
+							ExtraColor = Vector3(0.627f, 0.f, 0.937f);
+							break;
+						case 0: default:
+							ExtraColor = Vector3(1.f, 0.f, 0.f);
+							break;
+						}
+
 						_ImplInfo.Fx->SetFloatArray("_ExtraColor", ExtraColor, 3u);
 					}
 					else
@@ -904,9 +916,10 @@ void BtlPanel::UseExGauge(const uint32 Count)
 		_ExGauge = 0.f;
 }
 
-void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon)
+void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor/*= 0*/)
 {
-	if (_CurWeaponIdx == NextWeapon)
+	if (NextWeapon == _CurWeaponIdx
+		&& CbsColor == _CbsColor)
 		return;
 
 	if (Nero::WeaponList::RQ == NextWeapon)
@@ -924,6 +937,7 @@ void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon)
 	_HPGlassRotY = -30.f;
 
 	_CurWeaponIdx = NextWeapon;
+	_CbsColor = CbsColor;
 }
 
 void BtlPanel::AccumulateRedOrb(const uint32 Amount)
@@ -2039,7 +2053,10 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F7))
 	{
 		//ConsumeTDTGauge(0.5f);
-		//ChangeWeaponUI(Nero::WeaponList::Cbs);
+		//static int temp = 0;
+		//if (2 < temp)
+		//	temp = 0;
+		//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
 		ResetRankScore();
 	}
 	////////////////////////////

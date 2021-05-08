@@ -186,6 +186,7 @@ private:
 	bool _KeyboardInput[KEY_INPUT_END] = { false, };
 
 	Nero::WeaponList _CurWeaponIdx = Nero::WeaponList::RQ;
+	int _CbsColor = 0;	// 0: Fire, 1: Ice, 2: Thunder
 
 	Matrix _PerspectiveProjMatrix = Matrix();
 
@@ -264,7 +265,7 @@ public:
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count);
 
-	void ChangeWeaponUI(Nero::WeaponList NextWeapon);
+	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Fire, 1: Ice, 2: Thunder
 
 	void AccumulateRedOrb(const uint32 Amount);
 
