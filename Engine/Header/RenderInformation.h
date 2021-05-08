@@ -18,6 +18,7 @@ public:
 	Matrix  ViewProjection{};
 	Matrix  ViewProjectionInverse{};
 	Matrix  Ortho{};
+	Matrix  Billboard{};
 };
 END
 #endif // !_RENDERINFORMATION_H_

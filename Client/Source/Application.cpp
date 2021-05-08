@@ -105,7 +105,7 @@ void Application::IceCbsMidParticlePoolLoad()
 	const uint64 PoolSize = 300;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated("IceCbsMid", std::move(_PushParticle), PoolSize);
+		ParticleSystem::GetInstance()->PreGenerated("IceCbsMid", std::move(_PushParticle), PoolSize,false);
 
 	for (auto& _ParticleInstance : *ParticlePool)
 	{
@@ -183,7 +183,7 @@ void Application::IceAgeParticlePoolLoad()
 	const uint64 PoolSize = 1000;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize);
+		ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize,false);
 
 	Mesh::InitializeInfo _TargetInfo{};
 	_TargetInfo.bLocalVertexLocationsStorage = true;
@@ -293,7 +293,7 @@ void Application::FireParticlePoolLoad()
 	const uint64 PoolSize = 300;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated("FireParticle", std::move(_PushParticle), PoolSize);
+		ParticleSystem::GetInstance()->PreGenerated("FireParticle", std::move(_PushParticle), PoolSize,true);
 
 	for (auto& _ParticleInstance : *ParticlePool)
 	{
@@ -306,7 +306,7 @@ void Application::FireParticlePoolLoad()
 		static constexpr float ThirdVelocityScale = 300.f;
 
 		ParticleInstance::Fire _FireValue{};
-		_FireValue.ColorIntencity = FMath::Random(0.01f, 0.04f);
+		_FireValue.ColorIntencity = FMath::Random(0.5f, 1.f);
 		const float LifeTime = FMath::Random(0.20f, 1.f);
 		const Vector3 ParticleScale =
 			FMath::Random(Vector3{ 0.05f ,0.05f ,0.05f },
