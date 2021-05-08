@@ -51,6 +51,7 @@ private:
 	std::weak_ptr<SphereCollider> m_pCollider;
 
 	bool								  m_bIsRender;
+	bool								  m_bHitOnce_Em5000 = true;
 };
 
 

@@ -31,11 +31,13 @@ public:
 		Groggy_Dead,
 		Groggy_Start,
 		Groggy_Loop,
+		Groggy_End,
 		Hit_Buster_Start,
 		Hit_Buster_Swing_Start,
 		Hit_Buster_Swing_Loop,
 		Hit_Buster_Swing_Throw,
 		Hit_Buster_Swing_End,
+		Hit_Buster_Standup,
 		Howling,
 		Idle,
 		Move_Loop,
@@ -103,6 +105,7 @@ public:
 	void		 Turn_To_Car();
 	void		 Update_Angle_ToCar();
 	Em5000_State Get_State() { return m_eState; }
+	
 private:
 	//몬스터 상태
 	Em5000_State	m_eState =State_END;		
@@ -138,8 +141,8 @@ private:
 	float		m_fTurnTime = 0.f;
 
 	bool		m_bBuster = false;
-	
 
+	bool		m_bTest2 = false;
 
 
 	//전투 시작 테스트 용

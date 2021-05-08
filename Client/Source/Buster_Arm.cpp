@@ -8,6 +8,7 @@
 
 Buster_Arm::Buster_Arm()
 	:m_bIsRender(false)
+	,m_bHitOnce_Em5000(true)
 {
 	m_nTag = TAG_BusterArm_Right;
 
@@ -88,6 +89,10 @@ UINT Buster_Arm::Update(const float _fDeltaTime)
 		if ("em0000_Buster_Start" != m_pMesh->AnimName)
 			SetActive(false);
 	}
+
+	if (Input::GetKeyDown(DIK_U))
+		m_bHitOnce_Em5000 = true;
+
 
 	return 0;
 }
@@ -188,9 +193,12 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case Monster5000:
 		//그로기 상태일때만
-
-		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM5000_BUSTER_START);
-		m_pCollider.lock()->SetActive(false);
+		if (m_bHitOnce_Em5000 &&
+			static_pointer_cast<Monster>(_pOther.lock())->Get_Groggy())
+		{
+			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM5000_BUSTER_START);
+			m_bHitOnce_Em5000 = false;
+		}
 		break;
 	default:
 		break;

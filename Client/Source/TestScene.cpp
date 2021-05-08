@@ -136,7 +136,7 @@ HRESULT TestScene::LoadScene()
 	//}
 
 	//LoadMap();
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 	RenderDataSetUp();
 
 
@@ -220,11 +220,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	//if (nullptr != pPlane)
-	//	return S_OK;
+	if (nullptr != pPlane)
+		return S_OK;
 
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	//Physics::AddActor(UniqueID, *pPlane);
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
