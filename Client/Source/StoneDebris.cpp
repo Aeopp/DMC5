@@ -20,22 +20,22 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 	case REDORB_0:
 	case GREENORB_0:
 		_SubsetIdx = 0u;
-		_BrightScale = 1.f;
+		_BrightScale = 1.5f;
 		break;
 	case REDORB_1:
 	case GREENORB_1:
 		_SubsetIdx = 1u;
-		_BrightScale = 1.f;
+		_BrightScale = 1.5f;
 		break;
 	case REDORB_2:
 	case GREENORB_2:
 		_SubsetIdx = 2u;
-		_BrightScale = 1.f;
+		_BrightScale = 1.5f;
 		break;
 	case REDORB_3:
 	case GREENORB_3:
 		_SubsetIdx = 3u;
-		_BrightScale = 1.f;
+		_BrightScale = 1.5f;
 		break;
 	}
 	
@@ -341,7 +341,7 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 				if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 					Sptransform)
 				{
-					RedOrbAmount += static_cast<uint32>(Sptransform->GetScale().x / 0.001f) * 10u;	// 몬스터가 뿌리는 scale 0.0015 ~ 0.004
+					RedOrbAmount += static_cast<uint32>(Sptransform->GetScale().x / 0.001f) * 10u;	// 몬스터가 뿌리는 scale 0.0025 ~ 0.004
 				}
 
 				std::static_pointer_cast<BtlPanel>(pBtlPanel.lock())->AccumulateRedOrb(RedOrbAmount);

@@ -73,15 +73,15 @@ HRESULT TestScene::LoadScene()
 		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
 	/*--------------------------------------------------------- */
 
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 19, Until Dooms Day", 
+		pFont->SetText("D 18, Until Dooms Day", 
 			Font::TEX_ID::DMC5_BLACK_GRAD, 
 			Vector2(245.f, 130.f), 
 			Vector2(0.6f, 0.6f), 
@@ -91,7 +91,7 @@ HRESULT TestScene::LoadScene()
 	}
 
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -147,7 +147,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 	RenderDataSetUp();
 

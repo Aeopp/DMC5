@@ -257,6 +257,7 @@ public:
 	
 	void AddRankScore(float Score);	// 처음 호출시 StylishPoints 누적 시작
 	void ResetRankScore();			// wave 하나가 끝나면 반드시 호출
+	int GetRank() const		{ return _CurRank; }	/* -1 ~ 6 */
 
 	float GetExGauge() const { return _ExGauge; }
 	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
