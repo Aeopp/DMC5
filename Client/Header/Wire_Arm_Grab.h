@@ -46,6 +46,7 @@ public:
 
 	// ·»´õ¸µ ÇÔ¼ö ..
 	void RenderInit();
+	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
@@ -63,6 +64,13 @@ private:
 	Vector3	m_vDir;
 
 	float								m_fRadianForRotX;
+
+	std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
+	std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};
+	std::shared_ptr<ENGINE::Texture>		m_GradationTex{};
+
+	float	m_fAccTime = 0.f;
+
 };
 
 

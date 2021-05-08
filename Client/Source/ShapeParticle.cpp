@@ -22,15 +22,15 @@ void ShapeParticle::SetColorIdx(ShapeParticle::COLOR Idx)
 	{
 	case RED:
 		_ExtraColor = Vector3(0.518f, 0.019f, 0.051f);
-		_BrightScale = 0.3f;
+		_BrightScale = 0.4f;
 		break;
 	case GREEN:
 		_ExtraColor = Vector3(0.09f, 0.596f, 0.518f);
-		_BrightScale = 0.15f;
+		_BrightScale = 0.2f;
 		break;
 	case WHITE:
 		_ExtraColor = Vector3(1.f, 1.f, 1.f);
-		_BrightScale = 0.15f;
+		_BrightScale = 0.2f;
 		break;
 	}
 

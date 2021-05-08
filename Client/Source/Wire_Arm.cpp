@@ -30,6 +30,11 @@ HRESULT Wire_Arm::Ready()
 	Unit::Ready();
 	RenderInit();
 
+	m_NRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\pl0010_WireArm_NRMR.tga");
+	m_ATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\pl0010_WireArm_ATOS.tga");
+	//m_GradationTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\pl0010_08_Gradation_MSK1.tga");
+	m_GradationTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\grad.png");
+
 	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
 	
 	PushEditEntity(m_pTransform.lock().get());
@@ -96,6 +101,9 @@ UINT Wire_Arm::Update(const float _fDeltaTime)
 	{
 		m_pCollider.lock()->SetActive(false);
 	}
+
+	//
+	m_fAccTime += _fDeltaTime;
 
 	return 0;
 }
@@ -179,6 +187,17 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		_RenderProperty.bRender = m_bIsRender = false;
 	}
 	break;
+	case GAMEOBJECTTAG::Monster1000:
+	{
+		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
+		m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
+		m_pCollider.lock()->SetActive(false);
+
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
+		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Vine01_IK");
+		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+	}
+	break;
 	case GAMEOBJECTTAG::Monster5300:
 	{
 		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
@@ -190,6 +209,17 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
 	}
 		break;
+	case GAMEOBJECTTAG::Monster5000:
+	{
+		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
+		m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
+		m_pCollider.lock()->SetActive(false);
+
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
+		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Hip");
+		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+	}
+	break;
 	default:
 		break;
 	}
@@ -272,24 +302,33 @@ void Wire_Arm::RenderInit()
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = m_bIsRender;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"gbuffer_dsSK",
+		{"NeroWingArmSK",
 		[this](const DrawInfo& _Info)
 			{
-				RenderGBufferSK(_Info);
+				RenderAlphaBlendEffect(_Info);
 			}
 		},
 	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"ShadowSK" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadowSK(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_dsSK",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBufferSK(_Info);
+	//		}
+	//	},
+	//};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+	//	=
+	//{
+	//	{"ShadowSK" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderShadowSK(_Info);
+	//	}
+	//} };
 	_InitRenderProp.RenderOrders[RenderProperty::Order::DebugBone]
 		=
 	{
@@ -327,6 +366,30 @@ void Wire_Arm::RenderInit()
 	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wire_Arm\\Wire_Arm.Animation");
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
+}
+
+void Wire_Arm::RenderAlphaBlendEffect(const DrawInfo& _Info)
+{
+	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+		return;
+
+	m_pMesh->BindVTF(_Info.Fx);
+
+	auto WeakSubset = m_pMesh->GetSubset(0u);
+	if (auto SharedSubset = WeakSubset.lock();
+		SharedSubset)
+	{
+		const Matrix World = _RenderUpdateInfo.World;
+		_Info.Fx->SetMatrix("World", &World);
+		_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
+		_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());
+		_Info.Fx->SetTexture("GradationMap", m_GradationTex->GetTexture());
+		_Info.Fx->SetFloat("_BrightScale", 0.015f);
+		_Info.Fx->SetFloat("_SliceAmount", 0.f);
+		_Info.Fx->SetFloat("_AccumulationTexV", m_fAccTime * 0.6f);
+
+		SharedSubset->Render(_Info.Fx);
+	}
 }
 
 void Wire_Arm::RenderGBufferSK(const DrawInfo& _Info)

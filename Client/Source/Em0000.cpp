@@ -501,7 +501,6 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_START
 				&& m_pPlayer.lock()->IsAnimationEnd())
 			{
-
 				m_eState = Hit_Buster_End;
 
 				Vector3 vRot(0.f, 0.f, 0.f);
@@ -1027,6 +1026,18 @@ void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 		m_vPower.z = 0.f;
 		m_fPower = 100.f;
 		m_pCollider.lock()->SetGravity(true);
+	}
+	break;
+	case ATTACKTYPE::Attack_Air_Start:
+	{
+		m_eState = Hit_Air_Start;
+		m_bHit = true;
+
+		Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
+		D3DXVec3Normalize(&vLook, &vLook);
+		Vector3	vDir(vLook.x * 0.03f, 0.32f, vLook.z * 0.03f);
+
+		m_pCollider.lock()->AddForce(vDir * m_fPower);
 	}
 	break;
 	case ATTACKTYPE::Attack_KnocBack:

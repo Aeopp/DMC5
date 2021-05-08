@@ -610,14 +610,17 @@ void Em200::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Air_Buster_Finish", false, {}, 1.f, 1.f, true);
 			Vector3 vRot(0.f, 0.f, 0.f);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Finish" && m_pMesh->PlayingTime() >= 0.6f)
+			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Finish" && m_pMesh->PlayingTime() >= 0.95f)
 			{
+				m_pCollider.lock()->SetRigid(true);
+				m_pCollider.lock()->SetTrigger(false);
+				m_pCollider.lock()->SetGravity(true);
 
-				m_eState = Hit_KnocBack;
 				Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
 				m_vPower += -vLook;
-				m_vPower.y = 2.f;
+				m_vPower.y = 0.f;
+
 
 				D3DXVec3Normalize(&m_vPower, &m_vPower);
 				m_fPower = 120.f;
@@ -627,13 +630,8 @@ void Em200::State_Change(const float _fDeltaTime)
 				m_vPower.z = 0.f;
 				m_fPower = 100.f;
 
-
-				m_pCollider.lock()->SetRigid(true);
-				m_pCollider.lock()->SetTrigger(false);
-				m_pCollider.lock()->SetGravity(true);
-				
+				m_eState = Hit_KnocBack;
 			}
-
 		}
 		break;
 	case Em200::Hit_Split_Start:
@@ -1165,6 +1163,18 @@ void Em200::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 
 		m_pCollider.lock()->SetGravity(true);
 
+	}
+	break;
+	case ATTACKTYPE::Attack_Air_Start:
+	{
+		m_eState = Hit_Air_Start;
+		m_bHit = true;
+
+		Vector3 vLook = -m_pPlayerTrans.lock()->GetLook();
+		D3DXVec3Normalize(&vLook, &vLook);
+		Vector3	vDir(vLook.x * 0.03f, 0.32f, vLook.z * 0.03f);
+
+		m_pCollider.lock()->AddForce(vDir * m_fPower);
 	}
 	break;
 	case ATTACKTYPE::Attack_KnocBack:
