@@ -34,6 +34,7 @@
 #include "AirHike.h"
 #include "FireCircle.h"
 #include "IceAge.h"
+#include "JudgementSword.h"
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp" 
 
@@ -74,6 +75,7 @@ HRESULT TestScene::LoadScene()
 	/*--------------------------------------------------------- */
 
 	//AddGameObject<Camera>();
+	//AddGameObject <JudgementSword>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();

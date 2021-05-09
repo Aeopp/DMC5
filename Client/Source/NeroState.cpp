@@ -12056,7 +12056,11 @@ ShinMajinJudgement* ShinMajinJudgement::Create(FSMBase* const _pFSM, const UINT 
 HRESULT ShinMajinJudgement::StateEnter()
 {
 	m_pNero.lock()->ChangeAnimation("Judgement", false, Nero::ANI_SHINMAJIN_JUDGEMENT);
-
+	
+	for (int i = 0; i < 4; ++i)
+	{
+		m_bPlayOnce[i] = true;
+	}
 	return S_OK;
 }
 
@@ -12067,6 +12071,31 @@ HRESULT ShinMajinJudgement::StateExit()
 
 HRESULT ShinMajinJudgement::StateUpdate(const float _fDeltaTime)
 {
+	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.307f <= fCurAnimationTime && m_bPlayOnce[0])
+	{
+		m_bPlayOnce[0] = false;
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_JudgementSword, "CINEMA_4D___", false);	}
+
+	if (0.317f <= fCurAnimationTime && m_bPlayOnce[1])
+	{
+		m_bPlayOnce[1] = false;
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_JudgementShadow1, "CINEMA_4D___", false);
+	}
+
+	if (0.327f <= fCurAnimationTime && m_bPlayOnce[2])
+	{
+		m_bPlayOnce[2] = false;
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_JudgementShadow2, "CINEMA_4D___", false);
+	}
+
+	if (0.337f <= fCurAnimationTime && m_bPlayOnce[3])
+	{
+		m_bPlayOnce[3] = false;
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_JudgementShadow3, "CINEMA_4D___", false);
+	}
+
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 

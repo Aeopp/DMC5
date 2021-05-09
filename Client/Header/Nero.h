@@ -30,6 +30,10 @@ class FireCircle;
 class IceAge;
 class Trail;
 class ShapeParticle;
+class JudgementSword;
+class JudgementShadow1;
+class JudgementShadow2;
+class JudgementShadow3;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -308,7 +312,11 @@ public:
 		NeroCom_Cbs_Short,
 		NeroCom_Cbs_Middle,
 		NeroCom_Cbs_Long,
+		NeroCom_JudgementSword,
 		NeroCom_All_Weapon,
+		NeroCom_JudgementShadow1,
+		NeroCom_JudgementShadow2,
+		NeroCom_JudgementShadow3,
 		NeroCom_End
 	};
 
@@ -497,6 +505,10 @@ private:
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 
 	std::vector<std::weak_ptr<WingSword>>	m_vecWingSwords;
+	std::weak_ptr<JudgementSword>	m_pJudgementSword;
+	std::weak_ptr<JudgementShadow1> m_pJudgementShadow1;
+	std::weak_ptr<JudgementShadow2> m_pJudgementShadow2;
+	std::weak_ptr<JudgementShadow3> m_pJudgementShadow3;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

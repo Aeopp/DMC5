@@ -69,6 +69,9 @@ enum GAMEOBJECTTAG
 	Tag_Cbs_Middle,
 	Tag_Cbs_Long,
 	TAG_NeroShinMajin,
+	TAG_JudgementShadow1,
+	TAG_JudgementShadow2,
+	TAG_JudgementShadow3,
 	Tag_END
 };
 

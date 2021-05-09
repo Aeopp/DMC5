@@ -436,6 +436,10 @@
     <ClInclude Include="..\Header\CbsTrail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\JudgementShadow1.h" />
+    <ClInclude Include="..\Header\JudgementShadow2.h" />
+    <ClInclude Include="..\Header\JudgementShadow3.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -691,6 +695,10 @@
     <ClCompile Include="..\Source\CbsTrail.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\JudgementShadow1.cpp" />
+    <ClCompile Include="..\Source\JudgementShadow2.cpp" />
+    <ClCompile Include="..\Source\JudgementShadow3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

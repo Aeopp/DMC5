@@ -31,6 +31,10 @@
 #include "FireCircle.h"
 #include "CircleWave.h"
 #include "ShapeParticle.h"
+#include "JudgementSword.h"
+#include "JudgementShadow1.h"
+#include "JudgementShadow2.h"
+#include "JudgementShadow3.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -224,6 +228,12 @@ HRESULT Nero::Ready()
 	m_pAirHike = AddGameObject<AirHike>();
 	m_pTrail = AddGameObject<Trail>();
 	m_pIceAge = AddGameObject<IceAge>();
+	m_pJudgementSword = AddGameObject<JudgementSword>();
+	m_pJudgementShadow1 = AddGameObject<JudgementShadow1>();
+	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
+	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
+
+
 	for (int i = 0; i < 3; ++i)
 	{
 		m_pFireCircle[i] = AddGameObject<FireCircle>();
@@ -256,7 +266,7 @@ HRESULT Nero::Ready()
 
 	m_iCurAnimationIndex = ANI_END;
 	m_iPreAnimationIndex = ANI_END;
-
+	
 	return S_OK;
 }
 
@@ -386,10 +396,10 @@ UINT Nero::Update(const float _fDeltaTime)
 	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA3", false);
 	//	}
 	//}
-	//if (Input::GetKeyDown(DIK_9))
-	//{
-	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	//}
+	if (Input::GetKeyDown(DIK_9))
+	{
+		m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
+	}
 	return 0;
 }
 
@@ -1382,6 +1392,22 @@ void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string
 	case Nero::NeroCom_Cbs_Middle:
 		ChangeWeapon(Nero::NeroCom_Cbs_Middle);
 		m_pCbsMiddle.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify, bOverlap);
+		break;
+	case Nero::NeroCom_JudgementSword:
+		m_pJudgementSword.lock()->SetActive(true);
+		m_pJudgementSword.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_JudgementShadow1:
+		m_pJudgementShadow1.lock()->SetActive(true);
+		m_pJudgementShadow1.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_JudgementShadow2:
+		m_pJudgementShadow2.lock()->SetActive(true);
+		m_pJudgementShadow2.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
+		break;
+	case Nero::NeroCom_JudgementShadow3:
+		m_pJudgementShadow3.lock()->SetActive(true);
+		m_pJudgementShadow3.lock()->ChangeAnimation(InitAnimName, bLoop, _Notify);
 		break;
 	case Nero::NeroCom_End:
 		break;
