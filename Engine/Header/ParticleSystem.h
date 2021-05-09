@@ -131,6 +131,7 @@ public:
 
 			return World;
 		};
+
 		const std::optional<SpriteDesc>& GetSpriteDesc(){ return _SpriteDesc; };
 		const Vector3& GetCurLocation() { return CurrentLocation; };
 		const Vector3& GetCurRotation() { return CurRotation; };

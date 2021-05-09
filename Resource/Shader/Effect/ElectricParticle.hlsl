@@ -42,13 +42,10 @@ void PsMain(out float4 Color : COLOR0,
             in float2 UV1 : TEXCOORD1)
 {
     Color = tex2D(Albm, UV0);
-    Color .rgb *= ElectricColor;
-    
-    Color.rgb *= ColorIntencity;
+    Color.rgb *= ElectricColor;
+    Color.rgb *= ColorIntencity;    
     Color.rgb *= sin(Time);
     Color.rgb *= exposure_corr;
-    
-    Color.rgb = ElectricColor;
     
     Color.a *= LifeTimeAlphaFactor;
 };
