@@ -170,6 +170,7 @@
     <ClInclude Include="..\Header\Cbs_Short.h" />
     <ClInclude Include="..\Header\CircleWave.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
+    <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\Em1000.h" />
     <ClInclude Include="..\Header\Em1000Hand.h" />
     <ClInclude Include="..\Header\Em200.h" />
@@ -182,11 +183,9 @@
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
+    <ClInclude Include="..\Header\JudgementSword.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
-    <ClInclude Include="..\Header\LogoScene.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="..\Header\LogoScene.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -259,6 +258,7 @@
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
     <ClCompile Include="..\Source\CircleWave.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
+    <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\Em1000.cpp" />
     <ClCompile Include="..\Source\Em1000Hand.cpp" />
     <ClCompile Include="..\Source\Em200.cpp" />
@@ -271,11 +271,9 @@
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
+    <ClCompile Include="..\Source\JudgementSword.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
-    <ClCompile Include="..\Source\LogoScene.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\Source\LogoScene.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
@@ -447,6 +445,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

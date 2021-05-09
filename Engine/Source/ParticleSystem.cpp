@@ -25,11 +25,13 @@ std::vector<ParticleSystem::ParticleInstance>*
 ParticleSystem::PreGenerated
 (const std::string& Identifier /*등록한 이름으로 제어하세요*/,
 	const Particle& _Particle ,
-	const uint64 PoolSize )
+	const uint64 PoolSize ,
+	const bool bBillboard)
 {
 	auto& _RefParticle = _Particles[Identifier] = (_Particle);
 	auto& _RefParticleInstances = _RefParticle.RefInstances();
 	_RefParticleInstances.resize(PoolSize);
+	_RefParticle.bBillboard = bBillboard;
 	return &_RefParticleInstances;
 };
 
@@ -48,12 +50,10 @@ HRESULT ParticleSystem::UpdateParticleSystem(const float Delta)
 {
 	for (auto& [Key , _TargetParticle ] : _Particles)
 	{
-		// _TargetParticle.SetPlayTime(_TargetParticle.GetPlayTime() - Delta);
 		auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
 		if (_TargetParticle.bPlayable())
 		{
-			// const float LerpTimeNormalize = _TargetParticle.bLerpTimeNormalized ? _TargetParticle.GetDuration() : 1.0f;
 
 			bool bAnyOne = false;
 
@@ -67,15 +67,7 @@ HRESULT ParticleSystem::UpdateParticleSystem(const float Delta)
 				_TargetParticle.Sleep();
 			}
 		}
-	/*	else
-		{
-			auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
-			for (auto& _ParticleInstance : _RefTargetParticleInstances)
-			{
-				_ParticleInstance.Reset();
-			}
-		}*/
 	}
 
 	return S_OK;
@@ -122,6 +114,13 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 
 						auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
+						std::optional<Matrix> BillboardMat = std::nullopt;
+
+						if (_TargetParticle.bBillboard)
+						{
+							BillboardMat = _Renderer->_RenderInfo.Billboard;
+						}
+
 						for (auto& _ParticleInstance : _RefTargetParticleInstances)
 						{
 							if (_ParticleInstance.GetLifeTime().has_value())
@@ -129,10 +128,13 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 								if (auto _Subset = _TargetParticle._Mesh->GetSubset(0).lock();
 									_Subset)
 								{
-									const Matrix matWorld = _ParticleInstance.CalcWorld();
-									CurFx->SetFloat("LifeTimeAlphaFactor", _ParticleInstance.GetLifeTimeAlphaFactor());
-									CurFx->SetMatrix("matWorld", &matWorld);
+									const Matrix matWorld = _ParticleInstance.CalcWorld(BillboardMat);
 
+									CurFx->SetFloat("LifeTimeAlphaFactor", 
+										_ParticleInstance.GetLifeTimeAlphaFactor());
+									CurFx->SetMatrix("matWorld", &matWorld);
+									CurFx->SetFloat("Time", _ParticleInstance.GetT());
+									
 									if (const auto& bTargetSprite = _ParticleInstance.GetSpriteDesc();
 										bTargetSprite)
 									{

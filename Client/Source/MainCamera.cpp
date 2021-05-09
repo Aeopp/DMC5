@@ -43,8 +43,8 @@ HRESULT MainCamera::Ready()
 
 
 	m_fCameraAngle = 35.f;
-	m_fDistanceToTarget = OGDistance;
-
+	//m_fDistanceToTarget = OGDistance;
+	m_fDistanceToTarget = 1.f;
 	m_fRotX = -17.1f;
 	m_fFloatingAmount = 0.16f;
 

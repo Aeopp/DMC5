@@ -58,7 +58,7 @@ technique Default
         srcblend = srcalpha;
         destblend = invsrcalpha;
         //zenable = false;
-        zwriteenable = false;
+        zwriteenable = true;
         sRGBWRITEENABLE = false;
         cullmode = ccw;
         vertexshader = compile vs_3_0 VsMain();

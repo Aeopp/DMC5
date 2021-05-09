@@ -445,6 +445,7 @@
     <ClInclude Include="..\Header\CbsTrail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\LogoScene.h">
       <Filter>03.Scene\00.Logo</Filter>
     </ClInclude>
@@ -718,6 +719,7 @@
     <ClCompile Include="..\Source\CbsTrail.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp">
       <Filter>03.Scene\00.Logo</Filter>
     </ClCompile>
@@ -792,6 +794,8 @@
     <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

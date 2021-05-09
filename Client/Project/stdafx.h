@@ -55,6 +55,7 @@ enum GAMEOBJECTTAG
 	Eff_Trail,
 	Eff_CbsTrail,
 	Eff_FireCircle,
+	Eff_ElectricOccur ,
 	Eff_IceAge,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
@@ -70,6 +71,7 @@ enum GAMEOBJECTTAG
 	Tag_Cbs_Short,
 	Tag_Cbs_Middle,
 	Tag_Cbs_Long,
+	TAG_NeroShinMajin,
 	Tag_END
 };
 

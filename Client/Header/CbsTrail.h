@@ -34,7 +34,7 @@ private:
 	{
 		// Non
 		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} },
-		// Ice
+		// IceAge
 		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} }
 	};
 
@@ -78,7 +78,7 @@ private:
 	// Low High
 	std::array<std::pair<Vector3, Vector3>, BoneCnt >  LatelyOffsets{};
 
-	float ParticleCycle = 0.25f;
+	float ParticleCycle = 0.35f;
 	float CurParticleCycle = 0.0f;
 private:
 	explicit CbsTrail()  ;

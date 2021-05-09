@@ -400,6 +400,11 @@ void Renderer::ReadyRenderInfo()
 	_RenderInfo.View = (CameraView);
 	_RenderInfo.Projection = (CameraProjection);
 	_RenderInfo.ViewInverse = FMath::Inverse(_RenderInfo.View);
+	_RenderInfo.Billboard = _RenderInfo.ViewInverse;
+	_RenderInfo.Billboard._41 = 0.f;
+	_RenderInfo.Billboard._42 = 0.f;
+	_RenderInfo.Billboard._43 = 0.f;
+
 	_RenderInfo.ProjectionInverse = FMath::Inverse(_RenderInfo.Projection);
 	_RenderInfo.ViewProjection =
 		CameraView * CameraProjection;

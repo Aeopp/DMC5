@@ -5,6 +5,11 @@ uniform float exposure_corr;
 uniform float ColorIntencity;
 uniform float LifeTimeAlphaFactor;
 
+uniform float SpriteXStart;
+uniform float SpriteXEnd;
+uniform float SpriteYStart;
+uniform float SpriteYEnd;
+
 texture AlbmMap;
 sampler Albm = sampler_state
 {
@@ -17,30 +22,20 @@ sampler Albm = sampler_state
     sRGBTexture = true;
 };
 
-texture NrmrMap;
-sampler Nrmr = sampler_state
-{
-    texture = NrmrMap;
-    minfilter = linear;
-    magfilter = linear;
-    mipfilter = linear;
-    AddressU = wrap;
-    AddressV = wrap;
-    sRGBTexture = false;
-};
-
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV0 : TEXCOORD0,
             in out float2 UV1 : TEXCOORD1)
 {
     Position = mul(Position, matWorld);
-     Position = mul(Position, ViewProjection);
+    Position = mul(Position, ViewProjection);
     
+    UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
+    UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
 };
 
-void PsMain(out float4 Color : COLOR0 ,
-            in  float2 UV0 : TEXCOORD0 ,
-            in  float2 UV1 : TEXCOORD1 )
+void PsMain(out float4 Color : COLOR0,
+            in float2 UV0 : TEXCOORD0,
+            in float2 UV1 : TEXCOORD1)
 {
     Color = tex2D(Albm, UV0);
     Color.rgb *= ColorIntencity;
@@ -59,7 +54,7 @@ technique Default
         //zenable = false;
         zwriteenable = false;
         sRGBWRITEENABLE = false;
-        cullmode = ccw;
+        cullmode = none;
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();
     }

@@ -37,6 +37,7 @@
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
 #include "CbsTrail.h"
+#include "ElectricOccur.h"
 
 #include <iostream>
 #include <fstream>
@@ -70,12 +71,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
-
+	
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
 	//AddGameObject<IceAge>();
 	//AddGameObject<CbsTrail>();
+	//AddGameObject<ElectricOccur>();
 
 
 	// Wave 1st
@@ -124,8 +126,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
 	RenderDataSetUp();
 
@@ -223,11 +224,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	if (nullptr != pPlane)
-		return S_OK;
+	//if (nullptr != pPlane)
+	//	return S_OK;
 
-	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	Physics::AddActor(UniqueID, *pPlane);*/
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
@@ -418,7 +419,7 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	 /*_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");*/
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;

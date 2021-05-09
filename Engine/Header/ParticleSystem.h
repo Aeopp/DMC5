@@ -19,22 +19,24 @@ public:
 		{
 		public:
 			static SpriteDesc Make(
-						const float SpriteColCnt,
-						const float SpriteRowCnt,
-						const float SpriteCurCol,
-						const float SpriteCurRow,
+						const uint32 SpriteColCnt,
+						const uint32 SpriteRowCnt,
+						const uint32 SpriteCurCol,
+						const uint32 SpriteCurRow,
 						const float Interval ,
 						const bool bColLoop,
 						const bool bRowLoop)
 			{
 				SpriteDesc _SpriteDesc{};
-				_SpriteDesc.SpriteColCnt = SpriteColCnt;
-				_SpriteDesc.SpriteRowCnt = SpriteRowCnt;
-				_SpriteDesc.SpriteCurCol = SpriteCurCol;
-				_SpriteDesc.SpriteCurRow = SpriteCurRow;
+				_SpriteDesc.SpriteColCnt = static_cast<float>(SpriteColCnt);
+				_SpriteDesc.SpriteRowCnt =  static_cast<float>(SpriteRowCnt);
+				_SpriteDesc.SpriteCurCol =  static_cast<float>(SpriteCurCol);
+				_SpriteDesc.SpriteCurRow =  static_cast<float>(SpriteCurRow);
 				_SpriteDesc.CurInterval = _SpriteDesc.Interval = Interval;
 				_SpriteDesc.bColLoop = bColLoop;
 				_SpriteDesc.bRowLoop = bRowLoop;
+
+				return _SpriteDesc;
 			};
 
 			void Update(const float Delta)
@@ -116,7 +118,20 @@ public:
 			this->_SpriteDesc                = _SpriteDesc;
 		}
 
-		Matrix CalcWorld() { return FMath::WorldMatrix(Scale, CurRotation, CurrentLocation); };
+		Matrix CalcWorld(
+			const std::optional<Matrix>& bBillboard) { 
+			Matrix World;
+
+			if(bBillboard.has_value()==false)
+				World = FMath::WorldMatrix(Scale, CurRotation, CurrentLocation);
+			else
+			{
+				World = FMath::Scale(Scale) * bBillboard.value() * FMath::Translation(CurrentLocation);
+			}
+
+			return World;
+		};
+
 		const std::optional<SpriteDesc>& GetSpriteDesc(){ return _SpriteDesc; };
 		const Vector3& GetCurLocation() { return CurrentLocation; };
 		const Vector3& GetCurRotation() { return CurRotation; };
@@ -209,6 +224,7 @@ public:
 		std::function<void(const std::any& _InstanceValue,ID3DXEffect* const Fx)> InstanceBind{};
 		// 켤 경우 파티클 인스턴스 운동 T는 반드시 0~1이고 안 켰고 PlayTime이 1을 초과하는 경우 T도 1을 초과함.
 		bool bLerpTimeNormalized = false;
+		bool bBillboard = false;
 
 		std::vector<ParticleInstance>& RefInstances()
 		{
@@ -230,8 +246,6 @@ public:
 	private:
 		std::vector<ParticleInstance> _Instances{};
 		bool bSleep = true;
-		/*float PlayTime = 0.0f;
-		float Duration = 0.0f;*/
 	};
 // 1번 기하
 // 2번 메쉬 
@@ -250,10 +264,12 @@ public:
 	std::vector<ParticleSystem::ParticleInstance>* 
 		PreGenerated
 	(const std::string& Identifier /*등록한 이름으로 제어하세요*/,
-				 const Particle& _Particle ,
-				const uint64 PoolSize);
+				const Particle& _Particle ,
+				const uint64 PoolSize ,
+		const bool bBillboard);
 	// Reserve 한 파티클중 현재 Reset 상태에 들어간 파티클들.
-	std::vector<ParticleInstance*>PlayParticle(const std::string& Identifier ,
+	std::vector<ParticleInstance*>PlayParticle(
+		const std::string& Identifier ,
 		const bool bLifeTimeAlphaFactor);
 	Particle* PtrParticle(const std::string& Identifier);
 private:

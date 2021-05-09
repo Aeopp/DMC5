@@ -35,7 +35,7 @@ HRESULT RedQueen::Ready()
 
 	_RenderProperty.bRender = true;
 
-	m_pGlint = std::static_pointer_cast<Glint>(FindGameObjectWithTag(GAMEOBJECTTAG::Eff_Glint).lock());
+	m_pGlint = AddGameObject<Glint>();
 	
 	
 	return S_OK;
@@ -50,6 +50,7 @@ HRESULT RedQueen::Awake()
 
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetTrigger(true);
 
 	m_pCollider.lock()->SetRadius(0.05f);
@@ -116,17 +117,19 @@ void RedQueen::OnDisable()
 
 void RedQueen::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 {
-	Vector3 vGlintPos; 
-	memcpy(&vGlintPos, (*m_pMyBoneMat * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
-
-	// + m_pGlint.lock()->SetScale(적당히 작은 사이즈)
-	m_pGlint.lock()->SetPosition(vGlintPos);
-	m_pGlint.lock()->PlayStart(3.5f);
 }
 
 void RedQueen::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
+		return;
+	Vector3 vGlintPos;
+	memcpy(&vGlintPos, (*m_pMyBoneMat * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
 
+	// + m_pGlint.lock()->SetScale(적당히 작은 사이즈)
+	m_pGlint.lock()->SetScale(0.045f);
+	m_pGlint.lock()->SetPosition(vGlintPos);
+	m_pGlint.lock()->PlayStart(3.5f);
 }
 
 void RedQueen::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
