@@ -994,7 +994,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[REDORB] = { true, Vector3(1090.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
 	_UIDescs[TARGET_CURSOR] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.4f, 0.4f, 1.f) };
 	_UIDescs[TARGET_HP] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.56f, 0.56f, 1.f) };	// 0.46
-	_UIDescs[BOSS_GUAGE] = { true, Vector3(640.f, 660.f, 0.5f), Vector3(5.6f, 5.f, 1.f) };
+	_UIDescs[BOSS_GUAGE] = { false, Vector3(640.f, 660.f, 0.5f), Vector3(5.6f, 5.f, 1.f) };
 	_UIDescs[HP_GLASS] = { true, Vector3(-30.f, 14.f, 30.f), Vector3(0.01f, 0.01f, 0.01f) };
 	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(80.f, 91.f, 0.5f), Vector3(2.4f, 1.8f, 1.f) };
 	_UIDescs[EX_GAUGE] = { true, Vector3(-7.55f, 3.15f, 15.f), Vector3(0.01f, 0.01f, 0.01f) };
