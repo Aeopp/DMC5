@@ -11151,6 +11151,7 @@ em5000_Buster_Start* em5000_Buster_Start::Create(FSMBase* const _pFSM, const UIN
 
 HRESULT em5000_Buster_Start::StateEnter()
 {
+
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("em5000_Buster_Start", false, Nero::ANI_EM5000_BUSTER_START);
 	m_pNero.lock()->Set_PlayingTime(0.25f);

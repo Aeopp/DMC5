@@ -156,7 +156,12 @@ float Cbs_Short::Get_PlayingTime()
 float Cbs_Short::Get_PlayingAccTime()
 {
 	return m_pMesh->PlayingAccTime();
-}
+};
+
+Matrix* Cbs_Short::Get_BoneMatrixPtr(std::string _BoneName)
+{
+	return m_pMesh->GetToRootMatrixPtr(_BoneName);;
+};
 
 void Cbs_Short::RenderReady()
 {

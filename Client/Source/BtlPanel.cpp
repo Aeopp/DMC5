@@ -6,14 +6,6 @@
 #include "Renderer.h"
 
 
-// test
-//#include "Glint.h"
-//#include "OvertureHand.h"
-//#include "Liquid.h"
-//#include "AppearGroundMonster.h"
-//#include "QliphothBlock.h"
-
-
 void BtlPanel::Free()
 {
 	SafeDeleteArray(_UIDescs);
@@ -169,7 +161,19 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 				{
 					if (i == 0)
 					{
-						ExtraColor = Vector3(1.f, 0.f, 0.f);
+						switch (_CbsColor)
+						{
+						case 1:
+							ExtraColor = Vector3(0.627f, 0.f, 0.937f);		
+							break;
+						case 2:
+							ExtraColor = Vector3(1.f, 0.f, 0.f);
+							break;
+						case 0: default:
+							ExtraColor = Vector3(0.f, 0.819f, 0.847f);
+							break;
+						}
+
 						_ImplInfo.Fx->SetFloatArray("_ExtraColor", ExtraColor, 3u);
 					}
 					else
@@ -241,21 +245,6 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->BeginPass(0);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
-
-			////////////////////////////////////////////////////////////
-			//_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _Dummy0000Tex->GetTexture());
-
-			//Create_ScreenMat(CurID, ScreenMat, 1);
-
-			//_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
-			//_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
-
-			//_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
-			//_ImplInfo.Fx->BeginPass(12);
-			//SharedSubset->Render(_ImplInfo.Fx);
-			//_ImplInfo.Fx->EndPass();
-			////////////////////////////////////////////////////////////
 		}
 
 		//
@@ -283,26 +272,33 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _BossGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _BossGaugeNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
-
-			_ImplInfo.Fx->SetFloat("_HP_Degree", _TargetHP_Degree);
+	
 			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrtho);
 
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.002f);
 			_ImplInfo.Fx->BeginPass(3);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0005f);
 			_ImplInfo.Fx->BeginPass(4);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.005f);
+			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrthoDelay);
+			_ImplInfo.Fx->BeginPass(19);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrtho);
 			_ImplInfo.Fx->BeginPass(5);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
 			_ImplInfo.Fx->BeginPass(6);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
@@ -634,10 +630,13 @@ void BtlPanel::RenderReady()
 
 HRESULT BtlPanel::Ready()
 {
+	//
 	SetRenderEnable(true);
 
+	//
 	m_nTag = GAMEOBJECTTAG::UI_BtlPanel;
 
+	//
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::UI] =
@@ -651,6 +650,7 @@ HRESULT BtlPanel::Ready()
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 
+	//
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_Pipe0Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
 
@@ -659,8 +659,6 @@ HRESULT BtlPanel::Ready()
 	_RedOrbALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_albm.tga");
 	_RedOrbATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_atos.tga");
 	_RedOrbNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_nrmr.tga");
-
-	//_Dummy0000Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\dummy0000.png");
 
 	_TargetCursorTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Cursor_MET.tga");
 	_EnemyHPTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Enemy_HP_Target_01_IM.tga");
@@ -720,12 +718,19 @@ HRESULT BtlPanel::Ready()
 	_RankBAAlbTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\RankBA.png");
 	_RankSAlbTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\RankS.png");
 
+	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
-		 
+	
+	//
 	Init_UIDescs();
 
+	//
 	_FontVec.reserve(FONT_END);
-	_FontVec.push_back(static_pointer_cast<Font>(AddGameObject<Font>().lock()));
+	for (uint32 i = 0u; i < FONT_END; ++i)
+		_FontVec.push_back(static_pointer_cast<Font>(AddGameObject<Font>().lock()));
+	_FontVec[REDORBCOUNT].lock()->SetRenderFlag(true);
+	_FontVec[STYLISH_PTS_TITLE].lock()->SetRenderFlag(false);
+	_FontVec[STYLISH_PTS_SCORE].lock()->SetRenderFlag(false);
 
 	return S_OK;
 }
@@ -752,21 +757,16 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 	Update_PlayerHP(_fDeltaTime);
 	Update_ExGauge(_fDeltaTime);
 	Update_Rank(_fDeltaTime);
-	Update_Gauge(_fDeltaTime);
+	Update_Font(_fDeltaTime);
+	Update_Etc(_fDeltaTime);
 	Check_KeyInput(_fDeltaTime);
 
 	//
-	_FontVec[REDORBCOUNT].lock()->SetText(std::string(std::to_string(_RedOrbCount)), { 1125.f, 50.f }, { 0.8f, 0.8f }, true);
-
-	//
-	//Imgui_ModifyUI(HP_GLASS);
-
 	//POINT pt{};
 	//GetCursorPos(&pt);
 	//ScreenToClient(g_hWnd, &pt);
 	//Vector2 TargetPos = Vector2(static_cast<float>(pt.x), static_cast<float>(pt.y));
-	//
-	//std::cout << ScreenPosToOrtho(0.f, TargetPos.y).y << std::endl;
+	//std::cout << ScreenPosToOrtho(TargetPos.x, TargetPos.y).x << std::endl;
 
 	return 0;
 }          
@@ -779,6 +779,11 @@ UINT BtlPanel::LateUpdate(const float _fDeltaTime)
 void BtlPanel::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_ModifyUI(STYLISH_POINTS);
+	}
 }
 
 void BtlPanel::OnEnable()
@@ -839,6 +844,25 @@ void BtlPanel::SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass/*= true
 		_PlayerHPRatio = 0.f;
 }
 
+void BtlPanel::SetBossGaugeActive(bool IsActive)
+{
+	_UIDescs[BOSS_GUAGE].Using = IsActive;
+}
+
+void BtlPanel::SetBossGaugeHPRatio(const float HPRatio)
+{
+	if (_BossGaugeHPRatio > HPRatio)
+		_BossGaugeHPRatioDelay = _BossGaugeHPRatio;
+	else
+		_BossGaugeHPRatioDelay = 0.f;
+
+	_BossGaugeHPRatio = HPRatio;
+	if (_BossGaugeHPRatio > 1.f)
+		_BossGaugeHPRatio = 1.f;
+	else if (_BossGaugeHPRatio < 0.f)
+		_BossGaugeHPRatio = 0.f;
+}
+
 void BtlPanel::AccumulateTDTGauge(const float Amount)
 {
 	_TDTGauge += Amount;
@@ -868,12 +892,34 @@ void BtlPanel::AddRankScore(float Score)
 		return;
 
 	if (_PreRank < static_cast<int>((_RankScore + Score) / 100.f))
-	{
 		_RankScore = (_PreRank * 100.f + 150.f);
-		return;
-	}
+	else
+		_RankScore += Score;
 
-	_RankScore += Score;
+	// 
+	if (_StylishPtsAccumulateStart)
+	{
+		if (_CurRank >= 0)
+		{
+			_StylishPoints += static_cast<uint32>(Score) * static_cast<uint32>(_CurRank + 1);
+			if (99999999u < _StylishPoints)
+				_StylishPoints = 99999999u;
+		}
+	}
+	else
+	{
+		//_StylishPoints = 0u;
+		_StylishPtsAccumulateStart = true;
+	}
+}
+
+void BtlPanel::ResetRankScore()
+{
+	_StylishPtsAccumulateStart = false;
+	_RankScore = 0.f;
+	// + Stylish pts 누적
+
+	_StylishPtsAlive = true;
 }
 
 void BtlPanel::AddExGauge(float ExGauge)
@@ -907,9 +953,10 @@ void BtlPanel::UseExGauge(const uint32 Count)
 		_ExGauge = 0.f;
 }
 
-void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon)
+void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor/*= 0*/)
 {
-	if (_CurWeaponIdx == NextWeapon)
+	if (NextWeapon == _CurWeaponIdx
+		&& CbsColor == _CbsColor)
 		return;
 
 	if (Nero::WeaponList::RQ == NextWeapon)
@@ -927,6 +974,7 @@ void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon)
 	_HPGlassRotY = -30.f;
 
 	_CurWeaponIdx = NextWeapon;
+	_CbsColor = CbsColor;
 }
 
 void BtlPanel::AccumulateRedOrb(const uint32 Amount)
@@ -946,7 +994,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[REDORB] = { true, Vector3(1090.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
 	_UIDescs[TARGET_CURSOR] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.4f, 0.4f, 1.f) };
 	_UIDescs[TARGET_HP] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.56f, 0.56f, 1.f) };	// 0.46
-	_UIDescs[BOSS_GUAGE] = { false, Vector3(640.f, 670.f, 0.5f), Vector3(4.7f, 5.f, 1.f) };
+	_UIDescs[BOSS_GUAGE] = { false, Vector3(640.f, 660.f, 0.5f), Vector3(5.6f, 5.f, 1.f) };
 	_UIDescs[HP_GLASS] = { true, Vector3(-30.f, 14.f, 30.f), Vector3(0.01f, 0.01f, 0.01f) };
 	_UIDescs[EX_GAUGE_BACK] = { true, Vector3(80.f, 91.f, 0.5f), Vector3(2.4f, 1.8f, 1.f) };
 	_UIDescs[EX_GAUGE] = { true, Vector3(-7.55f, 3.15f, 15.f), Vector3(0.01f, 0.01f, 0.01f) };
@@ -957,6 +1005,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[RANK_BACK] = { false, Vector3(1120.f, 270.f, 0.8f), Vector3(_RankBackMaxScale, _RankBackMaxScale, 1.f) };
 	_UIDescs[RANK] = { false, Vector3(6.5f, 1.3f, 15.f), Vector3(0.08f, 0.08f, 0.08f) };
 	_UIDescs[RANK_LETTER] = { false, Vector3(1120.f, 330.f, 0.8f), Vector3(1.5f, 1.5f, 1.f) };
+	_UIDescs[STYLISH_POINTS] = { false, Vector3(1060.f, 390.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
 }
 
 void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -1611,9 +1660,7 @@ void BtlPanel::Update_PlayerHP(const float _fDeltaTime)
 {
 	//
 	if (_PlayerHPRatioDelay > _PlayerHPRatio)
-	{
 		_PlayerHPRatioDelay -= _fDeltaTime * 0.5f;
-	}
 
 	//
 	float HPGaugeOrthoWidth = 0.078125f;
@@ -1849,14 +1896,100 @@ void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 	}
 }
 
-void BtlPanel::Update_Gauge(const float _fDeltaTime)
+void BtlPanel::Update_Font(const float _fDeltaTime)
 {
-	float BossGaugeOrthoOffsetToCenter = 0.344f; // 직접 수작업으로 찾아야 하나 ㅠㅠ
-	// + 적 체력 받아와서 degree 같은 애들 갱신하자
-	// 일단 임시. 보스게이지가 한가운데 있어서 밑 로직 가능
-	_BossGauge_CurXPosOrtho = -BossGaugeOrthoOffsetToCenter + ((360.f - _TargetHP_Degree) / 360.f * 2.f * BossGaugeOrthoOffsetToCenter);
+	// RedOrb
+	if (auto pFont = _FontVec[REDORBCOUNT].lock();
+		pFont)
+	{
+		if (_UIDescs[REDORB].Using)
+		{
+			pFont->SetText(
+				std::to_string(_RedOrbCount),
+				Font::TEX_ID::DMC5_BLACK_GRAD,
+				{ _UIDescs[REDORB].Pos.x + 35.f, _UIDescs[REDORB].Pos.y },
+				{ 0.8f, 0.8f },
+				true);
 
-	//
+			pFont->SetRenderFlag(true);
+		}
+		else
+		{
+			pFont->SetRenderFlag(false);
+		}
+	}
+
+	// Stylish Pts
+	if (_StylishPtsAlive)
+	{
+		_StylishPtsAliveTime += _fDeltaTime;
+
+		auto pFont_Title = _FontVec[STYLISH_PTS_TITLE].lock();
+		auto pFont_Score = _FontVec[STYLISH_PTS_SCORE].lock();
+
+		if (!_UIDescs[STYLISH_POINTS].Using && pFont_Title)
+		{
+			pFont_Title->SetText(
+				"STYLISH PTS",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[STYLISH_POINTS].Pos.x, _UIDescs[STYLISH_POINTS].Pos.y },
+				{ _UIDescs[STYLISH_POINTS].Scale.x, _UIDescs[STYLISH_POINTS].Scale.y },
+				false);
+			pFont_Title->SetRenderFlag(true, Font::FADE_ID::DISOLVE_TORIGHT);
+
+			_UIDescs[STYLISH_POINTS].Using = true;
+		}
+		else if (!_StylishPtsAlive2ndCheck && 4.5f > _StylishPtsAliveTime && 1.2f < _StylishPtsAliveTime && pFont_Score)
+		{
+			string scoreStr = std::to_string(_StylishPoints);
+			while (8 > scoreStr.length())
+				scoreStr = string("0") + scoreStr;
+
+			pFont_Score->SetText(
+				scoreStr,
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[STYLISH_POINTS].Pos.x + 28.f, _UIDescs[STYLISH_POINTS].Pos.y + 50.f },
+				{ _UIDescs[STYLISH_POINTS].Scale.x * 2.f, _UIDescs[STYLISH_POINTS].Scale.y * 2.f },
+				false);
+			pFont_Score->SetRenderFlag(true, Font::FADE_ID::DISOLVE_TORIGHT);
+
+			_StylishPtsAlive2ndCheck = true;
+		}
+		else if (_StylishPtsAlive2ndCheck && 4.5f < _StylishPtsAliveTime && pFont_Title)
+		{
+			pFont_Title->SetRenderFlag(false, Font::FADE_ID::DISOLVE_TORIGHT);
+
+			_StylishPtsAlive2ndCheck = false;
+		}
+		else if (5.f < _StylishPtsAliveTime && pFont_Score)
+		{
+			pFont_Score->SetRenderFlag(false, Font::FADE_ID::DISOLVE_TORIGHT);
+	
+			// _StylishPoints 누적
+			_StylishPoints = 0u;
+
+			_UIDescs[STYLISH_POINTS].Using = false;
+			_StylishPtsAliveTime = 0.f;
+			_StylishPtsAlive = false;
+			_StylishPtsAlive2ndCheck = false;
+		}
+	}
+}
+
+void BtlPanel::Update_Etc(const float _fDeltaTime)
+{
+	// Boss HP
+	if (_BossGaugeHPRatioDelay > _BossGaugeHPRatio)
+		_BossGaugeHPRatioDelay -= _fDeltaTime * 1.5f;
+	else
+		_BossGaugeHPRatioDelay = 0.f;
+
+	float BossGaugeOrthoOffsetToCenter = 0.414f;
+	// 보스게이지가 한가운데 있어서 밑 로직 가능
+	_BossGauge_CurXPosOrtho = -BossGaugeOrthoOffsetToCenter + (_BossGaugeHPRatio * 2.f * BossGaugeOrthoOffsetToCenter);
+	_BossGauge_CurXPosOrthoDelay = -BossGaugeOrthoOffsetToCenter + (_BossGaugeHPRatioDelay * 2.f * BossGaugeOrthoOffsetToCenter);
+
+	// TDT Gauge
 	float TDTGaugeOrthoStartX = -0.685938f;
 	float TDTGaugeOrthoEndX = -0.33125f;
 	_TDTGauge_CurXPosOrtho = TDTGaugeOrthoStartX + _TDTGauge * (TDTGaugeOrthoEndX - TDTGaugeOrthoStartX);
@@ -1926,20 +2059,6 @@ Vector2 BtlPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 {
 	////////////////////////////
-	// 임시
-	//if (Input::GetKey(DIK_LEFTARROW))
-	//{
-	//	_TargetHP_Degree += 150.f * _fDeltaTime;
-	//	if (360.f < _TargetHP_Degree)
-	//		_TargetHP_Degree = 360.f;
-	//}
-	//if (Input::GetKey(DIK_RIGHTARROW))
-	//{
-	//	_TargetHP_Degree -= 150.f * _fDeltaTime;
-	//	if (0.f > _TargetHP_Degree)
-	//		_TargetHP_Degree = 0.f;
-	//}
-
 	if (Input::GetKeyDown(DIK_F1))
 	{
 		static bool bActive = _UIDescs[KEYBOARD].Using;
@@ -1959,40 +2078,37 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F4))
 	{
 		AddExGauge(0.333f);
-
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->PlayStart(40.f);
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(true);
-		//static uint32 idx = Liquid::MAX_VARIATION_IDX;
-		//++idx;
-		//if (idx >= Liquid::MAX_VARIATION_IDX)
-		//	idx = 0u;
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetVariationIdx((Liquid::VARIATION)idx);
-		//std::static_pointer_cast<AppearGroundMonster>(FindGameObjectWithTag(Eff_AppearGroundMonster).lock())->PlayStart();
 	}
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
-
-		//std::static_pointer_cast<Liquid>(FindGameObjectWithTag(Eff_Liquid).lock())->SetLoop(false);
-		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->PlayStart();
-		//std::static_pointer_cast<OvertureHand>(FindGameObjectWithTag(Eff_OvertureHand).lock())->SetLoop(true);
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		//AccumulateTDTGauge(1.f);
-		ChangeWeaponUI(Nero::WeaponList::RQ);
+		AccumulateTDTGauge(0.5f);
+		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->PlayStart();
+		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
+		//bActive = !bActive;
+		//SetBossGaugeActive(bActive);
+
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
 		//ConsumeTDTGauge(0.5f);
-		ChangeWeaponUI(Nero::WeaponList::Cbs);
+		//static int temp = 0;
+		//if (2 < temp)
+		//	temp = 0;
+		//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
+		ResetRankScore();
 
-		//std::static_pointer_cast<Glint>(FindGameObjectWithTag(Eff_Glint).lock())->PlayStart(4.f);
-		//std::static_pointer_cast<QliphothBlock>(FindGameObjectWithTag(Eff_QliphothBlock).lock())->Reset();
+		//static float Ratio = 1.f;
+		//Ratio -= 0.1f;
+		//if (0.f > Ratio)
+		//	Ratio = 1.f;
+		//SetBossGaugeHPRatio(Ratio);
 	}
 	////////////////////////////
 

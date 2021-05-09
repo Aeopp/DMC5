@@ -11,7 +11,6 @@
 #include "Em5000Hand.h"
 #include "Liquid.h"
 
-static std::set<int> NonCullingSubsetIdxSet{ 0,13,14};
 
 void Em5000::Free()
 {
@@ -35,6 +34,26 @@ void Em5000::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float	 fDir = D3DXVec3Length(&vDir);
+
+	if (!m_bGroggy)
+	{
+		if (m_BattleInfo.iHp <= 0.f)
+		{
+			m_eState = Dead;
+			m_bIng = true;
+		}
+	}
+	else
+	{
+		if (m_BattleInfo.iHp <= 0.f)
+		{
+			m_eState = Groggy_Dead;
+			m_bIng = true;
+			m_bHit = true;
+		}
+	}
+
+
 
 
 	D3DXVec3Normalize(&vDir, &vDir);
@@ -535,12 +554,69 @@ void Em5000::State_Change(const float _fDeltaTime)
 
 		break;
 	case Em5000::Dead:
+		if (m_bHit)
+		{
+			m_pMesh->PlayAnimation("Dead", false, {}, 1.f, 20.f, true);
+		}
 		break;
 	case Em5000::Groggy_Dead:
+		if (m_bGroggy)
+		{
+			m_pMesh->PlayAnimation("Groggy_Dead", false, {}, 1.f, 20.f, true);
+		}
 		break;
 	case Em5000::Groggy_Start:
+		if (m_bGroggy)
+		{
+			m_pMesh->PlayAnimation("Groggy_Start", false, {}, 1.f, 10.f, true);
+
+			for (int i = 0; i < 2; ++i)
+			{
+				m_pHand[i].lock()->Set_Coll(false);
+				m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Groggy_Loop;
+		}
 		break;
 	case Em5000::Groggy_Loop:
+		if (m_bGroggy)
+		{
+			m_pMesh->PlayAnimation("Groggy_Loop", false, {}, 1.f, 10.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_Loop" && m_pMesh->IsAnimationEnd())
+				m_eState = Groggy_End;
+		}
+		break;
+	case Em5000::Groggy_End:
+		if (m_bGroggy)
+		{
+			m_pMesh->PlayAnimation("Groggy_End", false, {}, 1.f, 10.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bGroggy = false;
+			
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->PlayingTime() >= 0.5f)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
+				}
+			}
+		}
 		break;
 	case Em5000::Hit_Buster_Start:
 		if (m_bHit)
@@ -550,8 +626,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 				Vector3 PlayerPos = m_pPlayerTrans.lock()->GetPosition();
 				Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
 
-				Vector3 vResult = PlayerPos + (-vLook * 0.1f);
-				vResult.y = m_pTransform.lock()->GetPosition().y;
+				Vector3 vResult = PlayerPos + (-vLook * 0.56f);
+				vResult.y = PlayerPos.y;
 				m_pTransform.lock()->SetPosition(vResult);
 
 				Update_Angle();
@@ -562,51 +638,81 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_pCollider.lock()->SetTrigger(true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Start" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Buster_Swing_Start;
-		
+				m_bBuster = false;
+			}
 		}
 		break;
 	case Em5000::Hit_Buster_Swing_Start:
 		if (m_bHit == true)
 		{
-			m_pMesh->PlayAnimation("Hit_Buster_Swing_Start", true, {}, 1.f, 1.f, true);
-			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
+			m_pMesh->PlayAnimation("Hit_Buster_Swing_Start", false, {}, 1.1f, 1.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_Start" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Buster_Swing_Loop;
+				m_bBuster = false;
+			}
 		}
 		break;
 	case Em5000::Hit_Buster_Swing_Loop:
 		if (m_bHit == true)
 		{
-			m_pMesh->PlayAnimation("Hit_Buster_Swing_Loop", true, {}, 1.f, 1.f, true);
-			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
+			Update_Angle();
+			m_pMesh->PlayAnimation("Hit_Buster_Swing_Loop", true, {}, 1.3f, 1.f, true);
+			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM5000_BUSTER_FINISH
+				&&m_pPlayer.lock()->Get_PlayingTime() >= 0.12f)
+			{
+				Vector3 PlayerPos = m_pPlayerTrans.lock()->GetPosition();
+				Vector3 vLook = m_pPlayerTrans.lock()->GetLook();
+
+				Vector3 vResult = PlayerPos + (-vLook * 0.56f);
+				vResult.y = m_pTransform.lock()->GetPosition().y;
+				m_pTransform.lock()->SetPosition(vResult);
+
+				Update_Angle();
+				Set_Rotate();
+
 				m_eState = Hit_Buster_Swing_Throw;
+			}
 		}
 		break;
 	case Em5000::Hit_Buster_Swing_Throw:
 		if (m_bHit == true)
 		{
-			m_pMesh->PlayAnimation("Hit_Buster_Swing_Throw", true, {}, 1.f, 1.f, true);
-			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
+			m_pCollider.lock()->SetRigid(true);
+			m_pCollider.lock()->SetTrigger(false);
+
+			m_pMesh->PlayAnimation("Hit_Buster_Swing_Throw", false, {}, 1.f, 1.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_Throw" && m_pMesh->IsAnimationEnd())
 				m_eState = Hit_Buster_Swing_End;
+				
 		}
 		break;
 	case Em5000::Hit_Buster_Swing_End:
 		if (m_bHit)
 		{
 			m_pMesh->PlayAnimation("Hit_Buster_Swing_End", false, {}, 1.f, 1.f, true);
-			Vector3 vRot(0.f, 0.f, 0.f);
-
-			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_End" && m_pMesh->PlayingTime() >= 0.6f)
-			{
-				m_pCollider.lock()->SetRigid(true);
-				m_pCollider.lock()->SetTrigger(false);
-			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_End" && m_pMesh->IsAnimationEnd())
 			{
-				m_eState = Idle;
+				m_eState = Hit_Buster_Standup;
 				m_bBuster = false;
 			}
+		}
+		break;
+	case Em5000::Hit_Buster_Standup:
+		if (m_bHit)
+		{
+			m_pMesh->PlayAnimation("Buster_Standup", false, {}, 1.f, 20.f, true);
 
+			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Standup" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bIng = false;
+				m_bHit = false;
+				m_bBuster = false;
+			}
 		}
 		break;
 	case Em5000::Howling:
@@ -620,7 +726,6 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Move_Loop", true, {}, 1.3f, 50.f, true);
 			m_bInteraction = true;
 			Update_Angle();
-
 
 			if (fDir <= 3 && fDir >= 2.5f && m_bJumpAttack)  
 			{
@@ -943,13 +1048,36 @@ UINT Em5000::Update(const float _fDeltaTime)
 		else
 			m_bTest = true;
 	}
+	if (Input::GetKeyDown(DIK_Y))
+	{
+		m_eState = Groggy_Start;
+		m_bGroggy = true;
+	}
+
 
 	if (m_bTest == true)
 	{
 		Fight(_fDeltaTime);
-		State_Change(_fDeltaTime);
 	}
+	State_Change(_fDeltaTime);
 	Rotate(_fDeltaTime);
+
+
+	if (m_eState == Dead
+		&& m_pMesh->IsAnimationEnd())
+	{
+		for (int i = 0; i < 2; ++i)
+			Destroy(m_pHand[i]);
+		Destroy(m_pGameObject);
+	}
+	if (m_eState == Groggy_Dead
+		&& m_pMesh->IsAnimationEnd())
+	{
+		for (int i = 0; i < 2; ++i)
+			Destroy(m_pHand[i]);
+		Destroy(m_pGameObject);
+	}
+
 
 	return 0;
 }
@@ -1019,15 +1147,6 @@ void Em5000::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (NonCullingSubsetIdxSet.contains(i))
-		{
-
-		}
-		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
-
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -1049,15 +1168,6 @@ void Em5000::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (NonCullingSubsetIdxSet.contains(i))
-		{
-
-		}
-		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
-
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -1084,14 +1194,7 @@ void Em5000::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (NonCullingSubsetIdxSet.contains(i))
-		{
 
-		}
-		else if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
 
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
@@ -1255,8 +1358,11 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
-		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		if (m_bGroggy)
+		{
+			_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
+			Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		}
 		break;
 	case GAMEOBJECTTAG::Overture:
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
