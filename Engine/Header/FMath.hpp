@@ -120,6 +120,8 @@ public:
 		Vector3& IntersectPointLhs,
 		Vector3& IntersectPointRhs);
 
+	static inline Vector3 RandomVector(const float Scale);
+
 	static inline Vector3 RandomEuler(const float PiScale);
 
 
@@ -212,6 +214,11 @@ inline void FMath::DebugPrintMatrix(const Matrix& _Matrix)
 	}
 	std::cout << std::endl;
 }
+
+inline Vector3 FMath::RandomVector(const float Scale)
+{
+	return FMath::Random<Vector3>(Vector3{ -1.f,-1.f,-1.f }, Vector3{ 1.f,1.f,1.f }) * Scale;
+};
 
 inline bool FMath::IsRange(const float Begin, const float End,
 	const float X)

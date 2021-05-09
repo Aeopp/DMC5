@@ -133,7 +133,8 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 									CurFx->SetFloat("LifeTimeAlphaFactor", 
 										_ParticleInstance.GetLifeTimeAlphaFactor());
 									CurFx->SetMatrix("matWorld", &matWorld);
-
+									CurFx->SetFloat("Time", _ParticleInstance.GetT());
+									
 									if (const auto& bTargetSprite = _ParticleInstance.GetSpriteDesc();
 										bTargetSprite)
 									{

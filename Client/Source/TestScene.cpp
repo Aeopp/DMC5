@@ -37,6 +37,7 @@
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
 #include "CbsTrail.h"
+#include "ElectricOccur.h"
 
 #include <iostream>
 #include <fstream>
@@ -67,6 +68,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<BtlPanel>();
 	AddGameObject<FireCircle>();
 	AddGameObject<CbsTrail>();
+	AddGameObject<ElectricOccur>();
 
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();

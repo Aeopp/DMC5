@@ -53,6 +53,7 @@ enum GAMEOBJECTTAG
 	Eff_Trail,
 	Eff_CbsTrail,
 	Eff_FireCircle,
+	Eff_ElectricOccur ,
 	Eff_IceAge,
 	Eff_CircleWave,
 	Eff_SpriteEffect,

@@ -245,8 +245,6 @@ public:
 	private:
 		std::vector<ParticleInstance> _Instances{};
 		bool bSleep = true;
-		/*float PlayTime = 0.0f;
-		float Duration = 0.0f;*/
 	};
 // 1번 기하
 // 2번 메쉬 

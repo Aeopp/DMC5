@@ -37,6 +37,7 @@ void FireCircle::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
+
 		// _RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (Inner)
 		{
@@ -46,20 +47,6 @@ void FireCircle::RenderReady()
 			for (uint32 i = 0; i < Numsubset; ++i)
 			{
 				const auto& _Subset = Inner->GetSubset(i);
-				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
-
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
-			}
-		}
-
-		if (Outer)
-		{
-			const uint32  Numsubset = Outer->GetNumSubset();
-			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
-
-			for (uint32 i = 0; i < Numsubset; ++i)
-			{
-				const auto& _Subset = Outer->GetSubset(i);
 				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
 				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
@@ -105,9 +92,10 @@ void FireCircle::RenderInit()
 	// 메시
 	// Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
 	Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
-
-	Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
-	// Inner = Resources::Load<StaticMesh>("..\\..\\Usable\\Convex2.fbx");
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = true;
+	// Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
+	Inner = Resources::Load<StaticMesh>("..\\..\\Usable\\Convex2.fbx", _Info);
 
 	// Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\halfpipe.fbx");
 	// 텍스쳐 
@@ -132,7 +120,8 @@ void FireCircle::RenderInit()
 	OuterDistortionIntencity =  DistortionIntencity = 10000000.f;
 };
 
-void FireCircle::PlayStart(const Vector3& Rotation,
+void FireCircle::PlayStart(
+	const Vector3& Rotation,
 	// 재생 시킬 위치 
 	const Vector3& Location ,
 	// 재생 시킬 회전 
@@ -395,8 +384,9 @@ UINT FireCircle::Update(const float _fDeltaTime)
 		spTransform)
 	{		
 		CurRoll += _fDeltaTime * RollRotationSpeed;
+
 		_RenderUpdateInfo.World =
-			FMath::Scale(spTransform->GetScale())* FMath::Rotation({ 0.f,0.f,CurRoll })
+			FMath::Scale(spTransform->GetScale())* FMath::Rotation({ 0.f,CurRoll,0.f })
 			* FMath::Rotation(_Rotation)* FMath::Translation(spTransform->GetPosition());
 
 		spTransform->SetWorldMatrix(_RenderUpdateInfo.World);
@@ -469,15 +459,12 @@ void FireCircle::Editor()
 			ImGui::Text("SpriteYStart %2.6f", SpriteRowIdx / SpriteRow);
 			ImGui::SameLine();
 			ImGui::Text("SpriteYEnd %2.6f", (SpriteRowIdx + 1.f) / SpriteRow);
-			
 
 			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
 
 			ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
-
-			
 
 			ImGui::SliderFloat("ClipRange", &ClipRange, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In ClipRange", &ClipRange, 0.f, 0.f, "%9.6f");
@@ -488,14 +475,14 @@ void FireCircle::Editor()
 			ImGui::SliderFloat("EditStartRoll", &EditStartRoll, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditStartRoll", &EditStartRoll, 0.f, 0.f, "%9.6f");
 
-			
-			;
-
 			ImGui::SliderFloat3("EditPlayStartLocation", EditPlayStartLocation, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat3("In EditPlayStartLocation", EditPlayStartLocation, "%9.6f");
 
-			ImGui::SliderFloat3("EditPlayStartRotation", EditPlayStartRotation, FLT_MIN, 10000.f, "%9.6f");
+			ImGui::SliderFloat3("EditPlayStartRotation", EditPlayStartRotation, FLT_MIN, FMath::PI, "%9.6f");
 			ImGui::InputFloat3("In EditPlayStartRotation", EditPlayStartRotation, "%9.6f");
+
+			ImGui::SliderFloat3("CurRotation", _Rotation, FLT_MIN, FMath::PI, "%9.6f");
+			ImGui::InputFloat3("In CurRotation", _Rotation, "%9.6f");
 
 			ImGui::SliderFloat("EditPlayRollRotateSpeed", &EditPlayRollRotateSpeed, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayRollRotateSpeed", &EditPlayRollRotateSpeed,0.f,0.f ,"%9.6f");
@@ -518,10 +505,6 @@ void FireCircle::Editor()
 			ImGui::SliderFloat("EditPlayStartPlayTime", &EditPlayStartPlayTime, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayStartPlayTime", &EditPlayStartPlayTime, 0.f, 0.f, "%9.6f");
 
-
-
-		/*	ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
-			ImGui::InputFloat("In SpriteUpdateCycle", &SpriteUpdateCycle, 0.f, 0.f, "%9.6f");*/
 		}
 		ImGui::EndChild();
 	}
