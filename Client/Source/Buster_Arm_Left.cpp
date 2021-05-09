@@ -217,7 +217,7 @@ void Buster_Arm_Left::RenderInit()
 void Buster_Arm_Left::RenderGBufferSK(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
-	_Info.Fx->SetMatrix("matWorld", &World);
+ 	_Info.Fx->SetMatrix("matWorld", &World);
 	const uint32 Numsubset = m_pMesh->GetNumSubset();
 	if (Numsubset > 0)
 	{

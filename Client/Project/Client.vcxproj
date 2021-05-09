@@ -181,6 +181,7 @@
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
+    <ClInclude Include="..\Header\JudgementSword.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -262,6 +263,7 @@
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
+    <ClCompile Include="..\Source\JudgementSword.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />

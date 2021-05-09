@@ -205,6 +205,12 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(StunStart::Create(this, STUN_START, m_pNero));
 	m_vecState.emplace_back(StunLoop::Create(this, STUN_LOOP, m_pNero));
 	m_vecState.emplace_back(StunEnd::Create(this, STUN_END, m_pNero));
+
+	m_vecState.emplace_back(TransformToShinMajin::Create(this, TRANSFORM_SHINMAJIN, m_pNero));
+	m_vecState.emplace_back(TransformToOrigin::Create(this, TRANSFORM_ORIGIN_DANTE, m_pNero));
+
+	m_vecState.emplace_back(ShinMajinEnter::Create(this, SHINMAJIN_ENTER, m_pNero));
+	m_vecState.emplace_back(ShinMajinJudgement::Create(this, SHINMAJIN_JUDGEMNET, m_pNero));
 	return S_OK;						
 }
 

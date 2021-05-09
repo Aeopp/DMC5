@@ -43,7 +43,7 @@ public:
 		// 재생 시킬 회전 
 		const float CurRoll = 0.0f,
 		// 회전 속도 . 
-		const float RollRotateSpeed = FMath::PI,
+		const float RollRotateSpeed = FMath::PI * 4.f,
 		const int32 StartSpriteRow = 3,
 		const float PlayTime = 1.f,
 		const int32 StartSpriteCol = 0,

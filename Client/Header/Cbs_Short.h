@@ -58,6 +58,9 @@ private:
 	std::vector<Matrix*>					m_vecParentMat;
 	UINT									m_iStateIndex = 0;
 	Vector3					m_vTest;
+
+	Matrix* m_pBoneMatrixPole3 = nullptr;
+	Matrix				m_MyRenderMat;
 };
 
 

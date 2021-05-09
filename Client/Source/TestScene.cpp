@@ -35,7 +35,7 @@
 #include "FireCircle.h"
 #include "IceAge.h"
 #include "ParticleSystem.h"
-#include "ParticleInstanceDesc.hpp"
+#include "ParticleInstanceDesc.hpp" 
 
 #include <iostream>
 #include <fstream>
@@ -77,9 +77,10 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
+	
 	//AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
 	
-	AddGameObject<Em5000>();
+	//AddGameObject<Em5000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	
@@ -415,8 +416,8 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005;
 	_Renderer->SkyIntencity = 0.005f;
