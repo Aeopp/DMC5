@@ -67,7 +67,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Em0000>();
-	// AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -207,7 +207,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 18, Until Dooms Day",
+		pFont->SetText("D 19, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
