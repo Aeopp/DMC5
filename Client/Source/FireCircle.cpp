@@ -50,8 +50,6 @@ void FireCircle::RenderReady()
 					if (auto spTransform = GetComponent<ENGINE::Transform>().lock();
 						spTransform)
 					{
-						
-
 						_RenderUpdateInfo.World =
 							FMath::Scale(spTransform->GetScale()) *
 							FMath::Rotation({ FMath::HalfPI - FLT_MIN, 0.f,CurRoll }) *
