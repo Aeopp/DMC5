@@ -31,29 +31,48 @@ FireCircle* FireCircle::Create()
 
 void FireCircle::RenderReady()
 {
-	// 이미 버텍스 자체가 월드 위치임 . 
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-
-		// _RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (Inner)
 		{
 			const uint32 Numsubset = Inner->GetNumSubset();
-			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
-
-			for (uint32 i = 0; i < Numsubset; ++i)
+			
+			if (Numsubset > 0)
 			{
-				const auto& _Subset = Inner->GetSubset(i);
-				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+				if (auto SpUser = User.lock();
+					SpUser)
+				{
+					_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
 
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+					if (auto spTransform = GetComponent<ENGINE::Transform>().lock();
+						spTransform)
+					{
+						
+
+						_RenderUpdateInfo.World =
+							FMath::Scale(spTransform->GetScale()) *
+							FMath::Rotation({ FMath::HalfPI - FLT_MIN, 0.f,CurRoll }) *
+							FMath::Rotation(PlayRotation) *
+							(UserRotation)*
+							FMath::Translation(spTransform->GetPosition());
+
+						spTransform->SetWorldMatrix(_RenderUpdateInfo.World);
+					}
+
+					for (uint32 i = 0; i < Numsubset; ++i)
+					{
+						const auto& _Subset = Inner->GetSubset(i);
+						const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+
+						_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+					}
+				}
 			}
 		}
 	}
-
 };
 
 void FireCircle::RenderInit()
@@ -90,16 +109,11 @@ void FireCircle::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 메시
-	// Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
 	Outer = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx");
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = true;
-	// Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
-	Inner = Resources::Load<StaticMesh>("..\\..\\Usable\\Convex2.fbx", _Info);
-
-	// Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\halfpipe.fbx");
-	// 텍스쳐 
-	// SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\13.tga");
+	Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
+	
 	SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\7.tga");
 	TrailMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire.tga");
 	EmssiveMskMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
@@ -107,9 +121,6 @@ void FireCircle::RenderInit()
 
 	NoiseScrollSpeed = { 0.55f,0.0f,2.09f };
 	NoiseScale = { 0.917f,1.009f,1.09f};
-
-	/*NoiseScale = { 0.f,0.f,0.f };
-	NoiseScrollSpeed = { 0.f,0.f,0.f };*/
 
 	EditPlayRollRotateSpeed  = 	RollRotationSpeed = 400.f;
 	EmissiveIntencity = 0.01f;
@@ -131,17 +142,26 @@ void FireCircle::PlayStart(
 	const int32 StartSpriteRow ,
 	const float PlayTime ,
 	const int32 StartSpriteCol ,
-	const Vector3& Scale )
+	const Vector3& Scale)
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
 		SpTransform->SetScale(Scale);
-		SpTransform->SetRotation(Rotation);
-		_Rotation = Rotation;
 		SpTransform->SetPosition(Location);
 	}
 
+	if (auto SpUser = User.lock();
+		SpUser)
+	{
+		if (auto SpUserTransform = SpUser->GetComponent<Transform>().lock();
+			SpUserTransform)
+		{
+			UserRotation = SpUserTransform->GetRotationMatrix();
+		}
+	}
+
+	PlayRotation = Rotation;
 	this->CurRoll = CurRoll;
 	this->RollRotationSpeed = RollRotateSpeed;
 	_RenderProperty.bRender = true;
@@ -205,9 +225,6 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	{
 		_Info.Fx->SetFloat("AlphaFactor", 1.0f);
 	}
-	 // 알파보간 하셈 !! 
-
-	
 
 	{
 		const uint32 Numsubset = Inner->GetNumSubset();
@@ -226,7 +243,7 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		};
 	}
 
-	if(bOuterRender)
+	/*if(bOuterRender)
 	{
 		const uint32 Numsubset = Outer->GetNumSubset();
 		if (Numsubset > 0)
@@ -246,11 +263,13 @@ void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 				SpSubset->Render(_Info.Fx);
 			};
 		};
-	}
+	}*/
 };
 
 void FireCircle::PlayParticle()
 {
+	return;
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -268,7 +287,6 @@ void FireCircle::PlayParticle()
 			}
 		}
 	};
-	
 }
 
 void FireCircle::SpriteUpdate(const float DeltaTime)
@@ -321,22 +339,22 @@ void FireCircle::RenderDebug(const DrawInfo& _Info)
 	}
 
 
-	{
-		const uint32 Numsubset = Outer->GetNumSubset();
-		for (uint32 i = 0; i < Numsubset; ++i)
-		{
-			if (auto SpSubset = Outer->GetSubset(i).lock();
-				SpSubset)
-			{
-				if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-				{
-					continue;
-				}
+	//{
+	//	const uint32 Numsubset = Outer->GetNumSubset();
+	//	for (uint32 i = 0; i < Numsubset; ++i)
+	//	{
+	//		if (auto SpSubset = Outer->GetSubset(i).lock();
+	//			SpSubset)
+	//		{
+	//			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+	//			{
+	//				continue;
+	//			}
 
-				SpSubset->Render(_Info.Fx);
-			};
-		};
-	}
+	//			SpSubset->Render(_Info.Fx);
+	//		};
+	//	};
+	//}
 };
 
 
@@ -358,6 +376,8 @@ HRESULT FireCircle::Awake()
 	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.f,0.f });
 	m_pTransform.lock()->SetScale(Vector3{ 0.01f,0.01f,0.01f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
+	User = FindGameObjectWithTag(Player);
+
 	return S_OK;
 }
 
@@ -380,25 +400,13 @@ UINT FireCircle::Update(const float _fDeltaTime)
 		return 0;
 	}
 
-	if (auto spTransform = GetComponent<ENGINE::Transform>().lock();
-		spTransform)
-	{		
-		CurRoll += _fDeltaTime * RollRotationSpeed;
-
-		_RenderUpdateInfo.World =
-			FMath::Scale(spTransform->GetScale())* FMath::Rotation({ 0.f,CurRoll,0.f })
-			* FMath::Rotation(_Rotation)* FMath::Translation(spTransform->GetPosition());
-
-		spTransform->SetWorldMatrix(_RenderUpdateInfo.World);
-	}
-
+	CurRoll += _fDeltaTime * RollRotationSpeed;
 	SpriteUpdate(_fDeltaTime);
 
 	CurParticleTime -= _fDeltaTime;
 	if (CurParticleTime < 0.0f)
 	{
 		CurParticleTime += ParticleTime;
-
 		PlayParticle();
 	}
 	return 0;
@@ -481,8 +489,10 @@ void FireCircle::Editor()
 			ImGui::SliderFloat3("EditPlayStartRotation", EditPlayStartRotation, FLT_MIN, FMath::PI, "%9.6f");
 			ImGui::InputFloat3("In EditPlayStartRotation", EditPlayStartRotation, "%9.6f");
 
-			ImGui::SliderFloat3("CurRotation", _Rotation, FLT_MIN, FMath::PI, "%9.6f");
-			ImGui::InputFloat3("In CurRotation", _Rotation, "%9.6f");
+			ImGui::SliderFloat3("CurRotation", PlayRotation, FLT_MIN, FMath::PI, "%9.6f");
+			ImGui::InputFloat3("In CurRotation", PlayRotation, "%9.6f");
+
+			;
 
 			ImGui::SliderFloat("EditPlayRollRotateSpeed", &EditPlayRollRotateSpeed, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayRollRotateSpeed", &EditPlayRollRotateSpeed,0.f,0.f ,"%9.6f");
@@ -505,6 +515,9 @@ void FireCircle::Editor()
 			ImGui::SliderFloat("EditPlayStartPlayTime", &EditPlayStartPlayTime, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayStartPlayTime", &EditPlayStartPlayTime, 0.f, 0.f, "%9.6f");
 
+
+			ImGui::SliderFloat3("TestRotation", TestRotation, FLT_MIN, FMath::PI, "%9.6f");
+			ImGui::InputFloat3("In TestRotation", TestRotation, "%9.6f");
 		}
 		ImGui::EndChild();
 	}
