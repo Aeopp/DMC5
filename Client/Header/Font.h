@@ -11,6 +11,7 @@ public:
 	{
 		DMC5_BLACK_GRAD,
 		DMC5_GREEN_GRAD,
+		DMC5_WHITE,
 		
 		FONTTEX_ID_END
 	};

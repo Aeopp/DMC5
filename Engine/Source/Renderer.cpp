@@ -575,6 +575,7 @@ HRESULT Renderer::OptRender()&
 	// Tonemapping();
 	AlphaBlendEffectRender();
 	UIRender();
+	UIRenderAfterPostProcessing();
 
 	ResetState();
 	RenderTargetDebugRender();

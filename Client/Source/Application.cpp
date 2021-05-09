@@ -1,25 +1,23 @@
 #include "stdafx.h"
 #include "Application.h"
 
-#include "TestScene.h"
+#include "LogoScene.h"
+//#include "TestScene.h"
+
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
 #include "Subset.h"
 
-Application::Application()
-{
-
-}
-
-HRESULT Application::ReadyApplication(const bool bWindowed,
-	const bool bMultiSample)
+HRESULT Application::ReadyApplication(const bool bWindowed, const bool bMultiSample)
 {
 	if (FAILED(Engine::ReadyEngine(bWindowed, bMultiSample)))
 		return E_FAIL;
 
 	StaticResourceLoad();
 
-	SceneManager::LoadScene(TestScene::Create());
+	// 
+	SceneManager::LoadScene(LogoScene::Create());
+
 	return S_OK;
 }
 
@@ -34,7 +32,6 @@ HRESULT Application::ReleaseApplication()
 {
 	if (FAILED(Engine::ReleaseEngine()))
 		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -42,7 +39,7 @@ void Application::StaticResourceLoad()
 {
 	ParticlePoolLoad();
 
-		/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
+	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = true;
 	Resources::Load<ENGINE::StaticMesh>(

@@ -40,8 +40,8 @@
 
 #include <iostream>
 #include <fstream>
-
 using namespace std;
+
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -207,7 +207,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 19, Until Dooms Day",
+		pFont->SetText("D 17, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
@@ -421,7 +421,7 @@ void TestScene::RenderDataSetUp()
 	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005;
+	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };

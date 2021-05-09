@@ -3,11 +3,11 @@
 class Application final
 {
 public:
-	Application();
+	Application() = default;
 	~Application() = default;
+
 public:
-	HRESULT ReadyApplication(const bool bWindowed,
-						const bool bMultiSample);
+	HRESULT ReadyApplication(const bool bWindowed, const bool bMultiSample);
 	HRESULT UpdateApplication(const float Delta);
 	HRESULT ReleaseApplication();
 

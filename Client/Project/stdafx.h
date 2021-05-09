@@ -39,6 +39,8 @@ enum GAMEOBJECTTAG
 	MonsterWeapon,
 	UI_BtlPanel,
 	UI_Font,
+	UI_LogoPanel,
+	UI_TitlePanel,
 	Eff_Glint,
 	Eff_OvertureHand,
 	Eff_Liquid,

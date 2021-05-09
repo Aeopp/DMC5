@@ -182,6 +182,12 @@
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
+    <ClInclude Include="..\Header\LogoPanel.h" />
+    <ClInclude Include="..\Header\LogoScene.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -222,6 +228,7 @@
     <ClInclude Include="..\Header\OvertureHand.h" />
     <ClInclude Include="..\Header\TestObject.h" />
     <ClInclude Include="..\Header\TestScene.h" />
+    <ClInclude Include="..\Header\TitleScene.h" />
     <ClInclude Include="..\Header\Trail.h" />
     <ClInclude Include="..\Header\Unit.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
@@ -264,6 +271,12 @@
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
+    <ClCompile Include="..\Source\LogoPanel.cpp" />
+    <ClCompile Include="..\Source\LogoScene.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Source\TitlePanel.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
@@ -304,6 +317,7 @@
     <ClCompile Include="..\Source\OvertureHand.cpp" />
     <ClCompile Include="..\Source\TestObject.cpp" />
     <ClCompile Include="..\Source\TestScene.cpp" />
+    <ClCompile Include="..\Source\TitleScene.cpp" />
     <ClCompile Include="..\Source\Trail.cpp" />
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
@@ -435,6 +449,16 @@
     <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\UI\TitlePanel.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\UI\LogoPanel.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -178,6 +178,15 @@
     <Filter Include="02.GameObject\Effect\Stone">
       <UniqueIdentifier>{bd5c7449-3e0b-4e89-ba48-858fc9d8b626}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Scene\00.Logo">
+      <UniqueIdentifier>{a8164007-a5f1-4690-a4bf-c5c70f429ec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Scene\01.Title">
+      <UniqueIdentifier>{39652d87-8e4a-48e1-b1b4-a84250cad958}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\Misc">
+      <UniqueIdentifier>{e47f0001-a56a-4b6f-a6ce-f285c618963f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -436,6 +445,24 @@
     <ClInclude Include="..\Header\CbsTrail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\LogoScene.h">
+      <Filter>03.Scene\00.Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\TitlePanel.h">
+      <Filter>02.GameObject\UI\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\UI\TitlePanel.hlsl">
+      <Filter>02.GameObject\UI\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\LogoPanel.h">
+      <Filter>02.GameObject\UI\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\UI\LogoPanel.hlsl">
+      <Filter>02.GameObject\UI\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\TitleScene.h">
+      <Filter>03.Scene\01.Title</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -690,6 +717,18 @@
     </ClCompile>
     <ClCompile Include="..\Source\CbsTrail.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\LogoScene.cpp">
+      <Filter>03.Scene\00.Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TitlePanel.cpp">
+      <Filter>02.GameObject\UI\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\LogoPanel.cpp">
+      <Filter>02.GameObject\UI\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TitleScene.cpp">
+      <Filter>03.Scene\01.Title</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
