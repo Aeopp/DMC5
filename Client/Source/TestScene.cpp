@@ -62,19 +62,27 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<Camera>();
 	//AddGameObject<MainCamera>();
 	//_Player = AddGameObject<Nero>();
 	//AddGameObject<BtlPanel>();
-	AddGameObject<FireCircle>();
 	AddGameObject<CbsTrail>();
 	AddGameObject<ElectricOccur>();
 
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	//AddGameObject<Em5000>();
 
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
+	
+	//AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
+	
+	//AddGameObject<Em5000>();
+	//AddGameObject<Em1000>();
+	//AddGameObject<Em5300>();
+	
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
@@ -127,8 +135,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
 	RenderDataSetUp();
 
@@ -206,19 +213,6 @@ HRESULT TestScene::LoadScene()
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
 
-	// DOOMDAY
-	if (auto pFont = AddGameObject<Font>().lock();
-		pFont)
-	{
-		pFont->SetText("D 18, Until Dooms Day",
-			Font::TEX_ID::DMC5_BLACK_GRAD,
-			Vector2(245.f, 130.f),
-			Vector2(0.6f, 0.6f),
-			true);
-
-		pFont->SetRenderFlag(true);
-	}
-
 	return S_OK;
 }
 
@@ -226,11 +220,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	if (nullptr != pPlane)
-		return S_OK;
+	//if (nullptr != pPlane)
+	//	return S_OK;
 
-	/*pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	Physics::AddActor(UniqueID, *pPlane);*/
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }

@@ -1265,6 +1265,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool	m_bPlayOnce = true;
+	bool	m_bPlayOnce2 = true;
 };
 
 
@@ -1368,7 +1371,7 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 
 private:
-	int		m_iLoopCount = 0;
+	bool	m_bPlayOnce = true;
 };
 
 class Skill_Streak_Ex3_Roll_End : public NeroState
@@ -2308,9 +2311,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-
 private:
-	int	m_iLoopCount = 0;
+	bool	m_bPlayOnce = true;
+	bool	m_bPlayOnce2 = true;
 };
 
 class Hr_Ex_Air_Roll_End : public NeroState
@@ -2909,5 +2912,68 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
 
+class TransformToShinMajin : public NeroState
+{
+private:
+	explicit TransformToShinMajin(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~TransformToShinMajin();
+
+public:
+	static TransformToShinMajin* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
+class TransformToOrigin : public NeroState
+{
+private:
+	explicit TransformToOrigin(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~TransformToOrigin();
+
+public:
+	static TransformToOrigin* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
+class ShinMajinEnter : public NeroState
+{
+private:
+	explicit ShinMajinEnter(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~ShinMajinEnter();
+
+public:
+	static ShinMajinEnter* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
+class ShinMajinJudgement : public NeroState
+{
+private:
+	explicit ShinMajinJudgement(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~ShinMajinJudgement();
+
+public:
+	static ShinMajinJudgement* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
 
 #endif // NeroState_h__

@@ -160,7 +160,7 @@ void FireCircle::PlayStart(
 void FireCircle::PlayEnd()
 {
 	_RenderProperty.bRender = false;
-};
+}
 
 void FireCircle::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
