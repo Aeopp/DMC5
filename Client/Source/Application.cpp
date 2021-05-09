@@ -274,7 +274,7 @@ void Application::FireParticlePoolLoad()
 	_PushParticle._ShaderKey = "FireParticle";
 	// 공유 정보 바인드 
 
-	auto _Tex = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\10.tga");
+	auto _Tex = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\11.tga");
 
 	_PushParticle.SharedResourceBind = [_Tex](
 		ENGINE::ParticleSystem::Particle& TargetParticle,
@@ -290,7 +290,7 @@ void Application::FireParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 300;
+	const uint64 PoolSize = 1000;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("FireParticle", std::move(_PushParticle), PoolSize,true);
@@ -306,11 +306,16 @@ void Application::FireParticlePoolLoad()
 		static constexpr float ThirdVelocityScale = 300.f;
 
 		ParticleInstance::Fire _FireValue{};
-		_FireValue.ColorIntencity = FMath::Random(0.5f, 1.f);
+		_FireValue.ColorIntencity = FMath::Random(0.3f, 0.5f);
 		const float LifeTime = FMath::Random(0.20f, 1.f);
+
 		const Vector3 ParticleScale =
 			FMath::Random(Vector3{ 0.05f ,0.05f ,0.05f },
 				Vector3{ 0.067,0.067,0.067f }) * GScale;
+
+		/*const Vector3 ParticleScale =
+			FMath::Random(Vector3{ 1.f ,1.f,1.f },
+				Vector3{ 1.f,1.f,1.f }) * GScale;*/
 
 		const Vector3 Cp0 = TargetLocation + FMath::Random(Vector3{ -1.f,-1.f,-1.f } *StartVelocityScale,
 			Vector3{ 1.f,1.f,1.f }    *StartVelocityScale);
@@ -329,8 +334,9 @@ void Application::FireParticlePoolLoad()
 		const Vector3 EndRot = RotCp1 + EulerVelocity * ThirdVelocityScale;
 
 		const auto _SpriteDesc = 
-			ParticleSystem::ParticleInstance::SpriteDesc::Make(8, 8, 0, FMath::Random(0.f, 7.f), 0.008f, 
-				false, false);
+			ParticleSystem::ParticleInstance::SpriteDesc::Make(8, 4, 0, FMath::Random(0u, 7u), 
+				FMath::Random(0.01f,0.03f), 
+				true, false);
 
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },

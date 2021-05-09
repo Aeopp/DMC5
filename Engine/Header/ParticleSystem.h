@@ -19,19 +19,19 @@ public:
 		{
 		public:
 			static SpriteDesc Make(
-						const float SpriteColCnt,
-						const float SpriteRowCnt,
-						const float SpriteCurCol,
-						const float SpriteCurRow,
+						const uint32 SpriteColCnt,
+						const uint32 SpriteRowCnt,
+						const uint32 SpriteCurCol,
+						const uint32 SpriteCurRow,
 						const float Interval ,
 						const bool bColLoop,
 						const bool bRowLoop)
 			{
 				SpriteDesc _SpriteDesc{};
-				_SpriteDesc.SpriteColCnt = SpriteColCnt;
-				_SpriteDesc.SpriteRowCnt = SpriteRowCnt;
-				_SpriteDesc.SpriteCurCol = SpriteCurCol;
-				_SpriteDesc.SpriteCurRow = SpriteCurRow;
+				_SpriteDesc.SpriteColCnt = static_cast<float>(SpriteColCnt);
+				_SpriteDesc.SpriteRowCnt =  static_cast<float>(SpriteRowCnt);
+				_SpriteDesc.SpriteCurCol =  static_cast<float>(SpriteCurCol);
+				_SpriteDesc.SpriteCurRow =  static_cast<float>(SpriteCurRow);
 				_SpriteDesc.CurInterval = _SpriteDesc.Interval = Interval;
 				_SpriteDesc.bColLoop = bColLoop;
 				_SpriteDesc.bRowLoop = bRowLoop;

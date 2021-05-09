@@ -50,12 +50,10 @@ HRESULT ParticleSystem::UpdateParticleSystem(const float Delta)
 {
 	for (auto& [Key , _TargetParticle ] : _Particles)
 	{
-		// _TargetParticle.SetPlayTime(_TargetParticle.GetPlayTime() - Delta);
 		auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
 		if (_TargetParticle.bPlayable())
 		{
-			// const float LerpTimeNormalize = _TargetParticle.bLerpTimeNormalized ? _TargetParticle.GetDuration() : 1.0f;
 
 			bool bAnyOne = false;
 
@@ -69,15 +67,7 @@ HRESULT ParticleSystem::UpdateParticleSystem(const float Delta)
 				_TargetParticle.Sleep();
 			}
 		}
-	/*	else
-		{
-			auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
-			for (auto& _ParticleInstance : _RefTargetParticleInstances)
-			{
-				_ParticleInstance.Reset();
-			}
-		}*/
 	}
 
 	return S_OK;
