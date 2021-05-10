@@ -30,6 +30,11 @@ class FireCircle;
 class IceAge;
 class Trail;
 class ShapeParticle;
+class JudgementSword;
+class JudgementShadow1;
+class JudgementShadow2;
+class JudgementShadow3;
+class CbsTrail;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -247,6 +252,10 @@ public:
 		ANI_EM200_BUSTER_AIR_START,
 		ANI_EM200_BUSTER_AIR_LOOP,
 		ANI_EM200_BUSTER_AIR_FINISH,
+		ANI_TRANSFORM_TO_SHINMAJIN,
+		ANI_TRANSFORM_TO_ORIGIN_DANTE,
+		ANI_SHINMAJIN_ENTER,
+		ANI_SHINMAJIN_JUDGEMENT,
 		ANI_END
 	};
 
@@ -304,9 +313,20 @@ public:
 		NeroCom_Cbs_Short,
 		NeroCom_Cbs_Middle,
 		NeroCom_Cbs_Long,
+		NeroCom_JudgementSword,
 		NeroCom_All_Weapon,
+		NeroCom_JudgementShadow1,
+		NeroCom_JudgementShadow2,
+		NeroCom_JudgementShadow3,
 		NeroCom_End
-	};	
+	};
+
+	enum MeshIndex
+	{
+		ORIGIN_DANTE,
+		SHINMAJIN_DANTE,
+		MESH_END
+	};
 
 private:
 	explicit Nero();
@@ -349,7 +369,7 @@ public:
 	Vector3 Get_NeroBoneWorldPos(std::string _BoneName);
 	bool Get_IsMajinMode() { return m_IsMajin; }
 	int  GetDashLoopDir() { return m_iDashLoopDir; }
-	std::string GetAniname() { return m_pMesh->AnimName; }
+	std::string GetAniname() { return m_pMesh[m_iMeshIndex]->AnimName; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
@@ -371,6 +391,7 @@ public:
 	void SetCbsIdle();
 	void SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster);
 	void SetFly(bool _ActiveOrNot) { m_IsFly = _ActiveOrNot; }
+	void SetPosFireCircle();
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
@@ -415,10 +436,14 @@ public:
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
 	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
 	void ChangeAnimationWingSword(const std::string& InitAnimName, const bool  bLoop);
+	void ChangeMeshIndex(UINT _iMeshIndex) { m_iMeshIndex = _iMeshIndex; }
 	//Effect
 	void PlayEffect(GAMEOBJECTTAG _eTag,
 		const Vector3& Rotation = { 0.f,0.f,0.f }, 
-		const float CurRoll = 0.0f);
+		const float CurRoll = 0.0f,
+		const int32 StartSpriteRow = 3, 
+		const float PlayTime = 1.f
+	, const Vector3& Scale = { 0.004f, 0.004f,0.004f });
 	void StopEffect(GAMEOBJECTTAG _eTag);
 public:
 
@@ -450,7 +475,7 @@ private:
 	void Update_Majin(float _fDeltaTime);
 
 private:
-	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
+	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh[MESH_END];
 	std::shared_ptr<NeroFSM> m_pFSM;
 	std::weak_ptr<RedQueen> m_pRedQueen;
 	std::weak_ptr<Nero_LWing>	m_pLWing;
@@ -475,12 +500,17 @@ private:
 	std::weak_ptr<AirHike>			m_pAirHike;
 	std::weak_ptr<Trail>			m_pTrail;
 	std::weak_ptr<IceAge>			m_pIceAge;
-	std::weak_ptr<FireCircle>		m_pFireCircle;
+	std::weak_ptr<FireCircle>		m_pFireCircle[3];
 	std::weak_ptr<CircleWave>		m_pCircleWave;
+	std::weak_ptr<CbsTrail>			m_pCbsTrail;
 	enum { SP_RED = 0, SP_GREEN, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 
 	std::vector<std::weak_ptr<WingSword>>	m_vecWingSwords;
+	std::weak_ptr<JudgementSword>	m_pJudgementSword;
+	std::weak_ptr<JudgementShadow1> m_pJudgementShadow1;
+	std::weak_ptr<JudgementShadow2> m_pJudgementShadow2;
+	std::weak_ptr<JudgementShadow3> m_pJudgementShadow3;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -488,6 +518,7 @@ private:
 	UINT	m_iJumpDirIndex;
 	UINT	m_iCurDirIndex;
 	UINT	m_iPreDirIndex;
+	UINT	m_iMeshIndex = 0;
 
 	bool	m_bDebugButton = true;
 	UINT	m_iJumpCount = 0;

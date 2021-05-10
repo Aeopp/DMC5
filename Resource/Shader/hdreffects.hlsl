@@ -7,7 +7,6 @@ uniform sampler2D blurtarget1 : register(s1);
 uniform sampler2D blurtarget2 : register(s2);
 uniform sampler2D blurtarget3 : register(s3);
 uniform sampler2D blurtarget4 : register(s4);
-
 uniform sampler2D depth : register(s5);
 
 uniform float4x4  matViewProjInv;

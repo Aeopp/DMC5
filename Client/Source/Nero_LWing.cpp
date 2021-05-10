@@ -22,7 +22,7 @@ Nero_LWing* Nero_LWing::Create()
 HRESULT Nero_LWing::Ready()
 {
 	RenderInit();
-
+	
 	m_NRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing\\pl0010_06_WingArm_NRMR.tga");
 	m_ATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing\\pl0010_06_WingArm_ATOS.tga");
 	m_GradationTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\grad.png");
@@ -47,6 +47,7 @@ HRESULT Nero_LWing::Ready()
 
 HRESULT Nero_LWing::Awake()
 {
+	GameObject::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	
 	if (!m_pNero.expired())
@@ -57,6 +58,7 @@ HRESULT Nero_LWing::Awake()
 
 HRESULT Nero_LWing::Start()
 {
+	GameObject::Start();
 	return S_OK;
 }
 
@@ -320,7 +322,7 @@ void Nero_LWing::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();

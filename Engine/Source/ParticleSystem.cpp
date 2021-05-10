@@ -19,15 +19,20 @@ HRESULT ParticleSystem::ReadyParticleSystem()
 {
 
 	return S_OK;
-}
+};
 
-void ParticleSystem::PreGenerated
+std::vector<ParticleSystem::ParticleInstance>* 
+ParticleSystem::PreGenerated
 (const std::string& Identifier /*등록한 이름으로 제어하세요*/,
 	const Particle& _Particle ,
-	const uint64 PoolSize)
+	const uint64 PoolSize ,
+	const bool bBillboard)
 {
 	auto& _RefParticle = _Particles[Identifier] = (_Particle);
-	_RefParticle.RefInstances().resize(PoolSize);
+	auto& _RefParticleInstances = _RefParticle.RefInstances();
+	_RefParticleInstances.resize(PoolSize);
+	_RefParticle.bBillboard = bBillboard;
+	return &_RefParticleInstances;
 };
 
 ParticleSystem::Particle* ParticleSystem::PtrParticle(const std::string& Identifier)
@@ -45,27 +50,24 @@ HRESULT ParticleSystem::UpdateParticleSystem(const float Delta)
 {
 	for (auto& [Key , _TargetParticle ] : _Particles)
 	{
-		_TargetParticle.SetPlayTime(_TargetParticle.GetPlayTime() - Delta);
 		auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
-		if (_TargetParticle.GetPlayTime() > 0.0f)
+		if (_TargetParticle.bPlayable())
 		{
-			const float LerpTimeNormalize = _TargetParticle.bLerpTimeNormalized ? _TargetParticle.GetDuration() : 1.0f;
+
+			bool bAnyOne = false;
 
 			for (auto& _ParticleInstance : _RefTargetParticleInstances)
 			{
-				_ParticleInstance.Update(Delta , LerpTimeNormalize);
+				bAnyOne  |= _ParticleInstance.Update(Delta);
 			}
-		}
-		else
-		{
-			auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
-			for (auto& _ParticleInstance : _RefTargetParticleInstances)
+			if (false == bAnyOne)
 			{
-				_ParticleInstance.Reset();
+				_TargetParticle.Sleep();
 			}
 		}
+
 	}
 
 	return S_OK;
@@ -76,7 +78,7 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 {
 	for (auto& [Key, _TargetParticle] : _Particles)
 	{
-		if (_TargetParticle.GetPlayTime() > 0.0f)
+		if (_TargetParticle.bPlayable())
 		{
 			if (auto iter = _Renderer->Shaders.find(_TargetParticle._ShaderKey);
 				iter != std::end(_Renderer->Shaders))
@@ -112,6 +114,13 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 
 						auto& _RefTargetParticleInstances = _TargetParticle.RefInstances();
 
+						std::optional<Matrix> BillboardMat = std::nullopt;
+
+						if (_TargetParticle.bBillboard)
+						{
+							BillboardMat = _Renderer->_RenderInfo.Billboard;
+						}
+
 						for (auto& _ParticleInstance : _RefTargetParticleInstances)
 						{
 							if (_ParticleInstance.GetLifeTime().has_value())
@@ -119,8 +128,13 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 								if (auto _Subset = _TargetParticle._Mesh->GetSubset(0).lock();
 									_Subset)
 								{
-									const Matrix matWorld = _ParticleInstance.CalcWorld();
+									const Matrix matWorld = _ParticleInstance.CalcWorld(BillboardMat);
+
+									CurFx->SetFloat("LifeTimeAlphaFactor", 
+										_ParticleInstance.GetLifeTimeAlphaFactor());
 									CurFx->SetMatrix("matWorld", &matWorld);
+									CurFx->SetFloat("Time", _ParticleInstance.GetT());
+									
 									if (const auto& bTargetSprite = _ParticleInstance.GetSpriteDesc();
 										bTargetSprite)
 									{
@@ -155,17 +169,15 @@ void ParticleSystem::Editor()
 	ImGui::End();
 };
 
-std::vector<ParticleSystem::ParticleInstance*> ParticleSystem::PlayableParticles(
-	const std::string& Identifier,
-	const float PlayTime)
+std::vector<ParticleSystem::ParticleInstance*> ParticleSystem::PlayParticle(
+	const std::string& Identifier ,
+	const bool bLifeTimeAlphaFactor)
 {
 	std::vector<ParticleSystem::ParticleInstance*> _Particles{};
 
 	if (auto* const _PtrParticle = PtrParticle(Identifier);
 		_PtrParticle)
 	{
-		_PtrParticle->SetPlayTime(PlayTime);
-
 		auto& _PtrParticleRefInstance = _PtrParticle->RefInstances();
 
 		_Particles.reserve(_PtrParticleRefInstance.size());
@@ -177,7 +189,14 @@ std::vector<ParticleSystem::ParticleInstance*> ParticleSystem::PlayableParticles
 				_Particles.push_back(&_TargetInstance);
 			}
 		}
+
+		if (_Particles.empty() == false)
+		{
+			_PtrParticle->Play();
+			this->bLifeTimeAlphaFactor = bLifeTimeAlphaFactor;
+		}
 	}
 
 	return _Particles;
 };
+

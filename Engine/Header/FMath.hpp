@@ -24,9 +24,11 @@ public:
 		vResult.z = _vFirst.z * _vSecond.z;
 		return vResult;
 	}
-
-
+	
 	static constexpr auto PI = std::numbers::pi_v<float>;
+	static constexpr auto HalfPI = PI / 2.f;
+	static constexpr auto QuadPI = PI / 4.f;
+	static constexpr auto ThirdPI =   PI / 3.f;
 
 	inline static bool Equal(const Vector3& Lhs, const Vector3& Rhs);
 	inline static bool IsValid(const Vector3& Target);
@@ -118,6 +120,10 @@ public:
 		Vector3& IntersectPointLhs,
 		Vector3& IntersectPointRhs);
 
+	static inline Vector3 RandomVector(const float Scale);
+
+	static inline Vector3 RandomEuler(const float PiScale);
+
 
 	static inline Vector3 BezierCurve(const Vector3& Start,const Vector3& End, const float t);
 
@@ -172,6 +178,9 @@ public:
 #pragma region RANDOM
 	template<typename Type>
 	static inline Type Random(const Type& Begin, const Type& End);
+
+	template<typename Type>
+	static inline Type Random(const std::pair<Type,Type>& _Pair);
 private:
 	static inline auto& GetGenerator();
 #pragma endregion RANDOM
@@ -205,6 +214,11 @@ inline void FMath::DebugPrintMatrix(const Matrix& _Matrix)
 	}
 	std::cout << std::endl;
 }
+
+inline Vector3 FMath::RandomVector(const float Scale)
+{
+	return FMath::Random<Vector3>(Vector3{ -1.f,-1.f,-1.f }, Vector3{ 1.f,1.f,1.f }) * Scale;
+};
 
 inline bool FMath::IsRange(const float Begin, const float End,
 	const float X)
@@ -252,6 +266,13 @@ Type FMath::Random(const Type& Begin, const Type& End)
 		return Dis(GetGenerator());
 	}
 };
+
+
+template<typename Type>
+Type FMath::Random(const std::pair<Type, Type>& _Pair)
+{
+	return Random(_Pair.first, _Pair.second);
+}
 
 auto& FMath::GetGenerator()
 {
@@ -682,6 +703,12 @@ bool FMath::IsSphereToSphere(const Sphere& Lhs, const Sphere& Rhs,
 	}
 
 	return false;
+}
+
+inline Vector3 FMath::RandomEuler(const float Scale)
+{
+	return FMath::Random(Vector3{-FMath::PI, -FMath::PI ,-FMath::PI } *Scale,
+						 Vector3{ FMath::PI,  FMath::PI , FMath::PI } *Scale);
 };
 
 bool FMath::IsRayToSphere(

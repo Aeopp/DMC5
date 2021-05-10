@@ -90,7 +90,7 @@ void Trail::RenderInit()
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 
-	_Desc.UpdateCycle = 0.0f;
+	_Desc.UpdateCycle = 0.016f;
 	_Desc.NewVtxCnt = 0;
 	UV0Multiply = 1.f;
 
@@ -155,7 +155,7 @@ void Trail::PlayStart(const Mode _Mode,
 			auto High = RQ->Get_BoneMatrixPtr("_001");
 			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
 
-			for (int32 i = 0; i < _Desc.VtxCnt; ++i)
+			for (int32 i = 0; i < _Desc.VtxCnt; i+=2)
 			{
 				VtxPtr[i +1].Location = HighPos;
 				VtxPtr[i].Location = LowPos;

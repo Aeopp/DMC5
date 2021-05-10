@@ -7,8 +7,8 @@
 #include <vector>
 #include "ShapeParticle.h"
 
-class IceAge :     public ENGINE::GameObject,
-			       public ENGINE::RenderInterface
+class IceAge : public ENGINE::GameObject,
+			   public ENGINE::RenderInterface
 {
 public:
 private:
@@ -40,20 +40,17 @@ public:
 public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
-		const Vector3 Scale = { 0.0016f ,0.0016f ,0.0016f },
-		const float YawRotationSpeed = FMath::PI *3.f,
+		const Vector3 Scale = { 0.0017f ,0.0017f  ,0.0017f },
+		const float YawRotationSpeed =1000.f,
 		const float PlayTime = 2.5f);
 	void PlayEnd();
 public:
-	void ParticlePoolReserve();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	float ParticleCycle = 0.1f;
+	float ParticleCycle = 0.30f;
 	float CurParticleTime = 0.0f;
-	// std::weak_ptr< ShapeParticle> _GeneratorParticle{};
-	// std::vector<Particle> _IceParticles{};
-
+	
 	float EmissiveIntencity{ 1.f };
 	float ColorIntencity{ 1.f };
 	float DistortionIntencity{ 1.f };

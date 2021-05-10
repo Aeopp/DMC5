@@ -34,13 +34,16 @@
 #include "AirHike.h"
 #include "FireCircle.h"
 #include "IceAge.h"
+#include "JudgementSword.h"
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
+#include "CbsTrail.h"
+#include "ElectricOccur.h"
 
 #include <iostream>
 #include <fstream>
-
 using namespace std;
+
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -61,6 +64,7 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	//AddGameObject<Camera>();
+	//AddGameObject <JudgementSword>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
@@ -68,12 +72,14 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	AddGameObject<Em5000>();
-
+	//AddGameObject<Em5000>();
+	
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
 	//AddGameObject<IceAge>();
+	//AddGameObject<CbsTrail>();
+	//AddGameObject<ElectricOccur>();
 
 
 	// Wave 1st
@@ -121,7 +127,6 @@ HRESULT TestScene::LoadScene()
 	//	pEm0000.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.25858f,0.02f,5.93767f });
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
-
 
 	//LoadMap();
 	AddGameObject<TempMap>();
@@ -201,11 +206,11 @@ HRESULT TestScene::LoadScene()
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
 
-	// DOOMDAY
+	// DOOMSDAY
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 18, Until Dooms Day",
+		pFont->SetText("D 17, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
@@ -221,11 +226,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	/*if (nullptr != pPlane)
-		return S_OK;
+	//if (nullptr != pPlane)
+	//	return S_OK;
 
-	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	Physics::AddActor(UniqueID, *pPlane);*/
+	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	//Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }
@@ -416,10 +421,10 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	 /*_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");*/
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005;
+	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };

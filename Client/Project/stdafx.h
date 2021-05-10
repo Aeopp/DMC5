@@ -39,6 +39,8 @@ enum GAMEOBJECTTAG
 	MonsterWeapon,
 	UI_BtlPanel,
 	UI_Font,
+	UI_LogoPanel,
+	UI_TitlePanel,
 	Eff_Glint,
 	Eff_OvertureHand,
 	Eff_Liquid,
@@ -51,7 +53,9 @@ enum GAMEOBJECTTAG
 	Eff_ShapeParticle,
 	Eff_AirHike,
 	Eff_Trail,
+	Eff_CbsTrail,
 	Eff_FireCircle,
+	Eff_ElectricOccur ,
 	Eff_IceAge,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
@@ -67,8 +71,28 @@ enum GAMEOBJECTTAG
 	Tag_Cbs_Short,
 	Tag_Cbs_Middle,
 	Tag_Cbs_Long,
+	TAG_NeroShinMajin,
+	TAG_JudgementShadow1,
+	TAG_JudgementShadow2,
+	TAG_JudgementShadow3,
 	Tag_END
 };
+
+
+struct TrailDesc
+{
+	uint32 VtxSize{};
+	uint32 VtxCnt{};
+	uint32 TriCnt{};
+	uint32 IdxSize{};
+	D3DFORMAT IdxFmt{};
+
+	int32 DrawTriCnt;
+	uint32 NewVtxCnt;
+	float UpdateCycle;
+	float CurVtxUpdateCycle;
+};
+
 
 #define OGDistance 0.83f
 #define MaxDistance 0.48f

@@ -5,20 +5,6 @@
 #include <optional>
 #include "Vertexs.h"
 
-struct TrailDesc
-{
-	uint32 VtxSize{};
-	uint32 VtxCnt{};
-	uint32 TriCnt{};
-	uint32 IdxSize{};
-	D3DFORMAT IdxFmt{};
-
-	int32 DrawTriCnt;
-	uint32 NewVtxCnt;
-	float UpdateCycle;
-	float CurVtxUpdateCycle;
-};
-
 class Trail : public ENGINE::GameObject,
 			  public ENGINE::RenderInterface
 {
@@ -48,7 +34,7 @@ private:
 	float SpriteColIdx = 0.f;
 
 	float SpriteCurUpdateCycle = 0.0f;
-	float SpriteUpdateCycle = 0.000001f;
+	float SpriteUpdateCycle = 0.016f;
 
 	Vector3 LowOffset{ 0.f,0.f,143.f};
 	Vector3 HighOffset{ 0.f,0.f,-231.f };

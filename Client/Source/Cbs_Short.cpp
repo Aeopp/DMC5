@@ -10,6 +10,7 @@ Cbs_Short::Cbs_Short()
 	m_nTag = Tag_Cbs_Short;
 	m_BattleInfo.eAttackType = Attack_Front;
 	m_BattleInfo.iAttack = 10;
+	D3DXMatrixIdentity(&m_MyRenderMat);
 }
 
 void Cbs_Short::Free()
@@ -43,7 +44,7 @@ HRESULT Cbs_Short::Awake()
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("WeaponConst"));
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("R_WeaponHand"));
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("L_WeaponHand"));
-
+	m_pBoneMatrixPole3 = m_pMesh->GetToRootMatrixPtr("pole03");
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
@@ -85,7 +86,20 @@ UINT Cbs_Short::LateUpdate(const float _fDeltaTime)
 	if (nullptr != m_vecParentMat[m_iStateIndex])
 	{
 		FinalWorld = *m_vecParentMat[m_iStateIndex] * ParentWorldMatrix;
-		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+		m_MyRenderMat = FinalWorld;
+		if ("Cbs_Revolver_Loop" == m_pMesh->AnimName)
+		{
+			m_pTransform.lock()->SetWorldMatrix(*m_pBoneMatrixPole3 * FinalWorld);
+		}
+		else
+		{
+			Vector3 vPlayerLook;
+			memcpy(&vPlayerLook, ParentWorldMatrix.m[2], sizeof(Vector3));
+			FinalWorld._41 += vPlayerLook.x * -150.f;
+			FinalWorld._42 += vPlayerLook.y * -150.f;
+			FinalWorld._43 += vPlayerLook.z * -150.f;
+			m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+		}
 	}
 
 	//Matrix		Scale,RotX,RotY, Pos;
@@ -142,7 +156,12 @@ float Cbs_Short::Get_PlayingTime()
 float Cbs_Short::Get_PlayingAccTime()
 {
 	return m_pMesh->PlayingAccTime();
-}
+};
+
+Matrix* Cbs_Short::Get_BoneMatrixPtr(std::string _BoneName)
+{
+	return m_pMesh->GetToRootMatrixPtr(_BoneName);;
+};
 
 void Cbs_Short::RenderReady()
 {
@@ -151,7 +170,8 @@ void Cbs_Short::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		//_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = m_MyRenderMat;
 		if (m_pMesh)
 		{
 			const uint32  Numsubset = m_pMesh->GetNumSubset();
