@@ -34,6 +34,7 @@ private:
 	void    ReadyFrustum();
 	void    ReadyQuad();
 	void    ReadyTextures();
+	void    ReadyPtLightPool();
 public:
 	HRESULT Render()&;
 	HRESULT OptRender()&;
@@ -45,7 +46,9 @@ public:
 	bool bEnvironmentRender = false;
 	void LightSave(std::filesystem::path path);
 	void LightLoad(const std::filesystem::path & path);
-	const std::vector< std::shared_ptr<FLight> >& GetDirLights() { return DirLights; }
+	const std::vector< std::shared_ptr<FLight> >& GetDirLights() { return DirLights; };
+
+	std::weak_ptr<FLight> RefRemainingDynamicLight();;
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -171,8 +174,7 @@ private:
 
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
-	// std::vector<std::shared_ptr<FLight>> DynamicPointLights{};
-
+	std::vector<std::shared_ptr<FLight>> DynamicPointLights{};
 	std::shared_ptr<Texture> SkyNoiseMap{};
 	std::shared_ptr<StaticMesh> SkysphereMesh{};
 	std::shared_ptr<Texture> sky{};

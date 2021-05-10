@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "RenderInterface.h"
 #include "Vertexs.h"
+#include "FLight.h"
 #include <optional>
 
 class ElectricOccur : public ENGINE::GameObject,
@@ -46,6 +47,11 @@ private:
 	float ColorIntencity = 0.7f;
 
 	float ScrollSpeed = 445.f;
+
+	float PtLightRadius = 1.f;
+	float PtLightFlux = 1.f;
+	std::weak_ptr<FLight> PtLight;
+	
 
 	Vector3 StartScale{ 0.0001f,0.0001f,0.0001f };
 	Vector3 FinalSacle{ 0.0001f,0.0001f,0.0001f };

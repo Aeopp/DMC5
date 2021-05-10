@@ -21,7 +21,6 @@ sampler Depth = sampler_state
     sRGBTexture = false;
 };
 
-
 texture AlbmMap;
 sampler Albm = sampler_state
 {
@@ -58,7 +57,7 @@ void VsMain(in out float4 Position : POSITION0,
 };
 
 void PsMain(out float4 Color : COLOR0,
-            
+
             in float2 UV0 : TEXCOORD0,
             in float2 UV1 : TEXCOORD1,
 
@@ -67,7 +66,7 @@ void PsMain(out float4 Color : COLOR0,
 {
     Color = tex2D(Albm, UV0);
     Color.a *= AlphaFactor;
-    // Color.rgb*= abs(sin(Time *ScrollSpeed));
+    Color.rgb*= abs(sin(Time *ScrollSpeed));
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;
     

@@ -451,14 +451,14 @@ void Application::ElectricParticlePoolLoad()
 		ENGINE::ParticleSystem::Particle& TargetParticle,
 		ID3DXEffect* const Fx)
 	{
-		static const Vector3 ElectricColor{ 223.f / 255.f, 207.f / 255.f,231.f / 255.f };
-		Fx->SetFloatArray("ElectricColor", ElectricColor, 3u);
+
 		Fx->SetTexture("MskMap",_Tex->GetTexture());
 	};
 
 	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
 	{
 		const auto& _Value = std::any_cast<const ParticleInstance::Electric&>(_InstanceVariable);
+		Fx->SetFloatArray("ElectricColor", _Value.Color, 3u);
 		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
 		return;
 	};
@@ -508,8 +508,8 @@ void Application::ElectricParticlePoolLoad()
 
 			ParticleInstance::Electric _ElectricValue{};
 
-			_ElectricValue.ColorIntencity = FMath::Random(0.1f, 1.f);
-
+			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
 			const float LifeTime = FMath::Random(0.1f, 3.f);
 
 			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },

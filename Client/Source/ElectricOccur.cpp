@@ -2,12 +2,15 @@
 #include "..\Header\ElectricOccur.h"
 #include "Transform.h"
 #include "Subset.h"
+#include "Color.h"
+
 #include "TextureType.h"
 #include "Renderer.h"
 #include <iostream>
 #include "GraphicSystem.h"
 #include "RedQueen.h"
 #include "ParticleSystem.h"
+#include "FLight.h"
 
 ElectricOccur::ElectricOccur()
 {
@@ -96,6 +99,8 @@ void ElectricOccur::RenderInit()
 
 void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 {
+	PlayEnd();
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -105,10 +110,25 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	CurParticleTime = 0.0f;
+
+
+	PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
+
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->bEnable = true;
+	}
 };
 
 void ElectricOccur::PlayEnd()
 {
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->bEnable = false;
+	}
+
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 };
@@ -116,10 +136,11 @@ void ElectricOccur::PlayEnd()
 void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T*ScrollSpeed)));
+	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T*ScrollSpeed)) );
 	_Info.Fx->SetFloat("Time", T);
 	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
+
 
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
@@ -259,6 +280,23 @@ UINT ElectricOccur::Update(const float _fDeltaTime)
 		PlayParticle();
 	}
 
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		if (auto SpTransform = GetComponent<Transform>().lock();
+			SpTransform)
+		{
+			SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
+			SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
+			SpPtLight->PointRadius = PtLightRadius;
+			SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
+		}
+		else
+		{
+			SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+		}
+	}
+
 	return 0;
 }
 
@@ -297,6 +335,12 @@ void ElectricOccur::Editor()
 
 			ImGui::SliderFloat("ScrollSpeed", &ScrollSpeed, FLT_MIN, 1000.f, "%9.6f");
 			ImGui::InputFloat("In ScrollSpeed", &ScrollSpeed, 0.f, 0.f, "%9.6f");
+
+			ImGui::SliderFloat("PtLightRadius", &PtLightRadius, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In PtLightRadius", &PtLightRadius, 0.f, 0.f, "%9.6f");
+
+			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In PtLightFlux", &PtLightFlux, 0.f, 0.f, "%9.6f");
 		}
 		ImGui::EndChild();
 	}

@@ -18,6 +18,7 @@ namespace ParticleInstance
 	struct Electric
 	{
 		float ColorIntencity = 0.33f;
+		Vector3 Color{1.f,1.f,1.f};
 	};
 }
 
