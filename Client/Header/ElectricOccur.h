@@ -40,7 +40,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	float ParticleTime = 0.03f;
+	float ParticleTime = 0.06f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;
 	float PlayTime = 0.25f;

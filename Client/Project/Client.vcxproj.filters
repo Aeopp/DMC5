@@ -438,6 +438,7 @@
     </ClInclude>
     <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\Thunderbolt.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -695,6 +696,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\ThunderBolt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -759,11 +761,12 @@
     </None>
     <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\ElectricEffectParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\Effect\ThunderBont.hlsl" />
   </ItemGroup>
 </Project>

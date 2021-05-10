@@ -42,7 +42,7 @@ void ElectricOccur::RenderReady()
 		const Vector3 Scale = FMath::Lerp(StartScale, FinalSacle, T / PlayTime);
 		_SpTransform->SetScale(Scale);
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-		if (Mesh)
+		/*if (Mesh)
 		{
 			const uint32 Numsubset = Mesh->GetNumSubset();
 			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
@@ -54,7 +54,7 @@ void ElectricOccur::RenderReady()
 
 				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
 			}
-		}
+		}*/
 	}
 };
 
@@ -178,7 +178,7 @@ void ElectricOccur::PlayParticle()
 				"ElectricParticle", true);
 			_Particle.empty() == false)
 		{
-			static constexpr uint32 JumpOffset = 1u;
+			static constexpr uint32 JumpOffset = 10u;
 
 			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
 			{
@@ -186,7 +186,6 @@ void ElectricOccur::PlayParticle()
 				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
 			}
 		}
-
 
 		//for (uint32 i = 0; i < 0; ++i)
 		//{
@@ -240,6 +239,7 @@ HRESULT ElectricOccur::Ready()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
+	InitTransform.lock()->SetRotation(Vector3{ 0.005f,0.005f,0.005f});
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	return S_OK;
@@ -248,9 +248,6 @@ HRESULT ElectricOccur::Ready()
 HRESULT ElectricOccur::Awake()
 {
 	GameObject::Awake();
-	
-	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
-	m_pTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	return S_OK;
 }
 

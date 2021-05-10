@@ -99,15 +99,12 @@ void AirHike::RenderInit()
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
 			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx" , _InitInfo);
 
-	_MagicTexture =
+	_MagicTexture =  
 		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\MagicTexture.tga");
-
 	_MagicAlb = 
 		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_pl_0120_0000_alb.tga");
 	_MagicMsk= 
 		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_pl0120_0000_msk2.tga");
-
-
 
 	PushEditEntity(_StaticMesh.get());
 };

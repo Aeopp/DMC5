@@ -1,25 +1,25 @@
-#ifndef __ELECTRICOCCUR_H_
-#define __ELECTRICOCCUR_H_
+#ifndef __THUNDERBOLT_H_
+#define __THUNDERBOLT_H_
 #include "GameObject.h"
 #include "RenderInterface.h"
 #include "Vertexs.h"
 #include "FLight.h"
 #include <optional>
 
-class ElectricOccur : public ENGINE::GameObject,
+class ThunderBolt  : public ENGINE::GameObject,
 	public ENGINE::RenderInterface
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Mesh{};
 	std::shared_ptr<ENGINE::Texture> GradMap{};
 private:
-	explicit ElectricOccur();
-	virtual ~ElectricOccur() = default;
+	explicit ThunderBolt();
+	virtual ~ThunderBolt() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
 public:
-	static ElectricOccur* Create();
+	static ThunderBolt* Create();
 public:
 	virtual void    RenderReady()                          override;
 public:
@@ -51,7 +51,6 @@ private:
 	float PtLightRadius = 10.f;
 	float PtLightFlux = 10.f;
 	std::weak_ptr<FLight> PtLight;
-	
 
 	Vector3 StartScale{ 0.0001f,0.0001f,0.0001f };
 	Vector3 FinalSacle{ 0.0001f,0.0001f,0.0001f };
