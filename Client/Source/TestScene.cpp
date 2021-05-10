@@ -72,10 +72,10 @@ HRESULT TestScene::LoadScene()
 	// AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
+	AddGameObject<BtlPanel>();*/
 	
 	//AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
 	
@@ -135,8 +135,8 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//LoadMap();
-	AddGameObject<TempMap>();
+	LoadMap();
+	// AddGameObject<TempMap>();
 	RenderDataSetUp();
 
 

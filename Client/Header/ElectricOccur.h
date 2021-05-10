@@ -6,12 +6,13 @@
 #include <optional>
 
 class ElectricOccur : public ENGINE::GameObject,
-			       public ENGINE::RenderInterface
+	public ENGINE::RenderInterface
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Mesh{};
+	std::shared_ptr<ENGINE::Texture> GradMap{};
 private:
-	explicit ElectricOccur()  ;
+	explicit ElectricOccur();
 	virtual ~ElectricOccur() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
@@ -38,11 +39,16 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	float ParticleTime = 0.1f;
+	float ParticleTime = 0.03f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;
-	float PlayTime = 3.f;
-	float ColorIntencity = 0.1f;
+	float PlayTime = 0.25f;
+	float ColorIntencity = 0.7f;
+
+	float ScrollSpeed = 445.f;
+
+	Vector3 StartScale{ 0.0001f,0.0001f,0.0001f };
+	Vector3 FinalSacle{ 0.0001f,0.0001f,0.0001f };
 };
 #endif //
 

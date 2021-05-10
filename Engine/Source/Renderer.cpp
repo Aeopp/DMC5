@@ -44,7 +44,7 @@ HRESULT Renderer::ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice)
 	ReadyQuad();
 	ReadySky();
 	ReadyTextures();
-
+	DynamicPointLights.resize(100u);
 	TestShaderInit();
 	return S_OK;
 };

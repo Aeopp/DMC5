@@ -446,6 +446,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ElectricEffectParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl">
       <FileType>Document</FileType>
     </None>

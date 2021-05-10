@@ -1,15 +1,22 @@
 matrix matWorld;
 matrix ViewProjection;
 
-uniform float exposure_corr;
-uniform float AlphaFactor;
-uniform float ColorIntencity;
-uniform float Time;
-
-uniform float ScrollSpeed;
-
 uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
+
+uniform float exposure_corr;
+uniform float ColorIntencity;
+uniform float LifeTimeAlphaFactor;
+
+uniform float3 _Color;
+
+uniform float SpriteXStart;
+uniform float SpriteXEnd;
+uniform float SpriteYStart;
+uniform float SpriteYEnd;
+
+uniform float Time;
+
 
 texture DepthMap;
 sampler Depth = sampler_state
@@ -20,7 +27,6 @@ sampler Depth = sampler_state
     mipfilter = none;
     sRGBTexture = false;
 };
-
 
 texture AlbmMap;
 sampler Albm = sampler_state
@@ -34,10 +40,10 @@ sampler Albm = sampler_state
     sRGBTexture = true;
 };
 
-texture GradMap;
-sampler Grad = sampler_state
+texture AlpMskMap;
+sampler Alp = sampler_state
 {
-    texture = GradMap;
+    texture = AlpMskMap;
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
@@ -46,30 +52,42 @@ sampler Grad = sampler_state
     sRGBTexture = false;
 };
 
-
 void VsMain(in out float4 Position : POSITION0,
+    
             in out float2 UV0 : TEXCOORD0,
-            in out float2 UV1 : TEXCOORD1,
-
-            out float4 ClipPosition : TEXCOORD2 )
+            in out float2 UV1 : TEXCOORD1 ,
+             out float2 OriginUV0 : TEXCOORD2,
+         out float4 ClipPosition : TEXCOORD3)
 {
     Position = mul(Position, matWorld);
-    ClipPosition = Position = mul(Position, ViewProjection);
+    ClipPosition =  Position = mul(Position, ViewProjection);
+    
+    
+    OriginUV0 = UV0;
+    UV0.x = lerp(SpriteXStart, SpriteXEnd, UV0.x);
+    UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
 };
 
 void PsMain(out float4 Color : COLOR0,
-            
             in float2 UV0 : TEXCOORD0,
-            in float2 UV1 : TEXCOORD1,
-
-            in float4 ClipPosition : TEXCOORD2
-)
+            in float2 UV1 : TEXCOORD1 ,
+    in float2 OriginUV0 : TEXCOORD2,
+   in float4 ClipPosition : TEXCOORD3  )
 {
-    Color = tex2D(Albm, UV0);
-    Color.a *= AlphaFactor;
-    // Color.rgb*= abs(sin(Time *ScrollSpeed));
-    Color.rgb *= ColorIntencity;
+    float4 AlpMskSample = tex2D(Alp, UV0);
+    
+    // Color = tex2D(Albm, OriginUV0);
+    Color .rgb=_Color;
+    
+    Color.a = AlpMskSample.a;
+    Color.rgb *= ColorIntencity;    
     Color.rgb *= exposure_corr;
+    
+    //float AlphaFactor = (1.0f - (abs(OriginUV0.x - 0.5f) / 0.5f) * 0.5f) + (1.0f - (abs(OriginUV0.y - 0.5f) / 0.5f) * 0.5f);
+    
+    //Color.a *= AlphaFactor;
+    
+    Color.a *= LifeTimeAlphaFactor;
     
     // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
@@ -89,8 +107,9 @@ void PsMain(out float4 Color : COLOR0,
     scenepos.xyzw /= scenepos.w;
     
     float scenedistance = length(scenepos.xyz);
-    Color.a = Color.a * saturate((scenedistance - particledistance) * SoftParticleDepthScale);
+    Color.a = Color.a * saturate((scenedistance - particledistance) * (SoftParticleDepthScale * 1.f));
     // 소프트 파티클 끝
+    
 };
 
 technique Default

@@ -171,6 +171,7 @@ private:
 
 	std::vector< std::shared_ptr<FLight> > DirLights{};
 	std::vector<std::shared_ptr<FLight>> PointLights{};
+	// std::vector<std::shared_ptr<FLight>> DynamicPointLights{};
 
 	std::shared_ptr<Texture> SkyNoiseMap{};
 	std::shared_ptr<StaticMesh> SkysphereMesh{};

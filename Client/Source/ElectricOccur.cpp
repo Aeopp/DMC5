@@ -36,7 +36,8 @@ void ElectricOccur::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const Vector3 Scale = _SpTransform->GetScale();
+		const Vector3 Scale = FMath::Lerp(StartScale, FinalSacle, T / PlayTime);
+		_SpTransform->SetScale(Scale);
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (Mesh)
 		{
@@ -90,6 +91,7 @@ void ElectricOccur::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric00.fbx", _InitInfo);
+	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Grad.png");
 };
 
 void ElectricOccur::PlayStart(const Vector3& PlayLocation)
@@ -103,20 +105,6 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	CurParticleTime = 0.0f;
-
-	if (auto _Particle =
-		ParticleSystem::GetInstance()->PlayParticle(
-		"ElectricParticle", true); 
-		_Particle.empty()==false)
-	{
-		static constexpr uint32 JumpOffset = 3u;
-
-		for (int32 i = 0; i < _Particle.size(); i+= JumpOffset)
-		{
-			auto& _PlayInstance = _Particle[i];
-			_PlayInstance->PlayDescBind(FMath::Identity());
-		}
-	}
 };
 
 void ElectricOccur::PlayEnd()
@@ -128,7 +116,10 @@ void ElectricOccur::PlayEnd()
 void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T*ScrollSpeed)));
+	_Info.Fx->SetFloat("Time", T);
+	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
+	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
 
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
@@ -148,11 +139,6 @@ void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			if (auto SpSubset = Mesh->GetSubset(i).lock();
 				SpSubset)
 			{
-				if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-				{
-					continue;
-				}
-
 				SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
 				SpSubset->Render(_Info.Fx);
 			};
@@ -163,23 +149,43 @@ void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void ElectricOccur::PlayParticle()
 {
-	/*if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
-		const Matrix Mat = SpTransform->GetRenderMatrix();
-		const uint32 RangeEnd = Mesh->m_spVertexLocations->size() - 1u;
-		const uint32 JumpOffset = 2u;
-
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				"ElectricParticle", true);
+			_Particle.empty() == false)
 		{
-			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("FireParticle", true);
-			for (int32 i = 0; i < _PlayableParticle.size();
-				i += JumpOffset)
+			static constexpr uint32 JumpOffset = 1u;
+
+			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
 			{
-				auto& _PlayInstance = _PlayableParticle[i];
+				auto& _PlayInstance = _Particle[i];
 				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
 			}
 		}
-	};*/
+
+
+		//for (uint32 i = 0; i < 0; ++i)
+		//{
+		//	if (auto _Particle =
+		//		ParticleSystem::GetInstance()->PlayParticle(
+		//			"ElectricEffectParticle"+std::to_string(i), true);
+
+		//		_Particle.empty() == false)
+		//	{
+		//		static constexpr uint32 JumpOffset = 50u;
+
+		//		for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
+		//		{
+		//			auto& _PlayInstance = _Particle[i];
+		//			_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+		//		}
+		//	}
+		//}
+
+	};
 }
 
 
@@ -212,7 +218,6 @@ HRESULT ElectricOccur::Ready()
 {
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
@@ -224,7 +229,6 @@ HRESULT ElectricOccur::Awake()
 	GameObject::Awake();
 	
 	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
-	m_pTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	return S_OK;
 }
@@ -290,6 +294,9 @@ void ElectricOccur::Editor()
 
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");
+
+			ImGui::SliderFloat("ScrollSpeed", &ScrollSpeed, FLT_MIN, 1000.f, "%9.6f");
+			ImGui::InputFloat("In ScrollSpeed", &ScrollSpeed, 0.f, 0.f, "%9.6f");
 		}
 		ImGui::EndChild();
 	}
