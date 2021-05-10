@@ -25,6 +25,7 @@ private:
 		const uint32 SpriteRowCnt,
 		const std::string& ParticleName);
 	void ElectricParticlePoolLoad();
+	void ElectricVoertexParticleLoad();
 	void ThunderBoltParticlePoolLoad();
 	void ThunderBoltEndParticlePoolLoad();
 };

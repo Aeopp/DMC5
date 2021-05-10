@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Header\ThunderBolt.h"
+#include "..\Header\ElectricVortex.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "Color.h"
@@ -12,27 +12,27 @@
 #include "ParticleSystem.h"
 #include "FLight.h"
 
-ThunderBolt::ThunderBolt()
+ElectricVortex::ElectricVortex()
 {
 
 };
 
-void ThunderBolt::Free()
+void ElectricVortex::Free()
 {
 	GameObject::Free();
 };
 
-std::string ThunderBolt::GetName()
+std::string ElectricVortex::GetName()
 {
-	return "ThunderBolt";
+	return "ElectricVortex";
 };
 
-ThunderBolt* ThunderBolt::Create()
+ElectricVortex* ElectricVortex::Create()
 {
-	return new ThunderBolt{};
+	return new ElectricVortex{};
 };
 
-void ThunderBolt::RenderReady()
+void ElectricVortex::RenderReady()
 {
 	// 이미 버텍스 자체가 월드 위치임 . 
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
@@ -58,7 +58,7 @@ void ThunderBolt::RenderReady()
 	}
 };
 
-void ThunderBolt::RenderInit()
+void ElectricVortex::RenderInit()
 {
 	m_nTag = Eff_ThunderBolt;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능) 알림.
@@ -82,7 +82,7 @@ void ThunderBolt::RenderInit()
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"ThunderBont",[this](const DrawInfo& _Info)
+		{"ElectricVortex",[this](const DrawInfo& _Info)
 			{
 				this->RenderAlphaBlendEffect(_Info);
 			}
@@ -93,11 +93,11 @@ void ThunderBolt::RenderInit()
 	//magic_eletric00.fbx
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
-	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric01.fbx", _InitInfo);
+	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric02.fbx", _InitInfo);
 	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Grad.png");
 };
 
-void ThunderBolt::PlayStart(const Vector3& PlayLocation)
+void ElectricVortex::PlayStart(const Vector3& PlayLocation)
 {
 	PlayEnd();
 
@@ -110,7 +110,7 @@ void ThunderBolt::PlayStart(const Vector3& PlayLocation)
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	CurParticleTime = 0.0f;
-
+	CurSubset = 0u;
 	PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
 
 	if (auto SpPtLight = PtLight.lock();
@@ -120,7 +120,7 @@ void ThunderBolt::PlayStart(const Vector3& PlayLocation)
 	}
 };
 
-void ThunderBolt::PlayEnd()
+void ElectricVortex::PlayEnd()
 {
 	if (auto SpPtLight = PtLight.lock();
 		SpPtLight)
@@ -131,26 +131,9 @@ void ThunderBolt::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
-	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltEndParticle", true);
-			_Particle.empty() == false)
-		{
-			static constexpr uint32 JumpOffset = 1u;
-
-			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
-			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-			}
-		}
-	};
 };
 
-void ThunderBolt::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T*ScrollSpeed)) );
@@ -170,24 +153,65 @@ void ThunderBolt::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	}
 
 	{
-		const uint32 TargetSubsetIdx = FMath::Random(0u, 1u);
-		if (auto SpSubset = Mesh->GetSubset(TargetSubsetIdx).lock();
-			SpSubset)
+
+		if (_Mode == Mode::Loop)
 		{
-			SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
-			SpSubset->Render(_Info.Fx);
-		};
+			if (auto SpSubset = Mesh->GetSubset(CurSubset % 4u).lock();
+				SpSubset)
+			{
+				SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+				SpSubset->Render(_Info.Fx);
+			};
+		}
+		else if (_Mode == Mode::All)
+		{
+			for ( uint32 j = 0; j < Mesh->GetNumSubset(); ++j)
+			{
+				if (auto SpSubset = Mesh->GetSubset(j).lock();
+					SpSubset)
+				{
+					SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+					SpSubset->Render(_Info.Fx);
+				};
+			}
+			
+		}
+		else if (_Mode == Mode::Rand)
+		{
+			if (auto SpSubset = Mesh->GetSubset(CurSubsetRand).lock();
+				SpSubset)
+			{
+				SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+				SpSubset->Render(_Info.Fx);
+			};
+		}
+		else if (_Mode == Mode::Set)
+		{
+			for (uint32 i = 0; i < _SubsetSets.size(); ++i)
+			{
+				if (_SubsetSets[i])
+				{
+					if (auto SpSubset = Mesh->GetSubset(i).lock();
+						SpSubset)
+					{
+						SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+						SpSubset->Render(_Info.Fx);
+					};
+				}
+			}
+			
+		}
 	}
 };
 
-void ThunderBolt::PlayParticle()
+void ElectricVortex::PlayParticle()
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltParticle", true);
+				"ElectricVortexParticle", true);
 			_Particle.empty() == false)
 		{
 			static constexpr uint32 JumpOffset = 1u;
@@ -203,7 +227,7 @@ void ThunderBolt::PlayParticle()
 
 
 
-void ThunderBolt::RenderDebug(const DrawInfo& _Info)
+void ElectricVortex::RenderDebug(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 
@@ -214,11 +238,6 @@ void ThunderBolt::RenderDebug(const DrawInfo& _Info)
 			if (auto SpSubset = Mesh->GetSubset(i).lock();
 				SpSubset)
 			{
-				if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-				{
-					continue;
-				}
-
 				SpSubset->Render(_Info.Fx);
 			};
 		};
@@ -227,34 +246,32 @@ void ThunderBolt::RenderDebug(const DrawInfo& _Info)
 };
 
 
-HRESULT ThunderBolt::Ready()
+HRESULT ElectricVortex::Ready()
 {
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	return S_OK;
 };
 
-HRESULT ThunderBolt::Awake()
+HRESULT ElectricVortex::Awake()
 {
 	GameObject::Awake();
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.0005f,0.0005f,0.0005f });
-
+	InitTransform.lock()->SetScale(Vector3{ 0.005f,0.005f,0.005f });
 	return S_OK;
 }
 
-HRESULT ThunderBolt::Start()
+HRESULT ElectricVortex::Start()
 {
 	GameObject::Start();
 
 	return S_OK;
 }
 
-UINT ThunderBolt::Update(const float _fDeltaTime)
+UINT ElectricVortex::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
@@ -264,6 +281,20 @@ UINT ThunderBolt::Update(const float _fDeltaTime)
 	{
 		PlayEnd();
 		return 0;
+	}
+
+	CurSubsetDelta -= _fDeltaTime;
+	if (CurSubsetDelta < 0.0f)
+	{
+		CurSubsetDelta += SubsetDelta;
+		++CurSubset;
+
+		for (uint32 i = 0; i < _SubsetSets.size(); ++i)
+		{
+			_SubsetSets[i] = FMath::Random(0u, 1u);
+		}
+
+		CurSubsetRand = FMath::Random(0u, 3u);
 	}
 
 	CurParticleTime -= _fDeltaTime;
@@ -290,17 +321,19 @@ UINT ThunderBolt::Update(const float _fDeltaTime)
 		}
 	}
 
+
+
 	return 0;
 }
 
-UINT ThunderBolt::LateUpdate(const float _fDeltaTime)
+UINT ElectricVortex::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
 
 	return 0;
 };
 
-void ThunderBolt::Editor()
+void ElectricVortex::Editor()
 {
 	GameObject::Editor();
 
@@ -326,6 +359,9 @@ void ThunderBolt::Editor()
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");
 
+			ImGui::SliderFloat("SubsetDelta", &SubsetDelta, FLT_MIN, 1.f, "%9.6f");
+			ImGui::InputFloat("In SubsetDelta", &SubsetDelta, 0.f, 0.f, "%9.6f");
+
 			ImGui::SliderFloat("ScrollSpeed", &ScrollSpeed, FLT_MIN, 1000.f, "%9.6f");
 			ImGui::InputFloat("In ScrollSpeed", &ScrollSpeed, 0.f, 0.f, "%9.6f");
 
@@ -334,17 +370,20 @@ void ThunderBolt::Editor()
 
 			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat("In PtLightFlux", &PtLightFlux, 0.f, 0.f, "%9.6f");
+
+			ImGui::SliderInt("Mode", &_Mode, 0, Mode::End-1);
+			ImGui::InputInt("In Mode", &_Mode, 0, 0);
 		}
 		ImGui::EndChild();
 	}
 };
 
-void ThunderBolt::OnEnable()
+void ElectricVortex::OnEnable()
 {
 	GameObject::OnEnable();
 };
 
-void ThunderBolt::OnDisable()
+void ElectricVortex::OnDisable()
 {
 	GameObject::OnDisable();
 };

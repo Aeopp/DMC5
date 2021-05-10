@@ -39,7 +39,7 @@
 #include "CbsTrail.h"
 #include "ElectricOccur.h"
 #include "Thunderbolt.h"
-
+#include "ElectricVortex.h"
 #include <iostream>
 #include <fstream>
 
@@ -69,6 +69,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<CbsTrail>();
 	AddGameObject<ElectricOccur>();
 	AddGameObject<ThunderBolt>();
+	AddGameObject<ElectricVortex>();
 
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();

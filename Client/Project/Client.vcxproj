@@ -171,6 +171,7 @@
     <ClInclude Include="..\Header\CircleWave.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
     <ClInclude Include="..\Header\ElectricOccur.h" />
+    <ClInclude Include="..\Header\ElectricVortex.h" />
     <ClInclude Include="..\Header\Em1000.h" />
     <ClInclude Include="..\Header\Em1000Hand.h" />
     <ClInclude Include="..\Header\Em200.h" />
@@ -256,6 +257,7 @@
     <ClCompile Include="..\Source\CircleWave.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
     <ClCompile Include="..\Source\ElectricOccur.cpp" />
+    <ClCompile Include="..\Source\ElectricVortex.cpp" />
     <ClCompile Include="..\Source\Em1000.cpp" />
     <ClCompile Include="..\Source\Em1000Hand.cpp" />
     <ClCompile Include="..\Source\Em200.cpp" />
@@ -459,6 +461,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\ThunderBont.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ElectricVortex.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

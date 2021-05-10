@@ -39,8 +39,8 @@ void ElectricOccur::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const Vector3 Scale = FMath::Lerp(StartScale, FinalSacle, T / PlayTime);
-		_SpTransform->SetScale(Scale);
+		/*const Vector3 Scale = FMath::Lerp(StartScale, FinalSacle, T / PlayTime);
+		_SpTransform->SetScale(Scale);*/
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		/*if (Mesh)
 		{
@@ -178,7 +178,7 @@ void ElectricOccur::PlayParticle()
 				"ElectricParticle", true);
 			_Particle.empty() == false)
 		{
-			static constexpr uint32 JumpOffset = 10u;
+			static constexpr uint32 JumpOffset = 1u;
 
 			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
 			{
@@ -237,9 +237,6 @@ void ElectricOccur::RenderDebug(const DrawInfo& _Info)
 HRESULT ElectricOccur::Ready()
 {
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
-	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetRotation(Vector3{ 0.005f,0.005f,0.005f});
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	return S_OK;
@@ -248,6 +245,11 @@ HRESULT ElectricOccur::Ready()
 HRESULT ElectricOccur::Awake()
 {
 	GameObject::Awake();
+	auto InitTransform = GetComponent<ENGINE::Transform>();
+	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
+	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
+	InitTransform.lock()->SetScale(Vector3{ 0.0001f,0.0001f,0.0001f });
+
 	return S_OK;
 }
 

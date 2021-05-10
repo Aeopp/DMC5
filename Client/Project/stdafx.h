@@ -55,6 +55,7 @@ enum GAMEOBJECTTAG
 	Eff_FireCircle,
 	Eff_ElectricOccur ,
 	Eff_ThunderBolt,
+	Eff_ElectricVortex,
 	Eff_IceAge,
 	Eff_CircleWave,
 	Eff_SpriteEffect,

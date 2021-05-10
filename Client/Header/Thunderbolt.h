@@ -43,7 +43,7 @@ private:
 	float ParticleTime = 0.03f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;
-	float PlayTime = 0.25f;
+	float PlayTime = 0.35f;
 	float ColorIntencity = 0.7f;
 
 	float ScrollSpeed = 445.f;
