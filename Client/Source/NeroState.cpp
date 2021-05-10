@@ -1325,11 +1325,31 @@ void NeroState::ActiveTrail(bool _ActvieOrNot)
 	m_bPlayTrail = _ActvieOrNot;
 	if (m_bPlayTrail)
 	{
-		m_pNero.lock()->PlayEffect(Eff_Trail);
+		switch (m_iNeroCurWeaponIndex)
+		{
+		case Nero::NeroCom_RedQueen:
+			m_pNero.lock()->PlayEffect(Eff_Trail);
+			break;
+		case Nero::NeroCom_Cbs_Short:
+			m_pNero.lock()->PlayEffect(Eff_CbsTrail);
+			break;
+		case Nero::NeroCom_Cbs_Long:
+			break;
+		}		
 	}
 	else
 	{
-		m_pNero.lock()->StopEffect(Eff_Trail);
+		switch (m_iNeroCurWeaponIndex)
+		{
+		case Nero::NeroCom_RedQueen:
+			m_pNero.lock()->StopEffect(Eff_Trail);
+			break;
+		case Nero::NeroCom_Cbs_Short:
+			m_pNero.lock()->StopEffect(Eff_CbsTrail);
+			break;
+		case Nero::NeroCom_Cbs_Long:
+			break;
+		}
 	}
 }
 
@@ -5597,7 +5617,7 @@ HRESULT BT_Att_ComboD_3::StateUpdate(const float _fDeltaTime)
 	}
 	else if (0.07f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(true);
-	if(0.22f)
+	if(0.22f <= fCurrAnimationTime)
 		NeroState::ActiveTrail(false);
 
 	if (0.19f <= fCurrAnimationTime && fCurrAnimationTime <= 0.27f)
@@ -6326,8 +6346,9 @@ HRESULT Skill_Float_Ground_Ex3::StateEnter()
 	NeroState::StateEnter();
 	m_bActiveColl_RedQueen = false;
 	ActiveColl_RedQueen(true);
-
+	m_bPlayOnce = true;
 	m_pNero.lock()->ChangeAnimation("Hr_Ex_3", false, Nero::ANI_HR_EX_3);
+	m_pNero.lock()->PlayEffect(Eff_FireCircle, Vector3{ 0.f,-0.45f,1.1f }, 0, 5, 0.5f, { 0.0033f,0.0033f,0.0033f });
 	return S_OK;
 }
 
@@ -6349,6 +6370,12 @@ HRESULT Skill_Float_Ground_Ex3::StateUpdate(const float _fDeltaTime)
 		ActiveColl_RedQueen(true);
 	else if (0.2f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
+
+	if (0.45f <= fCurrAnimationTime && m_bPlayOnce)
+	{
+		m_bPlayOnce = false;
+		m_pNero.lock()->PlayEffect(Eff_FireCircle, Vector3{ 0.f,0.3f,1.45f }, 0, 3, 0.5f, { 0.0033f,0.0033f,0.0033f });
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -6381,6 +6408,8 @@ HRESULT Skill_Float_Ground_Finish::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Hr_Ex_Finish", false, Nero::ANI_HR_EX_FINISH);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
+
+	m_pNero.lock()->PlayEffect(Eff_FireCircle, Vector3{ 0.f,-0.45f,1.7f }, 0, 1, 0.5f, { 0.004f,0.004f,0.004f });
 	return S_OK;
 }
 
@@ -6576,7 +6605,6 @@ HRESULT Skill_Streak_Ex3::StateEnter()
 	NeroState::ActiveTrail(true);
 	m_pNero.lock()->Use_ExGauge(1);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
-	m_pNero.lock()->PlayEffect(Eff_FireCircle, {90.f,0.f,0.f},10.f);
 	return S_OK;
 }
 
@@ -6788,7 +6816,7 @@ HRESULT Skill_Streak_Ex3_Roll_Loop::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Streak_Ex_Roll_Start", true, Nero::ANI_STREAK_END);
 	m_pNero.lock()->Reset_LerfAmount();
 	m_bPlayOnce = true;
-	m_pNero.lock()->PlayEffect(Eff_FireCircle, { 1.5f,0.f,0.f }, 0, 5,0.7f);
+	m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,0.f,0.3f }, 0, 5, 0.8f, {0.0035f,0.0035f,0.0035f});
 	return S_OK;
 }
 
@@ -6805,7 +6833,7 @@ HRESULT Skill_Streak_Ex3_Roll_Loop::StateUpdate(const float _fDeltaTime)
 
 	if (1.f <= fAccTime && m_bPlayOnce)
 	{
-		m_pNero.lock()->PlayEffect(Eff_FireCircle, { 1.7f, 0.f,0.f }, 0, 3,0.8f);
+		m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f, 0.f,0.25f }, 0, 3,0.8f, { 0.0035f,0.0035f,0.0035f });
 		m_bPlayOnce = false;
 	}
 
@@ -6846,7 +6874,7 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateEnter()
 	}
 	m_bActiveColl_RedQueen = true;
 	m_pNero.lock()->Reset_LerfAmount();
-	m_pNero.lock()->PlayEffect(Eff_FireCircle, { 1.6f,0.f,0.f }, 0, 1);
+	m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,0.f,0.f }, 0, 1);
 	return S_OK;
 }
 
@@ -7576,6 +7604,12 @@ HRESULT Cbs_ComboA1::StateEnter()
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Short, ATTACKTYPE::Attack_Front);
 	ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
 	m_pNero.lock()->CheckAutoRotate();
+
+	if (m_pNero.lock()->Get_IsMajinMode())
+	{
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Shuffle", false);
+	}
+	NeroState::ActiveTrail(true);
 	return S_OK;
 }
 
@@ -7645,6 +7679,10 @@ HRESULT Cbs_ComboA2::StateEnter()
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Short, "Cbs_ComboA2", false);
 	ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
 	m_pNero.lock()->CheckAutoRotate();
+	if (m_pNero.lock()->Get_IsMajinMode())
+	{
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left, "ComboA3", false);
+	}
 	return S_OK;
 }
 
@@ -7714,6 +7752,13 @@ HRESULT Cbs_ComboA3::StateEnter()
 	
 	ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
 	m_pNero.lock()->CheckAutoRotate();
+
+	if (m_pNero.lock()->Get_IsMajinMode())
+	{
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Shuffle", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left, "ComboD1", false);
+	}
+
 	return S_OK;
 }
 
@@ -7786,6 +7831,13 @@ HRESULT Cbs_ComboA4::StateEnter()
 
 	ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
 	m_pNero.lock()->CheckAutoRotate();
+
+	if (m_pNero.lock()->Get_IsMajinMode())
+	{
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "ComboD3", false);
+		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left, "ComboA3", false);
+	}
+
 	return S_OK;
 }
 
@@ -7858,6 +7910,7 @@ HRESULT Cbs_ComboA5::StateEnter()
 	
 	ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
 	m_pNero.lock()->CheckAutoRotate();
+	m_bPlayOnce = true;
 	return S_OK;
 }
 
@@ -7878,6 +7931,12 @@ HRESULT Cbs_ComboA5::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Short, ATTACKTYPE::Attack_KnocBack);
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
+		if (m_bPlayOnce && m_pNero.lock()->Get_IsMajinMode())
+		{
+			m_bPlayOnce = false;
+			m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Streak_End", false);
+			m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left, "Streak_End", false);
+		}
 	}
 	else if (0.14f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
@@ -10088,12 +10147,12 @@ HRESULT Hr_Ex_Air_Roll_Loop::StateUpdate(const float _fDeltaTime)
 	if (0.6f <= fCurrAccTime && m_bPlayOnce)
 	{
 		m_bPlayOnce = false;
-		m_pNero.lock()->PlayEffect(Eff_FireCircle, { -0.15f,0.5f,0.f }, 0, 5, 1.3f);
+		m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,-0.4f,-0.4f }, 0, 5, 1.3f, { 0.003f,0.003f,0.003f });
 	}
 	if (2.f <= fCurrAccTime && m_bPlayOnce2)
 	{
 		m_bPlayOnce2 = false;
-		m_pNero.lock()->PlayEffect(Eff_FireCircle, { -0.25f,0.5f,0.f }, 0, 3, 1.1f);
+		m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,-0.4f,-0.55f }, 0, 3, 1.1f, { 0.003f,0.003f,0.003f });
 	}
 
 	if (2.96f <= fCurrAccTime)
@@ -10128,7 +10187,7 @@ HRESULT Hr_Ex_Air_Roll_End::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Hr_Ex_Air_Roll_End", false, Nero::ANI_HR_EX_AIR_ROLL_END);
 	m_bActiveColl_RedQueen = false;
 	ActiveColl_RedQueen(true);
-	m_pNero.lock()->PlayEffect(Eff_FireCircle, { -0.35f,0.7f,0.f }, 0, 1, 0.7f);
+	m_pNero.lock()->PlayEffect(Eff_FireCircle, {0.f ,-0.4f,-0.75f }, 0, 1, 0.7f);
 
 	return S_OK;
 }
@@ -10546,6 +10605,7 @@ HRESULT Skill_Shuffle_Ex::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Shuffle_Ex", false, Nero::ANI_SHUFFLE_EX);
 	
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_KnocBack);
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Shuffle_Ex", false);
@@ -10567,7 +10627,6 @@ HRESULT Skill_Shuffle_Ex::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-	Vector3 NeroUp = Transform::QuaternionToEuler(m_pNero.lock()->GetComponent<Transform>().lock()->GetQuaternion());
 
 	if (0.44f <= fCurrAnimationTime)
 	{
@@ -10579,7 +10638,7 @@ HRESULT Skill_Shuffle_Ex::StateUpdate(const float _fDeltaTime)
 		if (m_bPlayOnce2)
 		{
 			m_bPlayOnce2 = false;
-			m_pNero.lock()->PlayEffect(Eff_FireCircle, Vector3{ 0.4f,-0.4f,0.f } + NeroUp, 0, 1, 0.7f, {0.0033f,0.0033f,0.0033f});
+			m_pNero.lock()->PlayEffect(Eff_FireCircle, Vector3{ 0.f,0.3f,0.65f }, 0, 1, 0.7f, {0.004f,0.004f,0.004f});
 		}
 	}
 	else if (0.28f <= fCurrAnimationTime)
@@ -10590,7 +10649,7 @@ HRESULT Skill_Shuffle_Ex::StateUpdate(const float _fDeltaTime)
 		if (m_bPlayOnce)
 		{
 			m_bPlayOnce = false;
-			m_pNero.lock()->PlayEffect(Eff_FireCircle, Vector3{ 0.8f,-0.8f,0.f } + NeroUp, 0, 3, 0.4f, { 0.0025f,0.0025f,0.0025f });
+			m_pNero.lock()->PlayEffect(Eff_FireCircle, Vector3{ 0.f,0.3f,0.45f }, 0, 3, 0.4f, { 0.0033f,0.0033f,0.0033f });
 		}
 	}
 	m_pNero.lock()->SetPosFireCircle();

@@ -5,24 +5,12 @@
 #include <optional>
 #include "Vertexs.h"
 
-struct TrailDesc
-{
-	uint32 VtxSize{};
-	uint32 VtxCnt{};
-	uint32 TriCnt{};
-	uint32 IdxSize{};
-	D3DFORMAT IdxFmt{};
-
-	int32 DrawTriCnt;
-	uint32 NewVtxCnt;
-	float UpdateCycle;
-	float CurVtxUpdateCycle;
-};
 
 class CbsTrail : public ENGINE::GameObject,
 			     public ENGINE::RenderInterface
 {
 public:
+
 	enum  Mode : uint32
 	{
 		Non,

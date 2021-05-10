@@ -35,6 +35,7 @@
 #include "JudgementShadow1.h"
 #include "JudgementShadow2.h"
 #include "JudgementShadow3.h"
+#include "CbsTrail.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -107,6 +108,7 @@ void Nero::Set_Weapon_AttType(NeroComponentID _eNeroComID, ATTACKTYPE _eAttDir)
 	{
 	case Nero::NeroCom_RedQueen:
 		m_pRedQueen.lock()->SetAttType(_eAttDir);
+		m_pRedQueen.lock()->SetWeaponState(Nero::WS_Battle);
 		break;
 	case Nero::NeroCom_Overture:
 		m_pOverture.lock()->Set_AttackType(_eAttDir);
@@ -233,7 +235,7 @@ HRESULT Nero::Ready()
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
 	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
 
-
+	m_pCbsTrail = AddGameObject<CbsTrail>();
 	for (int i = 0; i < 3; ++i)
 	{
 		m_pFireCircle[i] = AddGameObject<FireCircle>();
@@ -1518,6 +1520,13 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 			if (!m_pShapeParticle[SP_GREEN].lock()->IsPlaying())
 				m_pShapeParticle[SP_GREEN].lock()->PlayStart(2.8f);
 		}
+		break;
+	case Eff_CbsTrail:
+		if(Nero::ANI_CBS_SKILL_ICEAGE_END <= m_iCurAnimationIndex
+			&& m_iCurAnimationIndex <= Nero::ANI_CBS_SKILL_ICEAGE_START)
+			m_pCbsTrail.lock()->PlayStart(CbsTrail::IceAge);
+		else
+			m_pCbsTrail.lock()->PlayStart(CbsTrail::Non);
 		break;
 	default:
 		break;

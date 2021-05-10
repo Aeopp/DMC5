@@ -34,6 +34,7 @@ class JudgementSword;
 class JudgementShadow1;
 class JudgementShadow2;
 class JudgementShadow3;
+class CbsTrail;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -501,6 +502,7 @@ private:
 	std::weak_ptr<IceAge>			m_pIceAge;
 	std::weak_ptr<FireCircle>		m_pFireCircle[3];
 	std::weak_ptr<CircleWave>		m_pCircleWave;
+	std::weak_ptr<CbsTrail>			m_pCbsTrail;
 	enum { SP_RED = 0, SP_GREEN, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 

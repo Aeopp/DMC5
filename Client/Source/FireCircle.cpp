@@ -111,7 +111,6 @@ void FireCircle::RenderInit()
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = true;
 	Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
-	
 	SpriteMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire\\7.tga");
 	TrailMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Fire.tga");
 	EmssiveMskMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");

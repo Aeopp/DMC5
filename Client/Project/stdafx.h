@@ -78,6 +78,22 @@ enum GAMEOBJECTTAG
 	Tag_END
 };
 
+
+struct TrailDesc
+{
+	uint32 VtxSize{};
+	uint32 VtxCnt{};
+	uint32 TriCnt{};
+	uint32 IdxSize{};
+	D3DFORMAT IdxFmt{};
+
+	int32 DrawTriCnt;
+	uint32 NewVtxCnt;
+	float UpdateCycle;
+	float CurVtxUpdateCycle;
+};
+
+
 #define OGDistance 0.83f
 #define MaxDistance 0.48f
 #define RotateDistance 0.7f

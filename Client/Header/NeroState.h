@@ -1217,6 +1217,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool	m_bPlayOnce = true;
 };
 
 class Skill_Float_Ground_Finish : public NeroState
@@ -1711,6 +1713,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	bool		m_bPlayOnce = true;
 };
 
 class Cbs_SKill_Crystal : public NeroState
