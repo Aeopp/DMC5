@@ -66,9 +66,9 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	//AddGameObject<Em5000>();
+	AddGameObject<Em5000>();
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
@@ -123,7 +123,7 @@ HRESULT TestScene::LoadScene()
 	//}
 
 
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
 	RenderDataSetUp();
 
@@ -221,11 +221,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	if (nullptr != pPlane)
+	/*if (nullptr != pPlane)
 		return S_OK;
 
 	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	Physics::AddActor(UniqueID, *pPlane);
+	Physics::AddActor(UniqueID, *pPlane);*/
 
 	return S_OK;
 }
@@ -354,7 +354,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Stage2.json" };
+	std::ifstream inputStream{ "../../Data/Hotel.json" };
 	//std::ifstream inputStream{ "../../Data/Hotel.json" };
 
 	if (false == inputStream.is_open())

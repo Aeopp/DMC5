@@ -10,6 +10,7 @@
 #include <filesystem>
 #include "Em5000Hand.h"
 #include "Liquid.h"
+#include "StoneDebrisMulti.h"
 
 
 void Em5000::Free()
@@ -153,7 +154,7 @@ void Em5000::Fight(const float _fDeltaTime)
 		}
 		if (m_bRushAttack && m_bIng == false)
 		{
-			int iRush = FMath::Random<int>(1, 3);
+			int iRush = FMath::Random<int>(1, 7);
 
 			if (iRush == 1)
 			{
@@ -254,6 +255,59 @@ void Em5000::State_Change(const float _fDeltaTime)
 		}
 		break;
 	case Em5000::Attack_Finish:
+		if (m_bIng == true)
+		{
+			m_pMesh->PlayAnimation("Attack_Finish", false, {}, 1.f, 20.f, true);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Finish" && m_pMesh->IsAnimationEnd())
+			{
+				m_bIng = false;
+				m_bAttack = false;
+				m_bStone = false;
+				m_eState = Idle;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_Coll(false);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+				}
+
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Finish" && m_pMesh->PlayingTime() >= 0.36)
+			{
+				for (int i = 0; i < 2; ++i)
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Finish" && m_pMesh->PlayingTime() >= 0.32f)
+			{
+				if (m_bStone == false)
+				{
+					if (!m_pStone.expired())
+					{
+						m_pStone.lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone.lock()->SetScale(0.0025f);
+						m_pStone.lock()->PlayStart(40.f);
+					}
+					if (!m_pStone2.expired())
+					{
+						m_pStone2.lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
+						m_pStone2.lock()->SetScale(0.0025f);
+						m_pStone2.lock()->PlayStart(40.f);
+					}
+					m_bStone = true;
+				}
+			}
+			else if(m_pMesh->CurPlayAnimInfo.Name == "Attack_Finish" && m_pMesh->PlayingTime() >= 0.2f)
+			{
+				Update_Angle();
+				m_bInteraction = true;
+				for (int i = 0; i < 2; ++i)
+				{
+					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					m_pHand[i].lock()->Set_Coll(true);
+				}
+			}
+		}
 		break;
 	case Em5000::Attack_Grap_Car:
 		if (m_bIng == true)
@@ -284,6 +338,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
+				m_bStone = false;
 
 				for (int i = 0; i < 2; ++i)
 				{
@@ -296,8 +351,20 @@ void Em5000::State_Change(const float _fDeltaTime)
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.35f)
+			{
+				if (!m_pStone.expired() && m_bStone == false)
+				{
+					m_pStone.lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+					m_pStone.lock()->SetScale(0.0015f);
+					m_pStone.lock()->PlayStart(40.f);
+					m_bStone = true;
+				}
+			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.2f)
 			{
+				Update_Angle();
+				m_bInteraction = true;
 				for (int i = 0; i < 2; ++i)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
@@ -325,6 +392,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bIng = false;
 				m_bJumpAttack = false;
+				m_bStone = false;
 				for (int i = 0; i < 2; ++i)
 				{
 					m_pHand[i].lock()->Set_Coll(false);
@@ -335,6 +403,24 @@ void Em5000::State_Change(const float _fDeltaTime)
 			{
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+
+				if (m_bStone == false)
+				{
+					if (!m_pStone.expired())
+					{
+						m_pStone.lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone.lock()->SetScale(0.002f);
+						m_pStone.lock()->PlayStart(40.f);
+					}
+					if (!m_pStone2.expired())
+					{
+						m_pStone2.lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
+						m_pStone2.lock()->SetScale(0.002f);
+						m_pStone2.lock()->PlayStart(40.f);
+					}
+					m_bStone = true;
+				}
+
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Jump_Attack" && m_pMesh->PlayingTime() >= 0.2f)
 			{
@@ -352,10 +438,13 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_Punch_Twice", false, {}, 1.5f, 50.f, true);
 
+			if (m_BattleInfo.iHp <= 2500.f)
+			{
+				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.9f)
+					m_eState = Attack_Finish;
+			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->IsAnimationEnd())
 			{
-				int iRandom = FMath::Random<int>(1, 4);
-
 				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
@@ -370,9 +459,12 @@ void Em5000::State_Change(const float _fDeltaTime)
 			{
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+					
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.2f)
 			{
+				Update_Angle();
+				m_bInteraction = true;
 				for (int i = 0; i < 2; ++i)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
@@ -961,6 +1053,9 @@ HRESULT Em5000::Ready()
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
 	m_pTransform.lock()->SetPosition({ 0.3f, 1.f, -1.22f });
+	m_BattleInfo.iMaxHp = 5000.f;
+	m_BattleInfo.iHp = 2400.f;
+
 
 	m_pMesh->EnableToRootMatricies();
 	return S_OK;
@@ -996,7 +1091,9 @@ HRESULT Em5000::Awake()
 	m_pCollider.lock()->SetHeight(0.f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.4f,-0.1f });
 
-	m_pBlood = AddGameObject<Liquid>();
+	m_pStone = AddGameObject<StoneDebrisMulti>();
+	m_pStone2 = AddGameObject<StoneDebrisMulti>();
+
 	return S_OK;
 }
 
@@ -1063,6 +1160,9 @@ UINT Em5000::Update(const float _fDeltaTime)
 	Rotate(_fDeltaTime);
 
 
+
+
+
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
 	{
@@ -1107,19 +1207,7 @@ void Em5000::OnDisable()
 
 void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
-	if (!m_pBlood.expired())
-	{
-		int iRandom = FMath::Random<int>(0, 6);
-		if (iRandom >= 4)
-			++iRandom;
-
-		auto pBlood = m_pBlood.lock();
-		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
-		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
-		pBlood->SetScale(0.008f);
-		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
-		pBlood->PlayStart(40.f);
-	}
+	
 }
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)

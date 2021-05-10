@@ -149,7 +149,11 @@ private:
 	bool		m_bTest = false;
 	std::weak_ptr<Em5000Hand>	m_pHand[2];
 	std::weak_ptr<ENGINE::CapsuleCollider> m_pCollider;
-	weak_ptr<class Liquid> m_pBlood;
+
+
+	std::weak_ptr<class StoneDebrisMulti> m_pStone;
+	std::weak_ptr<class StoneDebrisMulti> m_pStone2;
+	bool								  m_bStone = false;
 
 };
 
