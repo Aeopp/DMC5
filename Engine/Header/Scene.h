@@ -19,6 +19,14 @@ private:
 
 	bool				m_bOnLoop;
 protected:
+	/* 
+	0 Scene 생성
+	0보다 크면 LoadScene() 진입, 증가
+	1 로딩 끝
+	로딩 스레드가 하나만 도는게 보장되어 있으니 이렇게 할게유 - by hscho
+	*/
+	static float		m_fLoadingProgress;
+protected:
 	explicit Scene();
 	virtual ~Scene() = default;
 	// Object을(를) 통해 상속됨

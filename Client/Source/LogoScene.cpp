@@ -3,7 +3,6 @@
 #include "Scene.h"
 #include "LogoPanel.h"
 #include "TitleScene.h"
-
 #include "TestScene.h"
 
 
@@ -21,9 +20,12 @@ LogoScene* LogoScene::Create()
 
 HRESULT LogoScene::LoadScene()
 {
-	_LogoPanel = AddGameObject<LogoPanel>();
+	m_fLoadingProgress = 0.01f;	// 로딩 시작
 
+	_LogoPanel = AddGameObject<LogoPanel>();
 	_LogoPanel.lock()->QuickProgressToNextScene();	// 엔터 안치고 바로 다음씬
+
+	m_fLoadingProgress = 1.f;	// 로딩 완료
 
 	return S_OK;
 }
@@ -50,6 +52,7 @@ HRESULT LogoScene::Update(const float _fDeltaTime)
 	{
 		// 다음 씬 로드
 		SceneManager::LoadScene(TitleScene::Create(), false);
+		//SceneManager::LoadScene(TestScene::Create(), false);
 
 		_LoadNextScene = true;
 	}

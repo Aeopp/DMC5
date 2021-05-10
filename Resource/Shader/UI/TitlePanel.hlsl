@@ -4,6 +4,8 @@ matrix ScreenMat; // (-width/2 ~ +width/2, +height/2 ~ -height/2)
 float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
+float2 _MinTexUV = float2(0.f, 0.f);
+float2 _MaxTexUV = float2(1.f, 1.f);
 float _SliceAmount = 0.f;
 
 texture ALB0Map;
@@ -38,7 +40,8 @@ VsOut VsMain(VsIn In)
     
     Out.Position = mul(float4(In.Position.xyz, 1.f), ScreenMat);
     Out.Position = mul(float4(Out.Position.xyz, 1.f), Ortho);
-    Out.UV = In.UV;
+    Out.UV.x = (_MaxTexUV.x - _MinTexUV.x) * In.UV.x + _MinTexUV.x;
+    Out.UV.y = (_MaxTexUV.y - _MinTexUV.y) * In.UV.y + _MinTexUV.y;
     
     return Out;
 };

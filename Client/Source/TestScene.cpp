@@ -62,9 +62,17 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	m_fLoadingProgress = 0.01f;	// 로딩 시작
+
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
+
+	m_fLoadingProgress = 0.2f;
+
 	_Player = AddGameObject<Nero>();
+
+	m_fLoadingProgress = 0.4f;
+
 	AddGameObject<BtlPanel>();
 
 	//AddGameObject<Em0000>();
@@ -126,10 +134,14 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
+
+	m_fLoadingProgress = 0.6f;
+
 	RenderDataSetUp();
 
+	m_fLoadingProgress = 0.8f;
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -217,6 +229,8 @@ HRESULT TestScene::LoadScene()
 
 		pFont->SetRenderFlag(true);
 	}
+
+	m_fLoadingProgress = 1.f;	// 로딩 완료
 
 	return S_OK;
 }
