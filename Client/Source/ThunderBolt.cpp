@@ -95,6 +95,7 @@ void ThunderBolt::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric01.fbx", _InitInfo);
 	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Grad.png");
+	DistortionMap =Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
 void ThunderBolt::PlayStart(const Vector3& PlayLocation)
@@ -157,6 +158,10 @@ void ThunderBolt::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("Time", T);
 	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+
+	;
+	_Info.Fx->SetTexture("DistortionMap", DistortionMap->GetTexture());
 
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
@@ -322,6 +327,11 @@ void ThunderBolt::Editor()
 			{
 				PlayEnd();
 			}
+
+			;
+
+			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 10000.f, "%9.6f");
+			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 0.f, "%9.6f");
 
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");

@@ -12,6 +12,7 @@ class ThunderBolt  : public ENGINE::GameObject,
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Mesh{};
 	std::shared_ptr<ENGINE::Texture> GradMap{};
+	std::shared_ptr<Texture> DistortionMap{};
 private:
 	explicit ThunderBolt();
 	virtual ~ThunderBolt() = default;
@@ -47,6 +48,7 @@ private:
 	float ColorIntencity = 0.7f;
 
 	float ScrollSpeed = 445.f;
+	float DistortionIntencity = 1.5f;
 
 	float PtLightRadius = 10.f;
 	float PtLightFlux = 10.f;

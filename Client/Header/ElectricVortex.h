@@ -21,6 +21,7 @@ public:
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Mesh{};
 	std::shared_ptr<ENGINE::Texture> GradMap{};
+	std::shared_ptr<ENGINE::Texture> DistortionMap;
 private:
 	explicit ElectricVortex();
 	virtual ~ElectricVortex() = default;
@@ -49,6 +50,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	
 	std::bitset<4u> _SubsetSets{};
 	uint32 CurSubset = 0u;
 	uint32 CurSubsetRand = 0u;
@@ -63,6 +65,7 @@ private:
 	float T = 0.0f;
 	float PlayTime = 0.35f;
 	float ColorIntencity = 0.7f;
+	float DistortionIntencity = 1.5f;
 
 	float ScrollSpeed = 445.f;
 

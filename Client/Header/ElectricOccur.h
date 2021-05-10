@@ -12,6 +12,7 @@ class ElectricOccur : public ENGINE::GameObject,
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Mesh{};
 	std::shared_ptr<ENGINE::Texture> GradMap{};
+	std::shared_ptr<Texture> DistortionMap{};
 private:
 	explicit ElectricOccur();
 	virtual ~ElectricOccur() = default;
@@ -52,6 +53,7 @@ private:
 	float PtLightFlux = 10.f;
 	std::weak_ptr<FLight> PtLight;
 	
+	float DistortionIntencity = 1.5f;
 
 	Vector3 StartScale{ 0.0001f,0.0001f,0.0001f };
 	Vector3 FinalSacle{ 0.0001f,0.0001f,0.0001f };

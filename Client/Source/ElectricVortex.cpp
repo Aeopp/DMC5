@@ -95,6 +95,8 @@ void ElectricVortex::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric02.fbx", _InitInfo);
 	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Grad.png");
+
+	DistortionMap = Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
 void ElectricVortex::PlayStart(const Vector3& PlayLocation)
@@ -141,6 +143,9 @@ void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
 
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+	_Info.Fx->SetTexture("DistortionMap", DistortionMap->GetTexture());
+
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
 	{
@@ -160,6 +165,9 @@ void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 				SpSubset)
 			{
 				SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+				const float RandY = FMath::Random(0.0f, 3.f);
+				_Info.Fx->SetFloat("SpriteYStart", RandY/4.f);
+				_Info.Fx->SetFloat("SpriteYEnd", (RandY + 1.f )/ 4.f);
 				SpSubset->Render(_Info.Fx);
 			};
 		}
@@ -171,6 +179,11 @@ void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 					SpSubset)
 				{
 					SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+					const float RandY = FMath::Random(0.0f, 3.f);
+					_Info.Fx->SetFloat("SpriteYStart", RandY / 4.f);
+					_Info.Fx->SetFloat("SpriteYEnd", (RandY + 1.f) / 4.f);
+
+
 					SpSubset->Render(_Info.Fx);
 				};
 			}
@@ -182,6 +195,11 @@ void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 				SpSubset)
 			{
 				SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+				const float RandY = FMath::Random(0.0f, 3.f);
+				_Info.Fx->SetFloat("SpriteYStart", RandY / 4.f);
+				_Info.Fx->SetFloat("SpriteYEnd", (RandY + 1.f) / 4.f);
+
+
 				SpSubset->Render(_Info.Fx);
 			};
 		}
@@ -195,6 +213,11 @@ void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 						SpSubset)
 					{
 						SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
+						const float RandY = FMath::Random(0.0f, 3.f);
+						_Info.Fx->SetFloat("SpriteYStart", RandY / 4.f);
+						_Info.Fx->SetFloat("SpriteYEnd", (RandY + 1.f) / 4.f);
+
+
 						SpSubset->Render(_Info.Fx);
 					};
 				}
@@ -355,6 +378,8 @@ void ElectricVortex::Editor()
 			{
 				PlayEnd();
 			}
+			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 10000.f, "%9.6f");
+			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 0.f, "%9.6f");
 
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");

@@ -11,6 +11,9 @@ uniform float ScrollSpeed;
 uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
 
+uniform float SpriteYStart;
+uniform float SpriteYEnd;
+
 texture DepthMap;
 sampler Depth = sampler_state
 {
@@ -53,7 +56,10 @@ void VsMain(in out float4 Position : POSITION0,
             out float4 ClipPosition : TEXCOORD2 )
 {
     Position = mul(Position, matWorld);
+    
     ClipPosition = Position = mul(Position, ViewProjection);
+    
+    // UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
 };
 
 void PsMain(out float4 Color : COLOR0,
