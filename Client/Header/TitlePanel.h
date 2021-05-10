@@ -7,6 +7,8 @@ class TitlePanel : public ENGINE::GameObject,
 				   public ENGINE::RenderInterface
 {
 public:
+	std::weak_ptr<class Font> _NewGameText{};
+	std::weak_ptr<class Font> _ExitText{};
 
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};

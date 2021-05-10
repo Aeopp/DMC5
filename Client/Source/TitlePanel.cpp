@@ -4,7 +4,7 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-
+#include "Font.h"
 
 void TitlePanel::Free()
 {
@@ -43,7 +43,12 @@ void TitlePanel::RenderUI(const DrawInfo& _Info)
 
 void TitlePanel::RenderReady()
 {
-
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto SpTransform = _WeakTransform.lock();
+		SpTransform)
+	{
+		_RenderUpdateInfo.World = SpTransform->GetRenderMatrix();
+	}
 }
 
 HRESULT TitlePanel::Ready()
@@ -51,6 +56,9 @@ HRESULT TitlePanel::Ready()
 	SetRenderEnable(true);
 
 	m_nTag = GAMEOBJECTTAG::UI_TitlePanel;
+
+	//auto InitTransform = GetComponent<ENGINE::Transform>();
+	//InitTransform.lock()->SetPosition({ 0.f, 0.f, 0.f });
 
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = true;
@@ -76,6 +84,31 @@ HRESULT TitlePanel::Ready()
 	_ScreenMat._42 = 0.f;
 	_ScreenMat._43 = 0.02f;
 
+	if (_NewGameText = AddGameObject<Font>();
+		!_NewGameText.expired())
+	{
+		_NewGameText.lock()->SetText("NEW GAME",
+			Font::TEX_ID::DMC5_WHITE,
+			Vector2(555.f, 600.f),
+			Vector2(0.67f, 0.67f),
+			Vector3(1.f, 1.f, 1.f),
+			false);
+
+		_NewGameText.lock()->SetRenderFlag(true);
+	}
+	//if (_ExitText = AddGameObject<Font>();
+	//	!_ExitText.expired())
+	//{
+	//	_ExitText.lock()->SetText("EXIT",
+	//		Font::TEX_ID::DMC5_WHITE,
+	//		Vector2(555.f, 630.f),
+	//		Vector2(0.67f, 0.67f),
+	//		Vector3(1.f, 1.f, 1.f),
+	//		true);
+
+	//	_ExitText.lock()->SetRenderFlag(true);
+	//}
+
 	return S_OK;
 }
 
@@ -92,6 +125,13 @@ HRESULT TitlePanel::Start()
 UINT TitlePanel::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+
+	if (1.f > _BrightScale)
+	{
+		_BrightScale += 2.f * _fDeltaTime;
+		if (1.f < _BrightScale)
+			_BrightScale = 1.f;
+	}
 
 	return 0;
 }          

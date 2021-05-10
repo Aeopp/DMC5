@@ -212,6 +212,7 @@ HRESULT TestScene::LoadScene()
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
+			Vector3(1.f, 1.f, 1.f),
 			true);
 
 		pFont->SetRenderFlag(true);

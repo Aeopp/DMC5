@@ -1925,26 +1925,48 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-
 	auto& _Group = RenderEntitys[RenderProperty::Order::UI];
+
+	// 후처리 이후에 그리는 UI만 Transform.z로 정렬해서 그림
+	using ZsType = std::pair<const std::string*,
+							ENGINE::Renderer::RenderEntityType*>;
+
+	std::list<ZsType> ZSortlist;
+
+	for (auto& [ShaderKey, Entitys] : _Group)
+	{
+		for (auto& _Entity : Entitys)
+		{
+			ZSortlist.push_back(ZsType{ &ShaderKey, &_Entity });
+		}
+	};
+
+	ZSortlist.sort([](const ZsType& _Lhs, const ZsType& _Rhs)
+		{
+			return _Lhs.second->first->_RenderUpdateInfo.World._43
+			< _Rhs.second->first->_RenderUpdateInfo.World._43;
+		});
+
 	DrawInfo _DrawInfo{};
 	_DrawInfo.BySituation.reset();
 	_DrawInfo._Device = Device;
 	_DrawInfo.IsAfterPostProcessing = true;
-	for (auto& [ShaderKey, Entitys] : _Group)
+
+	for (auto& [RefShaderKey, RefEntity] : ZSortlist)
 	{
-		auto Fx = Shaders[ShaderKey]->GetEffect();
+		auto Fx = Shaders[*RefShaderKey]->GetEffect();
 		Fx->SetMatrix("Ortho", &_RenderInfo.Ortho);
 		Fx->SetFloat("exposure_corr", 1.f / (exposure * 0.002f));
 		_DrawInfo.Fx = Fx;
-		for (auto& [Entity, Call] : Entitys)
-		{
-			UINT Passes{ 0u };
-			Fx->Begin(&Passes, NULL);
-			Call(_DrawInfo);
-			Fx->End();
-		}
+
+		UINT Passes{ 0u };
+		Fx->Begin(&Passes, NULL);
+		RefEntity->second(_DrawInfo);
+		Fx->End();
 	}
+
+	ZSortlist.clear();
+
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);

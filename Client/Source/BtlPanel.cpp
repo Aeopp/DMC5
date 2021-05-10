@@ -625,7 +625,12 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 void BtlPanel::RenderReady()
 {
-	_RenderProperty.bRender = true;
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto SpTransform = _WeakTransform.lock();
+		SpTransform)
+	{
+		_RenderUpdateInfo.World = SpTransform->GetRenderMatrix();
+	}
 }
 
 HRESULT BtlPanel::Ready()
@@ -1909,6 +1914,7 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 				Font::TEX_ID::DMC5_BLACK_GRAD,
 				{ _UIDescs[REDORB].Pos.x + 35.f, _UIDescs[REDORB].Pos.y },
 				{ 0.8f, 0.8f },
+				Vector3(1.f, 1.f, 1.f),
 				true);
 
 			pFont->SetRenderFlag(true);
@@ -1933,8 +1939,8 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 				"STYLISH PTS",
 				Font::TEX_ID::DMC5_GREEN_GRAD,
 				{ _UIDescs[STYLISH_POINTS].Pos.x, _UIDescs[STYLISH_POINTS].Pos.y },
-				{ _UIDescs[STYLISH_POINTS].Scale.x, _UIDescs[STYLISH_POINTS].Scale.y },
-				false);
+				{ _UIDescs[STYLISH_POINTS].Scale.x, _UIDescs[STYLISH_POINTS].Scale.y }
+			);
 			pFont_Title->SetRenderFlag(true, Font::FADE_ID::DISOLVE_TORIGHT);
 
 			_UIDescs[STYLISH_POINTS].Using = true;
@@ -1949,8 +1955,8 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 				scoreStr,
 				Font::TEX_ID::DMC5_GREEN_GRAD,
 				{ _UIDescs[STYLISH_POINTS].Pos.x + 28.f, _UIDescs[STYLISH_POINTS].Pos.y + 50.f },
-				{ _UIDescs[STYLISH_POINTS].Scale.x * 2.f, _UIDescs[STYLISH_POINTS].Scale.y * 2.f },
-				false);
+				{ _UIDescs[STYLISH_POINTS].Scale.x * 2.f, _UIDescs[STYLISH_POINTS].Scale.y * 2.f }
+			);
 			pFont_Score->SetRenderFlag(true, Font::FADE_ID::DISOLVE_TORIGHT);
 
 			_StylishPtsAlive2ndCheck = true;

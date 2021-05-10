@@ -46,7 +46,7 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 	if (!_LoadNextScene)
 	{
 		// 다음 씬 로드
-		SceneManager::LoadScene(TestScene::Create(), false);
+		//SceneManager::LoadScene(TestScene::Create(), false);
 
 		_LoadNextScene = true;
 	}
