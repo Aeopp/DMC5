@@ -91,6 +91,9 @@ enum WingSwordAnimationList
 	WingSword_Stinger_End,
 	WingSword_Stinger_Loop,
 	WingSword_Stinger_Start,
+	WingSword_HT,
+	WingSword_ComboB2_Loop,
+	WingSword_ComboB2_End,
 	WingSword_End
 };
 

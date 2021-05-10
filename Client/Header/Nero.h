@@ -23,7 +23,6 @@ class Liquid;
 class Cbs_Short;
 class Cbs_Middle;
 class Cbs_Long;
-class WingSword;
 class AirHike;
 class CircleWave;
 class FireCircle;
@@ -436,7 +435,6 @@ public:
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
 	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
-	void ChangeAnimationWingSword(const std::string& InitAnimName, const bool  bLoop);
 	void ChangeMeshIndex(UINT _iMeshIndex) { m_iMeshIndex = _iMeshIndex; }
 	void ChangeWeaponCollSize(float _fSize = 0.08f);
 	void ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap = false);
@@ -510,7 +508,6 @@ private:
 	enum { SP_RED = 0, SP_GREEN, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 
-	std::vector<std::weak_ptr<WingSword>>	m_vecWingSwords;
 	std::weak_ptr<JudgementSword>	m_pJudgementSword;
 	std::weak_ptr<JudgementShadow1> m_pJudgementShadow1;
 	std::weak_ptr<JudgementShadow2> m_pJudgementShadow2;
