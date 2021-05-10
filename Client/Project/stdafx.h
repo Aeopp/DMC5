@@ -72,8 +72,43 @@ enum GAMEOBJECTTAG
 	Tag_Cbs_Middle,
 	Tag_Cbs_Long,
 	TAG_NeroShinMajin,
+	TAG_JudgementShadow1,
+	TAG_JudgementShadow2,
+	TAG_JudgementShadow3,
 	Tag_END
 };
+
+enum WingSwordAnimationList
+{
+	WingSword_Ar1,
+	WingSword_Ar2,
+	WingSword_Ar3,
+	WingSword_Ar4,
+	WingSword_ComboA1,
+	WingSword_ComboA2,
+	WingSword_ComboA3,
+	WingSword_ComboB1,
+	WingSword_Stinger_End,
+	WingSword_Stinger_Loop,
+	WingSword_Stinger_Start,
+	WingSword_End
+};
+
+
+struct TrailDesc
+{
+	uint32 VtxSize{};
+	uint32 VtxCnt{};
+	uint32 TriCnt{};
+	uint32 IdxSize{};
+	D3DFORMAT IdxFmt{};
+
+	int32 DrawTriCnt;
+	uint32 NewVtxCnt;
+	float UpdateCycle;
+	float CurVtxUpdateCycle;
+};
+
 
 #define OGDistance 0.83f
 #define MaxDistance 0.48f

@@ -23,6 +23,7 @@ WIngArm_Left* WIngArm_Left::Create()
 
 HRESULT WIngArm_Left::Ready()
 {
+	GameObject::Ready();
 	RenderInit();
 
 	m_NRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing_Arm\\pl0010_01_NRMR.tga");
@@ -41,6 +42,7 @@ HRESULT WIngArm_Left::Ready()
 
 HRESULT WIngArm_Left::Awake()
 {
+	GameObject::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 
 	if (!m_pNero.expired())
@@ -51,6 +53,7 @@ HRESULT WIngArm_Left::Awake()
 
 HRESULT WIngArm_Left::Start()
 {
+	GameObject::Start();
 	return S_OK;
 }
 
@@ -61,9 +64,9 @@ UINT WIngArm_Left::Update(const float _fDeltaTime)
 
 	float fCurAnimationTime = m_pMesh->PlayingTime();
 
-	if (0.52 <= fCurAnimationTime && !m_bLoop)
+	if (0.52f <= fCurAnimationTime && !m_bLoop)
 	{
-		SetActive(false);
+		//SetActive(false);
 		if (m_pNero.lock()->Get_IsMajinMode())
 			m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_LWing, true);
 	}
@@ -72,10 +75,11 @@ UINT WIngArm_Left::Update(const float _fDeltaTime)
 	m_fAccTime += _fDeltaTime;
 
 	return 0;
-}
+} 
 
 UINT WIngArm_Left::LateUpdate(const float _fDeltaTime)
 {
+	GameObject::LateUpdate(_fDeltaTime);
 	Matrix								ParentWorldMatrix, FinalWorld;
 	Matrix								Scale, Trans;
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();

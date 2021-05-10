@@ -464,6 +464,11 @@
     <ClInclude Include="..\Header\TitleScene.h">
       <Filter>03.Scene\01.Title</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\JudgementShadow1.h" />
+    <ClInclude Include="..\Header\JudgementShadow2.h" />
+    <ClInclude Include="..\Header\JudgementShadow3.h" />
+    <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\NewWingSword.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -732,6 +737,11 @@
     <ClCompile Include="..\Source\TitleScene.cpp">
       <Filter>03.Scene\01.Title</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\JudgementShadow1.cpp" />
+    <ClCompile Include="..\Source\JudgementShadow2.cpp" />
+    <ClCompile Include="..\Source\JudgementShadow3.cpp" />
+    <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\NewWingSword.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

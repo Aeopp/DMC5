@@ -34,6 +34,7 @@
 #include "AirHike.h"
 #include "FireCircle.h"
 #include "IceAge.h"
+#include "JudgementSword.h"
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
 #include "CbsTrail.h"
@@ -65,6 +66,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.01f;	// 로딩 시작
 
 	//AddGameObject<Camera>();
+	//AddGameObject <JudgementSword>();
 	AddGameObject<MainCamera>();
 
 	m_fLoadingProgress = 0.2f;
@@ -372,7 +374,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Stage2.json" };
+	std::ifstream inputStream{ "../../Data/Hotel.json" };
 	//std::ifstream inputStream{ "../../Data/Hotel.json" };
 
 	if (false == inputStream.is_open())
