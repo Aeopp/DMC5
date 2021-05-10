@@ -50,12 +50,13 @@ public:
 		const Vector3& Scale = { 0.004f, 0.004f,0.004f });
 	void PlayEnd();
 public:
+	void PlayParticle();
 	void SpriteUpdate(const float DeltaTime);
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	float   SpriteProgressTime = 0.0f;
 
+	float   SpriteProgressTime = 0.0f;
 	bool    bOuterRender = false;
 
 	float   EmissiveIntencity{ 1.f };
@@ -92,7 +93,14 @@ private:
 
 	float PlayTime = 1.f;
 	float CurRoll{ 0.f };
-	Vector3 _Rotation{ 0.f,0.f,0.f };
+	Vector3 PlayRotation{ 0.f,0.f,0.f };
+
+	float ParticleTime = 0.1f;
+	float CurParticleTime = 0.0f;
+
+	// 사용자의 로테이션 .. 
+	Matrix UserRotation = FMath::Identity();
+	std::weak_ptr<GameObject> User{};
 
 	float EditPlayStartPlayTime = 1.f;
 	float EditStartRoll{ 0.0f };
@@ -100,8 +108,10 @@ private:
 	Vector3 EditPlayStartLocation{ 0.f,0.f,0.f };
 	Vector3 EditPlayStartRotation {0.f,0.f,0.f};
 	float EditPlayRollRotateSpeed{ 400.f };
-	int32 EditSpriteCol{ 0 };
-	int32 EditSpriteRow{0 };
+	int32 EditSpriteCol{0};
+	int32 EditSpriteRow{0};
+
+	Vector3 TestRotation{0.f,0.f,0.f};
 };
 #endif //
 

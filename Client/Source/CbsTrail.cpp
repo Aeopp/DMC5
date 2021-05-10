@@ -101,7 +101,7 @@ void CbsTrail::RenderInit()
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 
-	_Desc.UpdateCycle = 0.0f;
+	_Desc.UpdateCycle = 0.016f;
 	_Desc.NewVtxCnt = 0;
 	UV0Multiply = 1.f;
 
@@ -187,8 +187,7 @@ void CbsTrail::PlayStart(const Mode _Mode,
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
-	_Desc.UpdateCycle = _Desc.CurVtxUpdateCycle;
-
+	_Desc.UpdateCycle = _Desc.CurVtxUpdateCycle = 0.016f;
 };
 
 void CbsTrail::PlayEnd()
@@ -268,7 +267,7 @@ void CbsTrail::ParticleUpdate(const float DeltaTime)
 			auto _PlayableParticle = 
 				ParticleSystem::GetInstance()->PlayParticle("IceCbsMid",true);
 			// ¾óÀ½ »Ñ¸®¼À
-			const uint32 JumpOffset = 350u;
+			const uint32 JumpOffset = 200u;
 			
 			for (int32 i = 0; i < _PlayableParticle.size();
 				i += JumpOffset)

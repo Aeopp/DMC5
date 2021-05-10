@@ -2,7 +2,7 @@ matrix Ortho;
 matrix Perspective; // xy 회전이 필요한 경우 
 matrix ScreenMat; // (-width/2 ~ +width/2, +height/2 ~ -height/2)
 
-float exposure_corr = 1.f;
+//float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
 float2 _MinTexUV = float2(0.f, 0.f);

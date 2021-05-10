@@ -284,6 +284,7 @@ HRESULT Font::Ready()
 	_FontTexVec.reserve(FONTTEX_ID_END);
 	_FontTexVec.push_back(Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font_0.png"));
 	_FontTexVec.push_back(Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font_1.png"));
+	_FontTexVec.push_back(Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Font\\Texture\\dmc5font_2.png"));
 
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
 

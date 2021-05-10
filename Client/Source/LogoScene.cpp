@@ -1,0 +1,76 @@
+#include "stdafx.h"
+#include "..\Header\LogoScene.h"
+#include "Scene.h"
+#include "LogoPanel.h"
+#include "TitleScene.h"
+
+#include "TestScene.h"
+
+
+void LogoScene::Free()
+{
+	Scene::Free();
+}
+
+LogoScene* LogoScene::Create()
+{
+	LogoScene* pInstance = new LogoScene;
+	return pInstance;
+}
+
+
+HRESULT LogoScene::LoadScene()
+{
+	_LogoPanel = AddGameObject<LogoPanel>();
+
+	_LogoPanel.lock()->QuickProgressToNextScene();	// 엔터 안치고 바로 다음씬
+
+	return S_OK;
+}
+
+HRESULT LogoScene::Awake()
+{
+	Scene::Awake();
+
+	return S_OK;
+}
+
+HRESULT LogoScene::Start()
+{
+	Scene::Start();
+
+	return S_OK;
+}
+
+HRESULT LogoScene::Update(const float _fDeltaTime)
+{
+	Scene::Update(_fDeltaTime);
+
+	if (!_LoadNextScene)
+	{
+		// 다음 씬 로드
+		SceneManager::LoadScene(TestScene::Create(), false);
+
+		_LoadNextScene = true;
+	}
+	else if (SceneManager::IsLoaded())
+	{
+		if (auto SpLogoPanel = _LogoPanel.lock();
+			SpLogoPanel) 
+		{
+			SpLogoPanel->SetLoadingFinishedFlag(true);
+
+			if (SpLogoPanel->IsReadyToNextScene())
+				SceneManager::ActivateScene();
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT LogoScene::LateUpdate(const float _fDeltaTime)
+{
+	Scene::LateUpdate(_fDeltaTime);
+
+	return S_OK;
+}

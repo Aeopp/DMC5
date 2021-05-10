@@ -48,7 +48,7 @@ private:
 	float SpriteColIdx = 0.f;
 
 	float SpriteCurUpdateCycle = 0.0f;
-	float SpriteUpdateCycle = 0.000001f;
+	float SpriteUpdateCycle = 0.016f;
 
 	Vector3 LowOffset{ 0.f,0.f,143.f};
 	Vector3 HighOffset{ 0.f,0.f,-231.f };

@@ -170,6 +170,7 @@
     <ClInclude Include="..\Header\Cbs_Short.h" />
     <ClInclude Include="..\Header\CircleWave.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
+    <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\Em1000.h" />
     <ClInclude Include="..\Header\Em1000Hand.h" />
     <ClInclude Include="..\Header\Em200.h" />
@@ -186,6 +187,9 @@
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\LogoPanel.h" />
+    <ClInclude Include="..\Header\LogoScene.h" />
+    <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
     <ClInclude Include="..\Header\BtlPanel.h" />
@@ -226,6 +230,7 @@
     <ClInclude Include="..\Header\OvertureHand.h" />
     <ClInclude Include="..\Header\TestObject.h" />
     <ClInclude Include="..\Header\TestScene.h" />
+    <ClInclude Include="..\Header\TitleScene.h" />
     <ClInclude Include="..\Header\Trail.h" />
     <ClInclude Include="..\Header\Unit.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
@@ -256,6 +261,7 @@
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
     <ClCompile Include="..\Source\CircleWave.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
+    <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\Em1000.cpp" />
     <ClCompile Include="..\Source\Em1000Hand.cpp" />
     <ClCompile Include="..\Source\Em200.cpp" />
@@ -272,6 +278,9 @@
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\LogoPanel.cpp" />
+    <ClCompile Include="..\Source\LogoScene.cpp" />
+    <ClCompile Include="..\Source\TitlePanel.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
     <ClCompile Include="..\Source\BtlPanel.cpp" />
@@ -312,6 +321,7 @@
     <ClCompile Include="..\Source\OvertureHand.cpp" />
     <ClCompile Include="..\Source\TestObject.cpp" />
     <ClCompile Include="..\Source\TestScene.cpp" />
+    <ClCompile Include="..\Source\TitleScene.cpp" />
     <ClCompile Include="..\Source\Trail.cpp" />
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
@@ -443,6 +453,26 @@
     <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\UI\TitlePanel.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\UI\LogoPanel.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

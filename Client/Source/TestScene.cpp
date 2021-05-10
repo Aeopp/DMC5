@@ -36,12 +36,14 @@
 #include "IceAge.h"
 #include "JudgementSword.h"
 #include "ParticleSystem.h"
-#include "ParticleInstanceDesc.hpp" 
+#include "ParticleInstanceDesc.hpp"
+#include "CbsTrail.h"
+#include "ElectricOccur.h"
 
 #include <iostream>
 #include <fstream>
-
 using namespace std;
+
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -61,35 +63,23 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
-	Mesh::InitializeInfo _Info{};
-	_Info.bLocalVertexLocationsStorage = true;
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
-	/*--------------------------------------------------------- */
-
 	//AddGameObject<Camera>();
 	//AddGameObject <JudgementSword>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
-	
-	//AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
-	
-	//AddGameObject<Em5000>();
+
+	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
+	//AddGameObject<Em5000>();
 	
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
 	//AddGameObject<IceAge>();
+	//AddGameObject<CbsTrail>();
+	//AddGameObject<ElectricOccur>();
 
 
 	// Wave 1st
@@ -215,6 +205,19 @@ HRESULT TestScene::LoadScene()
 	//	ptr.lock()->SetActive(false);
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
+
+	// DOOMSDAY
+	if (auto pFont = AddGameObject<Font>().lock();
+		pFont)
+	{
+		pFont->SetText("D 17, Until Dooms Day",
+			Font::TEX_ID::DMC5_BLACK_GRAD,
+			Vector2(245.f, 130.f),
+			Vector2(0.6f, 0.6f),
+			true);
+
+		pFont->SetRenderFlag(true);
+	}
 
 	return S_OK;
 }
@@ -418,10 +421,10 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	 /*_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");*/
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005;
+	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
