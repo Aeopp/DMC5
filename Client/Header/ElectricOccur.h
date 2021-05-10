@@ -48,8 +48,8 @@ private:
 
 	float ScrollSpeed = 445.f;
 
-	float PtLightRadius = 1.f;
-	float PtLightFlux = 1.f;
+	float PtLightRadius = 10.f;
+	float PtLightFlux = 10.f;
 	std::weak_ptr<FLight> PtLight;
 	
 
