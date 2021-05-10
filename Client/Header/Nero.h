@@ -35,6 +35,7 @@ class JudgementShadow1;
 class JudgementShadow2;
 class JudgementShadow3;
 class CbsTrail;
+class NewWingSword;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -437,6 +438,8 @@ public:
 	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
 	void ChangeAnimationWingSword(const std::string& InitAnimName, const bool  bLoop);
 	void ChangeMeshIndex(UINT _iMeshIndex) { m_iMeshIndex = _iMeshIndex; }
+	void ChangeWeaponCollSize(float _fSize = 0.08f);
+	void ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap = false);
 	//Effect
 	void PlayEffect(GAMEOBJECTTAG _eTag,
 		const Vector3& Rotation = { 0.f,0.f,0.f }, 
@@ -503,6 +506,7 @@ private:
 	std::weak_ptr<FireCircle>		m_pFireCircle[3];
 	std::weak_ptr<CircleWave>		m_pCircleWave;
 	std::weak_ptr<CbsTrail>			m_pCbsTrail;
+	std::weak_ptr<NewWingSword>		m_pNewWingSword;
 	enum { SP_RED = 0, SP_GREEN, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 

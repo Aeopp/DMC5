@@ -78,6 +78,22 @@ enum GAMEOBJECTTAG
 	Tag_END
 };
 
+enum WingSwordAnimationList
+{
+	WingSword_Ar1,
+	WingSword_Ar2,
+	WingSword_Ar3,
+	WingSword_Ar4,
+	WingSword_ComboA1,
+	WingSword_ComboA2,
+	WingSword_ComboA3,
+	WingSword_ComboB1,
+	WingSword_Stinger_End,
+	WingSword_Stinger_Loop,
+	WingSword_Stinger_Start,
+	WingSword_End
+};
+
 
 struct TrailDesc
 {

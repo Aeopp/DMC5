@@ -64,9 +64,9 @@ UINT WIngArm_Left::Update(const float _fDeltaTime)
 
 	float fCurAnimationTime = m_pMesh->PlayingTime();
 
-	if (0.52 <= fCurAnimationTime && !m_bLoop)
+	if (0.52f <= fCurAnimationTime && !m_bLoop)
 	{
-		SetActive(false);
+		//SetActive(false);
 		if (m_pNero.lock()->Get_IsMajinMode())
 			m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_LWing, true);
 	}

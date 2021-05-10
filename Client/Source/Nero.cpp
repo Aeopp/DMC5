@@ -36,6 +36,7 @@
 #include "JudgementShadow2.h"
 #include "JudgementShadow3.h"
 #include "CbsTrail.h"
+#include "NewWingSword.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -222,6 +223,7 @@ HRESULT Nero::Ready()
 	m_pCbsShort = AddGameObject<Cbs_Short>();
 	m_pCbsMiddle = AddGameObject<Cbs_Middle>();
 	m_pCbsLong = AddGameObject<Cbs_Long>();
+	m_pNewWingSword = AddGameObject<NewWingSword>();
 	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
@@ -1472,6 +1474,22 @@ void Nero::ChangeAnimationWingSword(const std::string& InitAnimName, const bool 
 	}
 }
 
+void Nero::ChangeWeaponCollSize(float _fSize)
+{
+	switch (m_iCurWeaponIndex)
+	{
+	case NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->ChangeColliderSize(_fSize);
+		break;
+	}
+}
+
+void Nero::ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap)
+{
+	m_pNewWingSword.lock()->SetActive(true);
+	m_pNewWingSword.lock()->ChangeAnimation(_eAniList, _bLoop, _Overlap);
+}
+
 void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float CurRoll,
 	const int32 StartSpriteRow,	const float PlayTime, const Vector3& Scale)
 {
@@ -1556,6 +1574,9 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		m_pCircleWave.lock()->PlayEnd();
 		break;
 	case Eff_DashTrail:
+		break;
+	case Eff_CbsTrail:
+		m_pCbsTrail.lock()->PlayEnd();
 		break;
 	case Eff_ShapeParticle:
 		m_pShapeParticle[SP_GREEN].lock()->Reset();

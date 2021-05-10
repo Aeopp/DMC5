@@ -189,6 +189,7 @@
     <ClInclude Include="..\Header\JudgementSword.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
     <ClInclude Include="..\Header\LogoScene.h" />
+    <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="..\Source\JudgementSword.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
+    <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
