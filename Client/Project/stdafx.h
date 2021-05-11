@@ -94,6 +94,7 @@ enum WingSwordAnimationList
 	WingSword_HT,
 	WingSword_ComboB2_Loop,
 	WingSword_ComboB2_End,
+	WingSword_Helm,
 	WingSword_End
 };
 

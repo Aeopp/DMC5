@@ -813,6 +813,9 @@ void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot
 		m_pOverture.lock()->SetActive(ActiveOrNot);
 		m_pRedQueen.lock()->SetActive(ActiveOrNot);
 		break;
+	case Nero::NeroCom_NewWingSword:
+		m_pNewWingSword.lock()->SetActive(ActiveOrNot);
+		break;
 	case Nero::NeroCom_End:
 		break;
 	default:

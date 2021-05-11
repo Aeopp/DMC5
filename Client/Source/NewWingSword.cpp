@@ -296,4 +296,8 @@ void NewWingSword::RenderInit()
 	m_pMesh[WingSword_ComboB2_End] = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\ComboB2_End.fbx", _InitInfo);
 	m_pMesh[WingSword_ComboB2_End]->EnableToRootMatricies();
 	PushEditEntity(m_pMesh[WingSword_ComboB2_End].get());
+
+	m_pMesh[WingSword_Helm] = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\Helm.fbx", _InitInfo);
+	m_pMesh[WingSword_Helm]->EnableToRootMatricies();
+	PushEditEntity(m_pMesh[WingSword_Helm].get());
 }

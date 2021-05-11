@@ -318,6 +318,7 @@ public:
 		NeroCom_JudgementShadow1,
 		NeroCom_JudgementShadow2,
 		NeroCom_JudgementShadow3,
+		NeroCom_NewWingSword,
 		NeroCom_End
 	};
 
