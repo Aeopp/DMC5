@@ -597,6 +597,19 @@ PsOut PsMain_BossGauge4(PsIn_Clip In)
     return Out;
 };
 
+PsOut PsMain_BossGauge5(PsIn_Clip In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    clip(-In.Clip.y - 0.5f);
+    clip(_BossGaugeCurXPosOrtho - In.Clip.x);
+    
+    Out.Color.rgb = float3(0.8f, 0.8f, 1.f) * _BrightScale * exposure_corr;
+    Out.Color.a = tex2D(ATOS0, In.UV).r;
+    
+    return Out;
+};
+
 PsOut PsMain_Glass(PsIn In)
 {
     PsOut Out = (PsOut) 0;
@@ -1118,5 +1131,18 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge4();
+    }
+
+    pass p19
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain_ClipPos();
+        pixelshader = compile ps_3_0 PsMain_BossGauge5();
     }
 };

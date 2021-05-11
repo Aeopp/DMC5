@@ -68,10 +68,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
 
-	_Player = AddGameObject<Nero>();
+	//_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
 
 #pragma endregion
@@ -138,9 +138,9 @@ HRESULT TestScene::LoadScene()
 #pragma region Map & RenderData
 
 	//LoadMap();
-	AddGameObject<TempMap>();
+	//AddGameObject<TempMap>();
 	
-	RenderDataSetUp();
+	//RenderDataSetUp();
 
 #pragma endregion
 
