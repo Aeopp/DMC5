@@ -11,6 +11,7 @@ public:
 	{
 		DMC5_BLACK_GRAD,
 		DMC5_GREEN_GRAD,
+		DMC5_WHITE,
 		
 		FONTTEX_ID_END
 	};
@@ -28,6 +29,7 @@ public:
 		Font::TEX_ID TexID,
 		const Vector2& ScreenPos, 
 		const Vector2& Scale = Vector2(1.f, 1.f), 
+		const Vector3& ExtraColor = Vector3(1.f, 1.f, 1.f),	// 원본 텍스쳐 rgb에 곱할 값
 		bool UsingShadow = false);
 	
 	void SetRenderFlag(bool IsRender, 
@@ -66,6 +68,8 @@ private:
 	bool _UsingPerspective = false;
 
 	bool _UsingNoise = false;
+
+	Vector3 _ExtraColor = Vector3(1.f, 1.f, 1.f);
 
 	std::string _Text = "";
 	enum SCREENMAT_OPT { NOOPT = 0u, USINGSHADOW };

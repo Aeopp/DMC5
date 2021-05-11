@@ -10,6 +10,7 @@ class CbsTrail : public ENGINE::GameObject,
 			     public ENGINE::RenderInterface
 {
 public:
+
 	enum  Mode : uint32
 	{
 		Non,

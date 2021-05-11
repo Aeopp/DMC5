@@ -1217,6 +1217,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool	m_bPlayOnce = true;
 };
 
 class Skill_Float_Ground_Finish : public NeroState
@@ -1711,6 +1713,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	bool		m_bPlayOnce = true;
 };
 
 class Cbs_SKill_Crystal : public NeroState
@@ -1860,6 +1865,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool m_bPlayOnce = true;
 };
 
 class Middle_Cbs_BlitzAttack : public NeroState
@@ -2148,6 +2155,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool	m_pPlayOnce[3];
 };
 
 class Pole_WhirlWind_Loop : public NeroState
@@ -2974,6 +2983,9 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+private:
+	bool	m_bPlayOnce[4];
 };
 
 #endif // NeroState_h__

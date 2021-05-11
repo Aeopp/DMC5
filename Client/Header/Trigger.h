@@ -17,18 +17,17 @@ public:
 
 	// 일반적
 	void EventRegist(const std::function<void()>& CallBack,
-					 const Vector3& Location,
-					 const Vector3& ColliderBoxSize,
-					 const bool ImmediatelyEnable, /*생성 하자마자 활성화 ??*/
-					 const GAMEOBJECTTAG& TargetTag = GAMEOBJECTTAG::Player);
+		const Vector3& Location,
+		const Vector3& ColliderBoxSize,
+		const bool ImmediatelyEnable,/*생성 하자마자 활성화 ??*/
+		const GAMEOBJECTTAG& TargetTag = GAMEOBJECTTAG::Player);
 	// 몬스터 웨이브
-	void EventRegist(const std::vector<std::weak_ptr<class Monster>>& 
-					 WaveMonster,
-					 const std::function<void()>& SpawnAfterEvent,
-					 const Vector3& Location,
-					 const Vector3& ColliderBoxSize,
-					 const bool ImmediatelyEnable, /*생성 하자마자 활성화 ??*/
-					 const GAMEOBJECTTAG& TargetTag = GAMEOBJECTTAG::Player);
+	void EventRegist(const std::vector<std::weak_ptr<class Monster>>& WaveMonster,
+					const Vector3& Location,
+					const Vector3& ColliderBoxSize,
+					const bool ImmediatelyEnable,
+					const GAMEOBJECTTAG& TargetTag,
+					const std::function<void()>& SpawnAfterEvent );
 
 	bool IsEnable();
 	void TriggerEnable();

@@ -5,7 +5,6 @@
 #include <optional>
 #include "Vertexs.h"
 
-
 class Trail : public ENGINE::GameObject,
 			  public ENGINE::RenderInterface
 {

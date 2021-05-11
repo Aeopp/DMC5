@@ -2,7 +2,7 @@ matrix Ortho;
 matrix Perspective; // xy 회전이 필요한 경우 
 matrix ScreenMat; // (-width/2 ~ +width/2, +height/2 ~ -height/2)
 
-float exposure_corr = 1.f;
+//float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
 float2 _MinTexUV = float2(0.f, 0.f);
@@ -11,6 +11,8 @@ float2 _MaxTexUV = float2(1.f, 1.f);
 float _SliceAmount = 0.f;
 
 bool _UsingNoise = false;
+
+float3 _ExtraColor = float3(1.f, 1.f, 1.f);
 
 texture ALB0Map;
 sampler ALB0 = sampler_state
@@ -100,7 +102,7 @@ PsOut PsMain(PsIn In)
     }
 
     Out.Color = tex2D(ALB0, In.UV);
-    Out.Color.rgb *= (_BrightScale/* exposure_corr*/);
+    Out.Color.rgb *= _ExtraColor * (_BrightScale /* exposure_corr*/);
     Out.Color.a *= saturate(1.f - _SliceAmount);
     
     return Out;

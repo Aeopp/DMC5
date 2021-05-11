@@ -237,9 +237,6 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 		}
 	}
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -251,6 +248,11 @@ UINT QliphothBlock::LateUpdate(const float _fDeltaTime)
 void QliphothBlock::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void QliphothBlock::OnEnable()

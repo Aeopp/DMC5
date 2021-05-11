@@ -34,6 +34,7 @@
 #include "AirHike.h"
 #include "FireCircle.h"
 #include "IceAge.h"
+#include "JudgementSword.h"
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
 #include "CbsTrail.h"
@@ -45,10 +46,12 @@
 #include "AirHike.h"
 #include "CbsMidTrail.h"
 #include "BlitzAttack.h"
+#include "Trigger.h"
 #include <iostream>
 #include <fstream>
 
 using namespace std;
+
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -68,43 +71,72 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<BlitzAttack>();
-	AddGameObject<CbsMidTrail>();
-	AddGameObject<Camera>();
+	// Load Start
+	m_fLoadingProgress = 0.01f;
+#pragma region Trigger
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>()
+		};
 
-	/*AddGameObject<MainCamera>();
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f});
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f});
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f});
+
+		_Trigger->EventRegist(MonsterWave,
+			 Vector3{ -1.80262f,0.01168f,1.4464f },
+			 Vector3{1.f,1.f,1.f},
+			 true,GAMEOBJECTTAG::Player,
+				nullptr);
+	}
+
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		std::function<void()> _CallBack{};
+
+		_CallBack = []() 
+		{
+			PRINT_LOG(L"!!", L"불렀어?");
+		};
+
+		_Trigger->EventRegist(_CallBack,
+			Vector3{ -0.52020f,0.00822f,-0.52510f },
+			Vector3{ 1.f,1.f,1.f },
+			true,
+			GAMEOBJECTTAG::Player);
+	}
+#pragma endregion
+
+#pragma region Player & Camera
+
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+
 	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();*/
+	//AddGameObject<JudgementSword>();
 
-	// AddGameObject<CbsTrail>();
-	
+#pragma endregion
 
-	/*AddGameObject<ElectricOccur>();
-	AddGameObject<ThunderBolt>();
-	AddGameObject<ElectricVortex>();
-	AddGameObject<ThunderBoltSecond>();
-	AddGameObject<ElectricBranch>();
-	AddGameObject<AirHike>();*/
+	m_fLoadingProgress = 0.2f;
+
+#pragma region Monster
 
 	//AddGameObject<Em0000>();
-	// AddGameObject<Em1000>();
-	//AddGameObject<Em5300>();
-	
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();*/
-	
-	//AddGameObject<Font>().lock()->SetText("D 21, Until Dooms Day", Vector2(245.f, 130.f), Vector2(0.6f, 0.6f), true);
-	
-	//AddGameObject<Em5000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
-	//AddGameObject<FireCircle>();
-	//AddGameObject<IceAge>();
-
+	//AddGameObject<Em5000>();
 
 	// Wave 1st
 	//{
@@ -152,9 +184,32 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
+#pragma endregion
+
+	m_fLoadingProgress = 0.4f;
+
+#pragma region Map & RenderData
+
 	LoadMap();
-	// AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 	RenderDataSetUp();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.6f;
+
+#pragma region UI & Effect
+
+	AddGameObject<BtlPanel>();
+
+
+	//AddGameObject<CircleWave>();
+	//AddGameObject<AirHike>();
+	//AddGameObject<FireCircle>();
+	//AddGameObject<IceAge>();
+	//AddGameObject<CbsTrail>();
+	//AddGameObject<ElectricOccur>();
+
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -229,6 +284,31 @@ HRESULT TestScene::LoadScene()
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
 
+#pragma endregion
+
+	m_fLoadingProgress = 0.8f;
+
+#pragma region Misc
+
+	// DOOMSDAY
+	if (auto pFont = AddGameObject<Font>().lock();
+		pFont)
+	{
+		pFont->SetText("D 17, Until Dooms Day",
+			Font::TEX_ID::DMC5_BLACK_GRAD,
+			Vector2(245.f, 130.f),
+			Vector2(0.6f, 0.6f),
+			Vector3(1.f, 1.f, 1.f),
+			true);
+
+		pFont->SetRenderFlag(true);
+	}
+
+#pragma endregion
+
+	// Load Complete
+	m_fLoadingProgress = 1.f;
+
 	return S_OK;
 }
 
@@ -254,6 +334,9 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	//cout << "SceneUpdate" << endl;
+
+
 	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);
 	for (auto& _PlayInstance : _RefParticles)
 	{
@@ -262,10 +345,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 		_PlayInstance->CurveControlPoints = {};
 		_PlayInstance->CurveControlRotationPoints = {};
 	}*/
-
-
-
-	//cout << "SceneUpdate" << endl;
 
 
 	// 여기서 임시로 트리거 처리 ???
@@ -365,12 +444,12 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 {
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
-}
+};
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Stage2.json" };
-	//std::ifstream inputStream{ "../../Data/Hotel.json" };
+	// std::ifstream inputStream{ "../../Data/Hotel.json" };
+	std::ifstream inputStream{ "../../Data/Stage1_Map.json" };
 
 	if (false == inputStream.is_open())
 		return;
@@ -425,16 +504,17 @@ void TestScene::LoadMap()
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
-}
+};
 
 void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005;
+	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };

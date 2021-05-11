@@ -4,8 +4,12 @@
 
 USING(ENGINE)
 
+float Scene::m_fLoadingProgress = 0.f;
+
 Scene::Scene()
+	: m_bOnLoop(false)
 {
+	m_fLoadingProgress = 0.f;
 }
 
 void Scene::Free()

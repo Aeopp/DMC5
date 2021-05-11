@@ -63,7 +63,7 @@ PsOut PsMain(PsIn In)
 
     Out.Color = BaseSample;
     Out.Color.rgb *= (_BrightScale * exposure_corr);
-    Out.Color.a *= (1.f - _SliceAmount) * 0.035f;
+    Out.Color.a *= (1.f - _SliceAmount) * 0.01f;
     
     return Out;
 };
@@ -76,7 +76,7 @@ technique Default
         alphablendenable = true;
         srcblend = srcalpha;
         destblend = invsrcalpha;
-        zenable = false;
+        //zenable = false;
         zwriteenable = false;
         sRGBWRITEENABLE = false;
 

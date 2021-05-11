@@ -35,14 +35,14 @@ void Glint::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const Vector3 Scale = _SpTransform->GetScale();
+		//const Vector3 Scale = _SpTransform->GetScale();
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 
-		const auto& _Subset = _PlaneMesh->GetSubset(0);
-		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+		//const auto& _Subset = _PlaneMesh->GetSubset(0);
+		//const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
-		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, 0.01534f * Scale.x);	// ばば
+		//_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		//_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, 0.01534f * Scale.x);	// ばば
 	}
 }
 
@@ -81,8 +81,8 @@ Glint* Glint::Create()
 
 void Glint::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
-		return;
+	//if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+	//	return;
 	
 	auto WeakSubset_Plane = _PlaneMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset_Plane.lock();
@@ -94,7 +94,7 @@ void Glint::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			{
 				_Info.Fx->SetMatrix("World", &_WorldMatrix[i]);
 				_Info.Fx->SetTexture("BaseMap", _GlintTex->GetTexture());
-				_Info.Fx->SetFloat("_BrightScale", 0.03f);
+				_Info.Fx->SetFloat("_BrightScale", 0.06f);
 				_Info.Fx->SetFloat("_SliceAmount", _SliceAmount[i]);
 
 				SharedSubset->Render(_Info.Fx);
@@ -219,9 +219,6 @@ UINT Glint::Update(const float _fDeltaTime)
 		}
 	}
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -233,6 +230,11 @@ UINT Glint::LateUpdate(const float _fDeltaTime)
 void Glint::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void Glint::OnEnable()

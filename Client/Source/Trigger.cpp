@@ -13,7 +13,7 @@ void Trigger::EventRegist(
 	const Vector3& Location,
 	const Vector3& ColliderBoxSize,
 	const bool ImmediatelyEnable,/*생성 하자마자 활성화 ??*/
-	const GAMEOBJECTTAG& TargetTag = GAMEOBJECTTAG::Player)
+	const GAMEOBJECTTAG& TargetTag)
 {
 	if (auto _Transform = GetComponent<Transform>().lock();
 		_Transform)
@@ -39,11 +39,11 @@ void Trigger::EventRegist(
 
 void Trigger::EventRegist(
 	const std::vector<std::weak_ptr<class Monster>>& WaveMonster,
-	const std::function<void()>& SpawnAfterEvent,
 	const Vector3& Location,
 	const Vector3& Size,
 	const bool ImmediatelyEnable,
-	const GAMEOBJECTTAG& TargetTag)
+	const GAMEOBJECTTAG& TargetTag,
+	const std::function<void()>& SpawnAfterEvent )
 {
 	for (auto& WpMonster : WaveMonster)
 	{
@@ -114,15 +114,12 @@ HRESULT Trigger::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 1.f,1.f,1.f});
-	InitTransform.lock()->SetPosition(Vector3{0.f,0.0f,0.f });
-	InitTransform.lock()->SetRotation(Vector3{0.f,0.f ,0.0f});
 	PushEditEntity(InitTransform.lock().get());
 
 	_Collider = AddComponent<BoxCollider>();
 	_Collider.lock()->SetTrigger(true);
-	_Collider.lock()->SetActive(false);
-	_Collider.lock()->SetSize(Vector3{ 1.f,1.f,1.f });
+	// _Collider.lock()->SetActive(false);
+	//_Collider.lock()->SetSize(Vector3{ 1.f,1.f,1.f });
 
 	PushEditEntity(_Collider.lock().get());
 
@@ -133,9 +130,6 @@ HRESULT Trigger::Awake()
 {
 	GameObject::Awake();
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 1.f,1.f,1.f });
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.0f,0.f });
-	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f ,0.0f });
 	return S_OK;
 }
 
@@ -166,7 +160,16 @@ void Trigger::Editor()
 
 	if (bEdit)
 	{
+		if (ImGui::Button("Event Call"))
+		{
+			if (_Event)
+			{
+				_Event();
+			}
+		}
 
+		const char* Msg = IsEnable() ? "Enable" : "Disable";
+		ImGui::Text(Msg);
 	}
 }
 

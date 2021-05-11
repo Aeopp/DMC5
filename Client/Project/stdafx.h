@@ -39,6 +39,8 @@ enum GAMEOBJECTTAG
 	MonsterWeapon,
 	UI_BtlPanel,
 	UI_Font,
+	UI_LogoPanel,
+	UI_TitlePanel,
 	Eff_Glint,
 	Eff_OvertureHand,
 	Eff_Liquid,
@@ -76,8 +78,32 @@ enum GAMEOBJECTTAG
 	Tag_Cbs_Middle,
 	Tag_Cbs_Long,
 	TAG_NeroShinMajin,
+	TAG_JudgementShadow1,
+	TAG_JudgementShadow2,
+	TAG_JudgementShadow3,
 	Tag_END
 };
+
+enum WingSwordAnimationList
+{
+	WingSword_Ar1,
+	WingSword_Ar2,
+	WingSword_Ar3,
+	WingSword_Ar4,
+	WingSword_ComboA1,
+	WingSword_ComboA2,
+	WingSword_ComboA3,
+	WingSword_ComboB1,
+	WingSword_Stinger_End,
+	WingSword_Stinger_Loop,
+	WingSword_Stinger_Start,
+	WingSword_HT,
+	WingSword_ComboB2_Loop,
+	WingSword_ComboB2_End,
+	WingSword_Helm,
+	WingSword_End
+};
+
 
 struct TrailDesc
 {

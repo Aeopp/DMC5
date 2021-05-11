@@ -231,9 +231,6 @@ UINT Smoke::Update(const float _fDeltaTime)
 	//	Sptransform)
 	//	Sptransform->SetBillBoard(BillMat);
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -245,6 +242,11 @@ UINT Smoke::LateUpdate(const float _fDeltaTime)
 void Smoke::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void Smoke::OnEnable()

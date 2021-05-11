@@ -277,9 +277,6 @@ UINT AppearGroundMonster::Update(const float _fDeltaTime)
 		}
 	}
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -291,6 +288,11 @@ UINT AppearGroundMonster::LateUpdate(const float _fDeltaTime)
 void AppearGroundMonster::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void AppearGroundMonster::OnEnable()
