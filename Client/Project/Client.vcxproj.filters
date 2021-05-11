@@ -577,9 +577,6 @@
     <ClCompile Include="..\Source\Liquid.cpp">
       <Filter>02.GameObject\Effect\Liquid</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\DashImpact.cpp">
-      <Filter>02.GameObject\Effect\Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Em5000Hand.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\00.HAND</Filter>
     </ClCompile>

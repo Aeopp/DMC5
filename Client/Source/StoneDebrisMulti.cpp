@@ -156,9 +156,6 @@ UINT StoneDebrisMulti::Update(const float _fDeltaTime)
 	if (MAX_SUBSET_IDX < _SubsetIdx)
 		Reset();
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -170,6 +167,11 @@ UINT StoneDebrisMulti::LateUpdate(const float _fDeltaTime)
 void StoneDebrisMulti::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void StoneDebrisMulti::OnEnable()

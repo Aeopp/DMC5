@@ -72,7 +72,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 
 	_Player = AddGameObject<Nero>();
-	AddGameObject<JudgementSword>();
+	//AddGameObject<JudgementSword>();
 
 #pragma endregion
 
@@ -149,6 +149,7 @@ HRESULT TestScene::LoadScene()
 #pragma region UI & Effect
 
 	AddGameObject<BtlPanel>();
+
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();

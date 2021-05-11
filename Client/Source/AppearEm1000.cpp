@@ -308,9 +308,6 @@ UINT AppearEm1000::Update(const float _fDeltaTime)
 		Sptransform)
 		Sptransform->SetBillBoard(BillMat);
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -322,6 +319,11 @@ UINT AppearEm1000::LateUpdate(const float _fDeltaTime)
 void AppearEm1000::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void AppearEm1000::OnEnable()

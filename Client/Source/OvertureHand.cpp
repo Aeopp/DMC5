@@ -22,14 +22,14 @@ void OvertureHand::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const Vector3 Scale = _SpTransform->GetScale();
+		//const Vector3 Scale = _SpTransform->GetScale();
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 
-		const auto& _Subset = _HandMesh->GetSubset(0);
-		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+		//const auto& _Subset = _HandMesh->GetSubset(0);
+		//const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
-		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+		//_RenderUpdateInfo.SubsetCullingSphere.resize(1);
+		//_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
 	}
 }
 
@@ -77,8 +77,8 @@ OvertureHand* OvertureHand::Create()
 
 void OvertureHand::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
-		return;
+	//if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+	//	return;
 
 	if (2 == _Info.PassIndex)
 	{
@@ -238,9 +238,6 @@ UINT OvertureHand::Update(const float _fDeltaTime)
 	else if (0.2f < _AccumulateTime)
 		_SparkBranchSubsetIdx += _fDeltaTime * 7.5f;
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -252,6 +249,11 @@ UINT OvertureHand::LateUpdate(const float _fDeltaTime)
 void OvertureHand::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void OvertureHand::OnEnable()

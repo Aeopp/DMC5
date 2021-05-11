@@ -200,9 +200,6 @@ UINT Liquid::Update(const float _fDeltaTime)
 	if (_LiquidMeshVec[_VariationIdx].second < _SubsetIdx)
 		Reset();
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -214,6 +211,11 @@ UINT Liquid::LateUpdate(const float _fDeltaTime)
 void Liquid::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void Liquid::OnEnable()

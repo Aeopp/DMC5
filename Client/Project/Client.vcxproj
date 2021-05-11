@@ -197,7 +197,6 @@
     <ClInclude Include="..\Header\Buster_Arm.h" />
     <ClInclude Include="..\Header\Camera.h" />
     <ClInclude Include="..\Header\Car.h" />
-    <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\Effect.h" />
     <ClInclude Include="..\Header\Em100Hand.h" />
     <ClInclude Include="..\Header\Em5000Hand.h" />
@@ -289,7 +288,6 @@
     <ClCompile Include="..\Source\Buster_Arm.cpp" />
     <ClCompile Include="..\Source\Camera.cpp" />
     <ClCompile Include="..\Source\Car.cpp" />
-    <ClCompile Include="..\Source\DashImpact.cpp" />
     <ClCompile Include="..\Source\Effect.cpp" />
     <ClCompile Include="..\Source\Em100Hand.cpp" />
     <ClCompile Include="..\Source\Em5000Hand.cpp" />
