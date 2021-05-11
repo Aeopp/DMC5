@@ -78,17 +78,18 @@ void Camera::MoveCamera()
 		{
 
 		}
+		LONG lWheel = 0;
+		if (lWheel = Input::GetMouseMove(DIM_Z))
+		{
+			D3DXVECTOR3 vLook = Instance.m_pTransform->GetLook();
+
+			D3DXVECTOR3 vPosition = Instance.m_pTransform->GetPosition();
+
+			Instance.m_pTransform->SetPosition(vPosition + vLook * lWheel * Instance.m_fSensitivityWheel);
+		}
 	}
 
-	LONG lWheel = 0;
-	if (lWheel = Input::GetMouseMove(DIM_Z))
-	{
-		D3DXVECTOR3 vLook = Instance.m_pTransform->GetLook();
 
-		D3DXVECTOR3 vPosition = Instance.m_pTransform->GetPosition();
-
-		Instance.m_pTransform->SetPosition(vPosition + vLook * lWheel * Instance.m_fSensitivityWheel );
-	}
 }
 
 void Camera::UpdateCamera()

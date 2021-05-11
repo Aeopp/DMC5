@@ -16,6 +16,7 @@ GameObject::~GameObject()
 {
 	delete m_pTransform;
 
+
 	Physics::Instance.m_pScene->removeActor(*m_pRigidActor);
 
 	m_pRigidActor->userData = nullptr;
