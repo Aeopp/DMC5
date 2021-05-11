@@ -67,9 +67,11 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
-	//AddGameObject<BtlPanel>();
+	AddGameObject<Camera>();
+
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
+	AddGameObject<BtlPanel>();
 
 	AddGameObject<CbsTrail>();
 	AddGameObject<ElectricOccur>();
@@ -82,8 +84,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-
-	AddGameObject<Camera>();
+	
 	/*AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();*/
@@ -147,7 +148,7 @@ HRESULT TestScene::LoadScene()
 	//}
 
 	LoadMap();
-	// AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 	RenderDataSetUp();
 
 
