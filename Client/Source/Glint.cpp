@@ -94,7 +94,7 @@ void Glint::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			{
 				_Info.Fx->SetMatrix("World", &_WorldMatrix[i]);
 				_Info.Fx->SetTexture("BaseMap", _GlintTex->GetTexture());
-				_Info.Fx->SetFloat("_BrightScale", 0.03f);
+				_Info.Fx->SetFloat("_BrightScale", 0.06f);
 				_Info.Fx->SetFloat("_SliceAmount", _SliceAmount[i]);
 
 				SharedSubset->Render(_Info.Fx);

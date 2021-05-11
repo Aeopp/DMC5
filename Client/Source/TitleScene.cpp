@@ -50,6 +50,8 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 	if (!_LoadNextScene)
 	{
 		// 다음 씬 로드
+		// Title Scene에서 Stage1 로드를 겸함
+		// + s1 load
 		SceneManager::LoadScene(TestScene::Create(), false);
 
 		_LoadNextScene = true;
