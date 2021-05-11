@@ -1,5 +1,6 @@
 matrix matWorld;
 matrix ViewProjection;
+uniform matrix InverseProjection;
 
 uniform float exposure_corr;
 uniform float AlphaFactor;
@@ -7,13 +8,16 @@ uniform float ColorIntencity;
 uniform float Time;
 uniform float DistortionIntencity;
 
+uniform float UVYStartConstant; 
+uniform float UVYScrollSpeed;
+
+
 uniform float ScrollSpeed;
 
-uniform matrix InverseProjection;
-uniform float SoftParticleDepthScale;
+uniform float Range;
+uniform float EndRange;
 
-uniform float SpriteYStart;
-uniform float SpriteYEnd;
+uniform float SoftParticleDepthScale;
 
 texture DepthMap;
 sampler Depth = sampler_state
@@ -69,30 +73,42 @@ void VsMain(in out float4 Position : POSITION0,
 
             out float4 ClipPosition : TEXCOORD2 )
 {
-    Position = mul(Position, matWorld);    
+    Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
+    UV0.y = UVYStartConstant;
 };
 
 void PsMain(out float4 Color : COLOR0,
-            out float4 Color1 : COLOR1,
+out float4 Color1 : COLOR1,
             in float2 UV0 : TEXCOORD0,
             in float2 UV1 : TEXCOORD1,
 
             in float4 ClipPosition : TEXCOORD2
 )
 {
+    UV0.y += Time * UVYScrollSpeed;
+    
     Color = tex2D(Albm, UV0);
     Color.a *= AlphaFactor;
+    
+    float RangeFactor = UV0.y;
+    
+    //if (RangeFactor < Range)
+    //    clip(-1);
+    
+    //if (RangeFactor > EndRange)
+    //    clip(-1);
+    
     float factor = sin(Time * ScrollSpeed);
     float cosfactor = cos(Time * ScrollSpeed);
     
     float2 DistortionUV = float2(UV0.x + factor, UV0.y + cosfactor);
+    
     Color.rgb *= tex2D(Grad, DistortionUV).rgb;
+    Color1 = tex2D(Distortion, float2(UV0.x + factor, UV0.y + cosfactor)) * DistortionIntencity * abs(cosfactor);
     
+    Color.rgb *= abs(factor);
     
-    Color1 = tex2D(Distortion, DistortionUV) * DistortionIntencity * abs(cosfactor);
-    
-    Color.rgb*= abs(factor);
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;
     

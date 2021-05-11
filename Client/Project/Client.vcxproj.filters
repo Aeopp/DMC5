@@ -436,10 +436,22 @@
     <ClInclude Include="..\Header\CbsTrail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
-    <ClInclude Include="..\Header\Thunderbolt.h" />
-    <ClInclude Include="..\Header\ElectricVortex.h" />
+    <ClInclude Include="..\Header\ElectricBranch.h">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ElectricOccur.h">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ElectricVortex.h">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Thunderbolt.h">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ThunderboltSecond.h">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -695,10 +707,22 @@
     <ClCompile Include="..\Source\CbsTrail.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
-    <ClCompile Include="..\Source\ThunderBolt.cpp" />
-    <ClCompile Include="..\Source\ElectricVortex.cpp" />
+    <ClCompile Include="..\Source\ElectricBranch.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ElectricOccur.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ElectricVortex.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThunderBolt.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThunderBoltSecond.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -757,19 +781,35 @@
     <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
-    <None Include="..\..\Resource\Shader\Effect\FireParticle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
-    <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\ElectricEffectParticle.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ThunderBont.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ThunderBoltSecond.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\FireParticle.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\ElectricVortex.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\Effect\ElectricEffectParticle.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\ThunderBont.hlsl" />
-    <FxCompile Include="..\..\Resource\Shader\Effect\ElectricVortex.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\Effect\ElectricBranch.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -40,6 +40,9 @@
 #include "ElectricOccur.h"
 #include "Thunderbolt.h"
 #include "ElectricVortex.h"
+#include "ThunderboltSecond.h"
+#include "ElectricBranch.h"
+
 #include <iostream>
 #include <fstream>
 
@@ -66,10 +69,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<MainCamera>();
 	//_Player = AddGameObject<Nero>();
 	//AddGameObject<BtlPanel>();
+
 	AddGameObject<CbsTrail>();
 	AddGameObject<ElectricOccur>();
 	AddGameObject<ThunderBolt>();
 	AddGameObject<ElectricVortex>();
+	AddGameObject<ThunderBoltSecond>();
+	AddGameObject<ElectricBranch>();
 
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();

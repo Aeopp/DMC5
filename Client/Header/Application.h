@@ -26,5 +26,9 @@ private:
 	void ElectricVoertexParticleLoad();
 	void ThunderBoltParticlePoolLoad();
 	void ThunderBoltEndParticlePoolLoad();
+	void ThunderBoltSecondParticlePoolLoad();
+	void ThunderBoltSecondEndParticlePoolLoad();
+	void ElectricBranchParticlePoolLoad();
+	void ElectricBranchEndParticlePoolLoad();
 };
 #endif // !__APPLICATION_H__

@@ -85,7 +85,13 @@ void Application::IceParticlePoolLoad()
 	ThunderBoltParticlePoolLoad();
 	ThunderBoltEndParticlePoolLoad();
 
+	ThunderBoltSecondParticlePoolLoad();
+	ThunderBoltSecondEndParticlePoolLoad();
+
 	ElectricVoertexParticleLoad();
+
+	ElectricBranchParticlePoolLoad();
+	ElectricBranchEndParticlePoolLoad();
 };
 
 void Application::IceCbsMidParticlePoolLoad()
@@ -802,5 +808,325 @@ void Application::ThunderBoltEndParticlePoolLoad()
 				{ RScale,RScale,RScale }, LifeTime, 0.0f, _ElectricValue, std::nullopt);
 		}
 	}
+}
+
+void Application::ThunderBoltSecondParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "ElectricParticle";
+	// 공유 정보 바인드
+	_PushParticle.SharedResourceBind = [_Tex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("MskMap", _Tex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Electric&>(_InstanceVariable);
+		Fx->SetFloatArray("ElectricColor", _Value.Color, 3u);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 1000ul;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("ThunderBoltSecondParticle",
+			std::move(_PushParticle), PoolSize, true);
+
+	_Info.bLocalVertexLocationsStorage = true;
+	auto _TargetMesh = Resources::Load<StaticMesh>(
+		"..\\..\\Usable\\Electric\\Spark\\parts.fbx", _Info);
+
+	if (_TargetMesh->m_spVertexLocations)
+	{
+		for (auto& _ParticleInstance : *ParticlePool)
+		{
+			const uint32 Idx = FMath::Random(0u, uint32(_TargetMesh->m_spVertexLocations->size() - 1));
+
+			const Vector3 StartLocation =
+				(*_TargetMesh->m_spVertexLocations)[Idx];
+
+			const Vector3 Dir = FMath::Normalize(StartLocation);
+			Vector3 Cp0{};
+			Vector3 Cp1{};
+			Vector3 End{};
+
+			Cp0 = StartLocation + FMath::RandomVector(FMath::Random(66.f, 66.f));
+			Cp1 = Cp0 + FMath::RandomVector(FMath::Random(33.f, 66.f));
+			End = Cp1 + FMath::RandomVector(FMath::Random(33.f, 66.f));
+
+
+			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp0 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+
+			const float RScale = FMath::Random(0.0022f, 0.006f) * GScale;
+
+			ParticleInstance::Electric _ElectricValue{};
+
+			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			const float LifeTime = FMath::Random(0.1f, 3.f);
+
+			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
+				{ StartRot,RotCp0,RotCp1,EndRot },
+				{ RScale,RScale,RScale }, LifeTime, 0.0f, _ElectricValue, std::nullopt);
+		}
+	}
+}
+
+void Application::ThunderBoltSecondEndParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "ElectricParticle";
+	// 공유 정보 바인드
+	_PushParticle.SharedResourceBind = [_Tex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("MskMap", _Tex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Electric&>(_InstanceVariable);
+		Fx->SetFloatArray("ElectricColor", _Value.Color, 3u);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 500ul;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("ThunderBoltSecondEndParticle",
+			std::move(_PushParticle), PoolSize, true);
+
+	_Info.bLocalVertexLocationsStorage = true;
+	auto _TargetMesh = Resources::Load<StaticMesh>(
+		"..\\..\\Usable\\Electric\\Spark\\parts.fbx", _Info);
+
+	if (_TargetMesh->m_spVertexLocations)
+	{
+		for (auto& _ParticleInstance : *ParticlePool)
+		{
+			const uint32 Idx = FMath::Random(0u, uint32(_TargetMesh->m_spVertexLocations->size() - 1));
+
+			const Vector3 StartLocation =
+				(*_TargetMesh->m_spVertexLocations)[Idx];
+
+			const Vector3 Dir = FMath::Normalize(StartLocation);
+			Vector3 Cp0{};
+			Vector3 Cp1{};
+			Vector3 End{};
+
+			{
+				Cp0 = StartLocation + -Dir * FMath::Random(99.f, 180.f);
+				Cp1 = Cp0 + -Dir * FMath::Random(99.f, 180.f);
+				End = Cp1 + Dir * FMath::Random(99.f, 180.f);
+			}
+
+			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp0 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+
+			const float RScale = FMath::Random(0.0077f, 0.01f) * GScale;
+
+			ParticleInstance::Electric _ElectricValue{};
+
+			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			const float LifeTime = FMath::Random(0.1f, 3.f);
+
+			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
+				{ StartRot,RotCp0,RotCp1,EndRot },
+				{ RScale,RScale,RScale }, LifeTime, 0.0f, _ElectricValue, std::nullopt);
+		}
+	}
+}
+
+void Application::ElectricBranchParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "ElectricParticle";
+	// 공유 정보 바인드
+	_PushParticle.SharedResourceBind = [_Tex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("MskMap", _Tex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Electric&>(_InstanceVariable);
+		Fx->SetFloatArray("ElectricColor", _Value.Color, 3u);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 1000ul;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("ElectricBranchSecondParticle",
+			std::move(_PushParticle), PoolSize, true);
+
+	_Info.bLocalVertexLocationsStorage = true;
+	auto _TargetMesh = Resources::Load<StaticMesh>(
+		"..\\..\\Usable\\Electric\\Spark\\branch.fbx", _Info);
+
+	if (_TargetMesh->m_spVertexLocations)
+	{
+		for (auto& _ParticleInstance : *ParticlePool)
+		{
+			const uint32 Idx = FMath::Random(0u, uint32(_TargetMesh->m_spVertexLocations->size() - 1));
+
+			const Vector3 StartLocation =
+				(*_TargetMesh->m_spVertexLocations)[Idx];
+
+			const Vector3 Dir = FMath::Normalize(StartLocation);
+			Vector3 Cp0{};
+			Vector3 Cp1{};
+			Vector3 End{};
+
+			Cp0 = StartLocation + FMath::RandomVector(FMath::Random(66.f, 66.f));
+			Cp1 = Cp0 + FMath::RandomVector(FMath::Random(33.f, 66.f));
+			End = Cp1 + FMath::RandomVector(FMath::Random(33.f, 66.f));
+
+
+			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp0 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+
+			const float RScale = FMath::Random(0.0022f, 0.006f) * GScale;
+
+			ParticleInstance::Electric _ElectricValue{};
+
+			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			const float LifeTime = FMath::Random(0.1f, 3.f);
+
+			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
+				{ StartRot,RotCp0,RotCp1,EndRot },
+				{ RScale,RScale,RScale }, LifeTime, 0.0f, _ElectricValue, std::nullopt);
+		}
+	}
+
+}
+
+void Application::ElectricBranchEndParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "ElectricParticle";
+	// 공유 정보 바인드
+	_PushParticle.SharedResourceBind = [_Tex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("MskMap", _Tex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Electric&>(_InstanceVariable);
+		Fx->SetFloatArray("ElectricColor", _Value.Color, 3u);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 500ul;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("ElectricBranchEndParticle",
+			std::move(_PushParticle), PoolSize, true);
+
+	_Info.bLocalVertexLocationsStorage = true;
+	auto _TargetMesh = Resources::Load<StaticMesh>(
+		"..\\..\\Usable\\Electric\\Spark\\branch.fbx", _Info);
+
+	if (_TargetMesh->m_spVertexLocations)
+	{
+		for (auto& _ParticleInstance : *ParticlePool)
+		{
+			const uint32 Idx = FMath::Random(0u, uint32(_TargetMesh->m_spVertexLocations->size() - 1));
+
+			const Vector3 StartLocation =
+				(*_TargetMesh->m_spVertexLocations)[Idx];
+
+			const Vector3 Dir = FMath::Normalize(StartLocation);
+			Vector3 Cp0{};
+			Vector3 Cp1{};
+			Vector3 End{};
+
+			{
+				Cp0 = StartLocation + -Dir * FMath::Random(99.f, 180.f);
+				Cp1 = Cp0 + -Dir * FMath::Random(99.f, 180.f);
+				End = Cp1 + Dir * FMath::Random(99.f, 180.f);
+			}
+
+			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp0 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+
+			const float RScale = FMath::Random(0.0077f, 0.01f) * GScale;
+
+			ParticleInstance::Electric _ElectricValue{};
+
+			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			const float LifeTime = FMath::Random(0.1f, 3.f);
+
+			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
+				{ StartRot,RotCp0,RotCp1,EndRot },
+				{ RScale,RScale,RScale }, LifeTime, 0.0f, _ElectricValue, std::nullopt);
+		}
+	}
+
 }
 
