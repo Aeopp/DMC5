@@ -187,6 +187,12 @@
     <Filter Include="02.GameObject\UI\Misc">
       <UniqueIdentifier>{e47f0001-a56a-4b6f-a6ce-f285c618963f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Scene\02.Mission01_Hotel">
+      <UniqueIdentifier>{825e978e-7ea9-4647-a55b-2afdfaba19f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Scene\03.Mission02_Library">
+      <UniqueIdentifier>{e6c1dff5-fa82-4498-9a77-11b4f8d6babd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -469,6 +475,9 @@
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
+    <ClInclude Include="..\Header\Hotel_S01.h">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -576,9 +585,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\Liquid.cpp">
       <Filter>02.GameObject\Effect\Liquid</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\DashImpact.cpp">
-      <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em5000Hand.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\00.HAND</Filter>
@@ -742,6 +748,9 @@
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
+    <ClCompile Include="..\Source\Hotel_S01.cpp">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

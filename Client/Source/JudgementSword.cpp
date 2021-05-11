@@ -22,6 +22,10 @@ HRESULT JudgementSword::Ready()
 	GameObject::Ready();
 	RenderInit();
 
+	m_NRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\wp01_006_NRMR.tga");
+	m_ATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\wp01_006_ATOS.tga");
+	m_GradationTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\grad.png");
+
 	m_pTransform.lock()->SetScale({ GScale,GScale,GScale });
 
 	PushEditEntity(m_pTransform.lock().get());
@@ -53,6 +57,9 @@ UINT JudgementSword::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
+
+	//
+	m_fAccTime += _fDeltaTime;
 
 	return 0;
 }
@@ -183,6 +190,28 @@ void JudgementSword::RenderDebugSK(const DrawInfo& _Info)
 
 void JudgementSword::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	const Matrix World = _RenderUpdateInfo.World;
+	_Info.Fx->SetMatrix("World", &World);
+	const uint32 Numsubset = m_pMesh->GetNumSubset();
+	if (Numsubset > 0)
+	{
+		m_pMesh->BindVTF(_Info.Fx);
+	}
+	for (uint32 i = 0; i < Numsubset; ++i)
+	{
+		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
+			SpSubset)
+		{
+			_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
+			_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());
+			_Info.Fx->SetTexture("GradationMap", m_GradationTex->GetTexture());
+			_Info.Fx->SetFloat("_BrightScale", 0.015f);
+			_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_AccumulationTexV", m_fAccTime * 0.6f);
+
+			SpSubset->Render(_Info.Fx);
+		}
+	}
 }
 
 void JudgementSword::RenderInit()
@@ -191,24 +220,33 @@ void JudgementSword::RenderInit()
 
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"gbuffer_dsSK",
+		{"NeroWingArmSK",
 		[this](const DrawInfo& _Info)
 			{
-				RenderGBufferSK(_Info);
+				RenderAlphaBlendEffect(_Info);
 			}
 		},
 	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"ShadowSK" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadowSK(_Info);
-		}
-	} };
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_dsSK",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBufferSK(_Info);
+	//		}
+	//	},
+	//};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+	//	=
+	//{
+	//	{"ShadowSK" ,
+	//	[this](const DrawInfo& _Info)
+	//	{
+	//		RenderShadowSK(_Info);
+	//	}
+	//} };
 	_InitRenderProp.RenderOrders[RenderProperty::Order::DebugBone]
 		=
 	{

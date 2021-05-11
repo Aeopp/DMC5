@@ -186,8 +186,8 @@ void Nero_RWing::RenderInit()
 
 void Nero_RWing::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
-		return;
+	//if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+	//	return;
 
 	if (0 == _Info.PassIndex)
 	{
@@ -214,14 +214,6 @@ void Nero_RWing::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		{
 			const Matrix World = _RenderUpdateInfo.World;
 			_Info.Fx->SetMatrix("World", &World);
-
-			//if (!Renderer::GetInstance()->GetDirLights().empty())
-			//{
-			//	// ¤¾¤¾
-			//	auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
-			//	_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
-			//}
-
 			_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
 			_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());
 			_Info.Fx->SetTexture("GradationMap", m_GradationTex->GetTexture());
@@ -245,10 +237,10 @@ void Nero_RWing::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
+		//if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		//{
+		//	continue;
+		//}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -271,10 +263,10 @@ void Nero_RWing::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
+		//if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		//{
+		//	continue;
+		//}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -301,10 +293,10 @@ void Nero_RWing::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
+		//if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		//{
+		//	continue;
+		//}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -319,21 +311,21 @@ void Nero_RWing::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const Vector3 Scale = _SpTransform->GetScale();
+		//const Vector3 Scale = _SpTransform->GetScale();
 		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
-		if (m_pMesh)
-		{
-			const uint32  Numsubset = m_pMesh->GetNumSubset();
-			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+		//if (m_pMesh)
+		//{
+		//	const uint32  Numsubset = m_pMesh->GetNumSubset();
+		//	_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
 
-			for (uint32 i = 0; i < Numsubset; ++i)
-			{
-				const auto& _Subset = m_pMesh->GetSubset(i);
-				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+		//	for (uint32 i = 0; i < Numsubset; ++i)
+		//	{
+		//		const auto& _Subset = m_pMesh->GetSubset(i);
+		//		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
-			}
-		}
+		//		_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+		//	}
+		//}
 	}
 }
 

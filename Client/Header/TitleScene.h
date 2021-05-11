@@ -8,6 +8,7 @@ private:
 	std::weak_ptr<class TitlePanel> _TitlePanel{};
 
 	bool _LoadNextScene = false;
+	float _CheckLoadingTick = 0.f;
 
 private:
 	explicit TitleScene() = default;

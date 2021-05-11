@@ -19,6 +19,20 @@ private:
 
 	bool				m_bOnLoop;
 protected:
+	/* 
+	0 Scene 생성자 호출
+	0보다 크면 LoadScene() 진입, 증가
+	1 로딩 끝
+
+	Scene 생성자에서 0으로 쓰는거 이외에
+	로딩 스레드만 값을 덮어쓰고 로딩 스레드는 하나만 돈다는 전제,
+	다른 스레드가 값을 덮어쓰지 않고 읽기만 한다는 전제 하에
+	크리티컬섹션 등은 쓰지 않겠습니다 ㅎㅎ
+
+	- by hscho
+	*/
+	static float		m_fLoadingProgress;
+protected:
 	explicit Scene();
 	virtual ~Scene() = default;
 	// Object을(를) 통해 상속됨

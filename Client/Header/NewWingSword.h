@@ -33,6 +33,7 @@ public:
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
+    void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderInit();
 
 private:
@@ -41,6 +42,13 @@ private:
 
     UINT	m_iMeshIndex = 0;
     Matrix* m_pParentBoneMat;
+
+    std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
+    std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};
+    std::shared_ptr<ENGINE::Texture>		m_GradationTex{};
+
+    float	m_fAccTime = 0.f;
+
 };
 
 

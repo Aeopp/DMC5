@@ -207,8 +207,8 @@ void WIngArm_Left::RenderInit()
 
 void WIngArm_Left::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
-		return;
+	//if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
+	//	return;
 
 	m_pMesh->BindVTF(_Info.Fx);
 
@@ -240,10 +240,10 @@ void WIngArm_Left::RenderGBufferSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
+		//if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		//{
+		//	continue;
+		//}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -265,10 +265,10 @@ void WIngArm_Left::RenderShadowSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
+		//if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		//{
+		//	continue;
+		//}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -295,10 +295,10 @@ void WIngArm_Left::RenderDebugSK(const DrawInfo& _Info)
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-		{
-			continue;
-		}
+		//if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		//{
+		//	continue;
+		//}
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
@@ -313,21 +313,21 @@ void WIngArm_Left::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const Vector3 Scale = _SpTransform->GetScale();
+		//const Vector3 Scale = _SpTransform->GetScale();
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-		if (m_pMesh)
-		{
-			const uint32  Numsubset = m_pMesh->GetNumSubset();
-			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
+		//if (m_pMesh)
+		//{
+		//	const uint32  Numsubset = m_pMesh->GetNumSubset();
+		//	_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
 
-			for (uint32 i = 0; i < Numsubset; ++i)
-			{
-				const auto& _Subset = m_pMesh->GetSubset(i);
-				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
+		//	for (uint32 i = 0; i < Numsubset; ++i)
+		//	{
+		//		const auto& _Subset = m_pMesh->GetSubset(i);
+		//		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
 
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
-			}
-		}
+		//		_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
+		//	}
+		//}
 	}
 }
 

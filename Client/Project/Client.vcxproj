@@ -181,6 +181,7 @@
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
+    <ClInclude Include="..\Header\Hotel_S01.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
     <ClInclude Include="..\Header\JudgementShadow1.h" />
@@ -197,7 +198,6 @@
     <ClInclude Include="..\Header\Buster_Arm.h" />
     <ClInclude Include="..\Header\Camera.h" />
     <ClInclude Include="..\Header\Car.h" />
-    <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\Effect.h" />
     <ClInclude Include="..\Header\Em100Hand.h" />
     <ClInclude Include="..\Header\Em5000Hand.h" />
@@ -273,6 +273,7 @@
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
+    <ClCompile Include="..\Source\Hotel_S01.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
     <ClCompile Include="..\Source\JudgementShadow1.cpp" />
@@ -289,7 +290,6 @@
     <ClCompile Include="..\Source\Buster_Arm.cpp" />
     <ClCompile Include="..\Source\Camera.cpp" />
     <ClCompile Include="..\Source\Car.cpp" />
-    <ClCompile Include="..\Source\DashImpact.cpp" />
     <ClCompile Include="..\Source\Effect.cpp" />
     <ClCompile Include="..\Source\Em100Hand.cpp" />
     <ClCompile Include="..\Source\Em5000Hand.cpp" />
