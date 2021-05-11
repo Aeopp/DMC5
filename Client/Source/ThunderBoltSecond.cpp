@@ -39,7 +39,10 @@ void ThunderBoltSecond::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = (
+			FMath::Scale(_SpTransform->GetScale()) *
+			Renderer::GetInstance()->_RenderInfo.Billboard *
+			FMath::Translation(_SpTransform->GetPosition()));
 	}
 };
 
@@ -287,9 +290,9 @@ HRESULT ThunderBoltSecond::Awake()
 {
 	GameObject::Awake();
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
+	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.0f,0.f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.01f,0.01f,0.01f });
+	InitTransform.lock()->SetScale(Vector3{ 0.05f,0.05f,0.05f});
 
 	return S_OK;
 }

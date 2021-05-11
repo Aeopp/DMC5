@@ -44,6 +44,7 @@
 #include "ElectricBranch.h"
 #include "AirHike.h"
 #include "CbsMidTrail.h"
+#include "BlitzAttack.h"
 
 #include <iostream>
 #include <fstream>
@@ -68,12 +69,14 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	AddGameObject<BlitzAttack>();
+
 	AddGameObject<CbsMidTrail>();
 	AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
+	/*AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
+	AddGameObject<BtlPanel>();*/
 
 	// AddGameObject<CbsTrail>();
 	
@@ -151,8 +154,8 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	// LoadMap();
-	AddGameObject<TempMap>();
+	LoadMap();
+	// AddGameObject<TempMap>();
 	RenderDataSetUp();
 
 

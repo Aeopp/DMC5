@@ -774,7 +774,7 @@ void Application::ThunderBoltParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 1000ul;
+	const uint64 PoolSize = 10000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("ThunderBoltParticle",
@@ -852,7 +852,7 @@ void Application::ThunderBoltEndParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 500ul;
+	const uint64 PoolSize = 10000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("ThunderBoltEndParticle",
@@ -931,7 +931,7 @@ void Application::ThunderBoltSecondParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 1000ul;
+	const uint64 PoolSize = 10000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("ThunderBoltSecondParticle",
@@ -1010,7 +1010,7 @@ void Application::ThunderBoltSecondEndParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 500ul;
+	const uint64 PoolSize = 10000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("ThunderBoltSecondEndParticle",

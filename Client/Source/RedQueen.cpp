@@ -123,6 +123,7 @@ void RedQueen::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
 		return;
+
 	Vector3 vGlintPos;
 	memcpy(&vGlintPos, (*m_pMyBoneMat * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
 

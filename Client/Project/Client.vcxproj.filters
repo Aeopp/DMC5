@@ -453,6 +453,7 @@
       <Filter>02.GameObject\Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\CbsMidTrail.h" />
+    <ClInclude Include="..\Header\BlitzAttack.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -725,6 +726,7 @@
       <Filter>02.GameObject\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
+    <ClCompile Include="..\Source\BlitzAttack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

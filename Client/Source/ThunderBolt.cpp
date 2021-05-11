@@ -246,10 +246,11 @@ HRESULT ThunderBolt::Ready()
 HRESULT ThunderBolt::Awake()
 {
 	GameObject::Awake();
+
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
+	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.0f,0.f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.0005f,0.0005f,0.0005f });
+	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.01f,0.001f });
 
 	return S_OK;
 }

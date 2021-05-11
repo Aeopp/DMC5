@@ -66,14 +66,14 @@ private:
 	float ParticleTime = 0.03f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;
-	float PlayTime = 0.35f;
+	float PlayTime = 0.58f;
 	float ColorIntencity = 0.7f;
 
 	float ScrollSpeed = 445.f;
-	float DistortionIntencity = 1.5f;
+	float DistortionIntencity = 0.1f;
 
-	float PtLightRadius = 10.f;
-	float PtLightFlux = 10.f;
+	float PtLightRadius = 1.f;
+	float PtLightFlux = 1.f;
 	std::weak_ptr<FLight> PtLight;
 
 	float Range = 0.0f;

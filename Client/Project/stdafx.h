@@ -53,7 +53,7 @@ enum GAMEOBJECTTAG
 	Eff_Trail,
 	Eff_CbsTrail,
 	Eff_CbsMidTrail,
-
+	Eff_BlitzAttack,
 	Eff_FireCircle,
 	Eff_ElectricOccur ,
 	Eff_ThunderBolt,
