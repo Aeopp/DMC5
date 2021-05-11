@@ -4,6 +4,7 @@
 #include "Subset.h"
 #include "Nero.h"
 #include "Glint.h"
+
 RedQueen::RedQueen()
 {
 	m_nTag = TAG_RedQueen;

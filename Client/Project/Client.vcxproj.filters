@@ -454,6 +454,7 @@
     </ClInclude>
     <ClInclude Include="..\Header\CbsMidTrail.h" />
     <ClInclude Include="..\Header\BlitzAttack.h" />
+    <ClInclude Include="..\Header\Trigger.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -727,6 +728,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
+    <ClCompile Include="..\Source\Trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

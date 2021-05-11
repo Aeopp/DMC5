@@ -231,6 +231,7 @@
     <ClInclude Include="..\Header\Thunderbolt.h" />
     <ClInclude Include="..\Header\ThunderboltSecond.h" />
     <ClInclude Include="..\Header\Trail.h" />
+    <ClInclude Include="..\Header\Trigger.h" />
     <ClInclude Include="..\Header\Unit.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\Trail.cpp" />
+    <ClCompile Include="..\Source\Trigger.cpp" />
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />

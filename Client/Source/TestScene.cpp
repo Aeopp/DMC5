@@ -45,7 +45,6 @@
 #include "AirHike.h"
 #include "CbsMidTrail.h"
 #include "BlitzAttack.h"
-
 #include <iostream>
 #include <fstream>
 
@@ -64,13 +63,12 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-}
+};
 
 
 HRESULT TestScene::LoadScene()
 {
 	AddGameObject<BlitzAttack>();
-
 	AddGameObject<CbsMidTrail>();
 	AddGameObject<Camera>();
 
@@ -157,7 +155,6 @@ HRESULT TestScene::LoadScene()
 	LoadMap();
 	// AddGameObject<TempMap>();
 	RenderDataSetUp();
-
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
