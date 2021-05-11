@@ -181,6 +181,7 @@
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
+    <ClInclude Include="..\Header\Hotel_S01.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
     <ClInclude Include="..\Header\JudgementShadow1.h" />
@@ -272,6 +273,7 @@
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
+    <ClCompile Include="..\Source\Hotel_S01.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
     <ClCompile Include="..\Source\JudgementShadow1.cpp" />

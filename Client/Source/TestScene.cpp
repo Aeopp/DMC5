@@ -442,7 +442,7 @@ void TestScene::LoadMap()
 			vRotation.x = rotation[0].GetDouble();
 			vRotation.y = rotation[1].GetDouble();
 			vRotation.z = rotation[2].GetDouble();
-
+			
 			D3DXVECTOR3 vPosition;
 			auto position = iterObject->FindMember("Position")->value.GetArray();
 			vPosition.x = position[0].GetDouble();

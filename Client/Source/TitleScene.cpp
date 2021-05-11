@@ -2,6 +2,7 @@
 #include "..\Header\TitleScene.h"
 #include "Scene.h"
 #include "TitlePanel.h"
+#include "Hotel_S01.h"
 
 #include "TestScene.h"
 
@@ -51,8 +52,8 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 	{
 		// 다음 씬 로드
 		// Title Scene에서 Stage1 로드를 겸함
-		// + s1 load
-		SceneManager::LoadScene(TestScene::Create(), false);
+		SceneManager::LoadScene(Hotel_S01::Create(), false);
+		//SceneManager::LoadScene(TestScene::Create(), false);
 
 		_LoadNextScene = true;
 	}
