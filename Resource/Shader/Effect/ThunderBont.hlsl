@@ -93,9 +93,14 @@ out float4 Color1 : COLOR1,
         clip(-1);
     
    float factor = sin(Time * ScrollSpeed);
-    Color.rgb *= abs(factor);
     float cosfactor = cos(Time * ScrollSpeed);
+    
+    float2 DistortionUV = float2(UV0.x + factor, UV0.y + cosfactor);
+    
+    Color.rgb *= tex2D(Grad, DistortionUV).rgb;
     Color1 = tex2D(Distortion, float2(UV0.x + factor, UV0.y + cosfactor)) * DistortionIntencity * abs(cosfactor);
+    
+    Color.rgb *= abs(factor);
     
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;

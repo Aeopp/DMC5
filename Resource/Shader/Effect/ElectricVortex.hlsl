@@ -67,11 +67,8 @@ void VsMain(in out float4 Position : POSITION0,
 
             out float4 ClipPosition : TEXCOORD2 )
 {
-    Position = mul(Position, matWorld);
-    
+    Position = mul(Position, matWorld);    
     ClipPosition = Position = mul(Position, ViewProjection);
-    
-    // UV0.y = lerp(SpriteYStart, SpriteYEnd, UV0.y);
 };
 
 void PsMain(out float4 Color : COLOR0,
@@ -86,7 +83,12 @@ void PsMain(out float4 Color : COLOR0,
     Color.a *= AlphaFactor;
     float factor = sin(Time * ScrollSpeed);
     float cosfactor = cos(Time * ScrollSpeed);
-    Color1 = tex2D(Distortion, float2(UV0.x + factor, UV0.y + cosfactor)) * DistortionIntencity * abs(cosfactor);
+    
+    float2 DistortionUV = float2(UV0.x + factor, UV0.y + cosfactor);
+    Color.rgb *= tex2D(Grad, DistortionUV).rgb;
+    
+    
+    Color1 = tex2D(Distortion, DistortionUV) * DistortionIntencity * abs(cosfactor);
     
     Color.rgb*= abs(factor);
     Color.rgb *= ColorIntencity;

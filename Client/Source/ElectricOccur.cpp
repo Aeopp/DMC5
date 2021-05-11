@@ -96,8 +96,6 @@ void ElectricOccur::RenderInit()
 	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric00.fbx", _InitInfo);
 	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Grad.png");
 	DistortionMap = Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
-
-
 };
 
 void ElectricOccur::PlayStart(const Vector3& PlayLocation)

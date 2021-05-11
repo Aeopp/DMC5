@@ -94,7 +94,7 @@ void ThunderBolt::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric01.fbx", _InitInfo);
-	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Grad.png");
+	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\lightning_alb.png");
 	DistortionMap =Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
