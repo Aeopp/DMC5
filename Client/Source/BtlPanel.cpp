@@ -283,29 +283,29 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0005f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.00085f);
 			_ImplInfo.Fx->BeginPass(4);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.005f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0085f);
 			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrthoDelay);
 			_ImplInfo.Fx->BeginPass(19);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrtho);
+			_ImplInfo.Fx->SetFloat("_AccumulationTexU", _TotalAccumulateTime * 0.1f);
 			_ImplInfo.Fx->BeginPass(5);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0125f);
 			_ImplInfo.Fx->BeginPass(6);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
 			Create_ScreenMat(CurID, ScreenMat, 1);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _LoadingbarAlpTex->GetTexture());
 			_ImplInfo.Fx->BeginPass(20);
 			SharedSubset->Render(_ImplInfo.Fx);
@@ -1247,10 +1247,10 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		if (1 == _Opt)
 		{
 			_Out._11 = _UIDescs[_ID].Scale.x * 1.4f;
-			_Out._22 = _UIDescs[_ID].Scale.y;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.8f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
 			_Out._41 = _UIDescs[_ID].Pos.x - (g_nWndCX >> 1);
-			_Out._42 = -(_UIDescs[_ID].Pos.y - 1.5f - (g_nWndCY >> 1));
+			_Out._42 = -(_UIDescs[_ID].Pos.y - 1.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 		}
 		else
@@ -2119,12 +2119,12 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		//AccumulateTDTGauge(0.5f);
+		AccumulateTDTGauge(0.5f);
 		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
-		static bool bActive = _UIDescs[BOSS_GUAGE].Using;
-		bActive = !bActive;
-		SetBossGaugeActive(bActive);
+		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
+		//bActive = !bActive;
+		//SetBossGaugeActive(bActive);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
@@ -2133,13 +2133,13 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//if (2 < temp)
 		//	temp = 0;
 		//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
-		//ResetRankScore();
+		ResetRankScore();
 
-		static float Ratio = 1.f;
-		Ratio -= 0.1f;
-		if (0.f > Ratio)
-			Ratio = 1.f;
-		SetBossGaugeHPRatio(Ratio);
+		//static float Ratio = 1.f;
+		//Ratio -= 0.1f;
+		//if (0.f > Ratio)
+		//	Ratio = 1.f;
+		//SetBossGaugeHPRatio(Ratio);
 	}
 	////////////////////////////
 

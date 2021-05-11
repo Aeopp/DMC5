@@ -140,7 +140,7 @@ HRESULT TestScene::LoadScene()
 	//LoadMap();
 	//AddGameObject<TempMap>();
 	
-	//RenderDataSetUp();
+	RenderDataSetUp();
 
 #pragma endregion
 
