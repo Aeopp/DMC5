@@ -42,6 +42,7 @@
 #include "ElectricVortex.h"
 #include "ThunderboltSecond.h"
 #include "ElectricBranch.h"
+#include "AirHike.h"
 
 #include <iostream>
 #include <fstream>
@@ -76,6 +77,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<ElectricVortex>();
 	AddGameObject<ThunderBoltSecond>();
 	AddGameObject<ElectricBranch>();
+	AddGameObject<AirHike>();
 
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();

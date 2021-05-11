@@ -30,5 +30,8 @@ private:
 	void ThunderBoltSecondEndParticlePoolLoad();
 	void ElectricBranchParticlePoolLoad();
 	void ElectricBranchEndParticlePoolLoad();
+
+	void AirHikeParticleEndPoolLoad();
+	void AirHikeParticlePoolLoad();
 };
 #endif // !__APPLICATION_H__
