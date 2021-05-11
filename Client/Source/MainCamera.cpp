@@ -224,5 +224,18 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	D3DXVec3TransformNormal(&vLook, &vLook, &matTest);
 	D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
 
-	m_vEye = m_vAt + vLook;
+	//m_vEye = m_vAt + vLook; // ¿øº»
+
+	//static bool Test = true;
+
+	//if (Input::GetKeyDown(DIK_5))
+	//	Test = !Test;
+
+	//if(Test)
+	//	m_vEye = m_vAt + vLook;
+
+	static Vector3	TestEye{};
+	TestEye = m_vAt + vLook;
+
+	m_vEye = FMath::Lerp(m_vEye, TestEye, _fDeltaTime);
 }

@@ -137,7 +137,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map & RenderData
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 	
 	RenderDataSetUp();
@@ -396,7 +396,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Hotel.json" };
+	std::ifstream inputStream{ "../../Data/Test.json" };
 	//std::ifstream inputStream{ "../../Data/Mission02.json" };
 
 	if (false == inputStream.is_open())
