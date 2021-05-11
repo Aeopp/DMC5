@@ -54,6 +54,9 @@ private:
 	float PtLightFlux = 10.f;
 	std::weak_ptr<FLight> PtLight;
 
+	float Range = 0.0f;
+	float EndRange = 0.35f;
+
 	Vector3 StartScale{ 0.0001f,0.0001f,0.0001f };
 	Vector3 FinalSacle{ 0.0001f,0.0001f,0.0001f };
 };

@@ -53,7 +53,7 @@ private:
 	float PtLightFlux = 10.f;
 	std::weak_ptr<FLight> PtLight;
 	
-	float DistortionIntencity = 1.5f;
+	float DistortionIntencity = 0.25f;
 
 	Vector3 StartScale{ 0.0001f,0.0001f,0.0001f };
 	Vector3 FinalSacle{ 0.0001f,0.0001f,0.0001f };

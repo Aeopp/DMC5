@@ -1,5 +1,6 @@
 matrix matWorld;
 matrix ViewProjection;
+uniform matrix InverseProjection;
 
 uniform float exposure_corr;
 uniform float AlphaFactor;
@@ -9,7 +10,9 @@ uniform float DistortionIntencity;
 
 uniform float ScrollSpeed;
 
-uniform matrix InverseProjection;
+uniform float Range;
+uniform float EndRange;
+
 uniform float SoftParticleDepthScale;
 
 texture DepthMap;
@@ -80,7 +83,16 @@ out float4 Color1 : COLOR1,
 {
     Color = tex2D(Albm, UV0);
     Color.a *= AlphaFactor;
-    float  factor = sin(Time * ScrollSpeed);
+    
+    float RangeFactor = UV0.y;
+    
+    if (RangeFactor < Range)
+        clip(-1);
+    
+    if (RangeFactor > EndRange)
+        clip(-1);
+    
+   float factor = sin(Time * ScrollSpeed);
     Color.rgb *= abs(factor);
     float cosfactor = cos(Time * ScrollSpeed);
     Color1 = tex2D(Distortion, float2(UV0.x + factor, UV0.y + cosfactor)) * DistortionIntencity * abs(cosfactor);

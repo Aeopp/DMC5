@@ -5,6 +5,7 @@ uniform float exposure_corr;
 uniform float AlphaFactor;
 uniform float ColorIntencity;
 uniform float Time;
+uniform float DistortionIntencity;
 
 uniform float ScrollSpeed;
 
@@ -21,6 +22,17 @@ sampler Depth = sampler_state
     minfilter = linear;
     magfilter = linear;
     mipfilter = none;
+    sRGBTexture = false;
+};
+texture DistortionMap;
+sampler Distortion = sampler_state
+{
+    texture = DistortionMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
     sRGBTexture = false;
 };
 
@@ -63,7 +75,7 @@ void VsMain(in out float4 Position : POSITION0,
 };
 
 void PsMain(out float4 Color : COLOR0,
-
+            out float4 Color1 : COLOR1,
             in float2 UV0 : TEXCOORD0,
             in float2 UV1 : TEXCOORD1,
 
@@ -72,7 +84,11 @@ void PsMain(out float4 Color : COLOR0,
 {
     Color = tex2D(Albm, UV0);
     Color.a *= AlphaFactor;
-    Color.rgb*= abs(sin(Time *ScrollSpeed));
+    float factor = sin(Time * ScrollSpeed);
+    float cosfactor = cos(Time * ScrollSpeed);
+    Color1 = tex2D(Distortion, float2(UV0.x + factor, UV0.y + cosfactor)) * DistortionIntencity * abs(cosfactor);
+    
+    Color.rgb*= abs(factor);
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;
     

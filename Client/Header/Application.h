@@ -10,10 +10,8 @@ public:
 						const bool bMultiSample);
 	HRESULT UpdateApplication(const float Delta);
 	HRESULT ReleaseApplication();
-
 private:
 	void StaticResourceLoad();
-
 private:
 	void ParticlePoolLoad();
 	void IceParticlePoolLoad();

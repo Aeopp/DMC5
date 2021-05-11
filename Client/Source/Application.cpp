@@ -123,7 +123,8 @@ void Application::IceCbsMidParticlePoolLoad()
 	const uint64 PoolSize = 300;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated("IceCbsMid", std::move(_PushParticle), PoolSize,false);
+		ParticleSystem::GetInstance()->PreGenerated("IceCbsMid",
+			std::move(_PushParticle), PoolSize,false);
 
 	for (auto& _ParticleInstance : *ParticlePool)
 	{
@@ -445,8 +446,8 @@ void Application::ElectricParticlePoolLoad()
 	_Info.bLocalVertexLocationsStorage = false;
 	_PushParticle._Mesh = Resources::Load<StaticMesh>(
 		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
-	
-	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Electric\\mesh_03_magic_electric01_00_00_ALBA.dds");
+
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
 
 	_PushParticle.bLerpTimeNormalized = false;
 	// Particle 정보 채워주기 
@@ -540,7 +541,7 @@ void Application::ElectricVoertexParticleLoad()
 	_PushParticle._Mesh = Resources::Load<StaticMesh>(
 		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
 
-	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Electric\\mesh_03_magic_electric01_00_00_ALBA.dds");
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
 
 	_PushParticle.bLerpTimeNormalized = false;
 	// Particle 정보 채워주기 
@@ -655,7 +656,7 @@ void Application::ThunderBoltParticlePoolLoad()
 	_PushParticle._Mesh = Resources::Load<StaticMesh>(
 		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
 
-	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Electric\\mesh_03_magic_electric01_00_00_ALBA.dds");
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
 
 	_PushParticle.bLerpTimeNormalized = false;
 	// Particle 정보 채워주기 
@@ -676,7 +677,7 @@ void Application::ThunderBoltParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 250ul;
+	const uint64 PoolSize = 1000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("ThunderBoltParticle",
@@ -702,7 +703,6 @@ void Application::ThunderBoltParticlePoolLoad()
 			Cp0 = StartLocation + FMath::RandomVector(FMath::Random(66.f, 66.f));
 			Cp1 = Cp0 + FMath::RandomVector(FMath::Random(33.f, 66.f));
 			End = Cp1 + FMath::RandomVector(FMath::Random(33.f, 66.f));
-
 	
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
@@ -734,7 +734,7 @@ void Application::ThunderBoltEndParticlePoolLoad()
 	_PushParticle._Mesh = Resources::Load<StaticMesh>(
 		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
 
-	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Electric\\mesh_03_magic_electric01_00_00_ALBA.dds");
+	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
 
 	_PushParticle.bLerpTimeNormalized = false;
 	// Particle 정보 채워주기 
@@ -789,7 +789,7 @@ void Application::ThunderBoltEndParticlePoolLoad()
 			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			const float RScale = FMath::Random(0.0022f, 0.006f) * GScale;
+			const float RScale = FMath::Random(0.0077f, 0.01f) * GScale;
 
 			ParticleInstance::Electric _ElectricValue{};
 

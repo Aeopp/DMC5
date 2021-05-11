@@ -65,7 +65,7 @@ private:
 	float T = 0.0f;
 	float PlayTime = 0.35f;
 	float ColorIntencity = 0.7f;
-	float DistortionIntencity = 1.5f;
+	float DistortionIntencity = 0.25f;
 
 	float ScrollSpeed = 445.f;
 

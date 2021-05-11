@@ -119,6 +119,9 @@ void ThunderBolt::PlayStart(const Vector3& PlayLocation)
 	{
 		SpPtLight->bEnable = true;
 	}
+
+	Range = 0.0f;
+	EndRange = 0.35f;
 };
 
 void ThunderBolt::PlayEnd()
@@ -137,12 +140,11 @@ void ThunderBolt::PlayEnd()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltEndParticle", true);
+				"ThunderBoltEndParticle", 250u, true);
 			_Particle.empty() == false)
 		{
-			static constexpr uint32 JumpOffset = 1u;
-
-			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
+			
+			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
 				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
@@ -160,7 +162,9 @@ void ThunderBolt::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 
-	;
+	_Info.Fx->SetFloat("Range", Range);
+	_Info.Fx->SetFloat("EndRange", EndRange);
+
 	_Info.Fx->SetTexture("DistortionMap", DistortionMap->GetTexture());
 
 	const float PlayTimehalf = PlayTime * 0.5f;
@@ -192,12 +196,10 @@ void ThunderBolt::PlayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltParticle", true);
+				"ThunderBoltParticle", 1000ul, true);
 			_Particle.empty() == false)
 		{
-			static constexpr uint32 JumpOffset = 1u;
-
-			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
+			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
 				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
@@ -326,9 +328,7 @@ void ThunderBolt::Editor()
 			if (ImGui::SmallButton("PlayEnd"))
 			{
 				PlayEnd();
-			}
-
-			;
+			};
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 0.f, "%9.6f");

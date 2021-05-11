@@ -171,6 +171,7 @@ void ParticleSystem::Editor()
 
 std::vector<ParticleSystem::ParticleInstance*> ParticleSystem::PlayParticle(
 	const std::string& Identifier ,
+	const uint32 RequestParticleCnt,
 	const bool bLifeTimeAlphaFactor)
 {
 	std::vector<ParticleSystem::ParticleInstance*> _Particles{};
@@ -184,6 +185,11 @@ std::vector<ParticleSystem::ParticleInstance*> ParticleSystem::PlayParticle(
 
 		for (auto& _TargetInstance : _PtrParticleRefInstance)
 		{
+			if (_Particles.size() >= RequestParticleCnt)
+			{
+				break;
+			}
+
 			if (_TargetInstance.GetLifeTime().has_value() == false)
 			{
 				_Particles.push_back(&_TargetInstance);

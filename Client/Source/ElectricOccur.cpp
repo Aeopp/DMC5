@@ -181,35 +181,16 @@ void ElectricOccur::PlayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ElectricParticle", true);
+				"ElectricParticle", 1000ul,true);
 			_Particle.empty() == false)
 		{
-			static constexpr uint32 JumpOffset = 1u;
-
-			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
+			
+			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
 				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
 			}
 		}
-
-		//for (uint32 i = 0; i < 0; ++i)
-		//{
-		//	if (auto _Particle =
-		//		ParticleSystem::GetInstance()->PlayParticle(
-		//			"ElectricEffectParticle"+std::to_string(i), true);
-
-		//		_Particle.empty() == false)
-		//	{
-		//		static constexpr uint32 JumpOffset = 50u;
-
-		//		for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
-		//		{
-		//			auto& _PlayInstance = _Particle[i];
-		//			_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-		//		}
-		//	}
-		//}
 
 	};
 }

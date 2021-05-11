@@ -234,7 +234,7 @@ void ElectricVortex::PlayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ElectricVortexParticle", true);
+				"ElectricVortexParticle", 1000ul,true);
 			_Particle.empty() == false)
 		{
 			static constexpr uint32 JumpOffset = 1u;
