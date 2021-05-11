@@ -72,7 +72,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 
 	_Player = AddGameObject<Nero>();
-	//AddGameObject<JudgementSword>();
+	AddGameObject<JudgementSword>();
 
 #pragma endregion
 
@@ -81,7 +81,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Monster
 
 	//AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -137,7 +137,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map & RenderData
 
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
 	
 	RenderDataSetUp();
