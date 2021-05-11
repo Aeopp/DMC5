@@ -23,7 +23,6 @@ class Liquid;
 class Cbs_Short;
 class Cbs_Middle;
 class Cbs_Long;
-class WingSword;
 class AirHike;
 class CircleWave;
 class FireCircle;
@@ -35,6 +34,7 @@ class JudgementShadow1;
 class JudgementShadow2;
 class JudgementShadow3;
 class CbsTrail;
+class NewWingSword;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -318,6 +318,7 @@ public:
 		NeroCom_JudgementShadow1,
 		NeroCom_JudgementShadow2,
 		NeroCom_JudgementShadow3,
+		NeroCom_NewWingSword,
 		NeroCom_End
 	};
 
@@ -435,8 +436,9 @@ public:
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
 	void ChangeWeaponUI(NeroComponentID _iWeaponIndex);
-	void ChangeAnimationWingSword(const std::string& InitAnimName, const bool  bLoop);
 	void ChangeMeshIndex(UINT _iMeshIndex) { m_iMeshIndex = _iMeshIndex; }
+	void ChangeWeaponCollSize(float _fSize = 0.08f);
+	void ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap = false);
 	//Effect
 	void PlayEffect(GAMEOBJECTTAG _eTag,
 		const Vector3& Rotation = { 0.f,0.f,0.f }, 
@@ -503,10 +505,10 @@ private:
 	std::weak_ptr<FireCircle>		m_pFireCircle[3];
 	std::weak_ptr<CircleWave>		m_pCircleWave;
 	std::weak_ptr<CbsTrail>			m_pCbsTrail;
+	std::weak_ptr<NewWingSword>		m_pNewWingSword;
 	enum { SP_RED = 0, SP_GREEN, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 
-	std::vector<std::weak_ptr<WingSword>>	m_vecWingSwords;
 	std::weak_ptr<JudgementSword>	m_pJudgementSword;
 	std::weak_ptr<JudgementShadow1> m_pJudgementShadow1;
 	std::weak_ptr<JudgementShadow2> m_pJudgementShadow2;

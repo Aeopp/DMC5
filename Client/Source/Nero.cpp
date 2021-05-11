@@ -21,10 +21,6 @@
 #include "Cbs_Middle.h"
 #include "Cbs_Long.h"
 #include "Buster_Arm_Left.h"
-#include "WingSword1st.h"
-#include "WingSword2nd.h"
-#include "WingSword3rd.h"
-#include "WingSword4th.h"
 #include "AirHike.h"
 #include "Trail.h"
 #include "IceAge.h"
@@ -36,6 +32,7 @@
 #include "JudgementShadow2.h"
 #include "JudgementShadow3.h"
 #include "CbsTrail.h"
+#include "NewWingSword.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -222,6 +219,7 @@ HRESULT Nero::Ready()
 	m_pCbsShort = AddGameObject<Cbs_Short>();
 	m_pCbsMiddle = AddGameObject<Cbs_Middle>();
 	m_pCbsLong = AddGameObject<Cbs_Long>();
+	m_pNewWingSword = AddGameObject<NewWingSword>();
 	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
@@ -257,12 +255,6 @@ HRESULT Nero::Ready()
 		m_pShapeParticle[SP_GREEN].lock()->SetCtrlIdx(ShapeParticle::ZERO);
 		m_pShapeParticle[SP_GREEN].lock()->SetScale(0.0009f);
 	}
-
-	//m_vecWingSwords.reserve(4);
-	//m_vecWingSwords.emplace_back(AddGameObject<WingSword1st>());
-	//m_vecWingSwords.emplace_back(AddGameObject<WingSword2nd>());
-	//m_vecWingSwords.emplace_back(AddGameObject<WingSword3rd>());
-	//m_vecWingSwords.emplace_back(AddGameObject<WingSword4th>());
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -350,58 +342,10 @@ UINT Nero::Update(const float _fDeltaTime)
 	}
 	/* ----------------------------------- */
 
-
-	static bool Test = false;
-	//if (Input::GetKeyDown(DIK_RCONTROL))
+	//if (Input::GetKeyDown(DIK_9))
 	//{
-	//	Test = !Test;
-	//	if (Test)
-	//	{
-	//		//m_pMesh[m_iMeshIndex]->StopAnimation();
-	//		//m_pCbsShort.lock()->StopAnimation();
-	//		//m_pCbsMiddle.lock()->StopAnimation();
-	//		for (auto& pWingSword : m_vecWingSwords)
-	//		{
-	//			pWingSword.lock()->StopAnimation();
-	//		}
-	//	}
-	//	else
-	//	{
-	//		//m_pMesh[m_iMeshIndex]->ContinueAnimation();
-	//		//m_pCbsShort.lock()->ContinueAnimation();
-	//		//m_pCbsMiddle.lock()->ContinueAnimation();
-	//		for (auto& pWingSword : m_vecWingSwords)
-	//		{
-	//			pWingSword.lock()->ContinueAnimation();
-	//		}
-	//	}
+	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
 	//}
-
-	//if (Input::GetKeyDown(DIK_6))
-	//{
-	//	for (auto& pWingSword : m_vecWingSwords)
-	//	{
-	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA1",false);
-	//	}
-	//}
-	//if (Input::GetKeyDown(DIK_7))
-	//{
-	//	for (auto& pWingSword : m_vecWingSwords)
-	//	{
-	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA2", false);
-	//	}
-	//}
-	//if (Input::GetKeyDown(DIK_8))
-	//{
-	//	for (auto& pWingSword : m_vecWingSwords)
-	//	{
-	//		pWingSword.lock()->ChangeAnimation("Cbs_ComboA3", false);
-	//	}
-	//}
-	if (Input::GetKeyDown(DIK_9))
-	{
-		m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	}
 	return 0;
 }
 
@@ -868,6 +812,9 @@ void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot
 		m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
 		m_pOverture.lock()->SetActive(ActiveOrNot);
 		m_pRedQueen.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_NewWingSword:
+		m_pNewWingSword.lock()->SetActive(ActiveOrNot);
 		break;
 	case Nero::NeroCom_End:
 		break;
@@ -1463,13 +1410,20 @@ void Nero::ChangeWeaponUI(NeroComponentID _iWeaponIndex)
 		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
 }
 
-void Nero::ChangeAnimationWingSword(const std::string& InitAnimName, const bool bLoop)
+void Nero::ChangeWeaponCollSize(float _fSize)
 {
-	for (auto& pWingSword : m_vecWingSwords)
+	switch (m_iCurWeaponIndex)
 	{
-		pWingSword.lock()->SetActive(true);
-		pWingSword.lock()->ChangeAnimation(InitAnimName, bLoop);
+	case NeroCom_Cbs_Short:
+		m_pCbsShort.lock()->ChangeColliderSize(_fSize);
+		break;
 	}
+}
+
+void Nero::ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap)
+{
+	m_pNewWingSword.lock()->SetActive(true);
+	m_pNewWingSword.lock()->ChangeAnimation(_eAniList, _bLoop, _Overlap);
 }
 
 void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float CurRoll,
@@ -1556,6 +1510,9 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		m_pCircleWave.lock()->PlayEnd();
 		break;
 	case Eff_DashTrail:
+		break;
+	case Eff_CbsTrail:
+		m_pCbsTrail.lock()->PlayEnd();
 		break;
 	case Eff_ShapeParticle:
 		m_pShapeParticle[SP_GREEN].lock()->Reset();

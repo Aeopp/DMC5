@@ -63,24 +63,27 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	// Load Start
+	m_fLoadingProgress = 0.01f;
+
+#pragma region Player & Camera
+
 	//AddGameObject<Camera>();
-	//AddGameObject <JudgementSword>();
 	AddGameObject<MainCamera>();
+
 	_Player = AddGameObject<Nero>();
-	AddGameObject<BtlPanel>();
+	//AddGameObject<JudgementSword>();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.2f;
+
+#pragma region Monster
 
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
-	
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
-	//AddGameObject<FireCircle>();
-	//AddGameObject<IceAge>();
-	//AddGameObject<CbsTrail>();
-	//AddGameObject<ElectricOccur>();
-
 
 	// Wave 1st
 	//{
@@ -128,9 +131,32 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
+#pragma endregion
+
+	m_fLoadingProgress = 0.4f;
+
+#pragma region Map & RenderData
+
 	//LoadMap();
 	AddGameObject<TempMap>();
+	
 	RenderDataSetUp();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.6f;
+
+#pragma region UI & Effect
+
+	AddGameObject<BtlPanel>();
+
+
+	//AddGameObject<CircleWave>();
+	//AddGameObject<AirHike>();
+	//AddGameObject<FireCircle>();
+	//AddGameObject<IceAge>();
+	//AddGameObject<CbsTrail>();
+	//AddGameObject<ElectricOccur>();
 
 
 	//// Stage2 안개
@@ -206,6 +232,12 @@ HRESULT TestScene::LoadScene()
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
 
+#pragma endregion
+
+	m_fLoadingProgress = 0.8f;
+
+#pragma region Misc
+
 	// DOOMSDAY
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
@@ -214,10 +246,16 @@ HRESULT TestScene::LoadScene()
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
+			Vector3(1.f, 1.f, 1.f),
 			true);
 
 		pFont->SetRenderFlag(true);
 	}
+
+#pragma endregion
+
+	// Load Complete
+	m_fLoadingProgress = 1.f;
 
 	return S_OK;
 }
@@ -244,6 +282,9 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	//cout << "SceneUpdate" << endl;
+
+
 	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);
 	for (auto& _PlayInstance : _RefParticles)
 	{
@@ -252,10 +293,6 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 		_PlayInstance->CurveControlPoints = {};
 		_PlayInstance->CurveControlRotationPoints = {};
 	}*/
-
-
-
-	//cout << "SceneUpdate" << endl;
 
 
 	// 여기서 임시로 트리거 처리 ???
@@ -360,7 +397,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 void TestScene::LoadMap()
 {
 	std::ifstream inputStream{ "../../Data/Hotel.json" };
-	//std::ifstream inputStream{ "../../Data/Hotel.json" };
+	//std::ifstream inputStream{ "../../Data/Mission02.json" };
 
 	if (false == inputStream.is_open())
 		return;
@@ -405,7 +442,7 @@ void TestScene::LoadMap()
 			vRotation.x = rotation[0].GetDouble();
 			vRotation.y = rotation[1].GetDouble();
 			vRotation.z = rotation[2].GetDouble();
-
+			
 			D3DXVECTOR3 vPosition;
 			auto position = iterObject->FindMember("Position")->value.GetArray();
 			vPosition.x = position[0].GetDouble();
@@ -421,8 +458,9 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	 /*_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");*/
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;

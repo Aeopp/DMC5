@@ -91,6 +91,7 @@ HRESULT LogoPanel::Ready()
 			Font::TEX_ID::DMC5_GREEN_GRAD,
 			Vector2(555.f, 600.f),
 			Vector2(0.67f, 0.67f),
+			Vector3(1.f, 1.f, 1.f),
 			true);
 
 		_LoadingText.lock()->SetRenderFlag(_TextRender);
@@ -162,6 +163,7 @@ UINT LogoPanel::Update(const float _fDeltaTime)
 					Font::TEX_ID::DMC5_GREEN_GRAD,
 					Vector2(560.f, 600.f),
 					Vector2(0.67f, 0.67f),
+					Vector3(1.f, 1.f, 1.f),
 					true);
 				_TextChanged = true;
 			}

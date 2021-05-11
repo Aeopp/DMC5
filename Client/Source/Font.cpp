@@ -8,7 +8,7 @@
 #include <fstream>
 
 
-void Font::SetText(const std::string& Text, Font::TEX_ID TexID, const Vector2& ScreenPos, const Vector2& Scale/*= Vector2(1.f, 1.f)*/, bool UsingShadow/*= false*/)
+void Font::SetText(const std::string& Text, Font::TEX_ID TexID, const Vector2& ScreenPos, const Vector2& Scale/*= Vector2(1.f, 1.f)*/, const Vector3& ExtraColor/*= Vector3(1.f, 1.f, 1.f)*/, bool UsingShadow/*= false*/)
 {
 	_Text = Text;
 	
@@ -19,6 +19,7 @@ void Font::SetText(const std::string& Text, Font::TEX_ID TexID, const Vector2& S
 
 	_Pos = { ScreenPos.x, ScreenPos.y, 0.02f };
 	_Scale = { Scale.x, Scale.y, 1.f };
+	_ExtraColor = ExtraColor;
 	_UsingShadow = UsingShadow;
 }
 
@@ -79,6 +80,7 @@ void Font::RenderFont(const DrawInfo& _Info)
 			if (_UsingNoise)
 				_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
+			_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
 
 			if (!_UsingPerspective)
 			{
@@ -256,7 +258,12 @@ void Font::SetFontUV()
 
 void Font::RenderReady()
 {
-
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto SpTransform = _WeakTransform.lock();
+		SpTransform)
+	{
+		_RenderUpdateInfo.World = SpTransform->GetRenderMatrix();
+	}
 }
 
 HRESULT Font::Ready()
@@ -264,6 +271,9 @@ HRESULT Font::Ready()
 	SetRenderEnable(true);
 
 	m_nTag = GAMEOBJECTTAG::UI_Font;
+
+	auto InitTransform = GetComponent<ENGINE::Transform>();
+	InitTransform.lock()->SetPosition({ 0.f, 0.f, 1.f });	// 가장 나중에 그림
 
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = false;
@@ -424,10 +434,10 @@ void Font::Editor()
 		ImGui::InputText("Text##Font", buf, 32);
 
 		static int pos[2] = { 640, 360 };
-		ImGui::SliderInt2("Pos##Font", pos, 0, 1280);
+		ImGui::InputInt2("Pos##Font", pos);
 
 		static Vector2 scale = { 1.f, 1.f };
-		ImGui::SliderFloat2("scale##Font", scale, 0.1f, 10.f);
+		ImGui::InputFloat2("scale##Font", scale);
 
 		static int isShadow = _UsingShadow;
 		ImGui::SliderInt("Shadow##Font", &isShadow, 0, 1);
@@ -435,8 +445,11 @@ void Font::Editor()
 		static int TexID = _FontTexID;
 		ImGui::SliderInt("Tex##Font", &TexID, 0, FONTTEX_ID_END - 1);
 
+		static Vector3 extraColor = _ExtraColor;
+		ImGui::SliderFloat3("Color##Font", extraColor, 0.f, 1.f);
+
 		if (ImGui::Button("Apply##Font"))
-			SetText(buf, (Font::TEX_ID)TexID, Vector2((float)pos[0], (float)pos[1]), scale, isShadow);
+			SetText(buf, (Font::TEX_ID)TexID, Vector2((float)pos[0], (float)pos[1]), scale, extraColor, isShadow);
 	}
 }
 

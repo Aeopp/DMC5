@@ -40,6 +40,13 @@ private:
     std::weak_ptr<Nero>					  m_pNero;
 
     Matrix* m_pParentBoneMat;
+
+    std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
+    std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};
+    std::shared_ptr<ENGINE::Texture>		m_GradationTex{};
+
+    float	m_fAccTime = 0.f;
+
 };
 
 

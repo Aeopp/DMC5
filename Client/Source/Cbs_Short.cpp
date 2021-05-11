@@ -87,7 +87,8 @@ UINT Cbs_Short::LateUpdate(const float _fDeltaTime)
 	{
 		FinalWorld = *m_vecParentMat[m_iStateIndex] * ParentWorldMatrix;
 		m_MyRenderMat = FinalWorld;
-		if ("Cbs_Revolver_Loop" == m_pMesh->AnimName)
+		if ("Cbs_Revolver_Loop" == m_pMesh->AnimName
+			|| "Cbs_IceAge_Loop" == m_pMesh->AnimName)
 		{
 			m_pTransform.lock()->SetWorldMatrix(*m_pBoneMatrixPole3 * FinalWorld);
 		}
@@ -141,6 +142,11 @@ void Cbs_Short::Hit(BT_INFO _BattleInfo, void* pArg)
 void Cbs_Short::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify, const bool _bOverlap)
 {
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify,1.f,1.f,_bOverlap);
+}
+
+void Cbs_Short::ChangeColliderSize(float _fSize)
+{
+	m_pCollider.lock()->SetRadius(_fSize);
 }
 
 std::string Cbs_Short::GetName()

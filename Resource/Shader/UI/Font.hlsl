@@ -12,6 +12,8 @@ float _SliceAmount = 0.f;
 
 bool _UsingNoise = false;
 
+float3 _ExtraColor = float3(1.f, 1.f, 1.f);
+
 texture ALB0Map;
 sampler ALB0 = sampler_state
 {
@@ -100,7 +102,7 @@ PsOut PsMain(PsIn In)
     }
 
     Out.Color = tex2D(ALB0, In.UV);
-    Out.Color.rgb *= (_BrightScale/* exposure_corr*/);
+    Out.Color.rgb *= _ExtraColor * (_BrightScale /* exposure_corr*/);
     Out.Color.a *= saturate(1.f - _SliceAmount);
     
     return Out;

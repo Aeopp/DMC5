@@ -2,6 +2,7 @@
 #include "..\Header\TitleScene.h"
 #include "Scene.h"
 #include "TitlePanel.h"
+#include "Hotel_S01.h"
 
 #include "TestScene.h"
 
@@ -20,7 +21,11 @@ TitleScene* TitleScene::Create()
 
 HRESULT TitleScene::LoadScene()
 {
+	m_fLoadingProgress = 0.01f;	// 로딩 시작
+
 	_TitlePanel = AddGameObject<TitlePanel>();
+
+	m_fLoadingProgress = 1.f;	// 로딩 완료
 
 	return S_OK;
 }
@@ -46,20 +51,34 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 	if (!_LoadNextScene)
 	{
 		// 다음 씬 로드
-		SceneManager::LoadScene(TestScene::Create(), false);
+		// Title Scene에서 Stage1 로드를 겸함
+		SceneManager::LoadScene(Hotel_S01::Create(), false);
+		//SceneManager::LoadScene(TestScene::Create(), false);
 
 		_LoadNextScene = true;
 	}
-	else if (SceneManager::IsLoaded())
-	{
-		//if (auto SpLogoPanel = _LogoPanel.lock();
-		//	SpLogoPanel) 
-		//{
-		//	SpLogoPanel->SetLoadingFinishedFlag(true);
 
-		//	if (SpLogoPanel->IsReadyToNextScene())
-		//		SceneManager::ActivateScene();
-		//}
+	_CheckLoadingTick += _fDeltaTime;
+	
+	if (0.5f < _CheckLoadingTick)
+	{
+		if (auto SpLTitlePanel = _TitlePanel.lock();
+			SpLTitlePanel)
+		{
+			if (SceneManager::IsLoaded())
+			{
+				SpLTitlePanel->SetLoadingProgress(1.f);
+
+				if (SpLTitlePanel->IsReadyToNextScene())
+					SceneManager::ActivateScene();
+			}
+			else
+			{
+				SpLTitlePanel->SetLoadingProgress(m_fLoadingProgress);
+			}
+		}
+
+		_CheckLoadingTick = 0.f;
 	}
 
 	return S_OK;

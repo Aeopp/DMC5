@@ -443,9 +443,6 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		}
 	}
 
-	//
-	//Imgui_Modify();
-
 	return 0;
 }
 
@@ -457,6 +454,11 @@ UINT StoneDebris::LateUpdate(const float _fDeltaTime)
 void StoneDebris::Editor()
 {
 	GameObject::Editor();
+
+	if (bEdit)
+	{
+		Imgui_Modify();
+	}
 }
 
 void StoneDebris::OnEnable()
