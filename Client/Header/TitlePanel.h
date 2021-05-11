@@ -35,10 +35,17 @@ private:
 
 	bool _ShowLoadingProgress = false;
 
-	// 타이틀 화면부터 미리 로드해서 얘가 갖고 있음
-	// 다른 씬은 전용 패널이 갖고 있자
+	// Title Scene만 스테이지1을 미리 로드
 	float _LoadingProgress = 0.f;
-	std::shared_ptr<ENGINE::Texture> _LoadingBaseTex{};
+	std::shared_ptr<ENGINE::Texture> _Wing0Tex{};
+	std::shared_ptr<ENGINE::Texture> _Wing1Tex{};
+	std::shared_ptr<ENGINE::Texture> _LoadingbarATOSTex{};
+	Matrix _LoadingbarScreenMat = Matrix();
+	float _NoiseAccTime = 0.f;
+	float _LoadingbarCurXPosOrtho = 0.f;
+
+	std::weak_ptr<class Font> _LoadingText{};
+	float _TextBlickTick = 0.f;
 
 private:
 	explicit TitlePanel() = default;
@@ -51,6 +58,7 @@ private:
 private:
 	void	Update_TitleLogic(const float _fDeltaTime);
 	void	Update_LoadingLogic(const float _fDeltaTime);
+	Vector2	ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY);
 public:
 	static TitlePanel* Create();
 public:

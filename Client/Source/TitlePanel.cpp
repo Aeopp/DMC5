@@ -10,6 +10,7 @@ void TitlePanel::Free()
 {
 	Destroy(_NewGameText);
 	Destroy(_ExitText);
+	Destroy(_LoadingText);
 
 	GameObject::Free();
 }
@@ -26,51 +27,79 @@ TitlePanel* TitlePanel::Create()
 
 void TitlePanel::RenderUI(const DrawInfo& _Info)
 {
-	if (_Info.IsAfterPostProcessing)
+	// 타이틀 화면
+	if (!_ShowLoadingProgress && _Info.IsAfterPostProcessing)
 	{
 		auto WeakSubset = _PlaneMesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)
 		{
-			if (_ShowLoadingProgress)
-			{
-				// 로딩바
-				_Info.Fx->SetTexture("ALB0Map", _LoadingBaseTex->GetTexture());
-				_Info.Fx->SetFloat("_SliceAmount", 0.f);
-				_Info.Fx->SetFloat("_BrightScale", _BrightScale);
-				_Info.Fx->SetMatrix("ScreenMat", &_TitleScreenMat);
-				_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
-				_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+			_Info.Fx->SetTexture("ALB0Map", _TitleTex->GetTexture());
+			_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+			_Info.Fx->SetMatrix("ScreenMat", &_TitleScreenMat);
+			_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
 
-				_Info.Fx->BeginPass(0);
-				SharedSubset->Render(_Info.Fx);
-				_Info.Fx->EndPass();
-			}
+			_Info.Fx->BeginPass(0);
+			SharedSubset->Render(_Info.Fx);
+			_Info.Fx->EndPass();
+
+			_Info.Fx->SetTexture("ALB0Map", _SelectTex->GetTexture());
+			_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+			_Info.Fx->SetMatrix("ScreenMat", &_SelectScreenMat);
+			_Info.Fx->SetFloatArray("_MinTexUV", _SelectUVMin, 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", _SelectUVMax, 2u);
+
+			_Info.Fx->BeginPass(0);
+			SharedSubset->Render(_Info.Fx);
+			_Info.Fx->EndPass();
+		}
+	}
+	// 로딩 화면
+	else if (_ShowLoadingProgress && !_Info.IsAfterPostProcessing)
+	{
+		auto WeakSubset = _PlaneMesh->GetSubset(0u);
+		if (auto SharedSubset = WeakSubset.lock();
+			SharedSubset)
+		{
+			if (1.f <= _LoadingProgress)
+				_Info.Fx->SetTexture("ALB0Map", _Wing1Tex->GetTexture());
 			else
-			{
-				// 타이틀 화면
-				_Info.Fx->SetTexture("ALB0Map", _TitleTex->GetTexture());
-				_Info.Fx->SetFloat("_SliceAmount", 0.f);
-				_Info.Fx->SetFloat("_BrightScale", _BrightScale);
-				_Info.Fx->SetMatrix("ScreenMat", &_TitleScreenMat);
-				_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
-				_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+				_Info.Fx->SetTexture("ALB0Map", _Wing0Tex->GetTexture());
 
-				_Info.Fx->BeginPass(0);
-				SharedSubset->Render(_Info.Fx);
-				_Info.Fx->EndPass();
+			_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+			_Info.Fx->SetMatrix("ScreenMat", &_TitleScreenMat);
+			_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
 
-				_Info.Fx->SetTexture("ALB0Map", _SelectTex->GetTexture());
-				_Info.Fx->SetFloat("_SliceAmount", 0.f);
-				_Info.Fx->SetFloat("_BrightScale", _BrightScale);
-				_Info.Fx->SetMatrix("ScreenMat", &_SelectScreenMat);
-				_Info.Fx->SetFloatArray("_MinTexUV", _SelectUVMin, 2u);
-				_Info.Fx->SetFloatArray("_MaxTexUV", _SelectUVMax, 2u);
+			_Info.Fx->BeginPass(0);
+			SharedSubset->Render(_Info.Fx);
+			_Info.Fx->EndPass();
 
-				_Info.Fx->BeginPass(0);
-				SharedSubset->Render(_Info.Fx);
-				_Info.Fx->EndPass();
-			}
+			_Info.Fx->SetTexture("ATOS0Map", _LoadingbarATOSTex->GetTexture());
+			//_Info.Fx->SetFloat("_SliceAmount", 0.f);
+			_Info.Fx->SetFloat("_BrightScale", 0.001f);
+			_Info.Fx->SetMatrix("ScreenMat", &_LoadingbarScreenMat);
+			_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+
+			_Info.Fx->BeginPass(1);
+			SharedSubset->Render(_Info.Fx);
+			_Info.Fx->EndPass();
+
+			Matrix ScreenMat = _LoadingbarScreenMat;
+			ScreenMat._11 *= 0.8f;
+			_Info.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_Info.Fx->SetFloat("_BrightScale", 0.4f);
+			_Info.Fx->SetFloat("_AccumulationTexU", _NoiseAccTime * 0.1f);
+			_Info.Fx->SetFloat("_LoadingbarCurXPosOrtho", _LoadingbarCurXPosOrtho);
+
+			_Info.Fx->BeginPass(2);
+			SharedSubset->Render(_Info.Fx);
+			_Info.Fx->EndPass();
 		}
 	}
 }
@@ -211,25 +240,66 @@ void TitlePanel::Update_TitleLogic(const float _fDeltaTime)
 
 void TitlePanel::Update_LoadingLogic(const float _fDeltaTime)
 {
-	if (1.f > _BrightScale)
-	{
-		_BrightScale += 2.f * _fDeltaTime;
-		if (1.f < _BrightScale)
-			_BrightScale = 1.f;
-	}
+	_NoiseAccTime += _fDeltaTime;
+	float LoadingbarOrthoOffsetToCenter = 0.6875f;
+	_LoadingbarCurXPosOrtho = -LoadingbarOrthoOffsetToCenter + (_LoadingProgress * 2.f * LoadingbarOrthoOffsetToCenter);
 
-	// 로딩 완료
 	if (1.f <= _LoadingProgress)
 	{
-		//if (0.f < _BrightScale)
-		//{
-		//	_BrightScale -= 2.f * _fDeltaTime;
-		//	if (0.f >= _BrightScale)
-		//	{
-				_ReadyToNextScene = true;
-		//	}
-		//}
+		// 로딩 완료
+		_AccTime += _fDeltaTime;
+		if (2.f < _AccTime)
+			_ReadyToNextScene = true;
+
+		_BrightScale -= 1.5f * _fDeltaTime;
+		if (0.f >= _BrightScale)
+			_BrightScale = 0.f;
+
+		_LoadingText.lock()->SetRenderFlag(false);
 	}
+	else
+	{
+		if (1.f > _BrightScale)
+		{
+			_BrightScale += 2.f * _fDeltaTime;
+			if (1.f < _BrightScale)
+				_BrightScale = 1.f;
+		}
+
+		_TextBlickTick += _fDeltaTime;
+		if (_TextRender)
+		{
+			if (1.5f < _TextBlickTick)
+			{
+				_TextRender = false;
+				_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
+				_TextBlickTick = 0.f;
+			}
+		}
+		else
+		{
+			if (0.5f < _TextBlickTick)
+			{
+				_TextRender = true;
+				_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
+				_TextBlickTick = 0.f;
+			}
+		}
+	}
+
+	////
+	//POINT pt{};
+	//GetCursorPos(&pt);
+	//ScreenToClient(g_hWnd, &pt);
+	//Vector2 TargetPos = Vector2(static_cast<float>(pt.x), static_cast<float>(pt.y));
+	//std::cout << ScreenPosToOrtho(TargetPos.x, TargetPos.y).x << std::endl;
+}
+
+Vector2 TitlePanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
+{
+	Vector2 Ret = Vector2(_ScreenPosX - (g_nWndCX >> 1), -(_ScreenPosY - (g_nWndCY >> 1)));
+	D3DXVec2TransformCoord(&Ret, &Ret, &Renderer::GetInstance()->_RenderInfo.Ortho);
+	return Ret;
 }
 
 void TitlePanel::RenderReady()
@@ -268,8 +338,9 @@ HRESULT TitlePanel::Ready()
 	_TitleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\logo_2.png");
 	_SelectTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui4000_iam.tga");
 	
-	// 임시
-	_LoadingBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\logo_0.png");
+	_Wing0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\logo_0.png");
+	_Wing1Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\logo_1.png");
+	_LoadingbarATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\loadingbar_atos.tga");
 
 	_SelectUVMin = Vector2(0.f, 0.f);
 	_SelectUVMax = Vector2(0.f, 0.f);
@@ -289,7 +360,18 @@ HRESULT TitlePanel::Ready()
 	_SelectScreenMat._41 = 0.f;
 	_SelectScreenMat._42 = -150.f;
 	_SelectScreenMat._43 = 0.02f;
-	
+
+	D3DXMatrixIdentity(&_LoadingbarScreenMat);
+	_LoadingbarScreenMat._11 = 12.8f;
+	_LoadingbarScreenMat._22 = 7.6f;
+	_LoadingbarScreenMat._33 = 1.f;
+	Matrix RotMat;
+	D3DXMatrixRotationZ(&RotMat, D3DXToRadian(180.f));
+	_LoadingbarScreenMat *= RotMat;
+	_LoadingbarScreenMat._41 = 0.f;
+	_LoadingbarScreenMat._42 = -280.f;
+	_LoadingbarScreenMat._43 = 0.02f;
+		
 	if (_NewGameText = AddGameObject<Font>();
 		!_NewGameText.expired())
 	{
@@ -313,6 +395,18 @@ HRESULT TitlePanel::Ready()
 			false);
 
 		_ExitText.lock()->SetRenderFlag(true);
+	}
+	if (_LoadingText = AddGameObject<Font>();
+		!_LoadingText.expired())
+	{
+		_LoadingText.lock()->SetText("Now Loading...",
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			Vector2(555.f, 600.f),
+			Vector2(0.67f, 0.67f),
+			Vector3(1.f, 1.f, 1.f),
+			true);
+
+		_LoadingText.lock()->SetRenderFlag(false);
 	}
 
 	return S_OK;

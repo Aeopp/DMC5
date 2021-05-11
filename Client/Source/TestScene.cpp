@@ -63,7 +63,7 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	// 로딩 시작
+	// Load Start
 	m_fLoadingProgress = 0.01f;
 
 #pragma region Player & Camera
@@ -81,7 +81,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Monster
 
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -137,7 +137,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map & RenderData
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 	
 	RenderDataSetUp();
@@ -253,7 +253,8 @@ HRESULT TestScene::LoadScene()
 
 #pragma endregion
 
-	m_fLoadingProgress = 1.f;	// 로딩 완료
+	// Load Complete
+	m_fLoadingProgress = 1.f;
 
 	return S_OK;
 }
