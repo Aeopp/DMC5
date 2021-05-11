@@ -267,10 +267,9 @@ void CbsTrail::ParticleUpdate(const float DeltaTime)
 			auto _PlayableParticle = 
 				ParticleSystem::GetInstance()->PlayParticle("IceCbsMid",300ul,true);
 			// ¾óÀ½ »Ñ¸®¼À
-			const uint32 JumpOffset = 200u;
 			
 			for (int32 i = 0; i < _PlayableParticle.size();
-				i += JumpOffset)
+				++i)
 			{
 				auto& _PlayInstance = _PlayableParticle[i];
 

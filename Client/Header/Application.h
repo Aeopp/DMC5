@@ -16,6 +16,8 @@ private:
 	void ParticlePoolLoad();
 	void IceParticlePoolLoad();
 	void IceCbsMidParticlePoolLoad();
+	void CbsMidParticlePoolLoad();
+
 	void IceAgeParticlePoolLoad();
 	void FireParticlePoolLoad();
 	void ElectricEffectParticlePoolLoad(const std::filesystem::path& _TexPath,

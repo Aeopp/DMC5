@@ -52,6 +52,8 @@ enum GAMEOBJECTTAG
 	Eff_AirHike,
 	Eff_Trail,
 	Eff_CbsTrail,
+	Eff_CbsMidTrail,
+
 	Eff_FireCircle,
 	Eff_ElectricOccur ,
 	Eff_ThunderBolt,
@@ -76,6 +78,21 @@ enum GAMEOBJECTTAG
 	TAG_NeroShinMajin,
 	Tag_END
 };
+
+struct TrailDesc
+{
+	uint32 VtxSize{};
+	uint32 VtxCnt{};
+	uint32 TriCnt{};
+	uint32 IdxSize{};
+	D3DFORMAT IdxFmt{};
+
+	int32 DrawTriCnt;
+	uint32 NewVtxCnt;
+	float UpdateCycle;
+	float CurVtxUpdateCycle;
+};
+
 
 #define OGDistance 0.83f
 #define MaxDistance 0.48f

@@ -452,6 +452,7 @@
     <ClInclude Include="..\Header\ThunderboltSecond.h">
       <Filter>02.GameObject\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\CbsMidTrail.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -723,6 +724,7 @@
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp">
       <Filter>02.GameObject\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CbsMidTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -810,5 +812,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\CbsMidTrail.hlsl" />
   </ItemGroup>
 </Project>

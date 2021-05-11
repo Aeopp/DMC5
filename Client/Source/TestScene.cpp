@@ -43,6 +43,7 @@
 #include "ThunderboltSecond.h"
 #include "ElectricBranch.h"
 #include "AirHike.h"
+#include "CbsMidTrail.h"
 
 #include <iostream>
 #include <fstream>
@@ -67,19 +68,22 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	AddGameObject<CbsMidTrail>();
 	AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	AddGameObject<BtlPanel>();
 
-	AddGameObject<CbsTrail>();
-	AddGameObject<ElectricOccur>();
+	// AddGameObject<CbsTrail>();
+	
+
+	/*AddGameObject<ElectricOccur>();
 	AddGameObject<ThunderBolt>();
 	AddGameObject<ElectricVortex>();
 	AddGameObject<ThunderBoltSecond>();
 	AddGameObject<ElectricBranch>();
-	AddGameObject<AirHike>();
+	AddGameObject<AirHike>();*/
 
 	//AddGameObject<Em0000>();
 	// AddGameObject<Em1000>();
@@ -147,7 +151,7 @@ HRESULT TestScene::LoadScene()
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(pEm0000.lock()));
 	//}
 
-	LoadMap();
+	// LoadMap();
 	AddGameObject<TempMap>();
 	RenderDataSetUp();
 
