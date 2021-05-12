@@ -28,7 +28,7 @@ void Trigger::EventRegist(
 	{
 		_Collider->SetSize(ColliderBoxSize);
 		_Collider->SetActive(true);
-	}
+	};
 
 
 	// 트리거 발동 함수 등록 
@@ -53,7 +53,6 @@ void Trigger::EventRegist(
 	const std::function<void()>& SpawnAfterEvent  ,
 	const std::function<void()>& WaveEndEvent)
 {
-	
 	CheckIfTheDead = std::vector<std::weak_ptr<class Monster>>();
 
 	for (auto& WpMonster : WaveMonster)
@@ -144,6 +143,12 @@ void Trigger::TriggerDisable()
 	{
 		_Collider->SetActive(false);
 	};
+
+	if (auto _Transform = GetComponent<Transform>().lock();
+		_Transform)
+	{
+		_Transform->SetPosition(TriggerLocation);
+	};
 }
 
 void Trigger::Free()
@@ -227,6 +232,12 @@ HRESULT Trigger::Start()
 UINT Trigger::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+
+	if (auto _Transform = GetComponent<Transform>().lock();
+		_Transform)
+	{
+		_Transform->SetPosition(TriggerLocation);
+	};
 
 	if (IsAfterEvent() 
 		&&  (_Option == Option::MonsterWave )  
