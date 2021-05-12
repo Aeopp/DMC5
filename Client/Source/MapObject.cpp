@@ -140,6 +140,7 @@ void MapObject::RenderInit()
 	//		RenderDebug(_Info);
 	//	}
 	//} };
+
 	RenderInterface::Initialize(_InitRenderProp);
 }
 
