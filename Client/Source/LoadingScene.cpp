@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "..\Header\LoadingScene.h"
 #include "Hotel_S01.h"
+#include "Hotel_S02.h"
+#include "Hotel_S03.h"
+#include "Hotel_S04.h"
 #include "TestScene.h"
 #include "LoadingPanel.h"
 

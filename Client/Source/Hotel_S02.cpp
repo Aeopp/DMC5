@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Header\Hotel_S01.h"
+#include "..\Header\Hotel_S02.h"
 #include "LoadingScene.h"
 #include "TempMap.h"
 #include "Nero.h"
@@ -14,24 +14,24 @@
 using namespace std;
 
 
-Hotel_S01::Hotel_S01()
+Hotel_S02::Hotel_S02()
 {
 
 }
 
-void Hotel_S01::Free()
+void Hotel_S02::Free()
 {
 	Scene::Free();
 }
 
-Hotel_S01* Hotel_S01::Create()
+Hotel_S02* Hotel_S02::Create()
 {
-	Hotel_S01* pInstance = new Hotel_S01;
+	Hotel_S02* pInstance = new Hotel_S02;
 	return pInstance;
 }
 
 
-HRESULT Hotel_S01::LoadScene()
+HRESULT Hotel_S02::LoadScene()
 {
 	// Load Start
 	m_fLoadingProgress = 0.01f;
@@ -55,8 +55,8 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map
 
-	LoadObjects("../../Data/Stage1_Map.json");
-	LoadObjects("../../Data/Stage1_Object.json");
+	LoadObjects("../../Data/Stage2_Map.json");
+	LoadObjects("../../Data/Stage2_Object.json");
 
 	AddGameObject<TempMap>();
 	
@@ -91,19 +91,19 @@ HRESULT Hotel_S01::LoadScene()
 	return S_OK;
 }
 
-HRESULT Hotel_S01::Awake()
+HRESULT Hotel_S02::Awake()
 {
 	Scene::Awake();
 	return S_OK;
 }
 
-HRESULT Hotel_S01::Start()
+HRESULT Hotel_S02::Start()
 {
 	Scene::Start();
 	return S_OK;
 }
 
-HRESULT Hotel_S01::Update(const float _fDeltaTime)
+HRESULT Hotel_S02::Update(const float _fDeltaTime)
 {
 	if (!_LateInit)
 		LaitInit();
@@ -114,20 +114,20 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
 	////////////////////////////////////
 
 	return S_OK;
 }
 
-HRESULT Hotel_S01::LateUpdate(const float _fDeltaTime)
+HRESULT Hotel_S02::LateUpdate(const float _fDeltaTime)
 {
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
-void Hotel_S01::LoadObjects(const std::filesystem::path& path)
+void Hotel_S02::LoadObjects(const std::filesystem::path& path)
 {
 	std::ifstream inputStream{ path };
 
@@ -186,7 +186,7 @@ void Hotel_S01::LoadObjects(const std::filesystem::path& path)
 	}
 }
 
-void Hotel_S01::RenderDataSetUp()
+void Hotel_S02::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
@@ -205,12 +205,12 @@ void Hotel_S01::RenderDataSetUp()
 	_Renderer->StarFactor = 0.9f;
 }
 
-void Hotel_S01::TriggerSetUp()
+void Hotel_S02::TriggerSetUp()
 {
 
 }
 
-void Hotel_S01::LaitInit()
+void Hotel_S02::LaitInit()
 {
 	// + 플레이어 초기 위치 잡기 등
 

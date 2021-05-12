@@ -482,6 +482,15 @@
     <ClInclude Include="..\Header\LoadingScene.h">
       <Filter>03.Scene\98.LoadingScene</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Hotel_S02.h">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Hotel_S03.h">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Hotel_S04.h">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -764,6 +773,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\LoadingScene.cpp">
       <Filter>03.Scene\98.LoadingScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Hotel_S02.cpp">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Hotel_S03.cpp">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Hotel_S04.cpp">
+      <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
