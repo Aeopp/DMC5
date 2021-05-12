@@ -4,6 +4,10 @@ matrix ViewProjection;
 uniform float exposure_corr;
 uniform float AlphaFactor;
 uniform float ColorIntencity;
+uniform float Time;
+uniform float DistortionIntencity;
+
+uniform float ScrollSpeed;
 
 uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
@@ -18,7 +22,6 @@ sampler Depth = sampler_state
     sRGBTexture = false;
 };
 
-
 texture AlbmMap;
 sampler Albm = sampler_state
 {
@@ -31,6 +34,31 @@ sampler Albm = sampler_state
     sRGBTexture = true;
 };
 
+texture GradMap;
+sampler Grad = sampler_state
+{
+    texture = GradMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
+};
+
+texture DistortionMap;
+sampler Distortion = sampler_state
+{
+    texture = DistortionMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
+};
+
+
 
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV0 : TEXCOORD0,
@@ -42,18 +70,22 @@ void VsMain(in out float4 Position : POSITION0,
     ClipPosition = Position = mul(Position, ViewProjection);
 };
 
-
 void PsMain(out float4 Color : COLOR0,
-            
+            out float4 Color1 : COLOR1 , 
             in float2 UV0 : TEXCOORD0,
             in float2 UV1 : TEXCOORD1,
 
             in float4 ClipPosition : TEXCOORD2
 )
 {
-    
     Color = tex2D(Albm, UV0);
     Color.a *= AlphaFactor;
+    
+    float factor = sin(Time * ScrollSpeed);
+    Color.rgb *= abs(factor);
+    
+    float cosfactor = cos(Time * ScrollSpeed);
+    Color1 = tex2D(Distortion, float2(UV0.x + factor, UV0.y + cosfactor)) * DistortionIntencity * abs(cosfactor);
     
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;

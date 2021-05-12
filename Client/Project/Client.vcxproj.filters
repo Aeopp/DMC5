@@ -252,11 +252,9 @@
     <ClInclude Include="..\Header\Car.h">
       <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\Car</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\TestObject.h">
       <Filter>02.GameObject\Test</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\Buster_Arm.h">
       <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
     </ClInclude>
@@ -751,6 +749,10 @@
     <ClCompile Include="..\Source\Hotel_S01.cpp">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Trigger.cpp" />
+    <ClCompile Include="..\Source\BlitzAttack.cpp" />
+    <ClCompile Include="..\Source\ThunderBolt.cpp" />
+    <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

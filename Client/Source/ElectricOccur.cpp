@@ -2,12 +2,15 @@
 #include "..\Header\ElectricOccur.h"
 #include "Transform.h"
 #include "Subset.h"
+#include "Color.h"
+
 #include "TextureType.h"
 #include "Renderer.h"
 #include <iostream>
 #include "GraphicSystem.h"
 #include "RedQueen.h"
 #include "ParticleSystem.h"
+#include "FLight.h"
 
 ElectricOccur::ElectricOccur()
 {
@@ -36,9 +39,10 @@ void ElectricOccur::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const Vector3 Scale = _SpTransform->GetScale();
+		/*const Vector3 Scale = FMath::Lerp(StartScale, FinalSacle, T / PlayTime);
+		_SpTransform->SetScale(Scale);*/
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-		if (Mesh)
+		/*if (Mesh)
 		{
 			const uint32 Numsubset = Mesh->GetNumSubset();
 			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
@@ -50,7 +54,7 @@ void ElectricOccur::RenderReady()
 
 				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
 			}
-		}
+		}*/
 	}
 };
 
@@ -90,10 +94,14 @@ void ElectricOccur::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	Mesh = Resources::Load<StaticMesh>("..\\..\\Usable\\Electric\\magic_eletric00.fbx", _InitInfo);
+	GradMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\Grad.png");
+	DistortionMap = Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
 void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 {
+	PlayEnd();
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -104,23 +112,24 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 	_RenderProperty.bRender = true;
 	CurParticleTime = 0.0f;
 
-	if (auto _Particle =
-		ParticleSystem::GetInstance()->PlayParticle(
-		"ElectricParticle", true); 
-		_Particle.empty()==false)
-	{
-		static constexpr uint32 JumpOffset = 3u;
 
-		for (int32 i = 0; i < _Particle.size(); i+= JumpOffset)
-		{
-			auto& _PlayInstance = _Particle[i];
-			_PlayInstance->PlayDescBind(FMath::Identity());
-		}
+	PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
+
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->bEnable = true;
 	}
 };
 
 void ElectricOccur::PlayEnd()
 {
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->bEnable = false;
+	}
+
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 };
@@ -128,8 +137,15 @@ void ElectricOccur::PlayEnd()
 void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T*ScrollSpeed)) );
+	_Info.Fx->SetFloat("Time", T);
+	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
+	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
 
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+
+	;
+	_Info.Fx->SetTexture("DistortionMap", DistortionMap->GetTexture());
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
 	{
@@ -148,11 +164,6 @@ void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			if (auto SpSubset = Mesh->GetSubset(i).lock();
 				SpSubset)
 			{
-				if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-				{
-					continue;
-				}
-
 				SpSubset->BindProperty(TextureType::DIFFUSE, 0u, "AlbmMap", _Info.Fx);
 				SpSubset->Render(_Info.Fx);
 			};
@@ -163,23 +174,23 @@ void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void ElectricOccur::PlayParticle()
 {
-	/*if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
-		const Matrix Mat = SpTransform->GetRenderMatrix();
-		const uint32 RangeEnd = Mesh->m_spVertexLocations->size() - 1u;
-		const uint32 JumpOffset = 2u;
-
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				"ElectricParticle", 1000ul,true);
+			_Particle.empty() == false)
 		{
-			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("FireParticle", true);
-			for (int32 i = 0; i < _PlayableParticle.size();
-				i += JumpOffset)
+			
+			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
-				auto& _PlayInstance = _PlayableParticle[i];
+				auto& _PlayInstance = _Particle[i];
 				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
 			}
 		}
-	};*/
+
+	};
 }
 
 
@@ -211,9 +222,6 @@ void ElectricOccur::RenderDebug(const DrawInfo& _Info)
 HRESULT ElectricOccur::Ready()
 {
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
-	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	return S_OK;
@@ -222,10 +230,11 @@ HRESULT ElectricOccur::Ready()
 HRESULT ElectricOccur::Awake()
 {
 	GameObject::Awake();
-	
-	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
-	m_pTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
+	auto InitTransform = GetComponent<ENGINE::Transform>();
+	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
+	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
+	InitTransform.lock()->SetScale(Vector3{ 0.0001f,0.0001f,0.0001f });
+
 	return S_OK;
 }
 
@@ -253,6 +262,23 @@ UINT ElectricOccur::Update(const float _fDeltaTime)
 	{
 		CurParticleTime += ParticleTime;
 		PlayParticle();
+	}
+
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		if (auto SpTransform = GetComponent<Transform>().lock();
+			SpTransform)
+		{
+			SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
+			SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
+			SpPtLight->PointRadius = PtLightRadius;
+			SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
+		}
+		else
+		{
+			SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+		}
 	}
 
 	return 0;
@@ -288,8 +314,21 @@ void ElectricOccur::Editor()
 				PlayEnd();
 			}
 
+
+			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 10000.f, "%9.6f");
+			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 0.f, "%9.6f");
+
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");
+
+			ImGui::SliderFloat("ScrollSpeed", &ScrollSpeed, FLT_MIN, 1000.f, "%9.6f");
+			ImGui::InputFloat("In ScrollSpeed", &ScrollSpeed, 0.f, 0.f, "%9.6f");
+
+			ImGui::SliderFloat("PtLightRadius", &PtLightRadius, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In PtLightRadius", &PtLightRadius, 0.f, 0.f, "%9.6f");
+
+			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In PtLightFlux", &PtLightFlux, 0.f, 0.f, "%9.6f");
 		}
 		ImGui::EndChild();
 	}

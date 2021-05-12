@@ -54,8 +54,14 @@ enum GAMEOBJECTTAG
 	Eff_AirHike,
 	Eff_Trail,
 	Eff_CbsTrail,
+	Eff_CbsMidTrail,
+	Eff_BlitzAttack,
 	Eff_FireCircle,
 	Eff_ElectricOccur ,
+	Eff_ThunderBolt,
+	Eff_ThunderBoltSecond,
+	Eff_ElectricBranch,
+	Eff_ElectricVortex,
 	Eff_IceAge,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
@@ -75,6 +81,7 @@ enum GAMEOBJECTTAG
 	TAG_JudgementShadow1,
 	TAG_JudgementShadow2,
 	TAG_JudgementShadow3,
+	TAG_Trigger,
 	Tag_END
 };
 
@@ -91,6 +98,10 @@ enum WingSwordAnimationList
 	WingSword_Stinger_End,
 	WingSword_Stinger_Loop,
 	WingSword_Stinger_Start,
+	WingSword_HT,
+	WingSword_ComboB2_Loop,
+	WingSword_ComboB2_End,
+	WingSword_Helm,
 	WingSword_End
 };
 

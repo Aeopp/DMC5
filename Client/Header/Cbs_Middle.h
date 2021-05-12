@@ -37,6 +37,8 @@ public:
 public:
 	void	SetAttType(ATTACKTYPE _eAttDir) { m_BattleInfo.eAttackType = _eAttDir; }
 	void	SetWeaponState(UINT _StateIndex) { m_iBoneIndex = _StateIndex; }
+	/* 2021 05 08 트레일 본 위치를 구하기 위해서 바지사장 RedQueen 의 함수와 똑같이 만들었음 !! */
+	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;

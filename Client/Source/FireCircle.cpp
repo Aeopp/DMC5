@@ -272,12 +272,13 @@ void FireCircle::PlayParticle()
 	{
 		const Matrix Mat = SpTransform->GetRenderMatrix();
 		const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-		const uint32 JumpOffset = 2u;
+		
 
 		{
-			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle("FireParticle", true);
+			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle(
+				"FireParticle", 1000ul,true);
 			for (int32 i = 0; i < _PlayableParticle.size();
-				i += JumpOffset)
+				++i)
 			{
 				auto& _PlayInstance = _PlayableParticle[i];
 				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());

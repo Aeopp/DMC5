@@ -65,14 +65,14 @@ UINT WingArm_Right::Update(const float _fDeltaTime)
 	{
 		if (m_pMesh->IsAnimationEnd())
 		{
-			//SetActive(false);
+			SetActive(false);
 			if (m_pNero.lock()->Get_IsMajinMode())
 				m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
 		}
 	}
-	else if (0.52 <= fCurAnimationTime && !m_bLoop)
+	else if (0.52f <= fCurAnimationTime && !m_bLoop)
 	{
-		//SetActive(false);
+		SetActive(false);
 		if(m_pNero.lock()->Get_IsMajinMode())
 			m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
 	}

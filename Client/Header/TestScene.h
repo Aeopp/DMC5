@@ -37,5 +37,6 @@ public:
 public:
 	void LoadMap();
 	void RenderDataSetUp();
+	void TriggerSetUp();
 };
 #endif // !__TEST_SCENE_H__

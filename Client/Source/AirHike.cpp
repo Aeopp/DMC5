@@ -5,6 +5,7 @@
 #include "TextureType.h"
 #include "Renderer.h"
 #include <iostream>
+#include "ParticleSystem.h"
 
 void AirHike::Free()
 {
@@ -33,7 +34,6 @@ void AirHike::RenderReady()
 			SpTransform)
 		{
 			SpTransform->SetScale({ CurScale ,CurScale ,CurScale });
-			SpTransform->SetRotation({ 90.f,0,0 });
 			_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 			if (_StaticMesh)
 			{
@@ -99,15 +99,12 @@ void AirHike::RenderInit()
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
 			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx" , _InitInfo);
 
-	_MagicTexture =
+	_MagicTexture =  
 		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\MagicTexture.tga");
-
 	_MagicAlb = 
 		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_pl_0120_0000_alb.tga");
 	_MagicMsk= 
 		Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_decal_pl0120_0000_msk2.tga");
-
-
 
 	PushEditEntity(_StaticMesh.get());
 };
@@ -127,17 +124,20 @@ void AirHike::PlayStart(
 		}
 	}
 
+	CurParticleTime = 0.0f;
 	this->StartScale = StartScale;
 	this->FinalScale = FinalScale;
 	this->PlayTime = PlayTime;
 	T = 0.0f;
 	_RenderProperty.bRender = true;
+	bPlayedEndParticle = false;
 };
 
 void AirHike::PlayEnd()
 {
 	_RenderProperty.bRender = false;
     T = 0.0f;
+
 };
 
 void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -203,7 +203,7 @@ HRESULT AirHike::Ready()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
 	InitTransform.lock()->SetPosition(Vector3{0.f,0.11544f,0.f });
-	InitTransform.lock()->SetRotation(Vector3{0.f ,0.f ,90.f});
+	InitTransform.lock()->SetRotation(Vector3{90.f ,0.f ,0.0f});
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -233,6 +233,37 @@ UINT AirHike::Update(const float _fDeltaTime)
 	T += _fDeltaTime * Speed;
 	Sin = std::sinf(T);
 
+	if (bPlayedEndParticle == false && T >=  ( FMath::PI / 4.f) )
+	{
+		bPlayedEndParticle = true;
+
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
+		{
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"AirHikeEndParticle", 2000ul, true);
+				_Particle.empty() == false)
+			{
+
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
+			}
+		};
+	}
+
+	CurParticleTime -= _fDeltaTime;
+	if (CurParticleTime < 0.0f)
+	{
+		CurParticleTime += ParticleTime;
+		PlayParticle();
+	}
+
+	
+
 	// 끝날 쯔음 .
 	if (T >= PlayTime)
 	{
@@ -241,6 +272,26 @@ UINT AirHike::Update(const float _fDeltaTime)
 
 	return 0;
 }
+
+void AirHike::PlayParticle()
+{
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				"AirHikeParticle", 333ul, true);
+			_Particle.empty() == false)
+		{
+
+			for (int32 i = 0; i < _Particle.size(); ++i)
+			{
+				auto& _PlayInstance = _Particle[i];
+				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+			}
+		}
+	};
+};
 
 UINT AirHike::LateUpdate(const float _fDeltaTime)
 {

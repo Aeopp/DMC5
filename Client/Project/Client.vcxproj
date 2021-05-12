@@ -255,6 +255,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
     <ClCompile Include="..\Source\CbsTrail.cpp" />
     <ClCompile Include="..\Source\Cbs_Long.cpp" />
@@ -283,6 +284,8 @@
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
+    <ClCompile Include="..\Source\ThunderBolt.cpp" />
+    <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
@@ -325,6 +328,7 @@
     <ClCompile Include="..\Source\TestScene.cpp" />
     <ClCompile Include="..\Source\TitleScene.cpp" />
     <ClCompile Include="..\Source\Trail.cpp" />
+    <ClCompile Include="..\Source\Trigger.cpp" />
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
