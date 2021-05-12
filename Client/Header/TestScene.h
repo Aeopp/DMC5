@@ -37,10 +37,8 @@ public:
 public:
 	void LoadMap();
 	void RenderDataSetUp();
+	void MonsterWaveTriggerSetUp();
 	void TriggerSetUp();
-	std::shared_ptr<class Trigger> GetTestTrigger(
-		const bool Enable,
-		const std::shared_ptr<class Trigger>& _Trigger);
 	
 };
 #endif // !__TEST_SCENE_H__
