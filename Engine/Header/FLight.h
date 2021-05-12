@@ -76,6 +76,7 @@ public:
 
 	RECT LastScissorRect{ 0,0,0,0 };
 
+	bool bEnable = true;
 public:
 	Vector3 GetDirection()
 	{

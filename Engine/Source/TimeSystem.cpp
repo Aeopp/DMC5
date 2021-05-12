@@ -19,6 +19,11 @@ void TimeSystem::Free()
 
 }
 
+void TimeSystem::SetSlowly(const float Slowly)
+{
+	this->Slowly = Slowly;
+}
+
 HRESULT TimeSystem::ReadyTimeSystem()
 {
 	m_PrevTime= std::chrono::high_resolution_clock::now();

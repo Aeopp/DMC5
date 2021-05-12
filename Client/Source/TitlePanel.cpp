@@ -325,7 +325,7 @@ HRESULT TitlePanel::Ready()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::UI] =
 	{
-		{"TitlePanel",
+		{"LoadingPanel",
 		[this](const DrawInfo& _Info)
 			{
 				this->RenderUI(_Info);

@@ -184,14 +184,17 @@
     <Filter Include="03.Scene\01.Title">
       <UniqueIdentifier>{39652d87-8e4a-48e1-b1b4-a84250cad958}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\UI\Misc">
-      <UniqueIdentifier>{e47f0001-a56a-4b6f-a6ce-f285c618963f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.Scene\02.Mission01_Hotel">
       <UniqueIdentifier>{825e978e-7ea9-4647-a55b-2afdfaba19f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Scene\03.Mission02_Library">
       <UniqueIdentifier>{e6c1dff5-fa82-4498-9a77-11b4f8d6babd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Scene\98.LoadingScene">
+      <UniqueIdentifier>{baf33938-8a2d-413c-93d7-140fbf3cbefe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\Scene">
+      <UniqueIdentifier>{e47f0001-a56a-4b6f-a6ce-f285c618963f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -252,11 +255,9 @@
     <ClInclude Include="..\Header\Car.h">
       <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\Car</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\TestObject.h">
       <Filter>02.GameObject\Test</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\DashImpact.h" />
     <ClInclude Include="..\Header\Buster_Arm.h">
       <Filter>02.GameObject\01.Unit\01.Player\04.BusterArm</Filter>
     </ClInclude>
@@ -289,9 +290,6 @@
     </ClInclude>
     <ClInclude Include="..\Header\WingArm_Right.h">
       <Filter>02.GameObject\01.Unit\01.Player\02.WingArms\Right</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\DashImpact.h">
-      <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em100Hand.h">
       <Filter>02.GameObject\01.Unit\02.Monster\00.Em100\00.Hand</Filter>
@@ -456,16 +454,16 @@
       <Filter>03.Scene\00.Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\TitlePanel.h">
-      <Filter>02.GameObject\UI\Misc</Filter>
+      <Filter>02.GameObject\UI\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\UI\TitlePanel.hlsl">
-      <Filter>02.GameObject\UI\Misc</Filter>
+    <ClInclude Include="..\..\Resource\Shader\UI\LoadingPanel.hlsl">
+      <Filter>02.GameObject\UI\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\LogoPanel.h">
-      <Filter>02.GameObject\UI\Misc</Filter>
+      <Filter>02.GameObject\UI\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Resource\Shader\UI\LogoPanel.hlsl">
-      <Filter>02.GameObject\UI\Misc</Filter>
+      <Filter>02.GameObject\UI\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\TitleScene.h">
       <Filter>03.Scene\01.Title</Filter>
@@ -477,6 +475,12 @@
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\Hotel_S01.h">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\LoadingPanel.h">
+      <Filter>02.GameObject\UI\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\LoadingScene.h">
+      <Filter>03.Scene\98.LoadingScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -735,10 +739,10 @@
       <Filter>03.Scene\00.Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\TitlePanel.cpp">
-      <Filter>02.GameObject\UI\Misc</Filter>
+      <Filter>02.GameObject\UI\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\LogoPanel.cpp">
-      <Filter>02.GameObject\UI\Misc</Filter>
+      <Filter>02.GameObject\UI\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\TitleScene.cpp">
       <Filter>03.Scene\01.Title</Filter>
@@ -750,6 +754,16 @@
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Trigger.cpp" />
+    <ClCompile Include="..\Source\BlitzAttack.cpp" />
+    <ClCompile Include="..\Source\ThunderBolt.cpp" />
+    <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
+    <ClCompile Include="..\Source\LoadingPanel.cpp">
+      <Filter>02.GameObject\UI\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\LoadingScene.cpp">
+      <Filter>03.Scene\98.LoadingScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

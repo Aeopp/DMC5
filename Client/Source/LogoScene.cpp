@@ -5,7 +5,6 @@
 #include "TitleScene.h"
 #include "TestScene.h"
 
-
 void LogoScene::Free()
 {
 	Scene::Free();

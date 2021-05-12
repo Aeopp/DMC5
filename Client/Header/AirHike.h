@@ -54,7 +54,12 @@ public:
 		const float PlayTime = FMath::PI/2.f);
 	void PlayEnd();
 private:
+	void PlayParticle();
 public:
+	float ParticleTime = 0.001f;
+	float CurParticleTime = 0.0f;
+
+	bool bPlayedEndParticle = false;
 	float PlayTime = FMath::PI / 2.f;
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);

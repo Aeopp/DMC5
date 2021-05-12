@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "..\Header\Hotel_S01.h"
+#include "LoadingScene.h"
 #include "TempMap.h"
 #include "Nero.h"
 #include "BtlPanel.h"
+#include "Camera.h"
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
@@ -36,8 +38,9 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<MainCamera>();
+	//AddGameObject<Camera>();
 
+	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -50,16 +53,25 @@ HRESULT Hotel_S01::LoadScene()
 
 	m_fLoadingProgress = 0.4f;
 
-#pragma region Map & RenderData
+#pragma region Map
 
-	//LoadMap();
+	LoadObjects("../../Data/Stage1_Map.json");
+	LoadObjects("../../Data/Stage1_Object.json");
+
 	AddGameObject<TempMap>();
 	
-	RenderDataSetUp();
-
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
+
+#pragma region RenderData & Trigger
+
+	RenderDataSetUp();
+	TriggerSetUp();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.8f;
 
 #pragma region UI & Effect
 
@@ -67,7 +79,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma endregion
 
-	m_fLoadingProgress = 0.8f;
+	m_fLoadingProgress = 0.9f;
 
 #pragma region Misc
 
@@ -93,7 +105,20 @@ HRESULT Hotel_S01::Start()
 
 HRESULT Hotel_S01::Update(const float _fDeltaTime)
 {
+	if (!_LateInit)
+		LaitInit();
+
 	Scene::Update(_fDeltaTime);
+
+	// 테스트용 ////////////////////////
+	if (Input::GetKeyDown(DIK_NUMPAD9))
+	{
+		
+		// TestScene으로 넘어감
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
+	}
+	////////////////////////////////////
+
 	return S_OK;
 }
 
@@ -103,10 +128,9 @@ HRESULT Hotel_S01::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
-void Hotel_S01::LoadMap()
+void Hotel_S01::LoadObjects(const std::filesystem::path& path)
 {
-	std::ifstream inputStream{ "../../Data/Hotel.json" };
-	//std::ifstream inputStream{ "../../Data/Mission02.json" };
+	std::ifstream inputStream{ path };
 
 	if (false == inputStream.is_open())
 		return;
@@ -142,21 +166,21 @@ void Hotel_S01::LoadMap()
 
 			D3DXVECTOR3 vScale;
 			auto scale = iterObject->FindMember("Scale")->value.GetArray();
-			vScale.x = scale[0].GetDouble();
-			vScale.y = scale[1].GetDouble();
-			vScale.z = scale[2].GetDouble();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
 
 			D3DXVECTOR3 vRotation;
 			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
-			vRotation.x = rotation[0].GetDouble();
-			vRotation.y = rotation[1].GetDouble();
-			vRotation.z = rotation[2].GetDouble();
-			
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
 			D3DXVECTOR3 vPosition;
 			auto position = iterObject->FindMember("Position")->value.GetArray();
-			vPosition.x = position[0].GetDouble();
-			vPosition.y = position[1].GetDouble();
-			vPosition.z = position[2].GetDouble();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
 
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
@@ -180,4 +204,16 @@ void Hotel_S01::RenderDataSetUp()
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+}
+
+void Hotel_S01::TriggerSetUp()
+{
+
+}
+
+void Hotel_S01::LaitInit()
+{
+	// + 플레이어 초기 위치 잡기 등
+
+	_LateInit = true;
 }

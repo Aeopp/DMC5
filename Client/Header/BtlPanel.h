@@ -50,6 +50,7 @@ private:
 
 	std::shared_ptr<ENGINE::Texture> _BossGaugeATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _BossGaugeNRMRTex{};
+	std::shared_ptr<ENGINE::Texture> _LoadingbarAlpTex{};
 
 	std::shared_ptr<ENGINE::StaticMesh> _HPGlassMesh{};
 	std::shared_ptr<ENGINE::Texture> _HPGlassATOSTex{};

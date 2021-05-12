@@ -283,23 +283,31 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0005f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.00085f);
 			_ImplInfo.Fx->BeginPass(4);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.005f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0085f);
 			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrthoDelay);
 			_ImplInfo.Fx->BeginPass(19);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 			_ImplInfo.Fx->SetFloat("_BossGaugeCurXPosOrtho", _BossGauge_CurXPosOrtho);
+			_ImplInfo.Fx->SetFloat("_AccumulationTexU", _TotalAccumulateTime * 0.1f);
 			_ImplInfo.Fx->BeginPass(5);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0125f);
 			_ImplInfo.Fx->BeginPass(6);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			Create_ScreenMat(CurID, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetTexture("ATOS0Map", _LoadingbarAlpTex->GetTexture());
+			_ImplInfo.Fx->BeginPass(20);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 		}
@@ -670,7 +678,8 @@ HRESULT BtlPanel::Ready()
 
 	_BossGaugeATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\BossGauge_ATOS.tga");
 	_BossGaugeNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\BossGauge_NRMR.tga");
-	
+	_LoadingbarAlpTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\loadingbar_alp.tga");
+
 	_HPGlassMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\UI\\hud_gd_s.fbx");
 	_HPGlassATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\HUD_HPdante_Glass_S_ATOS.tga");
 	_HPGlassNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\HUD_HPdante_Glass_S_NRMR.tga");
@@ -1038,6 +1047,7 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			goto DEFAULT;
 		}
 		break;
+
 	case TARGET_CURSOR:
 		if (1 == _Opt)
 		{
@@ -1231,6 +1241,22 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		_Out._41 = (_UIDescs[_ID].Pos.x + _Opt * _HPGaugeWidth) - (g_nWndCX >> 1);
 		_Out._42 = -(_UIDescs[_ID].Pos.y - (g_nWndCY >> 1));
 		_Out._43 = _UIDescs[_ID].Pos.z;
+		break;
+
+	case BOSS_GUAGE:
+		if (1 == _Opt)
+		{
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.4f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = _UIDescs[_ID].Pos.x - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y - 1.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+		}
+		else
+		{
+			goto DEFAULT;
+		}
 		break;
 
 	case KEYBOARD:
@@ -2099,7 +2125,6 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
 		//bActive = !bActive;
 		//SetBossGaugeActive(bActive);
-
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{

@@ -36,7 +36,8 @@ FLight::FLight()
 	Spotparams = D3DXVECTOR2(0, 0);
 	CubeshadowmapSurface.fill(nullptr);
 	CubeCacheshadowmapSurface.fill(nullptr);
-
+	CubeDepthStencil.fill(nullptr);
+	CubeCacheDepthStencil.fill(nullptr);
 	Position = { 0.f,0.f,0.f ,1.f};
 	BlurIntencity = 4.f;
 	Cubeshadowmap = nullptr;
@@ -47,6 +48,11 @@ FLight::FLight()
 	ShadowMapSize = 0;
 	Blurred = false;
 	PointRadius = 7.1f;
+	bEnable = true;
+
+	
+
+
 }
 
 FLight::FLight(
@@ -59,14 +65,22 @@ FLight::FLight(
 	this->Position = position;
 	this->Color = color;
 
+	bEnable = true;
 	Projparams = D3DXVECTOR4(0, 0, 0, 0);
 	Spotdirection = D3DXVECTOR3(0, 0, 0);
 	Spotparams = D3DXVECTOR2(0, 0);
-
+	CubeshadowmapSurface.fill(nullptr);
+	CubeCacheshadowmapSurface.fill(nullptr);
+	CubeDepthStencil.fill(nullptr);
+	CubeCacheDepthStencil.fill(nullptr);
 	BlurIntencity = blurIntencity;
 	Cubeshadowmap = nullptr;
+	CacheShadowMap = nullptr;
+
 	Shadowmap = nullptr;
 	Blurredshadowmap = nullptr;
+
+
 	Currentface = 0;
 	ShadowMapSize = 0;
 	Blurred = false;
@@ -130,8 +144,6 @@ FLight::~FLight()
 			_Surface->Release();
 		}
 	}
-
-
 
 	for (auto& _Surface : CubeDepthStencil)
 	{

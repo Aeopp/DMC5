@@ -39,9 +39,18 @@
 #include "ParticleInstanceDesc.hpp"
 #include "CbsTrail.h"
 #include "ElectricOccur.h"
+#include "Thunderbolt.h"
+#include "ElectricVortex.h"
+#include "ThunderboltSecond.h"
+#include "ElectricBranch.h"
+#include "AirHike.h"
+#include "CbsMidTrail.h"
+#include "BlitzAttack.h"
+#include "Trigger.h"
 
 #include <iostream>
 #include <fstream>
+
 using namespace std;
 
 TestScene::TestScene()
@@ -58,7 +67,7 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-}
+};
 
 
 HRESULT TestScene::LoadScene()
@@ -66,12 +75,20 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
+#pragma region Trigger
+	TriggerSetUp();
+#pragma endregion
+
+#pragma region Effect
+	AddGameObject<BlitzAttack>();
+	AddGameObject<CbsMidTrail>();
+#pragma endregion
+	m_fLoadingProgress = 0.1f;
+
 #pragma region Player & Camera
-
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 	//AddGameObject<JudgementSword>();
 
 #pragma endregion
@@ -137,9 +154,8 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map & RenderData
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
-	
 	RenderDataSetUp();
 
 #pragma endregion
@@ -242,7 +258,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 17, Until Dooms Day",
+		pFont->SetText("D 15, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
@@ -392,12 +408,12 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 {
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
-}
+};
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Hotel.json" };
-	//std::ifstream inputStream{ "../../Data/Mission02.json" };
+	// std::ifstream inputStream{ "../../Data/Hotel.json" };
+	std::ifstream inputStream{ "../../Data/Stage1_Map.json" };
 
 	if (false == inputStream.is_open())
 		return;
@@ -442,7 +458,7 @@ void TestScene::LoadMap()
 			vRotation.x = rotation[0].GetDouble();
 			vRotation.y = rotation[1].GetDouble();
 			vRotation.z = rotation[2].GetDouble();
-			
+
 			D3DXVECTOR3 vPosition;
 			auto position = iterObject->FindMember("Position")->value.GetArray();
 			vPosition.x = position[0].GetDouble();
@@ -452,7 +468,7 @@ void TestScene::LoadMap()
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
-}
+};
 
 void TestScene::RenderDataSetUp()
 {
@@ -460,7 +476,7 @@ void TestScene::RenderDataSetUp()
 	auto _Renderer = Renderer::GetInstance();
 	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
 	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;
@@ -471,4 +487,61 @@ void TestScene::RenderDataSetUp()
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+}
+
+void TestScene::TriggerSetUp()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>()
+		};
+
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f};
+		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
+		const bool ImmediatelyEnable = true;
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+		const std::function<void()> SpawnWaveAfterEvent = nullptr;
+
+		_Trigger->EventRegist(MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent);
+	}
+
+	/*if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		std::function<void()> _CallBack{};
+
+		_CallBack = []()
+		{
+			PRINT_LOG(L"Log", L"Trigger Event !!");
+		};
+
+		_Trigger->EventRegist(_CallBack,
+			Vector3{ -0.52020f,0.00822f,-0.52510f },
+			Vector3{ 1.f,1.f,1.f },
+			true,
+			GAMEOBJECTTAG::Player);
+	}*/
 }

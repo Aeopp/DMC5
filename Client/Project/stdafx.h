@@ -41,6 +41,7 @@ enum GAMEOBJECTTAG
 	UI_Font,
 	UI_LogoPanel,
 	UI_TitlePanel,
+	UI_LoadingPanel,
 	Eff_Glint,
 	Eff_OvertureHand,
 	Eff_Liquid,
@@ -54,8 +55,14 @@ enum GAMEOBJECTTAG
 	Eff_AirHike,
 	Eff_Trail,
 	Eff_CbsTrail,
+	Eff_CbsMidTrail,
+	Eff_BlitzAttack,
 	Eff_FireCircle,
 	Eff_ElectricOccur ,
+	Eff_ThunderBolt,
+	Eff_ThunderBoltSecond,
+	Eff_ElectricBranch,
+	Eff_ElectricVortex,
 	Eff_IceAge,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
@@ -75,6 +82,7 @@ enum GAMEOBJECTTAG
 	TAG_JudgementShadow1,
 	TAG_JudgementShadow2,
 	TAG_JudgementShadow3,
+	TAG_Trigger,
 	Tag_END
 };
 
@@ -111,6 +119,19 @@ struct TrailDesc
 	uint32 NewVtxCnt;
 	float UpdateCycle;
 	float CurVtxUpdateCycle;
+};
+
+
+enum SCENE_ID
+{
+	HOTEL_S01,
+	HOTEL_S02,
+	HOTEL_S03,
+	HOTEL_S04,
+	LIBRARY_S01,
+	LIBRARY_S02,
+
+	SCENE_ID_END
 };
 
 
