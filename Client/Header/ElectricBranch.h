@@ -46,7 +46,11 @@ public:
 public:
 	void PlayStart(const Vector3& PlayLocation);
 	void PlayEnd();
+	float GetPlayTime();
 public:
+	float PtLightRadius = 10.f;
+	float PtLightFlux = 10.f;
+
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
@@ -72,8 +76,7 @@ private:
 	float ScrollSpeed = 445.f;
 	float DistortionIntencity = 1.5f;
 
-	float PtLightRadius = 10.f;
-	float PtLightFlux = 10.f;
+
 	std::weak_ptr<FLight> PtLight;
 
 	float Range = 0.0f;

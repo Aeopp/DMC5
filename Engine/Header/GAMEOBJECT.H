@@ -21,6 +21,7 @@ private:
 	//GameObject가 속한 Scene의 LoopPool의 어느 단계에 있는지 보관하는 변수.
 	UINT		m_nLoopIdx;
 	bool		m_bRenderRegist;
+	bool        m_bEditable;
 protected:
 	std::vector<Object*>		m_pEditObjects{};
 	std::weak_ptr<GameObject>	m_pGameObject;
@@ -64,6 +65,9 @@ public:
 	template<typename TYPE>
 	std::list<std::weak_ptr<TYPE>>	FindGameObjectsWithType();
 
+	bool IsEditable() const;
+	void SetEditable(const bool bEditable);
+	std::vector<Object*>& GetEditEntitys();
 public:
 	void	Destroy(std::weak_ptr<GameObject> const _pGameObject);
 	bool    IsRenderEnable();

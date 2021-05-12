@@ -6,9 +6,23 @@
 #include "Vertexs.h"
 
 class CbsMidTrail : public ENGINE::GameObject,
-			     public ENGINE::RenderInterface
+			        public ENGINE::RenderInterface
 {
 public:
+	struct EffectDesc
+	{
+		Vector3 LocationOffset{ 0.0f,0.0f,0.0f };
+		float T = 0.0f;
+		float PlayTime = 0.0f;
+		bool  bPlayEnd = true;
+		GAMEOBJECTTAG _Tag{};
+		std::weak_ptr<class GameObject> _Effect{};
+	};
+
+	static constexpr int32 EffectParticleCount = 1000;
+
+	std::array<CbsMidTrail::EffectDesc,EffectParticleCount> _PlayEffectDescs{};
+
 	enum  Mode : uint32
 	{
 		Non,
@@ -58,13 +72,17 @@ private:
 	float     T = 0.0f;
 
 	std::array<std::vector<Vertex::Index32>, BoneCnt> _IdxLog{};
-	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _VtxLog{};
+	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _TrailVtxWorldLocations{};
 
 	// Low High
 	std::array<std::pair<Vector3, Vector3>, BoneCnt >  LatelyOffsets{};
 
 	float ParticleCycle = 0.35f;
 	float CurParticleCycle = 0.0f;
+
+	int32  CurEffectParticleIdx = 0;
+	float EffectParticleCycle = 0.01f;
+	float CurEffectParticleCycle = 0.0f;
 private:
 	explicit CbsMidTrail()  ;
 	virtual ~CbsMidTrail() = default;
@@ -93,6 +111,7 @@ public:
 private:
 	void BufferUpdate(const float DeltaTime);
 	void ParticleUpdate(const float DeltaTime);
+	void EffectParticleUpdate(const float DeltaTime);
 	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
 	void VtxUVCalc(Vertex::TrailVertex* const VtxPtr);
 	void VertexBufUpdate();
@@ -100,5 +119,7 @@ private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);
+
+
 };
 #endif //

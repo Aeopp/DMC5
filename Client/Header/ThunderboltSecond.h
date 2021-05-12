@@ -7,15 +7,15 @@
 #include <optional>
 
 class ThunderBoltSecond  : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+						   public ENGINE::RenderInterface
 {
 public:
 	enum Mode : uint8
 	{
 		Loop,
 		Rand,
-		All,
 		Set,
+		All,
 		End
 	};
 private:
@@ -46,11 +46,17 @@ public:
 public:
 	void PlayStart(const Vector3& PlayLocation);
 	void PlayEnd();
+	float GetPlayTime();
 public:
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
-private:
+
+	void Dice(const uint32 ModeRangeEnd);
+
+	float PtLightRadius = 1.f;
+	float PtLightFlux = 1.f;
+public:
 	std::bitset<4u> _SubsetSets{};
 	uint32 CurSubset = 0u;
 	uint32 CurSubsetRand = 0u;
@@ -72,8 +78,7 @@ private:
 	float ScrollSpeed = 445.f;
 	float DistortionIntencity = 0.1f;
 
-	float PtLightRadius = 1.f;
-	float PtLightFlux = 1.f;
+
 	std::weak_ptr<FLight> PtLight;
 
 	float Range = 0.0f;

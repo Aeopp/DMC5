@@ -102,6 +102,8 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 {
 	PlayEnd();
 
+	// SetActive(true);
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -111,7 +113,6 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	CurParticleTime = 0.0f;
-
 
 	PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
 
@@ -124,6 +125,8 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 
 void ElectricOccur::PlayEnd()
 {
+	// SetActive(false);
+
 	if (auto SpPtLight = PtLight.lock();
 		SpPtLight)
 	{
@@ -132,7 +135,12 @@ void ElectricOccur::PlayEnd()
 
 	_RenderProperty.bRender = false;
 	T = 0.0f;
-};
+}
+float ElectricOccur::GetPlayTime()
+{
+	return PlayTime;
+}
+;
 
 void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
@@ -143,8 +151,6 @@ void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
 
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
-
-	;
 	_Info.Fx->SetTexture("DistortionMap", DistortionMap->GetTexture());
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
@@ -264,22 +270,26 @@ UINT ElectricOccur::Update(const float _fDeltaTime)
 		PlayParticle();
 	}
 
-	if (auto SpPtLight = PtLight.lock();
-		SpPtLight)
+	if (PtLightFlux > 0.0f)
 	{
-		if (auto SpTransform = GetComponent<Transform>().lock();
-			SpTransform)
+		if (auto SpPtLight = PtLight.lock();
+			SpPtLight)
 		{
-			SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
-			SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
-			SpPtLight->PointRadius = PtLightRadius;
-			SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
-		}
-		else
-		{
-			SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+			if (auto SpTransform = GetComponent<Transform>().lock();
+				SpTransform)
+			{
+				SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
+				SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
+				SpPtLight->PointRadius = PtLightRadius;
+				SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
+			}
+			else
+			{
+				SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+			}
 		}
 	}
+	
 
 	return 0;
 }

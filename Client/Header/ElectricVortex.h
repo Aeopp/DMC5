@@ -43,14 +43,17 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& PlayLocation);
-	void PlayEnd();
+	void  PlayStart(const Vector3& PlayLocation);
+	void  PlayEnd();
+	float GetPlayTime();
 public:
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+
+	float PtLightRadius = 10.f;
+	float PtLightFlux = 10.f;
 private:
-	
 	std::bitset<4u> _SubsetSets{};
 	uint32 CurSubset = 0u;
 	uint32 CurSubsetRand = 0u;
@@ -69,8 +72,6 @@ private:
 
 	float ScrollSpeed = 445.f;
 
-	float PtLightRadius = 10.f;
-	float PtLightFlux = 10.f;
 	std::weak_ptr<FLight> PtLight;
 
 	Vector3 StartScale{ 0.0001f,0.0001f,0.0001f };

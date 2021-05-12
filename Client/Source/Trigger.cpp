@@ -21,6 +21,7 @@ void Trigger::EventRegist(
 		_Collider)
 	{
 		_Collider->SetSize(ColliderBoxSize);
+		_Collider->SetActive(true);
 	}
 
 	_Event = CallBack;
@@ -78,13 +79,12 @@ void Trigger::EventRegist(
 
 bool Trigger::IsEnable()
 {
-	return IsActive();
+	return bEnable;
 }
 
 void Trigger::TriggerEnable()
 {
-	SetActive(true);
-
+	bEnable = true;
 	if (auto _Collider = GetComponent<BoxCollider>().lock();
 		_Collider)
 	{
@@ -100,7 +100,7 @@ void Trigger::TriggerEnable()
 
 void Trigger::TriggerDisable()
 {
-	SetActive(false);
+	bEnable = false;
 	if (auto _Collider = GetComponent<BoxCollider>().lock();
 		_Collider)
 	{
@@ -204,6 +204,18 @@ void Trigger::Editor()
 			}
 		}
 
+		if (ImGui::Button("Enable"))
+		{
+			TriggerEnable();
+		}
+
+		if (ImGui::Button("Disable"))
+		{
+			TriggerDisable();
+		}
+
+
+
 		const char* Msg = IsEnable() ? "Enable" : "Disable";
 		ImGui::Text(Msg);
 
@@ -223,6 +235,7 @@ void Trigger::Editor()
 void Trigger::OnEnable()
 {
 	GameObject::OnEnable();
+
 }
 
 void Trigger::OnDisable()
@@ -230,9 +243,11 @@ void Trigger::OnDisable()
 	GameObject::OnDisable();
 }
 
-void Trigger::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+void Trigger::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (_TargetTag != _pOther.lock()->m_nTag)
+		return;
+	if (bEnable == false)
 		return;
 
 	if (IsEnable())
@@ -247,7 +262,7 @@ void Trigger::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 }
 
 
-void Trigger::OnCollisionExit(std::weak_ptr<GameObject> _pOther)
+void Trigger::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
 
 }

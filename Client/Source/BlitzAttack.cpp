@@ -11,6 +11,7 @@
 #include "ThunderboltSecond.h"
 
 
+
 void BlitzAttack::Free()
 {
 	GameObject::Free();
@@ -46,7 +47,7 @@ HRESULT BlitzAttack::Ready()
 	{
 		EffectDesc _Desc{};
 		_Desc.LocationOffset = FMath::Random(Vector3{-0.5f,0.0f,-0.5f}, Vector3{ 0.5f,0.0f,0.5f });
-		_Desc.SpawnTime = FMath::Random(0.f, 3.f);
+		_Desc.SpawnTime = FMath::Random(0.f, 0.7f);
 		_Desc.bPlayed = true;
 		const uint32 Dice = FMath::Random(0u, 1u);
 
@@ -55,6 +56,11 @@ HRESULT BlitzAttack::Ready()
 			_Desc._Effect = AddGameObject<ThunderBoltSecond>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBoltSecond;
 
+			if (auto _ThunderBolt2nd = std::dynamic_pointer_cast<ThunderBoltSecond>(_Desc._Effect.lock());
+				_ThunderBolt2nd)
+			{
+				_ThunderBolt2nd->Dice(2u);
+			}
 			/*_Desc._Effect = AddGameObject<ThunderBolt>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBolt;*/
 		}
@@ -62,6 +68,12 @@ HRESULT BlitzAttack::Ready()
 		{
 			_Desc._Effect = AddGameObject<ThunderBoltSecond>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBoltSecond;
+
+			if (auto _ThunderBolt2nd = std::dynamic_pointer_cast<ThunderBoltSecond>(_Desc._Effect.lock());
+				_ThunderBolt2nd)
+			{
+				_ThunderBolt2nd->Dice(2u);
+			}
 		}
 
 		_DescElement = _Desc;
@@ -196,4 +208,6 @@ void BlitzAttack::PlayStart(const Vector3& Location)
 		_EffectRest.bPlayed = false;
 	}
 	T = 0.0f;
+
+	SetActive(true);
 }

@@ -12,7 +12,8 @@ GameObject::GameObject()
 	, m_nLoopIdx(0)
 	, m_bStatic(false)
 	, m_bDestroy(false)
-	, m_bRenderRegist(false)
+	, m_bRenderRegist(false) 
+	, m_bEditable(true)
 {
 	m_pTransform = AddComponent<Transform>();
 	m_pGameObject = std::static_pointer_cast<GameObject>(m_pThis);
@@ -66,6 +67,21 @@ std::list<std::weak_ptr<GameObject>> GameObject::FindGameObjectsWithTag(const UI
 std::list<std::weak_ptr<GameObject>> GameObject::FindGameObjectsWithLayer(const UINT& _nLayer)
 {
 	return m_pScene->FindGameObjectsWithLayer(_nLayer);
+}
+
+bool GameObject::IsEditable() const
+{
+	return m_bEditable;
+}
+
+void GameObject::SetEditable(const bool bEditable)
+{
+	m_bEditable = bEditable;
+}
+
+std::vector<Object*>& GameObject::GetEditEntitys()
+{
+	return m_pEditObjects;
 }
 
 void GameObject::Destroy(std::weak_ptr<GameObject> const _pGameObject)

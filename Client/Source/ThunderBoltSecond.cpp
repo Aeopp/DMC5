@@ -112,6 +112,8 @@ void ThunderBoltSecond::PlayStart(const Vector3& PlayLocation)
 
 	CurSubsetDelta = SubsetDelta;
 
+	// SetActive(true);
+
 	Range = 0.0f;
 	EndRange = 0.35f;
 };
@@ -124,6 +126,8 @@ void ThunderBoltSecond::PlayEnd()
 		SpPtLight->bEnable = false;
 	}
 
+	// SetActive(false);
+
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
@@ -132,10 +136,10 @@ void ThunderBoltSecond::PlayEnd()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltSecondEndParticle", 250u, true);
+				"ThunderBoltSecondEndParticle", 1000ul, true);
 			_Particle.empty() == false)
 		{
-			
+
 			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
@@ -145,10 +149,15 @@ void ThunderBoltSecond::PlayEnd()
 	};
 };
 
+float ThunderBoltSecond::GetPlayTime()
+{
+	return PlayTime;
+};
+
 void ThunderBoltSecond::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T*ScrollSpeed)) );
+	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T * ScrollSpeed)));
 	_Info.Fx->SetFloat("Time", T);
 	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
@@ -166,8 +175,8 @@ void ThunderBoltSecond::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
 	{
-		_Info.Fx->SetFloat("AlphaFactor", 1.0f - ((T-PlayTimehalf) / PlayTimehalf));
-		
+		_Info.Fx->SetFloat("AlphaFactor", 1.0f - ((T - PlayTimehalf) / PlayTimehalf));
+
 	}
 	else
 	{
@@ -237,6 +246,14 @@ void ThunderBoltSecond::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	}
 };
 
+void ThunderBoltSecond::Dice(const uint32 ModeRangeEnd)
+{
+	_Mode = FMath::Random(0u, ModeRangeEnd);
+	UVYScrollSpeed = FMath::Random(1.f, 1000.f);
+	UVYStartConstant = FMath::Random(0.f, 1.f);
+	ScrollSpeed = FMath::Random(0.f, 1000.f);
+};
+
 void ThunderBoltSecond::PlayParticle()
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -244,7 +261,7 @@ void ThunderBoltSecond::PlayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltSecondParticle", 1000ul, true);
+				"ThunderBoltSecondParticle", 100ul, true);
 			_Particle.empty() == false)
 		{
 			for (int32 i = 0; i < _Particle.size(); ++i)
@@ -337,23 +354,27 @@ UINT ThunderBoltSecond::Update(const float _fDeltaTime)
 		CurSubsetRand = FMath::Random(0u, 5u);
 	}
 
-
-	if (auto SpPtLight = PtLight.lock();
-		SpPtLight)
+	
+	if (PtLightFlux > 0.0f)
 	{
-		if (auto SpTransform = GetComponent<Transform>().lock();
-			SpTransform)
+		if (auto SpPtLight = PtLight.lock();
+			SpPtLight)
 		{
-			SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
-			SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
-			SpPtLight->PointRadius = PtLightRadius;
-			SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
-		}
-		else
-		{
-			SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+			if (auto SpTransform = GetComponent<Transform>().lock();
+				SpTransform)
+			{
+				SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
+				SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
+				SpPtLight->PointRadius = PtLightRadius;
+				SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
+			}
+			else
+			{
+				SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+			}
 		}
 	}
+	
 
 	return 0;
 }

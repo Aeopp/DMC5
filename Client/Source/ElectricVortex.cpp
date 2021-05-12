@@ -133,7 +133,12 @@ void ElectricVortex::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-};
+}
+float ElectricVortex::GetPlayTime()
+{
+	return PlayTime;
+}
+;
 
 void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
@@ -327,22 +332,26 @@ UINT ElectricVortex::Update(const float _fDeltaTime)
 		PlayParticle();
 	}
 
-	if (auto SpPtLight = PtLight.lock();
-		SpPtLight)
+	if (PtLightFlux > 0.0f)
 	{
-		if (auto SpTransform = GetComponent<Transform>().lock();
-			SpTransform)
+		if (auto SpPtLight = PtLight.lock();
+			SpPtLight)
 		{
-			SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
-			SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
-			SpPtLight->PointRadius = PtLightRadius;
-			SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
-		}
-		else
-		{
-			SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+			if (auto SpTransform = GetComponent<Transform>().lock();
+				SpTransform)
+			{
+				SpPtLight->SetPosition(FMath::ConvertVector4(SpTransform->GetPosition(), 1.f));
+				SpPtLight->Color = D3DXCOLOR(173.f / 255.f, 162.f / 255.f, 217.f / 255.f, 1.f);
+				SpPtLight->PointRadius = PtLightRadius;
+				SpPtLight->lightFlux = PtLightFlux * std::fabsf(std::sin(T * ScrollSpeed));
+			}
+			else
+			{
+				SpPtLight->SetPosition(Vector4{ FLT_MAX,FLT_MAX ,FLT_MAX ,1.f });
+			}
 		}
 	}
+	
 
 
 
