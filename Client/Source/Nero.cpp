@@ -342,10 +342,10 @@ UINT Nero::Update(const float _fDeltaTime)
 	}
 	/* ----------------------------------- */
 
-	if (Input::GetKeyDown(DIK_9))
-	{
-		m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	}
+	//if (Input::GetKeyDown(DIK_9))
+	//{
+	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
+	//}
 	return 0;
 }
 
@@ -1388,25 +1388,32 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 	switch (m_iCurWeaponIndex)
 	{
 	case Nero::NeroCom_RedQueen:
-		m_pRedQueen.lock()->SetActive(true);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		if (m_pRedQueen.lock()->IsActive())
+			return;
+		m_pRedQueen.lock()->SetActive(true);
 		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
+		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
 		break;
 	case Nero::NeroCom_Cbs_Short:
 		m_pRedQueen.lock()->SetActive(false);
-		m_pCbsShort.lock()->SetActive(true);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		if (m_pCbsShort.lock()->IsActive())
+			return;
+		m_pCbsShort.lock()->SetActive(true);
 		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
-		m_pCbsMiddle.lock()->SetActive(true);
 		m_pCbsLong.lock()->SetActive(false);
+		if (m_pCbsMiddle.lock()->IsActive())
+			return;
+		m_pCbsMiddle.lock()->SetActive(true);
 		m_pCbsMiddle.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 1);
 		break;
@@ -1414,6 +1421,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
+		if (m_pCbsLong.lock()->IsActive())
+			return;
 		m_pCbsLong.lock()->SetActive(true);
 		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
 		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs,2);

@@ -8376,6 +8376,11 @@ HRESULT Middle_Cbs_BiAttack::StateUpdate(const float _fDeltaTime)
 	if (0.97f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 
+	if (0.76f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
+
 	return S_OK;
 }
 
@@ -8428,6 +8433,11 @@ HRESULT Middle_Cbs_BlitzAttack::StateUpdate(const float _fDeltaTime)
 
 	if (0.9f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
+
+	if (0.73f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 
 	return S_OK;
 }
@@ -8486,7 +8496,10 @@ HRESULT Middle_Cbs_Satellite::StateUpdate(const float _fDeltaTime)
 
 	if (0.82f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
-
+	if (0.72f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 	return S_OK;
 }
 
@@ -8609,6 +8622,10 @@ HRESULT Middle_Cbs_Strike::StateUpdate(const float _fDeltaTime)
 	if (0.71f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 
+	if (0.59f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 	return S_OK;
 }
 
@@ -9012,23 +9029,29 @@ HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 	else if (0.15f <= fCurrAnimationTime)
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
 
-	if (Input::GetMouse(DIM_M))
+
+	if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
 	{
-		if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
+		if (Input::GetMouse(DIM_M))
 		{
 			ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 			m_pFSM->ChangeState(NeroFSM::POLE_COMBOA2);
 			return S_OK;
 		}
+	}
 
-		else if (0.31f <= fCurrAnimationTime && fCurrAnimationTime <= 0.42f)
+	else if (0.31f <= fCurrAnimationTime && fCurrAnimationTime <= 0.42f)
+	{
+		if (Input::GetMouse(DIM_M))
 		{
 			// ·¹µåÄý ÄÞº¸ ¶¥¹Ù´Ú Âï´Â°Å ½ÃÀÛ 
 			m_pFSM->ChangeState(NeroFSM::POLE_COMBOB1);
 			return S_OK;
 		}
 	}
-	else if (m_pNero.lock()->IsAnimationEnd())
+
+
+	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
@@ -9040,6 +9063,11 @@ HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 		NeroState::SetCbsIdle();
 	else if (0.45 <= fCurrAnimationTime)
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA1_End", false, {}, true);
+
+	if (0.59f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 	return S_OK;
 }
 
@@ -9086,9 +9114,10 @@ HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 	else if (0.1f <= fCurrAnimationTime)
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
 
-	if (Input::GetMouse(DIM_M))
+
+	if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
 	{
-		if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
+		if (Input::GetMouse(DIM_M))
 		{
 			ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 			m_pFSM->ChangeState(NeroFSM::POLE_COMBOA3);
@@ -9104,11 +9133,15 @@ HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 
-	if (0.72 <= fCurrAnimationTime)
+	if (0.72f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
-	else if (0.36 <= fCurrAnimationTime)
+	else if (0.36f <= fCurrAnimationTime)
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA2_End", false, {}, true);
 
+	if (0.46f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 	return S_OK;
 }
 
@@ -9155,14 +9188,7 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 	else if (0.21f <= fCurrAnimationTime)
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
 
-	if (Input::GetMouse(DIM_M))
-	{
-		//if (0.2f <= fCurrAnimationTime && fCurrAnimationTime <= 0.29f)
-		//{
-		//	m_pFSM->ChangeState(NeroFSM::POLE_COMBOA3);
-		//}
-	}
-	else if (m_pNero.lock()->IsAnimationEnd())
+	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
@@ -9171,11 +9197,15 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 
-	if (0.72 <= fCurrAnimationTime)
+	if (0.72f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
-	else if (0.53 <= fCurrAnimationTime)
+	else if (0.53f <= fCurrAnimationTime)
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA3_End", false, {}, true);
 
+	if (0.53f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 	return S_OK;
 }
 
@@ -9237,14 +9267,16 @@ HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 	if (0.46f <= fCurrAnimationTime)
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_NewWingSword, false);
 
-	if (Input::GetMouse(DIM_M))
+
+	if (0.36f <= fCurrAnimationTime && fCurrAnimationTime <= 0.46f)
 	{
-		if (0.36f <= fCurrAnimationTime && fCurrAnimationTime <= 0.46f)
+		if (Input::GetMouse(DIM_M))
 		{
 			m_pFSM->ChangeState(NeroFSM::POLE_COMBOB2);
 			return S_OK;
 		}
 	}
+
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
 		if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
@@ -9254,11 +9286,15 @@ HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 
-	if (0.83 <= fCurrAnimationTime)
+	if (0.83f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
-	else if (0.53 <= fCurrAnimationTime)
+	else if (0.53f <= fCurrAnimationTime)
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB1_End", false, {}, true);
 
+	if (0.53f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 	return S_OK;
 }
 
@@ -9316,15 +9352,16 @@ HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 	if (0.48f <= fCurrAnimationTime)
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_NewWingSword, false);
 
-	if (Input::GetMouse(DIM_M))
+
+	if (0.39f <= fCurrAnimationTime && fCurrAnimationTime <= 0.48f)
 	{
-		if (0.39f <= fCurrAnimationTime && fCurrAnimationTime <= 0.48f)
+		if (Input::GetMouse(DIM_M))
 		{
 			m_pFSM->ChangeState(NeroFSM::POLE_COMBOB3);
 			return S_OK;
 		}
 	}
-	else if (m_pNero.lock()->IsAnimationEnd())
+	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
@@ -9333,10 +9370,15 @@ HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 
-	if (0.76 <= fCurrAnimationTime)
+	if (0.76f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
-	else if (0.59 <= fCurrAnimationTime)
+	else if (0.59f <= fCurrAnimationTime)
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB2_End", false, {}, true);
+
+	if (0.62f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 
 	return S_OK;
 }
@@ -9394,15 +9436,17 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	if (0.53f <= fCurrAnimationTime)
 		m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_NewWingSword, false);
 
-	if (Input::GetMouse(DIM_M))
+
+	if (0.44f <= fCurrAnimationTime && fCurrAnimationTime <= 0.53f)
 	{
-		if (0.44f <= fCurrAnimationTime && fCurrAnimationTime <= 0.53f)
+		if (Input::GetMouse(DIM_M))
 		{
 			m_pFSM->ChangeState(NeroFSM::POLE_COMBOB4);
 			return S_OK;
 		}
 	}
-	else if (m_pNero.lock()->IsAnimationEnd())
+
+	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
@@ -9415,6 +9459,11 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 		NeroState::SetCbsIdle();
 	else if (0.53 <= fCurrAnimationTime)
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB3_End", false, {}, true);
+
+	if (0.53f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 
 	return S_OK;
 }
@@ -9472,15 +9521,7 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 	else if (0.08f <= fCurrAnimationTime)
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
 
-	if (Input::GetMouse(DIM_L))
-	{
-		if (0.88f <= fCurrAnimationTime)
-		{
-			m_pFSM->ChangeState(NeroFSM::CBS_COMBOA1);
-			return S_OK;
-		}
-	}
-	else if (m_pNero.lock()->IsAnimationEnd())
+	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
@@ -9489,11 +9530,15 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 
-	if (0.81 <= fCurrAnimationTime)
+	if (0.81f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
-	else if (0.55 <= fCurrAnimationTime)
+	else if (0.55f <= fCurrAnimationTime)
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB4_End", false, {}, true);
 
+	if (0.48f <= fCurrAnimationTime)
+	{
+		NeroState::KeyInput_Cbs_Idle();
+	}
 	return S_OK;
 }
 

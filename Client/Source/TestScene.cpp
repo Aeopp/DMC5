@@ -115,7 +115,7 @@ HRESULT TestScene::LoadScene()
 	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	AddGameObject<Em100>();
+	//AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
 	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f });
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
