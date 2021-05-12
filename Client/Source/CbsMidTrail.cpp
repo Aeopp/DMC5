@@ -639,25 +639,12 @@ HRESULT CbsMidTrail::Ready()
 	{
 		CbsMidTrail::EffectDesc _Desc{};
 		_Desc.LocationOffset = FMath::Random(
-			Vector3{ -0.1f,-0.1f,-0.1f }, Vector3{ 0.1f,0.1f,0.1f });
+			Vector3{ -0.001f,-0.001f,-0.001f }, Vector3{ 0.001f,0.001f,0.001f });
 		_Desc.bPlayEnd = true;
 
-		const uint32 Dice = FMath::Random(0u, 4u);
+		const uint32 Dice = FMath::Random(1u, 4u);
 
-		if (Dice == 0u)
-		{
-			_Desc._Effect = AddGameObject<ThunderBoltSecond>();
-			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBoltSecond;
-			
-			if (auto _ThunderBolt2nd = std::dynamic_pointer_cast<ThunderBoltSecond>(_Desc._Effect.lock());
-				_ThunderBolt2nd)
-			{
-				_ThunderBolt2nd->Dice(2u);
-				_Desc.PlayTime = _ThunderBolt2nd->GetPlayTime();
-				_ThunderBolt2nd->SetEditable(false);
-			}
-		}
-		else if (Dice == 1u)
+		 if (Dice == 1u)
 		{
 			_Desc._Effect = AddGameObject<ThunderBolt>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBolt;
@@ -666,6 +653,14 @@ HRESULT CbsMidTrail::Ready()
 			{
 				_Desc.PlayTime = _TargetEffect->GetPlayTime();
 				_TargetEffect->SetEditable(false);
+				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
+				TargetTransform->
+					SetScale(Vector3{
+						GScale * 0.01f,
+						GScale * 0.01f,
+						GScale * 0.01f });
+				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
 		else if (Dice == 2u)
@@ -677,7 +672,14 @@ HRESULT CbsMidTrail::Ready()
 			{
 				_Desc.PlayTime = _TargetEffect->GetPlayTime();
 				_TargetEffect->SetEditable(false);
-
+				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
+				TargetTransform->
+					SetScale(Vector3{
+						GScale * 0.01f,
+						GScale * 0.01f,
+						GScale * 0.01f });
+				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
 		else if (Dice == 3u)
@@ -689,7 +691,14 @@ HRESULT CbsMidTrail::Ready()
 			{
 				_Desc.PlayTime = _TargetEffect->GetPlayTime();
 				_TargetEffect->SetEditable(false);
-
+				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
+				TargetTransform->
+					SetScale(Vector3{
+						GScale * 0.01f,
+						GScale * 0.01f,
+						GScale * 0.01f });
+				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
 		else if (Dice == 4u)
@@ -701,7 +710,14 @@ HRESULT CbsMidTrail::Ready()
 			{
 				_Desc.PlayTime = _TargetEffect->GetPlayTime();
 				_TargetEffect->SetEditable(false);
-
+				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
+				TargetTransform->
+					SetScale(Vector3{
+						GScale * 0.01f,
+						GScale * 0.01f,
+						GScale * 0.01f });
+				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
 

@@ -53,6 +53,9 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 
 	void Dice(const uint32 ModeRangeEnd);
+
+	float PtLightRadius = 1.f;
+	float PtLightFlux = 1.f;
 public:
 	std::bitset<4u> _SubsetSets{};
 	uint32 CurSubset = 0u;
@@ -75,8 +78,7 @@ public:
 	float ScrollSpeed = 445.f;
 	float DistortionIntencity = 0.1f;
 
-	float PtLightRadius = 1.f;
-	float PtLightFlux = 1.f;
+
 	std::weak_ptr<FLight> PtLight;
 
 	float Range = 0.0f;
