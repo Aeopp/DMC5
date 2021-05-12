@@ -74,69 +74,16 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 #pragma region Trigger
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
-	{
-		std::vector<std::weak_ptr<Monster>> MonsterWave
-		{
-			AddGameObject<Em0000>(),
-			AddGameObject<Em0000>(),
-			AddGameObject<Em100>(),
-			AddGameObject<Em100>()
-		};
-
-		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
-
-		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f});
-
-		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f});
-
-		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f});
-
-		const Vector3 TriggerLocation{ -1.80262f,0.01168f,1.4464f };
-		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f};
-		const bool ImmediatelyEnable = true;
-		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
-		const std::function<void()> SpawnWaveAfterEvent = nullptr;
-
-		_Trigger->EventRegist(MonsterWave,
-			TriggerLocation,
-			TriggerBoxSize,
-			ImmediatelyEnable,
-			TargetTag,
-			SpawnWaveAfterEvent);
-	}
-
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
-	{
-		std::function<void()> _CallBack{};
-
-		_CallBack = []() 
-		{
-			PRINT_LOG(L"Log", L"Trigger Event !!");
-		};
-
-		_Trigger->EventRegist(_CallBack,
-			Vector3{ -0.52020f,0.00822f,-0.52510f },
-			Vector3{ 10.f,10.f,10.f},
-			true,
-			GAMEOBJECTTAG::Player);
-	}
+	TriggerSetUp();
 #pragma endregion
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
 
 	_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
-
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -533,4 +480,61 @@ void TestScene::RenderDataSetUp()
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+}
+
+void TestScene::TriggerSetUp()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>()
+		};
+
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+
+		const Vector3 TriggerLocation{ -1.80262f,0.01168f,1.4464f };
+		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
+		const bool ImmediatelyEnable = true;
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+		const std::function<void()> SpawnWaveAfterEvent = nullptr;
+
+		_Trigger->EventRegist(MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent);
+	}
+
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		std::function<void()> _CallBack{};
+
+		_CallBack = []()
+		{
+			PRINT_LOG(L"Log", L"Trigger Event !!");
+		};
+
+		_Trigger->EventRegist(_CallBack,
+			Vector3{ -0.52020f,0.00822f,-0.52510f },
+			Vector3{ 10.f,10.f,10.f },
+			true,
+			GAMEOBJECTTAG::Player);
+	}
 }
