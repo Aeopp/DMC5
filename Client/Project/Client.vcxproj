@@ -188,6 +188,8 @@
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\LoadingPanel.h" />
+    <ClInclude Include="..\Header\LoadingScene.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
     <ClInclude Include="..\Header\LogoScene.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
@@ -281,6 +283,8 @@
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\LoadingPanel.cpp" />
+    <ClCompile Include="..\Source\LoadingScene.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
@@ -471,7 +475,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\UI\TitlePanel.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\UI\LoadingPanel.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Header\Hotel_S01.h"
+#include "LoadingScene.h"
 #include "TempMap.h"
 #include "Nero.h"
 #include "BtlPanel.h"
@@ -52,18 +53,25 @@ HRESULT Hotel_S01::LoadScene()
 
 	m_fLoadingProgress = 0.4f;
 
-#pragma region Map & RenderData
+#pragma region Map
 
 	LoadObjects("../../Data/Stage1_Map.json");
 	LoadObjects("../../Data/Stage1_Object.json");
 
 	AddGameObject<TempMap>();
 	
-	RenderDataSetUp();
-
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
+
+#pragma region RenderData & Trigger
+
+	RenderDataSetUp();
+	TriggerSetUp();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.8f;
 
 #pragma region UI & Effect
 
@@ -71,7 +79,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma endregion
 
-	m_fLoadingProgress = 0.8f;
+	m_fLoadingProgress = 0.9f;
 
 #pragma region Misc
 
@@ -97,7 +105,20 @@ HRESULT Hotel_S01::Start()
 
 HRESULT Hotel_S01::Update(const float _fDeltaTime)
 {
+	if (!_LateInit)
+		LaitInit();
+
 	Scene::Update(_fDeltaTime);
+
+	// 테스트용 ////////////////////////
+	if (Input::GetKeyDown(DIK_NUMPAD9))
+	{
+		
+		// TestScene으로 넘어감
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
+	}
+	////////////////////////////////////
+
 	return S_OK;
 }
 
@@ -183,4 +204,16 @@ void Hotel_S01::RenderDataSetUp()
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+}
+
+void Hotel_S01::TriggerSetUp()
+{
+
+}
+
+void Hotel_S01::LaitInit()
+{
+	// + 플레이어 초기 위치 잡기 등
+
+	_LateInit = true;
 }
