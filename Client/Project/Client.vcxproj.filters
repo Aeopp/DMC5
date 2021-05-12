@@ -118,15 +118,6 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\02.Em0000\Weapon">
       <UniqueIdentifier>{c02369c1-af29-46dd-852c-dedcb84e3a5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\01.Unit\02.Monster\03.Em5000">
-      <UniqueIdentifier>{a76a460f-8b96-4594-aebb-ce10380608c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\01.Unit\02.Monster\03.Em5000\Car">
-      <UniqueIdentifier>{f7e815fa-94c1-43a1-8a89-e80638e252dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\01.Unit\02.Monster\03.Em5000\00.HAND">
-      <UniqueIdentifier>{948b5e51-6edb-4043-a730-b86913ec6f1a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\02.MapObject">
       <UniqueIdentifier>{177763a5-206d-447e-bfa8-d1f6afd3a203}</UniqueIdentifier>
     </Filter>
@@ -196,6 +187,15 @@
     <Filter Include="02.GameObject\UI\Scene">
       <UniqueIdentifier>{e47f0001-a56a-4b6f-a6ce-f285c618963f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000">
+      <UniqueIdentifier>{a76a460f-8b96-4594-aebb-ce10380608c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000\Car">
+      <UniqueIdentifier>{f7e815fa-94c1-43a1-8a89-e80638e252dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000\00.HAND">
+      <UniqueIdentifier>{948b5e51-6edb-4043-a730-b86913ec6f1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -250,10 +250,10 @@
       <Filter>02.GameObject\01.Unit\02.Monster\02.Em0000\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em5000.h">
-      <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000</Filter>
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Car.h">
-      <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\Car</Filter>
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000\Car</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\TestObject.h">
       <Filter>02.GameObject\Test</Filter>
@@ -295,7 +295,7 @@
       <Filter>02.GameObject\01.Unit\02.Monster\00.Em100\00.Hand</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Em5000Hand.h">
-      <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\00.HAND</Filter>
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000\00.HAND</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Gauntlet.h">
       <Filter>02.GameObject\01.Unit\01.Player\07.Gauntlet</Filter>
@@ -482,6 +482,8 @@
     <ClInclude Include="..\Header\LoadingScene.h">
       <Filter>03.Scene\98.LoadingScene</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ElectricBranch.h" />
+    <ClInclude Include="..\Header\ElectricVortex.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -543,10 +545,10 @@
       <Filter>02.GameObject\01.Unit\02.Monster\02.Em0000\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em5000.cpp">
-      <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000</Filter>
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Car.cpp">
-      <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\Car</Filter>
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000\Car</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\RedQueen.cpp" />
     <ClCompile Include="..\Source\Nero_LWing.cpp" />
@@ -591,7 +593,7 @@
       <Filter>02.GameObject\Effect\Liquid</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em5000Hand.cpp">
-      <Filter>02.GameObject\01.Unit\02.Monster\03.Em5000\00.HAND</Filter>
+      <Filter>02.GameObject\01.Unit\02.Monster\04.Em1000\03.Em5000\00.HAND</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Em100Hand.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\00.Em100\00.Hand</Filter>
@@ -765,6 +767,9 @@
     <ClCompile Include="..\Source\LoadingScene.cpp">
       <Filter>03.Scene\98.LoadingScene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CbsMidTrail.cpp" />
+    <ClCompile Include="..\Source\ElectricBranch.cpp" />
+    <ClCompile Include="..\Source\ElectricVortex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

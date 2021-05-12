@@ -1,0 +1,1218 @@
+{
+    "GameObject": [
+        {
+            "Mesh": "Resource\\Map\\Location2\\Storehouse\\Storehouse.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew3\\buildingnew3.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew7\\buildingnew7.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Street2\\Street.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew9\\buildingnew9.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelgate2\\Hotelgate2.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\building01\\building01.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        -14.975000381469727,
+                        -2.003000020980835,
+                        21.655000686645509
+                    ],
+                    "Position": [
+                        -8831.9990234375,
+                        -168.572998046875,
+                        37266.42578125
+                    ]
+                },
+                {
+                    "Scale": [
+                        0.800000011920929,
+                        0.800000011920929,
+                        0.800000011920929
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        -20.0
+                    ],
+                    "Position": [
+                        4410.9169921875,
+                        -571.0689697265625,
+                        46232.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelrasen\\Hotelrasen.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew05_12\\buildingnew05_12.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew7_3\\buildingnew7_3.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Street3\\Street3.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew5\\builingnew5.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        -2.7160000801086427,
+                        -160.54100036621095,
+                        -3.5769999027252199
+                    ],
+                    "Position": [
+                        -5343.509765625,
+                        268.80902099609377,
+                        36723.23046875
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        10.0,
+                        -90.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -11020.0,
+                        -749.4100341796875,
+                        41236.61328125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        10.0,
+                        120.0,
+                        0.0
+                    ],
+                    "Position": [
+                        20.9169921875,
+                        138.9310302734375,
+                        39632.83203125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        80.0,
+                        -10.0
+                    ],
+                    "Position": [
+                        3980.9169921875,
+                        -571.0689697265625,
+                        48622.83203125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        80.0,
+                        10.0
+                    ],
+                    "Position": [
+                        4470.9169921875,
+                        -971.0689697265625,
+                        50372.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew7_2\\buildingnew7_2.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew6\\buildingnew6.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Buildingbrick01_01\\Buildingbrick01_01.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -3218.97412109375,
+                        189.29600524902345,
+                        34990.71484375
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        -2.1569995880126955,
+                        -73.71099853515625,
+                        -2.6599998474121095
+                    ],
+                    "Position": [
+                        -5937.005859375,
+                        764.9669799804688,
+                        35489.07421875
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        30.0,
+                        0.0
+                    ],
+                    "Position": [
+                        280.9169921875,
+                        -1.0689697265625,
+                        39772.83203125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -80.0,
+                        -20.0
+                    ],
+                    "Position": [
+                        3830.9169921875,
+                        -131.06900024414063,
+                        44542.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Buildingnew\\Builingnew.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Breakablebuilding\\Breakablebuilding.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        3.130000114440918,
+                        19.035999298095704,
+                        -18.889999389648439
+                    ],
+                    "Position": [
+                        218.65699768066407,
+                        -407.72698974609377,
+                        32612.857421875
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        -13.86299991607666,
+                        26.14900016784668,
+                        -3.447999954223633
+                    ],
+                    "Position": [
+                        -2716.278076171875,
+                        -1068.4560546875,
+                        31544.3828125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        8.746000289916993,
+                        33.10499954223633,
+                        11.319999694824219
+                    ],
+                    "Position": [
+                        -1813.362060546875,
+                        1252.741943359375,
+                        31942.603515625
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        23.702999114990236
+                    ],
+                    "Position": [
+                        -13660.0,
+                        350.5899658203125,
+                        44196.61328125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        40.0,
+                        0.0
+                    ],
+                    "Position": [
+                        2850.9169921875,
+                        -730.0,
+                        38392.83203125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        30.0,
+                        -30.0,
+                        10.0
+                    ],
+                    "Position": [
+                        7420.9169921875,
+                        768.9310302734375,
+                        49392.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Passage2\\Passage2.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Upground6\\Upground6.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla6\\Hotelwalla6.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelenter\\Hotelenter.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew10\\buildingnew10.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -12020.0,
+                        70.59002685546875,
+                        43586.61328125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        150.0,
+                        -20.0
+                    ],
+                    "Position": [
+                        2110.9169921875,
+                        1038.9310302734376,
+                        40092.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Buildingnew01_02\\Buildingnew01_02.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla8\\Hotelwalla8.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance2\\Churchchapelentrance2.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior4\\Churchchapeleterior4.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance19\\Churchchapelentrance19.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance20\\Churchchapelentrance20.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew01\\buildingnew01.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelroom3\\Hotelroom3.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\BuildI\\BuildI.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        10.0,
+                        30.0,
+                        0.0
+                    ],
+                    "Position": [
+                        1740.9169921875,
+                        -1681.0689697265626,
+                        52102.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelroom2\\Hotelroom2.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Buildingbrick2\\Buildingbrick2.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -92.88999938964844,
+                        0.0
+                    ],
+                    "Position": [
+                        -1069.9849853515626,
+                        823.8610229492188,
+                        35174.8828125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -92.88999938964844,
+                        0.0
+                    ],
+                    "Position": [
+                        -1879.177978515625,
+                        823.8610229492188,
+                        35114.5546875
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -1649.0830078125,
+                        828.9310302734375,
+                        35732.83203125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        -0.6800000071525574,
+                        -193.0399932861328,
+                        -37.952999114990237
+                    ],
+                    "Position": [
+                        -9945.462890625,
+                        -97.66799926757813,
+                        39525.89453125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        200.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -10195.462890625,
+                        -87.66799926757813,
+                        38585.89453125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        10.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -1459.0830078125,
+                        528.9310302734375,
+                        37092.83203125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -70.0,
+                        -10.0
+                    ],
+                    "Position": [
+                        3670.9169921875,
+                        -321.0690002441406,
+                        43842.83203125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -40.0,
+                        -10.0
+                    ],
+                    "Position": [
+                        3800.9169921875,
+                        78.93099975585938,
+                        43842.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\HotelGate\\Hotelgate0.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Street4\\street4.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\UpGroundBuild\\UpGroundBuild.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelentrance\\Hotelentrance.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance1\\Churchchapelentrance1.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\electornicbillboard\\electornicbillboard.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchsideb12\\Churchsideb12.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelroom\\Hotelroom.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Street5\\Street5.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\HotellBody\\HotellBody.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla5\\Hotelwalla5.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Passage\\Passage.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\churchroofa11\\churchroofa11.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior0\\Churchchapeleterior0.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\BossArea\\BossArea.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Willarea\\Willarea.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelroom4\\Hotelroom4.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Passage3\\Passage3.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla10\\Hotelwalla10.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelroom5\\Hotelroom5.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Upground\\Upground.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelroon1\\Hotelroom1.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla\\Hotelwall.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla1\\Hotelwall1.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla3\\Hotelwall3.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchancel\\Churchchancel.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla4\\Hotelwalla4.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla9\\Howtelwalla9.fbx",
+            "List": []
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Buildingnew01_01\\Buildingnew01_01.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\StoreWood_01\\StoreWood_01.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        0.8999999761581421,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -3.6010000705718996,
+                        0.0
+                    ],
+                    "Position": [
+                        -1871.041015625,
+                        203.17599487304688,
+                        35126.48046875
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -3.6010000705718996,
+                        0.0
+                    ],
+                    "Position": [
+                        -2680.235107421875,
+                        203.17599487304688,
+                        35066.15234375
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Building\\Buildingnew1.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        -10.0,
+                        60.0,
+                        0.0
+                    ],
+                    "Position": [
+                        1860.9169921875,
+                        -240.0,
+                        41762.83203125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior1\\Churchchapeleterior1.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance0\\churchroofa0.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance3\\Churchchapelentrance3.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior2\\Churchchapeleterior2.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior3\\Churchchapeleterior3.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior5\\Churchchapeleterior5.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchsideb0\\Churchsideb0.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchsideb13\\Churchsideb13.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchmaintower\\Churchmaintower.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchmaintowerentrance\\Churchmaintowerentrance.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        135.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -2526.7958984375,
+                        -1759.68994140625,
+                        45204.05078125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Churchmaintowerentrance1\\Churchmaintowerentrance1.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -45.42499923706055,
+                        0.0
+                    ],
+                    "Position": [
+                        -426.7959899902344,
+                        -1869.68994140625,
+                        43184.05078125
+                    ]
+                }
+            ]
+        }
+    ]
+}
