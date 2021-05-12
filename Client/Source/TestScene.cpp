@@ -87,18 +87,28 @@ HRESULT TestScene::LoadScene()
 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f});
+
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f});
+
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f});
 
+		const Vector3 TriggerLocation{ -1.80262f,0.01168f,1.4464f };
+		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f};
+		const bool ImmediatelyEnable = true;
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+		const std::function<void()> SpawnWaveAfterEvent = nullptr;
+
 		_Trigger->EventRegist(MonsterWave,
-			 Vector3{ -1.80262f,0.01168f,1.4464f },
-			 Vector3{1.f,1.f,1.f},
-			 true,GAMEOBJECTTAG::Player,
-				nullptr);
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent);
 	}
 
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
@@ -108,12 +118,12 @@ HRESULT TestScene::LoadScene()
 
 		_CallBack = []() 
 		{
-			PRINT_LOG(L"!!", L"불렀어?");
+			PRINT_LOG(L"Log", L"Trigger Event !!");
 		};
 
 		_Trigger->EventRegist(_CallBack,
 			Vector3{ -0.52020f,0.00822f,-0.52510f },
-			Vector3{ 1.f,1.f,1.f },
+			Vector3{ 10.f,10.f,10.f},
 			true,
 			GAMEOBJECTTAG::Player);
 	}

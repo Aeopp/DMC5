@@ -6,7 +6,8 @@
 #include <optional>
 #include <functional>
 
-class Trigger : public ENGINE::GameObject
+class Trigger : public ENGINE::GameObject ,
+				public ENGINE::RenderInterface
 {
 public:
 	enum class Option : uint8
@@ -41,6 +42,8 @@ private:
 public:
 	static Trigger* Create();
 public:
+	virtual void RenderReady()override;
+
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
 	virtual HRESULT Start() override;
@@ -53,6 +56,7 @@ public:
 	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther)override;
 	virtual void	OnCollisionExit(std::weak_ptr<GameObject> _pOther)override;
 private:
+	Vector3 TriggerLocation{ 0.f,0.f,0.f };
 	Option _Option = Option::None;
 	GAMEOBJECTTAG _TargetTag = GAMEOBJECTTAG::Player;
 	std::function<void()> _Event{};

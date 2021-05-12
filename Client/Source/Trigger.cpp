@@ -15,11 +15,7 @@ void Trigger::EventRegist(
 	const bool ImmediatelyEnable,/*持失 馬切原切 醗失鉢 ??*/
 	const GAMEOBJECTTAG& TargetTag)
 {
-	if (auto _Transform = GetComponent<Transform>().lock();
-		_Transform)
-	{
-		_Transform->SetPosition(Location);
-	}
+	TriggerLocation = Location;
 
 	if (auto _Collider = GetComponent<BoxCollider>().lock();
 		_Collider)
@@ -88,11 +84,28 @@ bool Trigger::IsEnable()
 void Trigger::TriggerEnable()
 {
 	SetActive(true);
+
+	if (auto _Collider = GetComponent<BoxCollider>().lock();
+		_Collider)
+	{
+		_Collider->SetActive(true);
+	}
+
+	if (auto _Transform = GetComponent<Transform>().lock();
+		_Transform)
+	{
+		_Transform->SetPosition(TriggerLocation);
+	};
 }
 
 void Trigger::TriggerDisable()
 {
 	SetActive(false);
+	if (auto _Collider = GetComponent<BoxCollider>().lock();
+		_Collider)
+	{
+		_Collider->SetActive(false);
+	};
 }
 
 void Trigger::Free()
@@ -108,6 +121,16 @@ std::string Trigger::GetName()
 Trigger* Trigger::Create()
 {
 	return new Trigger{};
+}
+
+void Trigger::RenderReady()
+{
+	auto _WeakTransform = GetComponent<ENGINE::Transform>();
+	if (auto _SpTransform = _WeakTransform.lock();
+		_SpTransform)
+	{
+		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+	}
 };
 
 HRESULT Trigger::Ready()
@@ -118,10 +141,23 @@ HRESULT Trigger::Ready()
 
 	_Collider = AddComponent<BoxCollider>();
 	_Collider.lock()->SetTrigger(true);
-	// _Collider.lock()->SetActive(false);
-	//_Collider.lock()->SetSize(Vector3{ 1.f,1.f,1.f });
 
 	PushEditEntity(_Collider.lock().get());
+
+	m_nTag = TAG_Trigger;
+	SetRenderEnable(true);
+	ENGINE::RenderProperty _InitRenderProp;
+	_InitRenderProp.bRender = true;
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
+	RenderInterface::Initialize(_InitRenderProp);
 
 	return S_OK;
 };
@@ -170,6 +206,16 @@ void Trigger::Editor()
 
 		const char* Msg = IsEnable() ? "Enable" : "Disable";
 		ImGui::Text(Msg);
+
+		if (auto _Collider = GetComponent<BoxCollider>().lock();
+			_Collider)
+		{
+			const char* ColliderMsg = _Collider->IsActive() ? "ColliderEnable" : "ColliderDisable";
+			ImGui::Text(ColliderMsg);
+
+			Vector3 CurrentBoxColliderSize = _Collider->GetSize();
+			ImGui::SliderFloat3("BoxColliderSize", CurrentBoxColliderSize, 0.0f, 10.f);
+		}
 	}
 }
 
