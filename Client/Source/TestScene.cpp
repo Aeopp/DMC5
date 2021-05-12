@@ -487,83 +487,185 @@ void TestScene::RenderDataSetUp()
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
-}
+};
 
-void TestScene::TriggerSetUp()
+std::shared_ptr<Trigger> TestScene::GetTestTrigger
+	(const bool Enable,
+	const std::shared_ptr<Trigger>& _Trigger)
 {
-	// 트리거 생성 !! 
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
+	auto _StartTrigger = AddGameObject<Trigger>().lock();
+
+	if (_StartTrigger)
 	{
 		// 몬스터 웨이브 배열로 등록. 
 		std::vector<std::weak_ptr<Monster>> MonsterWave
 		{
-			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()/*,
 			AddGameObject<Em0000>(),
 			AddGameObject<Em100>(),
-			AddGameObject<Em100>()
+			AddGameObject<Em100>()*/
 		};
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
 
-		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+		//MonsterWave[1].lock()->GetComponent<Transform>().
+		//	lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
 
-		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+		//MonsterWave[2].lock()->GetComponent<Transform>().
+		//	lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
 
-		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+		//MonsterWave[3].lock()->GetComponent<Transform>().
+		//	lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f};
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
-		const bool ImmediatelyEnable = false;
+		const bool ImmediatelyEnable = Enable;
 		// 트리거 검사할 오브젝트는 플레이어 
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */ ]() 
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
+			PRINT_LOG(L"SpawnWave", L"SpawnWave");
 			//... 여기서 로직 처리하세요 . 
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
 		const std::function<void()> WaveEndEvent =
-			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */_Trigger]()
 		{
+			PRINT_LOG(L"WaveEndEvent", L"WaveEndEvent");
 			//... 여기서 로직 처리하세요 . 
+			if (_Trigger)
+			{
+				_Trigger->TriggerEnable();
+			}
 		};
 
-		_Trigger->EventRegist(
+		_StartTrigger->EventRegist(
 			MonsterWave,
 			TriggerLocation,
 			TriggerBoxSize,
 			ImmediatelyEnable,
 			TargetTag,
-			SpawnWaveAfterEvent ,
+			SpawnWaveAfterEvent,
 			WaveEndEvent);
 	}
+	return _StartTrigger;
+};
 
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
-	{
-		std::function<void()> _CallBack{};
+void TestScene::TriggerSetUp()
+{
 
-		_CallBack = []()
-		{
-			PRINT_LOG(L"Log", L"Trigger Event !!");
-		};
+	GetTestTrigger(true,
+		GetTestTrigger(false,
+			GetTestTrigger(false,
+				GetTestTrigger(false,
+					GetTestTrigger(false,
+						GetTestTrigger(false,
+							GetTestTrigger(false,
+								GetTestTrigger(false,
+									GetTestTrigger(false,
+										GetTestTrigger(false,
+											GetTestTrigger(false,
+												GetTestTrigger(false,
+													GetTestTrigger(false,
+														GetTestTrigger(false, nullptr)
+													)
+												)
+											)
+										)
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		)
+	);
 
-		_Trigger->EventRegist(_CallBack,
-			Vector3{ -0.66720f,0.01168f,-2.18399f },
-			Vector3{ 1.f,1.f,1.f },
-			true,
-			GAMEOBJECTTAG::Player);
-	}
+	//// 트리거 생성 !! 
+	//if (auto _Trigger = AddGameObject<Trigger>().lock();
+	//	_Trigger)
+	//{
+	//	// 몬스터 웨이브 배열로 등록. 
+	//	std::vector<std::weak_ptr<Monster>> MonsterWave
+	//	{
+	//		AddGameObject<Em0000>(),
+	//		AddGameObject<Em0000>(),
+	//		AddGameObject<Em100>(),
+	//		AddGameObject<Em100>()
+	//	};
+
+	//	// 몬스터 위치는 미리 잡아주기  . 
+	//	MonsterWave[0].lock()->GetComponent<Transform>().
+	//		lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+
+	//	MonsterWave[1].lock()->GetComponent<Transform>().
+	//		lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+
+	//	MonsterWave[2].lock()->GetComponent<Transform>().
+	//		lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+
+	//	MonsterWave[3].lock()->GetComponent<Transform>().
+	//		lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+
+	//	// 트리거 위치 .. . 
+	//	const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f};
+	//	// 트리거 박스 사이즈 
+	//	const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
+	//	// 트리거 정보 등록 하자마자 트리거는 활성화 
+	//	const bool ImmediatelyEnable = true;
+	//	// 트리거 검사할 오브젝트는 플레이어 
+	//	const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+	//	// 스폰 직후 이벤트 . 
+	//	const std::function<void()> SpawnWaveAfterEvent =
+	//		[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */ ]() 
+	//	{
+	//		//... 여기서 로직 처리하세요 . 
+	//	};
+
+	//	// 몬스터 전부 사망 하였을때 이벤트 . 
+	//	const std::function<void()> WaveEndEvent =
+	//		[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */_StartTrigger]()
+	//	{
+	//		_StartTrigger->TriggerEnable();
+	//		//... 여기서 로직 처리하세요 . 
+	//	};
+
+
+	//	_Trigger->EventRegist(
+	//		MonsterWave,
+	//		TriggerLocation,
+	//		TriggerBoxSize,
+	//		ImmediatelyEnable,
+	//		TargetTag,
+	//		SpawnWaveAfterEvent,
+	//		WaveEndEvent);
+	//}
+
+	//if (auto _Trigger = AddGameObject<Trigger>().lock();
+	//	_Trigger)
+	//{
+	//	std::function<void()> _CallBack{};
+
+	//	_CallBack = []()
+	//	{
+	//		PRINT_LOG(L"Log", L"Trigger Event !!");
+	//	};
+
+	//	_Trigger->EventRegist(_CallBack,
+	//		Vector3{ -0.66720f,0.01168f,-2.18399f },
+	//		Vector3{ 1.f,1.f,1.f },
+	//		true,
+	//		GAMEOBJECTTAG::Player);
+	//}
 }
