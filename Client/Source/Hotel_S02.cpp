@@ -213,6 +213,7 @@ void Hotel_S02::TriggerSetUp()
 void Hotel_S02::LaitInit()
 {
 	// + 플레이어 초기 위치 잡기 등
+	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({-3.63097f, 1.f, 11.70365f});
 
 	_LateInit = true;
 }
