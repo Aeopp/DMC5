@@ -114,6 +114,6 @@ struct TrailDesc
 };
 
 
-#define OGDistance 0.83f
+#define OGDistance 0.33f
 #define MaxDistance 0.48f
 #define RotateDistance 0.7f

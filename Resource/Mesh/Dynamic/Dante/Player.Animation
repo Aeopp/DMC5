@@ -318,51 +318,6 @@
                 "TransitionTime": 0.10000000149011612
             },
             {
-                "Name": "GT_Air_Crash_Just",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_Air_Crash_Reload",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_Bomb",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_Crash_Just",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_Crash_Reload",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_PickUp",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_Reload",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_Reload_Stylish",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
-                "Name": "GT_Repelled",
-                "Acceleration": 1.0,
-                "TransitionTime": 0.10000000149011612
-            },
-            {
                 "Name": "HitAway_GetUp",
                 "Acceleration": 1.0,
                 "TransitionTime": 0.009999999776482582

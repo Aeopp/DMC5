@@ -43,7 +43,7 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-
+static std::weak_ptr<MainCamera> _pMainCamera;
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -69,7 +69,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Player & Camera
 
 	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
+	_pMainCamera = AddGameObject<MainCamera>();
 
 	_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
@@ -231,7 +231,12 @@ HRESULT TestScene::LoadScene()
 	//	ptr.lock()->SetActive(false);
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
-
+	m_vecQliphothBlock.emplace_back(AddGameObject<QliphothBlock>().lock());
+	m_vecQliphothBlock[0].lock()->SetScale(0.025f);
+	m_vecQliphothBlock[0].lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
+	m_vecQliphothBlock[0].lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
+	static_pointer_cast<QliphothBlock>(m_vecQliphothBlock[0].lock())->SetCamTrigger(true);
+	m_vecQliphothBlock[0].lock()->SetActive(false);
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;
@@ -282,6 +287,17 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	if(Input::GetKeyDown(DIK_3))
+		m_vecQliphothBlock[0].lock()->SetActive(false);
+	if (Input::GetKeyDown(DIK_4))
+	{
+		m_vecQliphothBlock[0].lock()->SetActive(true);
+	}
+	if (Input::GetKeyDown(DIK_5))
+	{
+		_pMainCamera.lock()->SetDistance(1.f);
+		_pMainCamera.lock()->Set_At_Transform(_Player.lock()->GetComponent<Transform>(), MainCamera::AT_PLAYER);
+	}
 	//cout << "SceneUpdate" << endl;
 
 

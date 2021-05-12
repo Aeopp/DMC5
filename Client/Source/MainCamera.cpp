@@ -10,6 +10,7 @@ MainCamera::MainCamera()
 	m_vEye = { 0.f,0.f,0.f };
 	m_vAt = { 0.f,0.f,0.f };
 	m_vUp = { 0.f,1.f,0.f };
+	m_vLerpEye = m_vAt = { 0.f,0.f,0.f };
 	m_nTag = TAG_Camera;
 }
 
@@ -43,11 +44,11 @@ HRESULT MainCamera::Ready()
 
 
 	m_fCameraAngle = 35.f;
-	//m_fDistanceToTarget = OGDistance;
-	m_fDistanceToTarget = 1.f;
+	m_fDistanceToTarget = OGDistance;
+	//m_fDistanceToTarget = 1.f;
 	m_fRotX = -17.1f;
-	m_fFloatingAmount = 0.16f;
-
+	m_fFloatingAmount = 0.19f;
+	m_fSensitive = 15.f;
 	m_fDecreaseFactor = 0.6f;
 	m_fIncreaseFactor = 0.07f;
 
@@ -84,6 +85,9 @@ UINT MainCamera::Update(const float _fDeltaTime)
 	{
 	case AT_PLAYER:
 		MoveMent_Player(_fDeltaTime);
+		break;
+	case AT_TRIGGER:
+		MoveMent_Trigger(_fDeltaTime);
 		break;
 	default:
 		break;
@@ -160,7 +164,6 @@ void MainCamera::Editor()
 		ImGui::InputScalar("RotX", ImGuiDataType_Float, &m_fRotX, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("FloatingAmount", ImGuiDataType_Float, &m_fFloatingAmount, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("m_fNear", ImGuiDataType_Float, &m_fNear, MyButton ? &ZeroDotOne : NULL);
-		ImGui::InputScalar("Test2", ImGuiDataType_Float, &m_fTest2, MyButton ? &ZeroDotOne : NULL);
 	}
 }
 
@@ -234,8 +237,42 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	//if(Test)
 	//	m_vEye = m_vAt + vLook;
 
-	static Vector3	TestEye{};
-	TestEye = m_vAt + vLook;
+	m_vLerpEye = m_vAt + vLook;
 
-	m_vEye = FMath::Lerp(m_vEye, TestEye, _fDeltaTime);
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 1.5f);
+}
+
+void MainCamera::MoveMent_Trigger(float _fDeltaTime)
+{
+	switch (m_eTriggerCamMode)
+	{
+	case STAGE1_WAVE1:
+		Trigger_Cam_Stage1_Wave1(_fDeltaTime);
+		break;
+	}
+}
+
+void MainCamera::Trigger_Cam_Stage1_Wave1(float _fDeltaTime)
+{
+	Vector3 _TempAt;
+	_TempAt = m_pAtTranform.lock()->GetPosition();
+	_TempAt.y -= 0.7f;
+	m_vAt = FMath::Lerp(m_vAt, _TempAt, _fDeltaTime * 0.5f);
+	//m_vAt.y += m_fFloatingAmount;
+	long    dwMouseMove = 0;
+
+	Vector3 vLook = { -1.5f, 0.f ,1.f };
+	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
+	Matrix matRotAxis, matRotX;
+
+	vLook *= m_fDistanceToTarget;
+
+	D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_fRotX));
+	D3DXMatrixRotationAxis(&matRotAxis, &vUp, D3DXToRadian(m_fAngle));
+	D3DXVec3TransformNormal(&vLook, &vLook, &matRotX);
+	D3DXVec3TransformNormal(&vLook, &vLook, &matRotAxis);
+
+	m_vLerpEye = m_vAt + vLook;
+
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 0.5f);
 }
