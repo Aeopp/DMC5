@@ -45,12 +45,12 @@ public:
 public:
 	void PlayStart(const Vector3& PlayLocation);
 	void PlayEnd();
+	float GetPlayTime();
 public:
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	
 	std::bitset<4u> _SubsetSets{};
 	uint32 CurSubset = 0u;
 	uint32 CurSubsetRand = 0u;

@@ -537,7 +537,7 @@ void TestScene::TriggerSetUp()
 
 		_Trigger->EventRegist(_CallBack,
 			Vector3{ -0.52020f,0.00822f,-0.52510f },
-			Vector3{ 10.f,10.f,10.f },
+			Vector3{ 1.f,1.f,1.f },
 			true,
 			GAMEOBJECTTAG::Player);
 	}

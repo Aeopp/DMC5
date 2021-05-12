@@ -36,6 +36,7 @@ public:
 public:
 	void PlayStart(const Vector3& PlayLocation);
 	void PlayEnd();
+	float GetPlayTime();
 public:
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);

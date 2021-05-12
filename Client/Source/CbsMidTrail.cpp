@@ -192,6 +192,10 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
 	_Desc.UpdateCycle = _Desc.CurVtxUpdateCycle = 0.016f;
+
+	CurEffectParticleIdx = 0u;
+	CurEffectParticleCycle = 0.0f;
+
 };
 
 void CbsMidTrail::PlayEnd()
@@ -278,6 +282,161 @@ void CbsMidTrail::ParticleUpdate(const float DeltaTime)
 
 				_PlayInstance->PlayDescBind(
 					FMath::WorldMatrix(Scale, Rotation, WorldLocation));
+			}
+		}
+	}
+};
+
+void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
+{
+	CurEffectParticleCycle -= DeltaTime;
+
+	if (CurEffectParticleCycle < 0.0f)
+	{
+		CurEffectParticleCycle += EffectParticleCycle;
+		
+		
+		int32 Count = 0;
+		while (true)
+		{
+			auto& RefEffectDesc = _PlayEffectDescs[CurEffectParticleIdx];
+
+			if (RefEffectDesc.bPlayEnd)
+			{
+				RefEffectDesc.bPlayEnd = false;
+				RefEffectDesc.T = 0.0f;
+
+				if (Eff_ElectricBranch == RefEffectDesc._Tag)
+				{
+					if (
+						auto SpEffect = 
+						std::dynamic_pointer_cast<ElectricBranch>
+						(RefEffectDesc._Effect.lock()))
+					{
+						const uint32 TargetBoneIdx =
+							FMath::Random(0u, BoneCnt - 1u);
+
+						const uint32 TargetIdx =
+							FMath::Random(0ull, 
+								_TrailVtxWorldLocations[TargetBoneIdx].size()-1u);
+
+						const Vector3 TargetLocation =
+							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
+
+						SpEffect->PlayStart(RefEffectDesc.LocationOffset
+						 + TargetLocation);
+					}
+				}
+				else if (Eff_ElectricOccur == RefEffectDesc._Tag)
+				{
+					if (
+						auto SpEffect =
+						std::dynamic_pointer_cast<ElectricOccur>
+						(RefEffectDesc._Effect.lock()))
+					{
+						const uint32 TargetBoneIdx =
+							FMath::Random(0u, BoneCnt - 1u);
+
+						const uint32 TargetIdx =
+							FMath::Random(0ull,
+								_TrailVtxWorldLocations[TargetBoneIdx].size() - 1u);
+
+						const Vector3 TargetLocation =
+							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
+
+						SpEffect->PlayStart(RefEffectDesc.LocationOffset
+							+ TargetLocation);
+					}
+				}
+				else if (Eff_ElectricVortex == RefEffectDesc._Tag)
+				{
+					if (
+						auto SpEffect =
+						std::dynamic_pointer_cast<ElectricVortex>
+						(RefEffectDesc._Effect.lock()))
+					{
+						const uint32 TargetBoneIdx =
+							FMath::Random(0u, BoneCnt - 1u);
+
+						const uint32 TargetIdx =
+							FMath::Random(0ull,
+								_TrailVtxWorldLocations[TargetBoneIdx].size() - 1u);
+
+						const Vector3 TargetLocation =
+							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
+
+						SpEffect->PlayStart(RefEffectDesc.LocationOffset
+							+ TargetLocation);
+					}
+				}
+				else if (Eff_ThunderBolt == RefEffectDesc._Tag)
+				{
+					if (
+						auto SpEffect =
+						std::dynamic_pointer_cast<ThunderBolt>
+						(RefEffectDesc._Effect.lock()))
+					{
+						const uint32 TargetBoneIdx =
+							FMath::Random(0u, BoneCnt - 1u);
+
+						const uint32 TargetIdx =
+							FMath::Random(0ull,
+								_TrailVtxWorldLocations[TargetBoneIdx].size() - 1u);
+
+						const Vector3 TargetLocation =
+							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
+
+						SpEffect->PlayStart(RefEffectDesc.LocationOffset
+							+ TargetLocation);
+					}
+				}
+				else if (Eff_ThunderBoltSecond == RefEffectDesc._Tag)
+				{
+					if (
+						auto SpEffect =
+						std::dynamic_pointer_cast<ThunderBoltSecond>
+						(RefEffectDesc._Effect.lock()))
+					{
+						const uint32 TargetBoneIdx =
+							FMath::Random(0u, BoneCnt - 1u);
+
+						const uint32 TargetIdx =
+							FMath::Random(0ull,
+								_TrailVtxWorldLocations[TargetBoneIdx].size() - 1u);
+
+						const Vector3 TargetLocation =
+							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
+
+						SpEffect->PlayStart(RefEffectDesc.LocationOffset
+							+ TargetLocation);
+					}
+				}
+
+				break;
+			}
+			else
+			{
+
+				++CurEffectParticleIdx;
+				CurEffectParticleIdx %= EffectParticleCount;
+			}
+
+			++Count;
+
+			if (Count >= EffectParticleCount)
+				break;
+		}	
+	}
+
+
+	for (auto& _Element : _PlayEffectDescs)
+	{
+		if (_Element.bPlayEnd == false)
+		{
+			_Element.T += DeltaTime;
+			if (_Element.T >= _Element.PlayTime)
+			{
+				_Element.bPlayEnd = true;
 			}
 		}
 	}
@@ -377,7 +536,7 @@ void CbsMidTrail::VertexBufUpdate()
 		
 			for (int32 i = 0; i < BoneCnt; ++i)
 			{
-				auto& _CurVtxLog = _VtxLog[i];
+				auto& _CurVtxLog = _TrailVtxWorldLocations[i];
 				_CurVtxLog.resize(_Desc.NewVtxCnt);
 				for (size_t j = 0; j < _CurVtxLog.size(); ++j)
 				{
@@ -478,12 +637,10 @@ HRESULT CbsMidTrail::Ready()
 
 	for (auto& _DescElement : _PlayEffectDescs)
 	{
-		EffectDesc _Desc{};
+		CbsMidTrail::EffectDesc _Desc{};
 		_Desc.LocationOffset = FMath::Random(
 			Vector3{ -0.1f,-0.1f,-0.1f }, Vector3{ 0.1f,0.1f,0.1f });
-
-		_Desc.SpawnTime = FMath::Random(0.f, 1.f);
-		_Desc.bPlayed = true;
+		_Desc.bPlayEnd = true;
 
 		const uint32 Dice = FMath::Random(0u, 4u);
 
@@ -491,34 +648,62 @@ HRESULT CbsMidTrail::Ready()
 		{
 			_Desc._Effect = AddGameObject<ThunderBoltSecond>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBoltSecond;
-
+			
 			if (auto _ThunderBolt2nd = std::dynamic_pointer_cast<ThunderBoltSecond>(_Desc._Effect.lock());
 				_ThunderBolt2nd)
 			{
 				_ThunderBolt2nd->Dice(2u);
+				_Desc.PlayTime = _ThunderBolt2nd->GetPlayTime();
+				_ThunderBolt2nd->SetEditable(false);
 			}
 		}
 		else if (Dice == 1u)
 		{
 			_Desc._Effect = AddGameObject<ThunderBolt>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBolt;
+			if (auto _TargetEffect = std::dynamic_pointer_cast<ThunderBolt>(_Desc._Effect.lock());
+				_TargetEffect)
+			{
+				_Desc.PlayTime = _TargetEffect->GetPlayTime();
+				_TargetEffect->SetEditable(false);
+			}
 		}
 		else if (Dice == 2u)
 		{
 			_Desc._Effect = AddGameObject<ElectricOccur>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ElectricOccur;
+			if (auto _TargetEffect = std::dynamic_pointer_cast<ElectricOccur>(_Desc._Effect.lock());
+				_TargetEffect)
+			{
+				_Desc.PlayTime = _TargetEffect->GetPlayTime();
+				_TargetEffect->SetEditable(false);
+
+			}
 		}
 		else if (Dice == 3u)
 		{
 			_Desc._Effect = AddGameObject<ElectricBranch>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ElectricBranch;
+			if (auto _TargetEffect = std::dynamic_pointer_cast<ElectricBranch>(_Desc._Effect.lock());
+				_TargetEffect)
+			{
+				_Desc.PlayTime = _TargetEffect->GetPlayTime();
+				_TargetEffect->SetEditable(false);
+
+			}
 		}
 		else if (Dice == 4u)
 		{
 			_Desc._Effect = AddGameObject<ElectricVortex>();
 			_Desc._Tag = GAMEOBJECTTAG::Eff_ElectricVortex;
-		}
+			if (auto _TargetEffect = std::dynamic_pointer_cast<ElectricVortex>(_Desc._Effect.lock());
+				_TargetEffect)
+			{
+				_Desc.PlayTime = _TargetEffect->GetPlayTime();
+				_TargetEffect->SetEditable(false);
 
+			}
+		}
 
 		_DescElement = _Desc;
 	}
@@ -546,12 +731,12 @@ HRESULT CbsMidTrail::Start()
 UINT CbsMidTrail::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+
 	if (_RenderProperty.bRender == false) return 0;
 
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
-
-
+	EffectParticleUpdate(_fDeltaTime);
 
 	return 0;
 }
@@ -584,7 +769,7 @@ void CbsMidTrail::Editor()
 			}
 
 
-			for (auto& _Vtx : _VtxLog)
+			for (auto& _Vtx : _TrailVtxWorldLocations)
 			{
 				for (auto& _CurVtx : _Vtx)
 				{

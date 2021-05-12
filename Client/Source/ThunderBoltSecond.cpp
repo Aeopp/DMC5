@@ -112,6 +112,8 @@ void ThunderBoltSecond::PlayStart(const Vector3& PlayLocation)
 
 	CurSubsetDelta = SubsetDelta;
 
+	// SetActive(true);
+
 	Range = 0.0f;
 	EndRange = 0.35f;
 };
@@ -124,6 +126,8 @@ void ThunderBoltSecond::PlayEnd()
 		SpPtLight->bEnable = false;
 	}
 
+	// SetActive(false);
+
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
@@ -135,7 +139,7 @@ void ThunderBoltSecond::PlayEnd()
 				"ThunderBoltSecondEndParticle", 1000ul, true);
 			_Particle.empty() == false)
 		{
-			
+
 			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
@@ -143,6 +147,11 @@ void ThunderBoltSecond::PlayEnd()
 			}
 		}
 	};
+};
+
+float ThunderBoltSecond::GetPlayTime()
+{
+	return PlayTime;
 };
 
 void ThunderBoltSecond::RenderAlphaBlendEffect(const DrawInfo& _Info)

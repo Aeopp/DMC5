@@ -102,6 +102,8 @@ void ThunderBolt::PlayStart(const Vector3& PlayLocation)
 {
 	PlayEnd();
 
+	// SetActive(true);
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -151,7 +153,14 @@ void ThunderBolt::PlayEnd()
 			}
 		}
 	};
-};
+
+	// SetActive(false);
+}
+float ThunderBolt::GetPlayTime()
+{
+	return PlayTime;
+}
+;
 
 void ThunderBolt::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {

@@ -132,7 +132,14 @@ void Scene::EditUpdate()
 			m_LoopIter = m_Loop[ACTIVE][LOOP_UPDATE].erase(m_LoopIter);
 			continue;
 		}
-		(*m_LoopIter).lock()->Editor();
+		if (auto _Element = (*m_LoopIter).lock();
+			_Element)
+		{
+			if (_Element->m_bEditable)
+			{
+				_Element->Editor();
+			}
+		}
 
 		++m_LoopIter;
 	}

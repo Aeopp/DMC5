@@ -473,6 +473,8 @@
     <ClInclude Include="..\Header\Hotel_S01.h">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ElectricBranch.h" />
+    <ClInclude Include="..\Header\ElectricVortex.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -751,6 +753,8 @@
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
+    <ClCompile Include="..\Source\ElectricBranch.cpp" />
+    <ClCompile Include="..\Source\ElectricVortex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

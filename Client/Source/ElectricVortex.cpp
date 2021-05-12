@@ -133,7 +133,12 @@ void ElectricVortex::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-};
+}
+float ElectricVortex::GetPlayTime()
+{
+	return PlayTime;
+}
+;
 
 void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {

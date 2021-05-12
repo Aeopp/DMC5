@@ -140,7 +140,12 @@ void ElectricBranch::PlayEnd()
 			}
 		}
 	};
-};
+}
+float ElectricBranch::GetPlayTime()
+{
+	return PlayTime;
+}
+;
 
 void ElectricBranch::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {

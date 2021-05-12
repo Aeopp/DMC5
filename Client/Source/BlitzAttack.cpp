@@ -208,4 +208,6 @@ void BlitzAttack::PlayStart(const Vector3& Location)
 		_EffectRest.bPlayed = false;
 	}
 	T = 0.0f;
+
+	SetActive(true);
 }

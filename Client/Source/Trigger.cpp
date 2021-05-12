@@ -21,6 +21,7 @@ void Trigger::EventRegist(
 		_Collider)
 	{
 		_Collider->SetSize(ColliderBoxSize);
+		_Collider->SetActive(true);
 	}
 
 	_Event = CallBack;
@@ -85,27 +86,27 @@ void Trigger::TriggerEnable()
 {
 	SetActive(true);
 
-	if (auto _Collider = GetComponent<BoxCollider>().lock();
-		_Collider)
-	{
-		_Collider->SetActive(true);
-	}
+	//if (auto _Collider = GetComponent<BoxCollider>().lock();
+	//	_Collider)
+	//{
+	//	_Collider->SetActive(true);
+	//}
 
-	if (auto _Transform = GetComponent<Transform>().lock();
-		_Transform)
-	{
-		_Transform->SetPosition(TriggerLocation);
-	};
+	//if (auto _Transform = GetComponent<Transform>().lock();
+	//	_Transform)
+	//{
+	//	_Transform->SetPosition(TriggerLocation);
+	//};
 }
 
 void Trigger::TriggerDisable()
 {
 	SetActive(false);
-	if (auto _Collider = GetComponent<BoxCollider>().lock();
+	/*if (auto _Collider = GetComponent<BoxCollider>().lock();
 		_Collider)
 	{
 		_Collider->SetActive(false);
-	};
+	};*/
 }
 
 void Trigger::Free()
@@ -223,6 +224,7 @@ void Trigger::Editor()
 void Trigger::OnEnable()
 {
 	GameObject::OnEnable();
+
 }
 
 void Trigger::OnDisable()
@@ -230,7 +232,7 @@ void Trigger::OnDisable()
 	GameObject::OnDisable();
 }
 
-void Trigger::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+void Trigger::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (_TargetTag != _pOther.lock()->m_nTag)
 		return;
@@ -247,7 +249,7 @@ void Trigger::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 }
 
 
-void Trigger::OnCollisionExit(std::weak_ptr<GameObject> _pOther)
+void Trigger::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
 
 }

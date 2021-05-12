@@ -102,6 +102,8 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 {
 	PlayEnd();
 
+	// SetActive(true);
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -111,7 +113,6 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	CurParticleTime = 0.0f;
-
 
 	PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
 
@@ -124,7 +125,8 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 
 void ElectricOccur::PlayEnd()
 {
-// 	SetActive(false);
+	// SetActive(false);
+
 	if (auto SpPtLight = PtLight.lock();
 		SpPtLight)
 	{
@@ -133,7 +135,12 @@ void ElectricOccur::PlayEnd()
 
 	_RenderProperty.bRender = false;
 	T = 0.0f;
-};
+}
+float ElectricOccur::GetPlayTime()
+{
+	return PlayTime;
+}
+;
 
 void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
@@ -144,8 +151,6 @@ void ElectricOccur::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
 
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
-
-	;
 	_Info.Fx->SetTexture("DistortionMap", DistortionMap->GetTexture());
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
