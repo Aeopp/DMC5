@@ -2017,6 +2017,7 @@ RunStartLeft* RunStartLeft::Create(FSMBase* const _pFSM, const UINT _nIndex, wea
 
 HRESULT RunStartLeft::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2307,6 +2308,7 @@ RunStartRight* RunStartRight::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT RunStartRight::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2598,6 +2600,7 @@ RunStart180* RunStart180::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT RunStart180::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2887,6 +2890,7 @@ RunLoop* RunLoop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero
 
 HRESULT RunLoop::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 
@@ -2977,6 +2981,7 @@ RunStartFront* RunStartFront::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT RunStartFront::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	//앞으로 달리는 애니메이션으로 세팅
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
@@ -4823,6 +4828,7 @@ BT_Att1* BT_Att1::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero
 
 HRESULT BT_Att1::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	//달리고있었으면 대쉬 ComboA로 가야됨
 	m_pNero.lock()->ChangeAnimation("ComboA1", false,Nero::ANI_COMBOA1);
@@ -5812,6 +5818,7 @@ BT_Air_Att1* BT_Air_Att1::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT BT_Air_Att1::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT  CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
@@ -6195,6 +6202,7 @@ Skill_Split* Skill_Split::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT Skill_Split::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Split_Start", false, Nero::ANI_SPLIT_START);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Split);
@@ -6365,6 +6373,7 @@ Skill_Float_Ground* Skill_Float_Ground::Create(FSMBase* const _pFSM, const UINT 
 
 HRESULT Skill_Float_Ground::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Hr_Ground", false, Nero::ANI_HR_GROUND);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
@@ -6432,6 +6441,7 @@ Skill_Float_Ground_Ex3* Skill_Float_Ground_Ex3::Create(FSMBase* const _pFSM, con
 
 HRESULT Skill_Float_Ground_Ex3::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_bActiveColl_RedQueen = false;
 	ActiveColl_RedQueen(true);
@@ -6553,6 +6563,7 @@ Skill_Shuffle* Skill_Shuffle::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT Skill_Shuffle::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	//EX게이지에 따라서 분기
 	//게이지없을때
@@ -6627,6 +6638,7 @@ Skill_Streak* Skill_Streak::Create(FSMBase* const _pFSM, const UINT _nIndex, wea
 
 HRESULT Skill_Streak::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Streak_Start", false, Nero::ANI_STREAK_START);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_KnocBack);
@@ -6678,6 +6690,7 @@ Skill_Streak_Ex3* Skill_Streak_Ex3::Create(FSMBase* const _pFSM, const UINT _nIn
 
 HRESULT Skill_Streak_Ex3::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Streak_Ex_Start", false, Nero::ANI_STREAK_EX_START);
@@ -7448,6 +7461,7 @@ Cbs_ComboA1* Cbs_ComboA1::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT Cbs_ComboA1::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_Cbs_Short;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeWeapon(Nero::NeroCom_Cbs_Short);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Battle);
@@ -7920,6 +7934,7 @@ Cbs_SKill_IceAge_Start* Cbs_SKill_IceAge_Start::Create(FSMBase* const _pFSM, con
 
 HRESULT Cbs_SKill_IceAge_Start::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_Cbs_Short;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Cbs_SKill_IceAge_Start", false, Nero::ANI_CBS_SKILL_ICEAGE_START);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Battle);
@@ -8085,6 +8100,7 @@ Cbs_SKill_Revolver_Start* Cbs_SKill_Revolver_Start::Create(FSMBase* const _pFSM,
 
 HRESULT Cbs_SKill_Revolver_Start::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_Cbs_Short;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Cbs_SKill_Revolver_Start", false, Nero::ANI_CBS_SKILL_REVOLVER_START);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Battle);
@@ -8134,6 +8150,7 @@ Cbs_SKill_Revolver_Loop* Cbs_SKill_Revolver_Loop::Create(FSMBase* const _pFSM, c
 
 HRESULT Cbs_SKill_Revolver_Loop::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_Cbs_Short;
 	NeroState::StateEnter();
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Battle);
 	m_pNero.lock()->ChangeAnimation("Cbs_SKill_Revolver_Loop", true, Nero::ANI_CBS_SKILL_REVOLVER_LOOP);
@@ -8246,6 +8263,7 @@ Cbs_SKill_Swing* Cbs_SKill_Swing::Create(FSMBase* const _pFSM, const UINT _nInde
 
 HRESULT Cbs_SKill_Swing::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_Cbs_Short;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Cbs_SKill_Swing", false, Nero::ANI_CBS_SKILL_SWING);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Short, Nero::WS_Battle);
@@ -9781,6 +9799,7 @@ ComboA_Dash* ComboA_Dash::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT ComboA_Dash::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("ComboA1_Dash", false, Nero::ANI_COMBOA1_DASH);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Front);
@@ -9849,6 +9868,7 @@ Skill_Caliber* Skill_Caliber::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT Skill_Caliber::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Caliber_Start", false, Nero::ANI_CALIBER_START);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_KnocBack);
@@ -9973,6 +9993,7 @@ Hr_Air* Hr_Air::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> 
 
 HRESULT Hr_Air::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Hr_Air", false, Nero::ANI_HR_AIR);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
@@ -10037,6 +10058,7 @@ Hr_Ex_Start* Hr_Ex_Start::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT Hr_Ex_Start::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Hr_Ex_Start", false, Nero::ANI_HR_EX_START);
@@ -10149,6 +10171,7 @@ Hr_Ex_Air_Roll_Start* Hr_Ex_Air_Roll_Start::Create(FSMBase* const _pFSM, const U
 
 HRESULT Hr_Ex_Air_Roll_Start::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Hr_Ex_Air_Roll_Start", false, Nero::ANI_HR_EX_AIR_ROLL_START);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Air_Start);
@@ -10325,6 +10348,7 @@ Skill_Split_Ex* Skill_Split_Ex::Create(FSMBase* const _pFSM, const UINT _nIndex,
 
 HRESULT Skill_Split_Ex::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("SplitEx_Start", false, Nero::ANI_SPLITEX_START);
 	
@@ -10501,6 +10525,7 @@ Air_Dive_Slash_Start* Air_Dive_Slash_Start::Create(FSMBase* const _pFSM, const U
 
 HRESULT Air_Dive_Slash_Start::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	m_bActiveColl_RedQueen = false;
 	m_pNero.lock()->ChangeAnimation("Air_Dive_Slash_Start", false, Nero::ANI_AIR_DIVE_SLASH_START);
@@ -10679,6 +10704,7 @@ Skill_Shuffle_Ex* Skill_Shuffle_Ex::Create(FSMBase* const _pFSM, const UINT _nIn
 
 HRESULT Skill_Shuffle_Ex::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Shuffle_Ex", false, Nero::ANI_SHUFFLE_EX);
@@ -10763,6 +10789,7 @@ Skill_Float_Ground_Ex3_Start* Skill_Float_Ground_Ex3_Start::Create(FSMBase* cons
 
 HRESULT Skill_Float_Ground_Ex3_Start::StateEnter()
 {
+	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 
 
