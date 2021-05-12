@@ -6,6 +6,8 @@ class Hotel_S01 : public Scene
 {
 private:
 	std::weak_ptr<class Nero> _Player{};
+
+	bool _LateInit = false;
 private:
 	explicit Hotel_S01();
 	virtual ~Hotel_S01() = default;
@@ -23,5 +25,7 @@ public:
 private:
 	void LoadObjects(const std::filesystem::path& path);
 	void RenderDataSetUp();
+	void TriggerSetUp();
+	void LaitInit();
 };
 #endif // !__M01_HOTEL_S01_H__

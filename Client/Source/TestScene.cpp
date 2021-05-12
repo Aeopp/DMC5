@@ -74,6 +74,7 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 	m_fLoadingProgress = 0.01f;
+
 #pragma region Trigger
 	TriggerSetUp();
 #pragma endregion
@@ -82,12 +83,14 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<BlitzAttack>();
 	AddGameObject<CbsMidTrail>();
 #pragma endregion
+	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
 	AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -255,7 +258,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 17, Until Dooms Day",
+		pFont->SetText("D 15, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),

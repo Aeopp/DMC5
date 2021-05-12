@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Application.h"
-
 #include "LogoScene.h"
-// #include "TestScene.h"
 
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
@@ -15,7 +13,7 @@ HRESULT Application::ReadyApplication(const bool bWindowed, const bool bMultiSam
 
 	StaticResourceLoad();
 
-	// 
+	// 처음 시작 Scene 바꾸려면 LogoScene -> Update에서 주석 수정하길 BARAM - by hscho
 	SceneManager::LoadScene(LogoScene::Create());
 
 	return S_OK;
