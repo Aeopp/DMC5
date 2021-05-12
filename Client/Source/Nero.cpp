@@ -1060,16 +1060,6 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	D3DXVec3Normalize(&vDir, &vDir);
 	D3DXVec3Normalize(&vNewDir, &vNewDir);
 
-	if (FMath::IsNan(vDir))
-	{
-		int i = 0;
-	}
-
-	if (FMath::IsNan(vNewDir))
-	{
-		int i = 0;
-	}
-
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);

@@ -816,7 +816,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 150;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -4.8f, 1.2f, -4.82f });
+	m_pTransform.lock()->SetPosition({ -4.8f, 3.2f, -4.82f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -861,7 +861,7 @@ HRESULT Em100::Awake()
 
 	m_pCollider.lock()->SetRadius(0.07f);
 	m_pCollider.lock()->SetHeight(0.12f);
-	m_pCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
+	m_pCollider.lock()->SetCenter({ 0.f, 0.122f, 0.f });
 
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
@@ -895,7 +895,20 @@ UINT Em100::Update(const float _fDeltaTime)
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
-	  
+	if (FMath::IsNan(DeltaPos))
+	{
+		DeltaPos = { 0.f,0.f,0.f };
+	}
+	if (FMath::IsNan(DeltaQuat))
+	{
+		int i = 0; // 헤응
+		DeltaPos = { 0.f,0.f,0.f };
+		DeltaPos = { 0.f,0.f,0.f };
+		DeltaPos = { 0.f,0.f,0.f };
+		DeltaPos = { 0.f,0.f,0.f };
+		DeltaPos = { 0.f,0.f,0.f };
+		DeltaPos = { 0.f,0.f,0.f };
+	}
 	//ENGINE::AnimNotify _Notify{};
 	////return true 면 이제 호출 안함, false면 저 루프 돌떄 계속 호출.
 	//_Notify.Event[0.5] = [this]() {  AttackStart();  return false; };
@@ -919,6 +932,10 @@ UINT Em100::Update(const float _fDeltaTime)
 		D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 
 		D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
+		if (FMath::IsNan(DeltaPos))
+		{
+			DeltaPos = { 0.f,0.f,0.f };
+		}
 
 		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
@@ -1283,6 +1300,8 @@ void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 	m_bHit = true;
 	m_bDown = true;
 
+	m_pCollider.lock()->SetRigid(false);
+
 	if (m_bAir)
 		m_eState = Hit_Air_Buster_Start;
 	else
@@ -1293,7 +1312,6 @@ void Em100::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
-
 }
 
 void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
@@ -1350,10 +1368,10 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::Overture:
-		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
-		m_bHit = true;
-		m_bDown = true;
-		m_eState = Hit_KnocBack;
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
 		break;

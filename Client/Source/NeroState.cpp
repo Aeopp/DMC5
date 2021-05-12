@@ -4727,7 +4727,7 @@ HRESULT Wire_Pull_Air::StateUpdate(const float _fDeltaTime)
 		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 			NeroState::KeyInput_Jump();
 		else
-			NeroState::KeyInput_Jump();
+			NeroState::KeyInput_Cbs_Jump();
 	}
 
 	if (m_pNero.lock()->IsAnimationEnd())

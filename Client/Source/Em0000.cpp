@@ -1359,10 +1359,10 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	case GAMEOBJECTTAG::Overture:
-		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
-		m_bHit = true;
-		m_bDown = true;
-		m_eState = Hit_KnocBack;
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
 		break;

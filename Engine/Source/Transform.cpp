@@ -108,7 +108,10 @@ void Transform::UpdateTransform()
 void Transform::SetSimulationResult(const D3DXQUATERNION& _tQuaternion, const D3DXVECTOR3& _vPosition)
 {
 	m_tWorldQuaternion = _tQuaternion;
-
+	if (FMath::IsNan(m_tWorldQuaternion))
+	{
+		int i = 0;
+	}
 	m_vWorldPosition = _vPosition;
 
 	D3DXMATRIX matScale, matRot, matTrans;
@@ -145,11 +148,19 @@ void Transform::SetRotation(const D3DXVECTOR3& _vRotation, const SPACE& _eSpace)
 
 	D3DXQuaternionRotationYawPitchRoll(&m_tWorldQuaternion, D3DXToRadian(m_vWorldRotation.y), D3DXToRadian(m_vWorldRotation.x), D3DXToRadian(m_vWorldRotation.z));
 	D3DXMatrixRotationQuaternion(&m_matRotation, &m_tWorldQuaternion);
+	if (FMath::IsNan(m_tWorldQuaternion))
+	{
+		int i = 0;
+	}
 	m_bUpdated = true;
 }
 
 D3DXQUATERNION Transform::GetQuaternion(const SPACE& _eSpace)
 {
+	if (FMath::IsNan(m_tWorldQuaternion))
+	{
+		int i = 0;
+	}
 	return m_tWorldQuaternion;
 }
 
@@ -157,6 +168,10 @@ void Transform::SetQuaternion(const D3DXQUATERNION& _tQuaternion, const SPACE& _
 {
 	m_tWorldQuaternion = _tQuaternion;
 	D3DXMatrixRotationQuaternion(&m_matRotation, &m_tWorldQuaternion);
+	if (FMath::IsNan(m_tWorldQuaternion))
+	{
+		int i = 0;
+	}
 	m_bUpdated = true;
 }
 
@@ -248,7 +263,10 @@ void Transform::Rotate(const D3DXVECTOR3 _vRotate)
 	D3DXQuaternionRotationYawPitchRoll(&tQuatAdd, D3DXToRadian(_vRotate.y), D3DXToRadian(_vRotate.x), D3DXToRadian(_vRotate.z));
 
 	m_tWorldQuaternion = m_tWorldQuaternion * tQuatAdd;
-
+	if (FMath::IsNan(m_tWorldQuaternion))
+	{
+		int i = 0;
+	}
 	D3DXMatrixRotationQuaternion(&m_matRotation, &m_tWorldQuaternion);
 	m_bUpdated = true;
 }
@@ -256,7 +274,10 @@ void Transform::Rotate(const D3DXVECTOR3 _vRotate)
 void Transform::Rotate(const D3DXQUATERNION _tRotate)
 {
 	m_tWorldQuaternion = m_tWorldQuaternion * _tRotate;
-
+	if (FMath::IsNan(m_tWorldQuaternion))
+	{
+		int i = 0;
+	}
 	D3DXMatrixRotationQuaternion(&m_matRotation, &m_tWorldQuaternion);
 	m_bUpdated = true;
 }

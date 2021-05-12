@@ -33,7 +33,7 @@ HRESULT MainCamera::Ready()
 	m_fFovY = D3DXToRadian(45.f);
 	m_fAspect = float(float(g_nWndCX) / float(g_nWndCY));
 	m_fNear = 0.05f;
-	m_fFar = 25.f;
+	m_fFar = 15.f;
 
 
 	D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
@@ -45,7 +45,7 @@ HRESULT MainCamera::Ready()
 
 	m_fCameraAngle = 35.f;
 	m_fDistanceToTarget = OGDistance;
-	//m_fDistanceToTarget = 1.f;
+	m_fDistanceToTarget = 1.f;
 	m_fRotX = -17.1f;
 	m_fFloatingAmount = 0.19f;
 	m_fSensitive = 15.f;
@@ -227,7 +227,7 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	D3DXVec3TransformNormal(&vLook, &vLook, &matTest);
 	D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
 
-	//m_vEye = m_vAt + vLook; // 원본
+	m_vEye = m_vAt + vLook; // 원본
 
 	//static bool Test = true;
 
@@ -237,9 +237,9 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	//if(Test)
 	//	m_vEye = m_vAt + vLook;
 
-	m_vLerpEye = m_vAt + vLook;
+	//m_vLerpEye = m_vAt + vLook;
 
-	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 1.5f);
+	//m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 1.5f);
 }
 
 void MainCamera::MoveMent_Trigger(float _fDeltaTime)
