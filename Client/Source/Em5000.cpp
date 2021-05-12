@@ -63,6 +63,10 @@ void Em5000::Fight(const float _fDeltaTime)
 	D3DXVec3Cross(&vCross, &vLook, &vDir);
 	//앞 뒤 구분하기 위한 내적 결과 값
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 	float fDegree = D3DXToDegree(fRadian);
 
@@ -1400,6 +1404,10 @@ void Em5000::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1488,7 +1496,10 @@ void Em5000::Turn()
 	D3DXVec3Cross(&vCross, &vLook, &vDir);
 	//앞 뒤 구분하기 위한 내적 결과 값
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 
 	//
 	//fDot> 0 //플레이어가 앞에 있다.
@@ -1530,7 +1541,10 @@ void Em5000::Turn_To_Car()
 	Vector3  vCross2;
 	D3DXVec3Cross(&vCross2, &vLook2, &vDir2);
 	float fDot2 = D3DXVec3Dot(&vDir2, &vLook2);
-
+	if (fDot2 > 1.f)
+		fDot2 = 1.f - FLT_EPSILON;
+	else if (fDot2 < -1.f)
+		fDot2 = -1.f + FLT_EPSILON;
 	if (fDot2 > 0)
 	{
 		if (vCross2.y > 0)
@@ -1559,6 +1573,10 @@ void Em5000::Update_Angle_ToCar()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;

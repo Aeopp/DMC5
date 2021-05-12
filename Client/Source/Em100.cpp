@@ -114,6 +114,11 @@ void Em100::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
+
 
 	switch (m_eState)
 	{
@@ -324,6 +329,11 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Loop" && m_pCollider.lock()->IsGround())
 			{
+				if (fDot > 1.f)
+					fDot = 1.f - FLT_EPSILON;
+				else if (fDot < -1.f)
+					fDot = -1.f + FLT_EPSILON;
+
 				if (fDot < 0)
 					m_eState = Hit_End_Front;
 				else
@@ -414,6 +424,11 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
 			if (m_pCollider.lock()->IsGround() && m_pMesh->CurPlayAnimInfo.Name == "Hit_Air")
 			{
+				if (fDot > 1.f)
+					fDot = 1.f - FLT_EPSILON;
+				else if (fDot < -1.f)
+					fDot = -1.f + FLT_EPSILON;
+
 				if (fDot < 0)
 					m_eState = Hit_End_Front;
 				else
@@ -641,6 +656,11 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Hit_Buster_End:
 		if (m_bHit)
 		{
+			if (fDot > 1.f)
+				fDot = 1.f - FLT_EPSILON;
+			else if (fDot < -1.f)
+				fDot = -1.f + FLT_EPSILON;
+
 			if (fDot < 0)
 				m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
 			else
@@ -1589,6 +1609,12 @@ void Em100::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
+
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;

@@ -982,6 +982,12 @@ void Nero::CheckAutoRotate()
 		Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 		float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+		if (fDot > 1.f)
+			fDot = 1.f - FLT_EPSILON;
+		else if (fDot < -1.f)
+			fDot = -1.f + FLT_EPSILON;
+
 		float fRadian = acosf(fDot);
 		
 		Vector3	vCross;
@@ -1063,6 +1069,10 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1080,6 +1090,10 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	
 	vLook = -m_pTransform.lock()->GetLook();
 	fDot = D3DXVec3Dot(&vNewDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	fRadian = acosf(fDot);
 	float fDegree = D3DXToDegree(fRadian);
 	if (85.f <= fDegree || fDegree <= -85.f)
@@ -1116,6 +1130,10 @@ void Nero::RotateToHitMonster(std::weak_ptr<GameObject> _pMonster)
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;

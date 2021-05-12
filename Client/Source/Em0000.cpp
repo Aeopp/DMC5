@@ -95,7 +95,10 @@ void Em0000::State_Change(const float _fDeltaTime)
 	D3DXVec3Normalize(&vDir, &vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float    fDot = D3DXVec3Dot(&vDir, &vLook);
-
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 
 	switch (m_eState)
 	{
@@ -1252,6 +1255,10 @@ void Em0000::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1289,6 +1296,10 @@ void Em0000::Test()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
