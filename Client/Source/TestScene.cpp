@@ -77,12 +77,14 @@ HRESULT TestScene::LoadScene()
 	TriggerSetUp();
 #pragma endregion
 
+#pragma region Effect
+	AddGameObject<BlitzAttack>();
+#pragma endregion
+
 #pragma region Player & Camera
-
-	// AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 	//AddGameObject<JudgementSword>();
 #pragma endregion
 

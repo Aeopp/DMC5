@@ -952,9 +952,9 @@ void Application::ThunderBoltSecondParticlePoolLoad()
 			Vector3 Cp1{};
 			Vector3 End{};
 
-			Cp0 = StartLocation + FMath::RandomVector(FMath::Random(66.f, 66.f));
-			Cp1 = Cp0 + FMath::RandomVector(FMath::Random(33.f, 66.f));
-			End = Cp1 + FMath::RandomVector(FMath::Random(33.f, 66.f));
+			Cp0 = StartLocation + FMath::RandomVector(FMath::Random(0.5f,1.f));
+			Cp1 = Cp0 + FMath::RandomVector(FMath::Random(0.5f, 1.f));
+			End = Cp1 + FMath::RandomVector(FMath::Random(0.5f, 1.f));
 
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
@@ -962,12 +962,13 @@ void Application::ThunderBoltSecondParticlePoolLoad()
 			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			const float RScale = FMath::Random(0.0022f, 0.006f) * GScale;
+			const float RScale = FMath::Random(0.0066f, 0.018f) * GScale;
 
 			ParticleInstance::Electric _ElectricValue{};
 
 			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
-			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			_ElectricValue.Color = 
+				FMath::Lerp(Vector3{ 99.f/ 255.f,121.f/ 255.f, 148.f/ 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
 			const float LifeTime = FMath::Random(0.1f, 3.f);
 
 			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
@@ -1032,9 +1033,9 @@ void Application::ThunderBoltSecondEndParticlePoolLoad()
 			Vector3 End{};
 
 			{
-				Cp0 = StartLocation + -Dir * FMath::Random(99.f, 180.f);
-				Cp1 = Cp0 + -Dir * FMath::Random(99.f, 180.f);
-				End = Cp1 + Dir * FMath::Random(99.f, 180.f);
+				Cp0 = StartLocation + -Dir * FMath::Random(1.f, 2.f);
+				Cp1 = Cp0 + -Dir * FMath::Random(1.f, 2.f);
+				End = Cp1 + -Dir * FMath::Random(1.f, 2.f);
 			}
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
@@ -1042,12 +1043,12 @@ void Application::ThunderBoltSecondEndParticlePoolLoad()
 			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			const float RScale = FMath::Random(0.0077f, 0.01f) * GScale;
+			const float RScale = FMath::Random(0.0066f, 0.018f) * GScale;
 
 			ParticleInstance::Electric _ElectricValue{};
 
 			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
-			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 99.f / 255.f,121.f / 255.f, 148.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
 			const float LifeTime = FMath::Random(0.1f, 3.f);
 
 			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
@@ -1126,7 +1127,7 @@ void Application::ElectricBranchParticlePoolLoad()
 			ParticleInstance::Electric _ElectricValue{};
 
 			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
-			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 99.f / 255.f,121.f / 255.f, 148.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
 			const float LifeTime = FMath::Random(0.1f, 3.f);
 
 			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
@@ -1206,7 +1207,7 @@ void Application::ElectricBranchEndParticlePoolLoad()
 			ParticleInstance::Electric _ElectricValue{};
 
 			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
-			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 99.f / 255.f,121.f / 255.f, 148.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
 			const float LifeTime = FMath::Random(0.1f, 3.f);
 
 			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },

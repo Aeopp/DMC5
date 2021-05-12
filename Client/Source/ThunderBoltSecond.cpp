@@ -132,7 +132,7 @@ void ThunderBoltSecond::PlayEnd()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltSecondEndParticle", 250u, true);
+				"ThunderBoltSecondEndParticle", 1000ul, true);
 			_Particle.empty() == false)
 		{
 			
@@ -148,7 +148,7 @@ void ThunderBoltSecond::PlayEnd()
 void ThunderBoltSecond::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T*ScrollSpeed)) );
+	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity * std::fabsf(std::sin(T * ScrollSpeed)));
 	_Info.Fx->SetFloat("Time", T);
 	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
@@ -166,8 +166,8 @@ void ThunderBoltSecond::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	const float PlayTimehalf = PlayTime * 0.5f;
 	if (T >= PlayTimehalf)
 	{
-		_Info.Fx->SetFloat("AlphaFactor", 1.0f - ((T-PlayTimehalf) / PlayTimehalf));
-		
+		_Info.Fx->SetFloat("AlphaFactor", 1.0f - ((T - PlayTimehalf) / PlayTimehalf));
+
 	}
 	else
 	{
@@ -237,6 +237,14 @@ void ThunderBoltSecond::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	}
 };
 
+void ThunderBoltSecond::Dice(const uint32 ModeRangeEnd)
+{
+	_Mode = FMath::Random(0u, ModeRangeEnd);
+	UVYScrollSpeed = FMath::Random(1.f, 1000.f);
+	UVYStartConstant = FMath::Random(0.f, 1.f);
+	ScrollSpeed = FMath::Random(0.f, 1000.f);
+};
+
 void ThunderBoltSecond::PlayParticle()
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -244,7 +252,7 @@ void ThunderBoltSecond::PlayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltSecondParticle", 1000ul, true);
+				"ThunderBoltSecondParticle", 100ul, true);
 			_Particle.empty() == false)
 		{
 			for (int32 i = 0; i < _Particle.size(); ++i)

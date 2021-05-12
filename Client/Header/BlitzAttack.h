@@ -16,7 +16,7 @@ private:
 		GAMEOBJECTTAG _Tag{};
 		std::weak_ptr<class GameObject> _Effect{};
 	};
-	std::array<EffectDesc, 5u> _PlayEffectDescs{};
+	std::array<EffectDesc, 10u> _PlayEffectDescs{};
 private:
 	explicit BlitzAttack() = default;
 	virtual ~BlitzAttack() = default;

@@ -7,15 +7,15 @@
 #include <optional>
 
 class ThunderBoltSecond  : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+						   public ENGINE::RenderInterface
 {
 public:
 	enum Mode : uint8
 	{
 		Loop,
 		Rand,
-		All,
 		Set,
+		All,
 		End
 	};
 private:
@@ -50,7 +50,9 @@ public:
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
-private:
+
+	void Dice(const uint32 ModeRangeEnd);
+public:
 	std::bitset<4u> _SubsetSets{};
 	uint32 CurSubset = 0u;
 	uint32 CurSubsetRand = 0u;
