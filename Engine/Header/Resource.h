@@ -1,7 +1,6 @@
 #ifndef __RESOURCE_H__
 #define __RESOURCE_H__
 #include "Object.h"
-
 BEGIN(ENGINE)
 class ENGINE_DLL Resource abstract : public Object
 {

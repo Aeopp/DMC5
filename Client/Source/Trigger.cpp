@@ -231,11 +231,9 @@ void Trigger::Editor()
 	}
 }
 
-
 void Trigger::OnEnable()
 {
 	GameObject::OnEnable();
-
 }
 
 void Trigger::OnDisable()
@@ -247,6 +245,7 @@ void Trigger::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (_TargetTag != _pOther.lock()->m_nTag)
 		return;
+
 	if (bEnable == false)
 		return;
 
