@@ -861,7 +861,7 @@ HRESULT Em100::Awake()
 
 	m_pCollider.lock()->SetRadius(0.07f);
 	m_pCollider.lock()->SetHeight(0.12f);
-	m_pCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
+	m_pCollider.lock()->SetCenter({ 0.f, 0.122f, 0.f });
 
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
@@ -1293,6 +1293,12 @@ void Em100::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
+
+	for (int i = 0; i < 2; ++i)
+	{
+		m_pHand[i].lock()->Set_Coll(false);
+		m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+	}
 
 }
 

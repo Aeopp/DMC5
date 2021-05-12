@@ -979,6 +979,9 @@ void Em0000::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
+
+	m_pWeapon.lock()->Set_Coll(false);
+	m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 }
 
 void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)

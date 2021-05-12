@@ -103,7 +103,7 @@ void TempMap::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = true;
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Test.fbx", _InitInfo);
+		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Tempmap.fbx", _InitInfo);
 	PushEditEntity(_StaticMesh.get());
 };
 
@@ -177,7 +177,7 @@ HRESULT TempMap::Ready()
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale({ GScale,GScale,GScale });
-	InitTransform.lock()->SetPosition(Vector3{ -3672.85 ,57.237 ,22512.534}*GScale) ;
+	//InitTransform.lock()->SetPosition(Vector3{ -3672.85 ,57.237 ,22512.534}*GScale) ;
 
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
