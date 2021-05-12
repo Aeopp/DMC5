@@ -1236,6 +1236,13 @@ void Em200::Snatch(BT_INFO _BattleInfo, void* pArg)
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
 
+	for (int i = 0; i < 2; ++i)
+	{
+		m_pHand[i].lock()->Set_Coll(false);
+		m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+
+	}
+
 }
 
 void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)

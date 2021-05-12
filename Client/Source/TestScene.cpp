@@ -86,9 +86,9 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
 
 #pragma endregion
