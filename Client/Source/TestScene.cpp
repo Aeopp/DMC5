@@ -35,8 +35,6 @@
 #include "FireCircle.h"
 #include "IceAge.h"
 #include "JudgementSword.h"
-#include "ParticleSystem.h"
-#include "ParticleInstanceDesc.hpp"
 #include "CbsTrail.h"
 #include "ElectricOccur.h"
 #include "Thunderbolt.h"
@@ -47,10 +45,10 @@
 #include "CbsMidTrail.h"
 #include "BlitzAttack.h"
 #include "Trigger.h"
+#include "PreLoader.h"
 
 #include <iostream>
 #include <fstream>
-
 using namespace std;
 
 TestScene::TestScene()
@@ -75,19 +73,19 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
-#pragma region Trigger
-	TriggerSetUp();
+#pragma region PreLoad
+
+	PreLoader::PreLoadResources();
+
 #pragma endregion
 
-#pragma region Effect
-	AddGameObject<BlitzAttack>();
-	AddGameObject<CbsMidTrail>();
-#pragma endregion
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
+
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
+
 	_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
 
@@ -152,20 +150,25 @@ HRESULT TestScene::LoadScene()
 
 	m_fLoadingProgress = 0.4f;
 
-#pragma region Map & RenderData
+#pragma region Map
 
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
-	RenderDataSetUp();
 
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
 
-#pragma region UI & Effect
+#pragma region RenderData & Trigger
 
-	AddGameObject<BtlPanel>();
+	RenderDataSetUp();
+	//TriggerSetUp();
 
+#pragma endregion
+
+	m_fLoadingProgress = 0.7f;
+
+#pragma region Effect
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
@@ -173,7 +176,8 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<IceAge>();
 	//AddGameObject<CbsTrail>();
 	//AddGameObject<ElectricOccur>();
-
+	//AddGameObject<BlitzAttack>();
+	//AddGameObject<CbsMidTrail>();
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -251,6 +255,14 @@ HRESULT TestScene::LoadScene()
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;
+
+#pragma region UI
+
+	AddGameObject<BtlPanel>();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.9f;
 
 #pragma region Misc
 

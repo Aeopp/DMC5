@@ -12,10 +12,7 @@ class ResourceSystem final : public Object
 private:
 	//
 	typedef std::unordered_map <size_t, std::unordered_map<std::wstring, std::shared_ptr<Resource>>> ORIGIN;
-	typedef std::unordered_map <size_t, std::unordered_map<std::wstring, std::vector<std::shared_ptr<Resource>>>> CLONE;
-
 	ORIGIN	m_Origin;
-	CLONE	m_Clone;
 
 	LPDIRECT3DDEVICE9	m_pDevice;
 private:

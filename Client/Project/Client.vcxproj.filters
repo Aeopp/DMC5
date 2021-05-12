@@ -196,6 +196,9 @@
     <Filter Include="02.GameObject\UI\Scene">
       <UniqueIdentifier>{e47f0001-a56a-4b6f-a6ce-f285c618963f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.PreLoader">
+      <UniqueIdentifier>{aabd0ba9-b36c-491a-8793-05fdffc2a991}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -491,6 +494,11 @@
     <ClInclude Include="..\Header\Hotel_S04.h">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ElectricBranch.h" />
+    <ClInclude Include="..\Header\ElectricVortex.h" />
+    <ClInclude Include="..\Header\PreLoader.h">
+      <Filter>98.PreLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -782,6 +790,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Hotel_S04.cpp">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\CbsMidTrail.cpp" />
+    <ClCompile Include="..\Source\ElectricBranch.cpp" />
+    <ClCompile Include="..\Source\ElectricVortex.cpp" />
+    <ClCompile Include="..\Source\PreLoader.cpp">
+      <Filter>98.PreLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

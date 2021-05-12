@@ -4,7 +4,6 @@
 #include "TitlePanel.h"
 #include "Hotel_S01.h"
 
-
 void TitleScene::Free()
 {
 	Scene::Free();

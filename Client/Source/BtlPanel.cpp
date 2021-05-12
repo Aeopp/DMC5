@@ -2062,7 +2062,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 
 	//POINT pt{};
 	//GetCursorPos(&pt);
-	//ScreenToClient(g_hWnd, &pt);
+	//ScreenToClient(g_hWnd, &pt);_HPGlassRotY
 	//Vector2 TargetPos = Vector2(static_cast<float>(pt.x), static_cast<float>(pt.y));
 	//std::cout << ScreenPosToOrtho(TargetPos.x, TargetPos.y).x << std::endl;
 }

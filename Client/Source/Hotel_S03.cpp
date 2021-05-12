@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Header\Hotel_S03.h"
 #include "LoadingScene.h"
+#include "PreLoader.h"
 #include "TempMap.h"
 #include "Nero.h"
 #include "BtlPanel.h"
@@ -12,7 +13,6 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-
 
 Hotel_S03::Hotel_S03()
 {
@@ -36,11 +36,19 @@ HRESULT Hotel_S03::LoadScene()
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
+#pragma region PreLoad
+
+	PreLoader::PreLoadResources();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.1f;
+
 #pragma region Player & Camera
 
 	//AddGameObject<Camera>();
-
 	AddGameObject<MainCamera>();
+
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -53,13 +61,13 @@ HRESULT Hotel_S03::LoadScene()
 
 	m_fLoadingProgress = 0.4f;
 
-#pragma region Map
+#pragma region Map & Objects
 
 	LoadObjects("../../Data/Stage3_Map.json");
 	LoadObjects("../../Data/Stage3_Object.json");
 
 	AddGameObject<TempMap>();
-	
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -71,9 +79,16 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma endregion
 
+	m_fLoadingProgress = 0.7f;
+
+#pragma region Effect
+
+
+#pragma endregion
+
 	m_fLoadingProgress = 0.8f;
 
-#pragma region UI & Effect
+#pragma region UI
 
 	AddGameObject<BtlPanel>();
 
@@ -106,14 +121,13 @@ HRESULT Hotel_S03::Start()
 HRESULT Hotel_S03::Update(const float _fDeltaTime)
 {
 	if (!_LateInit)
-		LaitInit();
+		LateInit();
 
 	Scene::Update(_fDeltaTime);
 
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	////////////////////////////////////
@@ -210,7 +224,7 @@ void Hotel_S03::TriggerSetUp()
 
 }
 
-void Hotel_S03::LaitInit()
+void Hotel_S03::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
 

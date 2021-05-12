@@ -19,6 +19,7 @@ private:
 	/*vector<weak_ptr<GameObject>> m_vecEm100;
 	vector<weak_ptr<GameObject>> m_vecEm0000;*/
 	vector<weak_ptr<class Effect>> m_vecQliphothBlock;
+
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;
@@ -33,8 +34,7 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-
-public:
+private:
 	void LoadMap();
 	void RenderDataSetUp();
 	void TriggerSetUp();
