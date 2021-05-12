@@ -87,8 +87,8 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 	AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 	//AddGameObject<JudgementSword>();
 
 #pragma endregion
@@ -514,7 +514,7 @@ void TestScene::TriggerSetUp()
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
 
-		const Vector3 TriggerLocation{ -1.80262f,0.01168f,1.4464f };
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f};
 		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
 		const bool ImmediatelyEnable = true;
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
@@ -528,7 +528,7 @@ void TestScene::TriggerSetUp()
 			SpawnWaveAfterEvent);
 	}
 
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
+	/*if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
 		std::function<void()> _CallBack{};
@@ -543,5 +543,5 @@ void TestScene::TriggerSetUp()
 			Vector3{ 1.f,1.f,1.f },
 			true,
 			GAMEOBJECTTAG::Player);
-	}
+	}*/
 }

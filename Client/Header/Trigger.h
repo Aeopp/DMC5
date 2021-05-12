@@ -56,6 +56,7 @@ public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther)override;
 	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther)override;
 private:
+	bool bEnable = false;
 	Vector3 TriggerLocation{ 0.f,0.f,0.f };
 	Option _Option = Option::None;
 	GAMEOBJECTTAG _TargetTag = GAMEOBJECTTAG::Player;

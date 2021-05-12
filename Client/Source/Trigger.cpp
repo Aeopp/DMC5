@@ -79,34 +79,33 @@ void Trigger::EventRegist(
 
 bool Trigger::IsEnable()
 {
-	return IsActive();
+	return bEnable;
 }
 
 void Trigger::TriggerEnable()
 {
-	SetActive(true);
+	bEnable = true;
+	if (auto _Collider = GetComponent<BoxCollider>().lock();
+		_Collider)
+	{
+		_Collider->SetActive(true);
+	}
 
-	//if (auto _Collider = GetComponent<BoxCollider>().lock();
-	//	_Collider)
-	//{
-	//	_Collider->SetActive(true);
-	//}
-
-	//if (auto _Transform = GetComponent<Transform>().lock();
-	//	_Transform)
-	//{
-	//	_Transform->SetPosition(TriggerLocation);
-	//};
+	if (auto _Transform = GetComponent<Transform>().lock();
+		_Transform)
+	{
+		_Transform->SetPosition(TriggerLocation);
+	};
 }
 
 void Trigger::TriggerDisable()
 {
-	SetActive(false);
-	/*if (auto _Collider = GetComponent<BoxCollider>().lock();
+	bEnable = false;
+	if (auto _Collider = GetComponent<BoxCollider>().lock();
 		_Collider)
 	{
 		_Collider->SetActive(false);
-	};*/
+	};
 }
 
 void Trigger::Free()
@@ -205,6 +204,18 @@ void Trigger::Editor()
 			}
 		}
 
+		if (ImGui::Button("Enable"))
+		{
+			TriggerEnable();
+		}
+
+		if (ImGui::Button("Disable"))
+		{
+			TriggerDisable();
+		}
+
+
+
 		const char* Msg = IsEnable() ? "Enable" : "Disable";
 		ImGui::Text(Msg);
 
@@ -235,6 +246,8 @@ void Trigger::OnDisable()
 void Trigger::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (_TargetTag != _pOther.lock()->m_nTag)
+		return;
+	if (bEnable == false)
 		return;
 
 	if (IsEnable())
