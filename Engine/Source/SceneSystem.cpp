@@ -1,6 +1,6 @@
 #include "SceneSystem.h"
 #include "Scene.h"
-
+#include "ResourceSystem.h"
 #include "PhysicsSystem.h"
 
 USING(ENGINE)
@@ -155,6 +155,8 @@ void SceneSystem::SwitchScene()
 	m_pNextScene.reset();
 	//
 	m_eLoadingState = LOADINGSTATE::NONE;
+	//
+	ResourceSystem::GetInstance()->Clear();
 }
 
 unsigned int SceneSystem::LoadingThread(void* _pArg)

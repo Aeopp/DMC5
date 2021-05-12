@@ -17,12 +17,19 @@ void Trigger::EventRegist(
 {
 	TriggerLocation = Location;
 
+	if (auto _Transform = GetComponent<Transform>().lock();
+		_Transform)
+	{
+		_Transform->SetPosition(TriggerLocation);
+	};
+
 	if (auto _Collider = GetComponent<BoxCollider>().lock();
 		_Collider)
 	{
 		_Collider->SetSize(ColliderBoxSize);
 		_Collider->SetActive(true);
 	}
+
 
 	// 트리거 발동 함수 등록 
 	_Event = CallBack;
@@ -63,7 +70,7 @@ void Trigger::EventRegist(
 	}
 
 	// 몬스터 배열이 비어있었으므로 몬스터 사망 시점 체크할 필요 없으니 Optional 비워줌 
-	if (CheckIfTheDead->empty())
+	if (CheckIfTheDead.value().empty())
 	{
 		CheckIfTheDead = std::nullopt;
 	}
@@ -168,6 +175,11 @@ HRESULT Trigger::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
+	if (auto _Transform = GetComponent<Transform>().lock();
+		_Transform)
+	{
+		_Transform->SetPosition(TriggerLocation);
+	};
 	PushEditEntity(InitTransform.lock().get());
 
 	_Collider = AddComponent<BoxCollider>();
@@ -197,6 +209,11 @@ HRESULT Trigger::Awake()
 {
 	GameObject::Awake();
 	auto InitTransform = GetComponent<ENGINE::Transform>();
+	if (auto _Transform = GetComponent<Transform>().lock();
+		_Transform)
+	{
+		_Transform->SetPosition(TriggerLocation);
+	};
 	return S_OK;
 }
 
@@ -211,21 +228,15 @@ UINT Trigger::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
-
-	// (트리거가 발동된 직후 && 옵션 && 소환한 몬스터가 1개 이상 유효했음 )
 	if (IsAfterEvent() 
 		&&  (_Option == Option::MonsterWave )  
-		&& CheckIfTheDead.has_value())
+		&&  CheckIfTheDead.has_value())
 	{
-		bool bWaveEnd = true;
-
-		for (auto& _Monster : *CheckIfTheDead)
-		{
-			if (_Monster.expired() == false)
+		const bool bWaveEnd = std::all_of(std::begin(*CheckIfTheDead), std::end(*CheckIfTheDead), []
+		(const auto& _Monster)
 			{
-				bWaveEnd = false;
-			}
-		}
+				return (_Monster.expired() || (_Monster.lock()->Get_BattleInfo().iHp <= 0));
+			});
 
 		// 몬스터 전부 만료되었다면 웨이브 종료는 true 이므로 호출 
 		if(bWaveEnd)
@@ -234,10 +245,9 @@ UINT Trigger::Update(const float _fDeltaTime)
 			{
 				_WaveEndEvent();
 			}
+			// null로 초기화해서 다음번에는 로직 안타도록 체크 . 
+			CheckIfTheDead = std::nullopt;
 		}
-
-		// null로 초기화해서 다음번에는 로직 안타도록 체크 . 
-		CheckIfTheDead = std::nullopt;
 	}
 
 	return 0;
@@ -276,6 +286,12 @@ void Trigger::Editor()
 
 		const char* Msg = IsEnable() ? "Enable" : "Disable";
 		ImGui::Text(Msg);
+
+		const char* AfterEventMsg = IsAfterEvent() ? "AfterEvent" : "BeforeEvent";
+		ImGui::Text(AfterEventMsg);
+
+		const char* CheckIfTheDeadMsg = CheckIfTheDead.has_value() ? "CheckIfTheDead Has Value" : "CheckIfTheDead NULL";
+		ImGui::Text(CheckIfTheDeadMsg);
 
 		if (auto _Collider = GetComponent<BoxCollider>().lock();
 			_Collider)
