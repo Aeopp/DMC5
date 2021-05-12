@@ -10,6 +10,11 @@
 #include "Cbs_Short.h"
 #include "ParticleSystem.h"
 #include "Cbs_Middle.h"
+#include "Thunderbolt.h"
+#include "ThunderboltSecond.h"
+#include "ElectricBranch.h"
+#include "ElectricOccur.h"
+#include "ElectricVortex.h"
 
 CbsMidTrail::CbsMidTrail()
 {
@@ -54,7 +59,7 @@ CbsMidTrail* CbsMidTrail::Create()
 
 void CbsMidTrail::RenderReady()
 {
-	// 이미 버텍스 자체가 월드 위치임 . 
+	// 이미 버텍스 자체가 월드 위치임 .
 	_RenderUpdateInfo.World = FMath::Identity();
 };
 
@@ -122,7 +127,6 @@ void CbsMidTrail::RenderInit()
 			, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, _Desc.IdxFmt,
 			D3DPOOL_DEFAULT, &IdxBuffers[i], nullptr);
 	}
-
 
 	TrailMap = Resources::Load<Texture>(
 		"..\\..\\Usable\\tex_03_common_000_0002_alpg.tga");
@@ -370,8 +374,7 @@ void CbsMidTrail::VertexBufUpdate()
 		VtxUVCalc(VtxPtr);
 		VtxSplineInterpolation(VtxPtr);
 
-		if (bEdit)
-		{
+		
 			for (int32 i = 0; i < BoneCnt; ++i)
 			{
 				auto& _CurVtxLog = _VtxLog[i];
@@ -381,7 +384,6 @@ void CbsMidTrail::VertexBufUpdate()
 					_CurVtxLog[j] = VtxPtr[j];
 				}
 			}
-		}
 
 		VtxBuffer->Unlock();
 	};
@@ -473,6 +475,55 @@ HRESULT CbsMidTrail::Ready()
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
+
+	for (auto& _DescElement : _PlayEffectDescs)
+	{
+		EffectDesc _Desc{};
+		_Desc.LocationOffset = FMath::Random(
+			Vector3{ -0.1f,-0.1f,-0.1f }, Vector3{ 0.1f,0.1f,0.1f });
+
+		_Desc.SpawnTime = FMath::Random(0.f, 1.f);
+		_Desc.bPlayed = true;
+
+		const uint32 Dice = FMath::Random(0u, 4u);
+
+		if (Dice == 0u)
+		{
+			_Desc._Effect = AddGameObject<ThunderBoltSecond>();
+			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBoltSecond;
+
+			if (auto _ThunderBolt2nd = std::dynamic_pointer_cast<ThunderBoltSecond>(_Desc._Effect.lock());
+				_ThunderBolt2nd)
+			{
+				_ThunderBolt2nd->Dice(2u);
+			}
+		}
+		else if (Dice == 1u)
+		{
+			_Desc._Effect = AddGameObject<ThunderBolt>();
+			_Desc._Tag = GAMEOBJECTTAG::Eff_ThunderBolt;
+		}
+		else if (Dice == 2u)
+		{
+			_Desc._Effect = AddGameObject<ElectricOccur>();
+			_Desc._Tag = GAMEOBJECTTAG::Eff_ElectricOccur;
+		}
+		else if (Dice == 3u)
+		{
+			_Desc._Effect = AddGameObject<ElectricBranch>();
+			_Desc._Tag = GAMEOBJECTTAG::Eff_ElectricBranch;
+		}
+		else if (Dice == 4u)
+		{
+			_Desc._Effect = AddGameObject<ElectricVortex>();
+			_Desc._Tag = GAMEOBJECTTAG::Eff_ElectricVortex;
+		}
+
+
+		_DescElement = _Desc;
+	}
+
+
 	return S_OK;
 };
 
@@ -499,6 +550,8 @@ UINT CbsMidTrail::Update(const float _fDeltaTime)
 
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
+
+
 
 	return 0;
 }
@@ -529,21 +582,21 @@ void CbsMidTrail::Editor()
 			{
 				PlayEnd();
 			}
-		
+
 
 			for (auto& _Vtx : _VtxLog)
 			{
 				for (auto& _CurVtx : _Vtx)
 				{
-					ImGui::Text("Location x %9.6f y %9.6f z %9.6f", 
-							_CurVtx.Location.x, _CurVtx.Location.y ,_CurVtx.Location.z);
+					ImGui::Text("Location x %9.6f y %9.6f z %9.6f",
+						_CurVtx.Location.x, _CurVtx.Location.y, _CurVtx.Location.z);
 					ImGui::Text(" UV0 %9.6f ,%9.6f", _CurVtx.UV0.x, _CurVtx.UV0.y);
 					ImGui::Text(" UV1 %9.6f ,%9.6f", _CurVtx.UV1.x, _CurVtx.UV1.y);
 				}
 			}
-			
-			
-			ImGui::SliderFloat3("LowOffset",Offset[CurMode].first, -300.f, 300.f, "%9.6f");
+
+
+			ImGui::SliderFloat3("LowOffset", Offset[CurMode].first, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", Offset[CurMode].second, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
@@ -567,17 +620,16 @@ void CbsMidTrail::Editor()
 			ImGui::SliderFloat2("In NoiseDistortion2", NoiseDistortion2, FLT_MIN, 100.f, "%9.6f");
 
 
-			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN,1.f,"%9.6f");
+			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
-			
+
 			ImGui::ColorEdit4("Color", _Color);
-			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");
+			ImGui::SliderFloat("UV0Multiply", &UV0Multiply, 0.f, 10.f, "%1.6f");
 			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);
 		}
 		ImGui::EndChild();
 	}
-}
-
+};
 
 void CbsMidTrail::OnEnable()
 {

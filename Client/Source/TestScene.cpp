@@ -47,6 +47,7 @@
 #include "CbsMidTrail.h"
 #include "BlitzAttack.h"
 #include "Trigger.h"
+
 #include <iostream>
 #include <fstream>
 
@@ -79,12 +80,13 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 	AddGameObject<BlitzAttack>();
+	AddGameObject<CbsMidTrail>();
 #pragma endregion
 
 #pragma region Player & Camera
 	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
 #pragma endregion
 

@@ -6,9 +6,18 @@
 #include "Vertexs.h"
 
 class CbsMidTrail : public ENGINE::GameObject,
-			     public ENGINE::RenderInterface
+			        public ENGINE::RenderInterface
 {
 public:
+	struct EffectDesc
+	{
+		Vector3 LocationOffset{ 0.0f,0.0f,0.0f };
+		bool bPlayed = true;
+		GAMEOBJECTTAG _Tag{};
+		std::weak_ptr<class GameObject> _Effect{};
+	};
+	std::array<EffectDesc, 1000u> _PlayEffectDescs{};
+
 	enum  Mode : uint32
 	{
 		Non,
@@ -100,5 +109,7 @@ private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);
+
+
 };
 #endif //

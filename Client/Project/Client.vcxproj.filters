@@ -288,9 +288,6 @@
     <ClInclude Include="..\Header\WingArm_Right.h">
       <Filter>02.GameObject\01.Unit\01.Player\02.WingArms\Right</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\DashImpact.h">
-      <Filter>02.GameObject\Effect\Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Em100Hand.h">
       <Filter>02.GameObject\01.Unit\02.Monster\00.Em100\00.Hand</Filter>
     </ClInclude>
@@ -753,6 +750,7 @@
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
+    <ClCompile Include="..\Source\CbsMidTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

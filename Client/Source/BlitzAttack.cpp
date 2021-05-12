@@ -11,6 +11,7 @@
 #include "ThunderboltSecond.h"
 
 
+
 void BlitzAttack::Free()
 {
 	GameObject::Free();

@@ -124,6 +124,7 @@ void ElectricOccur::PlayStart(const Vector3& PlayLocation)
 
 void ElectricOccur::PlayEnd()
 {
+// 	SetActive(false);
 	if (auto SpPtLight = PtLight.lock();
 		SpPtLight)
 	{
