@@ -87,9 +87,9 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	// AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 	//AddGameObject<JudgementSword>();
 
 #pragma endregion
@@ -415,7 +415,7 @@ void TestScene::LoadMap()
 {
 	
 	// std::ifstream inputStream{ "../../Data/Hotel.json" };
-	std::ifstream inputStream{ "..\\..\\Data\\Stage4_Map.json" };
+	std::ifstream inputStream{ "..\\..\\Data\\Stage2_Map.json" };
 
 	if (false == inputStream.is_open())
 		return;
