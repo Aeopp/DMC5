@@ -46,6 +46,7 @@
 #include "BlitzAttack.h"
 #include "Trigger.h"
 #include "PreLoader.h"
+#include "SecretVision.h"
 
 #include <iostream>
 #include <fstream>
@@ -83,10 +84,11 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
+	AddGameObject<SecretVision>();
 
-	_Player = AddGameObject<Nero>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 	//AddGameObject<JudgementSword>();
 
 #pragma endregion

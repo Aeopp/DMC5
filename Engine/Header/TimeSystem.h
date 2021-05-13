@@ -4,7 +4,7 @@
 #include <chrono>
 
 BEGIN(ENGINE)
-class TimeSystem final : public Object
+class ENGINE_DLL TimeSystem final : public Object
 {
 	DECLARE_SINGLETON(TimeSystem)
 private:

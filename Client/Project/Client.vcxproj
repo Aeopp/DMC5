@@ -199,6 +199,7 @@
     <ClInclude Include="..\Header\LogoScene.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
+    <ClInclude Include="..\Header\SecretVision.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="..\Source\LogoScene.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
+    <ClCompile Include="..\Source\SecretVision.cpp" />
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
@@ -496,6 +498,11 @@
     <ClInclude Include="..\..\Resource\Shader\UI\LogoPanel.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\SecretVision.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

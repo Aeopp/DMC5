@@ -105,7 +105,19 @@ void Mesh::Editor()
 	Resource::Editor();
 	if (bEdit)
 	{
-		for (auto& _Subset:m_vecSubset)
+		uint32 FaceCount = 0u;
+		uint32 VertexCount = 0u;
+
+		for (const auto& _Subset : m_vecSubset)
+		{
+			VertexCount += _Subset->m_tVertexBufferDesc.nNumVertices;
+			FaceCount += _Subset->m_tVertexBufferDesc.nNumFaces;
+		}
+
+		ImGui::Text("Mesh VertexCount : %d", VertexCount);
+		ImGui::Text("Mesh Polygon Count: %d", FaceCount);
+
+		for (auto& _Subset : m_vecSubset)
 		{
 			_Subset->Editor();
 		}
