@@ -102,5 +102,7 @@ private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);
+private:
+	int32 bVertexPoolFull = 0;
 };
 #endif //

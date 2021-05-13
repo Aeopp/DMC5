@@ -413,9 +413,8 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 
 void TestScene::LoadMap()
 {
-	
 	// std::ifstream inputStream{ "../../Data/Hotel.json" };
-	std::ifstream inputStream{ "..\\..\\Data\\Stage2_Map.json" };
+	std::ifstream inputStream{ "..\\..\\Data\\Stage1_Map.json" };
 
 	if (false == inputStream.is_open())
 		return;
@@ -476,8 +475,8 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;

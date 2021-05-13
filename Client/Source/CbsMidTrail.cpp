@@ -205,8 +205,10 @@ void CbsMidTrail::PlayEnd()
 
 void CbsMidTrail::RenderTrail(const DrawInfo& _Info)
 {
-	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
+	if (T <= 0.25f)
+		return;
 
+	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
 	if (CurMode == Mode::Non)
 	{
@@ -610,6 +612,9 @@ void CbsMidTrail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
 
 void CbsMidTrail::RenderDebug(const DrawInfo& _Info)
 {
+	if (T <= 0.25f)
+		return;
+
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 
 	for (int32 i = 0; i < BoneCnt; ++i)
@@ -747,8 +752,9 @@ HRESULT CbsMidTrail::Start()
 UINT CbsMidTrail::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-
 	if (_RenderProperty.bRender == false) return 0;
+
+	T += _fDeltaTime;
 
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
