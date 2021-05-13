@@ -28,7 +28,7 @@ private:
 	float   CurDissolveParticleDelta = 0.0f;
 	Vector3 BurnColor{ 14.f / 255.f,1.f,0.f };
 	float   SliceAmount = 0.0f;
-	float   BurnSize = 0.20f;
+	float   BurnSize = 0.25f;
 	float   EmissionAmount = 100.f;
 	float   DissolveAcc = 1.f;
 	bool    bDissolve = false;
