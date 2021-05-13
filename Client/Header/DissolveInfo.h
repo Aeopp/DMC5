@@ -6,7 +6,11 @@
 struct DissolveInfo 				
 {
 public:
-	void Initialize();
+public:
+	static inline const std::string ShaderStaticName = "gbuffer_ds_dissolve";
+	static inline const std::string ShaderSkeletonName = "gbuffer_dsSK_dissolve";
+public:
+	void Initialize(const std::filesystem::path& MeshPath , const Vector3& _Color);
 	void DissolveStart();
 	void DissolveEnd();
 	void DissolveVariableBind(ID3DXEffect*const Fx);

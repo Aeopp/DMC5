@@ -8,14 +8,18 @@
 #include "RenderInterface.h"
 #include "Renderer.h"
 #include "ParticleSystem.h"
+#include "PreLoader.h"
 
-void DissolveInfo::Initialize()
+void DissolveInfo::Initialize(const std::filesystem::path& MeshPath,
+	const Vector3& _Color)
 {
 	_DissolveMap = Resources::Load<ENGINE::Texture>(
 		"..\\..\\Usable\\mesh_03_cs_noise_00_01.tga");
 
 	_BurnMap = Resources::Load<ENGINE::Texture>("..\\..\\Usable\\burn.tga");
-}
+	DissolveParticleName = MeshPath.string();
+	PreLoader::DissolveParticlePoolLoad(DissolveParticleName, _Color);
+};
 
 void DissolveInfo::DissolveStart()
 {
@@ -44,7 +48,6 @@ void DissolveInfo::DissolveVariableBind(ID3DXEffect* const Fx)
 
 void DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMatrix)
 {
-	
 	if (bDissolve)
 	{
 		this->RenderMatrix = RenderMatrix;

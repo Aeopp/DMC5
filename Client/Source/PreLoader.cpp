@@ -1557,7 +1557,7 @@ void PreLoader::DissolveParticlePoolLoad(
 	const uint64 PoolSize = 30000ul;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated("DissolveParticle",
+		ParticleSystem::GetInstance()->PreGenerated(_Path,
 			std::move(_PushParticle), PoolSize, true);
 
 	_Info.bLocalVertexLocationsStorage = true;
