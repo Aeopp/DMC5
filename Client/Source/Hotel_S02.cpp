@@ -49,11 +49,10 @@ HRESULT Hotel_S02::LoadScene()
 #pragma region Player & Camera
 	AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
