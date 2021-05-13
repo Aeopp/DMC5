@@ -49,6 +49,7 @@
 #include "SecretVision.h"
 #include "MakaiButterfly.h"
 #include "Smoke.h"
+#include "NhDoor.h"
 
 #include <iostream>
 #include <fstream>
@@ -85,11 +86,12 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	AddGameObject< SecretVision>();
+	AddGameObject<NhDoor>();
+	AddGameObject<BlitzAttack>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 

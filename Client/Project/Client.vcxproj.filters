@@ -875,13 +875,11 @@
     <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
     <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

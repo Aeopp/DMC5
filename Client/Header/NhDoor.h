@@ -38,7 +38,13 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderGBuffer(const DrawInfo& _Info);
 	void RenderShadow(const DrawInfo& _Info);
+public:
+	void DissolveStart();
+	void DissolveEnd();
 private:
-	void DissolveParticle();
+	bool bDissolve = false;
+	static const inline float DissolveParticleDelta = 0.03f;
+	float CurDissolveParticleDelta = 0.0f;
+	void  DissolveParticle();
 };
 #endif //

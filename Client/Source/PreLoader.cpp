@@ -1357,6 +1357,8 @@ void PreLoader::AirHikeParticlePoolLoad()
 	}
 };
 
+
+
 void PreLoader::SecretVisionDisappearParticlePoolLoad()
 {
 	ENGINE::ParticleSystem::Particle _PushParticle{};
@@ -1387,7 +1389,7 @@ void PreLoader::SecretVisionDisappearParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 30000ul;
+	const uint64 PoolSize = 15000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("SecretVisionDisappear",
@@ -1418,7 +1420,7 @@ void PreLoader::SecretVisionDisappearParticlePoolLoad()
 
 			_DisappearValue.ColorIntencity = FMath::Random(0.44f, 1.f);
 			_DisappearValue.Color = FMath::Lerp(Vector3{ 1.f,82.f / 255.f,35.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
-			const float LifeTime = FMath::Random(0.5f, 1.33f);
+			const float LifeTime = FMath::Random(0.5f, SecretVisionDisappearParticleLifeEnd);
 			static const float StartT = 0.0f;
 
 
@@ -1503,11 +1505,10 @@ void PreLoader::DissolveNhDoorParticlePoolLoad()
 			const float LifeTime = FMath::Random(0.5f, 1.33f);
 			static const float StartT = 0.0f;
 
-
-			StartLocation = FMath::RotationVecCoord(StartLocation, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+			/*StartLocation = FMath::RotationVecCoord(StartLocation, { 1.f,0.f,0.f }, FMath::PI / 2.f);
 			Cp0 = FMath::RotationVecCoord(Cp0, { 1.f,0.f,0.f }, FMath::PI / 2.f);
 			Cp1 = FMath::RotationVecCoord(Cp1, { 1.f,0.f,0.f }, FMath::PI / 2.f);
-			End = FMath::RotationVecCoord(End, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+			End = FMath::RotationVecCoord(End, { 1.f,0.f,0.f }, FMath::PI / 2.f);*/
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },

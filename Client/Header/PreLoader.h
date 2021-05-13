@@ -1,6 +1,8 @@
 #ifndef __PRELOADER_H__
 #define __PRELOADER_H__
 
+
+
 class PreLoader final
 {
 public:
@@ -9,7 +11,8 @@ public:
 
 public:
 	static void PreLoadResources();
-
+public:
+	static const inline float SecretVisionDisappearParticleLifeEnd{ 1.33f };
 private:
 	static void IceCbsMidParticlePoolLoad();
 	static void CbsMidParticlePoolLoad();
