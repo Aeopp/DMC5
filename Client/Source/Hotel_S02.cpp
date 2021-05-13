@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "SecretVision.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -45,11 +46,11 @@ HRESULT Hotel_S02::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<SecretVision>();
 
-	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -83,6 +84,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
+	AddGameObject<SecretVision>();
 
 #pragma endregion
 
@@ -232,7 +234,6 @@ void Hotel_S02::LateInit()
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 1.f, 11.70365f });
 	}
-
 
 	_LateInit = true;
 }
