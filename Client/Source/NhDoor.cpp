@@ -127,6 +127,7 @@ void NhDoor::RenderGBuffer(const DrawInfo& _Info)
 	const Matrix World = _RenderUpdateInfo.World;
 
 	_Info.Fx->SetMatrix("matWorld", &World);
+
 	_Info.Fx->SetTexture("DissolveMap", _DissolveMap->GetTexture());
 	_Info.Fx->SetTexture("BurnMap", _BurnMap->GetTexture());
 
@@ -134,7 +135,6 @@ void NhDoor::RenderGBuffer(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("BurnSize", BurnSize);
 	_Info.Fx->SetFloat("EmissionAmount", EmissionAmount);
 	_Info.Fx->SetFloat("SliceAmount", SliceAmount);
-	
 
 	const uint32 Numsubset =_StaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
@@ -312,7 +312,6 @@ void NhDoor::DissolveParticle()
 			}
 		}
 	};
-
 }
 
 

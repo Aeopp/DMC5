@@ -38,5 +38,9 @@ private:
 
 	static void SecretVisionDisappearParticlePoolLoad();
 	static void DissolveNhDoorParticlePoolLoad();
+
+	static void DissolveParticlePoolLoad(
+		const std::filesystem::path& _Path ,
+		const Vector3& StartColor);
 };
 #endif // !__PRELOADER_H__
