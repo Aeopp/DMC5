@@ -163,7 +163,7 @@ void PhysicsSystem::Simulate(const float _fDeltaTime)
 	delete[] ppActors;
 
 	//Simulation ½ÃÀÛ
-	m_pScene->simulate(_fDeltaTime);
+	m_pScene->simulate(1.f/60.f);
 
 	m_bSimulate = true;
 
