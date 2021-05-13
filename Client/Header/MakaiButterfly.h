@@ -33,6 +33,8 @@ private:
 
 	bool _IsAlive = false;
 
+	weak_ptr<CapsuleCollider> _Collider;
+
 private:
 	explicit MakaiButterfly() = default;
 	virtual ~MakaiButterfly() = default;
@@ -56,6 +58,8 @@ public:
 	virtual void    Editor()override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
+public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther) override;
 public:
 	virtual void PlayStart(const float PlayingSpeed = 25.f) override;
 	virtual void Reset() override;

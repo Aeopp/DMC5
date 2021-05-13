@@ -86,10 +86,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
 
-	//_Player = AddGameObject<Nero>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -155,7 +155,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Map
 
 	LoadMap();
-	//AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 
 #pragma endregion
 
@@ -172,7 +172,6 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
-	AddGameObject<Smoke>();
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();

@@ -49,11 +49,13 @@ void MakaiButterfly::PlayStart(const float PlayingSpeed/*= 25.f*/)
 	_IsAlive = true;
 	_SliceAmount = 1.f;
 	_BrightScale = 0.2f;
+	_Collider.lock()->SetActive(true);
 }
 
 void MakaiButterfly::Reset()
 {
 	_IsAlive = false;
+	_Collider.lock()->SetActive(false);
 }
 
 void MakaiButterfly::Imgui_Modify()
@@ -63,11 +65,11 @@ void MakaiButterfly::Imgui_Modify()
 	{
 		ImGui::Text("Eff_MakaiButterfly");
 
-		//{
-		//	static Vector3 SliderPosition = Sptransform->GetPosition();
-		//	ImGui::SliderFloat3("Pos##MakaiButterfly", SliderPosition, -10.f, 10.f);
-		//	Sptransform->SetPosition(SliderPosition);
-		//}
+		{
+			static Vector3 SliderPosition = Sptransform->GetPosition();
+			ImGui::SliderFloat3("Pos##MakaiButterfly", SliderPosition, -10.f, 10.f);
+			Sptransform->SetPosition(SliderPosition);
+		}
 
 		{
 			static float Scale = Sptransform->GetScale().x;
@@ -128,6 +130,14 @@ void MakaiButterfly::RenderInit()
 			}
 		} 
 	};
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider] =
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
 	RenderInterface::Initialize(_InitRenderProp);
 }
 
@@ -196,6 +206,14 @@ HRESULT MakaiButterfly::Ready()
 	_BezierStartOffsetPos = Vector3(0.f, 0.f, 0.f);
 	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.01f, -0.01f, -0.01f), Vector3(0.01f, 0.01f, 0.015f));
 	_BezierDeltaOffsetPos = Vector3(0.f, 0.f, 0.f);
+
+	_Collider = AddComponent<CapsuleCollider>();
+	_Collider.lock()->ReadyCollider();
+	_Collider.lock()->SetRadius(0.03f);
+	_Collider.lock()->SetHeight(0.03f);
+	_Collider.lock()->SetCenter({ 0.f, 0.f, 0.f });
+	_Collider.lock()->SetActive(false);
+	PushEditEntity(_Collider.lock().get());
 
 	return S_OK;
 }
@@ -309,4 +327,19 @@ void MakaiButterfly::OnEnable()
 void MakaiButterfly::OnDisable()
 {
 	GameObject::OnDisable();
+}
+
+void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	switch (_pOther.lock()->m_nTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+	case GAMEOBJECTTAG::Tag_Cbs_Short:
+	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		
+		Reset();
+
+		break;
+	}
 }
