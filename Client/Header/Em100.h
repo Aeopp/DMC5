@@ -2,7 +2,7 @@
 #define Em100_h__
 
 #include "Monster.h"
-#include "DissolveInfo.h"
+
 
 class RedQueen;
 class Em100Hand;
@@ -99,8 +99,6 @@ public:
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
 	void RenderInit();
-
-	DissolveInfo _DissolveInfo{};
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle()override;
@@ -109,13 +107,13 @@ public:
 	virtual void SetGravity(bool _bActiveOrNot);
 private:
 	//몬스터 상태
-	Em100_State	m_eState =State_END;		
+	Em100_State	m_eState = State_END;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;
 	float		m_fMoveTime = 0.f;
 
-	bool		m_bAttack = false;	
+	bool		m_bAttack = false;
 	float		m_fAttackTime = 0.f;
 
 	bool		m_bHardAttack = false;
@@ -131,7 +129,7 @@ private:
 
 
 	//////////버스터 용////////////////
-	Matrix*								  m_pPlayerBone;
+	Matrix* m_pPlayerBone;
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;

@@ -215,15 +215,15 @@ void SecretVision::Default()
 }
 void SecretVision::PuzzleStart()
 {
-if (auto SpCollider = _Collider.lock();
-	SpCollider)
-{
-	SpCollider->SetActive(true);
-}
+	if (auto SpCollider = _Collider.lock();
+		SpCollider)
+	{
+		SpCollider->SetActive(true);
+	}
 
-bEnable = true;
-_RenderProperty.bRender = true;
-InteractionIdx = 0u;
+	bEnable = true;
+	_RenderProperty.bRender = true;
+	InteractionIdx = 0u;
 };
 
 void SecretVision::PuzzleEnd()
