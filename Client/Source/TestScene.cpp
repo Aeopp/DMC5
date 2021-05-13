@@ -46,6 +46,7 @@
 #include "CbsMidTrail.h"
 #include "BlitzAttack.h"
 #include "Trigger.h"
+#include "SecretVision.h"
 #include "MakaiButterfly.h"
 
 #include <iostream>
@@ -88,7 +89,6 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<MainCamera>();
 
 	//_Player = AddGameObject<Nero>();
-	//AddGameObject<JudgementSword>();
 
 #pragma endregion
 
@@ -179,6 +179,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<ElectricOccur>();
 	//AddGameObject<BlitzAttack>();
 	//AddGameObject<CbsMidTrail>();
+	//AddGameObject<SecretVision>();
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();

@@ -7,7 +7,8 @@ TimeSystem::TimeSystem()
 	: m_fDeltaTime(0.f) ,  
 	m_fAccDeltaTime (0.f) , 
 	m_uiFrameRate(0u),
-	m_uiUpdateCount(0u)
+	m_uiUpdateCount(0u) ,
+	m_fAccTime(0.0f) 
 {
 	ZeroMemory(&m_tCPUTick, sizeof(LARGE_INTEGER));
 	ZeroMemory(&m_tStartFrame, sizeof(LARGE_INTEGER));
