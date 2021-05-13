@@ -91,7 +91,7 @@ void CbsTrail::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 20;
+	const int32 TriCnt = 24;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt+2;

@@ -151,10 +151,10 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 	if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Middle).lock();
 		_GameObject)
 	{
-		if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Middle>(_GameObject);
-			_CbsShort)
+		if (auto _CbsMiddle = std::dynamic_pointer_cast<Cbs_Middle>(_GameObject);
+			_CbsMiddle)
 		{
-			const auto _CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+			const auto _CbsWorld = _CbsMiddle->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 			for (int32 i = 0; i < BoneCnt; ++i)
 			{
@@ -162,7 +162,7 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 				auto& VtxBuffer = VtxBuffers[i];
 				VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
 
-				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
+				auto Low = _CbsMiddle->Get_BoneMatrixPtr(BoneNames[i]);
 				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
 
 				auto High = Low;

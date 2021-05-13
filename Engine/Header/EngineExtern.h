@@ -22,6 +22,7 @@ extern ENGINE_DLL bool					g_bRenderPtLightScissorTest;
 extern ENGINE_DLL bool					g_bTime;
 extern ENGINE_DLL bool					g_bOptRender;
 extern ENGINE_DLL bool					g_bFrameLimit;
+extern ENGINE_DLL bool                  g_bFixedDeltaTime;
 extern ENGINE_DLL bool					g_bParticleEditor;
 
 
