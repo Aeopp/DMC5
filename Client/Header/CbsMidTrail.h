@@ -119,7 +119,5 @@ private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);
-
-
 };
 #endif //

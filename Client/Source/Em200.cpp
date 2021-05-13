@@ -1235,14 +1235,6 @@ void Em200::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
-
-	for (int i = 0; i < 2; ++i)
-	{
-		m_pHand[i].lock()->Set_Coll(false);
-		m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-
-	}
-
 }
 
 void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
@@ -1262,7 +1254,10 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->Set_Coll(false);
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
 		if (m_bAir)
@@ -1271,7 +1266,10 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->Set_Coll(false);
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
 		if (m_bAir)
@@ -1280,7 +1278,10 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->Set_Coll(false);
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Long:
 		if (m_bAir)
@@ -1289,20 +1290,41 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->Set_Coll(false);
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		}
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->Set_Coll(false);
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		}
 		break;
 	case GAMEOBJECTTAG::TAG_WireArm:
 		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->Set_Coll(false);
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Overture:
-		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
-		m_bHit = true;
-		m_bDown = true;
-		m_eState = Hit_KnocBack;
+		if (m_bAir)
+			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		else
+			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->Set_Coll(false);
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+		}
 		break;
 	default:
 		break;

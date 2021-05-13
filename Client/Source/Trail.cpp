@@ -90,7 +90,7 @@ void Trail::RenderInit()
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 
-	_Desc.UpdateCycle = 0.016f;
+	_Desc.UpdateCycle = 0.0016f;
 	_Desc.NewVtxCnt = 0;
 	UV0Multiply = 1.f;
 
@@ -147,7 +147,11 @@ void Trail::PlayStart(const Mode _Mode,
 		if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
 			RQ)
 		{
-			const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
+			;
+
+			const auto SwordWorld = RQ->_RenderUpdateInfo.World;
+
+			// 	RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 			auto Low = RQ->Get_BoneMatrixPtr("_000");
 			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
@@ -175,7 +179,7 @@ void Trail::PlayStart(const Mode _Mode,
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
-	_Desc.UpdateCycle = _Desc.CurVtxUpdateCycle;
+	_Desc.CurVtxUpdateCycle = 0.0f;
 	SpriteCurUpdateCycle = SpriteUpdateCycle;
 	SpriteRowIdx = 0;
 	SpriteColIdx = 0;
@@ -188,6 +192,9 @@ void Trail::PlayEnd()
 
 void Trail::RenderTrail(const DrawInfo& _Info)
 {
+	if (T <= 0.1)
+		return;
+
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
 	if (CurMode ==Mode::Explosion)
@@ -323,8 +330,9 @@ void Trail::VertexBufUpdate()
 		if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
 			RQ)
 		{
-			const auto SwordWorld = RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
-
+			const auto SwordWorld = RQ->_RenderUpdateInfo.World; 
+			// RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
+			
 			auto Low = RQ->Get_BoneMatrixPtr("_000");
 			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
 
@@ -407,6 +415,11 @@ void Trail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
 
 void Trail::RenderDebug(const DrawInfo& _Info)
 {
+	if (T <= 0.1)
+		return;
+
+	_RenderProperty.bRender = T >= 0.01 ? true : false;
+
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
 	Device->SetVertexDeclaration(VtxDecl);
@@ -448,7 +461,7 @@ UINT Trail::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
-
+	T += _fDeltaTime;
 	SpriteUpdate(_fDeltaTime);
 	BufferUpdate(_fDeltaTime);
 

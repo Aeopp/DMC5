@@ -151,10 +151,10 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 	if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Middle).lock();
 		_GameObject)
 	{
-		if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Middle>(_GameObject);
-			_CbsShort)
+		if (auto _CbsMiddle = std::dynamic_pointer_cast<Cbs_Middle>(_GameObject);
+			_CbsMiddle)
 		{
-			const auto _CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+			const auto _CbsWorld = _CbsMiddle->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 			for (int32 i = 0; i < BoneCnt; ++i)
 			{
@@ -162,7 +162,7 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 				auto& VtxBuffer = VtxBuffers[i];
 				VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
 
-				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
+				auto Low = _CbsMiddle->Get_BoneMatrixPtr(BoneNames[i]);
 				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
 
 				auto High = Low;
@@ -201,12 +201,15 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 void CbsMidTrail::PlayEnd()
 {
 	_RenderProperty.bRender = false;
+	T = 0.0f;
 };
 
 void CbsMidTrail::RenderTrail(const DrawInfo& _Info)
 {
-	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
+	if (T <= 0.25f)
+		return;
 
+	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
 	if (CurMode == Mode::Non)
 	{
@@ -610,6 +613,9 @@ void CbsMidTrail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
 
 void CbsMidTrail::RenderDebug(const DrawInfo& _Info)
 {
+	if (T <= 0.25f)
+		return;
+
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 
 	for (int32 i = 0; i < BoneCnt; ++i)
@@ -747,8 +753,9 @@ HRESULT CbsMidTrail::Start()
 UINT CbsMidTrail::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-
 	if (_RenderProperty.bRender == false) return 0;
+
+	T += _fDeltaTime;
 
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
