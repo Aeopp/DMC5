@@ -2,7 +2,7 @@
 #define Em100_h__
 
 #include "Monster.h"
-
+#include "DissolveInfo.h"
 
 class RedQueen;
 class Em100Hand;
@@ -99,6 +99,8 @@ public:
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
 	void RenderInit();
+
+	DissolveInfo _DissolveInfo{};
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle()override;

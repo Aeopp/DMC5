@@ -51,6 +51,7 @@
 #include "Smoke.h"
 #include "NhDoor.h"
 
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -86,12 +87,17 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
+	auto EmEm100 = AddGameObject<Em100>().lock();
+
+	EmEm100->
+		GetComponent<Transform>().lock()->SetPosition(
+		Vector3{ 0.f,0.1f,0.f });
 	AddGameObject< SecretVision>();
 	AddGameObject<NhDoor>();
 	AddGameObject<BlitzAttack>();
 	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	// AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 

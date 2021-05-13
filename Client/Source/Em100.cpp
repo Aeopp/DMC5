@@ -891,6 +891,7 @@ HRESULT Em100::Start()
 UINT Em100::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
+	_DissolveInfo.DissolveUpdate(_fDeltaTime,_RenderUpdateInfo.World);
 
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
@@ -978,6 +979,8 @@ void Em100::Editor()
 	Unit::Editor();
 	if (bEdit)
 	{
+		_DissolveInfo.DissolveEditor();
+
 		ImGui::Text("Deg %3.4f", m_fRadian);
 		ImGui::Text("Acc Deg %3.4f", m_fAccuangle);
 
@@ -987,7 +990,7 @@ void Em100::Editor()
 		ImGui::InputFloat("vPowerY", &m_vPower.y);
 		ImGui::InputFloat("vPowerZ", &m_vPower.z);
 
-
+		
 	}
 }
 
@@ -1436,6 +1439,7 @@ void Em100::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		_DissolveInfo.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -1513,7 +1517,7 @@ void Em100::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -1557,10 +1561,14 @@ void Em100::RenderInit()
 		}
 	} };
 
+	_DissolveInfo.Initialize(
+		L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.fbx",
+		Vector3{ 1.f,0.f,0.f });
+
 	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
-	_InitInfo.bLocalVertexLocationsStorage = false;
+	_InitInfo.bLocalVertexLocationsStorage = true;
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.fbx", _InitInfo);
 	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Ani");
 	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.Animation");

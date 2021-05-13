@@ -12,7 +12,7 @@ class SecretVision : public ENGINE::GameObject,
 	{
 		static const uint32  DefaultLife = 4u;
 		static inline float  DisappearEndColorIntencity = 333.f;
-		static inline float  DisappearAcc = 0.5f;
+		static inline float  DisappearAcc = 0.6f;
 
 		float ColorIntencity = 0.0f;
 		float AlphaFactor = 0.0f;

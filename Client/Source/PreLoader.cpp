@@ -1524,7 +1524,7 @@ void PreLoader::DissolveNhDoorParticlePoolLoad()
 
 void PreLoader::DissolveParticlePoolLoad(
 	const std::filesystem::path& _Path,
-	const Vector3& StartColor)
+	const Vector3& StartColor )
 {
 	ENGINE::ParticleSystem::Particle _PushParticle{};
 
@@ -1536,8 +1536,10 @@ void PreLoader::DissolveParticlePoolLoad(
 	auto _Tex = Resources::Load<Texture>("..\\..\\Usable\\Smoke\\11.tga");
 
 	_PushParticle.bLerpTimeNormalized = false;
+
 	// Particle 정보 채워주기 
 	_PushParticle._ShaderKey = "DissolveParticle";
+
 	// 공유 정보 바인드
 	_PushParticle.SharedResourceBind = [_Tex](
 		ENGINE::ParticleSystem::Particle& TargetParticle,
@@ -1554,10 +1556,10 @@ void PreLoader::DissolveParticlePoolLoad(
 		return;
 	};
 
-	const uint64 PoolSize = 30000ul;
+	const uint64 PoolSize = 30000u;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated(_Path,
+		ParticleSystem::GetInstance()->PreGenerated(_Path.string(),
 			std::move(_PushParticle), PoolSize, true);
 
 	_Info.bLocalVertexLocationsStorage = true;
@@ -1580,7 +1582,7 @@ void PreLoader::DissolveParticlePoolLoad(
 
 			const float RScale = FMath::Random(0.015f, 0.045f) * GScale;
 
-			ParticleInstance::Disappear _DisappearValue{};
+			ParticleInstance::Dissolve _DisappearValue{};
 
 			_DisappearValue.ColorIntencity = FMath::Random(0.44f, 1.f);
 			_DisappearValue.Color = FMath::Lerp(
@@ -1588,9 +1590,9 @@ void PreLoader::DissolveParticlePoolLoad(
 			const float LifeTime = FMath::Random(0.5f, 1.33f);
 			static const float StartT = 0.0f;
 
-			Cp0.y += FMath::Random(0.f,9.9f);
-			Cp1.y += FMath::Random(0.f, 99.f);
-			End.y += FMath::Random(0.f, 150.f);
+			Cp0.y += FMath::Random(0.f,40.f);
+			Cp1.y += FMath::Random(0.f, 400.f);
+			End.y += FMath::Random(0.f, 1000.f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },
