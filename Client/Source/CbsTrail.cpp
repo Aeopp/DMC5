@@ -91,7 +91,7 @@ void CbsTrail::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 20;
+	const int32 TriCnt = 24;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt+2;
@@ -101,7 +101,7 @@ void CbsTrail::RenderInit()
 	_Desc.IdxSize = sizeof(Vertex::Index32);
 	_Desc.IdxFmt = D3DFMT_INDEX32;
 
-	_Desc.UpdateCycle = 0.016f;
+	_Desc.UpdateCycle = 0.00f;
 	_Desc.NewVtxCnt = 0;
 	UV0Multiply = 1.f;
 
@@ -150,8 +150,7 @@ void CbsTrail::PlayStart(const Mode _Mode,
 		if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
 			_CbsShort)
 		{
-			const auto _CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
-
+			const auto _CbsWorld = _CbsShort->_RenderUpdateInfo.World;
 			for (int32 i = 0; i < BoneCnt; ++i)
 			{
 				Vertex::TrailVertex* VtxPtr{};
@@ -168,7 +167,6 @@ void CbsTrail::PlayStart(const Mode _Mode,
 				{
 					VtxPtr[j + 1].Location = LatelyOffsets[i].second;
 					VtxPtr[j].Location = LatelyOffsets[i].first;
-
 				};
 				VtxBuffer->Unlock();
 			}
@@ -187,16 +185,20 @@ void CbsTrail::PlayStart(const Mode _Mode,
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 	_Desc.NewVtxCnt = 0;
-	_Desc.UpdateCycle = _Desc.CurVtxUpdateCycle = 0.016f;
+	_Desc.CurVtxUpdateCycle = 0.0f;
+	bVertexPoolFull = 0u;
 };
 
 void CbsTrail::PlayEnd()
 {
 	_RenderProperty.bRender = false;
+	bVertexPoolFull = 0u;
 };
 
 void CbsTrail::RenderTrail(const DrawInfo& _Info)
 {
+	if (T <= 0.25f)return;
+
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
 	if (CurMode == Mode::IceAge)
@@ -235,7 +237,7 @@ void CbsTrail::RenderTrail(const DrawInfo& _Info)
 		Device->SetVertexDeclaration(VtxDecl);
 		Device->SetIndices(IdxBuffers[i]);
 		_Info.Fx->CommitChanges();
-		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
+		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
 	}
 }
 
@@ -249,8 +251,6 @@ void CbsTrail::BufferUpdate(const float DeltaTime)
 
 		IndexBufUpdate();
 		VertexBufUpdate();
-		
-		
 	}
 }
 void CbsTrail::ParticleUpdate(const float DeltaTime)
@@ -346,6 +346,8 @@ void CbsTrail::VertexBufUpdate()
 
 		if (_Desc.NewVtxCnt > _Desc.VtxCnt)
 		{
+
+
 			static constexpr uint32 RemoveCount = 2;
 			_Desc.NewVtxCnt -= RemoveCount;
 
@@ -362,14 +364,15 @@ void CbsTrail::VertexBufUpdate()
 			if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Short>(_GameObject);
 				_CbsShort)
 			{
-				const auto SwordWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
+				const auto CbsShortWorld = _CbsShort->_RenderUpdateInfo.World;
+				// _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
 				
-				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * SwordWorld);
+				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * CbsShortWorld);
 
 				auto High = Low;
-				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * SwordWorld);
+				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * CbsShortWorld);
 
 				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[i].second;
 				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[i].first;
@@ -459,6 +462,8 @@ void CbsTrail::VtxUVCalc(Vertex::TrailVertex* const VtxPtr)
 
 void CbsTrail::RenderDebug(const DrawInfo& _Info)
 {
+	if (T <= 0.25f)return;
+
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 
 	for (int32 i = 0; i < BoneCnt; ++i)
@@ -470,7 +475,7 @@ void CbsTrail::RenderDebug(const DrawInfo& _Info)
 		Device->SetVertexDeclaration(VtxDecl);
 		Device->SetIndices(IdxBuffer);
 		_Info.Fx->CommitChanges();
-		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.DrawTriCnt);
+		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
 	}
 };
 
@@ -506,7 +511,7 @@ UINT CbsTrail::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
-
+	T += _fDeltaTime;
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
 
@@ -527,7 +532,7 @@ void CbsTrail::Editor()
 	if (bEdit)
 	{
 		const std::string ChildName = GetName() + "_Play";
-		ImGui::BeginChild(ChildName.c_str());
+		ImGui::Begin(ChildName.c_str());
 		{
 			static int32 _Mode;
 			ImGui::InputInt("Mode", &_Mode);
@@ -584,7 +589,7 @@ void CbsTrail::Editor()
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply,0.f,10.f,"%1.6f");
 			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);
 		}
-		ImGui::EndChild();
+		ImGui::End();
 	}
 }
 

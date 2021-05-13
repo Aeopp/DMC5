@@ -104,6 +104,7 @@ static void GlobalVariableSetup()
 	g_bOptRender = true;
 	g_bFrameLimit = true;
 	g_bParticleEditor = false;
+	g_bFixedDeltaTime = true;
 
 	ID3DXBuffer* SphereMeshAdjacency{ nullptr };
 	D3DXCreateSphere(g_pDevice, 0.00001f, 8, 8, &g_pSphereMesh, &SphereMeshAdjacency);

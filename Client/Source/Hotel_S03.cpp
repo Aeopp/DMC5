@@ -48,7 +48,6 @@ HRESULT Hotel_S03::LoadScene()
 
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
-
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion

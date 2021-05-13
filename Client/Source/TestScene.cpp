@@ -4,6 +4,7 @@
 #include "TestObject.h"
 #include "ShaderTester.h"
 #include "TempMap.h"
+#include "PreLoader.h"
 #include "TestAnimationObject.h"
 #include "Camera.h"
 #include "Nero.h"
@@ -45,7 +46,9 @@
 #include "CbsMidTrail.h"
 #include "BlitzAttack.h"
 #include "Trigger.h"
-#include "PreLoader.h"
+#include "SecretVision.h"
+#include "MakaiButterfly.h"
+#include "Smoke.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,7 +90,6 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<MainCamera>();
 
 	_Player = AddGameObject<Nero>();
-	//AddGameObject<JudgementSword>();
 
 #pragma endregion
 
@@ -152,7 +154,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 
 #pragma endregion
@@ -178,6 +180,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<ElectricOccur>();
 	//AddGameObject<BlitzAttack>();
 	//AddGameObject<CbsMidTrail>();
+	//AddGameObject<SecretVision>();
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -270,7 +273,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 15, Until Dooms Day",
+		pFont->SetText("D 14, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
@@ -425,7 +428,7 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 void TestScene::LoadMap()
 {
 	// std::ifstream inputStream{ "../../Data/Hotel.json" };
-	std::ifstream inputStream{ "../../Data/Stage1_Map.json" };
+	std::ifstream inputStream{ "..\\..\\Data\\Stage1_Map.json" };
 
 	if (false == inputStream.is_open())
 		return;
@@ -486,8 +489,8 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;
@@ -503,9 +506,41 @@ void TestScene::RenderDataSetUp()
 
 void TestScene::TriggerSetUp()
 {
+	// 이건 일반 트리거 
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
+		const std::function<void()> _CallBack =
+			[/*변수 캡쳐 (되도록 포인터로 ) */]()
+		{
+			// 로직 .. 
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 1.f,1.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+
+}
+
+void TestScene::MonsterWaveTriggerSetUp()
+{
+	// 트리거 생성 !! 
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
 		std::vector<std::weak_ptr<Monster>> MonsterWave
 		{
 			AddGameObject<Em0000>(),
@@ -514,6 +549,7 @@ void TestScene::TriggerSetUp()
 			AddGameObject<Em100>()
 		};
 
+		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
 
@@ -526,34 +562,37 @@ void TestScene::TriggerSetUp()
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
 
-		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f};
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
+		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
-		const bool ImmediatelyEnable = true;
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
-		const std::function<void()> SpawnWaveAfterEvent = nullptr;
 
-		_Trigger->EventRegist(MonsterWave,
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		_Trigger->EventRegist(
+			MonsterWave,
 			TriggerLocation,
 			TriggerBoxSize,
 			ImmediatelyEnable,
 			TargetTag,
-			SpawnWaveAfterEvent);
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
 	}
+};
 
-	/*if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
-	{
-		std::function<void()> _CallBack{};
-
-		_CallBack = []()
-		{
-			PRINT_LOG(L"Log", L"Trigger Event !!");
-		};
-
-		_Trigger->EventRegist(_CallBack,
-			Vector3{ -0.52020f,0.00822f,-0.52510f },
-			Vector3{ 1.f,1.f,1.f },
-			true,
-			GAMEOBJECTTAG::Player);
-	}*/
-}

@@ -24,24 +24,27 @@ void Subset::Editor()
 	Object::Editor();
 	if (bEdit)
 	{
-		std::string RenderText = "Render ? : " +  std::to_string(UniqueID);
+		std::string RenderText = "Render ? : " + std::to_string(UniqueID);
 		ImGui::Checkbox(RenderText.c_str(), &bRender);
+
+		ImGui::Text("nNumVertexCount : %d", m_tVertexBufferDesc.nNumVertices);
+		ImGui::Text("nNumPolygonCount: %d", m_tVertexBufferDesc.nNumFaces);
 
 		ImGui::Text("nNumUVChannel %d", m_tVertexBufferDesc.nNumUVChannel);
 		ImGui::Text("nMaxBonesRefPerVtx %d", m_tVertexBufferDesc.nMaxBonesRefPerVtx);
 		for (uint32 i = 0; i < m_tVertexBufferDesc.nNumUVChannel; ++i)
 		{
-			ImGui::Text("Channel %d NumComponents %d", i,  m_tVertexBufferDesc.vecNumUVComponents[i]);
+			ImGui::Text("Channel %d NumComponents %d", i, m_tVertexBufferDesc.vecNumUVComponents[i]);
 		};
 		ImGui::Text("bHasPosition %d", m_tVertexBufferDesc.bHasPosition);
 		ImGui::Text("bHasNormal %d", m_tVertexBufferDesc.bHasNormal);
 		ImGui::Text("bHasTangentBiNormal %d", m_tVertexBufferDesc.bHasTangentBiNormal);
 		ImGui::Text("bHasBone %d", m_tVertexBufferDesc.bHasBone);
-		
+
 		m_tMaterial.Editor();
-		for (auto&  [Key,TexArray] : m_tMaterial.Textures)
+		for (auto& [Key, TexArray] : m_tMaterial.Textures)
 		{
-			for(auto& TexPtr: TexArray)
+			for (auto& TexPtr : TexArray)
 			{
 				if (TexPtr)
 				{

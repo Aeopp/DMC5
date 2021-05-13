@@ -9,6 +9,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "SecretVision.h"
 
 #include <iostream>
 #include <fstream>
@@ -83,6 +84,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
+	AddGameObject<SecretVision>();
 
 #pragma endregion
 
@@ -227,7 +229,11 @@ void Hotel_S02::TriggerSetUp()
 void Hotel_S02::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
-	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({-3.63097f, 0.4f, 11.70365f});
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.70365f });
+	}
 
 	_LateInit = true;
 }

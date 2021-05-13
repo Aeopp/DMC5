@@ -70,6 +70,18 @@ void Transform::Editor()
 				}
 				SetScale(Result);
 			}
+
+			Vector3 Scale3{ 0,0,0 };
+			if (ImGui::SliderFloat3("Scale3", Scale3, -360.f, +360.f))
+			{
+				SetScale(CurScale + Scale3 * ScaleSensitivy);
+			}
+
+			if (ImGui::InputFloat3("In Scale3", Scale3))
+			{
+				SetScale(Scale3);
+			}
+
 			static float RotationSensitivy = 0.0001f;
 			ImGui::InputFloat("RotationSensitivy", &RotationSensitivy);
 			Vector3 Rotation{ 0,0,0 };

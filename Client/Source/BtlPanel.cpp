@@ -1015,7 +1015,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[STYLISH_LETTER] = { true, Vector3(-6.88f, 3.72f, 15.f), Vector3(0.24f, 0.24f, 0.1f) };
 	_UIDescs[HP_GAUGE] = { true, Vector3(218.f, 50.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
 	_UIDescs[TDT_GAUGE] = { true, Vector3(315.f, 75.f, 0.5f), Vector3(3.5f, 3.5f, 1.f) };
-	_UIDescs[KEYBOARD] = { true, Vector3(270.f, 570.f, 0.02f), Vector3(5.f, 1.5f, 1.f) };
+	_UIDescs[KEYBOARD] = { false, Vector3(270.f, 570.f, 0.02f), Vector3(5.f, 1.5f, 1.f) };
 	_UIDescs[RANK_BACK] = { false, Vector3(1120.f, 270.f, 0.8f), Vector3(_RankBackMaxScale, _RankBackMaxScale, 1.f) };
 	_UIDescs[RANK] = { false, Vector3(6.5f, 1.3f, 15.f), Vector3(0.08f, 0.08f, 0.08f) };
 	_UIDescs[RANK_LETTER] = { false, Vector3(1120.f, 330.f, 0.8f), Vector3(1.5f, 1.5f, 1.f) };

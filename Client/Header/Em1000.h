@@ -41,7 +41,6 @@ public:
 	virtual void Fight(const float _fDeltaTime)override;
 	virtual void State_Change(const float _fDeltaTime)override;
 	virtual void Skill_CoolTime(const float _fDeltaTime)override;
-
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;

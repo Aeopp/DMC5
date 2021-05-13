@@ -11,12 +11,23 @@ void Smoke::SetVariationIdx(Smoke::VARIATION Idx)
 	if (Idx > MAX_VARIATION_IDX)
 		return;
 
-	Reset();
+	switch (Idx)
+	{
+	case SMOKE_0: default:
+		_BrightScale = 0.00005f;
+		break;
+	case SMOKE_1:
+		_BrightScale = 0.01f;
+		break;
+	case SMOKE_2:
+		_BrightScale = 0.01f;
+		break;
+	case APPEAR_AERIAL_MONSTER:
+		_BrightScale = 0.00005f;
+		break;
+	}
 
-	if (APPEAR_AERIAL_MONSTER == Idx)
-		_SliceAmount = 1.f;
-	else
-		_SliceAmount = 0.f;
+	Reset();
 
 	_VariationIdx = Idx;
 }
@@ -51,11 +62,7 @@ void Smoke::RenderReady()
 void Smoke::Reset()
 {
 	_SpriteIdx = 0.f;
-
-	if (APPEAR_AERIAL_MONSTER == _VariationIdx)
-		_SliceAmount = 1.f;
-	else
-		_SliceAmount = 0.f;
+	_SliceAmount = 1.f;
 
 	Effect::Reset();
 }
@@ -90,6 +97,21 @@ void Smoke::Imgui_Modify()
 			static float PlayingSpeed = _PlayingSpeed;
 			ImGui::SliderFloat("PlayingSpeed##Smoke", &PlayingSpeed, 0.1f, 10.f);
 			_PlayingSpeed = PlayingSpeed;
+		}
+
+		{
+			static int VariationIdx = _VariationIdx;
+			ImGui::SliderInt("VariationIdx##Smoke", &VariationIdx, 0, 2);
+			if (ImGui::Button("Apply##Smoke"))
+				SetVariationIdx((Smoke::VARIATION)VariationIdx);
+		}
+
+		{
+			if (ImGui::Button("PlayStart##Smoke"))
+				PlayStart(_PlayingSpeed);
+			ImGui::SameLine();
+			if (ImGui::Button("Reset##Smoke"))
+				Reset();
 		}
 	}
 }
@@ -129,20 +151,45 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
-		_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
-		_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
-		_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
-		_Info.Fx->SetBool("_UsingNoise", true);
-		_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
-		_Info.Fx->SetFloat("_BrightScale", _BrightScale);
-		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
-		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
-		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
-
-		SharedSubset->Render(_Info.Fx);
-
 		if (APPEAR_AERIAL_MONSTER == _VariationIdx)
+		{
+			_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
+			_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
+			_Info.Fx->SetBool("_UsingNoise", true);
+			_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
+			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
+			_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
+
+			SharedSubset->Render(_Info.Fx);
 			SharedSubset->Render(_Info.Fx);	// 옅어서 한번 더 그림
+		}
+		else
+		{
+			_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
+			switch (_VariationIdx)
+			{
+			case SMOKE_0: default:
+				_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
+				break;
+			case SMOKE_1:
+				_Info.Fx->SetTexture("ALB0Map", _SmokeALB1Tex->GetTexture());
+				break;
+			case SMOKE_2:
+				_Info.Fx->SetTexture("ALB0Map", _SmokeALB2Tex->GetTexture());
+				break;
+			}
+			_Info.Fx->SetBool("_UsingNoise", false);
+			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
+			_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
+			_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
+
+			SharedSubset->Render(_Info.Fx);
+		}
 	}
 }
 
@@ -154,15 +201,18 @@ HRESULT Smoke::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_Smoke;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });	// _SmokeMesh 원점이 중앙이 아니라 스케일 늘리면 x축 이동도 필요
+	InitTransform.lock()->SetScale({ 0.001f, 0.001f, 0.001f });	// _SmokeMesh 원점이 중앙이 아니라 스케일 늘리면 x축 이동도 필요
 	
 	//_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_SmokeMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_enviroment_smoke00_03.fbx");
 
 	_SmokeALB0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_smoke_00_0016_alpg.tga");
+	_SmokeALB1Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_capcom_smoke_00_0049_alpg.tga");
+	_SmokeALB2Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\Smoke\\02.tga");
+
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
-	_PlayingSpeed = 1.f;
+	_PlayingSpeed = 10.f;
 	_BrightScale = 0.00005f;
 
 	Reset();
@@ -187,7 +237,6 @@ UINT Smoke::Update(const float _fDeltaTime)
 	if (!_IsPlaying)
 		return 0;
 
-	// SMOKE_0는 Reset() 호출까지 계속 재생
 	if (APPEAR_AERIAL_MONSTER == _VariationIdx)
 	{
 		//
@@ -197,6 +246,15 @@ UINT Smoke::Update(const float _fDeltaTime)
 			_SliceAmount = (_AccumulateTime - 4.f) * 0.6f;
 		else
 			_SliceAmount = 1.f - _AccumulateTime * 0.6f;
+	}
+	else
+	{
+		if (100.f < _AccumulateTime)
+			Reset();
+		else if (95.f < _AccumulateTime)
+			_SliceAmount = (_AccumulateTime - 95.f) * 0.2f;
+		else
+			_SliceAmount = 1.f - _AccumulateTime * 0.2f;
 	}
 
 	// sprite

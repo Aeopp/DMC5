@@ -8,6 +8,8 @@ public:
 	enum VARIATION : uint32
 	{
 		SMOKE_0 = 0u,
+		SMOKE_1,
+		SMOKE_2,
 
 		APPEAR_AERIAL_MONSTER,
 
@@ -21,6 +23,8 @@ private:
 	//std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
 	std::shared_ptr<ENGINE::StaticMesh> _SmokeMesh{};
 	std::shared_ptr<ENGINE::Texture> _SmokeALB0Tex{};
+	std::shared_ptr<ENGINE::Texture> _SmokeALB1Tex{};
+	std::shared_ptr<ENGINE::Texture> _SmokeALB2Tex{};
 	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
 
 	Vector2 _SmokeMinTexUV = Vector2(0.f, 0.f);

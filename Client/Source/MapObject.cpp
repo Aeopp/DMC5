@@ -140,7 +140,10 @@ void MapObject::RenderInit()
 	//		RenderDebug(_Info);
 	//	}
 	//} };
-	RenderInterface::Initialize(_InitRenderProp);
+
+	RenderInterface::Initialize(_InitRenderProp); 
+
+	PushEditEntity(m_pStaticMesh.get());
 }
 
 void MapObject::RenderGBuffer(const DrawInfo& _Info)

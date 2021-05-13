@@ -499,6 +499,13 @@
     <ClInclude Include="..\Header\PreLoader.h">
       <Filter>98.PreLoader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\SecretVision.h" />
+    <ClInclude Include="..\Header\MakaiButterfly.h">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -797,6 +804,10 @@
     <ClCompile Include="..\Source\PreLoader.cpp">
       <Filter>98.PreLoader</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\SecretVision.cpp" />
+    <ClCompile Include="..\Source\MakaiButterfly.cpp">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -864,5 +875,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\SecretVision.hlsl" />
   </ItemGroup>
 </Project>
