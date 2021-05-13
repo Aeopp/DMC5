@@ -793,7 +793,7 @@ PsOut PsMain_GUI(PsIn_GUI In)
     PsOut Out = (PsOut) 0;
     
     Out.Color = tex2D(ALB_NOsRGB, In.UV);
-    Out.Color.rgb *= _BrightScale;// * exposure_corr;
+    Out.Color.rgb *= _BrightScale; // * exposure_corr;
     
     return Out;
 };
@@ -807,7 +807,7 @@ PsOut PsMain_GUI_Dissolve(PsIn_GUI In)
     clip(NoiseSample);
     
     Out.Color = tex2D(ALB_NOsRGB, In.UV);
-    Out.Color.rgb *= _BrightScale;// * exposure_corr;
+    Out.Color.rgb *= _BrightScale; // * exposure_corr;
 
     return Out;
 };
