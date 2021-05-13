@@ -6,15 +6,19 @@
 #include <optional>
 
 class SecretVision : public ENGINE::GameObject,
-			         public ENGINE::RenderInterface
+	public ENGINE::RenderInterface
 {
 	struct SecretVisionDesc
 	{
+		static const uint32  DefaultLife = 4u;
+		static inline float  DisappearEndColorIntencity = 333.f;
+		static inline float  DisappearAcc = 0.5f;
+
 		float ColorIntencity = 0.0f;
 		float AlphaFactor = 0.0f;
-		float DistortionIntencity = 1.f;
-		int32 Life = 6u;
-		bool bDistortion = false;
+		int32 Life = DefaultLife;
+		bool bSurvive = true;
+		float T = 0.0f;
 	};
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _Mesh{};
@@ -22,7 +26,7 @@ private:
 	std::shared_ptr < ENGINE::Texture> _NoiseMap{};
 	std::array<SecretVisionDesc, 3u> _SVDescs{};
 private:
-	explicit SecretVision()  ;
+	explicit SecretVision();
 	virtual ~SecretVision() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
@@ -41,21 +45,41 @@ public:
 	virtual void    Editor()override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
+
+	virtual void OnTriggerEnter(std::weak_ptr<GameObject> _Target)override;
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
 	void Interaction(const uint32 Idx);
 	void Disappear(const uint32 Idx);
+	void PuzzleEndParticle();
+	void Default();
+	void PuzzleStart();
+	void PuzzleEnd();
 private:
+	// 컴포넌트
+	std::weak_ptr<BoxCollider> _Collider{};
+	bool bEnable = false;
+	// 
+
+	uint32 InteractionIdx = 0u;
+
+	static const inline float DefaultNoiseWrap = 0.6f;
+	static const inline float DefaultDistortionIntencity = 1.f;
+
+	bool bDistortion = true;
+	float DistortionIntencity = DefaultDistortionIntencity;
 	float VisionBias = 0.0001f;
 
-	float NoiseWrap = 0.6f;
+	float NoiseWrap = DefaultNoiseWrap;
 	float TimeCorr = 0.111675f;
 
-	float HitAddColorIntencity = 0.1f;
-	float HitAddAlphaFactor  = 0.1f;
-	float HitMinusDistortionIntencity = 0.1f;
+	float HitMinusNoiseWrap = DefaultNoiseWrap / static_cast<float>(SecretVisionDesc::DefaultLife);
+	float HitMinusDistortionIntencity = -0.2f;
+
+	float HitAddColorIntencity = 0.2f;
+	float HitAddAlphaFactor  = 0.2f;
 };
 #endif //
 

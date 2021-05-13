@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "SecretVision.h"
+#include "NhDoor.h"
 
 #include <iostream>
 #include <fstream>
@@ -46,6 +47,8 @@ HRESULT Hotel_S02::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
+	AddGameObject<SecretVision>();
+	AddGameObject<NhDoor>();
 
 	//AddGameObject<Camera>();
 	AddGameObject<MainCamera>();

@@ -85,6 +85,7 @@ enum GAMEOBJECTTAG
 	TAG_JudgementShadow2,
 	TAG_JudgementShadow3,
 	TAG_Trigger,
+	TAG_NhDoor,
 	Tag_END
 };
 
