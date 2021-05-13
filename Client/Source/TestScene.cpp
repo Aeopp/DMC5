@@ -172,7 +172,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
-	//AddGameObject<Smoke>();
+	AddGameObject<Smoke>();
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
