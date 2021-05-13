@@ -151,6 +151,7 @@ void SceneSystem::SwitchScene()
 	//¾À ÀüÈ¯
 	m_pCurrentScene = m_pNextScene;
 	PhysicsSystem::GetInstance()->ChangeScene(m_pCurrentScene->UniqueID);
+	ResourceSystem::GetInstance()->Clear();
 	//
 	m_pNextScene.reset();
 	//

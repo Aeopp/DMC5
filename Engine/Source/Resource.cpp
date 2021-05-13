@@ -3,8 +3,9 @@
 USING(ENGINE)
 
 Resource::Resource(LPDIRECT3DDEVICE9 const _pDevice)
-	: m_pDevice(_pDevice),
-	bClone{ FALSE }
+	: m_pDevice(_pDevice)
+	, bClone(FALSE)
+	, m_nRefCount(0)
 {
 	SafeAddRef(m_pDevice);
 }
@@ -12,7 +13,8 @@ Resource::Resource(LPDIRECT3DDEVICE9 const _pDevice)
 Resource::Resource(const Resource& _rOther)
 	: Object (_rOther) ,
 	  m_pDevice(_rOther.m_pDevice) ,
-	ResourcePath{ _rOther.ResourcePath }
+	ResourcePath{ _rOther.ResourcePath },
+	m_nRefCount(0)
 {
 	SafeAddRef(m_pDevice);
 }
@@ -20,6 +22,10 @@ Resource::Resource(const Resource& _rOther)
 void Resource::Free()
 {
 	SafeRelease(m_pDevice);
+	
+	if (false == m_pOrigin.expired())
+		m_pOrigin.lock()->Release();
+
 	Object::Free();
 }
 
@@ -30,5 +36,20 @@ void Resource::Editor()
 	{
 		ImGui::Text("Resource Path : %s", ResourcePath.string().c_str());
 	}
+}
+
+void Resource::AddRef()
+{
+	++m_nRefCount;
+}
+
+void Resource::Release()
+{
+	--m_nRefCount;
+}
+
+int Resource::GetRefCount()
+{
+	return m_nRefCount;
 }
 

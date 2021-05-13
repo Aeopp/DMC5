@@ -201,6 +201,7 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 void CbsMidTrail::PlayEnd()
 {
 	_RenderProperty.bRender = false;
+	T = 0.0f;
 };
 
 void CbsMidTrail::RenderTrail(const DrawInfo& _Info)

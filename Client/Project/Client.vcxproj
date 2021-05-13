@@ -184,6 +184,9 @@
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\Hotel_S01.h" />
+    <ClInclude Include="..\Header\Hotel_S02.h" />
+    <ClInclude Include="..\Header\Hotel_S03.h" />
+    <ClInclude Include="..\Header\Hotel_S04.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
     <ClInclude Include="..\Header\JudgementShadow1.h" />
@@ -195,6 +198,7 @@
     <ClInclude Include="..\Header\LogoPanel.h" />
     <ClInclude Include="..\Header\LogoScene.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
+    <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -282,6 +286,9 @@
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp" />
+    <ClCompile Include="..\Source\Hotel_S02.cpp" />
+    <ClCompile Include="..\Source\Hotel_S03.cpp" />
+    <ClCompile Include="..\Source\Hotel_S04.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
     <ClCompile Include="..\Source\JudgementShadow1.cpp" />
@@ -293,6 +300,7 @@
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
+    <ClCompile Include="..\Source\PreLoader.cpp" />
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
