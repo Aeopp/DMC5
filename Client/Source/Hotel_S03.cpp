@@ -226,6 +226,6 @@ void Hotel_S03::TriggerSetUp()
 void Hotel_S03::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
-
+	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({ -1.77158f, 1.36541f, 23.73719 });
 	_LateInit = true;
 }

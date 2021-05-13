@@ -4,6 +4,7 @@
 #include "TestObject.h"
 #include "ShaderTester.h"
 #include "TempMap.h"
+#include "PreLoader.h"
 #include "TestAnimationObject.h"
 #include "Camera.h"
 #include "Nero.h"
@@ -45,8 +46,9 @@
 #include "CbsMidTrail.h"
 #include "BlitzAttack.h"
 #include "Trigger.h"
-#include "PreLoader.h"
 #include "SecretVision.h"
+#include "MakaiButterfly.h"
+#include "Smoke.h"
 
 #include <iostream>
 #include <fstream>
@@ -84,12 +86,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
-	AddGameObject<SecretVision>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
 
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
-	//AddGameObject<JudgementSword>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -154,7 +154,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 
 #pragma endregion
@@ -180,6 +180,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<ElectricOccur>();
 	//AddGameObject<BlitzAttack>();
 	//AddGameObject<CbsMidTrail>();
+	//AddGameObject<SecretVision>();
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -272,7 +273,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 15, Until Dooms Day",
+		pFont->SetText("D 14, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),

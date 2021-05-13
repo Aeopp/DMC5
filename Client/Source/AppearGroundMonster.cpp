@@ -83,6 +83,11 @@ void AppearGroundMonster::Imgui_Modify()
 			ImGui::SliderFloat("PlayingSpeed##AppearGroundMonster", &PlayingSpeed, 0.1f, 10.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
+	
+		{
+			if (ImGui::Button("PlayStart##AppearGroundMonster"))
+				PlayStart(_PlayingSpeed);
+		}
 	}
 }
 
@@ -160,14 +165,6 @@ void AppearGroundMonster::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	{
 		Matrix World = _DecalBloodChildWorldMatrix * _RenderUpdateInfo.World;
 		_Info.Fx->SetMatrix("World", &World);
-
-		//if (!Renderer::GetInstance()->GetDirLights().empty())
-		//{
-		//	// ¤¾¤¾
-		//	auto dirLight = Renderer::GetInstance()->GetDirLights().begin()->get()->GetDirection();
-		//	_Info.Fx->SetFloatArray("LightDirection", dirLight, 3u);
-		//}
-
 		_Info.Fx->SetTexture("NRMR0Map", _DecalBloodNRMR0Tex->GetTexture());
 		_Info.Fx->SetTexture("Msk0Map", _DecalBloodMsk0Tex->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());

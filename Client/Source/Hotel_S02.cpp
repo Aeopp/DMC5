@@ -50,9 +50,10 @@ HRESULT Hotel_S02::LoadScene()
 	AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
 
-	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -86,6 +87,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
+	AddGameObject<SecretVision>();
 
 #pragma endregion
 
@@ -233,9 +235,8 @@ void Hotel_S02::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 1.f, 11.70365f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.70365f });
 	}
-
 
 	_LateInit = true;
 }

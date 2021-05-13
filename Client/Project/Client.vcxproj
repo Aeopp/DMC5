@@ -197,6 +197,7 @@
     <ClInclude Include="..\Header\LoadingScene.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
     <ClInclude Include="..\Header\LogoScene.h" />
+    <ClInclude Include="..\Header\MakaiButterfly.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="..\Source\LoadingScene.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
+    <ClCompile Include="..\Source\MakaiButterfly.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
@@ -520,6 +522,9 @@
     <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
