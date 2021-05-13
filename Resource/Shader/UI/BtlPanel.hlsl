@@ -536,7 +536,7 @@ PsOut PsMain_BossGauge2(PsIn_Clip In)
     
     float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;
     
-    Out.Color.rgb = Shade * float3(0.078f, 0.094f, 0.888f) * _BrightScale * exposure_corr;
+    Out.Color.rgb = Shade * float3(0.078f, 0.094f, 0.888f) * tex2D(Noise, In.UV - float2(_AccumulationTexU, 0.f)).r * 1.5f * _BrightScale * exposure_corr;
     Out.Color.a = ATOSSample.b;
  
     return Out;
@@ -547,24 +547,10 @@ PsOut PsMain_BossGauge3(PsIn_Clip In)
     PsOut Out = (PsOut) 0;
     
     clip(-In.Clip.y - 0.5f);
-    clip(_BossGaugeCurXPosOrtho - In.Clip.x);
+    clip(abs(_BossGaugeCurXPosOrtho - In.Clip.x) > 0.0015f ? -1.f : 1.f);
     
-    float4 ATOSSample = tex2D(ATOS0, In.UV);
-    float4 NRMRSample = tex2D(NRMR0, In.UV);
-    
-    float2 NormalXY = NRMRSample.xy * 2.f - 1.f;
-    float NormalZ = sqrt(1 - dot(NormalXY, NormalXY));
-   
-    float3x3 TBN = float3x3(normalize(In.Tangent),
-                            normalize(In.BiNormal),
-                            normalize(In.Normal));
-
-    float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
-    
-    float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;
-    
-    Out.Color.rgb = Shade * float3(0.27f, 0.31f, 1.f) * _BrightScale * exposure_corr;
-    Out.Color.a = ATOSSample.r * 0.045f;
+    Out.Color.rgb = float3(0.27f, 0.31f, 1.f) * _BrightScale * exposure_corr;
+    Out.Color.a = tex2D(ATOS0, In.UV).r;
     
     return Out;
 };
@@ -594,6 +580,19 @@ PsOut PsMain_BossGauge4(PsIn_Clip In)
     Out.Color.rgb = Shade * float3(1.f, 0.f, 0.f) * _BrightScale * exposure_corr;
     Out.Color.a = ATOSSample.b;
  
+    return Out;
+};
+
+PsOut PsMain_BossGauge5(PsIn_Clip In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    clip(-In.Clip.y - 0.5f);
+    clip(_BossGaugeCurXPosOrtho - In.Clip.x);
+    
+    Out.Color.rgb = float3(0.27f, 0.31f, 1.f) * _BrightScale * exposure_corr;
+    Out.Color.a = tex2D(ATOS0, In.UV).r * 0.2f;
+    
     return Out;
 };
 
@@ -1118,5 +1117,18 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge4();
+    }
+
+    pass p19
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain_ClipPos();
+        pixelshader = compile ps_3_0 PsMain_BossGauge5();
     }
 };

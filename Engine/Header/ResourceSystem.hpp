@@ -30,23 +30,25 @@ inline std::shared_ptr<TYPE> ResourceSystem::Load(const std::filesystem::path _P
 	}
 
 	//원본의 복사본을 생성
-	Resource* pClone = iterOriginResource->second->Clone();
-	//nTypeID를 키 값으로 갖는 pair가 있는지 확인.
-	auto iterCloneType = m_Clone.find(nTypeID);
-	//nTypeID를 키 값으로 갖는 pair가 없는 경우 pair추가.
-	if (m_Clone.end() == iterCloneType)
-		iterCloneType = m_Clone.emplace(nTypeID, std::unordered_map<std::wstring, std::vector<std::shared_ptr<Resource>>>()).first;
-	//TypeID에 해당하는 컨테이너에 _Path를 키값으로 갖는 pair가 있는지 확인.
-	auto iterCloneVector = iterCloneType->second.find(_Path.wstring());
-	//TypeID에 해당하는 컨테이너에 _Path를 키값으로 갖는 pair가 없는 경우 pair 추가
-	if (iterCloneType->second.end() == iterCloneVector)
-		iterCloneVector = iterCloneType->second.emplace(_Path.wstring(), std::vector<std::shared_ptr<Resource>>()).first;
-	//pair에 복사본 저장
-	std::shared_ptr<Resource> pReturn;
+	TYPE* pClone = (TYPE*)iterOriginResource->second->Clone();
+	pClone->m_pOrigin = iterOriginResource->second;
+	pClone->m_pOrigin.lock()->AddRef();
+	////nTypeID를 키 값으로 갖는 pair가 있는지 확인.
+	//auto iterCloneType = m_Clone.find(nTypeID);
+	////nTypeID를 키 값으로 갖는 pair가 없는 경우 pair추가.
+	//if (m_Clone.end() == iterCloneType)
+	//	iterCloneType = m_Clone.emplace(nTypeID, std::unordered_map<std::wstring, std::vector<std::shared_ptr<Resource>>>()).first;
+	////TypeID에 해당하는 컨테이너에 _Path를 키값으로 갖는 pair가 있는지 확인.
+	//auto iterCloneVector = iterCloneType->second.find(_Path.wstring());
+	////TypeID에 해당하는 컨테이너에 _Path를 키값으로 갖는 pair가 없는 경우 pair 추가
+	//if (iterCloneType->second.end() == iterCloneVector)
+	//	iterCloneVector = iterCloneType->second.emplace(_Path.wstring(), std::vector<std::shared_ptr<Resource>>()).first;
+	////pair에 복사본 저장
+	std::shared_ptr<TYPE> pReturn;
 	pReturn.reset(pClone, Deleter<Object>());
-	iterCloneVector->second.emplace_back(pReturn);
+	//iterCloneVector->second.emplace_back(pReturn);
 
-	return std::static_pointer_cast<TYPE>(pReturn);
+	return pReturn;
 }
 END
 #endif // !__RESOURCE_SYSTEM_HPP__

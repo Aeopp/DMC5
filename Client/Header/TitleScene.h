@@ -6,10 +6,8 @@ class TitleScene : public Scene
 {
 private:
 	std::weak_ptr<class TitlePanel> _TitlePanel{};
-
 	bool _LoadNextScene = false;
 	float _CheckLoadingTick = 0.f;
-
 private:
 	explicit TitleScene() = default;
 	virtual ~TitleScene() = default;
@@ -24,6 +22,5 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-
 };
 #endif // !__TITLE_SCENE_H__

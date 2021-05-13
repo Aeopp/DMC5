@@ -95,10 +95,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	D3DXVec3Normalize(&vDir, &vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float    fDot = D3DXVec3Dot(&vDir, &vLook);
-	if (fDot > 1.f)
-		fDot = 1.f - FLT_EPSILON;
-	else if (fDot < -1.f)
-		fDot = -1.f + FLT_EPSILON;
+
 
 	switch (m_eState)
 	{
@@ -982,6 +979,7 @@ void Em0000::Snatch(BT_INFO _BattleInfo, void* pArg)
 {
 	m_bHit = true;
 	m_eState = Hit_Snatch_Start;
+	
 }
 
 void Em0000::Air_Hit(BT_INFO _BattleInfo, void* pArg)
@@ -1255,10 +1253,6 @@ void Em0000::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-	if (fDot > 1.f)
-		fDot = 1.f - FLT_EPSILON;
-	else if (fDot < -1.f)
-		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1296,10 +1290,6 @@ void Em0000::Test()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-	if (fDot > 1.f)
-		fDot = 1.f - FLT_EPSILON;
-	else if (fDot < -1.f)
-		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1337,6 +1327,8 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		
+		m_pWeapon.lock()->Set_Coll(false);
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
@@ -1344,6 +1336,8 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+		
+		m_pWeapon.lock()->Set_Coll(false);
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
@@ -1352,6 +1346,7 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
+		m_pWeapon.lock()->Set_Coll(false);
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Long:
@@ -1360,20 +1355,30 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
+		m_pWeapon.lock()->Set_Coll(false);
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		m_pWeapon.lock()->Set_Coll(false);
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::TAG_WireArm:
 		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		m_pWeapon.lock()->Set_Coll(false);
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	case GAMEOBJECTTAG::Overture:
 		if (m_bAir)
 			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		m_pWeapon.lock()->Set_Coll(false);
+		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
 	default:
 		break;

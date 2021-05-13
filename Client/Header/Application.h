@@ -11,16 +11,5 @@ public:
 	HRESULT UpdateApplication(const float Delta);
 	HRESULT ReleaseApplication();
 
-private:
-	void StaticResourceLoad();
-
-private:
-	void ParticlePoolLoad();
-	void IceParticlePoolLoad();
-	void IceCbsMidParticlePoolLoad();
-	void IceAgeParticlePoolLoad();
-	void FireParticlePoolLoad();
-	void ElectricParticlePoolLoad();
-
 };
 #endif // !__APPLICATION_H__

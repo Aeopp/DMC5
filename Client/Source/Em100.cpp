@@ -114,11 +114,6 @@ void Em100::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-	if (fDot > 1.f)
-		fDot = 1.f - FLT_EPSILON;
-	else if (fDot < -1.f)
-		fDot = -1.f + FLT_EPSILON;
-
 
 	switch (m_eState)
 	{
@@ -329,11 +324,6 @@ void Em100::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Loop" && m_pCollider.lock()->IsGround())
 			{
-				if (fDot > 1.f)
-					fDot = 1.f - FLT_EPSILON;
-				else if (fDot < -1.f)
-					fDot = -1.f + FLT_EPSILON;
-
 				if (fDot < 0)
 					m_eState = Hit_End_Front;
 				else
@@ -424,11 +414,6 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Hit_Air", false, {}, 1.f, 20.f, true);
 			if (m_pCollider.lock()->IsGround() && m_pMesh->CurPlayAnimInfo.Name == "Hit_Air")
 			{
-				if (fDot > 1.f)
-					fDot = 1.f - FLT_EPSILON;
-				else if (fDot < -1.f)
-					fDot = -1.f + FLT_EPSILON;
-
 				if (fDot < 0)
 					m_eState = Hit_End_Front;
 				else
@@ -656,11 +641,6 @@ void Em100::State_Change(const float _fDeltaTime)
 	case Em100::Hit_Buster_End:
 		if (m_bHit)
 		{
-			if (fDot > 1.f)
-				fDot = 1.f - FLT_EPSILON;
-			else if (fDot < -1.f)
-				fDot = -1.f + FLT_EPSILON;
-
 			if (fDot < 0)
 				m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
 			else
@@ -836,7 +816,7 @@ HRESULT Em100::Ready()
 	m_BattleInfo.iHp = 150;
 	m_BattleInfo.iAttack = 20;
 
-	m_pTransform.lock()->SetPosition({ -4.8f, 3.2f, -4.82f });
+	m_pTransform.lock()->SetPosition({ -4.8f, 1.2f, -4.82f });
 		
 	RenderInit();
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
@@ -915,20 +895,7 @@ UINT Em100::Update(const float _fDeltaTime)
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
-	if (FMath::IsNan(DeltaPos))
-	{
-		DeltaPos = { 0.f,0.f,0.f };
-	}
-	if (FMath::IsNan(DeltaQuat))
-	{
-		int i = 0; // 헤응
-		DeltaPos = { 0.f,0.f,0.f };
-		DeltaPos = { 0.f,0.f,0.f };
-		DeltaPos = { 0.f,0.f,0.f };
-		DeltaPos = { 0.f,0.f,0.f };
-		DeltaPos = { 0.f,0.f,0.f };
-		DeltaPos = { 0.f,0.f,0.f };
-	}
+	  
 	//ENGINE::AnimNotify _Notify{};
 	////return true 면 이제 호출 안함, false면 저 루프 돌떄 계속 호출.
 	//_Notify.Event[0.5] = [this]() {  AttackStart();  return false; };
@@ -952,10 +919,6 @@ UINT Em100::Update(const float _fDeltaTime)
 		D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 
 		D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
-		if (FMath::IsNan(DeltaPos))
-		{
-			DeltaPos = { 0.f,0.f,0.f };
-		}
 
 		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
@@ -1320,8 +1283,6 @@ void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 	m_bHit = true;
 	m_bDown = true;
 
-	m_pCollider.lock()->SetRigid(false);
-
 	if (m_bAir)
 		m_eState = Hit_Air_Buster_Start;
 	else
@@ -1342,6 +1303,8 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		return;
 
 	m_bCollEnable = false;
+
+
 	switch (_pOther.lock()->m_nTag)	
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
@@ -1351,7 +1314,10 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			m_pHand[i].lock()->Set_Coll(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
 		if (m_bAir)
@@ -1360,7 +1326,10 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			m_pHand[i].lock()->Set_Coll(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
 		if (m_bAir)
@@ -1369,7 +1338,10 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			m_pHand[i].lock()->Set_Coll(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Long:
 		if (m_bAir)
@@ -1378,20 +1350,41 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 
 		for (int i = 0; i < 2; ++i)
+		{
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			m_pHand[i].lock()->Set_Coll(false);
+		}
 		break;
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			m_pHand[i].lock()->Set_Coll(false);
+		}
 		break;
 	case GAMEOBJECTTAG::TAG_WireArm:
 		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			m_pHand[i].lock()->Set_Coll(false);
+		}
 		break;
 	case GAMEOBJECTTAG::Overture:
 		if (m_bAir)
 			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+			m_pHand[i].lock()->Set_Coll(false);
+		}
 		break;
 	default:
 		break;
@@ -1609,12 +1602,6 @@ void Em100::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-
-	if (fDot > 1.f)
-		fDot = 1.f - FLT_EPSILON;
-	else if (fDot < -1.f)
-		fDot = -1.f + FLT_EPSILON;
-
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;

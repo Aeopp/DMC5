@@ -310,3 +310,8 @@ void Cbs_Middle::RenderDebugSK(const DrawInfo& _Info)
 		};
 	};
 }
+
+Matrix* Cbs_Middle::Get_BoneMatrixPtr(std::string _BoneName)
+{
+	return m_pMesh->GetToRootMatrixPtr(_BoneName);;
+}

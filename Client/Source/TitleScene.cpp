@@ -4,9 +4,6 @@
 #include "TitlePanel.h"
 #include "Hotel_S01.h"
 
-#include "TestScene.h"
-
-
 void TitleScene::Free()
 {
 	Scene::Free();
@@ -53,7 +50,6 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 		// 다음 씬 로드
 		// Title Scene에서 Stage1 로드를 겸함
 		SceneManager::LoadScene(Hotel_S01::Create(), false);
-		//SceneManager::LoadScene(TestScene::Create(), false);
 
 		_LoadNextScene = true;
 	}
@@ -62,19 +58,19 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 	
 	if (0.5f < _CheckLoadingTick)
 	{
-		if (auto SpLTitlePanel = _TitlePanel.lock();
-			SpLTitlePanel)
+		if (auto SpPanel = _TitlePanel.lock();
+			SpPanel)
 		{
 			if (SceneManager::IsLoaded())
 			{
-				SpLTitlePanel->SetLoadingProgress(1.f);
+				SpPanel->SetLoadingProgress(1.f);
 
-				if (SpLTitlePanel->IsReadyToNextScene())
+				if (SpPanel->IsReadyToNextScene())
 					SceneManager::ActivateScene();
 			}
 			else
 			{
-				SpLTitlePanel->SetLoadingProgress(m_fLoadingProgress);
+				SpPanel->SetLoadingProgress(m_fLoadingProgress);
 			}
 		}
 

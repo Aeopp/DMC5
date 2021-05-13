@@ -170,7 +170,9 @@
     <ClInclude Include="..\Header\Cbs_Short.h" />
     <ClInclude Include="..\Header\CircleWave.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
+    <ClInclude Include="..\Header\ElectricBranch.h" />
     <ClInclude Include="..\Header\ElectricOccur.h" />
+    <ClInclude Include="..\Header\ElectricVortex.h" />
     <ClInclude Include="..\Header\Em1000.h" />
     <ClInclude Include="..\Header\Em1000Hand.h" />
     <ClInclude Include="..\Header\Em200.h" />
@@ -182,15 +184,21 @@
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\Hotel_S01.h" />
+    <ClInclude Include="..\Header\Hotel_S02.h" />
+    <ClInclude Include="..\Header\Hotel_S03.h" />
+    <ClInclude Include="..\Header\Hotel_S04.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
     <ClInclude Include="..\Header\JudgementShadow1.h" />
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\LoadingPanel.h" />
+    <ClInclude Include="..\Header\LoadingScene.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
     <ClInclude Include="..\Header\LogoScene.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
+    <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -255,14 +263,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
+    <ClCompile Include="..\Source\CbsMidTrail.cpp" />
     <ClCompile Include="..\Source\CbsTrail.cpp" />
     <ClCompile Include="..\Source\Cbs_Long.cpp" />
     <ClCompile Include="..\Source\Cbs_Middle.cpp" />
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
     <ClCompile Include="..\Source\CircleWave.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
+    <ClCompile Include="..\Source\ElectricBranch.cpp" />
     <ClCompile Include="..\Source\ElectricOccur.cpp" />
+    <ClCompile Include="..\Source\ElectricVortex.cpp" />
     <ClCompile Include="..\Source\Em1000.cpp" />
     <ClCompile Include="..\Source\Em1000Hand.cpp" />
     <ClCompile Include="..\Source\Em200.cpp" />
@@ -274,15 +286,23 @@
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp" />
+    <ClCompile Include="..\Source\Hotel_S02.cpp" />
+    <ClCompile Include="..\Source\Hotel_S03.cpp" />
+    <ClCompile Include="..\Source\Hotel_S04.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
     <ClCompile Include="..\Source\JudgementShadow1.cpp" />
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\LoadingPanel.cpp" />
+    <ClCompile Include="..\Source\LoadingScene.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
+    <ClCompile Include="..\Source\PreLoader.cpp" />
+    <ClCompile Include="..\Source\ThunderBolt.cpp" />
+    <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
     <ClCompile Include="..\Source\Smoke.cpp" />
     <ClCompile Include="..\Source\Liquid.cpp" />
@@ -325,6 +345,7 @@
     <ClCompile Include="..\Source\TestScene.cpp" />
     <ClCompile Include="..\Source\TitleScene.cpp" />
     <ClCompile Include="..\Source\Trail.cpp" />
+    <ClCompile Include="..\Source\Trigger.cpp" />
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
@@ -467,7 +488,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\UI\TitlePanel.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\UI\LoadingPanel.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

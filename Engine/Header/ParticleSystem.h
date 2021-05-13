@@ -270,6 +270,7 @@ public:
 	// Reserve 한 파티클중 현재 Reset 상태에 들어간 파티클들.
 	std::vector<ParticleInstance*>PlayParticle(
 		const std::string& Identifier ,
+		const uint32 RequestParticleCnt,
 		const bool bLifeTimeAlphaFactor);
 	Particle* PtrParticle(const std::string& Identifier);
 private:

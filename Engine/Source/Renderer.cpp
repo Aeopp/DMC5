@@ -44,8 +44,10 @@ HRESULT Renderer::ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice)
 	ReadyQuad();
 	ReadySky();
 	ReadyTextures();
+	ReadyPtLightPool();
 
 	TestShaderInit();
+
 	return S_OK;
 };
 
@@ -434,7 +436,21 @@ void Renderer::ReadyQuad()
 void Renderer::ReadyTextures()
 {
 	DistortionTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\water_new_height.png");
-	
+};
+
+void Renderer::ReadyPtLightPool()
+{
+	for (uint32 i = 0; i < 33; ++i)
+	{
+		auto _Insert = std::make_shared<FLight>(
+			FLight(
+				FLight::Type::Point, { 1.5f,0.5f, 0.0f ,1 },
+				{ 1,1,1,1 }));
+
+		DynamicPointLights.push_back(_Insert);
+		_Insert->SetProjectionParameters(0, 0, 0.1f, 10.0f);
+		_Insert->bEnable = false;
+	}
 }
 
 void Renderer::Push(const std::weak_ptr<GameObject>& _RenderEntity)&
@@ -762,6 +778,24 @@ void Renderer::Editor()&
 	}
 	ImGui::End();
 };
+
+std::weak_ptr<FLight> Renderer::RefRemainingDynamicLight()
+{
+	std::weak_ptr<FLight> ReturnVal {};
+	for (auto& _Target : DynamicPointLights)
+	{
+		if (_Target)
+		{
+			if (_Target->bEnable == false)
+			{
+				ReturnVal= _Target;
+				continue;
+			}
+		}
+	}
+
+	return  ReturnVal;
+}
 
 void Renderer::RenderReady()&
 {
@@ -1378,8 +1412,22 @@ void Renderer::DeferredShading()
 		{
 			device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
 		}
+		
+		std::vector<FLight*> _PointLights{};
+		for (auto& Target : PointLights)
+		{
+			_PointLights.push_back(Target.get());
+		}
+		for (auto& Target : DynamicPointLights)
+		{
+			if (Target->bEnable)
+			{
+				_PointLights.push_back(Target.get());
+			}
+		}
 
-		for (auto& PointLight : PointLights)
+
+		for (auto& PointLight : _PointLights)
 		{
 			Sphere PtLtSp{};
 
