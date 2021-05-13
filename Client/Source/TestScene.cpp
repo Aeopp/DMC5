@@ -48,6 +48,7 @@
 #include "Trigger.h"
 #include "SecretVision.h"
 #include "MakaiButterfly.h"
+#include "Smoke.h"
 
 #include <iostream>
 #include <fstream>
@@ -153,8 +154,8 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
-	AddGameObject<TempMap>();
+	LoadMap();
+	//AddGameObject<TempMap>();
 
 #pragma endregion
 
@@ -171,6 +172,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
+	//AddGameObject<Smoke>();
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
