@@ -500,6 +500,7 @@
       <Filter>98.PreLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\SecretVision.h" />
+    <ClInclude Include="..\Header\NhDoor.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -799,6 +800,7 @@
       <Filter>98.PreLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\SecretVision.cpp" />
+    <ClCompile Include="..\Source\NhDoor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -869,5 +871,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Resource\Shader\Effect\SecretVision.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
   </ItemGroup>
 </Project>

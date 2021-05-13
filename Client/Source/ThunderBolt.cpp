@@ -39,22 +39,7 @@ void ThunderBolt::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		/*const Vector3 Scale = FMath::Lerp(StartScale, FinalSacle, T / PlayTime);
-		_SpTransform->SetScale(Scale);*/
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-		//if (Mesh)
-		//{
-		//	const uint32 Numsubset = Mesh->GetNumSubset();
-		//	_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
-
-		//	for (uint32 i = 0; i < Numsubset; ++i)
-		//	{
-		//		const auto& _Subset = Mesh->GetSubset(i);
-		//		const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
-
-		//		_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
-		//	}
-		//}
 	}
 };
 

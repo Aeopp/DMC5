@@ -10,6 +10,8 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "SecretVision.h"
+#include "NhDoor.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -46,6 +48,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 	AddGameObject<SecretVision>();
+	AddGameObject<NhDoor>();
 
 	AddGameObject<Camera>();
 	/*AddGameObject<MainCamera>();

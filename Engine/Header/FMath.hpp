@@ -124,6 +124,7 @@ public:
 
 	static inline Vector3 RandomEuler(const float PiScale);
 
+	static inline float BezierCurve(const float Start,const float Cp0, const float End, const float t);
 
 	static inline Vector3 BezierCurve(const Vector3& Start,const Vector3& End, const float t);
 
@@ -302,6 +303,11 @@ inline Vector3 FMath::BezierCurve(
 	const float t)
 {
 	return FMath::Lerp(FMath::Lerp(Start, CP0, t), FMath::Lerp(CP0, End, t), t);
+};
+
+inline float FMath::BezierCurve(const float Start, const float Cp0, const float End, const float t)
+{
+	return FMath::Lerp(FMath::Lerp(Start, Cp0, t), FMath::Lerp(Cp0, End, t), t);
 };
 
 inline Vector3 FMath::BezierCurve(

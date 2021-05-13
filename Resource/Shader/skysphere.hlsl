@@ -1,9 +1,9 @@
-uniform float Time;
-uniform bool Distortion;
-uniform float noisewrap;
-uniform float timecorr;
+uniform float  Time;
+uniform bool   Distortion;
+uniform float  noisewrap;
+uniform float  timecorr;
 uniform vector DistortionColor;
-uniform float DistortionIntencity;
+uniform float  DistortionIntencity;
 
 texture SkyMap;
 sampler Sky = sampler_state
