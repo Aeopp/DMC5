@@ -27,6 +27,11 @@ Hotel_S01::Hotel_S01()
 
 void Hotel_S01::Free()
 {
+	for (auto& Element : m_vecQliphothBlock)
+		Destroy(Element);
+	m_vecQliphothBlock.clear();
+	m_vecQliphothBlock.shrink_to_fit();
+
 	Scene::Free();
 }
 
@@ -92,23 +97,28 @@ HRESULT Hotel_S01::LoadScene()
 #pragma region Effect
 
 	// Stage2 길막
-	m_vecQliphothBlock.reserve(4);
+	m_vecQliphothBlock.reserve(7);
+
+	// 0: 시작지점 뒤
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
 		!ptr.expired())
 	{
-		ptr.lock()->SetScale(0.015f);
+		ptr.lock()->SetScale(0.016f);
 		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+		ptr.lock()->SetPosition(Vector3(-5.7f, 0.286f, -5.05f));
 		ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
+
+	// 1 ~ 3: Wave 1
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
 		!ptr.expired())
 	{
-		ptr.lock()->SetScale(0.009f);
-		ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
+		ptr.lock()->SetScale(0.007f);
+		ptr.lock()->SetRotation(Vector3(0.f, 205.714f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.5f, 0.355f, -2.775f));
 		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
@@ -118,6 +128,7 @@ HRESULT Hotel_S01::LoadScene()
 		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
 		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
 		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
@@ -127,6 +138,41 @@ HRESULT Hotel_S01::LoadScene()
 		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
 		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
 		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+
+	// 4 : Wave 2
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.012f);
+		ptr.lock()->SetRotation(Vector3(0.f, 0.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-3.59f, 0.408f, 7.172f));
+		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+
+	// 5 ~ 6 : Wave 3
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.012f);
+		ptr.lock()->SetRotation(Vector3(0.f, 180.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-3.59f, 0.408f, 7.372f));
+		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.005f);
+		ptr.lock()->SetRotation(Vector3(0.f, 0.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-3.62f, 0.1f, 11.35f));
+		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 
@@ -288,7 +334,6 @@ void Hotel_S01::LoadObjects(const std::filesystem::path& path, const bool _bAni)
 	}
 }
 
-
 void Hotel_S01::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
@@ -370,11 +415,10 @@ void Hotel_S01::Trigger1st()
 			if (auto Sp = _BtlPanel.lock(); Sp)
 				Sp->ResetRankScore();
 
-			for (int i = 1; i < 4; ++i)
+			for (uint32 i = 1u; i < 4u; ++i)
 			{
 				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
 				{
-					// 위치 변경
 					m_vecQliphothBlock[i].lock()->Reset();
 				}
 			}
@@ -431,7 +475,8 @@ void Hotel_S01::Trigger1st()
 			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
-			for (int i = 1; i < 4; ++i)
+
+			for (uint32 i = 1u; i < 4u; ++i)
 			{
 				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
 				{
@@ -447,9 +492,11 @@ void Hotel_S01::Trigger1st()
 			_SecondTrigger]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
 			_SecondTrigger->TriggerEnable();
 
 			// 여기서 카메라 연출 하세요 .
+
 		};
 
 		_StartTrigger->EventRegist(
@@ -494,7 +541,7 @@ void Hotel_S01::Trigger2nd()
 			lock()->SetPosition({ -3.52741f, 0.009f, 6.39310f});
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -3.1017f, 0.011680f,5.662048 };
+		const Vector3 TriggerLocation{ -3.1017f, 0.011680f, 5.662048f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 6.f, 3.f, 1.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
@@ -504,10 +551,27 @@ void Hotel_S01::Trigger2nd()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
 			Renderer::GetInstance()->SkyDistortionStart();
+		
+			for (uint32 i = 1u; i < 4u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->SetActive(false);
+				}
+			}
+			for (uint32 i = 4u; i < 5u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->SetActive(true);
+					m_vecQliphothBlock[i].lock()->PlayStart();
+				}
+			}
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
@@ -516,6 +580,14 @@ void Hotel_S01::Trigger2nd()
 		{
 			if (auto Sp = _BtlPanel.lock(); Sp)
 				Sp->ResetRankScore();
+
+			for (uint32 i = 4u; i < 5u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->Reset();
+				}
+			}
 		};
 
 		_Trigger->EventRegist(
@@ -545,14 +617,14 @@ void Hotel_S01::Trigger3rd()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -3.06028, 0.01f, 10.42297f });
+			lock()->SetPosition({ -3.06028f, 0.01f, 10.42297f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -4.40446f, 0.01f, 10.4338f });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -4.430736f, 0.01f, 8.29934f });
-
+			
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -5.1670f , -0.003732f , 7.915854f };
 		// 트리거 박스 사이즈 
@@ -564,10 +636,9 @@ void Hotel_S01::Trigger3rd()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
-			// (스폰 한 다음 이펙트 등등 )
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
@@ -577,6 +648,14 @@ void Hotel_S01::Trigger3rd()
 			//... 여기서 로직 처리하세요 . 
 			if (auto Sp = _BtlPanel.lock(); Sp)
 				Sp->ResetRankScore();
+
+			for (uint32 i = 5u; i < 7u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->Reset();
+				}
+			}
 		};
 
 		_EndTrigger->EventRegist(
@@ -625,6 +704,22 @@ void Hotel_S01::Trigger3rd()
 			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
+			for (uint32 i = 4u; i < 5u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->SetActive(false);
+				}
+			}
+			for (uint32 i = 5u; i < 7u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->SetActive(true);
+					m_vecQliphothBlock[i].lock()->PlayStart();
+				}
+			}
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
@@ -663,7 +758,7 @@ void Hotel_S01::Trigger4st()
 		};
 		
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.171700, 0.011680f, 12.167461 };
+		const Vector3 TriggerLocation{ -3.171700f, 0.011680f, 12.167461f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 6.f,5.f,1.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -689,6 +784,8 @@ void Hotel_S01::LateInit()
 											({ -4.8f, -0.2f, -5.02f });
 	}
 
-	_LateInit = true;
+	// 맵오브젝트가 로딩된 시점 (맵 오브젝트는 정적으로 움직이지 않음) (그림자맵 굽기)
 	Renderer::GetInstance()->LateSceneInit();
+
+	_LateInit = true;
 }

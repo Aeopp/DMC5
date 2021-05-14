@@ -127,7 +127,7 @@ PsOut PsMain1(PsIn In)
     newUV.x += _AccumulationTexU;
     newUV.y += _AccumulationTexV;
     
-    Out.Color = float4(0.055f * tex2D(Noise, newUV).r * _BrightScale * exposure_corr, 0.f, 0.f, tex2D(ALP0, In.UV).a * 0.4f * saturate((1.f - _SliceAmount * 2.f)));
+    Out.Color = float4(0.055f * tex2D(Noise, newUV).r * _BrightScale * exposure_corr, 0.f, 0.f, tex2D(ALP0, In.UV).a * 0.7f * saturate((1.f - _SliceAmount * 2.f)));
     
     // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
