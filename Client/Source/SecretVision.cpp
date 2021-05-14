@@ -9,7 +9,10 @@
 #include "TimeSystem.h"
 #include "RedQueen.h"
 #include "ParticleSystem.h"
+#include "PreLoader.h"
+#include "NhDoor.h"
 #include "BtlPanel.h"
+
 
 SecretVision::SecretVision()
 {
@@ -159,6 +162,8 @@ void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void SecretVision::Interaction(const uint32 Idx)
 {
+	bInteraction = false;
+
 	DistortionIntencity += HitMinusDistortionIntencity;
 	NoiseWrap += HitMinusNoiseWrap;
 	_SVDescs[Idx].AlphaFactor += HitAddAlphaFactor;
@@ -189,7 +194,7 @@ void SecretVision::PuzzleEndParticle()
 		SpTransform)
 	{
 		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle("SecretVisionDisappear", 30000ul, true);
+			ParticleSystem::GetInstance()->PlayParticle("SecretVisionDisappear", 15000ul, true);
 			_Particle.empty() == false)
 		{
 			for (int32 i = 0; i < _Particle.size(); ++i)
@@ -226,9 +231,19 @@ void SecretVision::PuzzleStart()
 		SpCollider->SetActive(true);
 	}
 
-	bEnable = true; 
+	bEnable = true;
 	_RenderProperty.bRender = true;
 	InteractionIdx = 0u;
+};
+
+uint32 SecretVision::GetInteractionIdx() const
+{
+	return InteractionIdx;
+};
+
+void SecretVision::SetInteractionEnable(const bool bInteraction)
+{
+	this->bInteraction = bInteraction;
 };
 
 void SecretVision::PuzzleEnd()
@@ -243,6 +258,7 @@ void SecretVision::PuzzleEnd()
 	_RenderProperty.bRender = false;
 	bEnable = false;
 
+	NhDoorOpenTime = 0.0f;
 	PuzzleEndParticle();
 
 	if (auto SpPanel = _BtlPanel.lock();
@@ -294,18 +310,18 @@ HRESULT SecretVision::Awake()
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetScale(Vector3{ 0.00370f,0.00602f,0.00447f });
-	InitTransform.lock()->SetPosition(Vector3{-3.32006f,1.61942f,17.74776f});
+	InitTransform.lock()->SetPosition(Vector3{ -3.32006f,1.61942f,17.74776f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 
 	_Collider = AddComponent<BoxCollider>();
 
-	if (auto SpCollider = _Collider.lock();SpCollider)
+	if (auto SpCollider = _Collider.lock(); SpCollider)
 	{
 		SpCollider->ReadyCollider();
-		SpCollider->SetSize(Vector3{1.f,1.f,1.f } );
+		SpCollider->SetSize(Vector3{ 1.f,1.f,1.f });
 		PushEditEntity(SpCollider.get());
 	}
-	
+
 
 
 	return S_OK;
@@ -320,6 +336,21 @@ HRESULT SecretVision::Start()
 
 UINT SecretVision::Update(const float _fDeltaTime)
 {
+	if (NhDoorOpenTime)
+	{
+		(*NhDoorOpenTime) += _fDeltaTime;
+
+		if ((*NhDoorOpenTime) >= PreLoader::SecretVisionDisappearParticleLifeEnd)
+		{
+			SetActive(false);
+			if (auto _NhDoor = std::dynamic_pointer_cast<NhDoor>( FindGameObjectWithTag(TAG_NhDoor).lock());
+				_NhDoor)
+			{
+				_NhDoor->DissolveStart();
+			}
+		};
+	}
+
 	if (bEnable == false)
 		return 0;
 
@@ -433,6 +464,8 @@ void SecretVision::OnDisable()
 
 void SecretVision::OnTriggerEnter(std::weak_ptr<GameObject> _Target)
 {
+	if (!bInteraction)return;
+
 	static const std::set<uint32> HitEnableTargetSet
 	{
 			TAG_RedQueen,

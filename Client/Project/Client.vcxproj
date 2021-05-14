@@ -170,6 +170,7 @@
     <ClInclude Include="..\Header\Cbs_Short.h" />
     <ClInclude Include="..\Header\CircleWave.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
+    <ClInclude Include="..\Header\DissolveInfo.h" />
     <ClInclude Include="..\Header\ElectricBranch.h" />
     <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\ElectricVortex.h" />
@@ -275,6 +276,7 @@
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
     <ClCompile Include="..\Source\CircleWave.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
+    <ClCompile Include="..\Source\DissolveInfo.cpp" />
     <ClCompile Include="..\Source\ElectricBranch.cpp" />
     <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\ElectricVortex.cpp" />
@@ -524,9 +526,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+    <None Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
       <FileType>Document</FileType>
-    </ClInclude>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

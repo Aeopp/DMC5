@@ -44,6 +44,10 @@ void Em5300::Fight(const float _fDeltaTime)
 	D3DXVec3Cross(&vCross, &vLook, &vDir);
 	//앞 뒤 구분하기 위한 내적 결과 값
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 	float fDegree = D3DXToDegree(fRadian);
 
@@ -97,7 +101,10 @@ void Em5300::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	
 	switch (m_eState)
 	{
@@ -894,6 +901,10 @@ void Em5300::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;

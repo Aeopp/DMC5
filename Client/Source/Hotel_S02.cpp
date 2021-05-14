@@ -11,6 +11,7 @@
 #include "MapObject.h"
 #include "SecretVision.h"
 #include "NhDoor.h"
+#include "Em100.h"
 
 #include <iostream>
 #include <fstream>
@@ -49,11 +50,9 @@ HRESULT Hotel_S02::LoadScene()
 #pragma region Player & Camera
 	AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
-
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 

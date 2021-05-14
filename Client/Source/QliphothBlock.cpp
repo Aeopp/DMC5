@@ -4,7 +4,7 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
-
+#include "MainCamera.h"
 
 void QliphothBlock::Free()
 {
@@ -258,6 +258,11 @@ void QliphothBlock::Editor()
 void QliphothBlock::OnEnable()
 {
 	GameObject::OnEnable();
+	if (_IsCamTrigger)
+	{
+		std::weak_ptr<MainCamera> _pCamera = static_pointer_cast<MainCamera>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_Camera).lock());
+		_pCamera.lock()->Set_At_Transform(m_pTransform, MainCamera::AT_TRIGGER);
+	}
 }
 
 void QliphothBlock::OnDisable()

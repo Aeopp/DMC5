@@ -504,9 +504,7 @@
     <ClInclude Include="..\Header\MakaiButterfly.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </ClInclude>
+    <ClInclude Include="..\Header\DissolveInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -810,6 +808,7 @@
     <ClCompile Include="..\Source\MakaiButterfly.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\DissolveInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -878,6 +877,11 @@
     <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
     <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
