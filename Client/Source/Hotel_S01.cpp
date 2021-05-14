@@ -9,6 +9,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "MapAniObject.h"
 
 #include <iostream>
 #include <fstream>
@@ -65,6 +66,7 @@ HRESULT Hotel_S01::LoadScene()
 
 	LoadObjects("../../Data/Stage1_Map.json");
 	LoadObjects("../../Data/Stage1_Object.json");
+	LoadObjects("../../Data/Stage1_AniObject.json", true);
 
 	AddGameObject<TempMap>();
 	
@@ -141,7 +143,7 @@ HRESULT Hotel_S01::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
-void Hotel_S01::LoadObjects(const std::filesystem::path& path)
+void Hotel_S01::LoadObjects(const std::filesystem::path& path, const bool _bAni)
 {
 	std::ifstream inputStream{ path };
 
@@ -163,39 +165,80 @@ void Hotel_S01::LoadObjects(const std::filesystem::path& path)
 	const Value& loadData = docu["GameObject"];
 
 	std::filesystem::path sFullPath;
-	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	if (_bAni == false)
 	{
-		//
-		sFullPath = iter->FindMember("Mesh")->value.GetString();
-		sFullPath = sBasePath / sFullPath;
-		//
-		Resources::Load<StaticMesh>(sFullPath);
-		//
-		auto objectArr = iter->FindMember("List")->value.GetArray();
-		//
-		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
 		{
-			auto pMapObject = AddGameObject<MapObject>();
+			//
+			sFullPath = iter->FindMember("Mesh")->value.GetString();
+			sFullPath = sBasePath / sFullPath;
+			//
+			Resources::Load<StaticMesh>(sFullPath);
+			//
+			auto objectArr = iter->FindMember("List")->value.GetArray();
+			//
+			for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+			{
+				auto pMapObject = AddGameObject<MapObject>();
 
-			D3DXVECTOR3 vScale;
-			auto scale = iterObject->FindMember("Scale")->value.GetArray();
-			vScale.x = scale[0].GetFloat();
-			vScale.y = scale[1].GetFloat();
-			vScale.z = scale[2].GetFloat();
+				D3DXVECTOR3 vScale;
+				auto scale = iterObject->FindMember("Scale")->value.GetArray();
+				vScale.x = scale[0].GetFloat();
+				vScale.y = scale[1].GetFloat();
+				vScale.z = scale[2].GetFloat();
 
-			D3DXVECTOR3 vRotation;
-			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
-			vRotation.x = rotation[0].GetFloat();
-			vRotation.y = rotation[1].GetFloat();
-			vRotation.z = rotation[2].GetFloat();
+				D3DXVECTOR3 vRotation;
+				auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+				vRotation.x = rotation[0].GetFloat();
+				vRotation.y = rotation[1].GetFloat();
+				vRotation.z = rotation[2].GetFloat();
 
-			D3DXVECTOR3 vPosition;
-			auto position = iterObject->FindMember("Position")->value.GetArray();
-			vPosition.x = position[0].GetFloat();
-			vPosition.y = position[1].GetFloat();
-			vPosition.z = position[2].GetFloat();
+				D3DXVECTOR3 vPosition;
+				auto position = iterObject->FindMember("Position")->value.GetArray();
+				vPosition.x = position[0].GetFloat();
+				vPosition.y = position[1].GetFloat();
+				vPosition.z = position[2].GetFloat();
 
-			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+				pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+			}
+		}
+	}
+	else
+	{
+		for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+		{
+			//
+			sFullPath = iter->FindMember("Mesh")->value.GetString();
+			sFullPath = sBasePath / sFullPath;
+			//
+			Resources::Load<SkeletonMesh>(sFullPath);
+			//
+			auto objectArr = iter->FindMember("List")->value.GetArray();
+			//
+			for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+			{
+				auto pMapObject = AddGameObject<MapAniObject>();
+
+				D3DXVECTOR3 vScale;
+				auto scale = iterObject->FindMember("Scale")->value.GetArray();
+				vScale.x = scale[0].GetFloat();
+				vScale.y = scale[1].GetFloat();
+				vScale.z = scale[2].GetFloat();
+
+				D3DXVECTOR3 vRotation;
+				auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+				vRotation.x = rotation[0].GetFloat();
+				vRotation.y = rotation[1].GetFloat();
+				vRotation.z = rotation[2].GetFloat();
+
+				D3DXVECTOR3 vPosition;
+				auto position = iterObject->FindMember("Position")->value.GetArray();
+				vPosition.x = position[0].GetFloat();
+				vPosition.y = position[1].GetFloat();
+				vPosition.z = position[2].GetFloat();
+
+				pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+			}
 		}
 	}
 }
