@@ -51,10 +51,7 @@ HRESULT Hotel_S02::LoadScene()
 	AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
 	AddGameObject<Camera>();
-	AddGameObject<Em100>().lock()->GetComponent<Transform>().lock()->SetPosition(
-		Vector3{ 0.f,0.1f,0.f });
 	/*AddGameObject<MainCamera>();
-
 	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion

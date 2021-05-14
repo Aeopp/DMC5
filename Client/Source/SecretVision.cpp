@@ -161,6 +161,8 @@ void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void SecretVision::Interaction(const uint32 Idx)
 {
+	bInteraction = false;
+
 	DistortionIntencity += HitMinusDistortionIntencity;
 	NoiseWrap += HitMinusNoiseWrap;
 	_SVDescs[Idx].AlphaFactor += HitAddAlphaFactor;
@@ -224,6 +226,16 @@ void SecretVision::PuzzleStart()
 	bEnable = true;
 	_RenderProperty.bRender = true;
 	InteractionIdx = 0u;
+};
+
+uint32 SecretVision::GetInteractionIdx() const
+{
+	return InteractionIdx;
+};
+
+void SecretVision::SetInteractionEnable(const bool bInteraction)
+{
+	this->bInteraction = bInteraction;
 };
 
 void SecretVision::PuzzleEnd()
@@ -438,6 +450,8 @@ void SecretVision::OnDisable()
 
 void SecretVision::OnTriggerEnter(std::weak_ptr<GameObject> _Target)
 {
+	if (!bInteraction)return;
+
 	static const std::set<uint32> HitEnableTargetSet
 	{
 			TAG_RedQueen,
