@@ -174,7 +174,9 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_pWireArmGrab.lock()->GetComponent<Transform>().lock()->SetPosition(MyPos);
 		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
 		m_pWireArmGrab.lock()->SetActive(true);
+		m_pWireArmGrab.lock()->Set_RadianForRotX(m_fRadianForRotX);
 		_RenderProperty.bRender = m_bIsRender = false;
+		SetActive(false);
 	}
 	break;
 	case GAMEOBJECTTAG::Monster200:
@@ -184,7 +186,9 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_pWireArmGrab.lock()->GetComponent<Transform>().lock()->SetPosition(MyPos);
 		m_pWireArmGrab.lock()->SetGrabedMonster(_pOther);
 		m_pWireArmGrab.lock()->SetActive(true);
+		m_pWireArmGrab.lock()->Set_RadianForRotX(m_fRadianForRotX);
 		_RenderProperty.bRender = m_bIsRender = false;
+		SetActive(false);
 	}
 	break;
 	case GAMEOBJECTTAG::Monster1000:
@@ -196,6 +200,7 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
 		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Vine01_IK");
 		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+		SetActive(false);
 	}
 	break;
 	case GAMEOBJECTTAG::Monster5300:
@@ -207,6 +212,7 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
 		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Hip");
 		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+		SetActive(false);
 	}
 		break;
 	case GAMEOBJECTTAG::Monster5000:
@@ -218,6 +224,7 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
 		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Hip");
 		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+		SetActive(false);
 	}
 	break;
 	default:

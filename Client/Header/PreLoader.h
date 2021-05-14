@@ -1,6 +1,8 @@
 #ifndef __PRELOADER_H__
 #define __PRELOADER_H__
 
+
+
 class PreLoader final
 {
 public:
@@ -9,7 +11,12 @@ public:
 
 public:
 	static void PreLoadResources();
-
+public:
+	static void DissolveParticlePoolLoad(
+		const std::filesystem::path& _Path,
+		const Vector3& StartColor);
+public:
+	static const inline float SecretVisionDisappearParticleLifeEnd{ 1.33f };
 private:
 	static void IceCbsMidParticlePoolLoad();
 	static void CbsMidParticlePoolLoad();
@@ -35,5 +42,6 @@ private:
 
 	static void SecretVisionDisappearParticlePoolLoad();
 	static void DissolveNhDoorParticlePoolLoad();
+
 };
 #endif // !__PRELOADER_H__

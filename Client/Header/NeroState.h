@@ -1392,137 +1392,6 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
 
-class GT_Equip : public NeroState
-{
-private:
-	explicit GT_Equip(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_Equip();
-
-public:
-	static GT_Equip* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-class GT_Crush_Reload : public NeroState
-{
-private:
-	explicit GT_Crush_Reload(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_Crush_Reload();
-
-public:
-	static GT_Crush_Reload* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-
-class GT_Crush_Just : public NeroState
-{
-private:
-	explicit GT_Crush_Just(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_Crush_Just();
-
-public:
-	static GT_Crush_Just* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-class GT_Bomb : public NeroState
-{
-private:
-	explicit GT_Bomb(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_Bomb();
-
-public:
-	static GT_Bomb* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-class GT_PickUp : public NeroState
-{
-private:
-	explicit GT_PickUp(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_PickUp();
-
-public:
-	static GT_PickUp* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-class GT_Air_Crush_Reload : public NeroState
-{
-private:
-	explicit GT_Air_Crush_Reload(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_Air_Crush_Reload();
-
-public:
-	static GT_Air_Crush_Reload* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-
-class GT_Air_Crush_Just : public NeroState
-{
-private:
-	explicit GT_Air_Crush_Just(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_Air_Crush_Just();
-
-public:
-	static GT_Air_Crush_Just* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-
-class GT_Air_Bomb : public NeroState
-{
-private:
-	explicit GT_Air_Bomb(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~GT_Air_Bomb();
-
-public:
-	static GT_Air_Bomb* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
 class Overture_Shoot : public NeroState
 {
 private:
@@ -1866,7 +1735,7 @@ public:
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 private:
-	bool m_bPlayOnce = true;
+	bool m_bPlayOnce = false;
 };
 
 class Middle_Cbs_BlitzAttack : public NeroState

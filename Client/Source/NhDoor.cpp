@@ -127,6 +127,7 @@ void NhDoor::RenderGBuffer(const DrawInfo& _Info)
 	const Matrix World = _RenderUpdateInfo.World;
 
 	_Info.Fx->SetMatrix("matWorld", &World);
+
 	_Info.Fx->SetTexture("DissolveMap", _DissolveMap->GetTexture());
 	_Info.Fx->SetTexture("BurnMap", _BurnMap->GetTexture());
 
@@ -134,7 +135,6 @@ void NhDoor::RenderGBuffer(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("BurnSize", BurnSize);
 	_Info.Fx->SetFloat("EmissionAmount", EmissionAmount);
 	_Info.Fx->SetFloat("SliceAmount", SliceAmount);
-	
 
 	const uint32 Numsubset =_StaticMesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
@@ -175,6 +175,18 @@ void NhDoor::RenderShadow(const DrawInfo& _Info)
 	};
 }
 
+void NhDoor::DissolveStart()
+{
+	bDissolve = true;
+}
+
+
+void NhDoor::DissolveEnd()
+{
+	SetActive(false);
+	_RenderProperty.bRender = false;
+}
+
 
 
 void NhDoor::RenderDebug(const DrawInfo& _Info)
@@ -212,19 +224,10 @@ HRESULT NhDoor::Ready()
 
 HRESULT NhDoor::Awake()
 {
-	//auto pCollider = AddComponent<CapsuleCollider>();
-	//pCollider.lock()->ReadyCollider();
-	//pCollider.lock()->SetRigid(true);
-	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
-	//pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-
-	//pCollider.lock()->SetRadius(100.f);
-	//pCollider.lock()->SetHeight(200.f);
 	m_pTransform.lock()->SetPosition(Vector3{-3328.f * GScale,1366.f * GScale,18028.f * GScale });
 	m_pTransform.lock()->SetScale(Vector3{ 1.f * GScale,1.f * GScale,1.f * GScale });
 	m_pTransform.lock()->SetRotation(Vector3{0.f,20.f,0.f});
-	//PushEditEntity(pCollider.lock().get());
+	
 	return S_OK;
 }
 
@@ -236,20 +239,25 @@ HRESULT NhDoor::Start()
 UINT NhDoor::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-	Vector3 vDir = m_pTransform.lock()->GetLook();
 
-	D3DXVec3Normalize(&vDir, &vDir);
-	if (Input::GetKey(DIK_W))
-		m_pTransform.lock()->Translate(vDir * _fDeltaTime * 10.f);
-	if (Input::GetKey(DIK_S))
-		m_pTransform.lock()->Translate(-vDir * _fDeltaTime * 10.f);
-	if (Input::GetKey(DIK_A))
-		m_pTransform.lock()->Rotate({ 0.f, D3DXToRadian(180 * -_fDeltaTime * 50.f), 0.f });
-	if (Input::GetKey(DIK_D))
-		m_pTransform.lock()->Rotate({ 0.f, D3DXToRadian(180 * _fDeltaTime * 50.f), 0.f });
-		
-	std::cout << m_pTransform.lock()->GetPosition().y << std::endl;
-	
+	if (bDissolve)
+	{
+		CurDissolveParticleDelta -= DissolveParticleDelta;
+
+		if (CurDissolveParticleDelta < 0.0f)
+		{
+			CurDissolveParticleDelta += DissolveParticleDelta;
+			DissolveParticle();
+		}
+
+		SliceAmount += _fDeltaTime;
+
+		if (SliceAmount>1.f)
+		{
+			DissolveEnd();
+		}
+	}
+
 	return 0;
 }
 
@@ -294,7 +302,7 @@ void NhDoor::DissolveParticle()
 		SpTransform)
 	{
 		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle("DissolveNhDoor", 1000ul, true);
+			ParticleSystem::GetInstance()->PlayParticle("DissolveNhDoor", 100ul, true);
 			_Particle.empty() == false)
 		{
 			for (int32 i = 0; i < _Particle.size(); ++i)
@@ -304,7 +312,6 @@ void NhDoor::DissolveParticle()
 			}
 		}
 	};
-
 }
 
 

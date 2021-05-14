@@ -510,6 +510,7 @@
     <ClInclude Include="..\Header\MapAniObject.h">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\DissolveInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -816,6 +817,7 @@
     <ClCompile Include="..\Source\MapAniObject.cpp">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\DissolveInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -884,6 +886,11 @@
     <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
     <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
