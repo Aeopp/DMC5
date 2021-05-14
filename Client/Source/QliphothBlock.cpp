@@ -80,6 +80,14 @@ void QliphothBlock::Imgui_Modify()
 		//	ImGui::SliderFloat("SliceAmount##QliphothBlock", &SliceAmount, 0.f, 1.f);
 		//	_SliceAmount = SliceAmount;
 		//}
+
+		{
+			if (ImGui::Button("PlayStart##QliphothBlock"))
+				PlayStart(_PlayingSpeed);
+			ImGui::SameLine();
+			if (ImGui::Button("Reset##QliphothBlock"))
+				Reset();
+		}
 	}
 }
 
@@ -191,7 +199,7 @@ HRESULT QliphothBlock::Ready()
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 	_PlayingSpeed = 1.f;
-	_BrightScale = 0.01f;
+	_BrightScale = 0.02f;
 
 	Reset();
 

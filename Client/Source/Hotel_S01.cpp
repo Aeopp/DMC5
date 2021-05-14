@@ -13,9 +13,9 @@
 #include "Em0000.h"
 #include "Em100.h"
 #include "Em1000.h"
-
-
 #include "Trigger.h"
+#include "QliphothBlock.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -52,7 +52,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	// AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -90,6 +90,44 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Effect
 
+	// Stage2 길막
+	m_vecQliphothBlock.reserve(4);
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.015f);
+		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-5.429f, 0.286f, -5.05f));
+		ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.009f);
+		ptr.lock()->SetRotation(Vector3(0.f, 210.909f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.303f, 0.505f, -2.475f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.025f);
+		ptr.lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.016f);
+		ptr.lock()->SetRotation(Vector3(0.f, 25.714f, 0.f));
+		ptr.lock()->SetPosition(Vector3(1.429f, 1.429f, 0.f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
 
 #pragma endregion
 
@@ -97,7 +135,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -135,6 +173,7 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
+		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
 	////////////////////////////////////
@@ -319,16 +358,37 @@ void Hotel_S01::Trigger1st()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
+			for (int i = 1; i < 4; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->SetActive(true);
+					m_vecQliphothBlock[i].lock()->PlayStart();
+				}
+			}
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
 		const std::function<void()> WaveEndEvent =
-			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+				Sp->ResetRankScore();
+
+			for (int i = 1; i < 4; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					// 위치 변경
+					m_vecQliphothBlock[i].lock()->Reset();
+				}
+			}
 		};
 
 		_Trigger->EventRegist(
@@ -344,7 +404,6 @@ void Hotel_S01::Trigger1st()
 
 void Hotel_S01::Trigger2nd()
 {
-
 	std::shared_ptr<Trigger> _Trigger{};
 
 	if (_Trigger = AddGameObject<Trigger>().lock();
@@ -390,9 +449,12 @@ void Hotel_S01::Trigger2nd()
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
 		const std::function<void()> WaveEndEvent =
-			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+				Sp->ResetRankScore();
 		};
 
 		_Trigger->EventRegist(
@@ -451,9 +513,12 @@ void  Hotel_S01::Trigger3rd()
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
 		const std::function<void()> WaveEndEvent =
-			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+				Sp->ResetRankScore();
 		};
 
 		_Trigger->EventRegist(
@@ -509,8 +574,8 @@ void Hotel_S01::LateInit()
 		({ -4.8f, 1.f, -5.02f });
 	}
 
-	_LateInit = true;
-
 	// 맵오브젝트가 로딩된 시점 (맵 오브젝트는 정적으로 움직이지 않음) (그림자맵 굽기)
 	Renderer::GetInstance()->RequestShadowMapBake();
+
+	_LateInit = true;
 }
