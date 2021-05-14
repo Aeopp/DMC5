@@ -73,7 +73,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion

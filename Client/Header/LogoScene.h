@@ -6,8 +6,8 @@ class LogoScene : public Scene
 {
 private:
 	std::weak_ptr<class LogoPanel> _LogoPanel{};
-
-	bool _LoadNextScene = false;
+	
+	bool _LoadNextScene = false; 
 
 private:
 	explicit LogoScene() = default;
