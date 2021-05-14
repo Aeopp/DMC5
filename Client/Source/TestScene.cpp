@@ -50,7 +50,7 @@
 #include "MakaiButterfly.h"
 #include "Smoke.h"
 #include "NhDoor.h"
-
+#include "SecretVisionMagicCircle.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,14 +87,11 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<SecretVision>();
-	AddGameObject<NhDoor>();
-	AddGameObject<BlitzAttack>();
+
+	//AddGameObject<Camera>();
+	
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
-	//AddGameObject<MainCamera>();
-
-	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -159,7 +156,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 	AddGameObject<TempMap>();
 
 #pragma endregion
@@ -186,6 +183,9 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<BlitzAttack>();
 	//AddGameObject<CbsMidTrail>();
 	//AddGameObject<SecretVision>();
+	//AddGameObject<NhDoor>();
+	//AddGameObject<BlitzAttack>();
+	AddGameObject<MakaiButterfly>();
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();

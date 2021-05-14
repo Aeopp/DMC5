@@ -37,6 +37,8 @@ private:
 	
 	static uint32 _TotalCnt;
 
+	weak_ptr<class SecretVisionMagicCircle>	_SVMC{};
+
 private:
 	explicit MakaiButterfly() = default;
 	virtual ~MakaiButterfly() = default;

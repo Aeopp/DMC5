@@ -203,6 +203,7 @@
     <ClInclude Include="..\Header\NhDoor.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
+    <ClInclude Include="..\Header\SecretVisionMagicCircle.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -309,6 +310,7 @@
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
     <ClCompile Include="..\Source\SecretVision.cpp" />
+    <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp" />
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />

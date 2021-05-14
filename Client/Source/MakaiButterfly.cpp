@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "SecretVision.h"
 #include "BtlPanel.h"
+#include "SecretVisionMagicCircle.h"
 
 
 uint32 MakaiButterfly::_TotalCnt = 0u;
@@ -22,6 +23,8 @@ void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 
 void MakaiButterfly::Free()
 {
+	Destroy(_SVMC);
+
 	GameObject::Free();
 }
 
@@ -219,6 +222,8 @@ HRESULT MakaiButterfly::Ready()
 	_Collider.lock()->SetActive(false);
 	PushEditEntity(_Collider.lock().get());
 
+	_SVMC = AddGameObject<SecretVisionMagicCircle>();
+
 	return S_OK;
 }
 
@@ -337,6 +342,9 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (MakaiButterfly::VARIATION::STAY == _VariationIdx)
 	{
+		Matrix ViewInverse;
+		Vector3 Dir;
+
 		switch (_pOther.lock()->m_nTag)
 		{
 		case GAMEOBJECTTAG::TAG_RedQueen:
@@ -351,8 +359,10 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 				if (_TotalCnt != idx)
 					return;
 
+				// To SecretVision
 				SpSecretVision->SetInteractionEnable(true);
 
+				// To BtlPannel
 				if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 					SpPanel)
 				{
@@ -360,8 +370,17 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 					SpPanel->ActivateSecretVision(idx);
 				}
 
-				// + ¹®¾ç ÀÌÆåÆ®
+				// ¹®¾çÀÌÆåÆ®
+				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
 
+				// ½Ã¹úÅÊ È¸Àü ¾ÈµÊ
+				ViewInverse = Renderer::GetInstance()->_RenderInfo.ViewInverse;
+				Dir = *reinterpret_cast<Vector3*>(&ViewInverse.m[2][0]);
+				D3DXVec3Normalize(&Dir, &Dir);
+
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition(), FMath::ToDegree(Dir));
+
+				//
 				Reset();
 
 				++_TotalCnt;
