@@ -54,6 +54,8 @@ public:
 public:
 	void SkyDistortionStart();
 	void SkyDistortionEnd();
+	void LateSceneInit();
+	void SceneChangeRender();
 private:
 	void RenderReady()&;
 	void RenderBegin()&;

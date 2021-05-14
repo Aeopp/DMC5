@@ -778,15 +778,27 @@ void Renderer::Editor()&
 	}
 	ImGui::End();
 };
+
 void Renderer::SkyDistortionStart()
 {
 	SkyDistortion = true;
-}
+};
+
 void Renderer::SkyDistortionEnd()
 {
 	SkyDistortion = false;
-}
+};
 
+void Renderer::LateSceneInit()
+{
+	Renderer::GetInstance()->SkyDistortion = false;
+	Renderer::GetInstance()->RequestShadowMapBake();
+};
+
+void Renderer::SceneChangeRender()
+{
+	CurDirLight = nullptr;
+};
 
 void Renderer::RequestShadowMapBake()
 {
@@ -795,27 +807,26 @@ void Renderer::RequestShadowMapBake()
 
 std::weak_ptr<FLight> Renderer::RefRemainingDynamicLight()
 {
-	std::weak_ptr<FLight> ReturnVal {};
+	std::weak_ptr<FLight> ReturnVal{};
 	for (auto& _Target : DynamicPointLights)
 	{
 		if (_Target)
 		{
 			if (_Target->bEnable == false)
 			{
-				ReturnVal= _Target;
+				ReturnVal = _Target;
 				continue;
 			}
 		}
 	}
 
 	return  ReturnVal;
-}
+};
 
 void Renderer::RenderReady()&
 {
 	RenderReadyEntitys();
 	ReadyRenderInfo();
-	// TestLightRotation();
 };
 
 void Renderer::RenderBegin()&
@@ -3150,8 +3161,6 @@ void Renderer::TestLightRotation()
 
 	time += TimeSystem::GetInstance()->DeltaTime();
 };
-
-
 
 
 

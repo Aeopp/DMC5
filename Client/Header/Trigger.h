@@ -87,7 +87,7 @@ private:
 	// 트리거 발동 콜백 함수 
 	std::function<void()> _Event{};
 	// 몬스터가 다 죽은 시점을 체크하기 위한 배열 . 
-	std::optional<std::vector<std::weak_ptr<class Monster>> > CheckIfTheDead{};
+	std::optional<std::vector<std::weak_ptr<class Monster>>> CheckIfTheDead{};
 	std::weak_ptr<class BoxCollider> _Collider{};
 };
 #endif //

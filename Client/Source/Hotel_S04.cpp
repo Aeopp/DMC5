@@ -9,7 +9,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-
+#include "Monster.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -143,6 +143,7 @@ HRESULT Hotel_S04::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
+
 void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 {
 	std::ifstream inputStream{ path };
@@ -237,7 +238,6 @@ void Hotel_S04::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
 
-	Renderer::GetInstance()->RequestShadowMapBake();
-
 	_LateInit = true;
+	Renderer::GetInstance()->LateSceneInit();
 }

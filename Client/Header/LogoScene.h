@@ -23,6 +23,5 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-
 };
 #endif // !__LOGO_SCENE_H__

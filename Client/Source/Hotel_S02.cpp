@@ -95,7 +95,6 @@ HRESULT Hotel_S02::LoadScene()
 
 	AddGameObject<SecretVision>().lock()->PuzzleStart();	// 임시
 	AddGameObject<NhDoor>();
-
 	// 
 	_MakaiButterflyVec.reserve(3);
 	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
@@ -279,9 +278,6 @@ void Hotel_S02::LateInit()
 		SpObject->PlayStart();
 	}
 
-	
-
 	_LateInit = true;
-	Renderer::GetInstance()->SkyDistortion = false;
-	Renderer::GetInstance()->RequestShadowMapBake();
+	Renderer::GetInstance()->LateSceneInit();
 }

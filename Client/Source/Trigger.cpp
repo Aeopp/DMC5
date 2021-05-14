@@ -261,6 +261,27 @@ UINT Trigger::Update(const float _fDeltaTime)
 		}
 	}
 
+	if (g_bEditMode)
+	{
+		if (Input::GetKeyDown(DIK_DELETE))
+		{
+			if (_Option == Option::MonsterWave && bAfterEvent)
+			{
+				if (CheckIfTheDead.has_value())
+				{
+					for (auto& WpMonster : CheckIfTheDead.value())
+					{
+						if (auto SpMonter = WpMonster.lock();
+							SpMonter)
+						{
+							SpMonter->Set_Hp(0);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return 0;
 };
 
