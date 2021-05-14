@@ -526,9 +526,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
       <FileType>Document</FileType>
-    </None>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl">

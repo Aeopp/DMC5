@@ -86,7 +86,5 @@ private:
 
 	std::optional<float> NhDoorOpenTime{ std::nullopt };
 
-	std::weak_ptr<class BtlPanel> _BtlPanel{};
-
 };
 #endif //

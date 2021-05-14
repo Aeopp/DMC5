@@ -6,6 +6,7 @@ class Hotel_S02 : public Scene
 {
 private:
 	std::weak_ptr<class Nero> _Player{};
+	std::vector<std::weak_ptr<class MakaiButterfly>> _MakaiButterflyVec{};
 	bool _LateInit = false;
 private:
 	explicit Hotel_S02();

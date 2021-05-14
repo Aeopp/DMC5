@@ -162,24 +162,22 @@ void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void SecretVision::Interaction(const uint32 Idx)
 {
-	bInteraction = false;
-
 	DistortionIntencity += HitMinusDistortionIntencity;
 	NoiseWrap += HitMinusNoiseWrap;
 	_SVDescs[Idx].AlphaFactor += HitAddAlphaFactor;
 	_SVDescs[Idx].ColorIntencity += HitAddColorIntencity;
 	--_SVDescs[Idx].Life;
 
-	auto SpPanel = _BtlPanel.lock();
+	auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 	if (SpPanel)
 		SpPanel->AddRankScore(50.f);
 
 	if (_SVDescs[Idx].Life < 0)
 	{
-		Disappear(Idx);
-
+		bInteraction = false;
 		if (SpPanel)
 			SpPanel->ActivateSecretVision(Idx);
+		Disappear(Idx);
 	}
 };
 
@@ -252,7 +250,7 @@ void SecretVision::PuzzleEnd()
 	if (auto SpCollider = _Collider.lock();
 		SpCollider)
 	{
-		SpCollider->SetActive(true);
+		SpCollider->SetActive(false);
 	}
 
 	_RenderProperty.bRender = false;
@@ -261,7 +259,7 @@ void SecretVision::PuzzleEnd()
 	NhDoorOpenTime = 0.0f;
 	PuzzleEndParticle();
 
-	if (auto SpPanel = _BtlPanel.lock();
+	if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 		SpPanel)
 	{
 		SpPanel->DissolveAllSecretVision();
@@ -299,8 +297,6 @@ HRESULT SecretVision::Ready()
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 
-	_BtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
-
 	return S_OK;
 };
 
@@ -318,7 +314,7 @@ HRESULT SecretVision::Awake()
 	if (auto SpCollider = _Collider.lock(); SpCollider)
 	{
 		SpCollider->ReadyCollider();
-		SpCollider->SetSize(Vector3{ 1.f,1.f,1.f });
+		SpCollider->SetSize(Vector3{ 1.f, 1.f, 0.125f });
 		PushEditEntity(SpCollider.get());
 	}
 

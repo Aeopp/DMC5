@@ -2173,9 +2173,9 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 	if (_UIDescs[SECRET_VISIONS].Using)
 	{
 		float EndCondition = 0.f;
-		float BrightScale = 0.005f;
+		float BrightScale = 0.01f;
 
-		_SecretVisionBrightCorr = 0.0005f * sinf(_TotalAccumulateTime * 2.5f);
+		_SecretVisionBrightCorr = 0.005f * sinf(_TotalAccumulateTime * 2.5f);
 
 		for (int i = 0; i < 3; ++i)
 		{
@@ -2184,7 +2184,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 				switch (_SecretVisionState[i])
 				{
 				case 1:	// µðÁ¹ºê·Î »ý±è
-					BrightScale = 0.001f;
+					BrightScale = 0.01f;
 					if (0.f < _SecretVisionDissolveAmount[i])
 					{
 						_SecretVisionDissolveAmount[i] -= 1.5f * _fDeltaTime;
@@ -2205,7 +2205,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 						{
 							_SecretVisionState[i] = 0;
 							//_SecretVisionPreState[i] = 0;
-							_SecretVisionBrightScale[i] = 0.001f;
+							_SecretVisionBrightScale[i] = 0.01f;
 							_SecretVisionDissolveAmount[i] = 1.f;
 						}
 					}

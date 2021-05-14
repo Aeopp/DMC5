@@ -505,6 +505,9 @@
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\DissolveInfo.h" />
+    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -877,9 +880,6 @@
     <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
     <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
     <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl" />
   </ItemGroup>

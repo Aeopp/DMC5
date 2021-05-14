@@ -34,6 +34,8 @@ private:
 	bool _IsAlive = false;
 
 	weak_ptr<CapsuleCollider> _Collider;
+	
+	static uint32 _TotalCnt;
 
 private:
 	explicit MakaiButterfly() = default;

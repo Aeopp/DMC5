@@ -8,6 +8,8 @@
 #include "BtlPanel.h"
 
 
+uint32 MakaiButterfly::_TotalCnt = 0u;
+
 void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 {
 	if (Idx > MAX_VARIATION_IDX)
@@ -195,7 +197,7 @@ HRESULT MakaiButterfly::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_MakaiButterFly;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.0015f, 0.0015f, 0.0015f });
+	InitTransform.lock()->SetScale({ 0.002f, 0.002f, 0.002f });
 
 	_Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_creature_makaibutterfly00_00.fbx");
 	_ALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_creature_makaibutterfly00_00_ALBM.tga");
@@ -206,7 +208,7 @@ HRESULT MakaiButterfly::Ready()
 	_BrightScale = 0.2f;
 
 	_BezierStartOffsetPos = Vector3(0.f, 0.f, 0.f);
-	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.01f, -0.01f, -0.01f), Vector3(0.01f, 0.01f, 0.015f));
+	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.015f, -0.015f, -0.015f), Vector3(0.015f, 0.015f, 0.015f));
 	_BezierDeltaOffsetPos = Vector3(0.f, 0.f, 0.f);
 
 	_Collider = AddComponent<CapsuleCollider>();
@@ -242,8 +244,8 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 		if (100.f < _AccumulateTime)
 			_IsAlive = false;
 
-		auto _WeakTransform = GetComponent<ENGINE::Transform>();
-		if (auto SpTransform = _WeakTransform.lock();
+		auto WeakTransform = GetComponent<ENGINE::Transform>();
+		if (auto SpTransform = WeakTransform.lock();
 			SpTransform)
 		{
 			Vector3 vDir = SpTransform->GetLook(); 
@@ -294,7 +296,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 	{
 		_SubsetIdx = 0.f;
 		_BezierStartOffsetPos = _BezierEndOffsetPos;
-		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.01f, -0.01f, -0.01f), Vector3(0.01f, 0.01f, 0.01f));
+		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.015f, -0.015f, -0.015f), Vector3(0.015f, 0.015f, 0.015f));
 	}
 
 	// BezierCurve
@@ -342,25 +344,28 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		case GAMEOBJECTTAG::Tag_Cbs_Short:
 		case GAMEOBJECTTAG::Tag_Cbs_Long:
 
-			uint32 idx = 0u;
-
 			if (auto SpSecretVision = std::static_pointer_cast<SecretVision>(FindGameObjectWithTag(TAG_SecretVision).lock());
 				SpSecretVision)
 			{
-				//SpSecretVision->깨지는상태에요;
-				//idx = SpSecretVision->인덱스 알려주세요;
+				uint32 idx = SpSecretVision->GetInteractionIdx();
+				if (_TotalCnt != idx)
+					return;
+
+				SpSecretVision->SetInteractionEnable(true);
+
+				if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+					SpPanel)
+				{
+					SpPanel->AddRankScore(10.f);
+					SpPanel->ActivateSecretVision(idx);
+				}
+
+				// + 문양 이펙트
+
+				Reset();
+
+				++_TotalCnt;
 			}
-
-			if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
-				SpPanel)
-			{
-				SpPanel->AddRankScore(10.f);
-				SpPanel->ActivateSecretVision(idx);
-			}
-
-			// + 문양 이펙트
-
-			Reset();
 
 			break;
 		}
