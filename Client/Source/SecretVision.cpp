@@ -11,6 +11,7 @@
 #include "ParticleSystem.h"
 #include "PreLoader.h"
 #include "NhDoor.h"
+#include "BtlPanel.h"
 
 
 SecretVision::SecretVision()
@@ -171,16 +172,21 @@ void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void SecretVision::Interaction(const uint32 Idx)
 {
-	bInteraction = false;
-
 	DistortionIntencity += HitMinusDistortionIntencity;
 	NoiseWrap += HitMinusNoiseWrap;
 	_SVDescs[Idx].AlphaFactor += HitAddAlphaFactor;
 	_SVDescs[Idx].ColorIntencity += HitAddColorIntencity;
 	--_SVDescs[Idx].Life;
 
+	auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+	if (SpPanel)
+		SpPanel->AddRankScore(50.f);
+
 	if (_SVDescs[Idx].Life < 0)
 	{
+		bInteraction = false;
+		if (SpPanel)
+			SpPanel->ActivateSecretVision(Idx);
 		Disappear(Idx);
 	}
 };
@@ -262,6 +268,13 @@ void SecretVision::PuzzleEnd()
 
 	NhDoorOpenTime = 0.0f;
 	PuzzleEndParticle();
+
+	if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+		SpPanel)
+	{
+		SpPanel->DissolveAllSecretVision();
+		SpPanel->ResetRankScore();
+	}
 };
 
 void SecretVision::RenderDebug(const DrawInfo& _Info)
@@ -293,9 +306,6 @@ HRESULT SecretVision::Ready()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
-
-
-
 
 	return S_OK;
 };
@@ -473,8 +483,8 @@ void SecretVision::OnTriggerEnter(std::weak_ptr<GameObject> _Target)
 	if (auto SpTarget = _Target.lock();
 		SpTarget)
 	{
-		if ( HitEnableTargetSet.contains(SpTarget->m_nTag))
-		{
+		if (HitEnableTargetSet.contains(SpTarget->m_nTag))
+		{			
 			Interaction(InteractionIdx);
 			if (InteractionIdx >=3u)
 			{

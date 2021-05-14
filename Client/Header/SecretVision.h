@@ -85,6 +85,6 @@ private:
 	float HitAddAlphaFactor  = 0.2f;
 
 	std::optional<float> NhDoorOpenTime{ std::nullopt };
+
 };
 #endif //
-

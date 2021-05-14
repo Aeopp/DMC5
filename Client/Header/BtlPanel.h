@@ -226,6 +226,7 @@ private:
 	//int _SecretVisionPreState[3] = { 0, 0, 0 };
 	float _SecretVisionBrightScale[3] = { 0.01f, 0.01f, 0.01f };
 	float _SecretVisionDissolveAmount[3] = { 1.f, 1.f, 1.f };
+	float _SecretVisionBrightCorr = 0.f;
 
 private:
 	explicit BtlPanel() = default;

@@ -113,8 +113,6 @@ void Transform::UpdateTransform()
 		m_matRender = GetWorldMatrix();
 	else
 		m_bSimulation = false;
-
-	m_bUpdated = false;
 }
 
 void Transform::SetSimulationResult(const D3DXQUATERNION& _tQuaternion, const D3DXVECTOR3& _vPosition)
@@ -135,6 +133,8 @@ void Transform::SetSimulationResult(const D3DXQUATERNION& _tQuaternion, const D3
 	m_matRender = matScale * matRot * matTrans;
 
 	m_bSimulation = true;
+
+	m_bUpdated = false;
 }
 
 std::string Transform::GetName()

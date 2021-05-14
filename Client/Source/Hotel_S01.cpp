@@ -47,9 +47,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	//AddGameObject<Camera>();
+
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -279,8 +280,8 @@ void Hotel_S01::LateInit()
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.8f, 3.f, -5.02f });
 	}
 
-	_LateInit = true;
-
 	// 맵오브젝트가 로딩된 시점 (맵 오브젝트는 정적으로 움직이지 않음) (그림자맵 굽기)
 	Renderer::GetInstance()->RequestShadowMapBake();
+
+	_LateInit = true;
 }
