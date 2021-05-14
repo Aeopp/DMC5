@@ -1322,15 +1322,11 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		else
 			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-<<<<<<< HEAD
-=======
-
 		for (int i = 0; i < 2; ++i)
 		{
 			m_pHand[i].lock()->Set_Coll(false);
 			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 		}
->>>>>>> origin/main
 		break;
 	default:
 		break;

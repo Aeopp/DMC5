@@ -11,6 +11,8 @@
 #include "MapObject.h"
 #include "SecretVision.h"
 #include "NhDoor.h"
+#include "HotelBrokenFloor.h"
+#include "HotelAnimationWall.h"
 
 #include <iostream>
 #include <fstream>
@@ -49,11 +51,12 @@ HRESULT Hotel_S02::LoadScene()
 #pragma region Player & Camera
 	AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
+	AddGameObject<HotelBrokenFloor>();
+	AddGameObject<HotelAnimationWall>();
+	AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -67,8 +70,8 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage2_Map.json");
-	LoadObjects("../../Data/Stage2_Object.json");
+	LoadObjects("../../Data/Test2.json");
+	//LoadObjects("../../Data/Stage2_Object.json");
 
 	AddGameObject<TempMap>();
 

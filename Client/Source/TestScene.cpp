@@ -49,6 +49,8 @@
 #include "SecretVision.h"
 #include "MakaiButterfly.h"
 #include "Smoke.h"
+#include "HotelBrokenFloor.h"
+#include "HotelAnimationWall.h"
 
 #include <iostream>
 #include <fstream>
@@ -155,8 +157,8 @@ HRESULT TestScene::LoadScene()
 #pragma region Map
 
 	//LoadMap();
-	AddGameObject<TempMap>();
-
+	//AddGameObject<TempMap>();
+	AddGameObject<HotelAnimationWall>();
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -261,7 +263,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	//AddGameObject<BtlPanel>();
 
 #pragma endregion
 
