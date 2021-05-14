@@ -99,7 +99,7 @@ HRESULT Hotel_S01::LoadScene()
 	// Stage2 길막
 	m_vecQliphothBlock.reserve(7);
 
-	// 0: 시작지점 뒤
+	// 0: StartPoint 
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
 		!ptr.expired())
 	{
@@ -402,7 +402,7 @@ void Hotel_S01::Trigger1st()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
 		};
@@ -412,6 +412,9 @@ void Hotel_S01::Trigger1st()
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
+			// 여기서 카메라 연출 하세요 .
+
 			if (auto Sp = _BtlPanel.lock(); Sp)
 				Sp->ResetRankScore();
 
@@ -495,8 +498,6 @@ void Hotel_S01::Trigger1st()
 
 			_SecondTrigger->TriggerEnable();
 
-			// 여기서 카메라 연출 하세요 .
-
 		};
 
 		_StartTrigger->EventRegist(
@@ -508,7 +509,6 @@ void Hotel_S01::Trigger1st()
 			SpawnWaveAfterEvent,
 			WaveEndEvent);
 	}
-
 }
 
 void Hotel_S01::Trigger2nd()
@@ -636,7 +636,7 @@ void Hotel_S01::Trigger3rd()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
 		};
@@ -681,7 +681,7 @@ void Hotel_S01::Trigger3rd()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -3.06028, 0.01f, 10.42297f });
+			lock()->SetPosition({ -3.06028f, 0.01f, 10.42297f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -4.40446f, 0.01f, 10.4338f });
@@ -701,7 +701,7 @@ void Hotel_S01::Trigger3rd()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
 
@@ -740,8 +740,6 @@ void Hotel_S01::Trigger3rd()
 			SpawnWaveAfterEvent,
 			WaveEndEvent);
 	}
-
-
 }
 
 void Hotel_S01::Trigger4st()
@@ -776,15 +774,12 @@ void Hotel_S01::Trigger4st()
 
 void Hotel_S01::LateInit()
 {
-	// + 플레이어 초기 위치 잡기 등
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition
-											({ -4.8f, -0.2f, -5.02f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.8f, -0.2f, -5.02f });
 	}
 
-	// 맵오브젝트가 로딩된 시점 (맵 오브젝트는 정적으로 움직이지 않음) (그림자맵 굽기)
 	Renderer::GetInstance()->LateSceneInit();
 
 	_LateInit = true;

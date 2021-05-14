@@ -2,8 +2,6 @@
 #define __M01_HOTEL_S01_H__
 #include "Scene.h"
 
-class Trigger;
-
 class Hotel_S01 : public Scene
 {
 private:
