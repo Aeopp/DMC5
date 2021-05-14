@@ -3,7 +3,6 @@
 #include "Scene.h"
 #include "TitlePanel.h"
 #include "Hotel_S01.h"
-#include "Hotel_S02.h"
 
 void TitleScene::Free()
 {

@@ -128,6 +128,7 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
+		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	////////////////////////////////////
@@ -234,8 +235,8 @@ void Hotel_S03::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
 	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({ -1.77158f, 1.36541f, 23.73719 });
-	_LateInit = true;
-
 
 	Renderer::GetInstance()->RequestShadowMapBake();
+
+	_LateInit = true;
 }

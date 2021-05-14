@@ -229,7 +229,7 @@ void StoneDebris::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
 		_Info.Fx->SetBool("_UsingNoise", false);
 		_Info.Fx->SetFloat("_SliceAmount", _SmokeSliceAmount);
-		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.05f);
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.2f);
 		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
@@ -247,7 +247,7 @@ void StoneDebris::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
 			_Info.Fx->SetBool("_UsingNoise", false);
 			//_Info.Fx->SetFloat("_SliceAmount", _SmokeSliceAmount);
-			_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SmokeSliceAmount) * 7.f);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SmokeSliceAmount) * 10.f);
 			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 			_Info.Fx->SetFloatArray("_MinTexUV", _DustSingleMinTexUV, 2u);
 			_Info.Fx->SetFloatArray("_MaxTexUV", _DustSingleMaxTexUV, 2u);
