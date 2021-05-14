@@ -23,9 +23,12 @@ void DissolveInfo::Initialize(const std::filesystem::path& MeshPath,
 
 void DissolveInfo::DissolveStart()
 {
-	bDissolve = true; 
-	SliceAmount = 0.0f;
-	CurDissolveParticleDelta = 0.0f;
+	if (!bDissolve)
+	{
+		bDissolve = true;
+		SliceAmount = 0.0f;
+		CurDissolveParticleDelta = 0.0f;
+	}
 }
 
 void DissolveInfo::DissolveEnd()
@@ -46,7 +49,7 @@ void DissolveInfo::DissolveVariableBind(ID3DXEffect* const Fx)
 	}
 }
 
-void DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMatrix)
+bool DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMatrix)
 {
 	if (bDissolve)
 	{
@@ -65,8 +68,11 @@ void DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMa
 		if (SliceAmount > 1.f)
 		{
 			DissolveEnd();
+			return true;
 		}
 	}
+
+	return false;
 }
 
 void DissolveInfo::DissolveEditor()

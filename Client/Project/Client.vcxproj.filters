@@ -504,6 +504,12 @@
     <ClInclude Include="..\Header\MakaiButterfly.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\MapAniObject.h">
+      <Filter>02.GameObject\02.MapObject</Filter>
+    </ClInclude>
     <ClInclude Include="..\Header\DissolveInfo.h" />
     <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
@@ -813,6 +819,9 @@
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\MakaiButterfly.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\MapAniObject.cpp">
+      <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\DissolveInfo.cpp" />
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp">

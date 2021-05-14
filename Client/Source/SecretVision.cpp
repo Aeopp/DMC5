@@ -98,6 +98,16 @@ void SecretVision::RenderInit()
 		}
 	};
 
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	Mesh::InitializeInfo _Info{};
@@ -314,7 +324,7 @@ HRESULT SecretVision::Awake()
 	if (auto SpCollider = _Collider.lock(); SpCollider)
 	{
 		SpCollider->ReadyCollider();
-		SpCollider->SetSize(Vector3{ 1.f, 1.f, 0.125f });
+		SpCollider->SetSize(Vector3{ 1.f,1.f,0.125f });
 		PushEditEntity(SpCollider.get());
 	}
 

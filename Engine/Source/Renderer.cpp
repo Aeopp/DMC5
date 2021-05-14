@@ -779,6 +779,11 @@ void Renderer::Editor()&
 	ImGui::End();
 };
 
+void Renderer::RequestShadowMapBake()
+{
+	bShadowMapBake = true;
+};
+
 std::weak_ptr<FLight> Renderer::RefRemainingDynamicLight()
 {
 	std::weak_ptr<FLight> ReturnVal {};
@@ -2977,7 +2982,6 @@ void Renderer::LightSave(std::filesystem::path path)
 	Of << StrBuf.GetString();
 };
 
-
 void Renderer::LightLoad(const std::filesystem::path& path)
 {
 	using namespace rapidjson;
@@ -2985,7 +2989,9 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 	std::ifstream Is{ path };
 
 	if (!Is.is_open())
+	{
 		return;
+	}
 
 	IStreamWrapper Isw(Is);
 	Document _Document{};
@@ -2998,6 +3004,8 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 	}
 
 	const Value& LightData = _Document["LightDataArray"];
+	DirLights.clear();
+	PointLights.clear();
 	// if (LightData.IsArray())
 	{
 		// auto LightArray=LightData.GetArray();

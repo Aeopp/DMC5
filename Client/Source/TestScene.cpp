@@ -103,6 +103,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
+	AddGameObject<Em100>();
 
 	// Wave 1st
 	//{

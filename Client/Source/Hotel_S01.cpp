@@ -9,6 +9,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "MapAniObject.h"
 
 #include <iostream>
 #include <fstream>
@@ -46,10 +47,9 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
@@ -65,6 +65,7 @@ HRESULT Hotel_S01::LoadScene()
 
 	LoadObjects("../../Data/Stage1_Map.json");
 	LoadObjects("../../Data/Stage1_Object.json");
+	LoadObjects("../../Data/Stage1_AniObject.json", true);
 
 	AddGameObject<TempMap>();
 	
@@ -74,7 +75,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp();
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -141,7 +142,7 @@ HRESULT Hotel_S01::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
-void Hotel_S01::LoadObjects(const std::filesystem::path& path)
+void Hotel_S01::LoadObjects(const std::filesystem::path& path, const bool _bAni)
 {
 	std::ifstream inputStream{ path };
 
@@ -163,52 +164,97 @@ void Hotel_S01::LoadObjects(const std::filesystem::path& path)
 	const Value& loadData = docu["GameObject"];
 
 	std::filesystem::path sFullPath;
-	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	if (_bAni == false)
 	{
-		//
-		sFullPath = iter->FindMember("Mesh")->value.GetString();
-		sFullPath = sBasePath / sFullPath;
-		//
-		Resources::Load<StaticMesh>(sFullPath);
-		//
-		auto objectArr = iter->FindMember("List")->value.GetArray();
-		//
-		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
 		{
-			auto pMapObject = AddGameObject<MapObject>();
+			//
+			sFullPath = iter->FindMember("Mesh")->value.GetString();
+			sFullPath = sBasePath / sFullPath;
+			//
+			Resources::Load<StaticMesh>(sFullPath);
+			//
+			auto objectArr = iter->FindMember("List")->value.GetArray();
+			//
+			for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+			{
+				auto pMapObject = AddGameObject<MapObject>();
 
-			D3DXVECTOR3 vScale;
-			auto scale = iterObject->FindMember("Scale")->value.GetArray();
-			vScale.x = scale[0].GetFloat();
-			vScale.y = scale[1].GetFloat();
-			vScale.z = scale[2].GetFloat();
+				D3DXVECTOR3 vScale;
+				auto scale = iterObject->FindMember("Scale")->value.GetArray();
+				vScale.x = scale[0].GetFloat();
+				vScale.y = scale[1].GetFloat();
+				vScale.z = scale[2].GetFloat();
 
-			D3DXVECTOR3 vRotation;
-			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
-			vRotation.x = rotation[0].GetFloat();
-			vRotation.y = rotation[1].GetFloat();
-			vRotation.z = rotation[2].GetFloat();
+				D3DXVECTOR3 vRotation;
+				auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+				vRotation.x = rotation[0].GetFloat();
+				vRotation.y = rotation[1].GetFloat();
+				vRotation.z = rotation[2].GetFloat();
 
-			D3DXVECTOR3 vPosition;
-			auto position = iterObject->FindMember("Position")->value.GetArray();
-			vPosition.x = position[0].GetFloat();
-			vPosition.y = position[1].GetFloat();
-			vPosition.z = position[2].GetFloat();
+				D3DXVECTOR3 vPosition;
+				auto position = iterObject->FindMember("Position")->value.GetArray();
+				vPosition.x = position[0].GetFloat();
+				vPosition.y = position[1].GetFloat();
+				vPosition.z = position[2].GetFloat();
 
-			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+				pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+			}
+		}
+	}
+	else
+	{
+		for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+		{
+			//
+			sFullPath = iter->FindMember("Mesh")->value.GetString();
+			sFullPath = sBasePath / sFullPath;
+			//
+			Resources::Load<SkeletonMesh>(sFullPath);
+			//
+			auto objectArr = iter->FindMember("List")->value.GetArray();
+			//
+			for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+			{
+				auto pMapObject = AddGameObject<MapAniObject>();
+
+				D3DXVECTOR3 vScale;
+				auto scale = iterObject->FindMember("Scale")->value.GetArray();
+				vScale.x = scale[0].GetFloat();
+				vScale.y = scale[1].GetFloat();
+				vScale.z = scale[2].GetFloat();
+
+				D3DXVECTOR3 vRotation;
+				auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+				vRotation.x = rotation[0].GetFloat();
+				vRotation.y = rotation[1].GetFloat();
+				vRotation.z = rotation[2].GetFloat();
+
+				D3DXVECTOR3 vPosition;
+				auto position = iterObject->FindMember("Position")->value.GetArray();
+				vPosition.x = position[0].GetFloat();
+				vPosition.y = position[1].GetFloat();
+				vPosition.z = position[2].GetFloat();
+
+				pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+			}
 		}
 	}
 }
 
-void Hotel_S01::RenderDataSetUp()
+void Hotel_S01::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+
+	if (bTest)
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	else
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S01.json");
 	
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
+	_Renderer->ao = 0.001f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -234,4 +280,7 @@ void Hotel_S01::LateInit()
 	}
 
 	_LateInit = true;
+
+	// 맵오브젝트가 로딩된 시점 (맵 오브젝트는 정적으로 움직이지 않음) (그림자맵 굽기)
+	Renderer::GetInstance()->RequestShadowMapBake();
 }
