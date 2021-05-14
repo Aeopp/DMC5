@@ -68,6 +68,7 @@ enum GAMEOBJECTTAG
 	Eff_SpriteEffect,
 	Eff_DashTrail,
 	Eff_MakaiButterFly,
+	Eff_SecretVisionMagicCircle,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,

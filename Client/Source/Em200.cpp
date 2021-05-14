@@ -37,11 +37,11 @@ void Em200::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	/*if (m_BattleInfo.iHp <= 0.f)
+	if (m_BattleInfo.iHp <= 0.f)
 	{
 		m_eState = Dead;
 		m_bIng = true;
-	}*/
+	}
 
 	//몬스터 움직이는 방향 정해주는 놈
 	if (fDir >= 0.5f)
@@ -897,9 +897,17 @@ UINT Em200::Update(const float _fDeltaTime)
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
 	{
-		for (int i = 0; i < 2; ++i)
-			Destroy(m_pHand[i]);
-		Destroy(m_pGameObject);
+		if (m_bDissolve == false)
+		{
+			m_pDissolve.DissolveStart();
+			m_bDissolve = true;
+		}
+		if (m_pDissolve.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World))
+		{
+			for (int i = 0; i < 2; ++i)
+				Destroy(m_pHand[i]);
+			Destroy(m_pGameObject);
+		}
 	}
 	/////////////////////////////
 
@@ -917,16 +925,7 @@ void Em200::Editor()
 	Unit::Editor();
 	if (bEdit)
 	{
-		ImGui::Text("Deg %3.4f", m_fRadian);
-		ImGui::Text("Acc Deg %3.4f", m_fAccuangle);
-
-		ImGui::InputFloat("Power", &m_fPower);
-
-		ImGui::InputFloat("vPowerX", &m_vPower.x);
-		ImGui::InputFloat("vPowerY", &m_vPower.y);
-		ImGui::InputFloat("vPowerZ", &m_vPower.z);
-
-
+		m_pDissolve.DissolveEditor();
 	}
 }
 
@@ -1379,6 +1378,7 @@ void Em200::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		m_pDissolve.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -1454,9 +1454,10 @@ void Em200::RenderInit()
 	SetRenderEnable(true);
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = true;
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -1499,6 +1500,12 @@ void Em200::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
+
+	m_pDissolve.Initialize("..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em200\\Em200.fbx",
+		Vector3{
+			1.f,0.f,0.f
+		});
+
 
 	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};

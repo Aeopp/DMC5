@@ -4,7 +4,12 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include "SecretVision.h"
+#include "BtlPanel.h"
+#include "SecretVisionMagicCircle.h"
 
+
+uint32 MakaiButterfly::_TotalCnt = 0u;
 
 void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 {
@@ -18,6 +23,8 @@ void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 
 void MakaiButterfly::Free()
 {
+	Destroy(_SVMC);
+
 	GameObject::Free();
 }
 
@@ -193,7 +200,7 @@ HRESULT MakaiButterfly::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_MakaiButterFly;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.0015f, 0.0015f, 0.0015f });
+	InitTransform.lock()->SetScale({ 0.002f, 0.002f, 0.002f });
 
 	_Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_creature_makaibutterfly00_00.fbx");
 	_ALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_creature_makaibutterfly00_00_ALBM.tga");
@@ -204,7 +211,7 @@ HRESULT MakaiButterfly::Ready()
 	_BrightScale = 0.2f;
 
 	_BezierStartOffsetPos = Vector3(0.f, 0.f, 0.f);
-	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.01f, -0.01f, -0.01f), Vector3(0.01f, 0.01f, 0.015f));
+	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.015f, -0.015f, -0.015f), Vector3(0.015f, 0.015f, 0.015f));
 	_BezierDeltaOffsetPos = Vector3(0.f, 0.f, 0.f);
 
 	_Collider = AddComponent<CapsuleCollider>();
@@ -214,6 +221,8 @@ HRESULT MakaiButterfly::Ready()
 	_Collider.lock()->SetCenter({ 0.f, 0.f, 0.f });
 	_Collider.lock()->SetActive(false);
 	PushEditEntity(_Collider.lock().get());
+
+	_SVMC = AddGameObject<SecretVisionMagicCircle>();
 
 	return S_OK;
 }
@@ -240,8 +249,8 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 		if (100.f < _AccumulateTime)
 			_IsAlive = false;
 
-		auto _WeakTransform = GetComponent<ENGINE::Transform>();
-		if (auto SpTransform = _WeakTransform.lock();
+		auto WeakTransform = GetComponent<ENGINE::Transform>();
+		if (auto SpTransform = WeakTransform.lock();
 			SpTransform)
 		{
 			Vector3 vDir = SpTransform->GetLook(); 
@@ -292,7 +301,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 	{
 		_SubsetIdx = 0.f;
 		_BezierStartOffsetPos = _BezierEndOffsetPos;
-		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.01f, -0.01f, -0.01f), Vector3(0.01f, 0.01f, 0.01f));
+		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.015f, -0.015f, -0.015f), Vector3(0.015f, 0.015f, 0.015f));
 	}
 
 	// BezierCurve
@@ -331,15 +340,53 @@ void MakaiButterfly::OnDisable()
 
 void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	switch (_pOther.lock()->m_nTag)
+	if (MakaiButterfly::VARIATION::STAY == _VariationIdx)
 	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-	case GAMEOBJECTTAG::Tag_Cbs_Middle:
-	case GAMEOBJECTTAG::Tag_Cbs_Short:
-	case GAMEOBJECTTAG::Tag_Cbs_Long:
-		
-		Reset();
+		Matrix ViewInverse;
+		Vector3 Dir;
 
-		break;
+		switch (_pOther.lock()->m_nTag)
+		{
+		case GAMEOBJECTTAG::TAG_RedQueen:
+		case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		case GAMEOBJECTTAG::Tag_Cbs_Short:
+		case GAMEOBJECTTAG::Tag_Cbs_Long:
+
+			if (auto SpSecretVision = std::static_pointer_cast<SecretVision>(FindGameObjectWithTag(TAG_SecretVision).lock());
+				SpSecretVision)
+			{
+				uint32 idx = SpSecretVision->GetInteractionIdx();
+				if (_TotalCnt != idx)
+					return;
+
+				// To SecretVision
+				SpSecretVision->SetInteractionEnable(true);
+
+				// To BtlPannel
+				if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+					SpPanel)
+				{
+					SpPanel->AddRankScore(10.f);
+					SpPanel->ActivateSecretVision(idx);
+				}
+
+				// ¹®¾çÀÌÆåÆ®
+				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
+
+				// ½Ã¹úÅÊ È¸Àü ¾ÈµÊ
+				ViewInverse = Renderer::GetInstance()->_RenderInfo.ViewInverse;
+				Dir = *reinterpret_cast<Vector3*>(&ViewInverse.m[2][0]);
+				D3DXVec3Normalize(&Dir, &Dir);
+
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition(), FMath::ToDegree(Dir));
+
+				//
+				Reset();
+
+				++_TotalCnt;
+			}
+
+			break;
+		}
 	}
 }

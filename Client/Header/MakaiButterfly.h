@@ -34,6 +34,10 @@ private:
 	bool _IsAlive = false;
 
 	weak_ptr<CapsuleCollider> _Collider;
+	
+	static uint32 _TotalCnt;
+
+	weak_ptr<class SecretVisionMagicCircle>	_SVMC{};
 
 private:
 	explicit MakaiButterfly() = default;

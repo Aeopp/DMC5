@@ -11,6 +11,7 @@
 #include "MapObject.h"
 #include "SecretVision.h"
 #include "NhDoor.h"
+#include "MakaiButterfly.h"
 #include "Em100.h"
 
 #include <iostream>
@@ -24,6 +25,11 @@ Hotel_S02::Hotel_S02()
 
 void Hotel_S02::Free()
 {
+	for (auto& Element : _MakaiButterflyVec)
+		Destroy(Element);
+	_MakaiButterflyVec.clear();
+	_MakaiButterflyVec.shrink_to_fit();
+
 	Scene::Free();
 }
 
@@ -48,11 +54,11 @@ HRESULT Hotel_S02::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<SecretVision>();
-	AddGameObject<NhDoor>();
-	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+
+	//AddGameObject<Camera>();
+
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -86,7 +92,14 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
-	AddGameObject<SecretVision>();
+	AddGameObject<SecretVision>().lock()->PuzzleStart();	// 임시
+	AddGameObject<NhDoor>();
+
+	// 
+	_MakaiButterflyVec.reserve(3);
+	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
+	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
+	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
 
 #pragma endregion
 
@@ -244,7 +257,27 @@ void Hotel_S02::LateInit()
 		SpPlayer->GetComponent<Transform>().lock()->SetRotation({ 0.f,180.f,0.f });
 	}
 
-	_LateInit = true;
+	//
+	if (auto SpObject = _MakaiButterflyVec[0].lock();
+		SpObject)
+	{
+		SpObject->SetPosition({ -4319.212f * GScale, 470.248f * GScale, 16593.594f * GScale });
+		SpObject->PlayStart();
+	}
+	if (auto SpObject = _MakaiButterflyVec[1].lock();
+		SpObject)
+	{
+		SpObject->SetPosition({ -804.781f * GScale, 1097.678f * GScale, 16376.986f * GScale });
+		SpObject->PlayStart();
+	}
+	if (auto SpObject = _MakaiButterflyVec[2].lock();
+		SpObject)
+	{
+		SpObject->SetPosition({ -4696.414f * GScale, 1683.205f * GScale, 15569.233f * GScale });
+		SpObject->PlayStart();
+	}
 
 	Renderer::GetInstance()->RequestShadowMapBake();
+
+	_LateInit = true;
 }

@@ -306,6 +306,8 @@ void GameObjectManager::Save()
 		Writer.StartArray();
 		for (auto& rPair : m_Container)
 		{
+			if(0 == rPair.second.size())
+				continue;
 			Writer.StartObject();
 			Writer.Key("Mesh");
 			Writer.String(rPair.first.c_str());

@@ -28,7 +28,6 @@ HRESULT MapAniObject::Ready()
 	GameObject::Ready();
 	PushEditEntity(m_pTransform.lock().get());
 
-	m_pTransform.lock()->SetScale({ 0.1f, 0.1f, 0.1f });
 
 	return S_OK;
 }
@@ -43,7 +42,9 @@ HRESULT MapAniObject::Start()
 {
 	GameObject::Start();
 
-	m_pMesh->PlayAnimation(0, true);
+	m_pMesh->PlayAnimation(0, true, {} , 1.3f);
+	if(m_bFlag6 == false)
+		m_pTransform.lock()->SetScale({ 0.00002f,0.00002f,0.00002f });
 
 	return S_OK;
 }
@@ -156,6 +157,9 @@ void MapAniObject::RenderInit()
 
 void MapAniObject::RenderGBuffer(const DrawInfo& _Info)
 {
+	DWORD _State{};
+	g_pDevice->GetRenderState(D3DRS_CULLMODE, &_State);
+	g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	const Matrix World = _RenderUpdateInfo.World;
 
 	_Info.Fx->SetMatrix("matWorld", &World);
@@ -170,10 +174,10 @@ void MapAniObject::RenderGBuffer(const DrawInfo& _Info)
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
-			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-			{
-				continue;
-			}
+			//if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+			//{
+			//	continue;
+			//}
 
 
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
@@ -181,6 +185,7 @@ void MapAniObject::RenderGBuffer(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
+	g_pDevice->SetRenderState(D3DRS_CULLMODE, _State);
 }
 
 void MapAniObject::RenderShadow(const DrawInfo& _Info)
@@ -193,10 +198,10 @@ void MapAniObject::RenderShadow(const DrawInfo& _Info)
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
-			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+			/*if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 			{
 				continue;
-			}
+			}*/
 
 			SpSubset->Render(_Info.Fx);
 		};
@@ -214,10 +219,10 @@ void MapAniObject::RenderEmissive(const DrawInfo& _Info)
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
-			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+		/*	if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 			{
 				continue;
-			}
+			}*/
 
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->Render(_Info.Fx);
@@ -235,11 +240,11 @@ void MapAniObject::RenderDebug(const DrawInfo& _Info)
 		if (auto SpSubset = m_pMesh->GetSubset(i).lock();
 			SpSubset)
 		{
-			if (false ==
+	/*		if (false ==
 				_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 			{
 				continue;
-			}
+			}*/
 
 			SpSubset->Render(_Info.Fx);
 		};
@@ -248,9 +253,9 @@ void MapAniObject::RenderDebug(const DrawInfo& _Info)
 #pragma endregion
 
 void MapAniObject::SetUp(
-	const TSTRING _sMesh, 
+	const TSTRING _sMesh,
 	const D3DXVECTOR3& _vScale,
-	const D3DXVECTOR3& _vRotation, 
+	const D3DXVECTOR3& _vRotation,
 	const D3DXVECTOR3 _vPosition)
 {
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(_sMesh);
@@ -263,8 +268,13 @@ void MapAniObject::SetUp(
 		{
 			bEmissive = false;
 		};
-	}
+		if (sFileName == "flag_06.fbx")
+		{
+			m_pTransform.lock()->SetScale({ 0.008f,0.008f,0.008f });
+			m_bFlag6 = true;
+		}
 
+	}
 
 	D3DXVECTOR3 vScale = _vScale * GScale;
 	D3DXVECTOR3 vPos = _vPosition * GScale;
@@ -275,3 +285,4 @@ void MapAniObject::SetUp(
 
 	RenderInit();
 }
+

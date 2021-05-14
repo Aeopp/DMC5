@@ -511,6 +511,12 @@
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\DissolveInfo.h" />
+    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\SecretVisionMagicCircle.h">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -818,6 +824,9 @@
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\DissolveInfo.cpp" />
+    <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -886,9 +895,6 @@
     <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
     <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
     <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl" />
   </ItemGroup>
