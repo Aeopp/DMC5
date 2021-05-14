@@ -73,7 +73,8 @@ HRESULT Hotel_S01::LoadScene()
 	LoadObjects("../../Data/Stage1_Object.json");
 	LoadObjects("../../Data/Stage1_AniObject.json", true);
 
-	AddGameObject<TempMap>();
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);
 	
 #pragma endregion
 
@@ -135,6 +136,8 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
+		Renderer::GetInstance()->CurDirLight = nullptr;
+
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
 	////////////////////////////////////
@@ -385,6 +388,7 @@ void Hotel_S01::Trigger2nd()
 		const std::function<void()> SpawnWaveAfterEvent =
 			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
+			Renderer::GetInstance()->SkyDistortionStart();
 			//... 여기서 로직 처리하세요 . 
 		};
 
@@ -406,7 +410,7 @@ void Hotel_S01::Trigger2nd()
 	}
 }
 
-void  Hotel_S01::Trigger3rd()
+void Hotel_S01::Trigger3rd()
 {
 	// 트리거 생성 !! 
 	std::shared_ptr<Trigger> _Trigger{};
@@ -506,11 +510,11 @@ void Hotel_S01::LateInit()
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition
-		({ -4.8f, 1.f, -5.02f });
+		({ -4.8f, -0.2f, -5.02f });
 	}
 
 	_LateInit = true;
-
 	// 맵오브젝트가 로딩된 시점 (맵 오브젝트는 정적으로 움직이지 않음) (그림자맵 굽기)
+	Renderer::GetInstance()->SkyDistortion = false;
 	Renderer::GetInstance()->RequestShadowMapBake();
 }

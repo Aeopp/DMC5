@@ -1,137 +1,6 @@
 {
     "GameObject": [
         {
-            "Mesh": "Resource\\Map\\Location2\\Street2\\Street.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\buildingnew9\\buildingnew9.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        165.0,
-                        0.0
-                    ],
-                    "Position": [
-                        1000.2030029296875,
-                        -402.9729919433594,
-                        -7770.61083984375
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\building01\\building01.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -29.947999954223634,
-                        0.0
-                    ],
-                    "Position": [
-                        486.77899169921877,
-                        -19.209999084472658,
-                        2493.27392578125
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\buildingnew05_12\\buildingnew05_12.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        0.4000000059604645,
-                        0.5,
-                        0.5
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -180.0,
-                        0.0
-                    ],
-                    "Position": [
-                        1060.0,
-                        -384.0,
-                        -2972.3330078125
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\buildingnew7_3\\buildingnew7_3.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.5,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        180.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -2260.177001953125,
-                        300.6619873046875,
-                        -5676.77783203125
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.5,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -118.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3393.27294921875,
-                        550.0,
-                        2118.5849609375
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\Storehouse\\Storehouse.fbx",
-            "List": []
-        },
-        {
             "Mesh": "Resource\\Map\\Location2\\buildingnew7\\buildingnew7.fbx",
             "List": [
                 {
@@ -210,63 +79,29 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\buildingnew6\\buildingnew6.fbx",
+            "Mesh": "Resource\\Map\\Location2\\buildingnew05_12\\buildingnew05_12.fbx",
             "List": [
                 {
                     "Scale": [
-                        1.0,
-                        1.0,
-                        1.5
+                        0.4000000059604645,
+                        0.5,
+                        0.5
                     ],
                     "Rotation": [
                         0.0,
-                        180.0,
+                        -180.0,
                         0.0
                     ],
                     "Position": [
-                        200.0,
-                        -384.5509948730469,
-                        -2950.39111328125
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.5,
-                        2.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        180.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -778.8579711914063,
-                        14.155029296875,
-                        5205.548828125
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        2.299999952316284,
-                        2.299999952316284
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -150.875,
-                        0.0
-                    ],
-                    "Position": [
-                        4525.4169921875,
-                        12.107000350952149,
-                        3117.097900390625
+                        1060.0,
+                        -384.0,
+                        -2972.3330078125
                     ]
                 }
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\buildingnew7_2\\buildingnew7_2.fbx",
+            "Mesh": "Resource\\Map\\Location2\\buildingnew7_3\\buildingnew7_3.fbx",
             "List": [
                 {
                     "Scale": [
@@ -280,9 +115,9 @@
                         0.0
                     ],
                     "Position": [
-                        -1024.9219970703126,
-                        300.6029968261719,
-                        -5736.62109375
+                        -2260.177001953125,
+                        300.6619873046875,
+                        -5676.77783203125
                     ]
                 },
                 {
@@ -297,26 +132,97 @@
                         0.0
                     ],
                     "Position": [
-                        -2904.87109375,
+                        -3393.27294921875,
                         550.0,
-                        1000.9019775390625
+                        2118.5849609375
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Street2\\Street.fbx",
+            "List": [
                 {
                     "Scale": [
-                        1.7999999523162842,
+                        1.0,
                         1.0,
                         1.0
                     ],
                     "Rotation": [
                         0.0,
-                        -238.0,
+                        0.0,
                         0.0
                     ],
                     "Position": [
-                        3097.81103515625,
-                        665.1389770507813,
-                        1634.320068359375
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew9\\buildingnew9.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        165.0,
+                        0.0
+                    ],
+                    "Position": [
+                        1000.2030029296875,
+                        -402.9729919433594,
+                        -7770.61083984375
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\building01\\building01.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -29.947999954223634,
+                        0.0
+                    ],
+                    "Position": [
+                        486.77899169921877,
+                        -19.209999084472658,
+                        2493.27392578125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Street3\\Street3.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
                     ]
                 }
             ]
@@ -497,23 +403,113 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\Street3\\Street3.fbx",
+            "Mesh": "Resource\\Map\\Location2\\buildingnew7_2\\buildingnew7_2.fbx",
             "List": [
                 {
                     "Scale": [
-                        1.0,
+                        1.5,
                         1.0,
                         1.0
                     ],
                     "Rotation": [
                         0.0,
-                        0.0,
+                        180.0,
                         0.0
                     ],
                     "Position": [
+                        -1024.9219970703126,
+                        300.6029968261719,
+                        -5736.62109375
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.5,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
                         0.0,
-                        0.0,
+                        -118.0,
                         0.0
+                    ],
+                    "Position": [
+                        -2904.87109375,
+                        550.0,
+                        1000.9019775390625
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.7999999523162842,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -238.0,
+                        0.0
+                    ],
+                    "Position": [
+                        3097.81103515625,
+                        665.1389770507813,
+                        1634.320068359375
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew6\\buildingnew6.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.5
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        200.0,
+                        -384.5509948730469,
+                        -2950.39111328125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.5,
+                        2.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -778.8579711914063,
+                        14.155029296875,
+                        5205.548828125
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        2.299999952316284,
+                        2.299999952316284
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -150.875,
+                        0.0
+                    ],
+                    "Position": [
+                        4525.4169921875,
+                        12.107000350952149,
+                        3117.097900390625
                     ]
                 }
             ]
@@ -570,106 +566,6 @@
                         -4104.490234375,
                         -247.16400146484376,
                         -5697.73388671875
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\Hotelwalla8\\Hotelwalla8.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -2297.60498046875,
-                        72.11100006103516,
-                        11179.1416015625
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -90.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -4966.5400390625,
-                        72.11100006103516,
-                        11179.1416015625
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\buildingnew10\\buildingnew10.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        180.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -28.951000213623048,
-                        617.7960205078125,
-                        -5775.48193359375
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.2999999523162842
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -211.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -988.85791015625,
-                        1004.155029296875,
-                        6740.98486328125
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\Hotelenter\\Hotelenter.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3629.135986328125,
-                        50.56700134277344,
-                        11461.318359375
                     ]
                 }
             ]
@@ -850,6 +746,106 @@
             ]
         },
         {
+            "Mesh": "Resource\\Map\\Location2\\Hotelenter\\Hotelenter.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -3629.135986328125,
+                        50.56700134277344,
+                        11461.318359375
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\buildingnew10\\buildingnew10.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -28.951000213623048,
+                        617.7960205078125,
+                        -5775.48193359375
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.2999999523162842
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -211.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -988.85791015625,
+                        1004.155029296875,
+                        6740.98486328125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Hotelwalla8\\Hotelwalla8.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -2297.60498046875,
+                        72.11100006103516,
+                        11179.1416015625
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -90.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -4966.5400390625,
+                        72.11100006103516,
+                        11179.1416015625
+                    ]
+                }
+            ]
+        },
+        {
             "Mesh": "Resource\\Map\\Location2\\buildingnew01\\buildingnew01.fbx",
             "List": [
                 {
@@ -867,28 +863,6 @@
                         -1093.717041015625,
                         -12.807999610900879,
                         -2460.864013671875
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\BuildI\\BuildI.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        0.800000011920929,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        80.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -2611.406982421875,
-                        -1.7760000228881837,
-                        4096.10009765625
                     ]
                 }
             ]
@@ -916,7 +890,51 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\Hotelentrance\\Hotelentrance.fbx",
+            "Mesh": "Resource\\Map\\Location2\\BuildI\\BuildI.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        0.800000011920929,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        80.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -2611.406982421875,
+                        -1.7760000228881837,
+                        4096.10009765625
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\HotelGate\\Hotelgate0.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -3616.85498046875,
+                        -0.041999999433755878,
+                        7269.548828125
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location2\\Street4\\street4.fbx",
             "List": [
                 {
                     "Scale": [
@@ -977,7 +995,7 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\Street4\\street4.fbx",
+            "Mesh": "Resource\\Map\\Location2\\Hotelentrance\\Hotelentrance.fbx",
             "List": [
                 {
                     "Scale": [
@@ -994,28 +1012,6 @@
                         0.0,
                         0.0,
                         0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\HotelGate\\Hotelgate0.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3616.85498046875,
-                        -0.041999999433755878,
-                        7269.548828125
                     ]
                 }
             ]

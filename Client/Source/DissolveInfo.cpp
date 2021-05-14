@@ -38,7 +38,7 @@ void DissolveInfo::DissolveEnd()
 
 void DissolveInfo::DissolveVariableBind(ID3DXEffect* const Fx)
 {
-	if (bDissolve)
+	// if (bDissolve)
 	{
 		Fx->SetTexture("DissolveMap", _DissolveMap->GetTexture());
 		Fx->SetTexture("BurnMap", _BurnMap->GetTexture());

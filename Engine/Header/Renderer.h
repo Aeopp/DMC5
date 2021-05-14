@@ -51,6 +51,9 @@ public:
 	std::weak_ptr<FLight> RefRemainingDynamicLight();;
 
 	void RequestShadowMapBake();
+public:
+	void SkyDistortionStart();
+	void SkyDistortionEnd();
 private:
 	void RenderReady()&;
 	void RenderBegin()&;

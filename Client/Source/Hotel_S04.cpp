@@ -65,7 +65,8 @@ HRESULT Hotel_S04::LoadScene()
 
 	LoadObjects("../../Data/Stage4_Map.json");
 
-	AddGameObject<TempMap>();
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(4);
 
 #pragma endregion
 

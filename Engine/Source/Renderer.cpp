@@ -778,6 +778,15 @@ void Renderer::Editor()&
 	}
 	ImGui::End();
 };
+void Renderer::SkyDistortionStart()
+{
+	SkyDistortion = true;
+}
+void Renderer::SkyDistortionEnd()
+{
+	SkyDistortion = false;
+}
+
 
 void Renderer::RequestShadowMapBake()
 {

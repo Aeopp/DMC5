@@ -55,7 +55,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -75,7 +75,8 @@ HRESULT Hotel_S02::LoadScene()
 	LoadObjects("../../Data/Stage2_Map.json");
 	LoadObjects("../../Data/Stage2_Object.json");
 
-	AddGameObject<TempMap>();
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(2);
 
 #pragma endregion
 
@@ -231,7 +232,7 @@ void Hotel_S02::RenderDataSetUp(const bool bTest)
 	}
 	
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
+	_Renderer->ao = 0.01f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -277,7 +278,9 @@ void Hotel_S02::LateInit()
 		SpObject->PlayStart();
 	}
 
-	Renderer::GetInstance()->RequestShadowMapBake();
+	
 
 	_LateInit = true;
+	Renderer::GetInstance()->SkyDistortion = false;
+	Renderer::GetInstance()->RequestShadowMapBake();
 }

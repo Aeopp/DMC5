@@ -212,7 +212,7 @@ HRESULT AirHike::Awake()
 	GameObject::Awake();
 
 	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,0.5f,0.5f });
-	m_pTransform.lock()->SetScale({ 0.005,0.005,0.005 });
+	m_pTransform.lock()->SetScale({ 0.0035f,0.0035f,0.0035f });
 	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.11544f,0.f });
 	m_pTransform.lock()->SetRotation(Vector3{ 90.f ,0.f ,0.0f });
 
