@@ -254,7 +254,7 @@ void SecretVision::PuzzleEnd()
 	if (auto SpCollider = _Collider.lock();
 		SpCollider)
 	{
-		SpCollider->SetActive(true);
+		SpCollider->SetActive(false);
 	}
 
 	_RenderProperty.bRender = false;

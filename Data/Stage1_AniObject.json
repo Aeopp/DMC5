@@ -1,0 +1,26 @@
+{
+    "GameObject": [
+        {
+            "Mesh": "Resource\\Map\\Object\\Flags\\Flag_03.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        0.25,
+                        0.25,
+                        0.25
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -241,6 +241,7 @@ void Hotel_S02::LateInit()
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.70365f });
+		SpPlayer->GetComponent<Transform>().lock()->SetRotation({ 0.f,180.f,0.f });
 	}
 
 	_LateInit = true;

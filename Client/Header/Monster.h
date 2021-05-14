@@ -4,6 +4,7 @@
 #include "Unit.h"
 #include "RenderInterface.h"
 #include "SkeletonMesh.h"
+#include "DissolveInfo.h"
 
 class Nero;
 class RedQueen;
@@ -83,6 +84,8 @@ protected:
 
 	// Effect
 	vector<weak_ptr<class StoneDebris>>	m_pStoneDebrisVec;
+	DissolveInfo						m_pDissolve;
+	bool								m_bDissolve = false;
 	bool m_bStoneDebrisPlayStart = false;
 };
 
