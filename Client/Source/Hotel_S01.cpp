@@ -46,10 +46,9 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
@@ -74,7 +73,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp();
+	RenderDataSetUp(true);
 	TriggerSetUp();
 
 #pragma endregion
@@ -200,15 +199,19 @@ void Hotel_S01::LoadObjects(const std::filesystem::path& path)
 	}
 }
 
-void Hotel_S01::RenderDataSetUp()
+void Hotel_S01::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+
+	if (bTest)
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	else
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S01.json");
 	
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
+	_Renderer->ao = 0.001f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -234,4 +237,7 @@ void Hotel_S01::LateInit()
 	}
 
 	_LateInit = true;
+
+	// 맵오브젝트가 로딩된 시점 (맵 오브젝트는 정적으로 움직이지 않음) (그림자맵 굽기)
+	Renderer::GetInstance()->RequestShadowMapBake();
 }

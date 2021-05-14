@@ -77,7 +77,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp();
+	RenderDataSetUp(true);
 	TriggerSetUp();
 
 #pragma endregion
@@ -204,12 +204,18 @@ void Hotel_S02::LoadObjects(const std::filesystem::path& path)
 	}
 }
 
-void Hotel_S02::RenderDataSetUp()
+void Hotel_S02::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	if (bTest)
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	}
+	else
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S02.json");
+	}
 	
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;
@@ -238,4 +244,6 @@ void Hotel_S02::LateInit()
 	}
 
 	_LateInit = true;
+
+	Renderer::GetInstance()->RequestShadowMapBake();
 }

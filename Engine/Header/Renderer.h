@@ -49,6 +49,8 @@ public:
 	const std::vector< std::shared_ptr<FLight> >& GetDirLights() { return DirLights; };
 
 	std::weak_ptr<FLight> RefRemainingDynamicLight();;
+
+	void RequestShadowMapBake();
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -185,10 +187,10 @@ private:
 	void TestShaderRelease();
 	void TestLightRotation();
 	void RenderShadowMaps();
-	void ShadowCacheBake();
+
 	void RenderGBuffer();
 	void DeferredShading();
-
+	void ShadowCacheBake();
 	//LPD3DXEFFECT			skyeffect = nullptr;
 	//LPD3DXEFFECT			metaleffect = nullptr;
 	//LPD3DXEFFECT			insulatoreffect = nullptr;
