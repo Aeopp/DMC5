@@ -277,7 +277,7 @@ void Hotel_S02::LateInit()
 		SpObject->PlayStart();
 	}
 
-	_LateInit = true;
-
 	Renderer::GetInstance()->RequestShadowMapBake();
+
+	_LateInit = true;
 }
