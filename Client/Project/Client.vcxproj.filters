@@ -504,6 +504,9 @@
     <ClInclude Include="..\Header\MakaiButterfly.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -878,10 +881,5 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

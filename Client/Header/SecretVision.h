@@ -79,7 +79,9 @@ private:
 	float HitMinusDistortionIntencity = -0.2f;
 
 	float HitAddColorIntencity = 0.2f;
-	float HitAddAlphaFactor  = 0.2f;
+	float HitAddAlphaFactor = 0.2f;
+
+	std::weak_ptr<class BtlPanel> _BtlPanel{};
+
 };
 #endif //
-

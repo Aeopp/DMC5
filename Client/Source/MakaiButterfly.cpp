@@ -4,6 +4,8 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include "SecretVision.h"
+#include "BtlPanel.h"
 
 
 void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
@@ -331,15 +333,36 @@ void MakaiButterfly::OnDisable()
 
 void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	switch (_pOther.lock()->m_nTag)
+	if (MakaiButterfly::VARIATION::STAY == _VariationIdx)
 	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-	case GAMEOBJECTTAG::Tag_Cbs_Middle:
-	case GAMEOBJECTTAG::Tag_Cbs_Short:
-	case GAMEOBJECTTAG::Tag_Cbs_Long:
-		
-		Reset();
+		switch (_pOther.lock()->m_nTag)
+		{
+		case GAMEOBJECTTAG::TAG_RedQueen:
+		case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		case GAMEOBJECTTAG::Tag_Cbs_Short:
+		case GAMEOBJECTTAG::Tag_Cbs_Long:
 
-		break;
+			uint32 idx = 0u;
+
+			if (auto SpSecretVision = std::static_pointer_cast<SecretVision>(FindGameObjectWithTag(TAG_SecretVision).lock());
+				SpSecretVision)
+			{
+				//SpSecretVision->깨지는상태에요;
+				//idx = SpSecretVision->인덱스 알려주세요;
+			}
+
+			if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+				SpPanel)
+			{
+				SpPanel->AddRankScore(10.f);
+				SpPanel->ActivateSecretVision(idx);
+			}
+
+			// + 문양 이펙트
+
+			Reset();
+
+			break;
+		}
 	}
 }

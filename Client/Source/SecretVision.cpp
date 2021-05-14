@@ -9,6 +9,7 @@
 #include "TimeSystem.h"
 #include "RedQueen.h"
 #include "ParticleSystem.h"
+#include "BtlPanel.h"
 
 SecretVision::SecretVision()
 {
@@ -164,9 +165,16 @@ void SecretVision::Interaction(const uint32 Idx)
 	_SVDescs[Idx].ColorIntencity += HitAddColorIntencity;
 	--_SVDescs[Idx].Life;
 
+	auto SpPanel = _BtlPanel.lock();
+	if (SpPanel)
+		SpPanel->AddRankScore(50.f);
+
 	if (_SVDescs[Idx].Life < 0)
 	{
 		Disappear(Idx);
+
+		if (SpPanel)
+			SpPanel->ActivateSecretVision(Idx);
 	}
 };
 
@@ -236,6 +244,13 @@ void SecretVision::PuzzleEnd()
 	bEnable = false;
 
 	PuzzleEndParticle();
+
+	if (auto SpPanel = _BtlPanel.lock();
+		SpPanel)
+	{
+		SpPanel->DissolveAllSecretVision();
+		SpPanel->ResetRankScore();
+	}
 };
 
 void SecretVision::RenderDebug(const DrawInfo& _Info)
@@ -268,8 +283,7 @@ HRESULT SecretVision::Ready()
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 
-	
-
+	_BtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 
 	return S_OK;
 };
@@ -430,8 +444,8 @@ void SecretVision::OnTriggerEnter(std::weak_ptr<GameObject> _Target)
 	if (auto SpTarget = _Target.lock();
 		SpTarget)
 	{
-		if ( HitEnableTargetSet.contains(SpTarget->m_nTag))
-		{
+		if (HitEnableTargetSet.contains(SpTarget->m_nTag))
+		{			
 			Interaction(InteractionIdx);
 			if (InteractionIdx >=3u)
 			{
