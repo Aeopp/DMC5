@@ -251,7 +251,6 @@ void Hotel_S01::RenderDataSetUp(const bool bTest)
 		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 	else
 		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S01.json");
-	
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.001f;
