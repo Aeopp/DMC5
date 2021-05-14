@@ -408,9 +408,15 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 {
 	UINT iFsmTag = m_pFSM->GetCurrentIndex();
-	if (NeroFSM::SKILL_STREAK_LOOP == iFsmTag)
+	if (NeroFSM::SKILL_STREAK_LOOP == iFsmTag
+		|| NeroFSM::SKILL_STREAK == iFsmTag)
 	{
 		m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_END);
+		return;
+	}
+	if (NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP == iFsmTag)
+	{
+		m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_END);
 		return;
 	}
 	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
@@ -924,6 +930,8 @@ void Nero::SetCbsIdle()
 	m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 	m_pCbsShort.lock()->SetWeaponState(Nero::WS_Idle);
 	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
+	m_pCbsTrail.lock()->PlayEnd();
+	m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
 }
 
 void Nero::SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster)
@@ -974,6 +982,12 @@ void Nero::CheckAutoRotate()
 		Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 		float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+		if (fDot > 1.f)
+			fDot = 1.f - FLT_EPSILON;
+		else if (fDot < -1.f)
+			fDot = -1.f + FLT_EPSILON;
+
 		float fRadian = acosf(fDot);
 		
 		Vector3	vCross;
@@ -1052,19 +1066,13 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	D3DXVec3Normalize(&vDir, &vDir);
 	D3DXVec3Normalize(&vNewDir, &vNewDir);
 
-	if (FMath::IsNan(vDir))
-	{
-		int i = 0;
-	}
-
-	if (FMath::IsNan(vNewDir))
-	{
-		int i = 0;
-	}
-
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1082,6 +1090,10 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	
 	vLook = -m_pTransform.lock()->GetLook();
 	fDot = D3DXVec3Dot(&vNewDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	fRadian = acosf(fDot);
 	float fDegree = D3DXToDegree(fRadian);
 	if (85.f <= fDegree || fDegree <= -85.f)
@@ -1118,6 +1130,10 @@ void Nero::RotateToHitMonster(std::weak_ptr<GameObject> _pMonster)
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1372,32 +1388,44 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 	switch (m_iCurWeaponIndex)
 	{
 	case Nero::NeroCom_RedQueen:
-		m_pRedQueen.lock()->SetActive(true);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		if (m_pRedQueen.lock()->IsActive())
+			return;
+		m_pRedQueen.lock()->SetActive(true);
 		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
+		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
 		break;
 	case Nero::NeroCom_Cbs_Short:
 		m_pRedQueen.lock()->SetActive(false);
-		m_pCbsShort.lock()->SetActive(true);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		if (m_pCbsShort.lock()->IsActive())
+			return;
+		m_pCbsShort.lock()->SetActive(true);
 		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
-		m_pCbsMiddle.lock()->SetActive(true);
 		m_pCbsLong.lock()->SetActive(false);
+		if (m_pCbsMiddle.lock()->IsActive())
+			return;
+		m_pCbsMiddle.lock()->SetActive(true);
 		m_pCbsMiddle.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 1);
 		break;
 	case Nero::NeroCom_Cbs_Long:
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
+		if (m_pCbsLong.lock()->IsActive())
+			return;
 		m_pCbsLong.lock()->SetActive(true);
 		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs,2);
 		break;
 	}
 }
@@ -1407,7 +1435,9 @@ void Nero::ChangeWeaponUI(NeroComponentID _iWeaponIndex)
 	if (Nero::NeroCom_RedQueen == _iWeaponIndex)
 		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
 	else
+	{
 		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
+	}
 }
 
 void Nero::ChangeWeaponCollSize(float _fSize)

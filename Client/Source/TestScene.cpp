@@ -87,11 +87,14 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject< SecretVision>();
+	AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
 	AddGameObject<BlitzAttack>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
+	//AddGameObject<MainCamera>();
+
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -156,7 +159,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 	AddGameObject<TempMap>();
 
 #pragma endregion
@@ -275,7 +278,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 14, Until Dooms Day",
+		pFont->SetText("D 13, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),

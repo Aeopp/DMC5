@@ -5,7 +5,7 @@
 #include "Subset.h"
 #include "Wire_Arm.h"
 #include "Monster.h"
-
+#include "NeroFSM.h"
 Wire_Arm_Grab::Wire_Arm_Grab()
 	:m_bIsRender(false)
 {
@@ -71,6 +71,16 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	m_pMesh->Update(_fDeltaTime);
 
 	Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	if (!m_pGrabedMonster.expired())
+	{
+		Vector3 MonsterPos = m_pGrabedMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+		Vector3 vLength = NeroPos - MonsterPos;
+		if (D3DXVec3Length(&vLength) < 0.2f)
+		{
+			m_bGrabEnd = true;
+		}
+	}
+
 	if (!m_bGrabEnd)
 	{
 		Vector3 vLength = NeroPos - m_pTransform.lock()->GetPosition();
@@ -92,14 +102,13 @@ UINT Wire_Arm_Grab::Update(const float _fDeltaTime)
 	{
 		m_bPlayOnce = false;
 		m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
-		//m_pMesh->ContinueAnimation();
 		m_vDir = { 0.f, 0.f,0.f };
-		//m_pTransform.lock()->Translate({ 0.f,-0.01f,0.f });
-		//NeroPos += m_pNero.lock()->GetComponent<Transform>().lock()->GetRight() * -0.05f;
 		m_pTransform.lock()->SetPosition(NeroPos);
 		m_pGrabedMonster.lock()->Set_Snatch(false);
-		//m_pGrabedMonster.lock()->SetGravity(true);
+		
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right, "Wire_Snatch_End", false);
+		if(UINT(NeroFSM::WIRE_SNATCH_PULL_AIR) == m_pNero.lock()->GetFsm().lock()->GetCurrentIndex())
+			m_pGrabedMonster.lock()->GetComponent<Transform>().lock()->Translate({ 0.f,0.1f,0.f });
 	}
 
 	//
@@ -120,15 +129,18 @@ void Wire_Arm_Grab::OnEnable()
 	_RenderProperty.bRender = true;
 	m_bGrabEnd = false;
 
-	//m_pMesh->PlayAnimation("Wire_Arm_End_Long", false);
-	//m_pMesh->SetPlayingTime(0.05f);
-	//m_pMesh->StopAnimation();
 	m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
 
 	Vector3 NeroPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
 	NeroPos += m_pNero.lock()->GetComponent<Transform>().lock()->GetRight() * -0.05f;
 	m_vDir = NeroPos - m_pTransform.lock()->GetPosition();
+	m_vDir.y += 0.1f;
 	D3DXVec3Normalize(&m_vDir, &m_vDir);
+
+	if (FMath::IsNan(m_vDir))
+	{
+		m_vDir = { 0.f,0.f,0.f };
+	}
 
 	Vector3 RotX = { D3DXToDegree(m_fRadianForRotX),0.f,0.f };
 
@@ -137,7 +149,6 @@ void Wire_Arm_Grab::OnEnable()
 
 	m_bPlayOnce = true;
 	m_pGrabedMonster.lock()->Set_Snatch(true);
-	//m_pGrabedMonster.lock()->SetGravity(false);
 }
 
 void Wire_Arm_Grab::OnDisable()

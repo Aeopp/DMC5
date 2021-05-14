@@ -99,7 +99,10 @@ void Em200::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	switch (m_eState)
 	{
 	case Em200::Attack_L:
@@ -1542,6 +1545,10 @@ void Em200::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
