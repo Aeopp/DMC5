@@ -20,22 +20,22 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 	case REDORB_0:
 	case GREENORB_0:
 		_SubsetIdx = 0u;
-		_BrightScale = 1.5f;
+		_BrightScale = 2.f;
 		break;
 	case REDORB_1:
 	case GREENORB_1:
 		_SubsetIdx = 1u;
-		_BrightScale = 1.5f;
+		_BrightScale = 2.f;
 		break;
 	case REDORB_2:
 	case GREENORB_2:
 		_SubsetIdx = 2u;
-		_BrightScale = 1.5f;
+		_BrightScale = 2.f;
 		break;
 	case REDORB_3:
 	case GREENORB_3:
 		_SubsetIdx = 3u;
-		_BrightScale = 1.5f;
+		_BrightScale = 2.f;
 		break;
 	}
 	
@@ -229,7 +229,7 @@ void StoneDebris::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
 		_Info.Fx->SetBool("_UsingNoise", false);
 		_Info.Fx->SetFloat("_SliceAmount", _SmokeSliceAmount);
-		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.2f);
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.1f);
 		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
@@ -294,7 +294,7 @@ HRESULT StoneDebris::Ready()
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
 
 	D3DXMatrixScaling(&_SmokeChildWorldMatrix, 0.2f, 0.2f, 0.2f);
-	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
+	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.00005f, 0.00005f, 0.00005f);
 
 	uint32 DustSingleIdx = FMath::Random<uint32>(0u, 3u);
 	_DustSingleMinTexUV = Vector2(DustSingleIdx * 0.25f, 0.f);
@@ -387,7 +387,7 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		_SmokeChildWorldMatrix._42 = _SmokeDeltaPosY;
 
 		// Single Dust
-		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
+		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.00005f, 0.00005f, 0.00005f);
 		_DustSingleChildWorldMatrix = _DustSingleChildWorldMatrix * BillMat * InvRotMat;
 	
 		_DustSingleVelocity.x = 0.01f * cosf(_AccumulateTime * 2.f);
