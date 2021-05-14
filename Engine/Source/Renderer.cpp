@@ -824,7 +824,7 @@ void Renderer::RenderBegin()&
 					CurDirLight->DepthStencil, nullptr, D3DTEXF_POINT)))
 				{
 					PRINT_LOG(TEXT("Warning"),
-						TEXT("Depth stencil copy failure."));
+						TEXT("Depth stencil copy falure."));
 				}
 			}
 			else

@@ -10,7 +10,12 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "MapAniObject.h"
+#include "Em0000.h"
+#include "Em100.h"
+#include "Em1000.h"
 
+
+#include "Trigger.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -47,9 +52,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	// AddGameObject<Camera>();
+
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -266,7 +272,231 @@ void Hotel_S01::RenderDataSetUp(const bool bTest)
 
 void Hotel_S01::TriggerSetUp()
 {
+	Trigger1st();
+	Trigger2nd();
+	Trigger3rd();
+	Trigger4st();
+};
 
+void Hotel_S01::Trigger1st()
+{
+	// 트리거 생성 !! 
+	std::shared_ptr<Trigger> _Trigger{};
+
+	if (_Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		_Trigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	}
+}
+
+void Hotel_S01::Trigger2nd()
+{
+
+	std::shared_ptr<Trigger> _Trigger{};
+
+	if (_Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -4.19094f, 0.009f, 5.34162f});
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -3.99099f, 0.009f, 6.28210f});
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -2.37271f, 0.009f, 5.71682f});
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -3.52741f, 0.009f, 6.39310f});
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -3.1017f, 0.011680f,5.662048 };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 6.f, 3.f, 1.f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		_Trigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	}
+}
+
+void  Hotel_S01::Trigger3rd()
+{
+	// 트리거 생성 !! 
+	std::shared_ptr<Trigger> _Trigger{};
+
+	if (_Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -3.06028, 0.01f, 10.42297f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -4.40446f, 0.01f, 10.4338f });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -4.430736f, 0.01f, 8.29934f });
+			
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{-5.1670f , -0.003732f , 7.915854f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 4.f,5.f,1.f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		_Trigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+
+	}
+}
+
+void Hotel_S01::Trigger4st()
+{
+	// 이건 일반 트리거 
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[/*변수 캡쳐*/]()
+		{
+			// 여기서 씬전환 !! 
+			Renderer::GetInstance()->CurDirLight = nullptr;
+			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
+		};
+		
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.171700, 0.011680f, 12.167461 };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 6.f,5.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
 }
 
 void Hotel_S01::LateInit()
@@ -275,7 +505,8 @@ void Hotel_S01::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.8f, 3.f, -5.02f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition
+		({ -4.8f, 1.f, -5.02f });
 	}
 
 	_LateInit = true;

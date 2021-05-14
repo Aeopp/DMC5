@@ -277,6 +277,16 @@ void Trigger::Editor()
 
 	if (bEdit)
 	{
+		ImGui::Text("Location : %2.6f %2.6f %2.6f", TriggerLocation.x, TriggerLocation.y, TriggerLocation.z);
+
+		static float PositionSensitivy = 0.05f;
+		ImGui::InputFloat("PositionSensitivy", &PositionSensitivy);
+		Vector3 Position{ 0,0,0 };
+		if (ImGui::SliderFloat3("Position", Position, -10.f, +10.f))
+		{
+			TriggerLocation  =(TriggerLocation + Position * PositionSensitivy);
+		}
+
 		if (ImGui::Button("Event Call"))
 		{
 			if (_Event)
@@ -311,7 +321,16 @@ void Trigger::Editor()
 			ImGui::Text(ColliderMsg);
 
 			Vector3 CurrentBoxColliderSize = _Collider->GetSize();
-			ImGui::SliderFloat3("BoxColliderSize", CurrentBoxColliderSize, 0.0f, 10.f);
+			ImGui::Text("Box Size %2.6f %2.6f %2.6f", 
+				CurrentBoxColliderSize.x, CurrentBoxColliderSize.y, CurrentBoxColliderSize.z);
+
+			static float BoxSensitivy = 0.000001f;
+			ImGui::InputFloat("BoxSensitivy", &BoxSensitivy);
+			Vector3 BoxSize{ 0,0,0 };
+			if (ImGui::SliderFloat3("BoxSize", BoxSize, -1.f, +1.f))
+			{
+				_Collider->SetSize(_Collider->GetSize()+ BoxSize);
+			}
 		}
 	}
 }
