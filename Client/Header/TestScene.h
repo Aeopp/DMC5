@@ -37,6 +37,8 @@ public:
 private:
 	void LoadMap();
 	void RenderDataSetUp();
+	void MonsterWaveTriggerSetUp();
 	void TriggerSetUp();
+	
 };
 #endif // !__TEST_SCENE_H__

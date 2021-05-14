@@ -121,61 +121,80 @@ void TitlePanel::Update_TitleLogic(const float _fDeltaTime)
 		}
 		else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 		{
-			if (2u == _CurState || 0u == _CurState)
+			if (0u < _CurState)
 			{
-				if (!_NewGameText.expired())
-				{
-					_NewGameText.lock()->SetText("NEW GAME",
-						Font::TEX_ID::DMC5_WHITE,
-						Vector2(590.f, 510.f),
-						Vector2(0.55f, 0.55f),
-						Vector3(0.25f, 0.654f, 0.654f),
-						false);
-				}
-				if (!_ExitText.expired())
-				{
-					_ExitText.lock()->SetText("EXIT",
-						Font::TEX_ID::DMC5_WHITE,
-						Vector2(620.f, 555.f),
-						Vector2(0.55f, 0.55f),
-						Vector3(0.654f, 0.654f, 0.654f),
-						false);
-				}
-
-				_SelectUVMin = Vector2(0.f, 0.007812f);
-				_SelectUVMax = Vector2(0.970703f, 0.210937f);
-				_SelectScreenMat._42 = -150.f;
-				_CurState = 1u;
+				--_CurState;
+				if (1u > _CurState)
+					_CurState = 2u;
+			}
+			else
+			{
+				_CurState = 2u;
 			}
 		}
 		else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 		{
-			if (1u == _CurState || 0u == _CurState)
+			if (0u < _CurState)
 			{
-				if (!_NewGameText.expired())
-				{
-					_NewGameText.lock()->SetText("NEW GAME",
-						Font::TEX_ID::DMC5_WHITE,
-						Vector2(590.f, 510.f),
-						Vector2(0.55f, 0.55f),
-						Vector3(0.654f, 0.654f, 0.654f),
-						false);
-				}
-				if (!_ExitText.expired())
-				{
-					_ExitText.lock()->SetText("EXIT",
-						Font::TEX_ID::DMC5_WHITE,
-						Vector2(620.f, 555.f),
-						Vector2(0.55f, 0.55f),
-						Vector3(0.25f, 0.654f, 0.654f),
-						false);
-				}
-
-				_SelectUVMin = Vector2(0.f, 0.472656f);
-				_SelectUVMax = Vector2(0.970703f, 0.667968f);
-				_SelectScreenMat._42 = -195.f;
-				_CurState = 2u;
+				++_CurState;
+				if (2u < _CurState)
+					_CurState = 1u;
 			}
+			else
+			{
+				_CurState = 1u;
+			}
+		}
+
+		if (1u == _CurState)
+		{
+			if (!_NewGameText.expired())
+			{
+				_NewGameText.lock()->SetText("NEW GAME",
+					Font::TEX_ID::DMC5_WHITE,
+					Vector2(590.f, 510.f),
+					Vector2(0.55f, 0.55f),
+					Vector3(0.25f, 0.654f, 0.654f),
+					false);
+			}
+			if (!_ExitText.expired())
+			{
+				_ExitText.lock()->SetText("EXIT",
+					Font::TEX_ID::DMC5_WHITE,
+					Vector2(620.f, 555.f),
+					Vector2(0.55f, 0.55f),
+					Vector3(0.654f, 0.654f, 0.654f),
+					false);
+			}
+
+			_SelectUVMin = Vector2(0.f, 0.007812f);
+			_SelectUVMax = Vector2(0.970703f, 0.210937f);
+			_SelectScreenMat._42 = -150.f;
+		}
+		else if (2u == _CurState)
+		{
+			if (!_NewGameText.expired())
+			{
+				_NewGameText.lock()->SetText("NEW GAME",
+					Font::TEX_ID::DMC5_WHITE,
+					Vector2(590.f, 510.f),
+					Vector2(0.55f, 0.55f),
+					Vector3(0.654f, 0.654f, 0.654f),
+					false);
+			}
+			if (!_ExitText.expired())
+			{
+				_ExitText.lock()->SetText("EXIT",
+					Font::TEX_ID::DMC5_WHITE,
+					Vector2(620.f, 555.f),
+					Vector2(0.55f, 0.55f),
+					Vector3(0.25f, 0.654f, 0.654f),
+					false);
+			}
+
+			_SelectUVMin = Vector2(0.f, 0.472656f);
+			_SelectUVMax = Vector2(0.970703f, 0.667968f);
+			_SelectScreenMat._42 = -195.f;
 		}
 	}
 	else

@@ -499,6 +499,11 @@
     <ClInclude Include="..\Header\PreLoader.h">
       <Filter>98.PreLoader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\SecretVision.h" />
+    <ClInclude Include="..\Header\NhDoor.h" />
+    <ClInclude Include="..\Header\MakaiButterfly.h">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -797,6 +802,11 @@
     <ClCompile Include="..\Source\PreLoader.cpp">
       <Filter>98.PreLoader</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\SecretVision.cpp" />
+    <ClCompile Include="..\Source\NhDoor.cpp" />
+    <ClCompile Include="..\Source\MakaiButterfly.cpp">
+      <Filter>02.GameObject\Effect\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -861,8 +871,17 @@
     </None>
     <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\SecretVision.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
+    <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

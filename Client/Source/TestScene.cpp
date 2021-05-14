@@ -4,6 +4,7 @@
 #include "TestObject.h"
 #include "ShaderTester.h"
 #include "TempMap.h"
+#include "PreLoader.h"
 #include "TestAnimationObject.h"
 #include "Camera.h"
 #include "Nero.h"
@@ -35,15 +36,24 @@
 #include "FireCircle.h"
 #include "IceAge.h"
 #include "JudgementSword.h"
-#include "ParticleSystem.h"
-#include "ParticleInstanceDesc.hpp"
 #include "CbsTrail.h"
 #include "ElectricOccur.h"
+#include "Thunderbolt.h"
+#include "ElectricVortex.h"
+#include "ThunderboltSecond.h"
+#include "ElectricBranch.h"
+#include "AirHike.h"
+#include "CbsMidTrail.h"
+#include "BlitzAttack.h"
+#include "Trigger.h"
+#include "SecretVision.h"
+#include "MakaiButterfly.h"
+#include "Smoke.h"
 
 #include <iostream>
 #include <fstream>
 using namespace std;
-static std::weak_ptr<MainCamera> _pMainCamera;
+
 TestScene::TestScene()
 {
 	pPlane = nullptr;
@@ -58,7 +68,7 @@ TestScene* TestScene::Create()
 {
 	TestScene* pInstance = new TestScene;
 	return pInstance;
-}
+};
 
 
 HRESULT TestScene::LoadScene()
@@ -66,13 +76,20 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
+#pragma region PreLoad
+
+	PreLoader::PreLoadResources();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.1f;
+
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	_pMainCamera = AddGameObject<MainCamera>();
+	AddGameObject<Camera>();
+	//AddGameObject<MainCamera>();
 
-	_Player = AddGameObject<Nero>();
-	//AddGameObject<JudgementSword>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -115,7 +132,7 @@ HRESULT TestScene::LoadScene()
 	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -2.85553,0.02f,2.24367f });
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
 
-	//AddGameObject<Em100>();
+	//	_Em100 = AddGameObject<Em100>();
 	//	_Em100.lock()->SetActive(false);
 	//	_Em100.lock()->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.74279f ,0.02f,5.37266f });
 	//	Wavesecond.push_back(static_pointer_cast<GameObject>(_Em100.lock()));
@@ -135,21 +152,25 @@ HRESULT TestScene::LoadScene()
 
 	m_fLoadingProgress = 0.4f;
 
-#pragma region Map & RenderData
+#pragma region Map
 
 	//LoadMap();
 	AddGameObject<TempMap>();
-	
-	RenderDataSetUp();
 
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
 
-#pragma region UI & Effect
+#pragma region RenderData & Trigger
 
-	AddGameObject<BtlPanel>();
+	RenderDataSetUp();
+	//TriggerSetUp();
 
+#pragma endregion
+
+	m_fLoadingProgress = 0.7f;
+
+#pragma region Effect
 
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
@@ -157,7 +178,9 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<IceAge>();
 	//AddGameObject<CbsTrail>();
 	//AddGameObject<ElectricOccur>();
-
+	//AddGameObject<BlitzAttack>();
+	//AddGameObject<CbsMidTrail>();
+	//AddGameObject<SecretVision>();
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -231,15 +254,18 @@ HRESULT TestScene::LoadScene()
 	//	ptr.lock()->SetActive(false);
 	//	m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	//}
-	m_vecQliphothBlock.emplace_back(AddGameObject<QliphothBlock>().lock());
-	m_vecQliphothBlock[0].lock()->SetScale(0.025f);
-	m_vecQliphothBlock[0].lock()->SetRotation(Vector3(0.f, 339.429f, 0.f));
-	m_vecQliphothBlock[0].lock()->SetPosition(Vector3(-0.857f, 1.143f, 0.f));
-	static_pointer_cast<QliphothBlock>(m_vecQliphothBlock[0].lock())->SetCamTrigger(true);
-	m_vecQliphothBlock[0].lock()->SetActive(false);
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;
+
+#pragma region UI
+
+	AddGameObject<BtlPanel>();
+
+#pragma endregion
+
+	m_fLoadingProgress = 0.9f;
 
 #pragma region Misc
 
@@ -247,7 +273,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 17, Until Dooms Day",
+		pFont->SetText("D 13, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
@@ -287,17 +313,6 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-	if(Input::GetKeyDown(DIK_3))
-		m_vecQliphothBlock[0].lock()->SetActive(false);
-	if (Input::GetKeyDown(DIK_4))
-	{
-		m_vecQliphothBlock[0].lock()->SetActive(true);
-	}
-	if (Input::GetKeyDown(DIK_5))
-	{
-		_pMainCamera.lock()->SetDistance(1.f);
-		_pMainCamera.lock()->Set_At_Transform(_Player.lock()->GetComponent<Transform>(), MainCamera::AT_PLAYER);
-	}
 	//cout << "SceneUpdate" << endl;
 
 
@@ -408,12 +423,12 @@ HRESULT TestScene::LateUpdate(const float _fDeltaTime)
 {
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
-}
+};
 
 void TestScene::LoadMap()
 {
-	std::ifstream inputStream{ "../../Data/Test.json" };
-	//std::ifstream inputStream{ "../../Data/Mission02.json" };
+	// std::ifstream inputStream{ "../../Data/Hotel.json" };
+	std::ifstream inputStream{ "..\\..\\Data\\Stage1_Map.json" };
 
 	if (false == inputStream.is_open())
 		return;
@@ -458,7 +473,7 @@ void TestScene::LoadMap()
 			vRotation.x = rotation[0].GetDouble();
 			vRotation.y = rotation[1].GetDouble();
 			vRotation.z = rotation[2].GetDouble();
-			
+
 			D3DXVECTOR3 vPosition;
 			auto position = iterObject->FindMember("Position")->value.GetArray();
 			vPosition.x = position[0].GetDouble();
@@ -468,15 +483,15 @@ void TestScene::LoadMap()
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
-}
+};
 
 void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	
+	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;
@@ -488,3 +503,96 @@ void TestScene::RenderDataSetUp()
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
 }
+
+void TestScene::TriggerSetUp()
+{
+	// 이건 일반 트리거 
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[/*변수 캡쳐 (되도록 포인터로 ) */]()
+		{
+			// 로직 .. 
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 1.f,1.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+
+}
+
+void TestScene::MonsterWaveTriggerSetUp()
+{
+	// 트리거 생성 !! 
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+		};
+
+		_Trigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	}
+};
+

@@ -67,6 +67,7 @@ enum GAMEOBJECTTAG
 	Eff_CircleWave,
 	Eff_SpriteEffect,
 	Eff_DashTrail,
+	Eff_MakaiButterFly,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,
@@ -75,6 +76,7 @@ enum GAMEOBJECTTAG
 	TAG_WireArm,
 	TAG_WireArm_Grab,
 	Overture,
+	TAG_SecretVision,
 	Tag_Cbs_Short,
 	Tag_Cbs_Middle,
 	Tag_Cbs_Long,
@@ -83,6 +85,7 @@ enum GAMEOBJECTTAG
 	TAG_JudgementShadow2,
 	TAG_JudgementShadow3,
 	TAG_Trigger,
+	TAG_NhDoor,
 	Tag_END
 };
 

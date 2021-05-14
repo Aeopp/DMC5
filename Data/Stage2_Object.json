@@ -60,29 +60,7 @@
                     ]
                 }
             ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Documents\\Nhdoor\\sm0382_nhbdoor.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        20.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3328.0,
-                        1366.0,
-                        18028.0
-                    ]
-                }
-            ]
-        },
+        }
         {
             "Mesh": "Resource\\Map\\Location2\\buildingnew7_3\\buildingnew7_3.fbx",
             "List": []
@@ -112,62 +90,6 @@
         {
             "Mesh": "Resource\\Map\\Location2\\buildingnew9\\buildingnew9.fbx",
             "List": []
-        },
-        {
-            "Mesh": "Resource\\Mesh\\Static\\Plane.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        3.5,
-                        5.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3308.0,
-                        1615.0,
-                        17744.0
-                    ]
-                },
-                {
-                    "Scale": [
-                        3.5,
-                        5.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3308.0,
-                        1615.0,
-                        17744.0
-                    ]
-                },
-                {
-                    "Scale": [
-                        3.5,
-                        5.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3308.0,
-                        1615.0,
-                        17744.0
-                    ]
-                }
-            ]
         },
         {
             "Mesh": "Resource\\Map\\Location2\\Hotelgate2\\Hotelgate2.fbx",

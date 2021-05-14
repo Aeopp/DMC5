@@ -33,7 +33,7 @@ public:
 	void RenderEmissive(const DrawInfo& _Info);
 
 	float EmissivePower = 0.05f;
-	bool bEmissive = false;
+	bool  bEmissive = false;
 public:
 	void SetUp(const TSTRING _sMesh, const D3DXVECTOR3& _vScale, const D3DXVECTOR3& _vRotation, const D3DXVECTOR3 _vPosition);
 };

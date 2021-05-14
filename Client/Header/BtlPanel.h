@@ -6,7 +6,7 @@
 #include "Nero.h"
 
 class BtlPanel : public ENGINE::GameObject,
-				 public ENGINE::RenderInterface				
+	public ENGINE::RenderInterface
 {
 private:
 	enum UI_DESC_ID
@@ -26,6 +26,7 @@ private:
 		RANK,
 		RANK_LETTER,
 		STYLISH_POINTS,
+		SECRET_VISIONS,
 		DESC_END
 	};
 	struct UI_DESC
@@ -104,6 +105,10 @@ private:
 	std::shared_ptr<ENGINE::Texture> _RankBAAlbTex{};
 	std::shared_ptr<ENGINE::Texture> _RankSAlbTex{};
 
+	std::shared_ptr<ENGINE::Texture> _SecretVision0Tex{};
+	std::shared_ptr<ENGINE::Texture> _SecretVision1Tex{};
+	std::shared_ptr<ENGINE::Texture> _SecretVision2Tex{};
+
 	float _DeltaTime = 0.f;
 	float _TotalAccumulateTime = 0.f;
 
@@ -113,7 +118,7 @@ private:
 	Vector2 _TargetHP_Normal0 = Vector2(0.f, 0.f);
 	Vector2 _TargetHP_Normal1 = Vector2(0.f, 0.f);
 	float _TargetCursorAlpha = 0.f;
-	
+
 	/* 0 ~ 1 */
 	float _PlayerHPRatio = 1.f;
 	float _PlayerHPRatioDelay = 1.f;
@@ -182,7 +187,7 @@ private:
 	float _ExGauge_FireAccumulateTime = 999.f;
 	float _ExGauge_FullFireAccumulateTime = 0.f;
 	float _ExGauge_DissolveAmount = 0.f;
-	
+
 	enum KEY_INPUT_ID
 	{
 		Q = 0, W, E, R, A, S, D, F, Z, X, C, V,
@@ -199,7 +204,7 @@ private:
 	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
 	Vector3 _LightDir_ExGauge = Vector3(-1.f, 1.f, -1.f);
 	Vector3 _LightDir_Stylish = Vector3(0.f, -1.f, 1.f);
-	
+
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
@@ -216,6 +221,11 @@ private:
 	std::vector<std::weak_ptr<Font>> _FontVec;
 
 	uint32 _RedOrbCount = 0u;
+
+	int _SecretVisionState[3] = { 0, 0, 0 };
+	//int _SecretVisionPreState[3] = { 0, 0, 0 };
+	float _SecretVisionBrightScale[3] = { 0.01f, 0.01f, 0.01f };
+	float _SecretVisionDissolveAmount[3] = { 1.f, 1.f, 1.f };
 
 private:
 	explicit BtlPanel() = default;
@@ -277,6 +287,9 @@ public:
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
 	void AccumulateRedOrb(const uint32 Amount);
+
+	void ActivateSecretVision(const int Number);
+	void DissolveAllSecretVision();
 
 };
 #endif // !__UI_BTL_PANEL__

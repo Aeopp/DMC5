@@ -33,5 +33,7 @@ private:
 	static void AirHikeParticleEndPoolLoad();
 	static void AirHikeParticlePoolLoad();
 
+	static void SecretVisionDisappearParticlePoolLoad();
+	static void DissolveNhDoorParticlePoolLoad();
 };
 #endif // !__PRELOADER_H__

@@ -7,7 +7,8 @@ TimeSystem::TimeSystem()
 	: m_fDeltaTime(0.f) ,  
 	m_fAccDeltaTime (0.f) , 
 	m_uiFrameRate(0u),
-	m_uiUpdateCount(0u)
+	m_uiUpdateCount(0u) ,
+	m_fAccTime(0.0f) 
 {
 	ZeroMemory(&m_tCPUTick, sizeof(LARGE_INTEGER));
 	ZeroMemory(&m_tStartFrame, sizeof(LARGE_INTEGER));
@@ -41,6 +42,7 @@ void TimeSystem::Editor()
 {
 	ImGui::Begin("Time");
 	ImGui::Checkbox("FrameLimit", &g_bFrameLimit);
+	ImGui::Checkbox("FixedDeltaTime", &g_bFixedDeltaTime);
 	ImGui::Text("Frame Rate : %d ", m_uiFrameRate);
 	ImGui::Text("Delta Time : %2.6f ", m_fDeltaTime);
 	ImGui::Text("Accumulate Time : %8.6f ", m_fAccTime);

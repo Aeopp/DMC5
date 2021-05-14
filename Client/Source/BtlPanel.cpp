@@ -248,6 +248,56 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		}
 
 		//
+		CurID = SECRET_VISIONS;
+		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		{
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+
+			if (0 != _SecretVisionState[0])
+			{
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SecretVision0Tex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _SecretVisionDissolveAmount[0]);
+				_ImplInfo.Fx->SetFloat("_BrightScale", _SecretVisionBrightScale[0]);
+
+				Create_ScreenMat(CurID, ScreenMat, 0);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+				_ImplInfo.Fx->BeginPass(16);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+			}
+
+			if (0 != _SecretVisionState[1])
+			{
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SecretVision1Tex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _SecretVisionDissolveAmount[1]);
+				_ImplInfo.Fx->SetFloat("_BrightScale", _SecretVisionBrightScale[1]);
+
+				Create_ScreenMat(CurID, ScreenMat, 1);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+				_ImplInfo.Fx->BeginPass(16);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+			}
+
+			if (0 != _SecretVisionState[2])
+			{
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SecretVision2Tex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _SecretVisionDissolveAmount[2]);
+				_ImplInfo.Fx->SetFloat("_BrightScale", _SecretVisionBrightScale[2]);
+
+				Create_ScreenMat(CurID, ScreenMat, 2);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+				_ImplInfo.Fx->BeginPass(16);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+			}
+		}
+
+		//
 		CurID = TARGET_CURSOR;
 		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
@@ -732,6 +782,10 @@ HRESULT BtlPanel::Ready()
 	_RankBAAlbTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\RankBA.png");
 	_RankSAlbTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\RankS.png");
 
+	_SecretVision0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\3.tga");
+	_SecretVision1Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\7.tga");
+	_SecretVision2Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\9.tga");
+
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
 	
@@ -999,6 +1053,30 @@ void BtlPanel::AccumulateRedOrb(const uint32 Amount)
 		_RedOrbCount = 99999999u;
 }
 
+void BtlPanel::ActivateSecretVision(const int Number)
+{
+	if (0 > Number || 2 < Number)
+		return;
+
+	const int State = _SecretVisionState[Number];
+	if (2 > State)
+		_SecretVisionState[Number] = State + 1;
+
+	_UIDescs[SECRET_VISIONS].Using = true;
+}
+
+void BtlPanel::DissolveAllSecretVision()
+{
+	if (!_UIDescs[SECRET_VISIONS].Using)
+		return;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		_SecretVisionDissolveAmount[i] = 0.f;
+		_SecretVisionState[i] = 3;
+	}
+}
+
 void BtlPanel::Init_UIDescs()
 {
 	if (!_UIDescs)
@@ -1015,11 +1093,12 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[STYLISH_LETTER] = { true, Vector3(-6.88f, 3.72f, 15.f), Vector3(0.24f, 0.24f, 0.1f) };
 	_UIDescs[HP_GAUGE] = { true, Vector3(218.f, 50.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
 	_UIDescs[TDT_GAUGE] = { true, Vector3(315.f, 75.f, 0.5f), Vector3(3.5f, 3.5f, 1.f) };
-	_UIDescs[KEYBOARD] = { true, Vector3(270.f, 570.f, 0.02f), Vector3(5.f, 1.5f, 1.f) };
+	_UIDescs[KEYBOARD] = { false, Vector3(270.f, 570.f, 0.02f), Vector3(5.f, 1.5f, 1.f) };
 	_UIDescs[RANK_BACK] = { false, Vector3(1120.f, 270.f, 0.8f), Vector3(_RankBackMaxScale, _RankBackMaxScale, 1.f) };
 	_UIDescs[RANK] = { false, Vector3(6.5f, 1.3f, 15.f), Vector3(0.08f, 0.08f, 0.08f) };
 	_UIDescs[RANK_LETTER] = { false, Vector3(1120.f, 330.f, 0.8f), Vector3(1.5f, 1.5f, 1.f) };
 	_UIDescs[STYLISH_POINTS] = { false, Vector3(1060.f, 390.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
+	_UIDescs[SECRET_VISIONS] = { false, Vector3(640.f, 60.f, 0.5f), Vector3(0.7f, 0.7f, 1.f) };
 }
 
 void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -1597,6 +1676,36 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		}
 		break;
 
+	case SECRET_VISIONS:
+		if (0 == _Opt)
+		{
+			_Out._11 = _UIDescs[_ID].Scale.x;
+			_Out._22 = _UIDescs[_ID].Scale.y;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x - 75.f) - (g_nWndCX >> 1);
+			_Out._42 = -((_UIDescs[_ID].Pos.y) - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+		}
+		else if (1 == _Opt)
+		{
+			_Out._11 = _UIDescs[_ID].Scale.x;
+			_Out._22 = _UIDescs[_ID].Scale.y;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = _UIDescs[_ID].Pos.x - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+		}
+		else if (2 == _Opt)
+		{
+			_Out._11 = _UIDescs[_ID].Scale.x;
+			_Out._22 = _UIDescs[_ID].Scale.y;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 75.f) - (g_nWndCX >> 1);
+			_Out._42 = -((_UIDescs[_ID].Pos.y) - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+		}
+		break;
+
 	default: DEFAULT:
 		_Out._11 = _UIDescs[_ID].Scale.x;
 		_Out._22 = _UIDescs[_ID].Scale.y;
@@ -2060,6 +2169,56 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 			_HPGlassRotY = 0.f;
 	}
 
+	// SecretVision
+	if (_UIDescs[SECRET_VISIONS].Using)
+	{
+		float EndCondition = 0.f;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			//if (_SecretVisionPreState[i] != _SecretVisionState[i])
+			{
+				switch (_SecretVisionState[i])
+				{
+				case 1:	// µðÁ¹ºê·Î »ý±è
+					if (0.f < _SecretVisionDissolveAmount[i])
+					{
+						_SecretVisionDissolveAmount[i] -= 1.5f * _fDeltaTime;
+						if (0.f > _SecretVisionDissolveAmount[i])
+							_SecretVisionDissolveAmount[i] = 0.f;
+					}
+					break;
+				case 2:	// ¹à±â ÃÖ´ë
+					_SecretVisionBrightScale[i] = 0.5f;
+					break;
+				case 3: // µðÁ¹ºê·Î »ç¶óÁü
+					EndCondition = 1.f;
+					if (1.f > _SecretVisionDissolveAmount[i])
+					{
+						_SecretVisionDissolveAmount[i] += 1.5f * _fDeltaTime;
+						if (1.f < _SecretVisionDissolveAmount[i])
+						{
+							_SecretVisionState[i] = 0;
+							//_SecretVisionPreState[i] = 0;
+							_SecretVisionBrightScale[i] = 0.01f;
+							_SecretVisionDissolveAmount[i] = 1.f;
+						}
+					}
+
+					if (EndCondition > _SecretVisionDissolveAmount[i])
+						EndCondition = _SecretVisionDissolveAmount[i];
+
+					break;
+				}
+
+				//_SecretVisionPreState[i] = _SecretVisionState[i];
+			}
+		}
+
+		if (EndCondition >= 1.f)
+			_UIDescs[SECRET_VISIONS].Using = false;
+	}
+
 	//POINT pt{};
 	//GetCursorPos(&pt);
 	//ScreenToClient(g_hWnd, &pt);_HPGlassRotY
@@ -2119,12 +2278,16 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		AccumulateTDTGauge(0.5f);
+		//AccumulateTDTGauge(0.5f);
 		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
 		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
 		//bActive = !bActive;
 		//SetBossGaugeActive(bActive);
+
+		ActivateSecretVision(0);
+		ActivateSecretVision(1);
+		ActivateSecretVision(2);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
@@ -2140,6 +2303,8 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//if (0.f > Ratio)
 		//	Ratio = 1.f;
 		//SetBossGaugeHPRatio(Ratio);
+
+		DissolveAllSecretVision();
 	}
 	////////////////////////////
 
