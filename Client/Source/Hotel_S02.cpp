@@ -145,6 +145,7 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
+		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
 	////////////////////////////////////

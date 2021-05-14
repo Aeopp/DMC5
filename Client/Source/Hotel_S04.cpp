@@ -127,8 +127,8 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		
 		// TestScene으로 넘어감
+		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
 	}
 	////////////////////////////////////
@@ -236,7 +236,7 @@ void Hotel_S04::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
 
-	_LateInit = true;
-
 	Renderer::GetInstance()->RequestShadowMapBake();
+
+	_LateInit = true;
 }
