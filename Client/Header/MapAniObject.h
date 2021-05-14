@@ -40,5 +40,6 @@ private:
 	shared_ptr<SkeletonMesh>	m_pMesh;
 	float EmissivePower = 0.05f;
 	bool  bEmissive = false;
+	bool  m_bFlag6 = false;
 };
 #endif // !__MAP_ANI_OBJECT_H__
