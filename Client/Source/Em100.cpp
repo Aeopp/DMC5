@@ -37,11 +37,11 @@ void Em100::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	//if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
-	//{
-	//	m_eState = Dead;
-	//	m_bIng = true;
-	//}
+	if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
+	{
+		m_eState = Dead;
+		m_bIng = true;
+	}
 
 
 
@@ -891,7 +891,8 @@ HRESULT Em100::Start()
 UINT Em100::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
-
+	
+	
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -954,14 +955,20 @@ UINT Em100::Update(const float _fDeltaTime)
 	}
 
 
-
-
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
 	{
-		for (int i = 0; i < 2; ++i)
-			Destroy(m_pHand[i]);
-		Destroy(m_pGameObject);
+		if (m_bDissolve == false)
+		{
+			m_pDissolve.DissolveStart();
+			m_bDissolve = true;	
+		}
+		if (m_pDissolve.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World))
+		{
+			for (int i = 0; i < 2; ++i)
+				Destroy(m_pHand[i]);
+			Destroy(m_pGameObject);
+		}
 	}
 
 	return 0;
@@ -978,16 +985,7 @@ void Em100::Editor()
 	Unit::Editor();
 	if (bEdit)
 	{
-		ImGui::Text("Deg %3.4f", m_fRadian);
-		ImGui::Text("Acc Deg %3.4f", m_fAccuangle);
-
-		ImGui::InputFloat("Power", &m_fPower);
-
-		ImGui::InputFloat("vPowerX", &m_vPower.x);
-		ImGui::InputFloat("vPowerY", &m_vPower.y);
-		ImGui::InputFloat("vPowerZ", &m_vPower.z);
-
-
+		m_pDissolve.DissolveEditor();
 	}
 }
 
@@ -1436,6 +1434,7 @@ void Em100::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		m_pDissolve.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -1511,9 +1510,10 @@ void Em100::RenderInit()
 	SetRenderEnable(true);
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = true;
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -1556,7 +1556,10 @@ void Em100::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
-
+	m_pDissolve.Initialize("..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.fbx", 
+		Vector3{
+			1.f,0.f,0.f
+		});
 	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 

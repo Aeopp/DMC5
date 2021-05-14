@@ -46,7 +46,7 @@ void DissolveInfo::DissolveVariableBind(ID3DXEffect* const Fx)
 	}
 }
 
-void DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMatrix)
+bool DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMatrix)
 {
 	if (bDissolve)
 	{
@@ -65,8 +65,11 @@ void DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMa
 		if (SliceAmount > 1.f)
 		{
 			DissolveEnd();
+			return true;
 		}
 	}
+
+	return false;
 }
 
 void DissolveInfo::DissolveEditor()
