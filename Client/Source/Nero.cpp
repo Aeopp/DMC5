@@ -569,6 +569,18 @@ void Nero::RenderGBufferSK(const DrawInfo& _Info)
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
 			SpSubset->Render(_Info.Fx);
 		};
+
+		/*if (auto SpSubset = m_pMesh[m_iMeshIndex]->GetSubset(i).lock();
+			SpSubset)
+		{
+			if (auto exSpSubset = m_pMesh[m_iMeshIndex_ex]->GetSubset(i).lock();
+				exSpSubset)
+			{
+				exSpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
+				exSpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
+			};
+			SpSubset->Render(_Info.Fx);
+		};*/
 	};
 }
 
@@ -1392,6 +1404,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pCbsTrail.lock()->PlayEnd();
 		if (m_pRedQueen.lock()->IsActive())
 			return;
 		m_pRedQueen.lock()->SetActive(true);
@@ -1402,6 +1415,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsShort.lock()->IsActive())
 			return;
 		m_pCbsShort.lock()->SetActive(true);
@@ -1412,6 +1426,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsMiddle.lock()->IsActive())
 			return;
 		m_pCbsMiddle.lock()->SetActive(true);
@@ -1422,6 +1437,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsLong.lock()->IsActive())
 			return;
 		m_pCbsLong.lock()->SetActive(true);

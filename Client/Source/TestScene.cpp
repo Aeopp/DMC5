@@ -54,6 +54,7 @@
 #include "BrokenPeople.h"
 #include "BrokenTable.h"
 #include "BrokenBookShelf.h"
+#include "TimeSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -321,8 +322,14 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-	if(Input::GetKeyDown(DIK_C))
-		AddGameObject<BrokenBookShelf>();
+	if (Input::GetKeyDown(DIK_C))
+	{
+		std::vector<Vector2> LostTimes;
+		LostTimes.emplace_back(Vector2{ 0.2f,0.3f });
+		LostTimes.emplace_back(Vector2{ 0.1f,0.f });
+		TimeSystem::GetInstance()->LostTime(LostTimes);
+	}
+
 	//cout << "SceneUpdate" << endl;
 
 

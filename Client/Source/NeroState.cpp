@@ -1339,7 +1339,10 @@ void NeroState::SetCbsIdle()
 void NeroState::IsGround()
 {
 	if (m_pNero.lock()->CheckIsGround())
+	{
+		m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 		m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
+	}
 }
 
 void NeroState::ActiveTrail(bool _ActvieOrNot)
@@ -4835,6 +4838,7 @@ HRESULT BT_Att1::StateEnter()
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboA1", false);
 	}
 	m_pNero.lock()->CheckAutoRotate();
+
 	NeroState::ActiveTrail(true);
 	return S_OK;
 }
@@ -8205,6 +8209,7 @@ HRESULT Cbs_SKill_Revolver_End::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_Stinger_End, false);
 	}
+	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	return S_OK;
 }
 
