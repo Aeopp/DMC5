@@ -1,11 +1,11 @@
 uniform float Time;
 uniform float Noisewrap;
 uniform float Timecorr;
-uniform vector DistortionColor;
-uniform float DistortionIntencity;
-uniform float Intencity = 1.f;
+uniform float3 DistortionColor;
+uniform float  DistortionIntencity;
+uniform float  Intencity = 1.f;
 uniform float2 PixelSize;
-
+uniform float NoiseIntencity;
 uniform float exposure_corr;
 
 texture AlbmMap;
@@ -45,15 +45,16 @@ void PsMain(
     out float4 color1 : COLOR1)
 {
     color = tex2D(Albm, tex);
-    color.rgb *= Intencity;
+   //  color.rgb *= Intencity;
+    
     
     float2 noiseuv = (tex * Noisewrap) + (Time * Timecorr);
     float4 NoiseSample = tex2D(Noise, noiseuv);
     
     color1 = NoiseSample;
-    
-    color.rgba *= DistortionColor;
- 
+    // color1.xy *= NoiseIntencity;
+    color.rgb *= DistortionColor;
+    color.rgb *= exposure_corr;
 };
 
 technique Default

@@ -9,13 +9,20 @@ class FadeOut : public ENGINE::GameObject,
 {
 private:
 	std::shared_ptr<ENGINE::Texture> NoiseMap{};
-	std::shared_ptr<ENGINE::Texture> AlbmMap{};
+	std::array<std::shared_ptr<ENGINE::Texture>,8u>AlbmMap{};
 	float T = 0.0f;
 	float Intencity{ 1.f };
-	float Noisewrap{ 8.173007f };
-	float Timecorr{ 0.304011f };
-	Vector4 DistortionColor{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
+	float Noisewrap{ 1.f };
+	float Timecorr{ 1.f };
+	std::array<Vector3, 2u> DistortionColor
+	{
+		Vector3{ 0.f,0.f,0.f },
+		Vector3{ 1.f,1.f,1.f }
+	};
 	float DistortionIntencity{ 1.f };
+	float NoiseIntencity{ 1.f };
+	float Acceleration = 0.2f;
+	float EndTime = 1.f;
 private:
 	explicit FadeOut() = default;
 	virtual ~FadeOut() = default;
@@ -37,9 +44,11 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart();
+	void PlayStart(const uint32 AlbIdx);
 	void PlayEnd();
 public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+private:
+	int32 AlbIdx = 0u;
 };
 #endif //
