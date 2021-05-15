@@ -46,9 +46,16 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	if (auto SpCamera = AddGameObject<Camera>().lock();
+			SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(
+			Vector3{ -1.77158f, 1.36541f, 23.73719 }
+		);
+	}
+
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
@@ -74,7 +81,7 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -90,7 +97,7 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+//	AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -235,8 +242,12 @@ void Hotel_S03::TriggerSetUp()
 void Hotel_S03::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
-	_Player.lock()->GetComponent<Transform>().lock()->SetPosition
+	if (_Player.expired() == false)
+	{
+		_Player.lock()->GetComponent<Transform>().lock()->SetPosition
 		({ -1.77158f, 1.36541f, 23.73719 });
+	}
+	
 	_LateInit = true;
 	Renderer::GetInstance()->LateSceneInit();
 }
