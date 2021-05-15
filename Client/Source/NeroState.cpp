@@ -2017,7 +2017,6 @@ RunStartLeft* RunStartLeft::Create(FSMBase* const _pFSM, const UINT _nIndex, wea
 
 HRESULT RunStartLeft::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2308,7 +2307,6 @@ RunStartRight* RunStartRight::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT RunStartRight::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2600,7 +2598,6 @@ RunStart180* RunStart180::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT RunStart180::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2890,7 +2887,6 @@ RunLoop* RunLoop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero
 
 HRESULT RunLoop::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 
@@ -2981,7 +2977,6 @@ RunStartFront* RunStartFront::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT RunStartFront::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	//앞으로 달리는 애니메이션으로 세팅
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();

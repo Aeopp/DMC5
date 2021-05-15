@@ -43,6 +43,8 @@ protected:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 
 	Matrix*					m_pParentMat = nullptr;
+	Matrix* m_pMyBoneMat = nullptr;
+	Matrix	m_MyRenderMat;
 };
 
 

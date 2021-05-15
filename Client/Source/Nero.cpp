@@ -414,7 +414,8 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_END);
 		return;
 	}
-	if (NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP == iFsmTag)
+	if (NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP == iFsmTag
+		|| NeroFSM::SKILL_AIR_DIVE_SLASH_START == iFsmTag)
 	{
 		m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_END);
 		return;

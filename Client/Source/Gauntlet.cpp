@@ -24,7 +24,7 @@ HRESULT Gauntlet::Awake()
     //부모 뼈 설정 해주고
 		//R_Forearm
 	m_pParentMat = m_pNero.lock()->Get_BoneMatrixPtr("R_Forearm");
-
+	m_pMyBoneMat = m_pMesh->GetToRootMatrixPtr("R_MiddleF2_sp");
     return S_OK;
 }
 
@@ -55,7 +55,13 @@ UINT Gauntlet::LateUpdate(const float _fDeltaTime)
 	if (nullptr != m_pParentMat)
 	{
 		FinalWorld = Scale * *m_pParentMat * ParentWorldMatrix;
-		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
+		m_MyRenderMat = FinalWorld;
+		Vector3 vPlayerLook;
+		memcpy(&vPlayerLook, ParentWorldMatrix.m[2], sizeof(Vector3));
+		FinalWorld._41 += vPlayerLook.x * -250.f;
+		FinalWorld._42 += vPlayerLook.y * -250.f;
+		FinalWorld._43 += vPlayerLook.z * -250.f;
+		m_pTransform.lock()->SetWorldMatrix(*m_pMyBoneMat * FinalWorld);
 	}
 
     return 0;
@@ -95,7 +101,7 @@ void Gauntlet::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetWorldMatrix();
+		_RenderUpdateInfo.World = m_MyRenderMat;
 	}
 }
 

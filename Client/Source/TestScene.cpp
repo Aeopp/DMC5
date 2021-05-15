@@ -92,10 +92,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
+	//AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
 
-	//_Player = AddGameObject<Nero>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -104,7 +104,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Monster
 
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -162,7 +162,7 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 	AddGameObject<TempMap>();
-	AddGameObject<HotelAnimationWall>();
+	//AddGameObject<HotelAnimationWall>();
 	//AddGameObject<AnimationUpGround>();
 	//AddGameObject<BrokenBookShelf>();
 #pragma endregion
