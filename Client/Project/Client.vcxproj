@@ -163,12 +163,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
+    <ClInclude Include="..\Header\BreakableObject.h" />
     <ClInclude Include="..\Header\Buster_Arm_Left.h" />
     <ClInclude Include="..\Header\CbsTrail.h" />
     <ClInclude Include="..\Header\Cbs_Long.h" />
     <ClInclude Include="..\Header\Cbs_Middle.h" />
     <ClInclude Include="..\Header\Cbs_Short.h" />
     <ClInclude Include="..\Header\CircleWave.h" />
+    <ClInclude Include="..\Header\CollObject.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
     <ClInclude Include="..\Header\DissolveInfo.h" />
     <ClInclude Include="..\Header\ElectricBranch.h" />
@@ -270,6 +272,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
+    <ClCompile Include="..\Source\BreakableObject.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
     <ClCompile Include="..\Source\CbsTrail.cpp" />
@@ -277,6 +280,7 @@
     <ClCompile Include="..\Source\Cbs_Middle.cpp" />
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
     <ClCompile Include="..\Source\CircleWave.cpp" />
+    <ClCompile Include="..\Source\CollObject.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
     <ClCompile Include="..\Source\DissolveInfo.cpp" />
     <ClCompile Include="..\Source\ElectricBranch.cpp" />

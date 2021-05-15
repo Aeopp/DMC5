@@ -24,6 +24,7 @@ public:
 public:
 	//GET
 	BT_INFO Get_BattleInfo();
+	void    Set_Hp();
 	bool	Get_Coll();
 public:
 	//SET

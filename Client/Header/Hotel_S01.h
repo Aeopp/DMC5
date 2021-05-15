@@ -28,6 +28,8 @@ public:
 private:	
 	void RenderDataSetUp(const bool bTest);
 	void LoadObjects(const std::filesystem::path& path, const bool _bAni = false);
+	void LoadCollObjects(const std::filesystem::path& path);
+	void LoadBreakablebjects(const std::filesystem::path& path);
 
 	void TriggerSetUp();
 	void Trigger1st();

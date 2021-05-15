@@ -135,7 +135,7 @@ void MakaiButterfly::RenderInit()
 			{
 				this->RenderDebug(_Info);
 			}
-		} 
+		}
 	};
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider] =
 	{

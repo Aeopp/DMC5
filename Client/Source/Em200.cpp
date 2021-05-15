@@ -37,7 +37,7 @@ void Em200::Fight(const float _fDeltaTime)
 	Vector3	 vDir = m_pPlayerTrans.lock()->GetPosition() - m_pTransform.lock()->GetPosition();
 	float	 fDir = D3DXVec3Length(&vDir);
 
-	if (m_BattleInfo.iHp <= 0.f)
+	if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
 	{
 		m_eState = Dead;
 		m_bIng = true;
@@ -1221,7 +1221,8 @@ void Em200::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em200::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+	if ((m_BattleInfo.iHp -= _BattleInfo.iAttack) >= 0.f)
+		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;
 	m_bDown = true;

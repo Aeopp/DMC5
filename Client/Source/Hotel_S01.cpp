@@ -15,6 +15,8 @@
 #include "Em1000.h"
 #include "Trigger.h"
 #include "QliphothBlock.h"
+#include "CollObject.h"
+#include "BreakableObject.h"
 
 #include <iostream>
 #include <fstream>
@@ -70,8 +72,9 @@ HRESULT Hotel_S01::LoadScene()
 #pragma region Map & Objects
 
 	LoadObjects("../../Data/Stage1_Map.json");
-	LoadObjects("../../Data/Stage1_Object.json");
 	LoadObjects("../../Data/Stage1_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage1_Object.json");
+	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -218,6 +221,7 @@ void Hotel_S01::LoadObjects(const std::filesystem::path& path, const bool _bAni)
 			sFullPath = iter->FindMember("Mesh")->value.GetString();
 			sFullPath = sBasePath / sFullPath;
 			//
+			
 			Resources::Load<StaticMesh>(sFullPath);
 			//
 			auto objectArr = iter->FindMember("List")->value.GetArray();
@@ -284,6 +288,126 @@ void Hotel_S01::LoadObjects(const std::filesystem::path& path, const bool _bAni)
 
 				pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 			}
+		}
+	}
+}
+
+void Hotel_S01::LoadCollObjects(const std::filesystem::path& path)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+		Mesh::InitializeInfo _InitInfo{};
+		_InitInfo.bLocalVertexLocationsStorage = true;
+		Resources::Load<StaticMesh>(sFullPath, _InitInfo);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<CollObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+		}
+	}
+}
+
+void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+		Resources::Load<StaticMesh>(sFullPath);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<BreakableObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
 }

@@ -66,6 +66,11 @@ BT_INFO Unit::Get_BattleInfo()
 	return m_BattleInfo;
 }
 
+void Unit::Set_Hp()
+{
+	m_BattleInfo.iHp = 0;
+}
+
 bool Unit::Get_Coll()
 {
 	return m_bCollEnable;
