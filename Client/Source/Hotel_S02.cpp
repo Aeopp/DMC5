@@ -14,6 +14,7 @@
 #include "MakaiButterfly.h"
 #include "Em100.h"
 #include "Trigger.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -55,14 +56,14 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+	if (auto SpCamera = AddGameObject<Camera>().lock();
 		SpCamera)
 	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f,0.296f ,11.846f });
-	}*/
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	}
 	
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -75,6 +76,7 @@ HRESULT Hotel_S02::LoadScene()
 	m_fLoadingProgress = 0.4f;
 
 #pragma region Map & Objects
+
 	LoadObjects("../../Data/Stage2_Map.json");
 	LoadObjects("../../Data/Stage2_Object.json");
 
@@ -86,17 +88,23 @@ HRESULT Hotel_S02::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
+
 	RenderDataSetUp(false);
 	TriggerSetUp();
+
 #pragma endregion
+
 	m_fLoadingProgress = 0.7f;
 
 #pragma region Effect
 
-	AddGameObject<SecretVision>().lock()->PuzzleStart();	// 임시
+	_SecretVision = AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
+
 	// 
-	_MakaiButterflyVec.reserve(3);
+	_MakaiButterflyVec.reserve(5);
+	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
+	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
 	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
 	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
 	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
@@ -246,6 +254,7 @@ void Hotel_S02::RenderDataSetUp(const bool bTest)
 void Hotel_S02::TriggerSetUp()
 {
 	TriggerFirstButterFlyMeet();
+	TriggerPuzzleStart();
 	TriggerWallSmash();
 	TriggerNextScene();
 }
@@ -256,15 +265,20 @@ void Hotel_S02::TriggerWallSmash()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐*/]()
+			[this/*변수 캡쳐*/]()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
+
+
+			//
+			for (auto& Element : _MakaiButterflyVec)
+				Element.lock()->SetActive(false);
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.108 , 1.564, 20.465 };
+		const Vector3 TriggerLocation{ -3.108f, 1.564f, 20.465f };
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 1 ,0.5, 0.1 };
+		const Vector3 BoxSize{ 1.f, 0.5f, 0.1f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
 		const bool ImmediatelyEnable = true;
 		// 트리거가 검사할 오브젝트 태그 
@@ -284,17 +298,96 @@ void Hotel_S02::TriggerFirstButterFlyMeet()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐*/]()
+			[this/*변수 캡쳐*/]()
 		{
 			// 여기서 퍼즐용 나방과 첫 조우 연출 !
+
+			if (auto SpObject = _MakaiButterflyVec[0].lock();
+				SpObject)
+			{
+				SpObject->SetActive(true);
+				SpObject->SetRotation({ 0.f, 90.f, 0.f });
+				SpObject->SetPosition({ -3.314f, 0.886f, 14.175f });
+				SpObject->PlayStart();
+			}
 		};
 		
-
-		
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.786f, 0.592f ,12.665f };
+		const Vector3 TriggerLocation{ -3.786f, 0.592f, 12.665f };
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 2.f , 1.f, 1.f };
+		const Vector3 BoxSize{ 2.f, 1.f, 1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+}
+
+void Hotel_S02::TriggerPuzzleStart()
+{
+	auto _SecondTrigger = AddGameObject<Trigger>().lock();
+	if (_SecondTrigger)
+	{
+		const std::function<void()> _CallBack =
+			[this/*변수 캡쳐*/]()
+		{
+			if (auto SpObject = _MakaiButterflyVec[1].lock();
+				SpObject)
+			{
+				SpObject->SetActive(true);
+				SpObject->SetRotation({ 0.f, 270.f, 0.f });
+				SpObject->SetPosition({ -3.163f, 1.555f, 15.013f });
+				SpObject->PlayStart();
+			}
+
+			for (uint32 i = 2u; i < 5u; ++i)
+			{
+				if (auto SpObject = _MakaiButterflyVec[i].lock();
+					SpObject)
+				{
+					SpObject->SetActive(true);
+					SpObject->PlayStart();
+				}
+			}
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.3f, 1.565f, 16.13f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 0.5f, 0.5f, 0.1f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_SecondTrigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this, _SecondTrigger/*변수 캡쳐*/]()
+		{
+			_SecretVision.lock()->PuzzleStart();
+
+			_SecondTrigger->TriggerEnable();
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.3f, 1.565f, 17.f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 0.5f, 0.5f, 0.1f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
 		const bool ImmediatelyEnable = true;
 		// 트리거가 검사할 오브젝트 태그 
@@ -322,7 +415,7 @@ void Hotel_S02::TriggerNextScene()
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -1.516f, 1.751f ,23.954f };
+		const Vector3 TriggerLocation{ -1.516f, 1.751f, 23.954f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 4.f,1.f,1.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -345,29 +438,47 @@ void Hotel_S02::LateInit()
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.70365f });
-		SpPlayer->GetComponent<Transform>().lock()->SetRotation({ 0.f,180.f,0.f });
+		SpPlayer->GetComponent<Transform>().lock()->SetRotation({ 0.f, 180.f, 0.f });
 	}
 
 	//
 	if (auto SpObject = _MakaiButterflyVec[0].lock();
 		SpObject)
 	{
-		SpObject->SetPosition({ -4319.212f * GScale, 470.248f * GScale, 16593.594f * GScale });
-		SpObject->PlayStart();
+		// 첫번째 조우 나비
+		SpObject->SetVariationIdx(MakaiButterfly::VARIATION::MOVE_FORWARD);
+		SpObject->SetActive(false);
 	}
 	if (auto SpObject = _MakaiButterflyVec[1].lock();
 		SpObject)
 	{
-		SpObject->SetPosition({ -804.781f * GScale, 1097.678f * GScale, 16376.986f * GScale });
-		SpObject->PlayStart();
+		// 두번째 조우 나비
+		SpObject->SetVariationIdx(MakaiButterfly::VARIATION::MOVE_FORWARD);
+		SpObject->SetActive(false);
 	}
 	if (auto SpObject = _MakaiButterflyVec[2].lock();
 		SpObject)
 	{
+		// 퍼즐용 나비
+		SpObject->SetPosition({ -4319.212f * GScale, 470.248f * GScale, 16593.594f * GScale });
+		SpObject->SetActive(false);
+	}
+	if (auto SpObject = _MakaiButterflyVec[3].lock();
+		SpObject)
+	{
+		// 퍼즐용 나비
+		SpObject->SetPosition({ -804.781f * GScale, 1097.678f * GScale, 16376.986f * GScale });
+		SpObject->SetActive(false);
+	}
+	if (auto SpObject = _MakaiButterflyVec[4].lock();
+		SpObject)
+	{
+		// 퍼즐용 나비
 		SpObject->SetPosition({ -4696.414f * GScale, 1683.205f * GScale, 15569.233f * GScale });
-		SpObject->PlayStart();
+		SpObject->SetActive(false);
 	}
 
-	_LateInit = true;
 	Renderer::GetInstance()->LateSceneInit();
+
+	_LateInit = true;
 }

@@ -7,6 +7,8 @@ float3 LightDirection = float3(0.f, 0.f, 1.f);
 float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
+bool _Apply_ExposureCorr = true; // PsMain_Plane() 에서 사용 시발
+
 float _TotalAccumulateTime;
 float _AccumulationTexU;
 float _AccumulationTexV;
@@ -358,7 +360,9 @@ PsOut PsMain_Plane(PsIn In)
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
     float Ambient = ATOSSample.b * 0.2f;
 
-    Out.Color = (Diffuse + Ambient) * float4(ALB0Sample.rgb, 1.f) * _BrightScale;// * exposure_corr;
+    Out.Color = (Diffuse + Ambient) * float4(ALB0Sample.rgb, 1.f) * _BrightScale;
+    if (_Apply_ExposureCorr)
+        Out.Color *= exposure_corr;
     Out.Color.a = ATOSSample.r;
 
     return Out;
