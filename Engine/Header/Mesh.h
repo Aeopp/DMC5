@@ -13,6 +13,10 @@ public:
 	struct InitializeInfo
 	{
 		bool bLocalVertexLocationsStorage = false;
+
+		bool bJoinIdenticalVertices = true;
+		bool bOptimizeMeshes = true;
+		bool bSplitLargeMeshes = true;
 	};
 public:
 	std::vector<std::shared_ptr<Subset>>  m_vecSubset;
