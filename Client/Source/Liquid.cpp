@@ -168,7 +168,7 @@ HRESULT Liquid::Ready()
 	_MeatNRMR0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_liquid_common_Meat_NRMR.tga");
 
 	_PlayingSpeed = 40.f;
-	_BrightScale = 0.25f;
+	_BrightScale = 0.4f;
 
 	SetVariationIdx(_VariationIdx);
 

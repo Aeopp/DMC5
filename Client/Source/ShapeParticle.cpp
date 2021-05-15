@@ -299,11 +299,10 @@ HRESULT ShapeParticle::Ready()
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info));
 	
-
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
 
-	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
+	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.00005f, 0.00005f, 0.00005f);
 
 	//
 	SetShapeIdx(_ShapeIdx);
@@ -351,7 +350,7 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 		D3DXMatrixInverse(&BillMat, 0, &BillMat);
 		D3DXMatrixInverse(&InvRotMat, 0, &GetComponent<Transform>().lock()->GetRotationMatrix());
 
-		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
+		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.00005f, 0.00005f, 0.00005f);
 		_DustSingleChildWorldMatrix = _DustSingleChildWorldMatrix * BillMat * InvRotMat;
 	
 		// BezierCurve

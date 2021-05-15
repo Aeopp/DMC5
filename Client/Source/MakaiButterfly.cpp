@@ -211,12 +211,12 @@ HRESULT MakaiButterfly::Ready()
 	_BrightScale = 0.2f;
 
 	_BezierStartOffsetPos = Vector3(0.f, 0.f, 0.f);
-	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.015f, -0.015f, -0.015f), Vector3(0.015f, 0.015f, 0.015f));
+	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.03f, -0.03f, -0.03f), Vector3(0.03f, 0.03f, 0.03f));
 	_BezierDeltaOffsetPos = Vector3(0.f, 0.f, 0.f);
 
 	_Collider = AddComponent<CapsuleCollider>();
 	_Collider.lock()->ReadyCollider();
-	_Collider.lock()->SetRadius(0.03f);
+	_Collider.lock()->SetRadius(0.05f);
 	_Collider.lock()->SetHeight(0.03f);
 	_Collider.lock()->SetCenter({ 0.f, 0.f, 0.f });
 	_Collider.lock()->SetActive(false);
@@ -301,7 +301,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 	{
 		_SubsetIdx = 0.f;
 		_BezierStartOffsetPos = _BezierEndOffsetPos;
-		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.015f, -0.015f, -0.015f), Vector3(0.015f, 0.015f, 0.015f));
+		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.03f, -0.03f, -0.03f), Vector3(0.03f, 0.03f, 0.03f));
 	}
 
 	// BezierCurve
@@ -340,6 +340,9 @@ void MakaiButterfly::OnDisable()
 
 void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (!_IsAlive)
+		return;
+
 	if (MakaiButterfly::VARIATION::STAY == _VariationIdx)
 	{
 		Matrix ViewInverse;
@@ -367,23 +370,35 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 					SpPanel)
 				{
 					SpPanel->AddRankScore(10.f);
+					SpPanel->AddExGauge(3.f);
 					SpPanel->ActivateSecretVision(idx);
 				}
 
-				// ¹®¾çÀÌÆåÆ®
+				// SVMC
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
-
-				// ½Ã¹úÅÊ È¸Àü ¾ÈµÊ
-				ViewInverse = Renderer::GetInstance()->_RenderInfo.ViewInverse;
-				Dir = *reinterpret_cast<Vector3*>(&ViewInverse.m[2][0]);
-				D3DXVec3Normalize(&Dir, &Dir);
-
-				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition(), FMath::ToDegree(Dir));
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
 
 				//
 				Reset();
 
 				++_TotalCnt;
+			}
+			else
+			{
+				// To BtlPannel
+				if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+					SpPanel)
+				{
+					SpPanel->AddRankScore(10.f);
+					SpPanel->AddExGauge(3.f);
+				}
+
+				// SVMC
+				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)FMath::Random<uint32>(0u, 2u));
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
+
+				//
+				Reset();
 			}
 
 			break;

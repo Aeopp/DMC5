@@ -63,9 +63,8 @@ public:
 public:
 	void PlayStart(
 		const std::optional<Vector3>& Location = std::nullopt,
-		const std::optional<Vector3>& Rotation = std::nullopt,
-		const float StartScale = 0.005170f,
-		const float FinalScale = 0.008031f,
+		const float StartScale = 0.003f,
+		const float FinalScale = 0.006f,
 		const float PlayTime = FMath::PI);
 	void PlayEnd();
 private:
@@ -75,6 +74,9 @@ public:
 	float CurParticleTime = 0.0f;
 
 	bool bPlayedEndParticle = false;
-	float PlayTime = FMath::PI / 2.f;
+	float PlayTime = FMath::PI;
+
+	Matrix BillBoardMat = Matrix();
+
 };
 #endif // !__SV_MAGICCIRCLE_H_

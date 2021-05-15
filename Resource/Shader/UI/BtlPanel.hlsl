@@ -458,7 +458,7 @@ PsOut PsMain_TargetHP(PsIn_NoiseClip In)
     float2 NoiseCoord = In.UV + FinalNoise.xy;  // 원본 uv를 밀어냄
        
     Out.Color = float4(0.25f, 0.647f, 0.698f, 1.f) * _BrightScale * exposure_corr;
-    Out.Color.a = tex2D(ATOS0, NoiseCoord).r * ((In.UV.y - 0.8f) * _TargetCursorAlpha);
+    Out.Color.a = tex2D(ATOS0, NoiseCoord).r * ((In.UV.y - 0.8f) * _TargetCursorAlpha) * 0.4f;
     
     return Out;
 };

@@ -186,7 +186,10 @@ void SecretVision::Interaction(const uint32 Idx)
 	{
 		bInteraction = false;
 		if (SpPanel)
+		{
 			SpPanel->ActivateSecretVision(Idx);
+			SpPanel->UseExGauge(3u, true);
+		}
 		Disappear(Idx);
 	}
 };
