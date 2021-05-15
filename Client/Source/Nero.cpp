@@ -308,7 +308,7 @@ UINT Nero::Update(const float _fDeltaTime)
 
 
 	//if (Input::GetKeyDown(DIK_0))
-	//	Hit(m_BattleInfo);
+		//Hit(m_BattleInfo);
 
 	//m_pAirHike.lock()->PlayStart();
 	
@@ -1252,6 +1252,9 @@ void Nero::IncreaseHp(int _Hp)
 
 	if (m_BattleInfo.iHp >= m_BattleInfo.iMaxHp)
 		m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
+
+	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 }
 
 float Nero::Get_ExGauge()
