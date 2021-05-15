@@ -69,6 +69,7 @@ enum GAMEOBJECTTAG
 	Eff_DashTrail,
 	Eff_MakaiButterFly,
 	Eff_SecretVisionMagicCircle,
+	Eff_FadeOut,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,

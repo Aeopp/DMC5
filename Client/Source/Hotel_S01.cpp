@@ -15,9 +15,10 @@
 #include "Em1000.h"
 #include "Trigger.h"
 #include "QliphothBlock.h"
-
+#include "FadeOut.h"
 #include <iostream>
 #include <fstream>
+
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -46,7 +47,11 @@ HRESULT Hotel_S01::LoadScene()
 {
 	// Load Start
 	m_fLoadingProgress = 0.01f;
+	if (auto _FadeOut = AddGameObject<FadeOut>().lock();
+		_FadeOut)
+	{
 
+	}
 #pragma region PreLoad
 
 	PreLoader::PreLoadResources();
@@ -57,10 +62,9 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	 AddGameObject<Camera>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 

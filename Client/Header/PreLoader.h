@@ -1,14 +1,11 @@
 #ifndef __PRELOADER_H__
 #define __PRELOADER_H__
 
-
-
 class PreLoader final
 {
 public:
 	PreLoader() = default;
 	~PreLoader() = default;
-
 public:
 	static void PreLoadResources();
 public:

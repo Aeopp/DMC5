@@ -48,8 +48,8 @@ public:
 	void LightLoad(const std::filesystem::path & path);
 	const std::vector< std::shared_ptr<FLight> >& GetDirLights() { return DirLights; };
 
-	std::weak_ptr<FLight> RefRemainingDynamicLight();;
-
+	std::weak_ptr<FLight> RefRemainingDynamicLight();
+	std::weak_ptr<Quad> GetQuad();
 	void RequestShadowMapBake();
 public:
 	void SkyDistortionStart();
@@ -124,13 +124,12 @@ public:
 	float   SkyNoisewrap = 8.173007f;
 	float   SkyTimecorr  = 0.304011f;
 	bool    SkyDistortion = false;
-	float   SkyRotationSpeed = 0.001f;
 	float   SkyIntencity = 0.111f;
+	float   SkyRotationSpeed = 0.001f;	
 	float   SkysphereScale = 0.078f;
 	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
 	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };
 private:
-	
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
 	float FogStart = 1.f;
@@ -160,7 +159,6 @@ private:
 	// 0 으로 세팅되면 미정의 동작 . 
 	float adaptedluminance = 0.1f;
 
-
 	IDirect3DSurface9* BackBuffer{ nullptr };
 	IDirect3DSurface9* BackBufferZBuffer{ nullptr };
 
@@ -185,7 +183,7 @@ private:
 	std::shared_ptr<Texture> SkyNoiseMap{};
 	std::shared_ptr<StaticMesh> SkysphereMesh{};
 	std::shared_ptr<Texture> sky{};
-	
+
 
 	// 쉐이더 테스트 시작 ....
 	bool TestShaderInit();
@@ -196,21 +194,13 @@ private:
 	void RenderGBuffer();
 	void DeferredShading();
 	void ShadowCacheBake();
-	//LPD3DXEFFECT			skyeffect = nullptr;
-	//LPD3DXEFFECT			metaleffect = nullptr;
-	//LPD3DXEFFECT			insulatoreffect = nullptr;
-	//LPD3DXEFFECT			measureeffect = nullptr;
-	//LPD3DXEFFECT			hdreffects = nullptr;
-	//LPD3DXEFFECT			effect = nullptr;
 
 	LPD3DXMESH				skull = nullptr;
 	LPD3DXMESH skymesh = nullptr;
-	LPDIRECT3DCUBETEXTURE9	environment = nullptr;		// HDR environment
-	LPDIRECT3DCUBETEXTURE9	irradiance1 = nullptr;		// preintegrated diffuse irradiance
-	LPDIRECT3DCUBETEXTURE9	irradiance2 = nullptr;		// preintegrated specular irradiance
-	LPDIRECT3DTEXTURE9		brdfLUT = nullptr;		// preintegrated BRDF lookup texture
-
-	Vector4 MoonLightTarget{0,0,0,1};
+	LPDIRECT3DCUBETEXTURE9	environment = nullptr;		
+	LPDIRECT3DCUBETEXTURE9	irradiance1 = nullptr;
+	LPDIRECT3DCUBETEXTURE9	irradiance2 = nullptr;		
+	LPDIRECT3DTEXTURE9		brdfLUT = nullptr;		
 
 	float DXScreenQuadVerticesFFP[24] = {
 		// NOTE: viewport must be added

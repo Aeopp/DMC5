@@ -183,6 +183,7 @@
     <ClInclude Include="..\Header\Em5300Missile.h" />
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
+    <ClInclude Include="..\Header\FadeOut.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\Hotel_S01.h" />
     <ClInclude Include="..\Header\Hotel_S02.h" />
@@ -291,6 +292,7 @@
     <ClCompile Include="..\Source\Em5300Missile.cpp" />
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
+    <ClCompile Include="..\Source\FadeOut.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp" />
     <ClCompile Include="..\Source\Hotel_S02.cpp" />

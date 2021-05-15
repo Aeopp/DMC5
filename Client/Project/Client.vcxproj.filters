@@ -517,6 +517,7 @@
     <ClInclude Include="..\Header\SecretVisionMagicCircle.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\FadeOut.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -827,6 +828,7 @@
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FadeOut.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

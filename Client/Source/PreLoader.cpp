@@ -3,9 +3,13 @@
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
 #include "Subset.h"
+#include "FadeOut.h"
 
 void PreLoader::PreLoadResources()
 {
+	
+
+
 	IceAgeParticlePoolLoad();
 	IceCbsMidParticlePoolLoad();
 	FireParticlePoolLoad();

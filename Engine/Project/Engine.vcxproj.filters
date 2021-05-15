@@ -655,8 +655,9 @@
     <None Include="..\..\Resource\Shader\Distortion.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\ColliderTrigger.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\ColliderTrigger.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\FadeOut.hlsl" />
   </ItemGroup>
 </Project>
