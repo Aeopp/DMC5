@@ -43,5 +43,7 @@ private:
 	static void SecretVisionDisappearParticlePoolLoad();
 	static void DissolveNhDoorParticlePoolLoad();
 
+	static void SVMCParticleEndPoolLoad();
+
 };
 #endif // !__PRELOADER_H__

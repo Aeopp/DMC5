@@ -216,7 +216,7 @@ HRESULT MakaiButterfly::Ready()
 
 	_Collider = AddComponent<CapsuleCollider>();
 	_Collider.lock()->ReadyCollider();
-	_Collider.lock()->SetRadius(0.03f);
+	_Collider.lock()->SetRadius(0.05f);
 	_Collider.lock()->SetHeight(0.03f);
 	_Collider.lock()->SetCenter({ 0.f, 0.f, 0.f });
 	_Collider.lock()->SetActive(false);
@@ -374,15 +374,9 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 					SpPanel->ActivateSecretVision(idx);
 				}
 
-				// ¹®¾çÀÌÆåÆ®
+				// SVMC
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
-
-				// ½Ã¹úÅÊ È¸Àü ¾ÈµÊ >> ºôº¸µå·Î
-				ViewInverse = Renderer::GetInstance()->_RenderInfo.ViewInverse;
-				Dir = *reinterpret_cast<Vector3*>(&ViewInverse.m[2][0]);
-				D3DXVec3Normalize(&Dir, &Dir);
-
-				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition(), FMath::ToDegree(Dir));
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
 
 				//
 				Reset();
@@ -399,15 +393,9 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 					SpPanel->AddExGauge(3.f);
 				}
 
-				// ¹®¾çÀÌÆåÆ®
+				// SVMC
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)FMath::Random<uint32>(0u, 2u));
-
-				// ½Ã¹úÅÊ È¸Àü ¾ÈµÊ >> ºôº¸µå·Î
-				ViewInverse = Renderer::GetInstance()->_RenderInfo.ViewInverse;
-				Dir = *reinterpret_cast<Vector3*>(&ViewInverse.m[2][0]);
-				D3DXVec3Normalize(&Dir, &Dir);
-
-				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition(), FMath::ToDegree(Dir));
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
 
 				//
 				Reset();
