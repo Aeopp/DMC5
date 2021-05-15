@@ -81,7 +81,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -247,4 +247,6 @@ void Hotel_S04::LateInit()
 
 	_LateInit = true;
 	Renderer::GetInstance()->LateSceneInit();
+	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
+	Renderer::GetInstance()->SkyDistortionStart();
 }

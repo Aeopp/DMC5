@@ -25,6 +25,7 @@ private:
 	void LoadObjects(const std::filesystem::path& path);
 	void RenderDataSetUp(const  bool bTest);
 	void TriggerSetUp();
+	void TriggerNextScene();
 	void LateInit();
 };
 #endif // !__M01_HOTEL_S03_H__

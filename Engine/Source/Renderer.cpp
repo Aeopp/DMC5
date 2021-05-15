@@ -791,7 +791,7 @@ void Renderer::SkyDistortionEnd()
 
 void Renderer::LateSceneInit()
 {
-	Renderer::GetInstance()->SkyDistortion = false;
+	Renderer::GetInstance()->SkyDistortionEnd();
 	Renderer::GetInstance()->RequestShadowMapBake();
 };
 
