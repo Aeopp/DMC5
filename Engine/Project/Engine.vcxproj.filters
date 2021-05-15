@@ -656,4 +656,7 @@
       <Filter>04.HLSL\Common</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\ColliderTrigger.hlsl" />
+  </ItemGroup>
 </Project>

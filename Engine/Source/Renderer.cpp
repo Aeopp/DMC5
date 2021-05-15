@@ -2059,9 +2059,9 @@ HRESULT Renderer::RendererCollider()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		_DrawInfo.Fx = Fx;
-		Vector4 DebugColor{ 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.1f };
+
 		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
-		Fx->SetVector("DebugColor", &DebugColor);
+		Fx->SetVector("DebugColor", &ColliderRenderDefaultColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		UINT Passes = 0u;
 		for (auto& [Entity, Call] : _EntityArr)

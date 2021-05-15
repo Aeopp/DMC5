@@ -1,6 +1,6 @@
 float4x4 World;
 float4x4 ViewProjection;
-float4   DebugColor;
+float4 TriggerColor = float4(1.f, 0.f, 0.f, 0.5f);
 
 struct VsIn
 {
@@ -37,8 +37,7 @@ struct PsOut
 PsOut PsDebug(PsIn In)
 {
     PsOut Out = (PsOut) 0;
-    Out.Color = DebugColor;
-  
+    Out.Color = TriggerColor;
     
     return Out;
 };

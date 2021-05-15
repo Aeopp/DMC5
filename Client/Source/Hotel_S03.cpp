@@ -214,9 +214,9 @@ void Hotel_S03::RenderDataSetUp(const  bool bTest)
 	{
 		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S03.json");
 	}
-	
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
+	_Renderer->ao = 0.5f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -235,7 +235,8 @@ void Hotel_S03::TriggerSetUp()
 void Hotel_S03::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
-	_Player.lock()->GetComponent<Transform>().lock()->SetPosition({ -1.77158f, 1.36541f, 23.73719 });
+	_Player.lock()->GetComponent<Transform>().lock()->SetPosition
+		({ -1.77158f, 1.36541f, 23.73719 });
 	_LateInit = true;
 	Renderer::GetInstance()->LateSceneInit();
 }
