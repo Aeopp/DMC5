@@ -15,6 +15,8 @@ private:
 	bool _IsAlive = false;
 	bool _IsCamTrigger = false;
 
+	std::weak_ptr<BoxCollider> _Collider{};
+
 private:
 	explicit QliphothBlock() = default;
 	virtual ~QliphothBlock() = default;

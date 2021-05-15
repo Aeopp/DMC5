@@ -224,7 +224,7 @@ private:
 
 	int _SecretVisionState[3] = { 0, 0, 0 };
 	//int _SecretVisionPreState[3] = { 0, 0, 0 };
-	float _SecretVisionBrightScale[3] = { 0.01f, 0.01f, 0.01f };
+	float _SecretVisionBrightScale[3] = { 0.02f, 0.02f, 0.02f };
 	float _SecretVisionDissolveAmount[3] = { 1.f, 1.f, 1.f };
 	float _SecretVisionBrightCorr = 0.f;
 
@@ -283,7 +283,7 @@ public:
 	float GetExGauge() const { return _ExGauge; }
 	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
-	void UseExGauge(const uint32 Count);
+	void UseExGauge(const uint32 Count, bool Force = false);
 
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 

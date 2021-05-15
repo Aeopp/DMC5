@@ -54,6 +54,8 @@ public:
 public:
 	void SkyDistortionStart();
 	void SkyDistortionEnd();
+	void LateSceneInit();
+	void SceneChangeRender();
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -217,6 +219,8 @@ private:
 		-0.5f, -0.5f, 0, 1,		1, 1
 		- 0.5f, -0.5f, 0, 1,		1, 0,
 	};
+public:
+	static inline Vector4 ColliderRenderDefaultColor { 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.1f };
 };
 END
 

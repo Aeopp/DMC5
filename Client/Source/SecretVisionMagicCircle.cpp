@@ -117,7 +117,6 @@ void SecretVisionMagicCircle::RenderInit()
 
 void SecretVisionMagicCircle::PlayStart(
 	const std::optional<Vector3>& Location,
-	const std::optional<Vector3>& Rotation,
 	const float StartScale,
 	const float FinalScale,
 	const float PlayTime)
@@ -128,7 +127,6 @@ void SecretVisionMagicCircle::PlayStart(
 		if (Location)
 		{
 			SpTransform->SetPosition(Location.value());
-			SpTransform->SetRotation(Rotation.value());
 		}
 	}
 
@@ -231,6 +229,9 @@ HRESULT SecretVisionMagicCircle::Ready()
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
+
+	D3DXMatrixIdentity(&BillBoardMat);
+
 	return S_OK;
 };
 
@@ -266,7 +267,7 @@ UINT SecretVisionMagicCircle::Update(const float _fDeltaTime)
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"AirHikeEndParticle", 2000ul, true);
+					"SVMCEndParticle", 2000ul, true);
 				_Particle.empty() == false)
 			{
 
@@ -283,10 +284,21 @@ UINT SecretVisionMagicCircle::Update(const float _fDeltaTime)
 	if (CurParticleTime < 0.0f)
 	{
 		CurParticleTime += ParticleTime;
-		PlayParticle();
+		//PlayParticle();
 	}
 
-	
+	// 빌보드
+	Matrix ViewInvMat;
+	ViewInvMat = Renderer::GetInstance()->_RenderInfo.ViewInverse;
+	D3DXMatrixIdentity(&BillBoardMat);
+	memcpy(&BillBoardMat.m[0][0], &ViewInvMat.m[0][0], sizeof(Vector3));
+	memcpy(&BillBoardMat.m[1][0], &ViewInvMat.m[1][0], sizeof(Vector3));
+	memcpy(&BillBoardMat.m[2][0], &ViewInvMat.m[2][0], sizeof(Vector3));
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		SpTransform->SetBillBoard(BillBoardMat);
+	}
 
 	// 끝날 쯔음 .
 	if (T >= PlayTime)

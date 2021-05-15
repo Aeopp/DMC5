@@ -812,7 +812,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
 		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
-		pBlood->SetScale(0.008f);
+		pBlood->SetScale(0.0085f);
 		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
 		pBlood->PlayStart(40.f);
 	}

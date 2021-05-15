@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "SceneSystem.h"
+#include "Renderer.h"
 
 USING(ENGINE)
 
@@ -10,6 +11,8 @@ HRESULT SceneManager::LoadScene(Scene* const _pScene, const bool _bSceneActivati
 {
 	if (nullptr == m_pSceneSystem.lock())
 		return E_FAIL;
+
+	Renderer::GetInstance()->SceneChangeRender();
 
 	return m_pSceneSystem.lock()->LoadScene(_pScene, _bSceneActivation);
 }

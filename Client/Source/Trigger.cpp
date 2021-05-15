@@ -199,7 +199,7 @@ HRESULT Trigger::Ready()
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
-		{"Collider" ,
+		{"ColliderTrigger" ,
 		[this](const DrawInfo& _Info)
 		{
 			DrawCollider(_Info);
@@ -261,6 +261,27 @@ UINT Trigger::Update(const float _fDeltaTime)
 		}
 	}
 
+	if (g_bEditMode)
+	{
+		if (Input::GetKeyDown(DIK_DELETE))
+		{
+			if (_Option == Option::MonsterWave && bAfterEvent)
+			{
+				if (CheckIfTheDead.has_value())
+				{
+					for (auto& WpMonster : CheckIfTheDead.value())
+					{
+						if (auto SpMonter = WpMonster.lock();
+							SpMonter)
+						{
+							SpMonter->Set_Hp(0);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return 0;
 };
 
@@ -279,6 +300,11 @@ void Trigger::Editor()
 	{
 		ImGui::Text("Location : %2.6f %2.6f %2.6f", TriggerLocation.x, TriggerLocation.y, TriggerLocation.z);
 
+		Vector3 InputPosition = TriggerLocation;
+		if (ImGui::InputFloat3("In Position", InputPosition))
+		{
+			TriggerLocation = InputPosition;
+		}
 		static float PositionSensitivy = 0.05f;
 		ImGui::InputFloat("PositionSensitivy", &PositionSensitivy);
 		Vector3 Position{ 0,0,0 };

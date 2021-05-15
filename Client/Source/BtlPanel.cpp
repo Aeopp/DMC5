@@ -55,7 +55,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGlassNRMRTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ALB0Map", _GlassTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ALB1Map", _BloodTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.025f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.03f);
 			_ImplInfo.Fx->SetFloat("_HPGlassDirt", _HPGlassDirt);
 
 			Create_ScreenMat(CurID, ScreenMat);
@@ -78,7 +78,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExBackALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _ExBackATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _ExBackNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.02f);
 
 			if (_UIDescs[EX_GAUGE].Using)
 				Create_ScreenMat(CurID, ScreenMat);
@@ -1011,9 +1011,12 @@ void BtlPanel::AddExGauge(float ExGauge)
 	_ExGauge_FireAccumulateTime = 0.f;
 }
 
-void BtlPanel::UseExGauge(const uint32 Count)
+void BtlPanel::UseExGauge(const uint32 Count, bool Force/*= false*/)
 {
 	if (!_UIDescs[EX_GAUGE].Using)
+		return;
+
+	if (!Force && _UIDescs[SECRET_VISIONS].Using)
 		return;
 
 	_ExGauge -= static_cast<float>(Count);
@@ -2184,7 +2187,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 				switch (_SecretVisionState[i])
 				{
 				case 1:	// µðÁ¹ºê·Î »ý±è
-					BrightScale = 0.01f;
+					BrightScale = 0.02f;
 					if (0.f < _SecretVisionDissolveAmount[i])
 					{
 						_SecretVisionDissolveAmount[i] -= 1.5f * _fDeltaTime;
@@ -2193,10 +2196,10 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 					}
 					break;
 				case 2:	// ¹à±â ÃÖ´ë
-					BrightScale = 0.25f;
+					BrightScale = 0.3f;
 					break;
 				case 3: // µðÁ¹ºê·Î »ç¶óÁü
-					BrightScale = 0.25f;
+					BrightScale = 0.3f;
 					EndCondition = 1.f;
 					if (1.f > _SecretVisionDissolveAmount[i])
 					{
@@ -2205,7 +2208,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 						{
 							_SecretVisionState[i] = 0;
 							//_SecretVisionPreState[i] = 0;
-							_SecretVisionBrightScale[i] = 0.01f;
+							_SecretVisionBrightScale[i] = 0.02f;
 							_SecretVisionDissolveAmount[i] = 1.f;
 						}
 					}
@@ -2292,9 +2295,9 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//bActive = !bActive;
 		//SetBossGaugeActive(bActive);
 
-		ActivateSecretVision(0);
-		ActivateSecretVision(1);
-		ActivateSecretVision(2);
+		//ActivateSecretVision(0);
+		//ActivateSecretVision(1);
+		//ActivateSecretVision(2);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
@@ -2311,7 +2314,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//	Ratio = 1.f;
 		//SetBossGaugeHPRatio(Ratio);
 
-		DissolveAllSecretVision();
+		//DissolveAllSecretVision();
 	}
 	////////////////////////////
 

@@ -13,7 +13,7 @@
 #include "NhDoor.h"
 #include "MakaiButterfly.h"
 #include "Em100.h"
-
+#include "Trigger.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -55,8 +55,12 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	// AddGameObject<Camera>();
-
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f,0.296f ,11.846f });
+	}*/
+	
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
@@ -71,7 +75,6 @@ HRESULT Hotel_S02::LoadScene()
 	m_fLoadingProgress = 0.4f;
 
 #pragma region Map & Objects
-
 	LoadObjects("../../Data/Stage2_Map.json");
 	LoadObjects("../../Data/Stage2_Object.json");
 
@@ -83,19 +86,15 @@ HRESULT Hotel_S02::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
-
 	RenderDataSetUp(false);
 	TriggerSetUp();
-
 #pragma endregion
-
 	m_fLoadingProgress = 0.7f;
 
 #pragma region Effect
 
 	AddGameObject<SecretVision>().lock()->PuzzleStart();	// 임시
 	AddGameObject<NhDoor>();
-
 	// 
 	_MakaiButterflyVec.reserve(3);
 	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
@@ -246,7 +245,97 @@ void Hotel_S02::RenderDataSetUp(const bool bTest)
 
 void Hotel_S02::TriggerSetUp()
 {
+	TriggerFirstButterFlyMeet();
+	TriggerWallSmash();
+	TriggerNextScene();
+}
 
+void Hotel_S02::TriggerWallSmash()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[/*변수 캡쳐*/]()
+		{
+			// 여기서 성큰이 벽을 박살내며 등장 !!
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.108 , 1.564, 20.465 };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 1 ,0.5, 0.1 };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+}
+
+void Hotel_S02::TriggerFirstButterFlyMeet()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[/*변수 캡쳐*/]()
+		{
+			// 여기서 퍼즐용 나방과 첫 조우 연출 !
+		};
+		
+
+		
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.786f, 0.592f ,12.665f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 2.f , 1.f, 1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+}
+
+void Hotel_S02::TriggerNextScene()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[/*변수 캡쳐*/]()
+		{
+			// 씬전환 !! 
+			Renderer::GetInstance()->CurDirLight = nullptr;
+			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -1.516f, 1.751f ,23.954f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 4.f,1.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
 }
 
 void Hotel_S02::LateInit()
@@ -279,9 +368,6 @@ void Hotel_S02::LateInit()
 		SpObject->PlayStart();
 	}
 
-	
-
 	_LateInit = true;
-	Renderer::GetInstance()->SkyDistortion = false;
-	Renderer::GetInstance()->RequestShadowMapBake();
+	Renderer::GetInstance()->LateSceneInit();
 }

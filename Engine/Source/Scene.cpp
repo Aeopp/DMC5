@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Renderer.h"
+#include "Input.h"
 
 USING(ENGINE)
 
@@ -102,8 +103,11 @@ HRESULT Scene::Update(const float _fDeltaTime)
 		++m_LoopIter;
 	}
 	m_bOnLoop = false;
+
 	return S_OK;
 }
+
+
 
 HRESULT Scene::LateUpdate(const float _fDeltaTime)
 {

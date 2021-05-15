@@ -9,7 +9,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-
+#include "Monster.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -46,10 +46,18 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
-
-	_Player = AddGameObject<Nero>();
+	if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+			-4.327,
+			1.449,
+			36.596, 
+			});
+		
+	}
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
@@ -64,7 +72,6 @@ HRESULT Hotel_S04::LoadScene()
 #pragma region Map & Objects
 
 	LoadObjects("../../Data/Stage4_Map.json");
-
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(4);
 
@@ -143,6 +150,7 @@ HRESULT Hotel_S04::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
+
 void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 {
 	std::ifstream inputStream{ path };
@@ -217,7 +225,7 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
+	_Renderer->ao = 0.5f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -237,7 +245,6 @@ void Hotel_S04::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
 
-	Renderer::GetInstance()->RequestShadowMapBake();
-
 	_LateInit = true;
+	Renderer::GetInstance()->LateSceneInit();
 }
