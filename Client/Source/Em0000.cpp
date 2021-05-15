@@ -40,7 +40,7 @@ void Em0000::Fight(const float _fDeltaTime)
 	/////이놈은 움직임이 한방향 밖에 없어서. 앞으로 갈지 아니면 백스탭 이후에 강한 공격할지
 	//Move가 On일때 1/4 확률로 백스텝을 하고 백스텝을 한 이후에는 바로 달려가면서 강한 공격
 
-	if (m_BattleInfo.iHp <= 0.f)
+	if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
 	{
 		m_eState = Dead;
 		m_bIng = true;
@@ -970,7 +970,8 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+	if ((m_BattleInfo.iHp -= _BattleInfo.iAttack) >= 0.f)
+		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;
 	m_bDown = true;

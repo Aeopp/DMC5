@@ -154,19 +154,19 @@ void TempMap::LoadMap(const int _iStage)
 	{
 	case 1:
 		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-			L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Stage1.fbx", _InitInfo);
+			L"..\\..\\Resource\\Map\\Collmap\\Stage1.fbx", _InitInfo);
 		break;
 	case 2:
 		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-			L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Stage2.fbx", _InitInfo);
+			L"..\\..\\Resource\\Map\\Collmap\\Stage2.fbx", _InitInfo);
 		break;
 	case 3:
 		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-			L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Stage3.fbx", _InitInfo);
+			L"..\\..\\Resource\\Map\\Collmap\\Stage3.fbx", _InitInfo);
 		break;
 	case 4:
 		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-			L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\BossStage.fbx", _InitInfo);
+			L"..\\..\\Resource\\Map\\Collmap\\BossStage.fbx", _InitInfo);
 		break;
 	default:
 		break;

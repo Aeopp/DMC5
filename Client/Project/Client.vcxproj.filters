@@ -517,7 +517,12 @@
     <ClInclude Include="..\Header\SecretVisionMagicCircle.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\FadeOut.h" />
+    <ClInclude Include="..\Header\CollObject.h">
+      <Filter>02.GameObject\02.MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\BreakableObject.h">
+      <Filter>02.GameObject\02.MapObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -828,7 +833,12 @@
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FadeOut.cpp" />
+    <ClCompile Include="..\Source\CollObject.cpp">
+      <Filter>02.GameObject\02.MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\BreakableObject.cpp">
+      <Filter>02.GameObject\02.MapObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

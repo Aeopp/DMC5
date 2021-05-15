@@ -7,6 +7,7 @@ class Hotel_S02 : public Scene
 private:
 	std::weak_ptr<class Nero> _Player{};
 	std::vector<std::weak_ptr<class MakaiButterfly>> _MakaiButterflyVec{};
+	std::weak_ptr<class SecretVision> _SecretVision{};
 	bool _LateInit = false;
 private:
 	explicit Hotel_S02();
@@ -29,6 +30,7 @@ private:
 	void TriggerSetUp();
 	void TriggerWallSmash();
 	void TriggerFirstButterFlyMeet();
+	void TriggerPuzzleStart();
 	void TriggerNextScene();
 
 	void LateInit();

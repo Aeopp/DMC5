@@ -1276,10 +1276,13 @@ void Em100::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+	if((m_BattleInfo.iHp -= _BattleInfo.iAttack) >=0.f)
+		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;
 	m_bDown = true;
+
+	m_pCollider.lock()->SetRigid(false);
 
 	if (m_bAir)
 		m_eState = Hit_Air_Buster_Start;

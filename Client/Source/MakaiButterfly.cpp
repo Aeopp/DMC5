@@ -55,7 +55,7 @@ void MakaiButterfly::PlayStart(const float PlayingSpeed/*= 25.f*/)
 	Effect::PlayStart(PlayingSpeed);
 	_IsAlive = true;
 	_SliceAmount = 1.f;
-	_BrightScale = 0.2f;
+	_BrightScale = 0.3f;
 	_Collider.lock()->SetActive(true);
 }
 
@@ -135,7 +135,7 @@ void MakaiButterfly::RenderInit()
 			{
 				this->RenderDebug(_Info);
 			}
-		} 
+		}
 	};
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider] =
 	{
@@ -208,7 +208,7 @@ HRESULT MakaiButterfly::Ready()
 	_NRMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_creature_makaibutterfly00_00_NRM.tga");
 
 	_PlayingSpeed = 25.f;
-	_BrightScale = 0.2f;
+	_BrightScale = 0.3f;
 
 	_BezierStartOffsetPos = Vector3(0.f, 0.f, 0.f);
 	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.03f, -0.03f, -0.03f), Vector3(0.03f, 0.03f, 0.03f));
@@ -223,6 +223,7 @@ HRESULT MakaiButterfly::Ready()
 	PushEditEntity(_Collider.lock().get());
 
 	_SVMC = AddGameObject<SecretVisionMagicCircle>();
+	_SVMC.lock()->SetActive(false);
 
 	return S_OK;
 }
@@ -246,7 +247,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 
 	if (MakaiButterfly::VARIATION::MOVE_FORWARD == _VariationIdx)
 	{
-		if (100.f < _AccumulateTime)
+		if (80.f < _AccumulateTime)
 			_IsAlive = false;
 
 		auto WeakTransform = GetComponent<ENGINE::Transform>();
@@ -254,7 +255,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 			SpTransform)
 		{
 			Vector3 vDir = SpTransform->GetLook(); 
-			SpTransform->SetPosition(SpTransform->GetPosition() + vDir * 0.001f);
+			SpTransform->SetPosition(SpTransform->GetPosition() + vDir * 0.01f);
 		}
 	}
 
@@ -276,11 +277,11 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 	}
 	else
 	{
-		if (0.2f > _BrightScale)
+		if (0.3f > _BrightScale)
 		{
 			_BrightScale += 0.5f * _fDeltaTime;
-			if (0.2f < _BrightScale)
-				_BrightScale = 0.2f;
+			if (0.3f < _BrightScale)
+				_BrightScale = 0.3f;
 		}
 
 		_SliceAmount += _fDeltaTime * 1.f;
@@ -375,6 +376,7 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 				}
 
 				// SVMC
+				_SVMC.lock()->SetActive(true);
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
 				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
 
@@ -394,6 +396,7 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 				}
 
 				// SVMC
+				_SVMC.lock()->SetActive(true);
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)FMath::Random<uint32>(0u, 2u));
 				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
 

@@ -55,7 +55,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGlassNRMRTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ALB0Map", _GlassTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ALB1Map", _BloodTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.03f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
 			_ImplInfo.Fx->SetFloat("_HPGlassDirt", _HPGlassDirt);
 
 			Create_ScreenMat(CurID, ScreenMat);
@@ -78,13 +78,13 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExBackALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _ExBackATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _ExBackNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.02f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0075f);
+			_ImplInfo.Fx->SetBool("_Apply_ExposureCorr", true);
 
 			if (_UIDescs[EX_GAUGE].Using)
 				Create_ScreenMat(CurID, ScreenMat);
 			else
 				Create_ScreenMat(CurID, ScreenMat, 1);
-
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
 			_ImplInfo.Fx->BeginPass(0);
@@ -102,7 +102,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		_ImplInfo.Fx->SetTexture("NRMR0Map", _ExNRMR0Tex->GetTexture());
 		_ImplInfo.Fx->SetTexture("Emissive0Map", _ExEmissive0Tex->GetTexture());
 		_ImplInfo.Fx->SetTexture("BurnRamp0Map", _BurnRampTex->GetTexture());
-		_ImplInfo.Fx->SetFloat("_BrightScale", 0.08f);
+		_ImplInfo.Fx->SetFloat("_BrightScale", 0.065f);
 		_ImplInfo.Fx->SetFloat("_SliceAmount", _ExGauge_DissolveAmount);
 		
 		auto WeakSubset0 = _Ex0Mesh->GetSubset(0u);
@@ -147,7 +147,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 	{
 		_ImplInfo.Fx->SetTexture("ALB0Map", _StylishALBMTex->GetTexture());
 		_ImplInfo.Fx->SetTexture("NRMR0Map", _StylishNRMRTex->GetTexture());
-		_ImplInfo.Fx->SetFloat("_BrightScale", 0.08f);
+		_ImplInfo.Fx->SetFloat("_BrightScale", 0.075f);
 
 		for (uint32 i = 0; i < 2u; ++i)
 		{
@@ -238,6 +238,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetBool("_Apply_ExposureCorr", false);
 
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -369,7 +370,8 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _HPGaugeBaseALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _HPGaugeBaseATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGaugeBaseNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.01f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.012f);
+			_ImplInfo.Fx->SetBool("_Apply_ExposureCorr", true);
 
 			for (int i = 0; i < _HPGaugeCount; ++i)
 			{
