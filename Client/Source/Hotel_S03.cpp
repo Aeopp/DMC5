@@ -11,6 +11,7 @@
 #include "MapObject.h"
 #include "Monster.h"
 #include "Trigger.h"
+#include "FadeOut.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -246,11 +247,15 @@ void Hotel_S03::TriggerNextScene()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐*/]()
+			[_FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			// 씬전환 !! 
-			Renderer::GetInstance()->CurDirLight = nullptr;
-			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
+			if (_FadeOut)
+			{
+				_FadeOut->PlayStart(2u,
+					[]() {
+						Renderer::GetInstance()->CurDirLight = nullptr;
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04)); });
+			}
 		};
 
 		// 트리거 위치

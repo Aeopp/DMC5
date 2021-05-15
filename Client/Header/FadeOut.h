@@ -44,11 +44,12 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const uint32 AlbIdx);
+	void PlayStart(const uint32 AlbIdx , const std::function<void()>& PlayEndCallBack);
 	void PlayEnd();
 public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	std::function<void()> PlayEndCallBack{};
 	int32 AlbIdx = 0u;
 };
 #endif //

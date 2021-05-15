@@ -18,6 +18,7 @@
 #include "FadeOut.h"
 #include <iostream>
 #include <fstream>
+#include "FadeOut.h"
 
 using namespace std;
 
@@ -47,11 +48,7 @@ HRESULT Hotel_S01::LoadScene()
 {
 	// Load Start
 	m_fLoadingProgress = 0.01f;
-	if (auto _FadeOut = AddGameObject<FadeOut>().lock();
-		_FadeOut)
-	{
 
-	}
 #pragma region PreLoad
 
 	PreLoader::PreLoadResources();
@@ -62,9 +59,9 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	 AddGameObject<Camera>();
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	 // AddGameObject<Camera>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -753,10 +750,13 @@ void Hotel_S01::Trigger4st()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐*/]()
+			[_FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			// 여기서 씬전환 !! 
-			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
+			if (_FadeOut)
+			{
+				_FadeOut->PlayStart(0u, 
+					[](){ SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02)); });
+			}
 		};
 		
 		// 트리거 위치

@@ -66,11 +66,12 @@ void FadeOut::RenderInit()
 	_RenderProperty.bRender = false;
 };
 
-void FadeOut::PlayStart(const uint32 AlbIdx)
+void FadeOut::PlayStart(const uint32 AlbIdx , const std::function<void()>& PlayEndCallBack)
 {
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	this->AlbIdx = AlbIdx;
+	this->PlayEndCallBack = PlayEndCallBack;
 };
 
 void FadeOut::PlayEnd()
@@ -138,6 +139,10 @@ UINT FadeOut::Update(const float _fDeltaTime)
 	if ( ( T/EndTime)> 1.f)
 	{
 		PlayEnd();
+		if (PlayEndCallBack)
+		{
+			PlayEndCallBack();
+		}
 	}
 	return 0;
 };
@@ -158,7 +163,7 @@ void FadeOut::Editor()
 	{
 		if (ImGui::SmallButton("Play"))
 		{
-			PlayStart(AlbIdx);
+			PlayStart(AlbIdx, {});
 		}
 
 		ImGui::Text("T : %2.6f", T);

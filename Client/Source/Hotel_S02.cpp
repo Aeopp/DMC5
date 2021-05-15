@@ -14,6 +14,7 @@
 #include "MakaiButterfly.h"
 #include "Em100.h"
 #include "Trigger.h"
+#include "FadeOut.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -314,11 +315,16 @@ void Hotel_S02::TriggerNextScene()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐*/]()
+			[_FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			// 씬전환 !! 
-			Renderer::GetInstance()->CurDirLight = nullptr;
-			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
+			// 씬전환 !!
+			if (_FadeOut)
+			{
+				_FadeOut->PlayStart(1u,
+					[]() { 			
+						Renderer::GetInstance()->CurDirLight = nullptr; 
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));});
+			}
 		};
 
 		// 트리거 위치
