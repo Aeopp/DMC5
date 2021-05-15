@@ -38,7 +38,6 @@ HRESULT HotelAnimationWall::Awake()
 HRESULT HotelAnimationWall::Start()
 {
 	GameObject::Start();
-	m_pMesh->PlayAnimation(0, true);
 	return S_OK;
 }
 
@@ -228,5 +227,9 @@ void HotelAnimationWall::RenderInit()
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Map\\Object\\HotelAnimationWall\\HotelAnimationWall.fbx", _InitInfo);
 
 	m_pMesh->EnableToRootMatricies();
+	m_pMesh->PlayAnimation(0, false);
+	m_pMesh->Update(0.0016f);
+	m_pMesh->StopAnimation();
+
 	PushEditEntity(m_pMesh.get());
 }

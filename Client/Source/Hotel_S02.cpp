@@ -70,8 +70,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Test2.json");
-	//LoadObjects("../../Data/Stage2_Object.json");
+	LoadObjects("../../Data/Stage2_Object.json");
 
 	AddGameObject<TempMap>();
 

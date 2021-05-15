@@ -509,6 +509,10 @@
     </ClInclude>
     <ClInclude Include="..\Header\HotelBrokenFloor.h" />
     <ClInclude Include="..\Header\HotelAnimationWall.h" />
+    <ClInclude Include="..\Header\AnimationUpGround.h" />
+    <ClInclude Include="..\Header\BrokenPeople.h" />
+    <ClInclude Include="..\Header\BrokenTable.h" />
+    <ClInclude Include="..\Header\BrokenBookShelf.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -814,6 +818,10 @@
     </ClCompile>
     <ClCompile Include="..\Source\HotelBrokenFloor.cpp" />
     <ClCompile Include="..\Source\HotelAnimationWall.cpp" />
+    <ClCompile Include="..\Source\AnimationUpGround.cpp" />
+    <ClCompile Include="..\Source\BrokenPeople.cpp" />
+    <ClCompile Include="..\Source\BrokenTable.cpp" />
+    <ClCompile Include="..\Source\BrokenBookShelf.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

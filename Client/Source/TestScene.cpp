@@ -51,9 +51,13 @@
 #include "Smoke.h"
 #include "HotelBrokenFloor.h"
 #include "HotelAnimationWall.h"
+#include "BrokenPeople.h"
+#include "BrokenTable.h"
+#include "BrokenBookShelf.h"
 
 #include <iostream>
 #include <fstream>
+#include "AnimationUpGround.h"
 using namespace std;
 
 TestScene::TestScene()
@@ -157,8 +161,10 @@ HRESULT TestScene::LoadScene()
 #pragma region Map
 
 	//LoadMap();
-	//AddGameObject<TempMap>();
+	AddGameObject<TempMap>();
 	AddGameObject<HotelAnimationWall>();
+	//AddGameObject<AnimationUpGround>();
+	//AddGameObject<BrokenBookShelf>();
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -263,7 +269,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region UI
 
-	//AddGameObject<BtlPanel>();
+	AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -315,6 +321,8 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	if(Input::GetKeyDown(DIK_C))
+		AddGameObject<BrokenBookShelf>();
 	//cout << "SceneUpdate" << endl;
 
 
