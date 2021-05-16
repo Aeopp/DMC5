@@ -205,7 +205,7 @@ void ThunderBolt::PlayEnd()
 				for (int32 i = 0; i < _Particle.size(); ++i)
 				{
 					auto& _PlayInstance = _Particle[i];
-					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+					_PlayInstance->PlayDescBind(_RenderUpdateInfo.World);
 				}
 			}
 		};
@@ -265,7 +265,7 @@ void ThunderBolt::PlayParticle()
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"ThunderBoltParticle", 1000ul, true);
+					"ThunderBoltParticle", 500ul, true);
 				_Particle.empty() == false)
 			{
 				for (int32 i = 0; i < _Particle.size(); ++i)

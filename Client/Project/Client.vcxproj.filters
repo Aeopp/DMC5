@@ -524,6 +524,7 @@
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\FadeOut.h" />
+    <ClInclude Include="..\Header\Thunderbolt.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
