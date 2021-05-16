@@ -35,6 +35,12 @@ public:
 	virtual void    OnDisable() override;
 public:
 	bool bParticle = true;
+
+	void PlayStart(const Vector3& PlayLocation,
+		Vector3 Direction ,
+		const float Velocity,
+		const std::optional<Vector3>& PlayScale = std::nullopt);
+
 	void PlayStart(
 		const Vector3& PlayLocation,
 		const std::optional<Vector3>& PlayRotation = std::nullopt
@@ -60,6 +66,10 @@ private:
 	float ScrollSpeed = 445.f;
 	float DistortionIntencity = 0.1f;
 
+	float   Velocity = 1.f;
+	Vector3 Direction{ 0.f,0.f,0.f };
+
+	Matrix DirRotMatrix = FMath::Identity();
 
 	std::weak_ptr<FLight> PtLight;
 

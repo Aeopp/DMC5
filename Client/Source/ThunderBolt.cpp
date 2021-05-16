@@ -39,7 +39,10 @@ void ThunderBolt::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = 
+			FMath::Scale(_SpTransform->GetScale())
+			* DirRotMatrix * 
+			FMath::Translation(_SpTransform->GetPosition());
 	}
 };
 
@@ -84,11 +87,66 @@ void ThunderBolt::RenderInit()
 };
 
 void ThunderBolt::PlayStart(
-	const Vector3& PlayLocation, const std::optional<Vector3>& PlayRotation, const std::optional<Vector3>& PlayScale
+	const Vector3& PlayLocation,
+	Vector3 Direction,
+	const float Velocity,
+	const std::optional<Vector3>& PlayScale)
+{
+	PlayEnd();
+	Direction = FMath::Normalize(Direction);
+
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		SpTransform->SetPosition(PlayLocation);
+
+
+		const Vector3 Axis =
+			FMath::Normalize(FMath::Cross(Direction, Vector3{ 0.f,-1.f,0.f }));
+
+		const float Rad = std::acosf(FMath::Dot(Direction, Vector3{ 0.f,-1.f,0.f }));
+
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
+		{
+			DirRotMatrix  = FMath::RotationAxisMatrix(Axis, Rad);
+		};
+
+		if (PlayScale)
+		{
+			SpTransform->SetScale(*PlayScale);
+		}
+	};
+
+
+	this->Velocity = Velocity;
+	this->Direction = Direction;
+
+	T = 0.0f;
+	_RenderProperty.bRender = true;
+	CurParticleTime = 0.0f;
+
+	PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
+
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->bEnable = true;
+	}
+
+	Range = 0.0f;
+	EndRange = 0.35f;
+};
+
+void ThunderBolt::PlayStart(
+	const Vector3& PlayLocation, 
+	const std::optional<Vector3>& PlayRotation, 
+	const std::optional<Vector3>& PlayScale
 )
 {
 	PlayEnd();
-
+	Velocity = 0.0f;
+	Direction = Vector3{ 0.f,0.f,0.f };
 	// SetActive(true);
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -97,6 +155,7 @@ void ThunderBolt::PlayStart(
 		SpTransform->SetPosition(PlayLocation);
 		if (PlayRotation)
 		{
+			DirRotMatrix = FMath::Rotation(*PlayRotation);
 			SpTransform->SetRotation(*PlayRotation);
 		}
 		if (PlayScale)
@@ -258,7 +317,6 @@ HRESULT ThunderBolt::Ready()
 HRESULT ThunderBolt::Awake()
 {
 	GameObject::Awake();
-
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.0f,0.f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
@@ -293,6 +351,13 @@ UINT ThunderBolt::Update(const float _fDeltaTime)
 		PlayParticle();
 	}
 
+	if (auto SpTransform = GetComponent<Transform>().lock();
+		SpTransform)
+	{
+		SpTransform->SetPosition(
+			SpTransform->GetPosition() + Direction * Velocity);
+	}
+
 	if (PtLightFlux > 0.0f)
 	{
 		if (auto SpPtLight = PtLight.lock();
@@ -313,7 +378,8 @@ UINT ThunderBolt::Update(const float _fDeltaTime)
 		}
 	};
 
-	
+
+
 
 	return 0;
 }
@@ -342,6 +408,26 @@ void ThunderBolt::Editor()
 					PlayStart(SpTransform->GetPosition());
 				}
 			}
+
+			if (ImGui::CollapsingHeader("Dir"))
+			{
+				static Vector3 Dir{ 0.f,0.f ,0.f };
+				static float SliderVelocity = 1.f;
+				ImGui::SliderFloat3("Direction", Dir, -1.f, 1.f);
+				ImGui::SliderFloat("SliderVelocity", &SliderVelocity, 0.f, 100.f);
+				if (ImGui::SmallButton("Play_Dir"))
+				{
+					if (auto SpTransform = GetComponent<Transform>().lock();
+						SpTransform)
+					{
+						PlayStart(
+							SpTransform->GetPosition(),
+							Dir ,
+							SliderVelocity);
+					}
+				}
+			}
+
 
 			if (ImGui::SmallButton("PlayEnd"))
 			{
