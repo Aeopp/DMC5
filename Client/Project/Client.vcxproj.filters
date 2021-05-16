@@ -423,11 +423,6 @@
     <ClInclude Include="..\Header\Trail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\WingSword.h" />
-    <ClInclude Include="..\Header\WingSword1st.h" />
-    <ClInclude Include="..\Header\WingSword2nd.h" />
-    <ClInclude Include="..\Header\WingSword3rd.h" />
-    <ClInclude Include="..\Header\WingSword4th.h" />
     <ClInclude Include="..\Header\DashTrail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
@@ -742,11 +737,6 @@
     <ClCompile Include="..\Source\NeroFSM.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\99.FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\WingSword.cpp" />
-    <ClCompile Include="..\Source\WingSword1st.cpp" />
-    <ClCompile Include="..\Source\WingSword2nd.cpp" />
-    <ClCompile Include="..\Source\WingSword3rd.cpp" />
-    <ClCompile Include="..\Source\WingSword4th.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>

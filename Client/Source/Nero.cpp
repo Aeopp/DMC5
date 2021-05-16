@@ -220,7 +220,6 @@ HRESULT Nero::Ready()
 	m_pCbsMiddle = AddGameObject<Cbs_Middle>();
 	m_pCbsLong = AddGameObject<Cbs_Long>();
 	m_pNewWingSword = AddGameObject<NewWingSword>();
-	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
 	m_pBlood.lock()->SetVariationIdx(Liquid::BLOOD_0);
