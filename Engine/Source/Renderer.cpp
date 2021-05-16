@@ -526,6 +526,7 @@ HRESULT Renderer::Render()&
 
 	// RenderEmissive();
 	AlphaBlendEffectRender();
+
 	if (bDistortion)
 	{
 		BlendDistortion();
@@ -652,10 +653,6 @@ void Renderer::Editor()&
 
 		ImGui::SliderFloat("StarScale", &StarScale, -10.f, 10.f);
 		ImGui::SliderFloat("StarFactor", &StarFactor, -10.f, 10.f);
-		;
-
-
-		;
 
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
@@ -664,11 +661,11 @@ void Renderer::Editor()&
 		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
-
 		ImGui::SliderFloat("ao", &ao, 0.0f, 1.f);
 		ImGui::InputFloat("In ao", &ao, 0.0f, 1.f);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::Checkbox("SkyDistortion", &SkyDistortion);
+
 		if (SkyDistortion)
 		{
 			ImGui::BeginChild("SkyDistortion Edit");
@@ -791,7 +788,7 @@ void Renderer::SkyDistortionEnd()
 
 void Renderer::LateSceneInit()
 {
-	Renderer::GetInstance()->SkyDistortion = false;
+	Renderer::GetInstance()->SkyDistortionEnd();
 	Renderer::GetInstance()->RequestShadowMapBake();
 };
 
@@ -1823,8 +1820,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderTarget(1u, RenderTargets["Distortion"]->GetSurface(0));
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	
-	using AsType = std::pair<const std::string*,
-		ENGINE::Renderer::RenderEntityType*>;
+	using AsType = std::pair<const std::string*,ENGINE::Renderer::RenderEntityType*>;
 
 	std::vector<AsType> AlphaSortArr;
 
@@ -3107,6 +3103,10 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 	}
 };
 
+std::weak_ptr<Quad> Renderer::GetQuad()
+{
+	return _Quad;
+};
 
 bool Renderer::TestShaderInit()
 {
@@ -3135,7 +3135,7 @@ bool Renderer::TestShaderInit()
 	sky = Resources::Load<Texture >("../../Media/Textures/static_sky.jpg");
 
 	return true;
-}
+};
 
 void Renderer::TestShaderRelease()
 {

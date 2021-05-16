@@ -13,14 +13,17 @@ void Trigger::EventRegist(
 	const Vector3& Location,
 	const Vector3& ColliderBoxSize,
 	const bool ImmediatelyEnable,/*持失 馬切原切 醗失鉢 ??*/
-	const GAMEOBJECTTAG& TargetTag)
+	const GAMEOBJECTTAG& TargetTag ,
+	const Vector3& Rotation)
 {
 	TriggerLocation = Location;
+	TriggerRotation = Rotation;
 
 	if (auto _Transform = GetComponent<Transform>().lock();
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
 	};
 
 	if (auto _Collider = GetComponent<BoxCollider>().lock();
@@ -131,6 +134,7 @@ void Trigger::TriggerEnable()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
 	};
 }
 
@@ -148,6 +152,8 @@ void Trigger::TriggerDisable()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 }
 
@@ -184,6 +190,8 @@ HRESULT Trigger::Ready()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 	PushEditEntity(InitTransform.lock().get());
 
@@ -218,6 +226,8 @@ HRESULT Trigger::Awake()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 	return S_OK;
 }
@@ -237,6 +247,8 @@ UINT Trigger::Update(const float _fDeltaTime)
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 
 	if (IsAfterEvent() 

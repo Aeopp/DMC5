@@ -141,7 +141,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
-	AddGameObject<MakaiButterfly>();
+	//AddGameObject<MakaiButterfly>();
 	//AddGameObject<SecretVisionMagicCircle>();
 
 	//// Stage2 안개
