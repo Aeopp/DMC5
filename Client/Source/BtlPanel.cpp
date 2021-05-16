@@ -6,6 +6,14 @@
 #include "Renderer.h"
 
 
+// static var
+int BtlPanel::_HPGaugeCount = 5;
+float BtlPanel::_TDTGauge = 0.f;
+uint32 BtlPanel::_StylishPoints = 0u;
+float BtlPanel::_ExGauge = 0.f;
+uint32 BtlPanel::_RedOrbCount = 0u;
+
+
 void BtlPanel::Free()
 {
 	SafeDeleteArray(_UIDescs);
@@ -1805,7 +1813,7 @@ void BtlPanel::Update_PlayerHP(const float _fDeltaTime)
 {
 	//
 	if (_PlayerHPRatioDelay > _PlayerHPRatio)
-		_PlayerHPRatioDelay -= _fDeltaTime * 0.5f;
+		_PlayerHPRatioDelay -= _fDeltaTime * 0.35f;
 
 	//
 	float HPGaugeOrthoWidth = 0.078125f;
