@@ -177,6 +177,7 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
 	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
 	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
+	_Info.Fx->SetFloat("VelocityBlurIntencity", VelocityBlurIntencity);
 
 	_Info.Fx->SetTexture("AlbedoMap", Albedo->GetTexture());
 	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
@@ -283,7 +284,7 @@ UINT IceAge::Update(const float _fDeltaTime)
 
 			{
 				auto _PlayableParticle = ParticleSystem::GetInstance()->
-					PlayParticle("Ice",500u, true);
+					PlayParticle("Ice",1000u, true);
 				for (int32 i = 0; i < _PlayableParticle.size(); 
 					++i)
 				{
@@ -336,6 +337,7 @@ void IceAge::Editor()
 			ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
 
+			ImGui::SliderFloat("VelocityBlurIntencity", &VelocityBlurIntencity, 0.f, 1.f);
 
 			ImGui::SliderFloat("EditPlayTime", &EditPlayTime, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayTime", &EditPlayTime, 0.f, 0.f, "%9.6f");

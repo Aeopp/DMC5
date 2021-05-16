@@ -3,7 +3,8 @@ uniform vector PixelSize;
 
 uniform float VelocityBlurIntencity;
 uniform float BlurLengthMin;
-uniform int VelocityBlurSamples;
+// uniform int VelocityBlurSamples;
+#define VelocityBlurSamples 32
 
 texture SceneMap;
 sampler Scene= sampler_state

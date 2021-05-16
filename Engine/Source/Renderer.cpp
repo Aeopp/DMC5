@@ -674,12 +674,12 @@ void Renderer::Editor()&
 			bShadowMapBake = true;
 		}
 
-		ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 1.f,
-			"%3.6f");
+		ImGui::SliderFloat("DistortionIntencity", 
+			&DistortionIntencity, 0.f, 1.f,"%3.6f");
+
 		if (ImGui::CollapsingHeader("VelocityBlur"))
 		{
-			ImGui::SliderFloat("VelocityBlurIntencity", &VelocityBlurIntencity, 0.f, 1.f,
-				"%3.6f");
+			ImGui::SliderFloat("VelocityBlurIntencity", &VelocityBlurIntencity, 0.f, 1.f,"%3.6f");
 			ImGui::SliderFloat("BlurLengthMin", &BlurLengthMin,
 				0.f, 10.f, "%3.6f");
 			ImGui::SliderInt("VelocityBlurNumBlurSamples",
@@ -696,7 +696,7 @@ void Renderer::Editor()&
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("Distortion", &bDistortion);
-		ImGui::Checkbox("VelocityBlur", &bVelocityBlur);
+		ImGui::Checkbox("bVelocityBlur", &bVelocityBlur);
 
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
@@ -2929,7 +2929,7 @@ HRESULT Renderer::BlendVelocityBlur()
 	{
 		Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 		Device->SetRenderState(D3DRS_ZENABLE, FALSE);
-		Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 		Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
@@ -2944,10 +2944,8 @@ HRESULT Renderer::BlendVelocityBlur()
 		auto Fx = Shaders["VelocityBlur"]->GetEffect();
 		Fx->SetVector("PixelSize", &PixelSize);
 
-		Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
 		Fx->SetFloat("VelocityBlurIntencity", VelocityBlurIntencity);
 		Fx->SetFloat("BlurLengthMin", BlurLengthMin);
-		Fx->SetInt("VelocityBlurSamples", VelocityBlurSamples);
 		
 		
 		Fx->Begin(nullptr, 0);

@@ -83,7 +83,9 @@ void ThunderBolt::RenderInit()
 	DistortionMap =Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
-void ThunderBolt::PlayStart(const Vector3& PlayLocation)
+void ThunderBolt::PlayStart(
+	const Vector3& PlayLocation, const std::optional<Vector3>& PlayRotation, const std::optional<Vector3>& PlayScale
+)
 {
 	PlayEnd();
 
@@ -93,6 +95,14 @@ void ThunderBolt::PlayStart(const Vector3& PlayLocation)
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
+		if (PlayRotation)
+		{
+			SpTransform->SetRotation(*PlayRotation);
+		}
+		if (PlayScale)
+		{
+			SpTransform->SetScale(*PlayScale);
+		}
 	};
 
 	T = 0.0f;
@@ -122,22 +132,26 @@ void ThunderBolt::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltEndParticle", 250u, true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-			
-			for (int32 i = 0; i < _Particle.size(); ++i)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ThunderBoltEndParticle", 250u, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
 			}
-		}
-	};
+		};
+	}
+	
 
 	// SetActive(false);
 }
@@ -185,21 +199,25 @@ void ThunderBolt::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void ThunderBolt::PlayParticle()
 {
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltParticle", 1000ul, true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-			for (int32 i = 0; i < _Particle.size(); ++i)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ThunderBoltParticle", 1000ul, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
 			}
-		}
-	};
+		};
+	}
+	
 }
 
 
@@ -244,7 +262,7 @@ HRESULT ThunderBolt::Awake()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.0f,0.f });
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.01f,0.001f });
+	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
 
 	return S_OK;
 }

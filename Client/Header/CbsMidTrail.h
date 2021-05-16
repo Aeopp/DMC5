@@ -4,7 +4,7 @@
 #include "RenderInterface.h"
 #include <optional>
 #include "Vertexs.h"
-
+#include "FLight.h"
 class CbsMidTrail : public ENGINE::GameObject,
 			        public ENGINE::RenderInterface
 {
@@ -68,6 +68,9 @@ private:
 	Vector2 NoiseDistortion1{ 22.5f,100.f};
 	Vector2 NoiseDistortion2{ 55.f,10.f};
 
+	float EffectEulerScale = 3.14f;
+	float EffectLocationOffsetScale = 0.005f;
+
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 
@@ -75,13 +78,13 @@ private:
 	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _TrailVtxWorldLocations{};
 
 	// Low High
-	std::array<std::pair<Vector3, Vector3>, BoneCnt >  LatelyOffsets{};
+	std::array<std::pair<Vector3, Vector3>,BoneCnt>  LatelyOffsets{};
 
 	float ParticleCycle = 0.35f;
 	float CurParticleCycle = 0.0f;
 
 	int32  CurEffectParticleIdx = 0;
-	float EffectParticleCycle = 0.01f;
+	float EffectParticleCycle = 0.0007f;
 	float CurEffectParticleCycle = 0.0f;
 private:
 	explicit CbsMidTrail()  ;
@@ -119,5 +122,22 @@ private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);
+	Vector3 GetTrailLocation();
+private:
+	Vector2 EffectLifeTimeRange{0.15f,0.25f};
+	std::map<GAMEOBJECTTAG, float> EffectScale
+	{
+		{Eff_ElectricBranch,0.f},
+		{Eff_ElectricOccur,0.f},
+		{Eff_ElectricVortex,0.011f},
+		{Eff_ThunderBolt,0.f},
+		{Eff_ThunderBoltSecond,0.f}
+	};
+	float EffectSubsetDelta = 0.1f;
+
+	float PtLightRadius = 1.f;
+	float PtLightFlux = 0.05f;
+	D3DXCOLOR PtLightColor{ 177.f/255.f,146.f/255.f,232.f/255.f,1.f };
+	std::weak_ptr<class FLight> PtLight{};
 };
 #endif //

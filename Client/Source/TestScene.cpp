@@ -51,6 +51,12 @@
 #include "Smoke.h"
 #include "NhDoor.h"
 #include "SecretVisionMagicCircle.h"
+#include "IceAge.h"
+#include "CbsMidTrail.h"
+#include "ElectricVortex.h"
+#include "ElectricBranch.h"
+#include "ElectricOccur.h"
+#include "BlitzAttack.h"
 
 #include <iostream>
 #include <fstream>
@@ -75,6 +81,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	AddGameObject<IceAge>();
+	AddGameObject<CbsMidTrail>();
+	// 1. 
+	AddGameObject<ElectricBranch>();
+	// 2.
+	AddGameObject<ElectricOccur>();
+	AddGameObject<ThunderBolt>();
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
@@ -88,9 +101,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
+	AddGameObject<Camera>();
 	
-	AddGameObject<MainCamera>();
+	// AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -236,6 +249,12 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.25f,0.f});
+	}
+
 	//cout << "SceneUpdate" << endl;
 
 	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);

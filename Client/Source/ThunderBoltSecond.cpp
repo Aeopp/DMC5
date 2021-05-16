@@ -87,14 +87,25 @@ void ThunderBoltSecond::RenderInit()
 	AlbMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\lightning.dds");
 };
 
-void ThunderBoltSecond::PlayStart(const Vector3& PlayLocation)
+void ThunderBoltSecond::PlayStart(const Vector3& PlayLocation, const std::optional<Vector3>& PlayRotation, const std::optional<Vector3>& PlayScale
+)
 {
 	PlayEnd();
+
+
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
+		if (PlayRotation)
+		{
+			SpTransform->SetRotation(*PlayRotation);
+		}
+		if (PlayScale)
+		{
+			SpTransform->SetScale(*PlayScale);
+		}
 	};
 
 	T = 0.0f;
@@ -131,22 +142,26 @@ void ThunderBoltSecond::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltSecondEndParticle", 1000ul, true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-
-			for (int32 i = 0; i < _Particle.size(); ++i)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ThunderBoltSecondEndParticle", 1000ul, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
 			}
-		}
-	};
+		};
+	}
+	
 };
 
 float ThunderBoltSecond::GetPlayTime()
@@ -256,21 +271,24 @@ void ThunderBoltSecond::Dice(const uint32 ModeRangeEnd)
 
 void ThunderBoltSecond::PlayParticle()
 {
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltSecondParticle", 100ul, true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-			for (int32 i = 0; i < _Particle.size(); ++i)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ThunderBoltSecondParticle", 100ul, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
 			}
-		}
-	};
+		};
+	}
 }
 
 

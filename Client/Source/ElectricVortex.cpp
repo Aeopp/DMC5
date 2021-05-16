@@ -99,14 +99,27 @@ void ElectricVortex::RenderInit()
 	DistortionMap = Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
-void ElectricVortex::PlayStart(const Vector3& PlayLocation)
+void ElectricVortex::PlayStart(
+	const Vector3& PlayLocation, 
+	const std::optional<Vector3>& PlayRotation, 
+	const std::optional<Vector3>& PlayScale)
 {
 	PlayEnd();
+
+
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
+		if (PlayRotation)
+		{
+			SpTransform->SetRotation(*PlayRotation);
+		}
+		if (PlayScale)
+		{
+			SpTransform->SetScale(*PlayScale);
+		}
 	};
 
 	T = 0.0f;
@@ -234,23 +247,27 @@ void ElectricVortex::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void ElectricVortex::PlayParticle()
 {
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ElectricVortexParticle", 1000ul,true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-			static constexpr uint32 JumpOffset = 1u;
-
-			for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ElectricVortexParticle", 133ul, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				static constexpr uint32 JumpOffset = 1u;
+
+				for (int32 i = 0; i < _Particle.size(); i += JumpOffset)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
 			}
-		}
-	};
+		};
+	}
+	
 }
 
 

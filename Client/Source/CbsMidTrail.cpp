@@ -16,6 +16,8 @@
 #include "ElectricOccur.h"
 #include "ElectricVortex.h"
 
+
+
 CbsMidTrail::CbsMidTrail()
 {
 	VtxBuffers.fill(nullptr);
@@ -196,12 +198,29 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 	CurEffectParticleIdx = 0u;
 	CurEffectParticleCycle = 0.0f;
 
+
+	if (PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
+		PtLight.expired()==false)
+	{
+		auto SpPtLight = PtLight.lock();
+		SpPtLight->bEnable = true;
+		SpPtLight->PointRadius = PtLightRadius;
+		SpPtLight->Color = PtLightColor;
+		SpPtLight->lightFlux = PtLightFlux;
+		SpPtLight->SetPosition(FMath::ConvertVector4(GetTrailLocation(), 1.f));
+	}
 };
 
 void CbsMidTrail::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->bEnable = false;
+	}
 };
 
 void CbsMidTrail::RenderTrail(const DrawInfo& _Info)
@@ -240,6 +259,21 @@ void CbsMidTrail::RenderTrail(const DrawInfo& _Info)
 		_Info.Fx->CommitChanges();
 		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
 	}
+
+
+
+}
+
+Vector3 CbsMidTrail::GetTrailLocation()
+{
+	Vector3 Result{0,0,0};
+	for (auto&  [Low,High ] : LatelyOffsets)
+	{
+		Result += Low;
+		Result += High;
+	}
+	Result /= static_cast<float> (LatelyOffsets.size() * 2.f);
+	return Result;
 }
 
 void CbsMidTrail::BufferUpdate(const float DeltaTime)
@@ -298,7 +332,6 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 	{
 		CurEffectParticleCycle += EffectParticleCycle;
 		
-		
 		int32 Count = 0;
 		while (true)
 		{
@@ -309,7 +342,8 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 				RefEffectDesc.bPlayEnd = false;
 				RefEffectDesc.T = 0.0f;
 
-				if (Eff_ElectricBranch == RefEffectDesc._Tag)
+				if (Eff_ElectricBranch == RefEffectDesc._Tag && 
+					(!FMath::AlmostEqual(EffectScale[Eff_ElectricBranch], 0.f)) )
 				{
 					if (
 						auto SpEffect = 
@@ -326,11 +360,19 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 						const Vector3 TargetLocation =
 							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
 
-						SpEffect->PlayStart(RefEffectDesc.LocationOffset
-						 + TargetLocation);
+						SpEffect->PlayStart(
+							FMath::RandomVector(EffectLocationOffsetScale)
+						 + TargetLocation ,
+							FMath::RandomEuler(EffectEulerScale),
+							FMath::RandomScale(EffectScale[Eff_ElectricBranch])      );
+
+						SpEffect->PlayTime = FMath::Random(EffectLifeTimeRange.x, EffectLifeTimeRange.y);
+
+						SpEffect->SubsetDelta = EffectSubsetDelta;
 					}
 				}
-				else if (Eff_ElectricOccur == RefEffectDesc._Tag)
+				else if (Eff_ElectricOccur == RefEffectDesc._Tag &&
+					(!FMath::AlmostEqual(EffectScale[Eff_ElectricOccur], 0.f)) )
 				{
 					if (
 						auto SpEffect =
@@ -347,11 +389,18 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 						const Vector3 TargetLocation =
 							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
 
-						SpEffect->PlayStart(RefEffectDesc.LocationOffset
-							+ TargetLocation);
+						
+						SpEffect->PlayStart(FMath::RandomVector(EffectLocationOffsetScale)
+							+ TargetLocation,
+							FMath::RandomEuler(EffectEulerScale),
+							FMath::RandomScale(EffectScale[Eff_ElectricOccur]));
+
+						SpEffect->PlayTime = FMath::Random(EffectLifeTimeRange.x, EffectLifeTimeRange.y);
+
 					}
 				}
-				else if (Eff_ElectricVortex == RefEffectDesc._Tag)
+				else if (Eff_ElectricVortex == RefEffectDesc._Tag &&
+					(!FMath::AlmostEqual(EffectScale[Eff_ElectricVortex], 0.f)) )
 				{
 					if (
 						auto SpEffect =
@@ -368,11 +417,19 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 						const Vector3 TargetLocation =
 							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
 
-						SpEffect->PlayStart(RefEffectDesc.LocationOffset
-							+ TargetLocation);
+						SpEffect->PlayStart(FMath::RandomVector(EffectLocationOffsetScale)
+							+ TargetLocation,
+							FMath::RandomEuler(EffectEulerScale),
+							FMath::RandomScale(EffectScale[Eff_ElectricVortex]));
+
+						SpEffect->PlayTime = FMath::Random(EffectLifeTimeRange.x, EffectLifeTimeRange.y);
+
+						SpEffect->SubsetDelta = EffectSubsetDelta;
+						SpEffect->bParticle = true;
 					}
 				}
-				else if (Eff_ThunderBolt == RefEffectDesc._Tag)
+				else if (Eff_ThunderBolt == RefEffectDesc._Tag &&
+					(!FMath::AlmostEqual(EffectScale[Eff_ThunderBolt ], 0.f)) )
 				{
 					if (
 						auto SpEffect =
@@ -389,11 +446,19 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 						const Vector3 TargetLocation =
 							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
 
-						SpEffect->PlayStart(RefEffectDesc.LocationOffset
-							+ TargetLocation);
+						SpEffect->PlayStart(FMath::RandomVector(EffectLocationOffsetScale)
+							+ TargetLocation,
+							FMath::RandomEuler(EffectEulerScale),
+							FMath::RandomScale(EffectScale[Eff_ThunderBolt]));
+
+						SpEffect->PlayTime = FMath::Random(EffectLifeTimeRange.x, EffectLifeTimeRange.y);
+
+						SpEffect->bParticle = false;
+
 					}
 				}
-				else if (Eff_ThunderBoltSecond == RefEffectDesc._Tag)
+				else if (Eff_ThunderBoltSecond == RefEffectDesc._Tag &&
+				(!FMath::AlmostEqual(EffectScale[Eff_ThunderBoltSecond], 0.f)))
 				{
 					if (
 						auto SpEffect =
@@ -410,8 +475,14 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 						const Vector3 TargetLocation =
 							_TrailVtxWorldLocations[TargetBoneIdx][TargetIdx].Location;
 
-						SpEffect->PlayStart(RefEffectDesc.LocationOffset
-							+ TargetLocation);
+						SpEffect->PlayStart(FMath::RandomVector(EffectLocationOffsetScale)
+							+ TargetLocation,
+							FMath::RandomEuler(EffectEulerScale),
+							FMath::RandomScale(EffectScale[Eff_ThunderBoltSecond]));
+
+						SpEffect->PlayTime = FMath::Random(EffectLifeTimeRange.x, EffectLifeTimeRange.y);
+
+						SpEffect->SubsetDelta = EffectSubsetDelta;
 					}
 				}
 
@@ -419,7 +490,6 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 			}
 			else
 			{
-
 				++CurEffectParticleIdx;
 				CurEffectParticleIdx %= EffectParticleCount;
 			}
@@ -644,8 +714,10 @@ HRESULT CbsMidTrail::Ready()
 	for (auto& _DescElement : _PlayEffectDescs)
 	{
 		CbsMidTrail::EffectDesc _Desc{};
+
 		_Desc.LocationOffset = FMath::Random(
-			Vector3{ -0.001f,-0.001f,-0.001f }, Vector3{ 0.001f,0.001f,0.001f });
+			Vector3{ -1.f,-1.f,-1.f }, Vector3{ 1.f,1.f,1.f }) * EffectLocationOffsetScale;
+
 		_Desc.bPlayEnd = true;
 
 		const uint32 Dice = FMath::Random(1u, 4u);
@@ -662,10 +734,10 @@ HRESULT CbsMidTrail::Ready()
 				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
 				TargetTransform->
 					SetScale(Vector3{
-						GScale * 0.01f,
-						GScale * 0.01f,
-						GScale * 0.01f });
-				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+						GScale * EffectScale[Eff_ThunderBolt],
+						GScale * EffectScale[Eff_ThunderBolt],
+						GScale * EffectScale[Eff_ThunderBolt] });
+				TargetTransform->SetRotation(FMath::RandomEuler(EffectEulerScale));
 				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
@@ -681,10 +753,10 @@ HRESULT CbsMidTrail::Ready()
 				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
 				TargetTransform->
 					SetScale(Vector3{
-						GScale * 0.01f,
-						GScale * 0.01f,
-						GScale * 0.01f });
-				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+						GScale * EffectScale[Eff_ElectricOccur],
+						GScale * EffectScale[Eff_ElectricOccur],
+						GScale * EffectScale[Eff_ElectricOccur] });
+				TargetTransform->SetRotation(FMath::RandomEuler(EffectEulerScale));
 				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
@@ -700,10 +772,10 @@ HRESULT CbsMidTrail::Ready()
 				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
 				TargetTransform->
 					SetScale(Vector3{
-						GScale * 0.01f,
-						GScale * 0.01f,
-						GScale * 0.01f });
-				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+						GScale * EffectScale[Eff_ElectricBranch],
+						GScale * EffectScale[Eff_ElectricBranch],
+						GScale * EffectScale[Eff_ElectricBranch] });
+				TargetTransform->SetRotation(FMath::RandomEuler(EffectEulerScale));
 				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
@@ -719,10 +791,10 @@ HRESULT CbsMidTrail::Ready()
 				auto TargetTransform = _TargetEffect->GetComponent<Transform>().lock();
 				TargetTransform->
 					SetScale(Vector3{
-						GScale * 0.01f,
-						GScale * 0.01f,
-						GScale * 0.01f });
-				TargetTransform->SetRotation(FMath::RandomEuler(1.f));
+						GScale * EffectScale[Eff_ElectricVortex],
+						GScale * EffectScale[Eff_ElectricVortex],
+						GScale * EffectScale[Eff_ElectricVortex] });
+				TargetTransform->SetRotation(FMath::RandomEuler(EffectEulerScale));
 				_TargetEffect->PtLightFlux = -1.f;
 			}
 		}
@@ -760,6 +832,15 @@ UINT CbsMidTrail::Update(const float _fDeltaTime)
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
 	EffectParticleUpdate(_fDeltaTime);
+
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->PointRadius = PtLightRadius;
+		SpPtLight->Color = PtLightColor;
+		SpPtLight->lightFlux = PtLightFlux;
+		SpPtLight->SetPosition(FMath::ConvertVector4(GetTrailLocation(), 1.f));
+	}
 
 	return 0;
 }
@@ -814,6 +895,87 @@ void CbsMidTrail::Editor()
 
 			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+
+			if (ImGui::CollapsingHeader("EffectScale"))
+			{
+				
+				{
+					const std::string SliderLabel = "Eff_ElectricBranch";
+					const std::string InLabel = "In Eff_ElectricBranch";
+
+					ImGui::SliderFloat(SliderLabel.c_str(),
+						&EffectScale[Eff_ElectricBranch], FLT_MIN, 0.1f, "%9.6f");
+					ImGui::InputFloat(InLabel.c_str(),
+						&EffectScale[Eff_ElectricBranch], FLT_MIN, 0.1f, "%9.6f");
+				}
+
+				{
+					const std::string SliderLabel = "Eff_ElectricOccur";
+					const std::string InLabel = "In Eff_ElectricOccur";
+
+					ImGui::SliderFloat(SliderLabel.c_str(),
+						&EffectScale[Eff_ElectricOccur], FLT_MIN, 0.1f, "%9.6f");
+					ImGui::InputFloat(InLabel.c_str(),
+						&EffectScale[Eff_ElectricOccur], FLT_MIN, 0.1f, "%9.6f");
+				}
+
+				{
+					const std::string SliderLabel = "Eff_ElectricVortex";
+					const std::string InLabel = "In Eff_ElectricVortex";
+
+					ImGui::SliderFloat(SliderLabel.c_str(),
+						&EffectScale[Eff_ElectricVortex], FLT_MIN, 0.1f, "%9.6f");
+					ImGui::InputFloat(InLabel.c_str(),
+						&EffectScale[Eff_ElectricVortex], FLT_MIN, 0.1f, "%9.6f");
+				}
+
+				{
+					const std::string SliderLabel = "Eff_ThunderBolt";
+					const std::string InLabel = "In Eff_ThunderBolt";
+
+					ImGui::SliderFloat(SliderLabel.c_str(),
+						&EffectScale[Eff_ThunderBolt], FLT_MIN, 0.1f, "%9.6f");
+					ImGui::InputFloat(InLabel.c_str(),
+						&EffectScale[Eff_ThunderBolt], FLT_MIN, 0.1f, "%9.6f");
+				}
+
+				{
+					const std::string SliderLabel = "Eff_ThunderBoltSecond";
+					const std::string InLabel = "In Eff_ThunderBoltSecond";
+
+					ImGui::SliderFloat(SliderLabel.c_str(),
+						&EffectScale[Eff_ThunderBoltSecond], FLT_MIN, 0.1f, "%9.6f");
+					ImGui::InputFloat(InLabel.c_str(),
+						&EffectScale[Eff_ThunderBoltSecond], FLT_MIN, 0.1f, "%9.6f");
+				}
+
+			}
+			
+			ImGui::SliderFloat("EffectParticleCycle", &EffectParticleCycle, FLT_MIN, 0.1f, "%9.6f");
+			ImGui::InputFloat("In EffectParticleCycle", &EffectParticleCycle, FLT_MIN, 0.1f, "%9.6f");
+
+			;
+
+			ImGui::SliderFloat("EffectEulerScale", &EffectEulerScale, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In EffectEulerScale", &EffectEulerScale, FLT_MIN, 10.f, "%9.6f");
+
+			ImGui::SliderFloat2("EffectLifeTimeRange", EffectLifeTimeRange, 
+				0.f, 0.3f, "%9.6f");
+
+			ImGui::SliderFloat("EffectSubsetDelta", &EffectSubsetDelta, FLT_MIN, 0.3f, "%9.6f");
+			ImGui::InputFloat("In EffectSubsetDelta", &EffectSubsetDelta, FLT_MIN, 0.3f, "%9.6f");
+
+			
+
+			ImGui::SliderFloat("PtLightRadius", &PtLightRadius, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In PtLightRadius", &PtLightRadius, FLT_MIN, 10.f, "%9.6f");
+
+			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In PtLightFlux", &PtLightFlux, FLT_MIN, 10.f, "%9.6f");
+			ImGui::ColorEdit4("PtLightColor", PtLightColor);
+
+			ImGui::SliderFloat("EffectLocationOffsetScale", &EffectLocationOffsetScale, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In EffectLocationOffsetScale", &EffectLocationOffsetScale, FLT_MIN, 10.f, "%9.6f");
 
 			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");

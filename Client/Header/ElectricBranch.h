@@ -44,24 +44,26 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& PlayLocation);
+	void PlayStart(const Vector3& PlayLocation,
+		  const std::optional<Vector3>& PlayRotation=std::nullopt
+		, const std::optional<Vector3>& PlayScale =std::nullopt);
 	void PlayEnd();
 	float GetPlayTime();
 public:
 	float PtLightRadius = 10.f;
 	float PtLightFlux = 10.f;
-
+	bool bParticle = true;
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+	float PlayTime = 0.40f;
+	float SubsetDelta = 0.2f;
 private:
 	std::bitset<4u> _SubsetSets{};
 	uint32 CurSubset = 0u;
 	uint32 CurSubsetRand = 0u;
 
 	int32 _Mode = Loop;
-
-	float SubsetDelta = 0.016f;
 	float CurSubsetDelta = 0.016f;
 
 	float UVYScrollSpeed = 1.f;
@@ -70,12 +72,11 @@ private:
 	float ParticleTime = 0.03f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;
-	float PlayTime = 0.35f;
+
 	float ColorIntencity = 0.7f;
-
+	float BlurIntencity = 0.f;
 	float ScrollSpeed = 445.f;
-	float DistortionIntencity = 1.5f;
-
+	float DistortionIntencity = 0.f;
 
 	std::weak_ptr<FLight> PtLight;
 

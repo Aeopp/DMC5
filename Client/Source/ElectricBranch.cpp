@@ -84,7 +84,8 @@ void ElectricBranch::RenderInit()
 	AlbMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\lightning.dds");
 };
 
-void ElectricBranch::PlayStart(const Vector3& PlayLocation)
+void ElectricBranch::PlayStart(
+	const Vector3& PlayLocation, const std::optional<Vector3>& PlayRotation, const std::optional<Vector3>& PlayScale)
 {
 	PlayEnd();
 
@@ -92,6 +93,14 @@ void ElectricBranch::PlayStart(const Vector3& PlayLocation)
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
+		if (PlayRotation)
+		{
+			SpTransform->SetRotation(*PlayRotation);
+		}
+		if (PlayScale)
+		{
+			SpTransform->SetScale(*PlayScale);
+		}
 	};
 
 	T = 0.0f;
@@ -155,6 +164,8 @@ void ElectricBranch::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetTexture("GradMap", GradMap->GetTexture());
 	_Info.Fx->SetFloat("ScrollSpeed", ScrollSpeed);
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+	_Info.Fx->SetFloat("BlurIntencity", BlurIntencity * (PlayTime-T)) ;
+
 
 	_Info.Fx->SetFloat("UVYStartConstant", UVYStartConstant);
 	_Info.Fx->SetFloat("UVYScrollSpeed", UVYScrollSpeed);
@@ -241,21 +252,24 @@ void ElectricBranch::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void ElectricBranch::PlayParticle()
 {
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ElectricBranchParticle", 1000ul, true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-			for (int32 i = 0; i < _Particle.size(); ++i)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ElectricBranchParticle", 250ul, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
 			}
-		}
-	};
+		};
+	}
 }
 
 
@@ -393,6 +407,12 @@ void ElectricBranch::Editor()
 			{
 				PlayEnd();
 			};
+
+			ImGui::SliderFloat("BlurIntencity", &BlurIntencity, FLT_MIN, 1.f , "%9.6f");
+
+
+			ImGui::SliderFloat("SubsetDelta", &SubsetDelta, FLT_MIN, 1.f, "%9.6f");
+			ImGui::InputFloat("In SubsetDelta", &SubsetDelta, 0.f, 1.f, "%9.6f");
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 10000.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 0.f, "%9.6f");
