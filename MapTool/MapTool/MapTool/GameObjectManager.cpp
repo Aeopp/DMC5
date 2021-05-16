@@ -105,7 +105,7 @@ void GameObjectManager::ShowMenuBar()
 	}
 
 	ImGui::Button("DELETE");
-	if (ImGui::IsItemClicked())
+	if (ImGui::IsItemClicked() || Input::GetKeyDown(DIK_DELETE))
 	{
 		DeleteGameObject();
 	}

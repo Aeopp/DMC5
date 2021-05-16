@@ -10,6 +10,8 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "Monster.h"
+#include "Trigger.h"
+#include "FadeOut.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -236,7 +238,45 @@ void Hotel_S03::RenderDataSetUp(const  bool bTest)
 
 void Hotel_S03::TriggerSetUp()
 {
+	TriggerNextScene();
+}
 
+void Hotel_S03::TriggerNextScene()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[_FadeOut = AddGameObject<FadeOut>().lock()]()
+		{
+			if (_FadeOut)
+			{
+				_FadeOut->PlayStart(2u,
+					[]() {
+						Renderer::GetInstance()->CurDirLight = nullptr;
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04)); });
+			}
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -4.55710 ,1.59400 ,37.21000 };
+		const Vector3 TriggerRotation{ -451.22879 ,13.12937 ,0.00000 };
+		;
+		// -4.55710 1.59400 37.21000
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 4.f,1.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag ,
+			TriggerRotation);
+	}
 }
 
 void Hotel_S03::LateInit()

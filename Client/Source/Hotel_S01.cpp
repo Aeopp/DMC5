@@ -15,11 +15,14 @@
 #include "Em1000.h"
 #include "Trigger.h"
 #include "QliphothBlock.h"
+#include "FadeOut.h"
 #include "CollObject.h"
 #include "BreakableObject.h"
 
 #include <iostream>
 #include <fstream>
+#include "FadeOut.h"
+
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -59,8 +62,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-
+	 // AddGameObject<Camera>();
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
@@ -873,10 +875,13 @@ void Hotel_S01::Trigger4st()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐*/]()
+			[_FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			// 여기서 씬전환 !! 
-			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
+			if (_FadeOut)
+			{
+				_FadeOut->PlayStart(0u, 
+					[](){ SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02)); });
+			}
 		};
 		
 		// 트리거 위치

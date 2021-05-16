@@ -28,7 +28,8 @@ public:
 		/* 함수를 호출 하자마자 트리거를 활성화 할지 말지 여부 (false 로 하고 트리거 스폰 이후에 켜는 것도 가능)*/
 		const bool ImmediatelyEnable,
 		/* 트리거와 충돌 검사를 하는 오브젝트의 태그 . */
-		const GAMEOBJECTTAG& TargetTag = GAMEOBJECTTAG::Player);
+		const GAMEOBJECTTAG& TargetTag = GAMEOBJECTTAG::Player ,
+		const Vector3& Rotation = Vector3{ 0.f,0.f ,0.f });
 
 	// 몬스터 웨이브를 스폰 하고자 하는 트리거는 해당 오버로딩된 해당 함수를 호출 . 
 	void EventRegist(
@@ -79,6 +80,7 @@ public:
 private:
 	bool bAfterEvent = false;
 	bool bEnable = false;
+	Vector3 TriggerRotation{ 0.f,0.f,0.f };
 	Vector3 TriggerLocation{ 0.f,0.f,0.f };
 	Option _Option = Option::None;
 	GAMEOBJECTTAG _TargetTag = GAMEOBJECTTAG::Player;
