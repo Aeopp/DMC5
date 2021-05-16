@@ -50,7 +50,6 @@
 #include "MakaiButterfly.h"
 #include "Smoke.h"
 #include "NhDoor.h"
-#include "SecretVisionMagicCircle.h"
 
 #include <iostream>
 #include <fstream>
@@ -110,7 +109,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -141,8 +140,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
-	//AddGameObject<MakaiButterfly>();
-	//AddGameObject<SecretVisionMagicCircle>();
+
+	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetLoop(true);
+	//	pSmoke->PlayStart();
+	//}
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -196,7 +200,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 13, Until Dooms Day",
+		pFont->SetText("D 12, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(245.f, 130.f),
 			Vector2(0.6f, 0.6f),
@@ -320,8 +324,8 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;

@@ -255,6 +255,14 @@ HRESULT Nero::Ready()
 		m_pShapeParticle[SP_GREEN].lock()->SetCtrlIdx(ShapeParticle::ZERO);
 		m_pShapeParticle[SP_GREEN].lock()->SetScale(0.0009f);
 	}
+	m_pShapeParticle[SP_WHITE] = AddGameObject<ShapeParticle>();
+	if (!m_pShapeParticle[SP_WHITE].expired())
+	{
+		m_pShapeParticle[SP_WHITE].lock()->SetShapeIdx(ShapeParticle::SPHERE);
+		m_pShapeParticle[SP_WHITE].lock()->SetColorIdx(ShapeParticle::WHITE);
+		m_pShapeParticle[SP_WHITE].lock()->SetCtrlIdx(ShapeParticle::ZERO);
+		m_pShapeParticle[SP_WHITE].lock()->SetScale(0.0009f);
+	}
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -330,14 +338,15 @@ UINT Nero::Update(const float _fDeltaTime)
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
 
 
-	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
+	//m_pBtlPanel.lock()->AccumulateTDTGauge(0.00005f);
+	m_pBtlPanel.lock()->AccumulateTDTGauge(0.003f * _fDeltaTime);
 	//m_pBtlPanel.lock()->AccumulateTDTGauge(1.f);
 
 
-	/* ShapeParticle이 재생중이면 위치 갱신 */
+	/* ShapeParticle 위치 갱신 */
 	for (int i = 0; i < SP_END; ++i)
 	{
-		if (m_pShapeParticle[i].lock()->IsPlaying())
+		//if (m_pShapeParticle[i].lock()->IsPlaying())
 			m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	}
 	/* ----------------------------------- */
@@ -346,6 +355,7 @@ UINT Nero::Update(const float _fDeltaTime)
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
 	//}
+
 	return 0;
 }
 
@@ -1497,15 +1507,20 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 	case Eff_DashTrail:
 		break;
 	case Eff_ShapeParticle:	// 오브 획득시 이펙트
-		if (0.f < CurRoll)	// 임시. 양수면 빨강 음수는 초록
+		if (1.f < CurRoll)
 		{
 			if (!m_pShapeParticle[SP_RED].lock()->IsPlaying())
-				m_pShapeParticle[SP_RED].lock()->PlayStart(2.8f);
+				m_pShapeParticle[SP_RED].lock()->PlayStart(5.f);
+		}
+		else if (0.f < CurRoll)
+		{
+			if (!m_pShapeParticle[SP_GREEN].lock()->IsPlaying())
+				m_pShapeParticle[SP_GREEN].lock()->PlayStart(5.f);
 		}
 		else
 		{
-			if (!m_pShapeParticle[SP_GREEN].lock()->IsPlaying())
-				m_pShapeParticle[SP_GREEN].lock()->PlayStart(2.8f);
+			if (!m_pShapeParticle[SP_WHITE].lock()->IsPlaying())
+				m_pShapeParticle[SP_WHITE].lock()->PlayStart(5.f);
 		}
 		break;
 	case Eff_CbsTrail:

@@ -78,29 +78,41 @@ void Monster::StoneDebrisInit()
 		Destroy(Element);
 	m_pStoneDebrisVec.clear();
 
-	m_pStoneDebrisVec.reserve(15u);
+	m_pStoneDebrisVec.reserve(16u);
 
-	uint32 StoneDebrisCnt = FMath::Random<uint32>(4u, 12u);
+	uint32 StoneDebrisCnt = FMath::Random<uint32>(8u, 12u);
 	for (uint32 i = 0u; i < StoneDebrisCnt; ++i)
 	{
 		weak_ptr<StoneDebris> p = AddGameObject<StoneDebris>();
 		p.lock()->SetVariationIdx((StoneDebris::VARIATION)FMath::Random<uint32>((uint32)StoneDebris::REDORB_0, (uint32)StoneDebris::REDORB_3));
-		p.lock()->SetScale(FMath::Random<float>(0.0025f, 0.004f));
+		p.lock()->SetScale(FMath::Random<float>(0.002f, 0.004f));
 		p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
 		// position은 죽을 때 위치
-		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.08f, 0.075f, -0.08f), Vector3(0.08f, 0.09f, 0.08f)));
+		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.12f, 0.145f, -0.12f), Vector3(0.12f, 0.16f, 0.12f)));
 		p.lock()->SetActive(false);
 		m_pStoneDebrisVec.push_back(p);
 	}
-	StoneDebrisCnt = FMath::Random<uint32>(0u, 3u);
+	StoneDebrisCnt = FMath::Random<uint32>(0u, 2u);
 	for (uint32 i = 0u; i < StoneDebrisCnt; ++i)
 	{
 		weak_ptr<StoneDebris> p = AddGameObject<StoneDebris>();
 		p.lock()->SetVariationIdx((StoneDebris::VARIATION)FMath::Random<uint32>((uint32)StoneDebris::GREENORB_0, (uint32)StoneDebris::GREENORB_3));
-		p.lock()->SetScale(FMath::Random<float>(0.0025f, 0.004f));
+		p.lock()->SetScale(FMath::Random<float>(0.002f, 0.004f));
 		p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
 		// position은 죽을 때 위치
-		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.08f, 0.075f, -0.08f), Vector3(0.08f, 0.09f, 0.08f)));
+		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.12f, 0.145f, -0.12f), Vector3(0.12f, 0.16f, 0.12f)));
+		p.lock()->SetActive(false);
+		m_pStoneDebrisVec.push_back(p);
+	}
+	StoneDebrisCnt = FMath::Random<uint32>(0u, 2u);
+	for (uint32 i = 0u; i < StoneDebrisCnt; ++i)
+	{
+		weak_ptr<StoneDebris> p = AddGameObject<StoneDebris>();
+		p.lock()->SetVariationIdx((StoneDebris::VARIATION)FMath::Random<uint32>((uint32)StoneDebris::WHITEORB_0, (uint32)StoneDebris::WHITEORB_3));
+		p.lock()->SetScale(FMath::Random<float>(0.002f, 0.003f));
+		p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
+		// position은 죽을 때 위치
+		p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.12f, 0.145f, -0.12f), Vector3(0.12f, 0.16f, 0.12f)));
 		p.lock()->SetActive(false);
 		m_pStoneDebrisVec.push_back(p);
 	}
@@ -118,7 +130,7 @@ void Monster::StoneDebrisPlayStart()
 	{
 		Element.lock()->SetPosition(CurPos);
 		Element.lock()->SetActive(true);
-		Element.lock()->PlayStart(1.5f);
+		Element.lock()->PlayStart();
 	}
 
 	m_bStoneDebrisPlayStart = true;

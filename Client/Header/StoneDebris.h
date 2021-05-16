@@ -15,11 +15,15 @@ public:
 		GREENORB_1,
 		GREENORB_2,
 		GREENORB_3,
+		WHITEORB_0,
+		WHITEORB_1,
+		WHITEORB_2,
+		WHITEORB_3,
 		MAX_VARIATION_IDX
 	};
 	void SetVariationIdx(StoneDebris::VARIATION Idx);
 
-	void SetVelocity(const Vector3& v0) { _Velocity0 = v0; }	// _BeginPos.y 0.05f 기준 y == 0.075f 근처가 적당
+	void SetVelocity(const Vector3& v0) { _Velocity0 = v0; }	// _BeginPos.y 0.05f 기준 y == 0.12f 근처가 적당
 
 private:
 	StoneDebris::VARIATION _VariationIdx = REDORB_0;
@@ -41,7 +45,7 @@ private:
 	Vector2 _SmokeMinTexUV = Vector2(0.f, 0.f);
 	Vector2 _SmokeMaxTexUV = Vector2(1.f, 1.f);
 	float _SmokeSliceAmount = 0.f;
-	Vector3 _SmokeExtraColor = Vector3(1.f, 1.f, 1.f);
+	Vector3 _SmokeExtraColor = Vector3(0.518f, 0.019f, 0.051f);
 	float _SmokeDeltaPosY = 0.f;
 
 	Matrix _DustSingleChildWorldMatrix = Matrix();
@@ -51,12 +55,13 @@ private:
 	Vector3 _DustSingleDeltaPos = Vector3(0.f, 0.f, 0.f);
 
 	Vector3 _BeginPos = Vector3(0.f, 0.05f, 0.f);
-	Vector3 _Velocity0 = Vector3(0.f, 0.075f, 0.f);
+	Vector3 _Velocity0 = Vector3(0.f, 0.15f, 0.f);
 
 	Vector3 _ExtraColor = Vector3(0.f, 0.f, 0.f);
 
 	float _PlayerEffectStart = false;
 	int _PlayerIncreaseHpAmount = 5;
+	float _TDTGaugeIncreaseHpAmount = 0.05f;
 
 private:
 	explicit StoneDebris() = default;
@@ -82,6 +87,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
+	virtual void PlayStart(const float PlayingSpeed = 2.5f) override;
 	virtual void Reset() override;
 	virtual void SetPosition(const Vector3& Pos) override;
 };

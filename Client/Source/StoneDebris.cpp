@@ -19,30 +19,53 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 	{
 	case REDORB_0:
 	case GREENORB_0:
+	case WHITEORB_0:
 		_SubsetIdx = 0u;
-		_BrightScale = 2.f;
 		break;
 	case REDORB_1:
 	case GREENORB_1:
+	case WHITEORB_1:
 		_SubsetIdx = 1u;
-		_BrightScale = 2.f;
 		break;
 	case REDORB_2:
 	case GREENORB_2:
+	case WHITEORB_2:
 		_SubsetIdx = 2u;
-		_BrightScale = 2.f;
 		break;
 	case REDORB_3:
 	case GREENORB_3:
+	case WHITEORB_3:
 		_SubsetIdx = 3u;
-		_BrightScale = 2.f;
 		break;
 	}
 	
-	if (GREENORB_0 <= Idx)
-		_SmokeExtraColor = Vector3(0.09f, 0.596f, 0.518f);
-	else
+	switch (Idx)
+	{
+	case REDORB_0:
+	case REDORB_1:
+	case REDORB_2:
+	case REDORB_3:
+		_ExtraColor = Vector3(0.f, 0.f, 0.f);
 		_SmokeExtraColor = Vector3(0.518f, 0.019f, 0.051f);
+		_BrightScale = 2.55f;
+		break;
+	case GREENORB_0:
+	case GREENORB_1:
+	case GREENORB_2:
+	case GREENORB_3:
+		_ExtraColor = Vector3(0.f, 0.f, 0.f);
+		_SmokeExtraColor = Vector3(0.09f, 0.596f, 0.518f);
+		_BrightScale = 1.55f;
+		break;
+	case WHITEORB_0:
+	case WHITEORB_1:
+	case WHITEORB_2:
+	case WHITEORB_3:
+		_ExtraColor = Vector3(1.f, 1.f, 1.f);
+		_SmokeExtraColor = Vector3(1.f, 1.f, 1.f);
+		_BrightScale = 0.65f;
+		break;
+	}		
 
 	_VariationIdx = Idx;
 }
@@ -72,6 +95,11 @@ void StoneDebris::RenderReady()
 		_RenderUpdateInfo.SubsetCullingSphere.resize(1);
 		_RenderUpdateInfo.SubsetCullingSphere[0] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
 	}
+}
+
+void StoneDebris::PlayStart(const float PlayingSpeed/*= 2.5f*/)
+{
+	Effect::PlayStart(PlayingSpeed);
 }
 
 void StoneDebris::Reset()
@@ -139,7 +167,7 @@ void StoneDebris::Imgui_Modify()
 		if (_Loop)
 		{
 			static int VariationIdx = _VariationIdx;
-			ImGui::SliderInt("VariationIdx##Eff_StoneDebris", &VariationIdx, 0, 7);
+			ImGui::SliderInt("VariationIdx##Eff_StoneDebris", &VariationIdx, 0, 11);
 			if(ImGui::Button("Apply##Eff_StoneDebris"))
 				SetVariationIdx((StoneDebris::VARIATION)VariationIdx);	
 		}
@@ -196,6 +224,7 @@ void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 	case GREENORB_1:
 	case GREENORB_2:
 	case GREENORB_3:
+	default:	// WHITE
 		_Info._Device->SetTexture(0, _GreenOrbALBMTex->GetTexture());
 		_Info._Device->SetTexture(1, _GreenOrbNRMRTex->GetTexture());
 		break;
@@ -300,7 +329,7 @@ HRESULT StoneDebris::Ready()
 	_DustSingleMinTexUV = Vector2(DustSingleIdx * 0.25f, 0.f);
 	_DustSingleMaxTexUV = Vector2((DustSingleIdx + 1u) * 0.25f, 0.25f);
 
-	_PlayingSpeed = 1.f;
+	_PlayingSpeed = 2.5f;
 	_BrightScale = 1.f;
 
 	_AccumulateTime += FMath::Random<float>(-0.2f, 0.2f);	// 재생시간 살짝씩 다르게 하기 위함
@@ -341,7 +370,7 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 				if (auto Sptransform = GetComponent<ENGINE::Transform>().lock();
 					Sptransform)
 				{
-					RedOrbAmount += static_cast<uint32>(Sptransform->GetScale().x / 0.001f) * 10u;	// 몬스터가 뿌리는 scale 0.0025 ~ 0.004
+					RedOrbAmount += static_cast<uint32>(Sptransform->GetScale().x / 0.001f) * 10u;	// 몬스터가 뿌리는 scale 0.002 ~ 0.004
 				}
 
 				std::static_pointer_cast<BtlPanel>(pBtlPanel.lock())->AccumulateRedOrb(RedOrbAmount);
@@ -363,8 +392,8 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		D3DXMatrixInverse(&InvRotMat, 0, &GetComponent<Transform>().lock()->GetRotationMatrix());
 
 		// Smoke
-		_SmokeSpriteIdx += (20.f * _PlayingSpeed * _fDeltaTime);
-		_SmokeSliceAmount += (0.8f * _PlayingSpeed * _fDeltaTime);
+		_SmokeSpriteIdx += (25.f * _PlayingSpeed * _fDeltaTime);
+		_SmokeSliceAmount += (0.75f * _PlayingSpeed * _fDeltaTime);
 
 		float cx = 8.f;	// 가로 갯수
 		float cy = 8.f; // 세로 갯수
@@ -400,28 +429,45 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 
 		if (!_PlayerEffectStart)
 		{
+			auto pPlayer = FindGameObjectWithTag(Player);
+
 			switch (_VariationIdx)
 			{
 			case REDORB_0:
 			case REDORB_1:
 			case REDORB_2:
 			case REDORB_3:
-				if (auto pPlayer = FindGameObjectWithTag(Player);
-					!pPlayer.expired())
+				if (!pPlayer.expired())
 				{
-					std::static_pointer_cast<Nero>(pPlayer.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 1.f);
+					std::static_pointer_cast<Nero>(pPlayer.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 1.5f);
 				}
 				break;
 			case GREENORB_0:
 			case GREENORB_1:
 			case GREENORB_2:
 			case GREENORB_3:
-				if (auto pPlayer = FindGameObjectWithTag(Player);
-					!pPlayer.expired())
+				if (!pPlayer.expired())
 				{
 					auto pNero = std::static_pointer_cast<Nero>(pPlayer.lock());
-					pNero->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -1.f);
+					pNero->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 0.5f);
 					pNero->IncreaseHp(_PlayerIncreaseHpAmount);
+				}
+				break;
+			case WHITEORB_0:
+			case WHITEORB_1:
+			case WHITEORB_2:
+			case WHITEORB_3:
+				if (!pPlayer.expired())
+				{
+					auto pNero = std::static_pointer_cast<Nero>(pPlayer.lock());
+					pNero->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, -0.5f);
+
+					if (auto pBtlPanel = FindGameObjectWithTag(UI_BtlPanel);
+						!pBtlPanel.expired())
+					{
+						std::static_pointer_cast<BtlPanel>(pBtlPanel.lock())->AccumulateTDTGauge(_TDTGaugeIncreaseHpAmount);
+					}
+
 				}
 				break;
 			}
@@ -436,7 +482,7 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 		{
 			Vector3 NewPos = Vector3(0.f, 0.f, 0.f);
 			NewPos.x = _BeginPos.x + _Velocity0.x * _AccumulateTime;
-			NewPos.y = _BeginPos.y + _Velocity0.y * _AccumulateTime - 0.049f * _AccumulateTime * _AccumulateTime;
+			NewPos.y = _BeginPos.y + _Velocity0.y * _AccumulateTime - 0.075f * _AccumulateTime * _AccumulateTime;
 			NewPos.z = _BeginPos.z + _Velocity0.z * _AccumulateTime;
 
 			Sptransform->SetPosition(NewPos);
