@@ -66,6 +66,7 @@ private:
 	void ResetState()&;
 private:
 	void ClearDistortion()&;
+	void ClearVelocityBlur()&;
 private:
 	HRESULT RenderDebug()&;
 	HRESULT RenderDebugBone()&;
@@ -92,6 +93,7 @@ private:
 	HRESULT RenderEmissive();
 	HRESULT RenderUV();
 	HRESULT BlendDistortion();
+	HRESULT BlendVelocityBlur();
 private:
 	void EnableDepthBias()&;
 	void DisableDepthBias()&;
@@ -109,7 +111,11 @@ public:
 	FLight* CurDirLight{ nullptr };
 
 	bool    bDistortion = true;
+	bool    bVelocityBlur = true;
+	int     VelocityBlurSamples = 32;
 	float   DistortionIntencity = 0.05f;
+	float   VelocityBlurIntencity = 1.f;
+	float	BlurLengthMin = 0.000001f;
 	float   exposure = 1.f;
 	float   SoftParticleDepthScale = 0.0f;
 	float   ao = 0.010f;
