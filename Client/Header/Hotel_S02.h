@@ -6,6 +6,7 @@ class Hotel_S02 : public Scene
 {
 private:
 	std::weak_ptr<class Nero> _Player{};
+	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::vector<std::weak_ptr<class MakaiButterfly>> _MakaiButterflyVec{};
 	std::weak_ptr<class SecretVision> _SecretVision{};
 	bool _LateInit = false;
@@ -23,9 +24,11 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-
 private:
 	void LoadObjects(const std::filesystem::path& path);
+	void LoadCollObjects(const std::filesystem::path& path);
+	void LoadBreakablebjects(const std::filesystem::path& path);
+private:
 	void RenderDataSetUp(const bool bTest);
 	void TriggerSetUp();
 	void TriggerWallSmash();

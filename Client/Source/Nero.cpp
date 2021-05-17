@@ -220,7 +220,6 @@ HRESULT Nero::Ready()
 	m_pCbsMiddle = AddGameObject<Cbs_Middle>();
 	m_pCbsLong = AddGameObject<Cbs_Long>();
 	m_pNewWingSword = AddGameObject<NewWingSword>();
-	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
 	m_pBlood.lock()->SetVariationIdx(Liquid::BLOOD_0);
@@ -255,6 +254,14 @@ HRESULT Nero::Ready()
 		m_pShapeParticle[SP_GREEN].lock()->SetCtrlIdx(ShapeParticle::ZERO);
 		m_pShapeParticle[SP_GREEN].lock()->SetScale(0.0009f);
 	}
+	m_pShapeParticle[SP_WHITE] = AddGameObject<ShapeParticle>();
+	if (!m_pShapeParticle[SP_WHITE].expired())
+	{
+		m_pShapeParticle[SP_WHITE].lock()->SetShapeIdx(ShapeParticle::SPHERE);
+		m_pShapeParticle[SP_WHITE].lock()->SetColorIdx(ShapeParticle::WHITE);
+		m_pShapeParticle[SP_WHITE].lock()->SetCtrlIdx(ShapeParticle::ZERO);
+		m_pShapeParticle[SP_WHITE].lock()->SetScale(0.0009f);
+	}
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -274,7 +281,7 @@ HRESULT Nero::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
-	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.08f, 0.f));
+	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.09f, 0.f));
 	m_pCollider.lock()->SetRadius(0.04f);
 	m_pCollider.lock()->SetHeight(0.1f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
@@ -330,14 +337,15 @@ UINT Nero::Update(const float _fDeltaTime)
 	m_pTransform.lock()->Translate(Pos * m_pTransform.lock()->GetScale().x);
 
 
-	m_pBtlPanel.lock()->AccumulateTDTGauge(0.0005f);
+	//m_pBtlPanel.lock()->AccumulateTDTGauge(0.00005f);
+	m_pBtlPanel.lock()->AccumulateTDTGauge(0.003f * _fDeltaTime);
 	//m_pBtlPanel.lock()->AccumulateTDTGauge(1.f);
 
 
-	/* ShapeParticle이 재생중이면 위치 갱신 */
+	/* ShapeParticle 위치 갱신 */
 	for (int i = 0; i < SP_END; ++i)
 	{
-		if (m_pShapeParticle[i].lock()->IsPlaying())
+		//if (m_pShapeParticle[i].lock()->IsPlaying())
 			m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	}
 	/* ----------------------------------- */
@@ -346,6 +354,7 @@ UINT Nero::Update(const float _fDeltaTime)
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
 	//}
+
 	return 0;
 }
 
@@ -414,7 +423,8 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_END);
 		return;
 	}
-	if (NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP == iFsmTag)
+	if (NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP == iFsmTag
+		|| NeroFSM::SKILL_AIR_DIVE_SLASH_START == iFsmTag)
 	{
 		m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_END);
 		return;
@@ -568,6 +578,18 @@ void Nero::RenderGBufferSK(const DrawInfo& _Info)
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
 			SpSubset->Render(_Info.Fx);
 		};
+
+		/*if (auto SpSubset = m_pMesh[m_iMeshIndex]->GetSubset(i).lock();
+			SpSubset)
+		{
+			if (auto exSpSubset = m_pMesh[m_iMeshIndex_ex]->GetSubset(i).lock();
+				exSpSubset)
+			{
+				exSpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
+				exSpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
+			};
+			SpSubset->Render(_Info.Fx);
+		};*/
 	};
 }
 
@@ -1394,6 +1416,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pCbsTrail.lock()->PlayEnd();
 		if (m_pRedQueen.lock()->IsActive())
 			return;
 		m_pRedQueen.lock()->SetActive(true);
@@ -1404,6 +1427,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsShort.lock()->IsActive())
 			return;
 		m_pCbsShort.lock()->SetActive(true);
@@ -1414,6 +1438,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsMiddle.lock()->IsActive())
 			return;
 		m_pCbsMiddle.lock()->SetActive(true);
@@ -1424,6 +1449,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsLong.lock()->IsActive())
 			return;
 		m_pCbsLong.lock()->SetActive(true);
@@ -1497,15 +1523,20 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 	case Eff_DashTrail:
 		break;
 	case Eff_ShapeParticle:	// 오브 획득시 이펙트
-		if (0.f < CurRoll)	// 임시. 양수면 빨강 음수는 초록
+		if (1.f < CurRoll)
 		{
 			if (!m_pShapeParticle[SP_RED].lock()->IsPlaying())
-				m_pShapeParticle[SP_RED].lock()->PlayStart(2.8f);
+				m_pShapeParticle[SP_RED].lock()->PlayStart(5.f);
+		}
+		else if (0.f < CurRoll)
+		{
+			if (!m_pShapeParticle[SP_GREEN].lock()->IsPlaying())
+				m_pShapeParticle[SP_GREEN].lock()->PlayStart(5.f);
 		}
 		else
 		{
-			if (!m_pShapeParticle[SP_GREEN].lock()->IsPlaying())
-				m_pShapeParticle[SP_GREEN].lock()->PlayStart(2.8f);
+			if (!m_pShapeParticle[SP_WHITE].lock()->IsPlaying())
+				m_pShapeParticle[SP_WHITE].lock()->PlayStart(5.f);
 		}
 		break;
 	case Eff_CbsTrail:

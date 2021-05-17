@@ -50,7 +50,7 @@ private:
 	CallType  _RenderCall{};
 
 	float _SliceAmount = 0.f;
-	Vector3 _ExtraColor = Vector3(1.f, 1.f, 1.f);
+	Vector3 _ExtraColor = Vector3(0.518f, 0.019f, 0.051f);
 
 	Matrix _DustSingleChildWorldMatrix = Matrix();
 	Vector2 _DustSingleMinTexUV = Vector2(0.f, 0.f);

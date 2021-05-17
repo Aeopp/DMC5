@@ -4,20 +4,30 @@ USING(ENGINE)
 IMPLEMENT_SINGLETON(TimeSystem)
 
 TimeSystem::TimeSystem()
-	: m_fDeltaTime(0.f) ,  
-	m_fAccDeltaTime (0.f) , 
+	: m_fDeltaTime(0.f),
+	m_fAccDeltaTime(0.f),
 	m_uiFrameRate(0u),
-	m_uiUpdateCount(0u) ,
-	m_fAccTime(0.0f) 
+	m_uiUpdateCount(0u),
+	m_fAccTime(0.0f)
 {
 	ZeroMemory(&m_tCPUTick, sizeof(LARGE_INTEGER));
 	ZeroMemory(&m_tStartFrame, sizeof(LARGE_INTEGER));
 	ZeroMemory(&m_tEndFrame, sizeof(LARGE_INTEGER));
-}
+};
+
 
 void TimeSystem::Free()
 {
 
+};
+
+void TimeSystem::LostTime(const std::vector<Vector2>& ALostArr)
+{
+	LostArr = ALostArr;
+	LostIdx = 0;
+	bLost = false;
+	LostT = 0.0f;
+	SetSlowly(0.01f);
 }
 
 void TimeSystem::SetSlowly(const float Slowly)
@@ -27,7 +37,7 @@ void TimeSystem::SetSlowly(const float Slowly)
 
 HRESULT TimeSystem::ReadyTimeSystem()
 {
-	m_PrevTime= std::chrono::high_resolution_clock::now();
+	m_PrevTime = std::chrono::high_resolution_clock::now();
 
 	return S_OK;
 }
@@ -52,6 +62,7 @@ void TimeSystem::Editor()
 
 void TimeSystem::UpdateDeltaTime(const float Delta)
 {
+
 	m_fDeltaTime = Delta;
 	m_fAccDeltaTime += Delta;
 	m_fAccTime += Delta;
@@ -64,6 +75,37 @@ void TimeSystem::UpdateDeltaTime(const float Delta)
 		m_uiUpdateCount = 0u;
 	}
 	m_tStartFrame = m_tEndFrame;
+
+	if (LostIdx >= LostArr.size())
+	{
+		SetSlowly(1.f);
+		bLost = false;
+		return;
+	}
+	else if (LostArr.empty()==false)
+	{
+		LostT += Delta;
+
+		if (bLost)
+		{
+			if (LostT >= LostArr[LostIdx].y)
+			{
+				bLost = false;
+				SetSlowly(0.01);
+				LostT = 0.0f;
+			}
+		}
+		else
+		{
+			if (LostT >= LostArr[LostIdx].x)
+			{
+				bLost = true;
+				LostT = 0.0f;
+				SetSlowly(1.f);
+				++LostIdx;
+			}
+		}
+	}
 }
 
 float TimeSystem::AccTime()

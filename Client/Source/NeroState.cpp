@@ -1339,7 +1339,10 @@ void NeroState::SetCbsIdle()
 void NeroState::IsGround()
 {
 	if (m_pNero.lock()->CheckIsGround())
+	{
+		m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 		m_pFSM->ChangeState(NeroFSM::JUMP_LANDING);
+	}
 }
 
 void NeroState::ActiveTrail(bool _ActvieOrNot)
@@ -2017,7 +2020,6 @@ RunStartLeft* RunStartLeft::Create(FSMBase* const _pFSM, const UINT _nIndex, wea
 
 HRESULT RunStartLeft::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2308,7 +2310,6 @@ RunStartRight* RunStartRight::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT RunStartRight::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2600,7 +2601,6 @@ RunStart180* RunStart180::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_
 
 HRESULT RunStart180::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
@@ -2890,7 +2890,6 @@ RunLoop* RunLoop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero
 
 HRESULT RunLoop::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 
@@ -2981,7 +2980,6 @@ RunStartFront* RunStartFront::Create(FSMBase* const _pFSM, const UINT _nIndex, w
 
 HRESULT RunStartFront::StateEnter()
 {
-	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
 	//앞으로 달리는 애니메이션으로 세팅
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
@@ -3945,36 +3943,6 @@ HRESULT Hit_Air::StateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
-Wind_Pressure_Small::Wind_Pressure_Small(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
-	:NeroState(_pFSM, _nIndex, _pNero)
-{
-}
-
-Wind_Pressure_Small::~Wind_Pressure_Small()
-{
-}
-
-Wind_Pressure_Small* Wind_Pressure_Small::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
-{
-	return new Wind_Pressure_Small(_pFSM, _nIndex, _pNero);
-}
-
-HRESULT Wind_Pressure_Small::StateEnter()
-{
-	return S_OK;
-}
-
-HRESULT Wind_Pressure_Small::StateExit()
-{
-	return S_OK;
-}
-
-HRESULT Wind_Pressure_Small::StateUpdate(const float _fDeltaTime)
-{
-	NeroState::StateUpdate(_fDeltaTime);
-	return S_OK;
-}
-
 Wind_Pressure_Big::Wind_Pressure_Big(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
 	:NeroState(_pFSM, _nIndex, _pNero)
 {
@@ -3991,6 +3959,12 @@ Wind_Pressure_Big* Wind_Pressure_Big::Create(FSMBase* const _pFSM, const UINT _n
 
 HRESULT Wind_Pressure_Big::StateEnter()
 {
+	NeroState::StateEnter();
+	if(Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+	else
+		NeroState::SetCbsIdle();
+	m_pNero.lock()->ChangeAnimation("WindPressure", false, Nero::ANI_WINDPRESSURE);
 	return S_OK;
 }
 
@@ -4001,37 +3975,11 @@ HRESULT Wind_Pressure_Big::StateExit()
 
 HRESULT Wind_Pressure_Big::StateUpdate(const float _fDeltaTime)
 {
-	NeroState::StateUpdate(_fDeltaTime);
-	return S_OK;
-}
-
-Wind_Pressure_Small_End::Wind_Pressure_Small_End(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
-	:NeroState(_pFSM, _nIndex, _pNero)
-{
-}
-
-Wind_Pressure_Small_End::~Wind_Pressure_Small_End()
-{
-}
-
-Wind_Pressure_Small_End* Wind_Pressure_Small_End::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
-{
-	return new Wind_Pressure_Small_End(_pFSM, _nIndex, _pNero);
-}
-
-HRESULT Wind_Pressure_Small_End::StateEnter()
-{
-	return S_OK;
-}
-
-HRESULT Wind_Pressure_Small_End::StateExit()
-{
-	return S_OK;
-}
-
-HRESULT Wind_Pressure_Small_End::StateUpdate(const float _fDeltaTime)
-{
-	NeroState::StateUpdate(_fDeltaTime);
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		m_pFSM->ChangeState(NeroFSM::STUN_START);
+		return S_OK;
+	}
 	return S_OK;
 }
 
@@ -4051,6 +3999,8 @@ Wind_Pressure_Big_End* Wind_Pressure_Big_End::Create(FSMBase* const _pFSM, const
 
 HRESULT Wind_Pressure_Big_End::StateEnter()
 {
+	NeroState::StateEnter();
+	m_pNero.lock()->ChangeAnimation("WindPressure_End", false, Nero::ANI_WINDPRESSURE_END);
 	return S_OK;
 }
 
@@ -4061,6 +4011,14 @@ HRESULT Wind_Pressure_Big_End::StateExit()
 
 HRESULT Wind_Pressure_Big_End::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
 	return S_OK;
 }
 
@@ -4840,6 +4798,7 @@ HRESULT BT_Att1::StateEnter()
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"ComboA1", false);
 	}
 	m_pNero.lock()->CheckAutoRotate();
+
 	NeroState::ActiveTrail(true);
 	return S_OK;
 }
@@ -8210,6 +8169,7 @@ HRESULT Cbs_SKill_Revolver_End::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_Stinger_End, false);
 	}
+	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	return S_OK;
 }
 

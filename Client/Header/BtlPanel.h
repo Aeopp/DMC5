@@ -6,7 +6,7 @@
 #include "Nero.h"
 
 class BtlPanel : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+				 public ENGINE::RenderInterface
 {
 private:
 	enum UI_DESC_ID
@@ -26,6 +26,7 @@ private:
 		RANK,
 		RANK_LETTER,
 		STYLISH_POINTS,
+		NULLBLACK,
 		SECRET_VISIONS,
 		DESC_END
 	};
@@ -109,7 +110,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _SecretVision1Tex{};
 	std::shared_ptr<ENGINE::Texture> _SecretVision2Tex{};
 
-	float _DeltaTime = 0.f;
+	std::shared_ptr<ENGINE::Texture> _NullBlackTex{};
+
 	float _TotalAccumulateTime = 0.f;
 
 	Vector3 _TargetPos = Vector3(0.f, 0.f, 0.f);
@@ -122,7 +124,7 @@ private:
 	/* 0 ~ 1 */
 	float _PlayerHPRatio = 1.f;
 	float _PlayerHPRatioDelay = 1.f;
-	int _HPGaugeCount = 5;
+	static int _HPGaugeCount;
 	float _HPGaugeWidth = 50.f;
 	float _HPGauge_CurXPosOrtho = 0.f;
 	float _HPGauge_CurXPosOrthoDelay = 0.f;
@@ -137,7 +139,7 @@ private:
 	float _BossGauge_CurXPosOrthoDelay = 0.f;
 
 	/* 0 ~ 1 */
-	float _TDTGauge = 0.f;
+	static float _TDTGauge;
 	float _TDTGauge_CurXPosOrtho = 0.f;
 	bool _TDTGauge_ConsumeStart = false;
 	float _TDTGauge_ConsumeSpeed = 1.f;
@@ -173,7 +175,7 @@ private:
 	0 ~ 99999999
 	_CurRank에 따라서 배율 증가
 	*/
-	uint32 _StylishPoints = 0u;
+	static uint32 _StylishPoints;
 	bool _StylishPtsAccumulateStart = false;
 	// + 결과창에 보여줄 누적 StylishPoints
 	bool _StylishPtsAlive = false;
@@ -181,7 +183,7 @@ private:
 	bool _StylishPtsAlive2ndCheck = false;
 
 	/* 0 ~ 3 */
-	float _ExGauge = 0.f;
+	static float _ExGauge;
 	float _ExGauge_EmissivePower[3] = { 0.f, };
 	Vector4 _ExGauge_FireFrame = Vector4();
 	float _ExGauge_FireAccumulateTime = 999.f;
@@ -220,13 +222,22 @@ private:
 	};
 	std::vector<std::weak_ptr<Font>> _FontVec;
 
-	uint32 _RedOrbCount = 0u;
+	static uint32 _RedOrbCount;
+	float _RedOrbAlpha = 1.f;
+	const float REDORB_ALIVETIME = 4.f;
+	float _RedOrbAlphaTime = REDORB_ALIVETIME;
 
 	int _SecretVisionState[3] = { 0, 0, 0 };
 	//int _SecretVisionPreState[3] = { 0, 0, 0 };
 	float _SecretVisionBrightScale[3] = { 0.02f, 0.02f, 0.02f };
 	float _SecretVisionDissolveAmount[3] = { 1.f, 1.f, 1.f };
 	float _SecretVisionBrightCorr = 0.f;
+
+	bool _GlobalUsing = false;
+	bool _GlobalUsingForce = false;
+	float _GlobalAlpha = 0.f;
+	const float GLOBAL_ALIVETIME = 4.f;
+	float _GlobalAlphaTime = 0.f;
 
 private:
 	explicit BtlPanel() = default;
@@ -288,9 +299,15 @@ public:
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
 	void AccumulateRedOrb(const uint32 Amount);
+	uint32 GetRedOrbCount() const { return _RedOrbCount; }
+	void SetRedOrbActive(bool IsActive);
+
+	void SetGlobalActive(bool IsActive, bool Force = false);
 
 	void ActivateSecretVision(const int Number);
 	void DissolveAllSecretVision();
+
+	void SetNullBlackActive(bool IsActive);
 
 };
 #endif // !__UI_BTL_PANEL__

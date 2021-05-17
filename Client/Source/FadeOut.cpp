@@ -83,30 +83,51 @@ void FadeOut::PlayEnd()
 void FadeOut::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	auto _Renderer = Renderer::GetInstance();
-	
-	if (auto _Quad = _Renderer->GetQuad().lock();
-		_Quad)
-	{
-		Vector2  PixelSize{ 1.f, 1.f };
-		PixelSize.x = 1.0f / static_cast<float > ( _Renderer->_RenderInfo.Viewport.Width );
-		PixelSize.y = -1.0f /static_cast<float > ( _Renderer->_RenderInfo.Viewport.Height);
-		_Info.Fx->SetTexture("AlbmMap",AlbmMap[AlbIdx]->GetTexture());
-		_Info.Fx->SetTexture("NoiseMap",NoiseMap->GetTexture());
-		const float LerpT = FMath::Clamp(T, 0.f, 1.f);
-		//const float Time = TimeSystem::GetInstance()->AccTime();
-		_Info.Fx->SetFloat("Time", T);
-		_Info.Fx->SetFloat("Noisewrap", FMath::Lerp(0.f, Noisewrap, LerpT));
-		_Info.Fx->SetFloat("Timecorr",FMath::Lerp(0.f,Timecorr , LerpT));
-		_Info.Fx->SetFloat("NoiseIntencity", FMath::Lerp(0.f, NoiseIntencity, LerpT));
-		_Info.Fx->SetFloat("DistortionIntencity", FMath::Lerp(0.f,DistortionIntencity, LerpT));
-		_Info.Fx->SetFloat("Intencity", FMath::Lerp(0.f,Intencity, LerpT));
-		const float ColorLerpT = FMath::Clamp(T - 0.5f, 0.f, 1.f);
-		const Vector3 LerpDistortionColor = FMath::Lerp(DistortionColor[0], DistortionColor[1],ColorLerpT);
-		_Info.Fx->SetFloatArray("DistortionColor", LerpDistortionColor,3u);
 
-		_Info.Fx->SetFloatArray("PixelSize", PixelSize, 2u);
-		// 여기서 변수 바인딩 . 
-		_Quad->Render(_Info._Device, 1.f, 1.f, _Info.Fx);
+	// 검은색 블랙 아웃 
+	if (_Info.PassIndex == 1)
+	{
+		if (auto _Quad = _Renderer->GetQuad().lock();
+			_Quad)
+		{
+			Vector2  PixelSize{ 1.f, 1.f };
+			PixelSize.x = 1.0f / static_cast<float> (_Renderer->_RenderInfo.Viewport.Width);
+			PixelSize.y = -1.0f / static_cast<float> (_Renderer->_RenderInfo.Viewport.Height);
+			_Info.Fx->SetFloat("Time", (T / EndTime));
+			_Info.Fx->SetFloatArray("PixelSize", PixelSize, 2u);
+			// 여기서 변수 바인딩 . 
+			_Quad->Render(_Info._Device, 1.f, 1.f, _Info.Fx);		
+		}
+		return;
+	}
+	// 페이드 아웃
+	else if (_Info.PassIndex == 0)
+	{
+		if (auto _Quad = _Renderer->GetQuad().lock();
+			_Quad)
+		{
+			Vector2  PixelSize{ 1.f, 1.f };
+			PixelSize.x = 1.0f / static_cast<float> (_Renderer->_RenderInfo.Viewport.Width);
+			PixelSize.y = -1.0f / static_cast<float> (_Renderer->_RenderInfo.Viewport.Height);
+			_Info.Fx->SetTexture("AlbmMap", AlbmMap[AlbIdx]->GetTexture());
+			_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
+			const float LerpT = FMath::Clamp(T, 0.f, 1.f);
+			//const float Time = TimeSystem::GetInstance()->AccTime();
+			_Info.Fx->SetFloat("Time", T);
+			_Info.Fx->SetFloat("Noisewrap", FMath::Lerp(0.f, Noisewrap, LerpT));
+			_Info.Fx->SetFloat("Timecorr", FMath::Lerp(0.f, Timecorr, LerpT));
+			_Info.Fx->SetFloat("NoiseIntencity", FMath::Lerp(0.f, NoiseIntencity, LerpT));
+			_Info.Fx->SetFloat("DistortionIntencity", FMath::Lerp(0.f, DistortionIntencity, LerpT));
+			_Info.Fx->SetFloat("Intencity", FMath::Lerp(0.f, Intencity, LerpT));
+			const float ColorLerpT = FMath::Clamp(T - 0.5f, 0.f, 1.f);
+			const Vector3 LerpDistortionColor = FMath::Lerp(DistortionColor[0], DistortionColor[1], ColorLerpT);
+			_Info.Fx->SetFloatArray("DistortionColor", LerpDistortionColor, 3u);
+
+			_Info.Fx->SetFloatArray("PixelSize", PixelSize, 2u);
+			// 여기서 변수 바인딩 . 
+			_Quad->Render(_Info._Device, 1.f, 1.f, _Info.Fx);
+		}
+		return;
 	}
 }
 
@@ -136,7 +157,7 @@ UINT FadeOut::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false)return 0;
 	T += _fDeltaTime * Acceleration;
-	if ( ( T/EndTime)> 1.f)
+	if ( ( T/EndTime) > 1.f )
 	{
 		PlayEnd();
 		if (PlayEndCallBack)

@@ -9,10 +9,6 @@
 #include "Camera.h"
 #include "Nero.h"
 #include "RedQueen.h"
-#include "WingSword1st.h"
-#include "WingSword2nd.h"
-#include "WingSword3rd.h"
-#include "WingSword4th.h"
 #include "Em100.h"
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
@@ -50,19 +46,10 @@
 #include "MakaiButterfly.h"
 #include "Smoke.h"
 #include "NhDoor.h"
-#include "SecretVisionMagicCircle.h"
-#include "IceAge.h"
-#include "CbsMidTrail.h"
-#include "ElectricVortex.h"
-#include "ElectricBranch.h"
-#include "ElectricOccur.h"
-#include "BlitzAttack.h"
-#include "LongBarrel.h"
-#include "BiAttack.h"
-#include "Satellite.h"
+#include "ShopPanel.h"
+
 #include <iostream>
 #include <fstream>
-
 using namespace std;
 
 TestScene::TestScene()
@@ -84,18 +71,6 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	AddGameObject<IceAge>();
-	// 껏다 켜기 
-	AddGameObject<CbsMidTrail>();
-	// 방향으로 재생 시켜 주기 .
-	AddGameObject<LongBarrel>();
-	AddGameObject<ElectricBranch>();
-	AddGameObject<ElectricOccur>();
-	AddGameObject<ThunderBolt>();
-	AddGameObject<BiAttack>();
-	AddGameObject<BlitzAttack>();
-	AddGameObject<Satellite>();
-
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
@@ -109,9 +84,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 	
-	// AddGameObject<MainCamera>();
+	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -124,14 +99,14 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
-	
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -162,8 +137,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
-	//AddGameObject<MakaiButterfly>();
-	//AddGameObject<SecretVisionMagicCircle>();
+
+	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetLoop(true);
+	//	pSmoke->PlayStart();
+	//}
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -206,6 +186,7 @@ HRESULT TestScene::LoadScene()
 #pragma region UI
 
 	AddGameObject<BtlPanel>();
+	//AddGameObject<ShopPanel>();
 
 #pragma endregion
 
@@ -217,9 +198,9 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 13, Until Dooms Day",
+		pFont->SetText("D 10, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
-			Vector2(245.f, 130.f),
+			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
 			Vector3(1.f, 1.f, 1.f),
 			true);
@@ -257,13 +238,6 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
-	//if (auto SpPlayer = _Player.lock();
-	//	SpPlayer)
-	//{
-	//	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.25f,0.f});
-	//}
-
 	//cout << "SceneUpdate" << endl;
 
 	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);
@@ -348,8 +322,8 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;
