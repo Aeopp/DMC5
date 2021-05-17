@@ -35,7 +35,10 @@ public:
 					const Vector3& PlayDirection);
 	void PlayStart(const uint32 BoneIdx /*0,1*/);
 private:
-	float AnimationTiming = 0.295090;
+	// pole03 = Idx 2
+	float AnimationTiming = 0.295090f;
+	// pole01 = Idx 0 
+	float AnimationTiming = 0.268436f;
 	float LightFlux = 0.1f;
 	std::pair<float, float> PlayTimeRange = {0.5f,1.f};
 	float ScaleOffset = 0.004f;
