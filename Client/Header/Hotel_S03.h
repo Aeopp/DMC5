@@ -23,6 +23,10 @@ public:
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
 	void LoadObjects(const std::filesystem::path& path);
+	void LoadCollObjects(const std::filesystem::path& path);
+	void LoadBreakablebjects(const std::filesystem::path& path);
+
+private:
 	void RenderDataSetUp(const  bool bTest);
 	void TriggerSetUp();
 	void TriggerNextScene();
