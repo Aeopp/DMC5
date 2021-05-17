@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MainCamera.h"
 #include "Nero.h"
+#include "TimeSystem.h"
 MainCamera::MainCamera()
 	:m_fFovY(0.f), m_fAspect(0.f), m_fNear(0.f), m_fFar(0.f), 
 	m_fCameraAngle(0.f),m_fDistanceToTarget(0.f),m_bFix(true)
@@ -10,6 +11,8 @@ MainCamera::MainCamera()
 	m_vEye = { 0.f,0.f,0.f };
 	m_vAt = { 0.f,0.f,0.f };
 	m_vUp = { 0.f,1.f,0.f };
+	m_vTriggerPos = { 0.f,0.f,0.f };
+	m_vTriggerAngle = { 0.f,0.f,0.f };
 	m_vLerpEye = m_vAt = { 0.f,0.f,0.f };
 	m_nTag = TAG_Camera;
 }
@@ -57,6 +60,7 @@ HRESULT MainCamera::Ready()
 
 HRESULT MainCamera::Awake()
 {
+	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pAtTranform = FindGameObjectWithTag(Player).lock()->GetComponent<Transform>();
 	m_eAtType = AT_PLAYER;
 	m_ePlayerCamMode = CAM_MODE_BASIC;
@@ -120,6 +124,22 @@ void MainCamera::Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eA
 {
 	m_pAtTranform = _pTransform;
 	m_eAtType = _eAtType;
+}
+
+void MainCamera::Set_TriggerCam(UINT _eTriggerCamMode, const Vector3& _vTriggerPos, const float& _fTriggerTime)
+{
+	m_eAtType = AT_TRIGGER;
+	m_eTriggerCamMode = _eTriggerCamMode;
+
+	m_vTriggerPos = _vTriggerPos;
+	m_fTriggerTime = _fTriggerTime;
+	m_vTriggerAngle = { 0.f,0.f,0.f };
+	switch (_eTriggerCamMode)
+	{
+	case STAGE1_WAVE1:
+		m_vEye.y -= 0.11f;
+		break;
+	}
 }
 
 void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
@@ -191,6 +211,8 @@ void MainCamera::MoveMent_Player(float _fDeltaTime)
 
 void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 {
+	if (m_fLerpSpeed <= 1.1f)
+		m_fLerpSpeed += _fDeltaTime;
 	m_vAt = m_pAtTranform.lock()->GetPosition();
 	m_vAt.y += m_fFloatingAmount;
 
@@ -239,40 +261,50 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 
 	m_vLerpEye = m_vAt + vLook;
 
-	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 1.5f);
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * m_fLerpSpeed);
 }
 
 void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 {
+	
 	switch (m_eTriggerCamMode)
 	{
 	case STAGE1_WAVE1:
 		Trigger_Cam_Stage1_Wave1(_fDeltaTime);
 		break;
 	}
+	m_fTriggerTime -= TimeSystem::GetInstance()->OriginDeltaTime();
+	if (m_fTriggerTime <= 0.f)
+	{
+		m_eAtType = AT_PLAYER;
+		switch (m_eTriggerCamMode)
+		{
+		case STAGE1_WAVE1:
+			m_fDistanceToTarget = 1.f;
+			m_fLerpSpeed = 0.2f;
+			break;
+		}
+
+	}
 }
 
 void MainCamera::Trigger_Cam_Stage1_Wave1(float _fDeltaTime)
 {
-	Vector3 _TempAt;
-	_TempAt = m_pAtTranform.lock()->GetPosition();
-	_TempAt.y -= 0.7f;
-	m_vAt = FMath::Lerp(m_vAt, _TempAt, _fDeltaTime * 0.5f);
-	//m_vAt.y += m_fFloatingAmount;
+	m_vAt = FMath::Lerp(m_vAt, m_vTriggerPos, _fDeltaTime * 0.8f);
+	m_vTriggerAngle.x += _fDeltaTime * 0.1f;
 	long    dwMouseMove = 0;
 
-	Vector3 vLook = { -1.5f, 0.f ,1.f };
+	Vector3 vLook = m_vTriggerPos - m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	D3DXVec3Normalize(&vLook, &vLook);
 	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
 	Matrix matRotAxis, matRotX;
 
-	vLook *= m_fDistanceToTarget;
-
-	D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_fRotX));
-	D3DXMatrixRotationAxis(&matRotAxis, &vUp, D3DXToRadian(m_fAngle));
+	D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vTriggerAngle.x));
+	D3DXMatrixRotationAxis(&matRotAxis, &vUp, D3DXToRadian(m_vTriggerAngle.y));
 	D3DXVec3TransformNormal(&vLook, &vLook, &matRotX);
 	D3DXVec3TransformNormal(&vLook, &vLook, &matRotAxis);
 
 	m_vLerpEye = m_vAt + vLook;
 
-	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 0.5f);
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 0.8f);
 }

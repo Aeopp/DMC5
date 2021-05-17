@@ -29,6 +29,7 @@ public:
 public:
     void Set_PlayerCamMode(UINT _ePlayerCamMode) { m_ePlayerCamMode = _ePlayerCamMode; }
     void Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eAtType);
+    void Set_TriggerCam(UINT _eTriggerCamMode,const Vector3& _vTriggerPos,const float& _fTriggerTime);
     void SetDistance(float _fDistance) { m_fDistanceToTarget = _fDistance; }
 public:
     void DecreaseDistance(float _GoalDis,float _fDeltaTime);
@@ -59,7 +60,7 @@ private:
 	Matrix	m_matView, m_matProj;
 
 
-	float	m_fDistanceToTarget = 10.f;
+	float	m_fDistanceToTarget = 0.f;
 	float	m_fCameraAngle = 45.f;
     float   m_fAngle = 0.f;
     float   m_fSensitive = 0.f;
@@ -69,6 +70,12 @@ private:
     //////////////////////////////////////////
     float   m_fDecreaseFactor = 0.f;
     float   m_fIncreaseFactor = 0.f;
+
+    float   m_fTriggerTime = 0.f;
+    Vector3 m_vTriggerPos;
+    Vector3 m_vTriggerAngle;
+
+    float   m_fLerpSpeed = 0.f;
 };
 
 

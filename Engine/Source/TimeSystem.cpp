@@ -21,13 +21,13 @@ void TimeSystem::Free()
 
 };
 
-void TimeSystem::LostTime(const std::vector<Vector2>& ALostArr)
+void TimeSystem::LostTime(const std::vector<Vector3>& ALostArr)
 {
 	LostArr = ALostArr;
 	LostIdx = 0;
 	bLost = false;
 	LostT = 0.0f;
-	SetSlowly(0.01f);
+	SetSlowly(LostArr[0].z);
 }
 
 void TimeSystem::SetSlowly(const float Slowly)
@@ -91,7 +91,7 @@ void TimeSystem::UpdateDeltaTime(const float Delta)
 			if (LostT >= LostArr[LostIdx].y)
 			{
 				bLost = false;
-				SetSlowly(0.01);
+				SetSlowly(LostArr[LostIdx].z);
 				LostT = 0.0f;
 			}
 		}
@@ -116,6 +116,11 @@ float TimeSystem::AccTime()
 float TimeSystem::DeltaTime()
 {
 	return m_fDeltaTime * Slowly;
+}
+
+float TimeSystem::OriginDeltaTime()
+{
+	return m_fDeltaTime;
 }
 
 

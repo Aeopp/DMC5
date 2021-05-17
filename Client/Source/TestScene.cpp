@@ -50,6 +50,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "TimeSystem.h"
 using namespace std;
 
 TestScene::TestScene()
@@ -86,7 +87,7 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Camera>();
 	
-	AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -118,7 +119,7 @@ HRESULT TestScene::LoadScene()
 #pragma region RenderData & Trigger
 
 	RenderDataSetUp();
-	//TriggerSetUp();
+	TriggerSetUp();
 
 #pragma endregion
 
@@ -344,9 +345,13 @@ void TestScene::TriggerSetUp()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐 (되도록 포인터로 ) */]()
+			[/*변수 캡쳐 (되도록 포인터로 ) */this]()
 		{
 			// 로직 .. 
+			vector<Vector3> _LostTimes;
+			_LostTimes.emplace_back(Vector3{ 3.f,1.f,0.5f });
+			TimeSystem::GetInstance()->LostTime(_LostTimes);
+			_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE1_WAVE1, Vector3(0.338f, 1.237f, 0.524f), 3.f);
 		};
 
 		// 트리거 위치
@@ -406,9 +411,10 @@ void TestScene::MonsterWaveTriggerSetUp()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */this]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
