@@ -21,8 +21,6 @@
 
 #include <iostream>
 #include <fstream>
-#include "FadeOut.h"
-
 using namespace std;
 
 Hotel_S01::Hotel_S01()

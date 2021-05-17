@@ -221,12 +221,21 @@ private:
 	std::vector<std::weak_ptr<Font>> _FontVec;
 
 	static uint32 _RedOrbCount;
+	float _RedOrbAlpha = 1.f;
+	const float REDORB_ALIVETIME = 4.f;
+	float _RedOrbAlphaTime = REDORB_ALIVETIME;
 
 	int _SecretVisionState[3] = { 0, 0, 0 };
 	//int _SecretVisionPreState[3] = { 0, 0, 0 };
 	float _SecretVisionBrightScale[3] = { 0.02f, 0.02f, 0.02f };
 	float _SecretVisionDissolveAmount[3] = { 1.f, 1.f, 1.f };
 	float _SecretVisionBrightCorr = 0.f;
+
+	bool _GlobalUsing = false;
+	bool _GlobalUsingForce = false;
+	float _GlobalAlpha = 0.f;
+	const float GLOBAL_ALIVETIME = 4.f;
+	float _GlobalAlphaTime = 0.f;
 
 private:
 	explicit BtlPanel() = default;
@@ -288,6 +297,10 @@ public:
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
 	void AccumulateRedOrb(const uint32 Amount);
+	uint32 GetRedOrbCount() const { return _RedOrbCount; }
+	void SetRedOrbActive(bool IsActive);
+
+	void SetGlobalActive(bool IsActive, bool Force = false);
 
 	void ActivateSecretVision(const int Number);
 	void DissolveAllSecretVision();
