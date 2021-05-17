@@ -9,6 +9,12 @@
 void BreakableObject::Free()
 {
 	m_pStaticMesh.reset();
+
+	for (auto& Element : m_pStoneDebrisVec)
+		Destroy(Element);
+	m_pStoneDebrisVec.clear();
+	m_pStoneDebrisVec.shrink_to_fit();
+
 	GameObject::Free();
 }
 
@@ -297,7 +303,7 @@ UINT BreakableObject::Update(const float _fDeltaTime)
 	if (m_bDestroyObject)
 		m_fStoneTime += _fDeltaTime;
 
-	if(m_fStoneTime >= 1.2f)
+	if (m_fStoneTime >= 3.f)
 	{
 		m_fStoneTime = 0.f;
 		m_bDestroyObject = false;

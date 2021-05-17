@@ -2379,9 +2379,9 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F6))
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
-		SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		AccumulateTDTGauge(0.5f);
-		ChangeWeaponUI(Nero::WeaponList::RQ);
+		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
+		AccumulateTDTGauge(1.f);
+		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
 		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
 		//bActive = !bActive;
@@ -2395,11 +2395,11 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
-		ConsumeTDTGauge(0.5f);
-		static int temp = 0;
-		if (2 < temp)
-			temp = 0;
-		ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
+		//ConsumeTDTGauge(0.5f);
+		//static int temp = 0;
+		//if (2 < temp)
+		//	temp = 0;
+		//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
 		//ResetRankScore();
 
 		//static float Ratio = 1.f;
@@ -2454,7 +2454,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	}
 
 	if (IsGlobalAlpha)
-		SetGlobalActive(true);
+		SetGlobalActive(true, _GlobalUsingForce);
 
 	if (!_UIDescs[KEYBOARD].Using)
 		return;

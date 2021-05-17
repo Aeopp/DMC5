@@ -47,7 +47,7 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 	case REDORB_3:
 		_ExtraColor = Vector3(0.f, 0.f, 0.f);
 		_SmokeExtraColor = Vector3(0.518f, 0.019f, 0.051f);
-		_BrightScale = 2.55f;
+		_BrightScale = 2.45f;
 		break;
 	case GREENORB_0:
 	case GREENORB_1:
