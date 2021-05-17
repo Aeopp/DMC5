@@ -21,6 +21,11 @@ void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 	_VariationIdx = Idx;
 }
 
+void MakaiButterfly::ResetTotalCnt()
+{
+	_TotalCnt = 0u;
+}
+
 void MakaiButterfly::Free()
 {
 	Destroy(_SVMC);

@@ -221,12 +221,16 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
-	// 테스트용 ////////////////////////
+	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
-	////////////////////////////////////
+	/* -------------------------- */
 
 	return S_OK;
 }

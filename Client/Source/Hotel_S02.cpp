@@ -156,12 +156,16 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
-	// 테스트용 ////////////////////////
+	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
-	////////////////////////////////////
+	/* -------------------------- */
 
 	return S_OK;
 }
@@ -616,6 +620,8 @@ void Hotel_S02::LateInit()
 		SpObject->SetPosition({ -4696.414f * GScale, 1683.205f * GScale, 15569.233f * GScale });
 		SpObject->SetActive(false);
 	}
+
+	MakaiButterfly::ResetTotalCnt();
 
 	Renderer::GetInstance()->LateSceneInit();
 
