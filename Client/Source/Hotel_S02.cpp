@@ -17,6 +17,8 @@
 #include "FadeOut.h"
 #include "CollObject.h"
 #include "BreakableObject.h"
+#include "HotelBrokenFloor.h"
+#include "HotelAnimationWall.h"
 
 #include <iostream>
 #include <fstream>
@@ -84,6 +86,8 @@ HRESULT Hotel_S02::LoadScene()
 	LoadCollObjects("../../Data/Stage2_Object.json");
 	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
+	AddGameObject<HotelAnimationWall>();
+	AddGameObject<HotelBrokenFloor>();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(2);
 

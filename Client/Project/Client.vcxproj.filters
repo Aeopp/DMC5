@@ -831,6 +831,8 @@
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FadeOut.cpp" />
+    <ClCompile Include="..\Source\HotelBrokenFloor.cpp" />
+    <ClCompile Include="..\Source\HotelAnimationWall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

@@ -293,6 +293,8 @@
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FadeOut.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
+    <ClCompile Include="..\Source\HotelAnimationWall.cpp" />
+    <ClCompile Include="..\Source\HotelBrokenFloor.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp" />
     <ClCompile Include="..\Source\Hotel_S02.cpp" />
     <ClCompile Include="..\Source\Hotel_S03.cpp" />
