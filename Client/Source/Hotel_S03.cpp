@@ -239,7 +239,41 @@ void Hotel_S03::RenderDataSetUp(const  bool bTest)
 void Hotel_S03::TriggerSetUp()
 {
 	TriggerNextScene();
-}
+	TriggerUpGround();
+};
+
+void Hotel_S03::TriggerUpGround()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[]()
+		{
+			// 여기서 UpGround 로직 처리하세요 ... 
+
+			// 땅이 솟아오름 !! .. 
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.158700f ,0.565950f,27.829210f};
+		const Vector3 TriggerRotation{ 0.f ,0.f,0.f };
+
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 1.705f,1.0630f,0.827000f};
+		// 트리거 정보 등록하자마자 활성화 할까요 ?  
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			TriggerRotation);
+	}
+};
 
 void Hotel_S03::TriggerNextScene()
 {

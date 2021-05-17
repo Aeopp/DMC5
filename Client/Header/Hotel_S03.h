@@ -25,6 +25,7 @@ private:
 	void LoadObjects(const std::filesystem::path& path);
 	void RenderDataSetUp(const  bool bTest);
 	void TriggerSetUp();
+	void TriggerUpGround();
 	void TriggerNextScene();
 	void LateInit();
 };

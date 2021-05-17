@@ -124,7 +124,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
-
+	
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -257,11 +257,12 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-	if (auto SpPlayer = _Player.lock();
-		SpPlayer)
-	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.25f,0.f});
-	}
+
+	//if (auto SpPlayer = _Player.lock();
+	//	SpPlayer)
+	//{
+	//	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.25f,0.f});
+	//}
 
 	//cout << "SceneUpdate" << endl;
 
