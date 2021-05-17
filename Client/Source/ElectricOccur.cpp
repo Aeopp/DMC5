@@ -98,7 +98,9 @@ void ElectricOccur::RenderInit()
 	DistortionMap = Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
-void ElectricOccur::PlayStart(const Vector3& PlayLocation, const std::optional<Vector3>& PlayRotation, const std::optional<Vector3>& PlayScale)
+void ElectricOccur::PlayStart(const Vector3& PlayLocation, 
+	const std::optional<Vector3>& PlayRotation, 
+	const std::optional<Vector3>& PlayScale)
 {
 	PlayEnd();
 

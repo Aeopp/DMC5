@@ -59,8 +59,10 @@
 #include "BlitzAttack.h"
 #include "LongBarrel.h"
 #include "BiAttack.h"
+#include "Satellite.h"
 #include <iostream>
 #include <fstream>
+
 using namespace std;
 
 TestScene::TestScene()
@@ -91,6 +93,9 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<ElectricOccur>();
 	AddGameObject<ThunderBolt>();
 	AddGameObject<BiAttack>();
+	AddGameObject<BlitzAttack>();
+	AddGameObject<Satellite>();
+
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 

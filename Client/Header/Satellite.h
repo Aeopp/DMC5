@@ -1,11 +1,11 @@
-#ifndef __BIATTACK_H_
-#define __BIATTACK_H_
+#ifndef __SATELLITE_H_
+#define __SATELLITE_H_
 #include "GameObject.h"
 #include "RenderInterface.h"
-#include "ElectricOccur.h"
+
 #include <optional>
 
-class BiAttack : public ENGINE::GameObject
+class Satellite : public ENGINE::GameObject
 		
 {
 private:
@@ -13,16 +13,16 @@ private:
 	{
 		std::weak_ptr<class ThunderBolt> _Effect{};
 	};
-	std::array<BiAttack::EffectDesc, 10u> _PlayEffectDescs{};
-	std::weak_ptr<ElectricOccur> _ElectricOccur{};
+	std::array<Satellite::EffectDesc, 40u> _PlayEffectDescs{};
+	std::weak_ptr<class ElectricBranch > _ElectricBranch{};
 private:
-	explicit BiAttack() = default;
-	virtual ~BiAttack() = default;
+	explicit Satellite() = default;
+	virtual ~Satellite() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
 public:
-	static BiAttack* Create();
+	static Satellite* Create();
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -35,18 +35,25 @@ public:
 public:
 	void PlayStart(const Vector3& Location ,
 					const Vector3& PlayDirection);
+	void PlayEnd();
 private:
-	float ElectricForwardOffset = 0.05f;
+	bool bPlay = false;
+	float ThunderBoltDelta= 0.001872f;
+	float CurThunderBoltDelta = 0.0f;
+
+	float ElectricForwardOffset = 0.024064f;
+	float PlayLocationOffset = 0.1f;
+	std::pair<float, float> VelocityOffset{ 0.238235f,0.721925f};
 	float LightRadius = 0.5f;
-	float OccurScale = 0.0002f;
+	float BranchScale = 0.005f;
 	float LightFlux = 0.1f;
-	std::pair<float, float> PlayTimeRange = {0.395f,0.525f};
-	float ScaleOffset = 0.004f;
-	std::pair<float, float> VelocityOffset{ 0.1f,0.72f};
-	float PlayLocationOffset = 0.0000f;
+	std::pair<float, float> PlayTimeRange = {0.1f,0.2f};
+	float ScaleOffset = 0.002674f;
+
 	Vector3 PlayDirection{ 0.f,0.f,0.f };
-	float DirYawOffset = 0.25f;
-	float DirPitchOffset = 0.118f;
+	float DirYawOffset = 3.142f;
+	float DirPitchOffset = 3.142f;
 	float T = 0.0f;
+	Vector3 CurrentPlayDireciton{ 0.f,0.f,0.f };
 };
 #endif //

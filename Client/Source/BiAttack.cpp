@@ -97,21 +97,27 @@ void BiAttack::Editor()
 			PlayStart(GetComponent<Transform>().lock()->GetPosition(), PlayDirection);
 		}
 
-		ImGui::SliderFloat3("PlayDirection", PlayDirection, -1.f, 1.f);
-		ImGui::SliderFloat("PlayLocationOffset", &PlayLocationOffset, 0.f, 1.f);
-		ImGui::SliderFloat("VelocityOffset Begin", &VelocityOffset.first, 0.f, 9.9f);
-		ImGui::SliderFloat("VelocityOffset End", &VelocityOffset.second, 0.f, 10.f);
-		ImGui::SliderFloat("ScaleOffset", &ScaleOffset, 0.f, 1.f);
-		ImGui::InputFloat("In ScaleOffset", &ScaleOffset, 0.f, 1.f);
 
-		ImGui::SliderFloat("LightFlux", &LightFlux, 0.0f, 1.f);
-		ImGui::SliderFloat("LightRadius", &LightRadius, 0.0f, 1.f);
+		ImGui::SliderFloat("ElectricForwardOffset",&ElectricForwardOffset, 0.f, 1.f ,"%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
+
+		ImGui::SliderFloat3("PlayDirection", PlayDirection, -1.f, 1.f);
+		ImGui::SliderFloat("PlayLocationOffset", &PlayLocationOffset, 0.f, 1.f,"%.6f",ImGuiSliderFlags_::ImGuiSliderFlags_None );
+		ImGui::SliderFloat("VelocityOffset Begin", &VelocityOffset.first, 0.f, 9.9f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		ImGui::SliderFloat("VelocityOffset End", &VelocityOffset.second, 0.f, 10.f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		ImGui::SliderFloat("ScaleOffset", &ScaleOffset, 0.f, 1.f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		ImGui::InputFloat("In ScaleOffset", &ScaleOffset, 0.f, 1.f);
+		
+		ImGui::SliderFloat("OccurScale", &OccurScale, 0.f, 0.1f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		ImGui::InputFloat("In OccurScale", &OccurScale, 0.f, 0.1f);
+
+		ImGui::SliderFloat("LightFlux", &LightFlux, 0.0f, 1.f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		ImGui::SliderFloat("LightRadius", &LightRadius, 0.0f, 1.f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
 
 		ImGui::SliderFloat("DirYawOffset ", &DirYawOffset, -FMath::PI ,FMath::PI);
 		ImGui::SliderFloat("DirPitchOffset ", &DirPitchOffset, -FMath::PI, FMath::PI);
 
-		ImGui::SliderFloat("PlayTimeRange Begin", &PlayTimeRange.first, 0.0f,1.f);
-		ImGui::SliderFloat("PlayTimeRange End", &PlayTimeRange.second, 0.0f,1.f);;
+		ImGui::SliderFloat("PlayTimeRange Begin", &PlayTimeRange.first, 0.0f,1.f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		ImGui::SliderFloat("PlayTimeRange End", &PlayTimeRange.second, 0.0f,1.f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);;
 	}
 };
 
@@ -125,9 +131,12 @@ void BiAttack::OnDisable()
 	GameObject::OnDisable();
 }
 
-void BiAttack::PlayStart(const Vector3& Location, const Vector3& PlayDirection)
+void BiAttack::PlayStart(const Vector3& Location, 
+						const Vector3& PlayDirection)
 {
+	
 	const Vector3 NormDirection = FMath::Normalize(PlayDirection);
+	const Vector3 PlayLocation = Location + NormDirection * ElectricForwardOffset;
 
 	for (auto& _DescElement : _PlayEffectDescs)
 	{
@@ -139,13 +148,14 @@ void BiAttack::PlayStart(const Vector3& Location, const Vector3& PlayDirection)
 			const Vector3 _Scale = FMath::RandomScale(ScaleOffset);
 			const Vector3 _Right = FMath::Normalize(FMath::Cross(Vector3{ 0,1,0 }, PlayDirection)); 
 			const Vector3 _Up = FMath::Normalize(FMath::Cross( PlayDirection, _Right ));
+
 			Vector3 _Direction = NormDirection;
 			_Direction =FMath::RotationVecNormal(_Direction, _Up, 
-							FMath::Random(-FMath::PI*DirYawOffset,FMath::PI * DirYawOffset));
+							FMath::Random(-FMath::HalfPI*DirYawOffset,FMath::HalfPI* DirYawOffset));
 			_Direction = FMath::RotationVecNormal(_Direction, _Right, 
-							FMath::Random(0.0f, FMath::PI * DirPitchOffset));
+							FMath::Random(-FMath::HalfPI* DirPitchOffset, 0.f));
 			
-			_PlayEffect->PlayStart(Location + _Location, _Direction, _Velocity ,_Scale);
+			_PlayEffect->PlayStart(PlayLocation + _Location, _Direction, _Velocity ,_Scale);
 			_PlayEffect->PlayTime = FMath::Random(PlayTimeRange);
 			_PlayEffect->PtLightFlux = LightFlux;
 			_PlayEffect->PtLightRadius= LightRadius;
@@ -153,5 +163,5 @@ void BiAttack::PlayStart(const Vector3& Location, const Vector3& PlayDirection)
 		}
 	}
 
-	_ElectricOccur.lock()->PlayStart( Location  , NormDirection *ElectricForwardOffset , FMath::RandomEuler(1.f));
+	_ElectricOccur.lock()->PlayStart(PlayLocation, std::nullopt, Vector3{ OccurScale , OccurScale,OccurScale } );
 }

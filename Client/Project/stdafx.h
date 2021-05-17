@@ -59,6 +59,7 @@ enum GAMEOBJECTTAG
 	Eff_BlitzAttack,
 	Eff_LongBarrel,
 	Eff_BiAttack,
+	Eff_Satellite,
 	Eff_FireCircle,
 	Eff_ElectricOccur ,
 	Eff_ThunderBolt,
