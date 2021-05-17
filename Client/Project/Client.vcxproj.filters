@@ -525,6 +525,7 @@
     </ClInclude>
     <ClInclude Include="..\Header\FadeOut.h" />
     <ClInclude Include="..\Header\Thunderbolt.h" />
+    <ClInclude Include="..\Header\LongBarrel.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -842,6 +843,7 @@
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FadeOut.cpp" />
+    <ClCompile Include="..\Source\LongBarrel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

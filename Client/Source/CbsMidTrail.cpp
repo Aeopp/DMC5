@@ -454,7 +454,6 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 						SpEffect->PlayTime = FMath::Random(EffectLifeTimeRange.x, EffectLifeTimeRange.y);
 
 						SpEffect->bParticle = false;
-
 					}
 				}
 				else if (Eff_ThunderBoltSecond == RefEffectDesc._Tag &&

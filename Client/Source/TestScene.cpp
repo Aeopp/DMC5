@@ -57,6 +57,7 @@
 #include "ElectricBranch.h"
 #include "ElectricOccur.h"
 #include "BlitzAttack.h"
+#include "LongBarrel.h"
 
 #include <iostream>
 #include <fstream>
@@ -83,11 +84,13 @@ HRESULT TestScene::LoadScene()
 {
 	AddGameObject<IceAge>();
 	AddGameObject<CbsMidTrail>();
+	AddGameObject<LongBarrel>();
 	// 1. 
 	AddGameObject<ElectricBranch>();
 	// 2.
 	AddGameObject<ElectricOccur>();
 	AddGameObject<ThunderBolt>();
+
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 

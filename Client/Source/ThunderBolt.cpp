@@ -90,7 +90,8 @@ void ThunderBolt::PlayStart(
 	const Vector3& PlayLocation,
 	Vector3 Direction,
 	const float Velocity,
-	const std::optional<Vector3>& PlayScale)
+	const std::optional<Vector3>& PlayScale ,
+	const bool bEditPlay)
 {
 	PlayEnd();
 	Direction = FMath::Normalize(Direction);
@@ -99,17 +100,15 @@ void ThunderBolt::PlayStart(
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
-
-
-		const Vector3 Axis =
-			FMath::Normalize(FMath::Cross(Direction, Vector3{ 0.f,-1.f,0.f }));
-
-		const float Rad = std::acosf(FMath::Dot(Direction, Vector3{ 0.f,-1.f,0.f }));
+		const Vector3 Up = Direction.y  > 0.f ? Vector3{ 0.f,-1.f,0.f } : Vector3{ 0.f,1.f,0.f };
+		const Vector3 Axis = FMath::Cross(Direction, Up);
+		const Vector3 NormalAxis = FMath::Normalize(Axis);
+		const float Rad = std::asinf(FMath::Length(Axis));
 
 		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 			SpTransform)
 		{
-			DirRotMatrix  = FMath::RotationAxisMatrix(Axis, Rad);
+			DirRotMatrix  = FMath::RotationAxisMatrix(NormalAxis, Rad);
 		};
 
 		if (PlayScale)
@@ -136,6 +135,8 @@ void ThunderBolt::PlayStart(
 
 	Range = 0.0f;
 	EndRange = 0.35f;
+
+	this->bEditPlay = bEditPlay;
 };
 
 void ThunderBolt::PlayStart(
@@ -210,6 +211,11 @@ void ThunderBolt::PlayEnd()
 			}
 		};
 	}
+
+	if (bEditPlay)
+	{
+		GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.25f,0.f });
+	}
 	
 
 	// SetActive(false);
@@ -271,7 +277,7 @@ void ThunderBolt::PlayParticle()
 				for (int32 i = 0; i < _Particle.size(); ++i)
 				{
 					auto& _PlayInstance = _Particle[i];
-					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+					_PlayInstance->PlayDescBind(_RenderUpdateInfo.World);
 				}
 			}
 		};
@@ -318,7 +324,7 @@ HRESULT ThunderBolt::Awake()
 {
 	GameObject::Awake();
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.0f,0.f });
+	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.25f,0.f } );
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
 
@@ -414,7 +420,8 @@ void ThunderBolt::Editor()
 				static Vector3 Dir{ 0.f,0.f ,0.f };
 				static float SliderVelocity = 1.f;
 				ImGui::SliderFloat3("Direction", Dir, -1.f, 1.f);
-				ImGui::SliderFloat("SliderVelocity", &SliderVelocity, 0.f, 100.f);
+				ImGui::SliderFloat("SliderVelocity", &SliderVelocity, 0.f, 1.f);
+				ImGui::InputFloat("In SliderVelocity", &SliderVelocity);
 				if (ImGui::SmallButton("Play_Dir"))
 				{
 					if (auto SpTransform = GetComponent<Transform>().lock();
@@ -423,7 +430,7 @@ void ThunderBolt::Editor()
 						PlayStart(
 							SpTransform->GetPosition(),
 							Dir ,
-							SliderVelocity);
+							SliderVelocity ,std::nullopt,true);
 					}
 				}
 			}

@@ -39,7 +39,8 @@ public:
 	void PlayStart(const Vector3& PlayLocation,
 		Vector3 Direction ,
 		const float Velocity,
-		const std::optional<Vector3>& PlayScale = std::nullopt);
+		const std::optional<Vector3>& PlayScale = std::nullopt,
+		const bool bEditPlay=false );
 
 	void PlayStart(
 		const Vector3& PlayLocation,
@@ -56,7 +57,9 @@ public:
 	float PtLightRadius = 1.f;
 	float PtLightFlux = 1.f;
 	float PlayTime = 0.58f;
+	float DistortionIntencity = 0.1f;
 private:
+	bool bEditPlay = false;
 	float ParticleTime = 0.03f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;
@@ -64,7 +67,7 @@ private:
 	float ColorIntencity = 0.7f;
 
 	float ScrollSpeed = 445.f;
-	float DistortionIntencity = 0.1f;
+
 
 	float   Velocity = 1.f;
 	Vector3 Direction{ 0.f,0.f,0.f };

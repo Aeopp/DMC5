@@ -168,6 +168,7 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 	const float AlphaFactor = std::clamp(PlayTime - T, 0.0f, 1.f);
 
+	
 	_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
 	_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
 	const Vector3 Speed = NoiseScrollSpeed * T;
@@ -178,6 +179,7 @@ void IceAge::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
 	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
 	_Info.Fx->SetFloat("VelocityBlurIntencity", VelocityBlurIntencity);
+	_Info.Fx->SetFloat("VelocityBlurAlpha", VelocityBlurAlpha);
 
 	_Info.Fx->SetTexture("AlbedoMap", Albedo->GetTexture());
 	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
@@ -338,6 +340,8 @@ void IceAge::Editor()
 			ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
 
 			ImGui::SliderFloat("VelocityBlurIntencity", &VelocityBlurIntencity, 0.f, 1.f);
+			ImGui::SliderFloat("VelocityBlurAlpha", &VelocityBlurAlpha, 0.f, 1.f);
+			;
 
 			ImGui::SliderFloat("EditPlayTime", &EditPlayTime, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayTime", &EditPlayTime, 0.f, 0.f, "%9.6f");

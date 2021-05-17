@@ -4,9 +4,10 @@ matrix ViewProjection;
 uniform float exposure_corr;
 
 uniform float  DistortionIntencity;
-uniform float  ColorIntencity;
+uniform float ColorIntencity;
 uniform float  EmissiveIntencity;
 uniform float VelocityBlurIntencity = 1.f;
+uniform float VelocityBlurAlpha = 1.f;
 
 uniform matrix InverseProjection;
 uniform float  SoftParticleDepthScale;
@@ -170,7 +171,7 @@ void PsMain(out float4 Color  : COLOR0,
     // 속도 블러 테스트
     Color2.xy = LNormal.xy * VelocityBlurIntencity;
     Color2.z = 1.f;
-    Color2.w = 1.f;
+    Color2.w = VelocityBlurAlpha;
     // Color2 = float4(1(속도), 1(속도), 1(의미없음), 1 <-1로하길 바람);
     //
 };
