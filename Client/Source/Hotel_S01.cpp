@@ -60,7 +60,8 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	 // AddGameObject<Camera>();
+	//AddGameObject<Camera>();
+
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
@@ -223,7 +224,6 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
 	////////////////////////////////////
@@ -768,9 +768,9 @@ void Hotel_S01::Trigger3rd()
 			lock()->SetPosition({ -4.430736f, 0.01f, 8.29934f });
 			
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -5.1670f , -0.003732f , 7.915854f };
+		const Vector3 TriggerLocation{ -3.7564f , -0.003732f , 9.8498f };
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 4.f,5.f,1.f };
+		const Vector3 TriggerBoxSize = { 3.66f, 2.062f, 4.594f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
 		const bool ImmediatelyEnable = false;
 		// 트리거 검사할 오브젝트는 플레이어 
@@ -837,9 +837,9 @@ void Hotel_S01::Trigger3rd()
 
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -5.1670f , -0.003732f , 7.915854f };
+		const Vector3 TriggerLocation{ -3.7564f, -0.003732f, 9.8498f };
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 4.f,5.f,1.f };
+		const Vector3 TriggerBoxSize = { 3.66f, 2.062f, 4.594f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
 		const bool ImmediatelyEnable = true;
 		// 트리거 검사할 오브젝트는 플레이어 
@@ -902,16 +902,21 @@ void Hotel_S01::Trigger4st()
 		const std::function<void()> _CallBack =
 			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			if (auto Sp = _BtlPanel.lock(); Sp)
+			auto SpPanel = _BtlPanel.lock();
+			if (SpPanel)
 			{
-				Sp->SetRedOrbActive(false);
-				Sp->SetGlobalActive(false);
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
 			}
 
 			if (_FadeOut)
 			{
 				_FadeOut->PlayStart(0u, 
-					[](){ SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02)); });
+					[SpPanel]()
+					{ 
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02)); 
+					});
 			}
 		};
 		

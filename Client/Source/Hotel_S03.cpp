@@ -141,7 +141,6 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	////////////////////////////////////
@@ -373,24 +372,27 @@ void Hotel_S03::TriggerNextScene()
 		const std::function<void()> _CallBack =
 			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			if (auto Sp = _BtlPanel.lock(); Sp)
+			auto SpPanel = _BtlPanel.lock();
+			if (SpPanel)
 			{
-				Sp->SetRedOrbActive(false);
-				Sp->SetGlobalActive(false);
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
 			}
 
 			if (_FadeOut)
 			{
 				_FadeOut->PlayStart(2u,
-					[]() {
-						Renderer::GetInstance()->CurDirLight = nullptr;
-						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04)); });
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
+					});
 			}
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -4.55710 ,1.59400 ,37.21000 };
-		const Vector3 TriggerRotation{ -451.22879 ,13.12937 ,0.00000 };
+		const Vector3 TriggerLocation{ -4.55710f, 1.59400f, 37.21000f };
+		const Vector3 TriggerRotation{ -451.22879f, 13.12937f, 0.00000f };
 		;
 		// -4.55710 1.59400 37.21000
 		// 콜라이더 사이즈 

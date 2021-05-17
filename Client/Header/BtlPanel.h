@@ -26,6 +26,7 @@ private:
 		RANK,
 		RANK_LETTER,
 		STYLISH_POINTS,
+		NULLBLACK,
 		SECRET_VISIONS,
 		DESC_END
 	};
@@ -108,6 +109,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _SecretVision0Tex{};
 	std::shared_ptr<ENGINE::Texture> _SecretVision1Tex{};
 	std::shared_ptr<ENGINE::Texture> _SecretVision2Tex{};
+
+	std::shared_ptr<ENGINE::Texture> _NullBlackTex{};
 
 	float _DeltaTime = 0.f;
 	float _TotalAccumulateTime = 0.f;
@@ -304,6 +307,8 @@ public:
 
 	void ActivateSecretVision(const int Number);
 	void DissolveAllSecretVision();
+
+	void SetNullBlackActive(bool IsActive);
 
 };
 #endif // !__UI_BTL_PANEL__

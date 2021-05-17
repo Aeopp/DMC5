@@ -155,7 +155,6 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
 	////////////////////////////////////
@@ -531,19 +530,21 @@ void Hotel_S02::TriggerNextScene()
 		const std::function<void()> _CallBack =
 			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			if (auto Sp = _BtlPanel.lock(); Sp)
+			auto SpPanel = _BtlPanel.lock();
+			if (SpPanel)
 			{
-				Sp->SetRedOrbActive(false);
-				Sp->SetGlobalActive(false);
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
 			}
 
-			// 씬전환 !!
 			if (_FadeOut)
 			{
 				_FadeOut->PlayStart(1u,
-					[]() { 			
-						Renderer::GetInstance()->CurDirLight = nullptr; 
-						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));});
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
+					});
 			}
 		};
 

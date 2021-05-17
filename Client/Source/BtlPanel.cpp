@@ -385,7 +385,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _HPGaugeBaseALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _HPGaugeBaseATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGaugeBaseNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.012f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
 			_ImplInfo.Fx->SetBool("_Apply_ExposureCorr", true);
 
 			for (int i = 0; i < _HPGaugeCount; ++i)
@@ -617,6 +617,23 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 				_ImplInfo.Fx->EndPass();
 			}
 		}
+
+		//
+		CurID = NULLBLACK;
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _NullBlackTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(12);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
 	}
 
 	//
@@ -802,6 +819,8 @@ HRESULT BtlPanel::Ready()
 	_SecretVision0Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\3.tga");
 	_SecretVision1Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\7.tga");
 	_SecretVision2Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\9.tga");
+
+	_NullBlackTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\NullBlack.tga");
 
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
@@ -1113,6 +1132,11 @@ void BtlPanel::DissolveAllSecretVision()
 	}
 }
 
+void BtlPanel::SetNullBlackActive(bool IsActive)
+{
+	_UIDescs[NULLBLACK].Using = IsActive;
+}
+
 void BtlPanel::SetRedOrbActive(bool IsActive)
 {
 	_UIDescs[REDORB].Using = IsActive;
@@ -1144,6 +1168,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[RANK] = { false, Vector3(6.5f, 1.3f, 15.f), Vector3(0.08f, 0.08f, 0.08f) };
 	_UIDescs[RANK_LETTER] = { false, Vector3(1120.f, 330.f, 0.8f), Vector3(1.5f, 1.5f, 1.f) };
 	_UIDescs[STYLISH_POINTS] = { false, Vector3(1060.f, 390.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
+	_UIDescs[NULLBLACK] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(12.8f, 7.2f, 1.f) };
 	_UIDescs[SECRET_VISIONS] = { false, Vector3(640.f, 60.f, 0.5f), Vector3(0.7f, 0.7f, 1.f) };
 }
 
