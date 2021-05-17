@@ -5,6 +5,7 @@
 #include <optional>
 #include "Vertexs.h"
 #include "FLight.h"
+
 class CbsMidTrail : public ENGINE::GameObject,
 			        public ENGINE::RenderInterface
 {
@@ -40,6 +41,9 @@ private:
 	static constexpr uint32 BoneCnt = 3u;
 
 	std::array<std::string, BoneCnt > BoneNames{"pole01","pole02","pole03"};
+
+	std::array<Vector3, BoneCnt > BoneWorldLocationMap{};
+
 	std::array< IDirect3DVertexBuffer9*, BoneCnt> VtxBuffers{};
 	std::array< IDirect3DIndexBuffer9*, BoneCnt> IdxBuffers{};
 	IDirect3DVertexDeclaration9* VtxDecl{ nullptr };
@@ -111,6 +115,7 @@ public:
 				const Mode _Mode ,
 				const std::optional<Vector3>& Location = std::nullopt);
 	void PlayEnd();
+	std::optional<Vector3 > GetBoneWorldLocation(const uint32 BoneIdx);
 private:
 	void BufferUpdate(const float DeltaTime);
 	void ParticleUpdate(const float DeltaTime);
@@ -130,11 +135,11 @@ private:
 		{Eff_ElectricBranch,0.f},
 		{Eff_ElectricOccur,0.f},
 		{Eff_ElectricVortex,0.011f},
-		{Eff_ThunderBolt,0.f},
+		{Eff_ThunderBolt,0.0012f},
 		{Eff_ThunderBoltSecond,0.f}
 	};
 	float EffectSubsetDelta = 0.1f;
-
+	std::pair<float, float > ThunderBoltVeloictyScale{ 0.0f,0.1f};
 	float PtLightRadius = 1.f;
 	float PtLightFlux = 0.05f;
 	D3DXCOLOR PtLightColor{ 177.f/255.f,146.f/255.f,232.f/255.f,1.f };

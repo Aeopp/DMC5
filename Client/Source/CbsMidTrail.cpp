@@ -167,6 +167,9 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 				auto Low = _CbsMiddle->Get_BoneMatrixPtr(BoneNames[i]);
 				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
 
+				Vector3 IdentityVec{ 0.f,0.f,0.f};
+				BoneWorldLocationMap[i] = FMath::Mul(IdentityVec, (*Low) * _CbsWorld);
+
 				auto High = Low;
 				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
 
@@ -221,6 +224,18 @@ void CbsMidTrail::PlayEnd()
 	{
 		SpPtLight->bEnable = false;
 	}
+};
+std::optional<Vector3> CbsMidTrail::GetBoneWorldLocation(const uint32 BoneIdx)
+{
+	std::optional<Vector3> ReturnVal{};
+
+	if (BoneIdx < BoneWorldLocationMap.size())
+	{
+		ReturnVal = BoneWorldLocationMap[BoneIdx];
+	}
+
+	return ReturnVal;
+
 };
 
 void CbsMidTrail::RenderTrail(const DrawInfo& _Info)
@@ -449,7 +464,7 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 						SpEffect->PlayStart(FMath::RandomVector(EffectLocationOffsetScale)
 							+ TargetLocation,
 							FMath::RandomEuler(EffectEulerScale),
-							FMath::RandomScale(EffectScale[Eff_ThunderBolt]));
+							FMath::Random(ThunderBoltVeloictyScale ) , FMath::RandomScale(EffectScale[Eff_ThunderBolt]));
 
 						SpEffect->PlayTime = FMath::Random(EffectLifeTimeRange.x, EffectLifeTimeRange.y);
 
@@ -581,20 +596,22 @@ void CbsMidTrail::VertexBufUpdate()
 			}
 		}
 
+		
 		if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Middle).lock();
 			_GameObject)
 		{
 			if (auto _CbsShort = std::dynamic_pointer_cast<Cbs_Middle>(_GameObject);
 				_CbsShort)
 			{
-				const auto SwordWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
-
+				const auto _CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
 				
-				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * SwordWorld);
+				LatelyOffsets[i].first =   FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
+				Vector3 IdentityVec{ 0.f,0.f,0.f };
+				BoneWorldLocationMap[i] =  FMath::Mul(IdentityVec, (*Low) * _CbsWorld);
 
 				auto High = Low;
-				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * SwordWorld);
+				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
 
 				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[i].second;
 				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[i].first;
@@ -883,6 +900,8 @@ void CbsMidTrail::Editor()
 				}
 			}
 
+			ImGui::SliderFloat("ThunderBoltVeloictyScale Begin", &ThunderBoltVeloictyScale.first, 0.f, 3.f);
+			ImGui::SliderFloat("ThunderBoltVeloictyScale End", &ThunderBoltVeloictyScale.second, 0.f, 3.f);
 
 			ImGui::SliderFloat3("LowOffset", Offset[CurMode].first, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("HighOffset", Offset[CurMode].second, -300.f, 300.f, "%9.6f");
@@ -1009,6 +1028,7 @@ void CbsMidTrail::OnDisable()
 {
 	GameObject::OnDisable();
 };
+
 
 
 

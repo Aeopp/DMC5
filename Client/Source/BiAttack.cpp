@@ -1,7 +1,5 @@
 #include "stdafx.h"
-#include "..\Header\LongBarrel.h"
-#include "CbsMidTrail.h"
-#include "Cbs_Middle.h"
+#include "..\Header\BiAttack.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "TextureType.h"
@@ -10,43 +8,43 @@
 #include "ParticleSystem.h"
 #include "Thunderbolt.h"
 
-void LongBarrel::Free()
+void BiAttack::Free()
 {
 	GameObject::Free();
 };
 
-std::string LongBarrel::GetName()
+std::string BiAttack::GetName()
 {
-	return "LongBarrel";
+	return "BiAttack";
 };
 
-LongBarrel* LongBarrel::Create()
+BiAttack* BiAttack::Create()
 {
-	return new LongBarrel{};
+	return new BiAttack{};
 };
 
 
-
-
-HRESULT LongBarrel::Ready()
+HRESULT BiAttack::Ready()
 {
 	// 트랜스폼 초기화 .. 
-	m_nTag = Eff_BlitzAttack;
+	m_nTag = Eff_BiAttack;
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	PushEditEntity(InitTransform.lock().get());
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 
 	for (auto& _DescElement : _PlayEffectDescs)
 	{
-		EffectDesc _Desc{};
+		BiAttack::EffectDesc _Desc{};
 		_Desc._Effect = AddGameObject<ThunderBolt>();
 		_DescElement = _Desc;
 	}
 
+	_ElectricOccur = AddGameObject<ElectricOccur>();
+
 	return S_OK;
 };
 
-HRESULT LongBarrel::Awake()
+HRESULT BiAttack::Awake()
 {
 	GameObject::Awake();
 	auto InitTransform = GetComponent<ENGINE::Transform>();
@@ -56,14 +54,14 @@ HRESULT LongBarrel::Awake()
 	return S_OK;
 }
 
-HRESULT LongBarrel::Start()
+HRESULT BiAttack::Start()
 {
 	GameObject::Start();
 
 	return S_OK;
 }
 
-UINT LongBarrel::Update(const float _fDeltaTime)
+UINT BiAttack::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	
@@ -78,14 +76,14 @@ UINT LongBarrel::Update(const float _fDeltaTime)
 }
 
 
-UINT LongBarrel::LateUpdate(const float _fDeltaTime)
+UINT BiAttack::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
 
 	return 0;
 }
 
-void LongBarrel::Editor()
+void BiAttack::Editor()
 {
 	GameObject::Editor();
 
@@ -93,31 +91,10 @@ void LongBarrel::Editor()
 	{
 		/*const std::string ChildName = GetName() + "_Play";
 		ImGui::BeginChild(ChildName.c_str()); */
-		ImGui::Text("AnimationTiming %2.6f", AnimationTiming);
 
 		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart(GetComponent<Transform>().lock()->GetPosition(), PlayDirection);
-		}
-		static bool bPole01 = false;
-		ImGui::Checkbox("bPole01", &bPole01);
-		
-		if (ImGui::SmallButton("Play From Bone Calc"))
-		{
-			if (auto SpCbsMid = std::dynamic_pointer_cast<Cbs_Middle>(FindGameObjectWithTag(Tag_Cbs_Middle).lock());
-				SpCbsMid)
-			{
-				AnimationTiming = 	SpCbsMid->Get_PlayingTime();
-			}
-
-			if (bPole01)
-			{
-				PlayStart(0);
-			}
-			else
-			{
-				PlayStart(2);
-			}
 		}
 
 		ImGui::SliderFloat3("PlayDirection", PlayDirection, -1.f, 1.f);
@@ -128,29 +105,29 @@ void LongBarrel::Editor()
 		ImGui::InputFloat("In ScaleOffset", &ScaleOffset, 0.f, 1.f);
 
 		ImGui::SliderFloat("LightFlux", &LightFlux, 0.0f, 1.f);
+		ImGui::SliderFloat("LightRadius", &LightRadius, 0.0f, 1.f);
 
 		ImGui::SliderFloat("DirYawOffset ", &DirYawOffset, -FMath::PI ,FMath::PI);
 		ImGui::SliderFloat("DirPitchOffset ", &DirPitchOffset, -FMath::PI, FMath::PI);
 
 		ImGui::SliderFloat("PlayTimeRange Begin", &PlayTimeRange.first, 0.0f,1.f);
-		ImGui::SliderFloat("PlayTimeRange End", &PlayTimeRange.second, 0.0f,1.f);
-		;
+		ImGui::SliderFloat("PlayTimeRange End", &PlayTimeRange.second, 0.0f,1.f);;
 	}
 };
 
-void LongBarrel::OnEnable()
+void BiAttack::OnEnable()
 {
 	GameObject::OnEnable();
 }
 
-void LongBarrel::OnDisable()
+void BiAttack::OnDisable()
 {
 	GameObject::OnDisable();
 }
 
-void LongBarrel::PlayStart(const Vector3& Location, const Vector3& PlayDirection)
+void BiAttack::PlayStart(const Vector3& Location, const Vector3& PlayDirection)
 {
-	Vector3 NormDirection = FMath::Normalize(PlayDirection);
+	const Vector3 NormDirection = FMath::Normalize(PlayDirection);
 
 	for (auto& _DescElement : _PlayEffectDescs)
 	{
@@ -160,35 +137,21 @@ void LongBarrel::PlayStart(const Vector3& Location, const Vector3& PlayDirection
 			const Vector3 _Location = FMath::RandomVector(PlayLocationOffset);
 			const float _Velocity = FMath::Random(VelocityOffset.first, VelocityOffset.second);
 			const Vector3 _Scale = FMath::RandomScale(ScaleOffset);
-			const Vector3 _Right = FMath::Normalize(FMath::Cross(Vector3{ 0,1,0 }, PlayDirection));
-			const Vector3 _Up = FMath::Normalize(FMath::Cross(PlayDirection, _Right));
+			const Vector3 _Right = FMath::Normalize(FMath::Cross(Vector3{ 0,1,0 }, PlayDirection)); 
+			const Vector3 _Up = FMath::Normalize(FMath::Cross( PlayDirection, _Right ));
 			Vector3 _Direction = NormDirection;
-
-			_Direction = FMath::RotationVecNormal(_Direction, _Up,
-				FMath::Random(-FMath::PI * DirYawOffset, FMath::PI * DirYawOffset));
-			_Direction = FMath::RotationVecNormal(_Direction, _Right,
-				FMath::Random(-FMath::PI * DirPitchOffset, FMath::PI * DirPitchOffset));
-
-			_PlayEffect->PlayStart(Location + _Location, _Direction, _Velocity, _Scale);
+			_Direction =FMath::RotationVecNormal(_Direction, _Up, 
+							FMath::Random(-FMath::PI*DirYawOffset,FMath::PI * DirYawOffset));
+			_Direction = FMath::RotationVecNormal(_Direction, _Right, 
+							FMath::Random(0.0f, FMath::PI * DirPitchOffset));
+			
+			_PlayEffect->PlayStart(Location + _Location, _Direction, _Velocity ,_Scale);
 			_PlayEffect->PlayTime = FMath::Random(PlayTimeRange);
 			_PlayEffect->PtLightFlux = LightFlux;
+			_PlayEffect->PtLightRadius= LightRadius;
 			_PlayEffect->DistortionIntencity = 0.0f;
 		}
 	}
-};
 
-void LongBarrel::PlayStart(const uint32 BoneIdx)
-{
-	if (auto _CbsMidTrail = std::dynamic_pointer_cast<CbsMidTrail>( FindGameObjectWithTag(Eff_CbsMidTrail).lock());
-		_CbsMidTrail)
-	{
-		if (auto OLocation = _CbsMidTrail->GetBoneWorldLocation(BoneIdx);
-			OLocation)
-		{
-			const Vector3 Start = *_CbsMidTrail->GetBoneWorldLocation(1);
-			const Vector3 Location = *OLocation;
-
-			PlayStart(Start,FMath::Normalize(Location-Start));
-		}
-	}
+	_ElectricOccur.lock()->PlayStart( Location  , NormDirection *ElectricForwardOffset , FMath::RandomEuler(1.f));
 }

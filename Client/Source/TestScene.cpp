@@ -58,7 +58,7 @@
 #include "ElectricOccur.h"
 #include "BlitzAttack.h"
 #include "LongBarrel.h"
-
+#include "BiAttack.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -83,14 +83,14 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	AddGameObject<IceAge>();
+	// 껏다 켜기 
 	AddGameObject<CbsMidTrail>();
+	// 방향으로 재생 시켜 주기 .
 	AddGameObject<LongBarrel>();
-	// 1. 
 	AddGameObject<ElectricBranch>();
-	// 2.
 	AddGameObject<ElectricOccur>();
 	AddGameObject<ThunderBolt>();
-
+	AddGameObject<BiAttack>();
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 

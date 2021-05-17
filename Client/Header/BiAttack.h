@@ -1,10 +1,11 @@
-#ifndef __LONGBARREL_H_
-#define __LONGBARREL_H_
+#ifndef __BIATTACK_H_
+#define __BIATTACK_H_
 #include "GameObject.h"
 #include "RenderInterface.h"
+#include "ElectricOccur.h"
 #include <optional>
 
-class LongBarrel : public ENGINE::GameObject
+class BiAttack : public ENGINE::GameObject
 		
 {
 private:
@@ -12,15 +13,16 @@ private:
 	{
 		std::weak_ptr<class ThunderBolt> _Effect{};
 	};
-	std::array<EffectDesc, 10u> _PlayEffectDescs{};
+	std::array<BiAttack::EffectDesc, 10u> _PlayEffectDescs{};
+	std::weak_ptr<ElectricOccur> _ElectricOccur{};
 private:
-	explicit LongBarrel() = default;
-	virtual ~LongBarrel() = default;
+	explicit BiAttack() = default;
+	virtual ~BiAttack() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
 	virtual std::string GetName() override;
 public:
-	static LongBarrel* Create();
+	static BiAttack* Create();
 public:
 	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override;
@@ -31,11 +33,13 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart( const Vector3& Location ,
+	void PlayStart(const Vector3& Location ,
 					const Vector3& PlayDirection);
-	void PlayStart(const uint32 BoneIdx /*0,1*/);
 private:
-	float AnimationTiming = 0.295090;
+	
+	float ElectricForwardOffset = 1.f;
+	float LightRadius = 1.f;
+	float OccurScale = 1.f;
 	float LightFlux = 0.1f;
 	std::pair<float, float> PlayTimeRange = {0.5f,1.f};
 	float ScaleOffset = 0.004f;

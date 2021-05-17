@@ -526,6 +526,7 @@
     <ClInclude Include="..\Header\FadeOut.h" />
     <ClInclude Include="..\Header\Thunderbolt.h" />
     <ClInclude Include="..\Header\LongBarrel.h" />
+    <ClInclude Include="..\Header\BiAttack.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -844,6 +845,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\FadeOut.cpp" />
     <ClCompile Include="..\Source\LongBarrel.cpp" />
+    <ClCompile Include="..\Source\BiAttack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
