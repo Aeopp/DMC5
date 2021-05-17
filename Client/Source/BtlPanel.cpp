@@ -853,7 +853,6 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
-	_DeltaTime = _fDeltaTime;
 	_TotalAccumulateTime += _fDeltaTime;
 
 	//

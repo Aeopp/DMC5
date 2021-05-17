@@ -6,7 +6,7 @@
 #include "Nero.h"
 
 class BtlPanel : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+				 public ENGINE::RenderInterface
 {
 private:
 	enum UI_DESC_ID
@@ -112,7 +112,6 @@ private:
 
 	std::shared_ptr<ENGINE::Texture> _NullBlackTex{};
 
-	float _DeltaTime = 0.f;
 	float _TotalAccumulateTime = 0.f;
 
 	Vector3 _TargetPos = Vector3(0.f, 0.f, 0.f);

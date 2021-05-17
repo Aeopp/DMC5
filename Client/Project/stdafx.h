@@ -42,6 +42,7 @@ enum GAMEOBJECTTAG
 	UI_LogoPanel,
 	UI_TitlePanel,
 	UI_LoadingPanel,
+	UI_ShopPanel,
 	Eff_Glint,
 	Eff_OvertureHand,
 	Eff_Liquid,

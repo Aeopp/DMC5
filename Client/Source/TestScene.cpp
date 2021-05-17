@@ -50,6 +50,7 @@
 #include "MakaiButterfly.h"
 #include "Smoke.h"
 #include "NhDoor.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
@@ -189,6 +190,7 @@ HRESULT TestScene::LoadScene()
 #pragma region UI
 
 	AddGameObject<BtlPanel>();
+	//AddGameObject<ShopPanel>();
 
 #pragma endregion
 

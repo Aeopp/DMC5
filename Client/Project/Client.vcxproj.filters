@@ -199,6 +199,9 @@
     <Filter Include="98.PreLoader">
       <UniqueIdentifier>{aabd0ba9-b36c-491a-8793-05fdffc2a991}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\UI\Shop">
+      <UniqueIdentifier>{3efc42f4-a894-401b-9da1-91cf0d09ac3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -524,6 +527,12 @@
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\FadeOut.h" />
+    <ClInclude Include="..\Header\ShopPanel.h">
+      <Filter>02.GameObject\UI\Shop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\UI\ShopPanel.hlsl">
+      <Filter>02.GameObject\UI\Shop</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -841,6 +850,9 @@
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FadeOut.cpp" />
+    <ClCompile Include="..\Source\ShopPanel.cpp">
+      <Filter>02.GameObject\UI\Shop</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
