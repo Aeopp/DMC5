@@ -30,7 +30,10 @@ HRESULT HotelBrokenFloor::Ready()
 HRESULT HotelBrokenFloor::Awake()
 {
 	GameObject::Awake();
-
+	m_pCollider = AddComponent<BoxCollider>();
+	m_pCollider.lock()->SetSize({ 0.8f,0.2f,0.8f });
+	m_pCollider.lock()->SetCenter({ -0.27f,1.23f,15.8f });
+	PushEditEntity(m_pCollider.lock().get());
 	return S_OK;
 }
 
@@ -44,6 +47,9 @@ UINT HotelBrokenFloor::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
+
+	if(0.16f <= m_pMesh->PlayingTime())
+		m_pCollider.lock()->SetActive(false);
 	return 0;
 }
 
@@ -77,6 +83,23 @@ void HotelBrokenFloor::Editor()
 std::string HotelBrokenFloor::GetName()
 {
 	return "HotelBrokenFloor";
+}
+
+void HotelBrokenFloor::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	UINT ObjTag = _pOther.lock()->m_nTag;
+
+	if (GAMEOBJECTTAG::TAG_RedQueen != ObjTag)
+		return;
+	++m_iCollCount;
+	if (m_iCollCount > 4)
+	{
+		m_pMesh->ContinueAnimation();
+	}
+}
+
+void HotelBrokenFloor::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
+{
 }
 
 void HotelBrokenFloor::RenderReady()

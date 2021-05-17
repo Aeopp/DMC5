@@ -23,6 +23,9 @@ public:
 	virtual void Editor()override;
 	virtual std::string GetName() override;
 public:
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	OnTriggerExit(std::weak_ptr<GameObject> _pOther);
+public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
 	void RenderGBufferSK(const DrawInfo& _Info);
@@ -32,6 +35,9 @@ public:
 	void RenderInit();
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
+	std::weak_ptr<BoxCollider> m_pCollider;
+
+	UINT m_iCollCount = 0;
 };
 
 
