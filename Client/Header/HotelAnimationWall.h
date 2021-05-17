@@ -23,6 +23,8 @@ public:
 	virtual void Editor()override;
 	virtual std::string GetName() override;
 public:
+	void ContinueAnimation() { m_pMesh->ContinueAnimation(); }
+public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
 	void RenderGBufferSK(const DrawInfo& _Info);

@@ -249,6 +249,7 @@ void BrokenPeople::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
+	_InitInfo.bJoinIdenticalVertices = false;
 	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Map\\Object\\BrokenPeople\\BrokenPeople.fbx", _InitInfo);
 
 	m_pMesh->EnableToRootMatricies();

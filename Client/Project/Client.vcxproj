@@ -158,12 +158,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Header\AnimationUpGround.h" />
     <ClInclude Include="..\Header\AppearEm1000.h" />
     <ClInclude Include="..\Header\AppearGroundMonster.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
     <ClInclude Include="..\Header\BreakableObject.h" />
+    <ClInclude Include="..\Header\BrokenBookShelf.h" />
+    <ClInclude Include="..\Header\BrokenPeople.h" />
+    <ClInclude Include="..\Header\BrokenTable.h" />
     <ClInclude Include="..\Header\Buster_Arm_Left.h" />
     <ClInclude Include="..\Header\CbsTrail.h" />
     <ClInclude Include="..\Header\Cbs_Long.h" />
@@ -262,6 +266,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\AnimationUpGround.cpp" />
     <ClCompile Include="..\Source\AppearEm1000.cpp" />
     <ClCompile Include="..\Source\AppearGroundMonster.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -269,6 +274,9 @@
     <ClCompile Include="..\Source\Application.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\BreakableObject.cpp" />
+    <ClCompile Include="..\Source\BrokenBookShelf.cpp" />
+    <ClCompile Include="..\Source\BrokenPeople.cpp" />
+    <ClCompile Include="..\Source\BrokenTable.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
     <ClCompile Include="..\Source\CbsTrail.cpp" />
