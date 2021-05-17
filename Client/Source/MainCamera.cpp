@@ -14,6 +14,7 @@ MainCamera::MainCamera()
 	m_vTriggerPos = { 0.f,0.f,0.f };
 	m_vTriggerAngle = { 0.f,0.f,0.f };
 	m_vLerpEye = m_vAt = { 0.f,0.f,0.f };
+	m_fLerpSpeed = 1.1f;
 	m_nTag = TAG_Camera;
 }
 
@@ -282,6 +283,7 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 		case STAGE1_WAVE1:
 			m_fDistanceToTarget = 1.f;
 			m_fLerpSpeed = 0.2f;
+			m_vEye = Vector3(0.338f, 1.237f, 0.524f);
 			break;
 		}
 
