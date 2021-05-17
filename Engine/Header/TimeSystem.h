@@ -35,6 +35,13 @@ private:
 public:
 	float   AccTime();
 	float	DeltaTime();
+	void LostTime(const std::vector<Vector2>& ALostArr);
+private:
+	// X :Slow Y : Re
+	std::vector<Vector2> LostArr;
+	uint32 LostIdx = 0u;
+	bool   bLost = false;
+	float  LostT = 0.0f;
 };
 END
 #endif // !__TIME_SYSTEM_H__

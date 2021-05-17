@@ -459,22 +459,6 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
 
-class Wind_Pressure_Small : public NeroState
-{
-private:
-	explicit Wind_Pressure_Small(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~Wind_Pressure_Small();
-
-public:
-	static Wind_Pressure_Small* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
 class Wind_Pressure_Big : public NeroState
 {
 private:
@@ -484,22 +468,6 @@ public:
 
 public:
 	static Wind_Pressure_Big* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-
-public:
-	virtual HRESULT StateEnter()							override;
-	virtual HRESULT StateExit()								override;
-	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
-};
-
-class Wind_Pressure_Small_End : public NeroState
-{
-private:
-	explicit Wind_Pressure_Small_End(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
-public:
-	virtual ~Wind_Pressure_Small_End();
-
-public:
-	static Wind_Pressure_Small_End* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
 
 public:
 	virtual HRESULT StateEnter()							override;

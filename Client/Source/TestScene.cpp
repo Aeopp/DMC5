@@ -9,10 +9,6 @@
 #include "Camera.h"
 #include "Nero.h"
 #include "RedQueen.h"
-#include "WingSword1st.h"
-#include "WingSword2nd.h"
-#include "WingSword3rd.h"
-#include "WingSword4th.h"
 #include "Em100.h"
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
@@ -88,10 +84,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 	
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -112,8 +108,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(1);
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);
 
 #pragma endregion
 

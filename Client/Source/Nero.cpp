@@ -220,7 +220,6 @@ HRESULT Nero::Ready()
 	m_pCbsMiddle = AddGameObject<Cbs_Middle>();
 	m_pCbsLong = AddGameObject<Cbs_Long>();
 	m_pNewWingSword = AddGameObject<NewWingSword>();
-	//m_pRockman = AddGameObject<GT_Rockman>();
 	m_pBlood = AddGameObject<Liquid>();
 	m_pBlood.lock()->SetScale(0.007f);
 	m_pBlood.lock()->SetVariationIdx(Liquid::BLOOD_0);
@@ -282,7 +281,7 @@ HRESULT Nero::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
-	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.08f, 0.f));
+	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.09f, 0.f));
 	m_pCollider.lock()->SetRadius(0.04f);
 	m_pCollider.lock()->SetHeight(0.1f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
@@ -424,7 +423,8 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		m_pFSM->ChangeState(NeroFSM::SKILL_STREAK_END);
 		return;
 	}
-	if (NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP == iFsmTag)
+	if (NeroFSM::SKILL_AIR_DIVE_SLASH_LOOP == iFsmTag
+		|| NeroFSM::SKILL_AIR_DIVE_SLASH_START == iFsmTag)
 	{
 		m_pFSM->ChangeState(NeroFSM::SKILL_AIR_DIVE_SLASH_END);
 		return;
@@ -578,6 +578,18 @@ void Nero::RenderGBufferSK(const DrawInfo& _Info)
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
 			SpSubset->Render(_Info.Fx);
 		};
+
+		/*if (auto SpSubset = m_pMesh[m_iMeshIndex]->GetSubset(i).lock();
+			SpSubset)
+		{
+			if (auto exSpSubset = m_pMesh[m_iMeshIndex_ex]->GetSubset(i).lock();
+				exSpSubset)
+			{
+				exSpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
+				exSpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
+			};
+			SpSubset->Render(_Info.Fx);
+		};*/
 	};
 }
 
@@ -1404,6 +1416,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pCbsTrail.lock()->PlayEnd();
 		if (m_pRedQueen.lock()->IsActive())
 			return;
 		m_pRedQueen.lock()->SetActive(true);
@@ -1414,6 +1427,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsShort.lock()->IsActive())
 			return;
 		m_pCbsShort.lock()->SetActive(true);
@@ -1424,6 +1438,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsLong.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsMiddle.lock()->IsActive())
 			return;
 		m_pCbsMiddle.lock()->SetActive(true);
@@ -1434,6 +1449,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 		m_pRedQueen.lock()->SetActive(false);
 		m_pCbsShort.lock()->SetActive(false);
 		m_pCbsMiddle.lock()->SetActive(false);
+		m_pTrail.lock()->SetActive(false);
 		if (m_pCbsLong.lock()->IsActive())
 			return;
 		m_pCbsLong.lock()->SetActive(true);

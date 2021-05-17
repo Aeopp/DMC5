@@ -17,9 +17,12 @@
 #include "FadeOut.h"
 #include "CollObject.h"
 #include "BreakableObject.h"
+#include "HotelBrokenFloor.h"
+#include "HotelAnimationWall.h"
 
 #include <iostream>
 #include <fstream>
+#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S02::Hotel_S02()
@@ -84,6 +87,7 @@ HRESULT Hotel_S02::LoadScene()
 	LoadCollObjects("../../Data/Stage2_Object.json");
 	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
+	AddGameObject<HotelBrokenFloor>();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(2);
 
@@ -385,12 +389,13 @@ void Hotel_S02::TriggerWallSmash()
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
+		auto _AnimationWall = AddGameObject<HotelAnimationWall>();
 		const std::function<void()> _CallBack =
-			[this/*변수 캡쳐*/]()
+			[this/*변수 캡쳐*/, _AnimationWall]()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
-
-
+			_AnimationWall.lock()->ContinueAnimation();
+			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			//
 			for (auto& Element : _MakaiButterflyVec)
 				Element.lock()->SetActive(false);
