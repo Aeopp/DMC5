@@ -76,6 +76,9 @@ void Renderer::ReadySky()
 	SkysphereMesh = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Sphere.fbx", InitInfo);
 	SkyTexMission02Sun = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\First.dds");
 	SkyTexMission02Sunset = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\Second.dds");
+
+	SkyTexMission03 = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission03\\First.tga");
+
 	SkyNoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\smoke_01_iam.tga");
 }
 

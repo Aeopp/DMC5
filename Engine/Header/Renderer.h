@@ -1,5 +1,6 @@
 #ifndef _RENDERER_H_
 #define _RENDERER_H_
+
 #include "Object.h"
 #include "GameObject.h"
 #include <map>
@@ -105,9 +106,12 @@ public:
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};
+	std::shared_ptr<Texture> SkyTexMission03{};
 
 	std::map<std::string, std::shared_ptr<ENGINE::Shader>> Shaders{};
 	std::map<std::string, std::shared_ptr<RenderTarget>>   RenderTargets{};
+	
+
 	FLight* CurDirLight{ nullptr };
 
 	bool    bDistortion = true;
