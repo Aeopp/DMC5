@@ -211,6 +211,9 @@ HRESULT NeroFSM::ReadyFSM()
 
 	m_vecState.emplace_back(ShinMajinEnter::Create(this, SHINMAJIN_ENTER, m_pNero));
 	m_vecState.emplace_back(ShinMajinJudgement::Create(this, SHINMAJIN_JUDGEMNET, m_pNero));
+
+	m_vecState.emplace_back(Wind_Pressure_Big::Create(this, WINDPRESSURE, m_pNero));
+	m_vecState.emplace_back(Wind_Pressure_Big_End::Create(this, WINDPRESSURE_END, m_pNero));
 	return S_OK;						
 }
 

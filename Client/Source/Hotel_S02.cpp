@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S02::Hotel_S02()
@@ -395,7 +396,7 @@ void Hotel_S02::TriggerWallSmash()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
 			_AnimationWall.lock()->ContinueAnimation();
-
+			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			//
 			for (auto& Element : _MakaiButterflyVec)
 				Element.lock()->SetActive(false);
