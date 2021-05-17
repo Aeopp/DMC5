@@ -141,6 +141,6 @@ enum SCENE_ID
 };
 
 
-#define OGDistance 0.83f
-#define MaxDistance 0.48f
+#define OGDistance 0.43f
+#define MaxDistance 0.78f
 #define RotateDistance 0.7f

@@ -2899,12 +2899,15 @@ HRESULT RunLoop::StateEnter()
 		{
 		case Nero::ANI_RUNSTART_FROM_COMBOA1:
 			m_pNero.lock()->ChangeAnimation("RunLoop_From_ComboA1", true, Nero::ANI_RUNLOOP_FROM_COMBOA1);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 			break;
 		case Nero::ANI_RUNSTART_FROM_COMBOA2:
 			m_pNero.lock()->ChangeAnimation("RunLoop_From_ComboA1", true, Nero::ANI_RUNLOOP_FROM_COMBOA1);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 			break;
 		default:
 			m_pNero.lock()->ChangeAnimation("RunLoop", true, Nero::ANI_RUNLOOP);
+			m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 			break;
 		}
 	}
@@ -12224,6 +12227,176 @@ HRESULT ShinMajinJudgement::StateUpdate(const float _fDeltaTime)
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 
+	}
+	return S_OK;
+}
+
+Provoke1::Provoke1(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+Provoke1::~Provoke1()
+{
+}
+
+Provoke1* Provoke1::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Provoke1(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT Provoke1::StateEnter()
+{
+	m_pNero.lock()->ChangeAnimation("Provoke1", false, Nero::ANI_PROVOKE1);
+
+	return S_OK;
+}
+
+HRESULT Provoke1::StateExit()
+{
+	return S_OK;
+}
+
+HRESULT Provoke1::StateUpdate(const float _fDeltaTime)
+{
+	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.6f <= fCurAnimationTime)
+	{
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+		{
+			NeroState::KeyInput_Idle();
+		}
+		else
+		{
+			NeroState::KeyInput_Cbs_Idle();
+		}
+	}
+
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
+	return S_OK;
+}
+
+Provoke3::Provoke3(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+Provoke3::~Provoke3()
+{
+}
+
+Provoke3* Provoke3::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Provoke3(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT Provoke3::StateEnter()
+{
+	m_pNero.lock()->ChangeAnimation("Provoke3", false, Nero::ANI_PROVOKE3);
+
+	return S_OK;
+}
+
+HRESULT Provoke3::StateExit()
+{
+	return S_OK;
+}
+
+HRESULT Provoke3::StateUpdate(const float _fDeltaTime)
+{
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
+	return S_OK;
+}
+
+Provoke9::Provoke9(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+Provoke9::~Provoke9()
+{
+}
+
+Provoke9* Provoke9::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Provoke9(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT Provoke9::StateEnter()
+{
+	m_pNero.lock()->ChangeAnimation("Provoke9", false, Nero::ANI_PROVOKE9);
+
+	return S_OK;
+}
+
+HRESULT Provoke9::StateExit()
+{
+	return S_OK;
+}
+
+HRESULT Provoke9::StateUpdate(const float _fDeltaTime)
+{
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
+	return S_OK;
+}
+
+Provoke10::Provoke10(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+Provoke10::~Provoke10()
+{
+}
+
+Provoke10* Provoke10::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Provoke10(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT Provoke10::StateEnter()
+{
+	m_pNero.lock()->ChangeAnimation("Provoke10", false, Nero::ANI_PROVOKE10);
+
+	return S_OK;
+}
+
+HRESULT Provoke10::StateExit()
+{
+	return S_OK;
+}
+
+HRESULT Provoke10::StateUpdate(const float _fDeltaTime)
+{
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+			m_pFSM->ChangeState(NeroFSM::IDLE);
+		else
+			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
 	}
 	return S_OK;
 }
