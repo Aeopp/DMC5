@@ -440,6 +440,12 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 				if (!pPlayer.expired())
 				{
 					std::static_pointer_cast<Nero>(pPlayer.lock())->PlayEffect(Eff_ShapeParticle, { 0.f, 0.f, 0.f }, 1.5f);
+
+					if (auto pBtlPanel = FindGameObjectWithTag(UI_BtlPanel);
+						!pBtlPanel.expired())
+					{
+						std::static_pointer_cast<BtlPanel>(pBtlPanel.lock())->AccumulateRedOrb(0u);
+					}
 				}
 				break;
 			case GREENORB_0:

@@ -29,7 +29,7 @@ void BreakableObject::RenderReady()
 		_SpTransform)
 	{
 		const Vector3 Scale = _SpTransform->GetScale();
-		_RenderProperty.bRender = true;
+		//_RenderProperty.bRender = true;
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 		if (m_pStaticMesh)
 		{
@@ -203,10 +203,10 @@ void BreakableObject::StoneInit()
 		{
 			weak_ptr<StoneDebris> p = AddGameObject<StoneDebris>();
 			p.lock()->SetVariationIdx((StoneDebris::VARIATION)FMath::Random<uint32>((uint32)StoneDebris::GREENORB_0, (uint32)StoneDebris::GREENORB_3));
-			p.lock()->SetScale(FMath::Random<float>(0.0025f, 0.004f));
+			p.lock()->SetScale(FMath::Random<float>(0.002f, 0.004f));
 			p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
 			// position은 죽을 때 위치
-			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.08f, 0.075f, -0.08f), Vector3(0.08f, 0.09f, 0.08f)));
+			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.09f, 0.145f, -0.09f), Vector3(0.09f, 0.16f, 0.09f)));
 			p.lock()->SetActive(false);
 			m_pStoneDebrisVec.push_back(p);
 		}
@@ -217,10 +217,10 @@ void BreakableObject::StoneInit()
 		{
 			weak_ptr<StoneDebris> p = AddGameObject<StoneDebris>();
 			p.lock()->SetVariationIdx((StoneDebris::VARIATION)FMath::Random<uint32>((uint32)StoneDebris::REDORB_0, (uint32)StoneDebris::REDORB_3));
-			p.lock()->SetScale(FMath::Random<float>(0.0025f, 0.004f));
+			p.lock()->SetScale(FMath::Random<float>(0.002f, 0.004f));
 			p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
 			// position은 죽을 때 위치
-			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.08f, 0.075f, -0.08f), Vector3(0.08f, 0.09f, 0.08f)));
+			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.09f, 0.145f, -0.09f), Vector3(0.09f, 0.16f, 0.09f)));
 			p.lock()->SetActive(false);
 			m_pStoneDebrisVec.push_back(p);
 		}
@@ -240,7 +240,7 @@ void BreakableObject::StoneDebrisPlayStart()
 	{
 		Element.lock()->SetPosition(CurPos);
 		Element.lock()->SetActive(true);
-		Element.lock()->PlayStart(1.5f);
+		Element.lock()->PlayStart();
 	}
 
 	m_bStoneDebrisPlayStart = true;
@@ -339,6 +339,7 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::Tag_Cbs_Long:
 		if (m_bDestroyObject == false)
 		{
+			_RenderProperty.bRender = false;
 			StoneDebrisPlayStart();
 			m_bDestroyObject = true;
 		}

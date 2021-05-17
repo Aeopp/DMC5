@@ -59,11 +59,11 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	//}
 	
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -106,12 +106,10 @@ HRESULT Hotel_S02::LoadScene()
 	AddGameObject<NhDoor>();
 
 	// 
-	_MakaiButterflyVec.reserve(5);
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
+	size_t ButterflyCnt = 5u;
+	_MakaiButterflyVec.reserve(ButterflyCnt);
+	for (size_t i = 0u ; i < ButterflyCnt; ++i)
+		_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
 
 #pragma endregion
 
@@ -119,7 +117,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -531,8 +529,14 @@ void Hotel_S02::TriggerNextScene()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[_FadeOut = AddGameObject<FadeOut>().lock()]()
+			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+			}
+
 			// 씬전환 !!
 			if (_FadeOut)
 			{

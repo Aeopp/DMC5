@@ -50,14 +50,15 @@ HRESULT Hotel_S04::LoadScene()
 		SpCamera)
 	{
 		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-4.327,
-			1.449,
-			36.596, 
+			-4.327f,
+			1.449f,
+			36.596f, 
 			});
 		
 	}
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -72,6 +73,7 @@ HRESULT Hotel_S04::LoadScene()
 #pragma region Map & Objects
 
 	LoadObjects("../../Data/Stage4_Map.json");
+
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(4);
 
@@ -97,7 +99,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -245,8 +247,9 @@ void Hotel_S04::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
 
-	_LateInit = true;
 	Renderer::GetInstance()->LateSceneInit();
 	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
 	Renderer::GetInstance()->SkyDistortionStart();
+
+	_LateInit = true;
 }

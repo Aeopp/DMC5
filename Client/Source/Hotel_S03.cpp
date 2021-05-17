@@ -17,7 +17,6 @@
 
 #include <iostream>
 #include <fstream>
-
 using namespace std;
 
 Hotel_S03::Hotel_S03()
@@ -52,13 +51,13 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-			SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(
-			Vector3{ -1.77158f, 1.36541f, 23.73719 }
-		);
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//		SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(
+	//		Vector3{ -1.77158f, 1.36541f, 23.73719 }
+	//	);
+	//}
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -82,7 +81,6 @@ HRESULT Hotel_S03::LoadScene()
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(3);
 
-
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -105,7 +103,7 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -373,8 +371,14 @@ void Hotel_S03::TriggerNextScene()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[_FadeOut = AddGameObject<FadeOut>().lock()]()
+			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+			}
+
 			if (_FadeOut)
 			{
 				_FadeOut->PlayStart(2u,
@@ -411,9 +415,10 @@ void Hotel_S03::LateInit()
 	if (_Player.expired() == false)
 	{
 		_Player.lock()->GetComponent<Transform>().lock()->SetPosition
-		({ -1.77158f, 1.36541f, 23.73719 });
+		({ -1.77158f, 1.36541f, 23.73719f });
 	}
 	
-	_LateInit = true;
 	Renderer::GetInstance()->LateSceneInit();
+
+	_LateInit = true;
 }

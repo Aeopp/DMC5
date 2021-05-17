@@ -540,7 +540,11 @@ void Hotel_S01::Trigger1st()
 			// 여기서 카메라 연출 하세요 .
 
 			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
 				Sp->ResetRankScore();
+			}
 
 			for (uint32 i = 1u; i < 4u; ++i)
 			{
@@ -602,6 +606,11 @@ void Hotel_S01::Trigger1st()
 			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
 
 			for (uint32 i = 1u; i < 4u; ++i)
 			{
@@ -681,6 +690,11 @@ void Hotel_S01::Trigger2nd()
 
 			Renderer::GetInstance()->SkyDistortionStart();
 		
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+
 			for (uint32 i = 1u; i < 4u; ++i)
 			{
 				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
@@ -703,7 +717,11 @@ void Hotel_S01::Trigger2nd()
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
 			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
 				Sp->ResetRankScore();
+			}
 
 			for (uint32 i = 4u; i < 5u; ++i)
 			{
@@ -771,7 +789,11 @@ void Hotel_S01::Trigger3rd()
 		{
 			//... 여기서 로직 처리하세요 . 
 			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
 				Sp->ResetRankScore();
+			}
 
 			for (uint32 i = 5u; i < 7u; ++i)
 			{
@@ -828,6 +850,11 @@ void Hotel_S01::Trigger3rd()
 			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+			
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
 
 			for (uint32 i = 4u; i < 5u; ++i)
 			{
@@ -873,8 +900,14 @@ void Hotel_S01::Trigger4st()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[_FadeOut = AddGameObject<FadeOut>().lock()]()
+			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+			}
+
 			if (_FadeOut)
 			{
 				_FadeOut->PlayStart(0u, 
