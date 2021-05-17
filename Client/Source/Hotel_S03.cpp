@@ -9,7 +9,11 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-#include "AnimationUpGround.h"
+#include "Monster.h"
+#include "Trigger.h"
+#include "FadeOut.h"
+#include "BreakableObject.h"
+#include "CollObject.h"
 
 #include <iostream>
 #include <fstream>
@@ -47,9 +51,16 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//		SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(
+	//		Vector3{ -1.77158f, 1.36541f, 23.73719 }
+	//	);
+	//}
+
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -63,9 +74,12 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage3_Object.json");
-	AddGameObject<AnimationUpGround>();
-	AddGameObject<TempMap>();
+	LoadObjects("../../Data/Stage3_Map.json");
+	LoadCollObjects("../../Data/Stage3_Object.json");
+	LoadBreakablebjects("../../Data/Stage3_BreakableObject.json");
+
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(3);
 
 #pragma endregion
 
@@ -73,7 +87,7 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp();
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -89,7 +103,7 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -127,6 +141,7 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
+		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	////////////////////////////////////
@@ -139,6 +154,7 @@ HRESULT Hotel_S03::LateUpdate(const float _fDeltaTime)
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
 }
+
 
 void Hotel_S03::LoadObjects(const std::filesystem::path& path)
 {
@@ -199,15 +215,141 @@ void Hotel_S03::LoadObjects(const std::filesystem::path& path)
 	}
 }
 
-void Hotel_S03::RenderDataSetUp()
+void Hotel_S03::LoadCollObjects(const std::filesystem::path& path)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+		Mesh::InitializeInfo _InitInfo{};
+		_InitInfo.bLocalVertexLocationsStorage = true;
+		Resources::Load<StaticMesh>(sFullPath, _InitInfo);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<CollObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+		}
+	}
+}
+
+void Hotel_S03::LoadBreakablebjects(const std::filesystem::path& path)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+		Resources::Load<StaticMesh>(sFullPath);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<BreakableObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+		}
+	}
+}
+
+void Hotel_S03::RenderDataSetUp(const  bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	
+	if (bTest)
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	}
+	else
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S03.json");
+	}
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
+	_Renderer->ao = 0.5f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -220,12 +362,63 @@ void Hotel_S03::RenderDataSetUp()
 
 void Hotel_S03::TriggerSetUp()
 {
+	TriggerNextScene();
+}
 
+void Hotel_S03::TriggerNextScene()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
+		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+			}
+
+			if (_FadeOut)
+			{
+				_FadeOut->PlayStart(2u,
+					[]() {
+						Renderer::GetInstance()->CurDirLight = nullptr;
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04)); });
+			}
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -4.55710 ,1.59400 ,37.21000 };
+		const Vector3 TriggerRotation{ -451.22879 ,13.12937 ,0.00000 };
+		;
+		// -4.55710 1.59400 37.21000
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 4.f,1.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag ,
+			TriggerRotation);
+	}
 }
 
 void Hotel_S03::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
-	//_Player.lock()->GetComponent<Transform>().lock()->SetPosition({ -1.77158f, 1.36541f, 23.73719 });
+	if (_Player.expired() == false)
+	{
+		_Player.lock()->GetComponent<Transform>().lock()->SetPosition
+		({ -1.77158f, 1.36541f, 23.73719f });
+	}
+	
+	Renderer::GetInstance()->LateSceneInit();
+
 	_LateInit = true;
 }

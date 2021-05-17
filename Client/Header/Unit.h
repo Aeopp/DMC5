@@ -24,10 +24,12 @@ public:
 public:
 	//GET
 	BT_INFO Get_BattleInfo();
+	void    Set_Hp();
 	bool	Get_Coll();
 public:
 	//SET
 	void	Set_Coll(const bool _bColl);
+	void    Set_Hp  (const int _Hp);	
 	void	Set_AttackType(ATTACKTYPE _Type);
 protected:
 	//전투 관련된 변수

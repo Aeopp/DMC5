@@ -201,9 +201,6 @@ HRESULT AirHike::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01 });
-	InitTransform.lock()->SetPosition(Vector3{0.f,0.11544f,0.f });
-	InitTransform.lock()->SetRotation(Vector3{90.f ,0.f ,0.0f});
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -215,6 +212,10 @@ HRESULT AirHike::Awake()
 	GameObject::Awake();
 
 	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,0.5f,0.5f });
+	m_pTransform.lock()->SetScale({ 0.0035f,0.0035f,0.0035f });
+	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.11544f,0.f });
+	m_pTransform.lock()->SetRotation(Vector3{ 90.f ,0.f ,0.0f });
+
 	return S_OK;
 }
 

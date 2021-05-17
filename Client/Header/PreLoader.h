@@ -6,10 +6,14 @@ class PreLoader final
 public:
 	PreLoader() = default;
 	~PreLoader() = default;
-
 public:
 	static void PreLoadResources();
-
+public:
+	static void DissolveParticlePoolLoad(
+		const std::filesystem::path& _Path,
+		const Vector3& StartColor);
+public:
+	static const inline float SecretVisionDisappearParticleLifeEnd{ 1.33f };
 private:
 	static void IceCbsMidParticlePoolLoad();
 	static void CbsMidParticlePoolLoad();
@@ -35,5 +39,8 @@ private:
 
 	static void SecretVisionDisappearParticlePoolLoad();
 	static void DissolveNhDoorParticlePoolLoad();
+
+	static void SVMCParticleEndPoolLoad();
+
 };
 #endif // !__PRELOADER_H__

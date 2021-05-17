@@ -66,6 +66,11 @@ BT_INFO Unit::Get_BattleInfo()
 	return m_BattleInfo;
 }
 
+void Unit::Set_Hp()
+{
+	m_BattleInfo.iHp = 0;
+}
+
 bool Unit::Get_Coll()
 {
 	return m_bCollEnable;
@@ -74,6 +79,11 @@ bool Unit::Get_Coll()
 void Unit::Set_Coll(const bool _bColl)
 {
 	m_bCollEnable = _bColl;
+}
+
+void Unit::Set_Hp(const int _Hp)
+{
+	m_BattleInfo.iHp = _Hp;
 }
 
 void Unit::Set_AttackType(ATTACKTYPE _Type)

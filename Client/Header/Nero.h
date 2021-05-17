@@ -506,7 +506,7 @@ private:
 	std::weak_ptr<CircleWave>		m_pCircleWave;
 	std::weak_ptr<CbsTrail>			m_pCbsTrail;
 	std::weak_ptr<NewWingSword>		m_pNewWingSword;
-	enum { SP_RED = 0, SP_GREEN, SP_END };	// ShapeParticle
+	enum { SP_RED = 0, SP_GREEN, SP_WHITE, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 
 	std::weak_ptr<JudgementSword>	m_pJudgementSword;

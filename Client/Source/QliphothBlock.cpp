@@ -37,11 +37,23 @@ void QliphothBlock::PlayStart(const float PlayingSpeed)
 {
 	Effect::PlayStart(PlayingSpeed);
 	_IsAlive = true;
+
+	if (auto SpCollider = _Collider.lock();
+		SpCollider)
+	{
+		SpCollider->SetActive(true);
+	}
 }
 
 void QliphothBlock::Reset()
 {
 	_IsAlive = false;
+
+	if (auto SpCollider = _Collider.lock();
+		SpCollider)
+	{
+		SpCollider->SetActive(false);
+	}
 }
 
 void QliphothBlock::Imgui_Modify()
@@ -53,7 +65,8 @@ void QliphothBlock::Imgui_Modify()
 
 		{
 			static Vector3 SliderPosition = Sptransform->GetPosition();
-			ImGui::SliderFloat3("Pos##QliphothBlock", SliderPosition, -10.f, 10.f);
+			//ImGui::SliderFloat3("Pos##QliphothBlock", SliderPosition, -10.f, 10.f);
+			ImGui::InputFloat3("Pos##QliphothBlock", SliderPosition);
 			Sptransform->SetPosition(SliderPosition);
 		}
 
@@ -80,6 +93,14 @@ void QliphothBlock::Imgui_Modify()
 		//	ImGui::SliderFloat("SliceAmount##QliphothBlock", &SliceAmount, 0.f, 1.f);
 		//	_SliceAmount = SliceAmount;
 		//}
+
+		{
+			if (ImGui::Button("PlayStart##QliphothBlock"))
+				PlayStart(_PlayingSpeed);
+			ImGui::SameLine();
+			if (ImGui::Button("Reset##QliphothBlock"))
+				Reset();
+		}
 	}
 }
 
@@ -102,6 +123,15 @@ void QliphothBlock::RenderInit()
 				this->RenderAlphaBlendEffect(_Info);
 			}
 		},
+	};
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider] =
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+			{
+			this->DrawCollider(_Info);
+			}
+		} 
 	};
 
 	RenderInterface::Initialize(_InitRenderProp);
@@ -153,8 +183,8 @@ void QliphothBlock::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			_Info.Fx->SetTexture("ALP0Map", _BaseInnerTex->GetTexture());
 			_Info.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
 			_Info.Fx->SetFloat("_BrightScale", _BrightScale);
-			_Info.Fx->SetFloat("_AccumulationTexU", _AccumulateTime * 0.075f);
-			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.075f);
+			_Info.Fx->SetFloat("_AccumulationTexU", _AccumulateTime * 0.15f);
+			_Info.Fx->SetFloat("_AccumulationTexV", _AccumulateTime * 0.15f);
 			_Info.Fx->SetFloat("_SliceAmount", _SliceAmount);
 
 			// 깊이스케일 조절 하고 싶으면 바인드 .
@@ -191,7 +221,15 @@ HRESULT QliphothBlock::Ready()
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
 
 	_PlayingSpeed = 1.f;
-	_BrightScale = 0.01f;
+	_BrightScale = 0.015f;
+
+	_Collider = AddComponent<BoxCollider>();
+	if (auto SpCollider = _Collider.lock(); SpCollider)
+	{
+		SpCollider->ReadyCollider();
+		SpCollider->SetSize(Vector3{ 2.2f, 2.2f, 0.125f });	// 무지성 2.2배. 나중에 문제생기면 수정 ㅎㅎ
+		PushEditEntity(SpCollider.get());
+	}
 
 	Reset();
 

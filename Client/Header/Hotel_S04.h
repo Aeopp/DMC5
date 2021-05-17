@@ -6,6 +6,7 @@ class Hotel_S04 : public Scene
 {
 private:
 	std::weak_ptr<class Nero> _Player{};
+	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	bool _LateInit = false;
 private:
 	explicit Hotel_S04();
@@ -23,7 +24,7 @@ public:
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
 	void LoadObjects(const std::filesystem::path& path);
-	void RenderDataSetUp();
+	void RenderDataSetUp(const bool bTest);
 	void TriggerSetUp();
 	void LateInit();
 };

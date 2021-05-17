@@ -1,6 +1,6 @@
 float4x4 World;
 float4x4 ViewProjection;
-float4 DebugColor;
+float4   DebugColor;
 
 struct VsIn
 {

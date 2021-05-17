@@ -9,7 +9,7 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
-
+#include "Monster.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -46,10 +46,19 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-	AddGameObject<MainCamera>();
+	if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+			-4.327f,
+			1.449f,
+			36.596f, 
+			});
+		
+	}
 
-	_Player = AddGameObject<Nero>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -65,7 +74,8 @@ HRESULT Hotel_S04::LoadScene()
 
 	LoadObjects("../../Data/Stage4_Map.json");
 
-	AddGameObject<TempMap>();
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(4);
 
 #pragma endregion
 
@@ -73,7 +83,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp();
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -89,7 +99,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -127,8 +137,8 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		
 		// TestScene으로 넘어감
+		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
 	}
 	////////////////////////////////////
@@ -141,6 +151,7 @@ HRESULT Hotel_S04::LateUpdate(const float _fDeltaTime)
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
 }
+
 
 void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 {
@@ -199,17 +210,24 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
-}
+};
 
-void Hotel_S04::RenderDataSetUp()
+void Hotel_S04::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
-	
+
+	if (bTest)
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	}
+	else
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S04.json");
+	}
+
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
+	_Renderer->ao = 0.5f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -228,6 +246,10 @@ void Hotel_S04::TriggerSetUp()
 void Hotel_S04::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
+
+	Renderer::GetInstance()->LateSceneInit();
+	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
+	Renderer::GetInstance()->SkyDistortionStart();
 
 	_LateInit = true;
 }

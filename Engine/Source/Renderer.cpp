@@ -526,6 +526,7 @@ HRESULT Renderer::Render()&
 
 	// RenderEmissive();
 	AlphaBlendEffectRender();
+
 	if (bDistortion)
 	{
 		BlendDistortion();
@@ -652,10 +653,6 @@ void Renderer::Editor()&
 
 		ImGui::SliderFloat("StarScale", &StarScale, -10.f, 10.f);
 		ImGui::SliderFloat("StarFactor", &StarFactor, -10.f, 10.f);
-		;
-
-
-		;
 
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
@@ -664,11 +661,11 @@ void Renderer::Editor()&
 		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
 		ImGui::Checkbox("LightRender", &bLightRender);
-
 		ImGui::SliderFloat("ao", &ao, 0.0f, 1.f);
 		ImGui::InputFloat("In ao", &ao, 0.0f, 1.f);
 		ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.f);
 		ImGui::Checkbox("SkyDistortion", &SkyDistortion);
+
 		if (SkyDistortion)
 		{
 			ImGui::BeginChild("SkyDistortion Edit");
@@ -779,29 +776,54 @@ void Renderer::Editor()&
 	ImGui::End();
 };
 
+void Renderer::SkyDistortionStart()
+{
+	SkyDistortion = true;
+};
+
+void Renderer::SkyDistortionEnd()
+{
+	SkyDistortion = false;
+};
+
+void Renderer::LateSceneInit()
+{
+	Renderer::GetInstance()->SkyDistortionEnd();
+	Renderer::GetInstance()->RequestShadowMapBake();
+};
+
+void Renderer::SceneChangeRender()
+{
+	CurDirLight = nullptr;
+};
+
+void Renderer::RequestShadowMapBake()
+{
+	bShadowMapBake = true;
+};
+
 std::weak_ptr<FLight> Renderer::RefRemainingDynamicLight()
 {
-	std::weak_ptr<FLight> ReturnVal {};
+	std::weak_ptr<FLight> ReturnVal{};
 	for (auto& _Target : DynamicPointLights)
 	{
 		if (_Target)
 		{
 			if (_Target->bEnable == false)
 			{
-				ReturnVal= _Target;
+				ReturnVal = _Target;
 				continue;
 			}
 		}
 	}
 
 	return  ReturnVal;
-}
+};
 
 void Renderer::RenderReady()&
 {
 	RenderReadyEntitys();
 	ReadyRenderInfo();
-	// TestLightRotation();
 };
 
 void Renderer::RenderBegin()&
@@ -819,7 +841,7 @@ void Renderer::RenderBegin()&
 					CurDirLight->DepthStencil, nullptr, D3DTEXF_POINT)))
 				{
 					PRINT_LOG(TEXT("Warning"),
-						TEXT("Depth stencil copy failure."));
+						TEXT("Depth stencil copy falure."));
 				}
 			}
 			else
@@ -1798,8 +1820,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderTarget(1u, RenderTargets["Distortion"]->GetSurface(0));
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	
-	using AsType = std::pair<const std::string*,
-		ENGINE::Renderer::RenderEntityType*>;
+	using AsType = std::pair<const std::string*,ENGINE::Renderer::RenderEntityType*>;
 
 	std::vector<AsType> AlphaSortArr;
 
@@ -2034,9 +2055,9 @@ HRESULT Renderer::RendererCollider()&
 	{
 		auto Fx = Shaders[ShaderKey]->GetEffect();
 		_DrawInfo.Fx = Fx;
-		Vector4 DebugColor{ 255.f / 255.f,240.f / 255.f,140.f / 255.f,0.1f };
+
 		const Matrix ScaleOffset = FMath::Scale({ 0.01f,0.01f,0.01f });
-		Fx->SetVector("DebugColor", &DebugColor);
+		Fx->SetVector("DebugColor", &ColliderRenderDefaultColor);
 		Fx->SetMatrix("ViewProjection", &_RenderInfo.ViewProjection);
 		UINT Passes = 0u;
 		for (auto& [Entity, Call] : _EntityArr)
@@ -2977,7 +2998,6 @@ void Renderer::LightSave(std::filesystem::path path)
 	Of << StrBuf.GetString();
 };
 
-
 void Renderer::LightLoad(const std::filesystem::path& path)
 {
 	using namespace rapidjson;
@@ -2985,7 +3005,9 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 	std::ifstream Is{ path };
 
 	if (!Is.is_open())
+	{
 		return;
+	}
 
 	IStreamWrapper Isw(Is);
 	Document _Document{};
@@ -2998,6 +3020,8 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 	}
 
 	const Value& LightData = _Document["LightDataArray"];
+	DirLights.clear();
+	PointLights.clear();
 	// if (LightData.IsArray())
 	{
 		// auto LightArray=LightData.GetArray();
@@ -3079,6 +3103,10 @@ void Renderer::LightLoad(const std::filesystem::path& path)
 	}
 };
 
+std::weak_ptr<Quad> Renderer::GetQuad()
+{
+	return _Quad;
+};
 
 bool Renderer::TestShaderInit()
 {
@@ -3107,7 +3135,7 @@ bool Renderer::TestShaderInit()
 	sky = Resources::Load<Texture >("../../Media/Textures/static_sky.jpg");
 
 	return true;
-}
+};
 
 void Renderer::TestShaderRelease()
 {
@@ -3133,8 +3161,6 @@ void Renderer::TestLightRotation()
 
 	time += TimeSystem::GetInstance()->DeltaTime();
 };
-
-
 
 
 

@@ -13,14 +13,17 @@ void Trigger::EventRegist(
 	const Vector3& Location,
 	const Vector3& ColliderBoxSize,
 	const bool ImmediatelyEnable,/*持失 馬切原切 醗失鉢 ??*/
-	const GAMEOBJECTTAG& TargetTag)
+	const GAMEOBJECTTAG& TargetTag ,
+	const Vector3& Rotation)
 {
 	TriggerLocation = Location;
+	TriggerRotation = Rotation;
 
 	if (auto _Transform = GetComponent<Transform>().lock();
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
 	};
 
 	if (auto _Collider = GetComponent<BoxCollider>().lock();
@@ -131,6 +134,7 @@ void Trigger::TriggerEnable()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
 	};
 }
 
@@ -148,6 +152,8 @@ void Trigger::TriggerDisable()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 }
 
@@ -184,6 +190,8 @@ HRESULT Trigger::Ready()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 	PushEditEntity(InitTransform.lock().get());
 
@@ -199,7 +207,7 @@ HRESULT Trigger::Ready()
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
 		=
 	{
-		{"Collider" ,
+		{"ColliderTrigger" ,
 		[this](const DrawInfo& _Info)
 		{
 			DrawCollider(_Info);
@@ -218,6 +226,8 @@ HRESULT Trigger::Awake()
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 	return S_OK;
 }
@@ -237,6 +247,8 @@ UINT Trigger::Update(const float _fDeltaTime)
 		_Transform)
 	{
 		_Transform->SetPosition(TriggerLocation);
+		_Transform->SetRotation(TriggerRotation);
+
 	};
 
 	if (IsAfterEvent() 
@@ -261,6 +273,27 @@ UINT Trigger::Update(const float _fDeltaTime)
 		}
 	}
 
+	if (g_bEditMode)
+	{
+		if (Input::GetKeyDown(DIK_DELETE))
+		{
+			if (_Option == Option::MonsterWave && bAfterEvent)
+			{
+				if (CheckIfTheDead.has_value())
+				{
+					for (auto& WpMonster : CheckIfTheDead.value())
+					{
+						if (auto SpMonter = WpMonster.lock();
+							SpMonter)
+						{
+							SpMonter->Set_Hp(0);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return 0;
 };
 
@@ -277,6 +310,21 @@ void Trigger::Editor()
 
 	if (bEdit)
 	{
+		ImGui::Text("Location : %2.6f %2.6f %2.6f", TriggerLocation.x, TriggerLocation.y, TriggerLocation.z);
+
+		Vector3 InputPosition = TriggerLocation;
+		if (ImGui::InputFloat3("In Position", InputPosition))
+		{
+			TriggerLocation = InputPosition;
+		}
+		static float PositionSensitivy = 0.05f;
+		ImGui::InputFloat("PositionSensitivy", &PositionSensitivy);
+		Vector3 Position{ 0,0,0 };
+		if (ImGui::SliderFloat3("Position", Position, -10.f, +10.f))
+		{
+			TriggerLocation  =(TriggerLocation + Position * PositionSensitivy);
+		}
+
 		if (ImGui::Button("Event Call"))
 		{
 			if (_Event)
@@ -311,7 +359,16 @@ void Trigger::Editor()
 			ImGui::Text(ColliderMsg);
 
 			Vector3 CurrentBoxColliderSize = _Collider->GetSize();
-			ImGui::SliderFloat3("BoxColliderSize", CurrentBoxColliderSize, 0.0f, 10.f);
+			ImGui::Text("Box Size %2.6f %2.6f %2.6f", 
+				CurrentBoxColliderSize.x, CurrentBoxColliderSize.y, CurrentBoxColliderSize.z);
+
+			static float BoxSensitivy = 0.000001f;
+			ImGui::InputFloat("BoxSensitivy", &BoxSensitivy);
+			Vector3 BoxSize{ 0,0,0 };
+			if (ImGui::SliderFloat3("BoxSize", BoxSize, -1.f, +1.f))
+			{
+				_Collider->SetSize(_Collider->GetSize()+ BoxSize);
+			}
 		}
 	}
 }

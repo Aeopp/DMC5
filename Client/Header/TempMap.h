@@ -31,9 +31,13 @@ public:
 	virtual void    Editor()override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
+
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderGBuffer(const DrawInfo& _Info);
 	void RenderShadow(const DrawInfo& _Info);
+
+
+	void LoadMap(const int _iStage);
 };
 #endif //__TEMPMAP__H_

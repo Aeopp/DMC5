@@ -7,6 +7,8 @@ float3 LightDirection = float3(0.f, 0.f, 1.f);
 float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
+bool _Apply_ExposureCorr = true; // PsMain_Plane() 에서 사용 시발
+
 float _TotalAccumulateTime;
 float _AccumulationTexU;
 float _AccumulationTexV;
@@ -31,6 +33,8 @@ float2 _MaxTexUV = float2(1.f, 1.f);
 float _EmissivePower = 0.f;
 
 float3 _ExtraColor = float3(0.f, 0.f, 0.f);
+
+float _GlobalAlpha = 1.f;
 
 
 texture NoiseMap;
@@ -358,9 +362,11 @@ PsOut PsMain_Plane(PsIn In)
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
     float Ambient = ATOSSample.b * 0.2f;
 
-    Out.Color = (Diffuse + Ambient) * float4(ALB0Sample.rgb, 1.f) * _BrightScale;// * exposure_corr;
-    Out.Color.a = ATOSSample.r;
-
+    Out.Color = (Diffuse + Ambient) * float4(ALB0Sample.rgb, 1.f) * _BrightScale;
+    if (_Apply_ExposureCorr)
+        Out.Color *= exposure_corr;
+    Out.Color.a = ATOSSample.r * _GlobalAlpha;
+ 
     return Out;
 };
 
@@ -384,7 +390,7 @@ PsOut PsMain_Mesh(PsIn In)
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
 
     Out.Color = Diffuse * float4(ALB0Sample.rgb + _ExtraColor, 1.f) * _BrightScale * exposure_corr; // extracolor 일단 여기만 넣는다 ㅠ
-    Out.Color.a = 1.f;
+    Out.Color.a = _GlobalAlpha;
     
     return Out;
 };
@@ -458,7 +464,7 @@ PsOut PsMain_TargetHP(PsIn_NoiseClip In)
     float2 NoiseCoord = In.UV + FinalNoise.xy;  // 원본 uv를 밀어냄
        
     Out.Color = float4(0.25f, 0.647f, 0.698f, 1.f) * _BrightScale * exposure_corr;
-    Out.Color.a = tex2D(ATOS0, NoiseCoord).r * ((In.UV.y - 0.8f) * _TargetCursorAlpha);
+    Out.Color.a = tex2D(ATOS0, NoiseCoord).r * ((In.UV.y - 0.8f) * _TargetCursorAlpha) * 0.4f;
     
     return Out;
 };
@@ -624,6 +630,7 @@ PsOut PsMain_Glass(PsIn In)
         Out.Color = (Out.Color * (1.f - Dirt)) + float4(Shade * ALB1Sample.rgb, Dirt);
 
     Out.Color.rgb *= _BrightScale * exposure_corr;
+    Out.Color.a *= _GlobalAlpha;  
     
     return Out;
 };
@@ -650,7 +657,7 @@ PsOut PsMain_HPGauge0(PsIn_Clip In)
     float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;
     
     Out.Color.rgb = Shade * (ALB0Sample.rgb * float3(0.027f, 0.78f, 0.478f)) * _BrightScale * exposure_corr;
-    Out.Color.a = ATOSSample.r;
+    Out.Color.a = ATOSSample.r *_GlobalAlpha;
     
     return Out;
 };
@@ -677,7 +684,7 @@ PsOut PsMain_HPGauge1(PsIn_Clip In)
     float Shade = saturate(dot(WorldNormal, -normalize(LightDirection))) + 0.2f;
     
     Out.Color.rgb = Shade * (ALB0Sample.rgb * float3(1.f, 0.f, 0.f)) * _BrightScale * exposure_corr;
-    Out.Color.a = ATOSSample.r;
+    Out.Color.a = ATOSSample.r * _GlobalAlpha;
     
     return Out;
 };
@@ -704,7 +711,7 @@ PsOut PsMain_TDTGauge0(PsIn In)
     newUV.y += _AccumulationTexV;
  
     Out.Color.rgb = Shade * saturate((float3(0.149f, 0.145f, 0.208f) - 0.15f * float3(NRMRSample.aaa))) * _BrightScale * exposure_corr;
-    Out.Color.a = (ATOSSample.r + ATOSSample.b) * (1.f - saturate(tex2D(ATOS0, newUV).a * 0.8f));
+    Out.Color.a = (ATOSSample.r + ATOSSample.b) * (1.f - saturate(tex2D(ATOS0, newUV).a * 0.8f)) * _GlobalAlpha;
     
     return Out;
 };
@@ -744,7 +751,7 @@ PsOut PsMain_TDTGauge1(PsIn_Clip In)
         Out.Color.rgb *= (_BrightScale * exposure_corr);
     }
     
-    Out.Color.a = ATOSSample.b;
+    Out.Color.a = ATOSSample.b * _GlobalAlpha;
 
     return Out;
 };
@@ -783,7 +790,7 @@ PsOut PsMain_ExGauge(PsIn In)
 
     Out.Color = Diffuse * ALB0Sample + Emissive * ALB1Sample;
     Out.Color.rgb *= _BrightScale * exposure_corr;
-    Out.Color.a = 1.f;
+    Out.Color.a = _GlobalAlpha;
 
     return Out;
 };

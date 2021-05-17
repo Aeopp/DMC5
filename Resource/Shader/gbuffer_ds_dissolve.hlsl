@@ -91,8 +91,9 @@ void ps_gbuffer_tbn(
     
     float3 n = normalize(mul(tbn, tnorm));
     
-    float4 _Color = tex2D(baseColor, tex);
+    
      // µðÁ¹ºê.
+    float4 _Color = tex2D(baseColor, tex);
     float Dissolve = tex2D(DissolveSampler, tex).r - SliceAmount;
     clip(Dissolve);
     float3 CurBurnColor = float3(1, 1, 1);

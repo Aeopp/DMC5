@@ -22,15 +22,15 @@ void ShapeParticle::SetColorIdx(ShapeParticle::COLOR Idx)
 	{
 	case RED:
 		_ExtraColor = Vector3(0.518f, 0.019f, 0.051f);
-		_BrightScale = 0.4f;
+		_BrightScale = 2.85f;
 		break;
 	case GREEN:
 		_ExtraColor = Vector3(0.09f, 0.596f, 0.518f);
-		_BrightScale = 0.2f;
+		_BrightScale = 1.5f;
 		break;
 	case WHITE:
 		_ExtraColor = Vector3(1.f, 1.f, 1.f);
-		_BrightScale = 0.2f;
+		_BrightScale = 0.9f;
 		break;
 	}
 
@@ -299,11 +299,10 @@ HRESULT ShapeParticle::Ready()
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info));
 	_ShapeVec.push_back(Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info));
 	
-
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	_DustSingleTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\tex_03_dust_single_0003_alpg.tga");
 
-	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
+	D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.00005f, 0.00005f, 0.00005f);
 
 	//
 	SetShapeIdx(_ShapeIdx);
@@ -351,7 +350,7 @@ UINT ShapeParticle::Update(const float _fDeltaTime)
 		D3DXMatrixInverse(&BillMat, 0, &BillMat);
 		D3DXMatrixInverse(&InvRotMat, 0, &GetComponent<Transform>().lock()->GetRotationMatrix());
 
-		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.000025f, 0.000025f, 0.000025f);
+		D3DXMatrixScaling(&_DustSingleChildWorldMatrix, 0.00005f, 0.00005f, 0.00005f);
 		_DustSingleChildWorldMatrix = _DustSingleChildWorldMatrix * BillMat * InvRotMat;
 	
 		// BezierCurve

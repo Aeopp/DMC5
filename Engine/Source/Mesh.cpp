@@ -38,14 +38,15 @@ void Mesh::MakeVertexLocationsFromSubset()&
 		}
 	}
 }
-HRESULT Mesh::LoadMeshFromFile(const std::filesystem::path _Path, const std::any& InitParams)&
+HRESULT Mesh::LoadMeshFromFile(const std::filesystem::path _Path, 
+							  const std::any& InitParams)&
 {
 	//Assimp Importer 积己.
 	auto AiImporter = Assimp::Importer{};
 	ResourcePath = _Path;
 	//FBX颇老阑 佬绢辑 Scene 积己.
-	const aiScene* const AiScene = AiImporter.ReadFile(
-		ResourcePath.string(),
+
+	unsigned int LoadFlag =
 		aiProcess_MakeLeftHanded |
 		aiProcess_FlipUVs |
 		aiProcess_FlipWindingOrder |
@@ -58,11 +59,31 @@ HRESULT Mesh::LoadMeshFromFile(const std::filesystem::path _Path, const std::any
 		aiProcess_TransformUVCoords |
 		aiProcess_FindInstances |
 		aiProcess_GenSmoothNormals |
-		aiProcess_SortByPType |
-		aiProcess_OptimizeMeshes |
-		aiProcess_SplitLargeMeshes |
-		aiProcess_JoinIdenticalVertices
-	);
+		aiProcess_SortByPType;
+
+	if (InitParams.has_value())
+	{
+		const auto& LoadInfo = std::any_cast<const Mesh::InitializeInfo&>(InitParams);
+
+		if (LoadInfo.bJoinIdenticalVertices)
+		{
+			LoadFlag |= aiProcess_JoinIdenticalVertices;
+		}
+
+		if (LoadInfo.bOptimizeMeshes)
+		{
+			LoadFlag |= aiProcess_OptimizeMeshes;
+		}
+
+		if (LoadInfo.bSplitLargeMeshes)
+		{
+			LoadFlag |= aiProcess_SplitLargeMeshes;
+		}
+	}
+
+	const aiScene* const AiScene = AiImporter.ReadFile(
+		ResourcePath.string(),
+		LoadFlag);
 
 	return LoadMeshImplementation(AiScene, ResourcePath, InitParams);
 };

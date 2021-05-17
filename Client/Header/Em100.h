@@ -3,7 +3,6 @@
 
 #include "Monster.h"
 
-
 class RedQueen;
 class Em100Hand;
 class Nero;
@@ -107,13 +106,13 @@ public:
 	virtual void SetGravity(bool _bActiveOrNot);
 private:
 	//몬스터 상태
-	Em100_State	m_eState =State_END;		
+	Em100_State	m_eState = State_END;
 
 	//공격 및 이동 관련
 	bool		m_bMove = false;
 	float		m_fMoveTime = 0.f;
 
-	bool		m_bAttack = false;	
+	bool		m_bAttack = false;
 	float		m_fAttackTime = 0.f;
 
 	bool		m_bHardAttack = false;
@@ -129,7 +128,7 @@ private:
 
 
 	//////////버스터 용////////////////
-	Matrix*								  m_pPlayerBone;
+	Matrix* m_pPlayerBone;
 	Matrix								  m_PlayerWorld;
 	Matrix								  m_Result;
 	Matrix								  m_TempMatrix;
@@ -139,7 +138,12 @@ private:
 	/*---이펙트 ---*/
 	weak_ptr<class Liquid> m_pBlood;
 	weak_ptr<class AppearGroundMonster>   m_pAppear;
+
+	
 	/*----------------*/
+
+	
+	
 };
 
 #endif // Em100_h__

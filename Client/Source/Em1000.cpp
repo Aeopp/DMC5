@@ -383,7 +383,12 @@ UINT Em1000::Update(const float _fDeltaTime)
 
 	if (m_eState == Dead_Floor || m_eState == Dead_Wall)
 	{
-		if (m_pMesh->IsAnimationEnd())
+		if (m_bDissolve == false)
+		{
+			m_pDissolve.DissolveStart();
+			m_bDissolve = true;
+		}
+		if (m_pDissolve.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World))
 		{
 			Destroy(m_pHand);
 			Destroy(m_pGameObject);
@@ -442,7 +447,7 @@ void Em1000::Hit(BT_INFO _BattleInfo, void* pArg)
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
 		pBlood->SetPosition(GetMonsterBoneWorldPos("Vine01_IK"));
-		pBlood->SetScale(0.008f);
+		pBlood->SetScale(0.0085f);
 		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
 		pBlood->PlayStart(40.f);
 	}
@@ -543,6 +548,7 @@ void Em1000::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		m_pDissolve.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -633,7 +639,7 @@ void Em1000::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -679,9 +685,10 @@ void Em1000::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};
+	m_pDissolve.Initialize(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\Em1000.fbx", Vector3{ 1.f,0.f,0.f });
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
-	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\test.fbx", _InitInfo);
+	m_pMesh = Resources::Load<ENGINE::SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\Em1000.fbx", _InitInfo);
 
 	m_pMesh->LoadAnimationFromDirectory(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\Ani");
 	m_pMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em1000\\Em1000.Animation");

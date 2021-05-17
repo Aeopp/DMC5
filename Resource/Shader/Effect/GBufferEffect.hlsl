@@ -67,7 +67,8 @@ void ps_gbuffer_tbn(
     float3 n = normalize(mul(tbn, tnorm));
 
     float4 albm = tex2D(baseColor, tex);
-    color0 = saturate(float4((albm.rgb + extraColor) * brightScale * exposure_corr, albm.a));
+    float3 alb = saturate(albm.rgb + extraColor) * brightScale * exposure_corr;
+    color0 = saturate(float4(alb, albm.a));
     color1 = float4(n * 0.5f + 0.5f, normap_sample.w);
     color2 = float4(zw.x / zw.y, 0, 0, 0);
 };

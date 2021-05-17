@@ -6,8 +6,8 @@ class LogoScene : public Scene
 {
 private:
 	std::weak_ptr<class LogoPanel> _LogoPanel{};
-
-	bool _LoadNextScene = false;
+	
+	bool _LoadNextScene = false; 
 
 private:
 	explicit LogoScene() = default;
@@ -23,6 +23,5 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-
 };
 #endif // !__LOGO_SCENE_H__

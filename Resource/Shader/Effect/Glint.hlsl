@@ -63,7 +63,7 @@ PsOut PsMain(PsIn In)
 
     Out.Color = BaseSample;
     Out.Color.rgb *= (_BrightScale * exposure_corr);
-    Out.Color.a *= (1.f - _SliceAmount) * 0.01f;
+    Out.Color.a *= (1.f - _SliceAmount) * 0.0075f;
     
     return Out;
 };

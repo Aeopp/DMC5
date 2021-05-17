@@ -100,11 +100,8 @@ void TempMap::RenderInit()
 
 	// 
 	// 스태틱 메쉬 로딩
-	Mesh::InitializeInfo _InitInfo{};
-	_InitInfo.bLocalVertexLocationsStorage = true;
-	_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Map\\Location\\Location2\\Arcade\\Tempmap.fbx", _InitInfo);
-	PushEditEntity(_StaticMesh.get());
+
+	
 };
 
 void TempMap::RenderGBuffer(const DrawInfo& _Info)
@@ -147,6 +144,35 @@ void TempMap::RenderShadow(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
+}
+
+void TempMap::LoadMap(const int _iStage)
+{
+	Mesh::InitializeInfo _InitInfo{};
+	_InitInfo.bLocalVertexLocationsStorage = true;
+	switch (_iStage)
+	{
+	case 1:
+		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
+			L"..\\..\\Resource\\Map\\Collmap\\Stage1.fbx", _InitInfo);
+		break;
+	case 2:
+		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
+			L"..\\..\\Resource\\Map\\Collmap\\Stage2.fbx", _InitInfo);
+		break;
+	case 3:
+		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
+			L"..\\..\\Resource\\Map\\Collmap\\Stage3.fbx", _InitInfo);
+		break;
+	case 4:
+		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
+			L"..\\..\\Resource\\Map\\Collmap\\BossStage.fbx", _InitInfo);
+		break;
+	default:
+		break;
+	}
+	PushEditEntity(_StaticMesh.get());
+	
 }
 
 

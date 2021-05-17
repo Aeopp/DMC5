@@ -40,7 +40,7 @@ void Em0000::Fight(const float _fDeltaTime)
 	/////이놈은 움직임이 한방향 밖에 없어서. 앞으로 갈지 아니면 백스탭 이후에 강한 공격할지
 	//Move가 On일때 1/4 확률로 백스텝을 하고 백스텝을 한 이후에는 바로 달려가면서 강한 공격
 
-	if (m_BattleInfo.iHp <= 0.f)
+	if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
 	{
 		m_eState = Dead;
 		m_bIng = true;
@@ -751,8 +751,16 @@ UINT Em0000::Update(const float _fDeltaTime)
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
 	{
-		Destroy(m_pWeapon);
-		Destroy(m_pGameObject);
+		if (m_bDissolve == false)
+		{
+			m_pDissolve.DissolveStart();
+			m_bDissolve = true;
+		}
+		if (m_pDissolve.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World))
+		{
+			Destroy(m_pWeapon);
+			Destroy(m_pGameObject);
+		}
 	}
 	return 0;
 }
@@ -804,7 +812,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
 		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
-		pBlood->SetScale(0.008f);
+		pBlood->SetScale(0.0085f);
 		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
 		pBlood->PlayStart(40.f);
 	}
@@ -962,7 +970,8 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+	if ((m_BattleInfo.iHp -= _BattleInfo.iAttack) >= 0.f)
+		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;
 	m_bDown = true;
@@ -1083,6 +1092,7 @@ void Em0000::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		m_pDissolve.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -1161,7 +1171,7 @@ void Em0000::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -1205,6 +1215,10 @@ void Em0000::RenderInit()
 		}
 	} };
 
+	m_pDissolve.Initialize("..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em0000\\Em0000.fbx",
+		Vector3{
+			1.f,0.f,0.f
+		});
 
 	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};

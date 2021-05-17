@@ -158,22 +158,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Header\AnimationUpGround.h" />
     <ClInclude Include="..\Header\AppearEm1000.h" />
     <ClInclude Include="..\Header\AppearGroundMonster.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
-    <ClInclude Include="..\Header\BrokenBookShelf.h" />
-    <ClInclude Include="..\Header\BrokenPeople.h" />
-    <ClInclude Include="..\Header\BrokenTable.h" />
+    <ClInclude Include="..\Header\BreakableObject.h" />
     <ClInclude Include="..\Header\Buster_Arm_Left.h" />
     <ClInclude Include="..\Header\CbsTrail.h" />
     <ClInclude Include="..\Header\Cbs_Long.h" />
     <ClInclude Include="..\Header\Cbs_Middle.h" />
     <ClInclude Include="..\Header\Cbs_Short.h" />
     <ClInclude Include="..\Header\CircleWave.h" />
+    <ClInclude Include="..\Header\CollObject.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
+    <ClInclude Include="..\Header\DissolveInfo.h" />
     <ClInclude Include="..\Header\ElectricBranch.h" />
     <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\ElectricVortex.h" />
@@ -186,9 +185,8 @@
     <ClInclude Include="..\Header\Em5300Missile.h" />
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
+    <ClInclude Include="..\Header\FadeOut.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
-    <ClInclude Include="..\Header\HotelAnimationWall.h" />
-    <ClInclude Include="..\Header\HotelBrokenFloor.h" />
     <ClInclude Include="..\Header\Hotel_S01.h" />
     <ClInclude Include="..\Header\Hotel_S02.h" />
     <ClInclude Include="..\Header\Hotel_S03.h" />
@@ -204,10 +202,12 @@
     <ClInclude Include="..\Header\LogoPanel.h" />
     <ClInclude Include="..\Header\LogoScene.h" />
     <ClInclude Include="..\Header\MakaiButterfly.h" />
+    <ClInclude Include="..\Header\MapAniObject.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
+    <ClInclude Include="..\Header\SecretVisionMagicCircle.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -253,6 +253,11 @@
     <ClInclude Include="..\Header\Unit.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
+    <ClInclude Include="..\Header\WingSword.h" />
+    <ClInclude Include="..\Header\WingSword1st.h" />
+    <ClInclude Include="..\Header\WingSword2nd.h" />
+    <ClInclude Include="..\Header\WingSword3rd.h" />
+    <ClInclude Include="..\Header\WingSword4th.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
     <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
     <ClInclude Include="Client.h" />
@@ -262,16 +267,13 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\AnimationUpGround.cpp" />
     <ClCompile Include="..\Source\AppearEm1000.cpp" />
     <ClCompile Include="..\Source\AppearGroundMonster.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
-    <ClCompile Include="..\Source\BrokenBookShelf.cpp" />
-    <ClCompile Include="..\Source\BrokenPeople.cpp" />
-    <ClCompile Include="..\Source\BrokenTable.cpp" />
+    <ClCompile Include="..\Source\BreakableObject.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
     <ClCompile Include="..\Source\CbsTrail.cpp" />
@@ -279,7 +281,9 @@
     <ClCompile Include="..\Source\Cbs_Middle.cpp" />
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
     <ClCompile Include="..\Source\CircleWave.cpp" />
+    <ClCompile Include="..\Source\CollObject.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
+    <ClCompile Include="..\Source\DissolveInfo.cpp" />
     <ClCompile Include="..\Source\ElectricBranch.cpp" />
     <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\ElectricVortex.cpp" />
@@ -292,9 +296,8 @@
     <ClCompile Include="..\Source\Em5300Missile.cpp" />
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
+    <ClCompile Include="..\Source\FadeOut.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
-    <ClCompile Include="..\Source\HotelAnimationWall.cpp" />
-    <ClCompile Include="..\Source\HotelBrokenFloor.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp" />
     <ClCompile Include="..\Source\Hotel_S02.cpp" />
     <ClCompile Include="..\Source\Hotel_S03.cpp" />
@@ -310,10 +313,12 @@
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
     <ClCompile Include="..\Source\MakaiButterfly.cpp" />
+    <ClCompile Include="..\Source\MapAniObject.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
     <ClCompile Include="..\Source\SecretVision.cpp" />
+    <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp" />
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
@@ -362,6 +367,11 @@
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
+    <ClCompile Include="..\Source\WingSword.cpp" />
+    <ClCompile Include="..\Source\WingSword1st.cpp" />
+    <ClCompile Include="..\Source\WingSword2nd.cpp" />
+    <ClCompile Include="..\Source\WingSword3rd.cpp" />
+    <ClCompile Include="..\Source\WingSword4th.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
     <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
     <ClCompile Include="Client.cpp" />
@@ -529,6 +539,14 @@
     <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

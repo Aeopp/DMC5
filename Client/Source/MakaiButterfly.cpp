@@ -4,7 +4,12 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include "SecretVision.h"
+#include "BtlPanel.h"
+#include "SecretVisionMagicCircle.h"
 
+
+uint32 MakaiButterfly::_TotalCnt = 0u;
 
 void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 {
@@ -18,6 +23,8 @@ void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 
 void MakaiButterfly::Free()
 {
+	Destroy(_SVMC);
+
 	GameObject::Free();
 }
 
@@ -48,7 +55,7 @@ void MakaiButterfly::PlayStart(const float PlayingSpeed/*= 25.f*/)
 	Effect::PlayStart(PlayingSpeed);
 	_IsAlive = true;
 	_SliceAmount = 1.f;
-	_BrightScale = 0.2f;
+	_BrightScale = 0.3f;
 	_Collider.lock()->SetActive(true);
 }
 
@@ -128,7 +135,7 @@ void MakaiButterfly::RenderInit()
 			{
 				this->RenderDebug(_Info);
 			}
-		} 
+		}
 	};
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider] =
 	{
@@ -193,7 +200,7 @@ HRESULT MakaiButterfly::Ready()
 	m_nTag = GAMEOBJECTTAG::Eff_MakaiButterFly;
 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.0015f, 0.0015f, 0.0015f });
+	InitTransform.lock()->SetScale({ 0.002f, 0.002f, 0.002f });
 
 	_Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\mesh_03_creature_makaibutterfly00_00.fbx");
 	_ALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_creature_makaibutterfly00_00_ALBM.tga");
@@ -201,19 +208,22 @@ HRESULT MakaiButterfly::Ready()
 	_NRMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\Effect\\mesh_03_creature_makaibutterfly00_00_NRM.tga");
 
 	_PlayingSpeed = 25.f;
-	_BrightScale = 0.2f;
+	_BrightScale = 0.3f;
 
 	_BezierStartOffsetPos = Vector3(0.f, 0.f, 0.f);
-	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.01f, -0.01f, -0.01f), Vector3(0.01f, 0.01f, 0.015f));
+	_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.03f, -0.03f, -0.03f), Vector3(0.03f, 0.03f, 0.03f));
 	_BezierDeltaOffsetPos = Vector3(0.f, 0.f, 0.f);
 
 	_Collider = AddComponent<CapsuleCollider>();
 	_Collider.lock()->ReadyCollider();
-	_Collider.lock()->SetRadius(0.03f);
+	_Collider.lock()->SetRadius(0.05f);
 	_Collider.lock()->SetHeight(0.03f);
 	_Collider.lock()->SetCenter({ 0.f, 0.f, 0.f });
 	_Collider.lock()->SetActive(false);
 	PushEditEntity(_Collider.lock().get());
+
+	_SVMC = AddGameObject<SecretVisionMagicCircle>();
+	_SVMC.lock()->SetActive(false);
 
 	return S_OK;
 }
@@ -237,15 +247,15 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 
 	if (MakaiButterfly::VARIATION::MOVE_FORWARD == _VariationIdx)
 	{
-		if (100.f < _AccumulateTime)
+		if (80.f < _AccumulateTime)
 			_IsAlive = false;
 
-		auto _WeakTransform = GetComponent<ENGINE::Transform>();
-		if (auto SpTransform = _WeakTransform.lock();
+		auto WeakTransform = GetComponent<ENGINE::Transform>();
+		if (auto SpTransform = WeakTransform.lock();
 			SpTransform)
 		{
 			Vector3 vDir = SpTransform->GetLook(); 
-			SpTransform->SetPosition(SpTransform->GetPosition() + vDir * 0.001f);
+			SpTransform->SetPosition(SpTransform->GetPosition() + vDir * 0.01f);
 		}
 	}
 
@@ -267,11 +277,11 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 	}
 	else
 	{
-		if (0.2f > _BrightScale)
+		if (0.3f > _BrightScale)
 		{
 			_BrightScale += 0.5f * _fDeltaTime;
-			if (0.2f < _BrightScale)
-				_BrightScale = 0.2f;
+			if (0.3f < _BrightScale)
+				_BrightScale = 0.3f;
 		}
 
 		_SliceAmount += _fDeltaTime * 1.f;
@@ -292,7 +302,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 	{
 		_SubsetIdx = 0.f;
 		_BezierStartOffsetPos = _BezierEndOffsetPos;
-		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.01f, -0.01f, -0.01f), Vector3(0.01f, 0.01f, 0.01f));
+		_BezierEndOffsetPos = FMath::Random<Vector3>(Vector3(-0.03f, -0.03f, -0.03f), Vector3(0.03f, 0.03f, 0.03f));
 	}
 
 	// BezierCurve
@@ -331,15 +341,70 @@ void MakaiButterfly::OnDisable()
 
 void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	switch (_pOther.lock()->m_nTag)
-	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-	case GAMEOBJECTTAG::Tag_Cbs_Middle:
-	case GAMEOBJECTTAG::Tag_Cbs_Short:
-	case GAMEOBJECTTAG::Tag_Cbs_Long:
-		
-		Reset();
+	if (!_IsAlive)
+		return;
 
-		break;
+	if (MakaiButterfly::VARIATION::STAY == _VariationIdx)
+	{
+		Matrix ViewInverse;
+		Vector3 Dir;
+
+		switch (_pOther.lock()->m_nTag)
+		{
+		case GAMEOBJECTTAG::TAG_RedQueen:
+		case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		case GAMEOBJECTTAG::Tag_Cbs_Short:
+		case GAMEOBJECTTAG::Tag_Cbs_Long:
+
+			if (auto SpSecretVision = std::static_pointer_cast<SecretVision>(FindGameObjectWithTag(TAG_SecretVision).lock());
+				SpSecretVision)
+			{
+				uint32 idx = SpSecretVision->GetInteractionIdx();
+				if (_TotalCnt != idx)
+					return;
+
+				// To SecretVision
+				SpSecretVision->SetInteractionEnable(true);
+
+				// To BtlPannel
+				if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+					SpPanel)
+				{
+					SpPanel->AddRankScore(10.f);
+					SpPanel->AddExGauge(3.f);
+					SpPanel->ActivateSecretVision(idx);
+				}
+
+				// SVMC
+				_SVMC.lock()->SetActive(true);
+				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
+
+				//
+				Reset();
+
+				++_TotalCnt;
+			}
+			else
+			{
+				// To BtlPannel
+				if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+					SpPanel)
+				{
+					SpPanel->AddRankScore(10.f);
+					SpPanel->AddExGauge(3.f);
+				}
+
+				// SVMC
+				_SVMC.lock()->SetActive(true);
+				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)FMath::Random<uint32>(0u, 2u));
+				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
+
+				//
+				Reset();
+			}
+
+			break;
+		}
 	}
 }

@@ -12,7 +12,7 @@ class SecretVision : public ENGINE::GameObject,
 	{
 		static const uint32  DefaultLife = 4u;
 		static inline float  DisappearEndColorIntencity = 333.f;
-		static inline float  DisappearAcc = 0.5f;
+		static inline float  DisappearAcc = 0.6f;
 
 		float ColorIntencity = 0.0f;
 		float AlphaFactor = 0.0f;
@@ -50,19 +50,22 @@ public:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+public:
+	void   PuzzleStart();
+	uint32 GetInteractionIdx()const;
+	void   SetInteractionEnable(const bool bInteraction);
 private:
 	void Interaction(const uint32 Idx);
 	void Disappear(const uint32 Idx);
 	void PuzzleEndParticle();
 	void Default();
-	void PuzzleStart();
 	void PuzzleEnd();
 private:
 	// ÄÄÆ÷³ÍÆ®
 	std::weak_ptr<BoxCollider> _Collider{};
 	bool bEnable = false;
-	// 
-
+	//
+	bool   bInteraction = false;
 	uint32 InteractionIdx = 0u;
 
 	static const inline float DefaultNoiseWrap = 0.6f;
@@ -80,6 +83,8 @@ private:
 
 	float HitAddColorIntencity = 0.2f;
 	float HitAddAlphaFactor  = 0.2f;
+
+	std::optional<float> NhDoorOpenTime{ std::nullopt };
+
 };
 #endif //
-

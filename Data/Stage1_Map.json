@@ -128,10 +128,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\Storehouse\\Storehouse.fbx",
-            "List": []
-        },
-        {
             "Mesh": "Resource\\Map\\Location2\\buildingnew7\\buildingnew7.fbx",
             "List": [
                 {
@@ -889,28 +885,6 @@
                         -2611.406982421875,
                         -1.7760000228881837,
                         4096.10009765625
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Brickrubble\\Brickrubble.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        3.0,
-                        3.0,
-                        3.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        120.0,
-                        0.0
-                    ],
-                    "Position": [
-                        4080.0,
-                        20.0,
-                        3070.0
                     ]
                 }
             ]
