@@ -114,7 +114,10 @@ void Em100::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
-
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	switch (m_eState)
 	{
 	case Em100::Air_End:
@@ -259,6 +262,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.5f, 20.f, true);
 		m_pCollider.lock()->SetActive(false);
+		m_bDead = true;
 		StoneDebrisPlayStart();
 		break;
 	case Em100::Hit_Air:
@@ -1611,6 +1615,11 @@ void Em100::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
+
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;

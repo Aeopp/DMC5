@@ -95,7 +95,10 @@ void Em0000::State_Change(const float _fDeltaTime)
 	D3DXVec3Normalize(&vDir, &vDir);
 	Vector3	 vLook = m_pTransform.lock()->GetLook();
 	float    fDot = D3DXVec3Dot(&vDir, &vLook);
-
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 
 	switch (m_eState)
 	{
@@ -180,6 +183,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 	case Em0000::Dead:
 		if (m_bIng == true)
 			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.5f, 20.f, true);
+		m_bDead = true;
 		m_pCollider.lock()->SetActive(false);
 		StoneDebrisPlayStart();
 		break;
@@ -1268,6 +1272,10 @@ void Em0000::Update_Angle()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;
@@ -1305,6 +1313,10 @@ void Em0000::Test()
 	Vector3 vLook = -m_pTransform.lock()->GetLook();
 
 	float fDot = D3DXVec3Dot(&vDir, &vLook);
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
 	float fRadian = acosf(fDot);
 
 	Vector3	vCross;

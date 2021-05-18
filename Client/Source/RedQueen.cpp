@@ -8,7 +8,7 @@
 RedQueen::RedQueen()
 {
 	m_nTag = TAG_RedQueen;
-	m_BattleInfo.iAttack = 10;
+	m_BattleInfo.iAttack = 1000;
 	m_BattleInfo.eAttackType = Attack_END;
 }
 

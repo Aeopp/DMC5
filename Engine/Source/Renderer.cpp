@@ -2198,7 +2198,7 @@ HRESULT Renderer::Update(const float DeltaTime)&
 {
 	if (_FadeEffect.bEnable)
 	{
-		_FadeEffect.T += DeltaTime;
+		_FadeEffect.T += TimeSystem::GetInstance()->OriginDeltaTime();
 
 		if (_FadeEffect.T > _FadeEffect.Time)
 		{

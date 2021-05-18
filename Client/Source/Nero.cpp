@@ -65,7 +65,7 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 {
 	if (_ActiveOrNot)
 	{
-		std::list<std::weak_ptr<Monster>> Monsters = GetAllMonster();
+		std::list<std::weak_ptr<Monster>> Monsters = GetAliveMonster();
 		for (auto& pMonster : Monsters)
 			pMonster.lock()->Set_Coll(true);
 	}
@@ -184,6 +184,21 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 std::list<std::weak_ptr<Monster>> Nero::GetAllMonster()
 {
 	return FindGameObjectsWithType<Monster>();
+}
+
+std::list<std::weak_ptr<Monster>> Nero::GetAliveMonster()
+{
+	std::list<std::weak_ptr<Monster>> _AllMonsters = FindGameObjectsWithType<Monster>();
+	std::list<std::weak_ptr<Monster>> _AliveMonsters;
+
+	for (auto& pMonster : _AllMonsters)
+	{
+		if (!pMonster.lock()->Get_Dead())
+			_AliveMonsters.emplace_back(pMonster);
+	}
+	
+
+	return _AliveMonsters;
 }
 
 std::string Nero::GetName()
@@ -361,6 +376,7 @@ UINT Nero::Update(const float _fDeltaTime)
 UINT Nero::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
+
 	return 0;
 }
 
@@ -759,6 +775,12 @@ void Nero::Editor()
 		{
 			ChangeAnimation("Idle_Battle", true, ANI_IDLE_BATTLE);
 		}
+		if (ImGui::Button("BuyItems"))
+		{
+			BuyUpgradedOverture();
+			BuyCbsMiddle();
+			BuyCbsLong();
+		}
 	}
 
 }
@@ -896,7 +918,7 @@ void Nero::SetLockOnMonster()
 	if (!m_pTargetMonster.expired())
 		return;
 
-	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
+	std::list<std::weak_ptr<Monster>> MonsterList = GetAliveMonster();
 	if (0 == MonsterList.size())
 		return;
 
@@ -972,7 +994,7 @@ void Nero::SetPosFireCircle()
 
 void Nero::CheckAutoRotate()
 {
-	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
+	std::list<std::weak_ptr<Monster>> MonsterList = GetAliveMonster();
 	std::weak_ptr<Monster> LockOnMonster;
 	if (0 == MonsterList.size())
 		return;
@@ -1317,6 +1339,12 @@ void Nero::ConsumeTDTGauge(const float Speed)
 void Nero::AddRankScore(float Score)
 {
 	m_pBtlPanel.lock()->AddRankScore(Score);
+}
+
+void Nero::BuyUpgradedOverture()
+{
+	m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetRadius(0.27f);
+	m_pEffOverture.lock()->GetComponent<Transform>().lock()->SetScale({ 0.002f, 0.002f, 0.002f });
 }
 
 void Nero::StopAnimation()

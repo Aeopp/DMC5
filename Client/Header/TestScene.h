@@ -10,6 +10,7 @@ private:
 	// 임시 트리거 
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class Em1000> _Em1000{};
+	std::weak_ptr<class MainCamera> _MainCamera{};
 	std::vector<weak_ptr<GameObject>> Wavefirst{};
 	bool bfirst = false;
 	std::vector<weak_ptr<GameObject>> Wavesecond{};
