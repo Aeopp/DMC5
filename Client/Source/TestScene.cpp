@@ -109,7 +109,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -121,8 +121,8 @@ HRESULT TestScene::LoadScene()
 #pragma region RenderData & Trigger
 
 	RenderDataSetUp();
-	TriggerSetUp();
-	MonsterWaveTriggerSetUp();
+	//TriggerSetUp();
+	//MonsterWaveTriggerSetUp();
 
 #pragma endregion
 
@@ -144,11 +144,11 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<MakaiButterfly>();
 	//AddGameObject<CbsLongTrail>();
 
-	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
-	//	pSmoke)
+	//if (auto Sp = AddGameObject<StoneDebris>().lock();
+	//	Sp)
 	//{
-	//	pSmoke->SetLoop(true);
-	//	pSmoke->PlayStart();
+	//	Sp->SetLoop(true);
+	//	Sp->PlayStart();
 	//}
 
 	//// Stage2 안개

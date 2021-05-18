@@ -47,7 +47,7 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 	case REDORB_3:
 		_ExtraColor = Vector3(0.f, 0.f, 0.f);
 		_SmokeExtraColor = Vector3(0.518f, 0.019f, 0.051f);
-		_BrightScale = 2.45f;
+		_BrightScale = 0.1f;
 		break;
 	case GREENORB_0:
 	case GREENORB_1:
@@ -55,7 +55,7 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 	case GREENORB_3:
 		_ExtraColor = Vector3(0.f, 0.f, 0.f);
 		_SmokeExtraColor = Vector3(0.09f, 0.596f, 0.518f);
-		_BrightScale = 1.55f;
+		_BrightScale = 0.08f;
 		break;
 	case WHITEORB_0:
 	case WHITEORB_1:
@@ -63,7 +63,7 @@ void StoneDebris::SetVariationIdx(StoneDebris::VARIATION Idx)
 	case WHITEORB_3:
 		_ExtraColor = Vector3(1.f, 1.f, 1.f);
 		_SmokeExtraColor = Vector3(1.f, 1.f, 1.f);
-		_BrightScale = 0.65f;
+		_BrightScale = 0.0275f;
 		break;
 	}		
 
@@ -180,28 +180,25 @@ void StoneDebris::RenderInit()
 
 	ENGINE::RenderProperty _InitRenderProp;
 	_InitRenderProp.bRender = false;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
-	{
-		{"GBufferEffect",
-		[this](const DrawInfo& _Info)
-			{
-				this->RenderGBuffer(_Info);
-			}
-		},
-	};
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
+		{"StoneDebris",
+		[this](const DrawInfo& _Info)
+			{
+				this->RenderAlphaBlendEffect_Stone(_Info);
+			}
+		},
 		{"Sprite",
 		[this](const DrawInfo& _Info)
 			{
-				this->RenderAlphaBlendEffect(_Info);
+				this->RenderAlphaBlendEffect_Debris(_Info);
 			}
 		},
 	};
 	RenderInterface::Initialize(_InitRenderProp);
 }
 
-void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
+void StoneDebris::RenderAlphaBlendEffect_Stone(const DrawInfo& _Info)
 {
 	if (2.f < _AccumulateTime)
 		return;
@@ -209,7 +206,7 @@ void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 	if (!_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[0]))
 		return;
 
-	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
+	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 
 	switch (_VariationIdx)
 	{
@@ -217,21 +214,21 @@ void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 	case REDORB_1:
 	case REDORB_2:
 	case REDORB_3:
-		_Info._Device->SetTexture(0, _RedOrbALBMTex->GetTexture());
-		_Info._Device->SetTexture(1, _RedOrbNRMRTex->GetTexture());
+	default:	// WHITE
+		_Info.Fx->SetTexture("ALB0Map", _RedOrbALBMTex->GetTexture());
+		_Info.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
 		break;
 	case GREENORB_0:
 	case GREENORB_1:
 	case GREENORB_2:
 	case GREENORB_3:
-	default:	// WHITE
-		_Info._Device->SetTexture(0, _GreenOrbALBMTex->GetTexture());
-		_Info._Device->SetTexture(1, _GreenOrbNRMRTex->GetTexture());
+		_Info.Fx->SetTexture("ALB0Map", _GreenOrbALBMTex->GetTexture());
+		_Info.Fx->SetTexture("NRMR0Map", _GreenOrbNRMRTex->GetTexture());
 		break;
 	}
 
-	_Info.Fx->SetFloat("brightScale", _BrightScale);
-	_Info.Fx->SetFloatArray("extraColor", _ExtraColor, 3u);
+	_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+	_Info.Fx->SetFloatArray("_ExtraColor", _ExtraColor, 3u);
 
 	auto WeakSubset = _DebrisMesh->GetSubset(_SubsetIdx);
 	if (auto SharedSubset = WeakSubset.lock();
@@ -241,7 +238,7 @@ void StoneDebris::RenderGBuffer(const DrawInfo& _Info)
 	}
 }
 
-void StoneDebris::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void StoneDebris::RenderAlphaBlendEffect_Debris(const DrawInfo& _Info)
 {
 	if (2.f > _AccumulateTime)
 		return;
@@ -258,7 +255,7 @@ void StoneDebris::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
 		_Info.Fx->SetBool("_UsingNoise", false);
 		_Info.Fx->SetFloat("_SliceAmount", _SmokeSliceAmount);
-		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 0.1f);
+		_Info.Fx->SetFloat("_BrightScale", _BrightScale * 3.5f);
 		//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 		_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 		_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
@@ -276,7 +273,7 @@ void StoneDebris::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			//_Info.Fx->SetTexture("NoiseMap", _SmokeALB0Tex->GetTexture());
 			_Info.Fx->SetBool("_UsingNoise", false);
 			//_Info.Fx->SetFloat("_SliceAmount", _SmokeSliceAmount);
-			_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SmokeSliceAmount) * 10.f);
+			_Info.Fx->SetFloat("_BrightScale", _BrightScale * (1.f - _SmokeSliceAmount) * 15.f);
 			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 			_Info.Fx->SetFloatArray("_MinTexUV", _DustSingleMinTexUV, 2u);
 			_Info.Fx->SetFloatArray("_MaxTexUV", _DustSingleMaxTexUV, 2u);
