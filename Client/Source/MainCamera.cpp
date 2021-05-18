@@ -5,6 +5,7 @@
 #include "NeroFSM.h"
 #include "Trigger.h"
 #include "Renderer.h"
+#include "QliphothBlock.h"
 MainCamera::MainCamera()
 	:m_fFovY(0.f), m_fAspect(0.f), m_fNear(0.f), m_fFar(0.f), 
 	m_fDistanceToTarget(0.f),m_bFix(true)
@@ -285,6 +286,7 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 
 void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
 {
+	//몬스터 다 죽었을때 슬로우 되는 카메라 처리
 	m_vAt = m_pAtTranform.lock()->GetPosition();
 	m_vAt.y += m_fFloatingAmount;
 
@@ -335,6 +337,13 @@ void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
 			Set_TriggerCam(STAGE1_WAVE1_END, Vector3{ -1.081f,0.818f,0.439f }, 2.f);
 			m_fDistanceToTarget = OGDistance;
 			m_fTriggerTime = 3.f;
+			for (uint32 i = 1u; i < 4u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->Reset();
+				}
+			}
 			break;
 		}
 	}

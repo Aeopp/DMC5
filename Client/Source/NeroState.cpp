@@ -557,6 +557,8 @@ HRESULT NeroState::KeyInput_Run(const int _nIndex)
 
 HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 {
+	bool IsHaveCbsMiddle = m_pNero.lock()->Get_IsHaveCbsMiddle();
+	bool IsHaveCbsLong = m_pNero.lock()->Get_IsHaveCbsLong();
 	//삼절곤 키입력
 	if (Input::GetKey(DIK_1))
 	{
@@ -603,18 +605,24 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				//땅 꽝 찍는거
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_BLITZATTACK);
 				return S_OK;
 			}
 			else if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_M))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				//앞으로 나가면서 미친연속공격
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_BI_ATTACK);
 				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_SATELLITE);
 				return S_OK;
 			}
@@ -645,6 +653,8 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
+				if (!IsHaveCbsLong)
+					return S_OK;
 				m_pFSM->ChangeState(NeroFSM::POLE_WHIRLWIND_START);
 				return S_OK;
 			}
@@ -706,6 +716,8 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 	}
 	else if (Input::GetMouse(DIM_M))
 	{
+		if (!IsHaveCbsLong)
+			return S_OK;
 		switch (_nIndex)
 		{
 		case NeroFSM::POLE_COMBOA1:
@@ -737,6 +749,8 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 	}
 	else if (Input::GetMouse(DIM_R))
 	{
+		if (!IsHaveCbsMiddle)
+			return S_OK;
 		//몬스터 위치에 따라서 업다운 프론트 결정
 		m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_STRIKE);
 		return S_OK;
@@ -801,6 +815,8 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 
 HRESULT NeroState::KeyInput_Cbs_Run(const int _nIndex)
 {
+	bool IsHaveCbsMiddle = m_pNero.lock()->Get_IsHaveCbsMiddle();
+	bool IsHaveCbsLong = m_pNero.lock()->Get_IsHaveCbsLong();
 	if (Input::GetKey(DIK_1))
 	{
 		NeroState::SetCbsIdle();
@@ -846,18 +862,24 @@ HRESULT NeroState::KeyInput_Cbs_Run(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				//땅 꽝 찍는거
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_BLITZATTACK);
 				return S_OK;
 			}
 			else if (Input::GetKey(DIK_S) && Input::GetMouse(DIM_M))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				//앞으로 나가면서 미친연속공격
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_BI_ATTACK);
 				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_SATELLITE);
 				return S_OK;
 			}
@@ -888,6 +910,8 @@ HRESULT NeroState::KeyInput_Cbs_Run(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
+				if (!IsHaveCbsLong)
+					return S_OK;
 				m_pFSM->ChangeState(NeroFSM::POLE_WHIRLWIND_START);
 				return S_OK;
 			}
@@ -950,6 +974,8 @@ HRESULT NeroState::KeyInput_Cbs_Run(const int _nIndex)
 	}
 	else if (Input::GetMouse(DIM_M))
 	{
+		if (!IsHaveCbsLong)
+			return S_OK;
 		switch (_nIndex)
 		{
 		case NeroFSM::POLE_COMBOA1:
@@ -981,6 +1007,8 @@ HRESULT NeroState::KeyInput_Cbs_Run(const int _nIndex)
 	}
 	else if (Input::GetMouse(DIM_R))
 	{
+		if (!IsHaveCbsMiddle)
+			return S_OK;
 		//몬스터 위치에 따라서 업다운 프론트 결정
 		m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_STRIKE);
 		return S_OK;
@@ -1169,6 +1197,9 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 
 HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 {
+	bool IsHaveCbsMiddle = m_pNero.lock()->Get_IsHaveCbsMiddle();
+	bool IsHaveCbsLong = m_pNero.lock()->Get_IsHaveCbsLong();
+
 	UINT JumpCount = m_pNero.lock()->Get_JumpCount();
 	UINT Ex_Gauge = m_pNero.lock()->Get_ExGaugeCount();
 
@@ -1210,11 +1241,15 @@ HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 			}
 			else if (Input::GetMouse(DIM_R))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_STRIKE_AIR_UP);
 				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_M))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_SATELLITE_AIR);
 				return S_OK;
 			}
@@ -1223,6 +1258,8 @@ HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 		{
 			if (Input::GetMouse(DIM_R))
 			{
+				if (!IsHaveCbsMiddle)
+					return S_OK;
 				m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_STRIKE_AIR_DOWN);
 				return S_OK;
 			}
@@ -1245,6 +1282,8 @@ HRESULT NeroState::KeyInput_Cbs_Jump(const int _nIndex)
 	}
 	else if (Input::GetMouse(DIM_R))
 	{
+		if (!IsHaveCbsMiddle)
+			return S_OK;
 		m_pFSM->ChangeState(NeroFSM::MIDDLE_CBS_STRIKE_AIR);
 		return S_OK;
 	}

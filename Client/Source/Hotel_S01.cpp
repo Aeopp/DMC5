@@ -79,10 +79,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Test.json");
-	//LoadObjects("../../Data/Stage1_AniObject.json", true);
-	//LoadCollObjects("../../Data/Stage1_Object.json");
-	//LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
+	LoadObjects("../../Data/Stage1_Map.json");
+	LoadObjects("../../Data/Stage1_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage1_Object.json");
+	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -181,7 +181,8 @@ HRESULT Hotel_S01::LoadScene()
 		//ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
-
+	//메인 카메라에 클리포트 블록 전달
+	_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;
@@ -614,14 +615,6 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 				Sp->SetRedOrbActive(false);
 				Sp->SetGlobalActive(false);
 				Sp->ResetRankScore();
-			}
-
-			for (uint32 i = 1u; i < 4u; ++i)
-			{
-				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-				{
-					m_vecQliphothBlock[i].lock()->Reset();
-				}
 			}
 		};
 
