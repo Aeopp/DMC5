@@ -9,7 +9,8 @@ private:
 	static std::weak_ptr<CoreSystem> m_pCoreSystem;
 public:
 	static HRESULT ReadyEngine(
-		const bool bWindowed,const bool bMultiSample);
+		const bool bWindowed,const bool bMultiSample ,
+		const std::filesystem::path& SoundDirectoryPath);
 	static HRESULT UpdateEngine(const float Delta);
 	static HRESULT ReleaseEngine();
 };

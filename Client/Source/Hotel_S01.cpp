@@ -18,6 +18,7 @@
 #include "FadeOut.h"
 #include "CollObject.h"
 #include "BreakableObject.h"
+#include "SoundSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -227,6 +228,24 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
 	////////////////////////////////////
+
+	if (Input::GetKeyDown(DIK_UP))
+	{
+		SoundSystem::GetInstance()->Play("_2",1.f, true, false);
+	}
+	if (Input::GetKeyDown(DIK_DOWN))
+	{
+		SoundSystem::GetInstance()->Play("Wow",0.5f,false, false);
+	}
+	if (Input::GetKeyDown(DIK_LEFT))
+	{
+		SoundSystem::GetInstance()->Play("_1", 0.77f, true, false);
+	}
+	if (Input::GetKeyDown(DIK_RIGHT))
+	{
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Rs", { 1u,3u }, 1.f, true);
+	}
+
 
 	return S_OK;
 }
@@ -478,6 +497,11 @@ void Hotel_S01::RenderDataSetUp(const bool bTest)
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+}
+
+void Hotel_S01::BgmPlay()
+{
+	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 }
 
 void Hotel_S01::TriggerSetUp()
@@ -992,4 +1016,6 @@ void Hotel_S01::LateInit()
 	Renderer::GetInstance()->LateSceneInit();
 
 	_LateInit = true;
+
+	BgmPlay();
 }

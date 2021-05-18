@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\fmod\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>26812</DisableSpecificWarnings>
@@ -144,7 +144,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\fmod\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>

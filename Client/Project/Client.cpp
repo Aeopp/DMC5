@@ -53,7 +53,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 	tMessage.message = WM_NULL;
 
 	Application* pApplication = new Application;
-	pApplication->ReadyApplication(true,false);
+
+	const std::filesystem::path SoundDirectoryPath = "..\\..\\Resource\\Sound\\";
+	pApplication->ReadyApplication(true,false , SoundDirectoryPath);
 
 	static constexpr float TargetDelta = 1.0f / 60.f;
 	std::chrono::time_point<std::chrono::high_resolution_clock> PrevTime;
