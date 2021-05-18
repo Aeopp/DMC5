@@ -175,7 +175,12 @@
     <ClCompile Include="..\Source\DxHelper.cpp">
       <Filter>06.Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\ParticleSystem.cpp" />
+    <ClCompile Include="..\Source\SoundSystem.cpp">
+      <Filter>07.Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ParticleSystem.cpp">
+      <Filter>06.Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Header\Object.h">
@@ -424,8 +429,15 @@
     <ClInclude Include="..\Header\FileHelper.h">
       <Filter>98.UnLabeld</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\ParticleSystem.h" />
-    <ClInclude Include="..\Header\ParticleInstanceDesc.hpp" />
+    <ClInclude Include="..\Header\SoundSystem.h">
+      <Filter>07.Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ParticleInstanceDesc.hpp">
+      <Filter>06.Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ParticleSystem.h">
+      <Filter>06.Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">
@@ -590,6 +602,9 @@
     <Filter Include="04.HLSL\Common\Debug">
       <UniqueIdentifier>{0910d899-4839-4bba-9520-60be49d32132}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07.Sound">
+      <UniqueIdentifier>{608146af-73d2-4fa3-a376-b6793f9845b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Blur.hlsl">
@@ -655,8 +670,17 @@
     <None Include="..\..\Resource\Shader\Distortion.hlsl">
       <Filter>04.HLSL\Common</Filter>
     </None>
-    <None Include="..\..\Resource\Shader\ColliderTrigger.hlsl" />
-    <None Include="..\..\Resource\Shader\FadeOut.hlsl" />
-    <None Include="..\..\Resource\Shader\VelocityBlur.hlsl" />
+    <None Include="..\..\Resource\Shader\ColliderTrigger.hlsl">
+      <Filter>04.HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\FadeOut.hlsl">
+      <Filter>04.HLSL</Filter>
+    </None>
+    <None Include="..\..\Resource\Shader\VelocityBlur.hlsl">
+      <Filter>04.HLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\FadeEffect.hlsl" />
   </ItemGroup>
 </Project>

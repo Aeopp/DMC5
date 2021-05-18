@@ -179,7 +179,9 @@ void Em0000::State_Change(const float _fDeltaTime)
 		break;
 	case Em0000::Dead:
 		if (m_bIng == true)
-			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.5f, 20.f, true);
+		m_bDead = true;
+		m_pCollider.lock()->SetActive(false);
 		StoneDebrisPlayStart();
 		break;
 		break;
@@ -970,7 +972,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	if ((m_BattleInfo.iHp -= _BattleInfo.iAttack) >= 0.f)
+	if ((m_BattleInfo.iHp > _BattleInfo.iAttack))
 		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;

@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "Monster.h"
+#include "SoundSystem.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -214,6 +215,11 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 	}
 };
 
+void Hotel_S04::BgmPlay()
+{
+	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+};
+
 void Hotel_S04::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
@@ -248,10 +254,10 @@ void Hotel_S04::TriggerSetUp()
 void Hotel_S04::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
-
 	Renderer::GetInstance()->LateSceneInit();
 	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
 	Renderer::GetInstance()->SkyDistortionStart();
 
 	_LateInit = true;
+	BgmPlay();
 }

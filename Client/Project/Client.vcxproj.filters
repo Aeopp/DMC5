@@ -202,6 +202,9 @@
     <Filter Include="02.GameObject\UI\Shop">
       <UniqueIdentifier>{3efc42f4-a894-401b-9da1-91cf0d09ac3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Effect\Weapon\Trail">
+      <UniqueIdentifier>{c2aa0ad7-cbc5-4f8f-abd5-119aa4ae70e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -532,6 +535,10 @@
     <ClInclude Include="..\..\Resource\Shader\UI\ShopPanel.hlsl">
       <Filter>02.GameObject\UI\Shop</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\CbsLongTrail.h">
+      <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\LongBarrel.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -853,6 +860,12 @@
     <ClCompile Include="..\Source\ShopPanel.cpp">
       <Filter>02.GameObject\UI\Shop</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CbsLongTrail.cpp">
+      <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\LongBarrel.cpp" />
+    <ClCompile Include="..\Source\Satellite.cpp" />
+    <ClCompile Include="..\Source\BiAttack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

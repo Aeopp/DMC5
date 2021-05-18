@@ -51,6 +51,7 @@ public:
 	void	Set_Snatch(bool _bSnatch);
 	void	AddRankScore(float _fRankScore);
 	bool	Get_Groggy() { return m_bGroggy; }
+	bool	Get_Dead() { return m_bDead; }
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
 	virtual void   Update_Angle() PURE;
@@ -67,6 +68,7 @@ protected:
 	bool	m_bEnterGround = false;
 	bool	m_bAir = false;
 	bool	m_bGroggy = false;
+	bool	m_bDead = false;
 
 	//플레이어 방향 회전하기 용
 	bool	m_bInteraction = false;;

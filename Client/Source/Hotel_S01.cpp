@@ -18,6 +18,12 @@
 #include "FadeOut.h"
 #include "CollObject.h"
 #include "BreakableObject.h"
+#include "SoundSystem.h"
+#include "CbsMidTrail.h"
+#include "BlitzAttack.h"
+#include "BiAttack.h"
+#include "Satellite.h"
+#include "LongBarrel.h"
 
 #include <iostream>
 #include <fstream>
@@ -60,7 +66,13 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
+	 // AddGameObject<Camera>();
+
+	AddGameObject<CbsMidTrail>();
+	AddGameObject<LongBarrel>();
+	AddGameObject<Satellite>();
+	AddGameObject<BlitzAttack>();
+	AddGameObject<BiAttack>();
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -229,6 +241,22 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
+	}
+	if (Input::GetKeyDown(DIK_UP))
+	{
+		SoundSystem::GetInstance()->Play("_2", 1.f, true, false);
+	}
+	if (Input::GetKeyDown(DIK_DOWN))
+	{
+		SoundSystem::GetInstance()->Play("Wow", 0.5f, false, false);
+	}
+	if (Input::GetKeyDown(DIK_LEFT))
+	{
+		SoundSystem::GetInstance()->Play("_1", 0.77f, true, false);
+	}
+	if (Input::GetKeyDown(DIK_RIGHT))
+	{
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Rs", { 1u,3u }, 1.f, true);
 	}
 	/* -------------------------- */
 
@@ -484,15 +512,61 @@ void Hotel_S01::RenderDataSetUp(const bool bTest)
 	_Renderer->StarFactor = 0.9f;
 }
 
+void Hotel_S01::BgmPlay()
+{
+	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+}
+
 void Hotel_S01::TriggerSetUp()
 {
-	Trigger1st();
+	// 전광판 전투는 연출 이후에 작동 
+	TriggerElectricBoard(
+		TriggerElectricBoardBattle()
+	);
+
 	Trigger2nd();
 	Trigger3rd();
 	Trigger4st();
 };
 
-void Hotel_S01::Trigger1st()
+void Hotel_S01::TriggerElectricBoard(
+	const std::weak_ptr<Trigger>&
+	_BattleTrigger)
+{
+	// 이건 일반 트리거 
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[_BattleTrigger]()
+		{
+			
+			// 여기서 카메라 연출 시작 ....
+
+			// .............
+
+			// 카메라는 연출 할만큼 하고 웨이브 시작 타이밍에
+			// _BattleTrigger.lock()->TriggerEnable()  <- 웨이브 시작 ..
+		};
+		
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 1.f,1.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	};
+};
+
+std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 {
 	auto _SecondTrigger = AddGameObject<Trigger>().lock();
 	if (_SecondTrigger)
@@ -507,22 +581,23 @@ void Hotel_S01::Trigger1st()
 		};
 
 		// 몬스터 위치는 미리 잡아주기  . 
+
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+			lock()->SetPosition({ -0.162f, 0.02f, -0.152f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+			lock()->SetPosition({ -1.187f, 0.02f, -1.137f });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+			lock()->SetPosition({ 0.602f, 0.02f, -0.374f });
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
-
+			lock()->SetPosition({ 1.313f, 0.02f, -0.993f });
+	
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 10.f,10.f,10.f};
+		const Vector3 TriggerBoxSize = { 100.f,100.f,100.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
 		const bool ImmediatelyEnable = false;
 		// 트리거 검사할 오브젝트는 플레이어 
@@ -585,23 +660,23 @@ void Hotel_S01::Trigger1st()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+			lock()->SetPosition({ -0.162f, 0.02f, -0.152f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+			lock()->SetPosition({ -1.187f, 0.02f, -1.137f });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+			lock()->SetPosition({ 0.602f, 0.02f, -0.374f });
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+			lock()->SetPosition({ 1.313f, 0.02f, -0.993f });
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
+		const Vector3 TriggerBoxSize = { 100.f,100.f,100.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
-		const bool ImmediatelyEnable = true;
+		const bool ImmediatelyEnable = false;
 		// 트리거 검사할 오브젝트는 플레이어 
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
 
@@ -645,7 +720,9 @@ void Hotel_S01::Trigger1st()
 			TargetTag,
 			SpawnWaveAfterEvent,
 			WaveEndEvent);
-	}
+	};
+
+	return _StartTrigger;
 }
 
 void Hotel_S01::Trigger2nd()
@@ -925,7 +1002,7 @@ void Hotel_S01::Trigger4st()
 		};
 		
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.171700f, 0.011680f, 12.167461f };
+		const Vector3 TriggerLocation { -3.171700f, 0.011680f, 12.167461f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 6.f,5.f,1.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -950,6 +1027,8 @@ void Hotel_S01::LateInit()
 	}
 
 	Renderer::GetInstance()->LateSceneInit();
+
+	BgmPlay();
 
 	_LateInit = true;
 }

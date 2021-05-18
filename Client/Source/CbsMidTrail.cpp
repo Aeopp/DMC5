@@ -282,7 +282,8 @@ void CbsMidTrail::RenderTrail(const DrawInfo& _Info)
 Vector3 CbsMidTrail::GetTrailLocation()
 {
 	Vector3 Result{0,0,0};
-	for (auto&  [Low,High ] : LatelyOffsets)
+
+	for (auto&  [Low,High] : LatelyOffsets)
 	{
 		Result += Low;
 		Result += High;
@@ -514,7 +515,6 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 				break;
 		}	
 	}
-
 
 	for (auto& _Element : _PlayEffectDescs)
 	{

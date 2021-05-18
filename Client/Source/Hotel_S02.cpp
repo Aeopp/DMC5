@@ -19,7 +19,7 @@
 #include "BreakableObject.h"
 #include "HotelBrokenFloor.h"
 #include "HotelAnimationWall.h"
-
+#include "SoundSystem.h"
 #include <iostream>
 #include <fstream>
 #include "NeroFSM.h"
@@ -574,6 +574,11 @@ void Hotel_S02::TriggerNextScene()
 	}
 }
 
+void Hotel_S02::BgmPlay()
+{
+	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+}
+
 void Hotel_S02::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
@@ -624,6 +629,6 @@ void Hotel_S02::LateInit()
 	MakaiButterfly::ResetTotalCnt();
 
 	Renderer::GetInstance()->LateSceneInit();
-
+	BgmPlay();
 	_LateInit = true;
 }
