@@ -169,6 +169,7 @@
     <ClInclude Include="..\Header\BrokenPeople.h" />
     <ClInclude Include="..\Header\BrokenTable.h" />
     <ClInclude Include="..\Header\Buster_Arm_Left.h" />
+    <ClInclude Include="..\Header\CbsLongTrail.h" />
     <ClInclude Include="..\Header\CbsTrail.h" />
     <ClInclude Include="..\Header\Cbs_Long.h" />
     <ClInclude Include="..\Header\Cbs_Middle.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="..\Source\BrokenPeople.cpp" />
     <ClCompile Include="..\Source\BrokenTable.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
+    <ClCompile Include="..\Source\CbsLongTrail.cpp" />
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
     <ClCompile Include="..\Source\CbsTrail.cpp" />
     <ClCompile Include="..\Source\Cbs_Long.cpp" />

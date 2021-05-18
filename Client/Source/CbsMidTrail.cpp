@@ -515,7 +515,6 @@ void CbsMidTrail::EffectParticleUpdate(const float DeltaTime)
 		}	
 	}
 
-
 	for (auto& _Element : _PlayEffectDescs)
 	{
 		if (_Element.bPlayEnd == false)
