@@ -6,6 +6,7 @@
 #include "FMath.hpp"
 #include <any>
 #include <tuple>
+#include "Renderer.h"
 
 BEGIN(ENGINE)
 class ENGINE_DLL ParticleSystem final : public Object
@@ -38,6 +39,7 @@ public:
 
 				return _SpriteDesc;
 			};
+
 
 			void Update(const float Delta)
 			{

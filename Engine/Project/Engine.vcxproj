@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_EXPORT;IMGUI_ENGINE;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(ProjectDir)..\Source\imgui\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(ProjectDir)..\Source\imgui\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\fmod\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -155,7 +155,7 @@ call Engine.bat</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_EXPORT;IMGUI_ENGINE;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(ProjectDir)..\Source\imgui\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(ProjectDir)..\Source\imgui\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\fmod\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -244,6 +244,7 @@ call Engine.bat</Command>
     <ClInclude Include="..\Header\Shader.h" />
     <ClInclude Include="..\Header\ShaderTester.h" />
     <ClInclude Include="..\Header\SkeletonMesh.h" />
+    <ClInclude Include="..\Header\SoundSystem.h" />
     <ClInclude Include="..\Header\SphereCollider.h" />
     <ClInclude Include="..\Header\StaticMesh.h" />
     <ClInclude Include="..\Header\Subset.h" />
@@ -307,6 +308,7 @@ call Engine.bat</Command>
     <ClCompile Include="..\Source\Shader.cpp" />
     <ClCompile Include="..\Source\ShaderTester.cpp" />
     <ClCompile Include="..\Source\SkeletonMesh.cpp" />
+    <ClCompile Include="..\Source\SoundSystem.cpp" />
     <ClCompile Include="..\Source\SphereCollider.cpp" />
     <ClCompile Include="..\Source\StaticMesh.cpp" />
     <ClCompile Include="..\Source\Subset.cpp" />

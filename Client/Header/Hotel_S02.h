@@ -35,6 +35,7 @@ private:
 	void TriggerFirstButterFlyMeet();
 	void TriggerPuzzleStart();
 	void TriggerNextScene();
+	void BgmPlay();
 
 	void LateInit();
 };

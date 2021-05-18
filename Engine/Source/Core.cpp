@@ -27,6 +27,7 @@ ENGINE_DLL bool                 g_bOptRender;
 ENGINE_DLL bool                 g_bFrameLimit;
 ENGINE_DLL bool                 g_bFixedDeltaTime;
 ENGINE_DLL bool                 g_bParticleEditor;
+ENGINE_DLL bool                 g_bSoundEdit;
 
 
 ENGINE_DLL ID3DXMesh*		    g_pSphereMesh;
@@ -44,11 +45,12 @@ void ENGINE_DLL Log(const std::string& PushLog)
 std::weak_ptr<CoreSystem> Engine::m_pCoreSystem = CoreSystem::GetInstance();
 
 HRESULT Engine::ReadyEngine(const bool bWindowed,
-							const bool bMultiSample)
+							const bool bMultiSample,
+							const std::filesystem::path& SoundDirectoryPath)
 {
 	if (nullptr == m_pCoreSystem.lock() || m_pCoreSystem.expired())
 		return E_FAIL;
-	return m_pCoreSystem.lock()->ReadyEngine(bWindowed, bMultiSample);
+	return m_pCoreSystem.lock()->ReadyEngine(bWindowed, bMultiSample ,SoundDirectoryPath);
 }
 
 HRESULT Engine::UpdateEngine(const float Delta)

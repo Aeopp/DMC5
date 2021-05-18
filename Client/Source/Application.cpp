@@ -2,14 +2,15 @@
 #include "Application.h"
 #include "LogoScene.h"
 
-HRESULT Application::ReadyApplication(const bool bWindowed, const bool bMultiSample)
+HRESULT Application::ReadyApplication(const bool bWindowed, const bool bMultiSample,
+										const std::filesystem::path& SoundDirectoryPath)
 {
-	if (FAILED(Engine::ReadyEngine(bWindowed, bMultiSample)))
+	if (FAILED(Engine::ReadyEngine(bWindowed, bMultiSample ,SoundDirectoryPath)))
 		return E_FAIL;
 
 	// 처음 시작 Scene 바꾸려면 LogoScene -> Update에서 주석 수정하길 BARAM - by hscho
 	SceneManager::LoadScene(LogoScene::Create());
-
+	
 	return S_OK;
 }
 
