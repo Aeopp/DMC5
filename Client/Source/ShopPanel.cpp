@@ -41,8 +41,29 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 	_ImplInfo.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
 	_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir, 3u);
 
-	auto WeakSubset = _PlaneMesh->GetSubset(0u);
-	if (auto SharedSubset = WeakSubset.lock();
+	auto Pipe0Subset = _Pipe0Mesh->GetSubset(0u);
+	if (auto SharedSubset = Pipe0Subset.lock();
+		SharedSubset)
+	{
+		//
+		CurID = STATUE_BG;
+		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[STATUE_BG].Using)
+		{
+			_ImplInfo.Fx->SetTexture("ATOS0Map", _StatueATOSTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.001f);
+			_ImplInfo.Fx->SetBool("_ApplyExposureCorr", true);
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+	}
+
+	auto PlaneSubset = _PlaneMesh->GetSubset(0u);
+	if (auto SharedSubset = PlaneSubset.lock();
 		SharedSubset)
 	{
 		//
@@ -99,6 +120,8 @@ HRESULT ShopPanel::Ready()
 
 	//
 	_PlaneMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+	_Pipe0Mesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx");
+	_StatueATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\statue_atos.tga");
 	_NoiseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\noiseInput_ATOS.tga");
 	_RedOrbALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_albm.tga");
 	_RedOrbATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_atos.tga");
@@ -182,6 +205,7 @@ void ShopPanel::Init_UIDescs()
 		_UIDescs = new UI_DESC[DESC_END];
 
 	// Using, Pos, Scale, Rot
+	_UIDescs[STATUE_BG] = { true, Vector3(640.f, 360.f, 0.9f), Vector3(1.f, 1.f, 1.f),  Vector3(0.f, 0.f, 0.f) };
 	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f),  Vector3(0.f, 0.f, 0.f) };
 }
 

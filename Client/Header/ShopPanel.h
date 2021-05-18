@@ -9,7 +9,8 @@ class ShopPanel : public ENGINE::GameObject,
 private:
 	enum UI_DESC_ID
 	{
-		REDORB = 0,
+		STATUE_BG = 0,
+		REDORB,
 
 		DESC_END
 	};
@@ -23,7 +24,11 @@ private:
 	UI_DESC* _UIDescs = nullptr;
 
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _Pipe0Mesh{};
+
 	std::shared_ptr<ENGINE::Texture> _NoiseTex{};
+	std::shared_ptr<ENGINE::Texture> _StatueATOSTex{};
+
 	std::shared_ptr<ENGINE::Texture> _RedOrbALBMTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};

@@ -252,6 +252,17 @@ PsOut PsMain_GUI(PsIn_GUI In)
     return Out;
 };
 
+PsOut PsMain_StatueBG(PsIn In)
+{
+    PsOut Out = (PsOut) 0;
+
+    float4 ATOSSample = tex2D(ATOS0, In.UV);
+    Out.Color = float4(1.f, 0.f, 0.f, 1.f) * ATOSSample.a * _BrightScale * exposure_corr;
+    Out.Color.a = ATOSSample.a;
+ 
+    return Out;
+};
+
 
 technique Default
 {
@@ -266,5 +277,17 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_Plane();
+    }
+    pass p1
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain();
+        pixelshader = compile ps_3_0 PsMain_StatueBG();
     }
 };
