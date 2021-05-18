@@ -45,6 +45,7 @@ private:
 	void    ReadyQuad();
 	void    ReadyTextures();
 	void    ReadyPtLightPool();
+	void    RenderFadeEffect();
 public:
 	HRESULT Render()&;
 	HRESULT Update(const float DeltaTime)&;
