@@ -16,7 +16,7 @@
 #include "Em100.h"
 #include "Em0000.h"
 #include "CollObject.h"
-
+#include "SoundSystem.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -359,6 +359,11 @@ void Hotel_S03::RenderDataSetUp(const  bool bTest)
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+};
+
+void Hotel_S03::BgmPlay()
+{
+	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 };
 
 void Hotel_S03::TriggerSetUp()
@@ -964,4 +969,5 @@ void Hotel_S03::LateInit()
 	Renderer::GetInstance()->LateSceneInit();
 
 	_LateInit = true;
+	BgmPlay();
 }

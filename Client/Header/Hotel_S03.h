@@ -29,6 +29,7 @@ private:
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:
 	void RenderDataSetUp(const bool bTest);
+	void BgmPlay();
 	void TriggerSetUp();
 	void TriggerUpGround();
 	void TriggerNextScene();

@@ -24,6 +24,7 @@ public:
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
 	void LoadObjects(const std::filesystem::path& path);
+	void BgmPlay();
 	void RenderDataSetUp(const bool bTest);
 	void TriggerSetUp();
 	void LateInit();
