@@ -255,7 +255,8 @@ void Em200::State_Change(const float _fDeltaTime)
 		break;
 	case Em200::Dead:
 		if (m_bIng == true)
-			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.5f, 20.f, true);
+		m_pCollider.lock()->SetActive(false);
 		StoneDebrisPlayStart();
 		break;
 	case Em200::Hit_Air:
