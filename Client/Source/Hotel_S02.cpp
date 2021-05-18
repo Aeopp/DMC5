@@ -434,7 +434,7 @@ void Hotel_S02::TriggerWallSmash()
 				Sp->SetScale(0.008f);
 				Sp->SetRotation({0.f, 344.681f, 0.f});
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
-				Sp->PlayStart(9.4f);
+				Sp->PlayStart(9.6f);
 			}
 			if (auto Sp = _Smoke1.lock(); Sp)
 			{
@@ -443,7 +443,7 @@ void Hotel_S02::TriggerWallSmash()
 				Sp->SetScale(0.008f);
 				Sp->SetRotation({ 0.f, 344.681f, 0.f });
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
-				Sp->PlayStart(9.6f);
+				Sp->PlayStart(9.4f);
 			}
 
 			//
