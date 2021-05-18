@@ -41,7 +41,7 @@ private:
 	static constexpr uint32 BoneCnt = 3u;
 
 	std::array<std::string, BoneCnt > BoneNames{"pole01","pole02","pole03"};
-
+	Vector3 CurrentTrailLocation = { 0.f,0.f,0.f };
 	std::array<Vector3, BoneCnt > BoneWorldLocationMap{};
 
 	std::array< IDirect3DVertexBuffer9*, BoneCnt> VtxBuffers{};

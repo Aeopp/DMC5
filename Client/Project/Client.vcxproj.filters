@@ -538,6 +538,7 @@
     <ClInclude Include="..\Header\CbsLongTrail.h">
       <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\LongBarrel.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -862,6 +863,9 @@
     <ClCompile Include="..\Source\CbsLongTrail.cpp">
       <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\LongBarrel.cpp" />
+    <ClCompile Include="..\Source\Satellite.cpp" />
+    <ClCompile Include="..\Source\BiAttack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
