@@ -21,7 +21,7 @@ HRESULT             InitInstance(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 #pragma endregion
 
-constexpr bool bWindowed = false;
+constexpr bool bWindowed = true;
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdParam, int nCmdShow)
 {
