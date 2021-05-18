@@ -33,6 +33,11 @@
 #include "JudgementShadow3.h"
 #include "CbsTrail.h"
 #include "NewWingSword.h"
+#include "CbsMidTrail.h"
+#include "BiAttack.h"
+#include "BlitzAttack.h"
+#include "LongBarrel.h"
+#include "Satellite.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -242,6 +247,11 @@ HRESULT Nero::Ready()
 	m_pAirHike = AddGameObject<AirHike>();
 	m_pTrail = AddGameObject<Trail>();
 	m_pIceAge = AddGameObject<IceAge>();
+	m_pCbsMidTrail = AddGameObject<CbsMidTrail>();
+	m_pBiAttack = AddGameObject<BiAttack>();
+	m_pBlitzAttack = AddGameObject<BlitzAttack>();
+	m_pLongBarrel = AddGameObject<LongBarrel>();
+	m_pSatellite = AddGameObject<Satellite>();
 	m_pJudgementSword = AddGameObject<JudgementSword>();
 	m_pJudgementShadow1 = AddGameObject<JudgementShadow1>();
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
@@ -327,12 +337,6 @@ UINT Nero::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 
 	Update_Majin(_fDeltaTime);
-
-
-	//if (Input::GetKeyDown(DIK_0))
-		//Hit(m_BattleInfo);
-
-	//m_pAirHike.lock()->PlayStart();
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -1574,6 +1578,22 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		else
 			m_pCbsTrail.lock()->PlayStart(CbsTrail::Non);
 		break;
+	case Eff_CbsMidTrail:
+		m_pCbsMidTrail.lock()->PlayStart(CbsMidTrail::Non);
+		break;
+	case Eff_BiAttack:
+		m_pBiAttack.lock()->PlayStart(vMyPos, m_pTransform.lock()->GetLook());
+		break;
+	case Eff_BlitzAttack:
+		m_pBlitzAttack.lock()->PlayStart(vMyPos);
+		break;
+	case Eff_LongBarrel:
+		m_pLongBarrel.lock()->PlayStart(0);
+		m_pLongBarrel.lock()->PlayStart(2);
+		break;
+	case Eff_Satellite:
+		m_pSatellite.lock()->PlayStart(vMyPos, m_pTransform.lock()->GetLook());
+		break;
 	default:
 		break;
 	}
@@ -1609,6 +1629,12 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 	case Eff_ShapeParticle:
 		m_pShapeParticle[SP_GREEN].lock()->Reset();
 		m_pShapeParticle[SP_RED].lock()->Reset();
+		break;
+	case Eff_CbsMidTrail:
+		m_pCbsMidTrail.lock()->PlayEnd();
+		break;
+	case Eff_Satellite:
+		m_pSatellite.lock()->PlayEnd();
 		break;
 	default:
 		break;
