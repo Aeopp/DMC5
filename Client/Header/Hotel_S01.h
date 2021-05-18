@@ -44,7 +44,6 @@ private:
 	void TriggerInFrontOfHotel(const std::weak_ptr<Trigger>& _BattleTrigger);
 	std::weak_ptr<Trigger> TriggerInFrontOfHotelBattle();
 
-	void Trigger3rd();
 	void Trigger4st();
 
 	void LateInit();
