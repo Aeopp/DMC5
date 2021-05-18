@@ -153,7 +153,6 @@ void Trigger::TriggerDisable()
 	{
 		_Transform->SetPosition(TriggerLocation);
 		_Transform->SetRotation(TriggerRotation);
-
 	};
 }
 

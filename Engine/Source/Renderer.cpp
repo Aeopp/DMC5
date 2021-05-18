@@ -688,6 +688,26 @@ void Renderer::Editor()&
 			ImGui::SliderInt("VelocityBlurNumBlurSamples",
 				&VelocityBlurSamples, 0, 128);
 		}
+
+		if (ImGui::CollapsingHeader("FadeEffect"))
+		{
+			static float FadeTime = 1.f;
+
+			ImGui::SliderFloat("Fade Time", &FadeTime, 0.f, 10.f);
+
+			if (ImGui::SmallButton("FadeOut"))
+			{
+				FadeOutStart(FadeTime);
+			}
+			if (ImGui::SmallButton("FadeIn"))
+			{
+				FadeInStart(FadeTime);
+			}
+			if (ImGui::SmallButton("FadeOutIn"))
+			{
+				FadeOutAfterIn(FadeTime);
+			}
+		}
 		
 		
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
@@ -834,7 +854,7 @@ void Renderer::FadeOutStart(const float Time)
 	_FadeEffect.T = 0.0f;
 	_FadeEffect.bEnable = true;
 	_FadeEffect.Time = Time;
-	_FadeEffect.FadeValues = {1.0f,0.f,0.f};
+	_FadeEffect.CurMode = Renderer::FadeEffect::Mode::Out;
 };
 
 void Renderer::FadeInStart(const float Time)
@@ -842,7 +862,7 @@ void Renderer::FadeInStart(const float Time)
 	_FadeEffect.T = 0.0f;
 	_FadeEffect.bEnable = true;
 	_FadeEffect.Time = Time;
-	_FadeEffect.FadeValues = {0.0f,1.0f,1.0f};
+	_FadeEffect.CurMode = Renderer::FadeEffect::Mode::In;
 };
 
 void Renderer::FadeOutAfterIn(const float Time)
@@ -850,7 +870,7 @@ void Renderer::FadeOutAfterIn(const float Time)
 	_FadeEffect.bEnable = true;
 	_FadeEffect.T = 0.0f;
 	_FadeEffect.Time = Time;
-	_FadeEffect.FadeValues = {1.0f,0.0f,1.0f};
+	_FadeEffect.CurMode = Renderer::FadeEffect::Mode::OutAfterIn;
 };
 
 void Renderer::LateSceneInit()
@@ -2075,7 +2095,7 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 
 	// 후처리 이후에 그리는 UI만 Transform.z로 정렬해서 그림
 	using ZsType = std::pair<const std::string*,
-							ENGINE::Renderer::RenderEntityType*>;
+		ENGINE::Renderer::RenderEntityType*>;
 
 	std::list<ZsType> ZSortlist;
 
@@ -2090,7 +2110,7 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 	ZSortlist.sort([](const ZsType& _Lhs, const ZsType& _Rhs)
 		{
 			return _Lhs.second->first->_RenderUpdateInfo.World._43
-			< _Rhs.second->first->_RenderUpdateInfo.World._43;
+				< _Rhs.second->first->_RenderUpdateInfo.World._43;
 		});
 
 	DrawInfo _DrawInfo{};
@@ -2115,11 +2135,33 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 
 	ZSortlist.clear();
 
+	RenderFadeEffect();
+
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+
 	return S_OK;
-}
+};
+
+void Renderer::RenderFadeEffect()
+{
+	if (_FadeEffect.bEnable)
+	{
+		auto Fx = Shaders["FadeEffect"]->GetEffect();
+		Fx->Begin(nullptr, NULL);
+		Fx->BeginPass(0);
+		
+		const float CurAlphaFactor =_FadeEffect.GetLerp();
+
+
+		Fx->SetFloat("AlphaFactor", CurAlphaFactor);
+
+		_Quad->Render(Device, 1.f, 1.f, Fx);
+		Fx->EndPass();
+		Fx->End();
+	}
+};
 
 HRESULT Renderer::RendererCollider()&
 {
@@ -2150,7 +2192,7 @@ HRESULT Renderer::RendererCollider()&
 	}
 
 	return S_OK;
-};
+}; 
 
 HRESULT Renderer::Update(const float DeltaTime)&
 {
@@ -2160,16 +2202,51 @@ HRESULT Renderer::Update(const float DeltaTime)&
 
 		if (_FadeEffect.T > _FadeEffect.Time)
 		{
-			_FadeEffect.bEnable = false;
+			if (_FadeEffect.CurMode != FadeEffect::Mode::Out)
+			{
+				_FadeEffect.bEnable = false;
+			}
 		}
 	}
 
 	return S_OK;
 };
 
+bool Renderer::IsBlackOut()const&
+{
+	return (_FadeEffect.T >= _FadeEffect.Time) && (_FadeEffect.CurMode == Renderer::FadeEffect::Mode::Out);
+}
 float Renderer::FadeEffect::GetLerp()const&
 {
-	return T / Time;
+	float Factor = 0.0f;
+	float ReturnValue = 0.0f;
+
+	switch (CurMode)
+	{
+	case ENGINE::Renderer::FadeEffect::Mode::Out:
+		Factor = FMath::HalfPI;
+		if (T >= Time)
+		{
+			ReturnValue = 1.f;
+		}
+		else
+		{
+			ReturnValue = std::sinf((T / Time) * Factor);
+		}
+		break;
+	case ENGINE::Renderer::FadeEffect::Mode::In:
+		Factor = FMath::HalfPI;
+		ReturnValue = std::cosf((T / Time) * Factor);
+		break;
+	case ENGINE::Renderer::FadeEffect::Mode::OutAfterIn:
+		Factor = FMath::PI;
+		ReturnValue = std::sinf((T / Time) * Factor); 
+		break;
+	default:
+		break;
+	}
+
+	return ReturnValue;
 };
 
 HRESULT Renderer::LightFrustumRender()&
@@ -3312,6 +3389,3 @@ void Renderer::TestLightRotation()
 
 	time += TimeSystem::GetInstance()->DeltaTime();
 };
-
-
-

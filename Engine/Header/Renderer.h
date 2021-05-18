@@ -23,7 +23,14 @@ class ENGINE_DLL Renderer final : public Object
 public:
 	struct FadeEffect
 	{
-		std::array<float,3u> FadeValues{0.f,0.f,0.f};
+		enum class Mode : uint8
+		{
+			Out,
+			In,
+			OutAfterIn,
+			None
+		};
+		FadeEffect::Mode CurMode{FadeEffect::Mode::None};
 		float T = 0.0f;
 		float Time = 0.0f;
 		bool bEnable = false;
@@ -51,6 +58,7 @@ public:
 	HRESULT Update(const float DeltaTime)&;
 	HRESULT OptRender()&;
 	void    Editor()&;
+
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
 	void Push(const std::weak_ptr<GameObject>&_RenderEntity)&;
 	const Frustum* GetCameraFrustum()const& { return CameraFrustum.get(); };
@@ -63,14 +71,15 @@ public:
 	std::weak_ptr<FLight> RefRemainingDynamicLight();
 	std::weak_ptr<Quad> GetQuad();
 	void RequestShadowMapBake();
+	bool IsBlackOut()const&;
 public:
 	void SkyDistortionStart();
 	void SkyDistortionEnd();
-	// 영상이 서서히 검은색으로 포화.
+	// 영상이 서서히 검은색으로 포화. (검은색으로 되고 복구하지 않음 )
 	void FadeOutStart(const float Time);
-	// 영상이 서서히 본래의 색으로
+	// 영상이 검정색에서 서서히 본래의 색으로
 	void FadeInStart(const float Time);
-
+	// 페이드아웃 -> 페이드 인 세트 
 	void FadeOutAfterIn(const float Time);
 
 	void LateSceneInit();

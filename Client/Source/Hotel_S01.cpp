@@ -61,7 +61,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	// AddGameObject<Camera>();
+	 // AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -569,10 +569,10 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 		// 몬스터 위치는 미리 잡아주기  . 
 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -1.447, 0.02f,  -0.171 });
+			lock()->SetPosition({ -0.162f, 0.02f,  -0.152f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.590, 0.02f, 0.253 });
+			lock()->SetPosition({ -1.187f, 0.02f, -1.137f });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ 0.602, 0.02f, 	 -0.374 });
@@ -646,10 +646,10 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -1.447, 0.02f,  -0.171 });
+			lock()->SetPosition({ -0.162f, 0.02f,  -0.152f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.590, 0.02f, 0.253 });
+			lock()->SetPosition({ -1.187f, 0.02f, -1.137f });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ 0.602, 0.02f, -0.374 });
