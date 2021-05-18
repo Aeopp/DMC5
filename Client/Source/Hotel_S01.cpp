@@ -503,8 +503,7 @@ void Hotel_S01::TriggerElectricBoard(
 		const std::function<void()> _CallBack =
 			[_BattleTrigger]()
 		{
-			PRINT_LOG(L"Camera", L"Camera");
-			_BattleTrigger.lock()->TriggerEnable();
+			
 			// 여기서 카메라 연출 시작 ....
 
 			// .............
@@ -512,11 +511,11 @@ void Hotel_S01::TriggerElectricBoard(
 			// 카메라는 연출 할만큼 하고 웨이브 시작 타이밍에
 			// _BattleTrigger.lock()->TriggerEnable()  <- 웨이브 시작 ..
 		};
-
+		
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.171700f, 0.011680f, 12.167461f };
+		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 6.f,5.f,1.f };
+		const Vector3 BoxSize{ 1.f,1.f,1.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
 		const bool ImmediatelyEnable = true;
 		// 트리거가 검사할 오브젝트 태그 
@@ -557,11 +556,11 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ 1.313 , 0.02f, 	-0.993 });
-
+	
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 10.f,10.f,10.f };
+		const Vector3 TriggerBoxSize = { 100.f,100.f,100.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
 		const bool ImmediatelyEnable = false;
 		// 트리거 검사할 오브젝트는 플레이어 
@@ -638,7 +637,7 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
+		const Vector3 TriggerBoxSize = { 100.f,100.f,100.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
 		const bool ImmediatelyEnable = false;
 		// 트리거 검사할 오브젝트는 플레이어 
