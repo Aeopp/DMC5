@@ -934,10 +934,10 @@ void Renderer::RenderBegin()&
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
 	Device->GetDepthStencilSurface(&BackBufferZBuffer);
-	// Device->Clear(0, nullptr,
-	// /*Device->Clear(0, nullptr,
-	// 	D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
-	// 	0xff00ff00, 1.0f, 0);*/
+
+	/*Device->Clear(0, nullptr,
+	 	D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
+	 	0xff00ff00, 1.0f, 0);*/
 };
 
 //   등록코드수정 
