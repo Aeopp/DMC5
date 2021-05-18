@@ -47,6 +47,7 @@
 #include "Smoke.h"
 #include "NhDoor.h"
 #include "ShopPanel.h"
+#include "StoneDebris.h"
 
 #include <iostream>
 #include <fstream>
@@ -106,7 +107,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -137,7 +138,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
-
+	
 	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
 	//	pSmoke)
 	//{
@@ -198,7 +199,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 10, Until Dooms Day",
+		pFont->SetText("D 9, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),

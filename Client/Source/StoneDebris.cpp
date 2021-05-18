@@ -378,7 +378,10 @@ UINT StoneDebris::Update(const float _fDeltaTime)
 			break;
 		}
 
-		Reset();
+		if (!_Loop)
+			Destroy(m_pGameObject);
+		else
+			Reset();
 	}
 	else if (2.f < _AccumulateTime)
 	{
