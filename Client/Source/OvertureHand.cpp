@@ -185,7 +185,7 @@ HRESULT OvertureHand::Ready()
 	RenderInterface::Initialize(_InitRenderProp);
 
 	auto InitTransform =  GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.002f, 0.002f, 0.002f });
+	InitTransform.lock()->SetScale({ 0.001f, 0.001f, 0.001f });
 
 	_HandMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\wp00_010_0000.fbx");
 	_SparkBranchMesh = Resources::Load<ENGINE::StaticMesh>(L"..\\..\\Resource\\Mesh\\Static\\Effect\\spark_branch_01.fbx");

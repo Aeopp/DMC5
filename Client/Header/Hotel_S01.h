@@ -8,6 +8,7 @@ class Hotel_S01 : public Scene
 private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
+	std::weak_ptr<class MainCamera> _MainCamera{};
 	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
 	bool _LateInit = false;
 private:
@@ -36,8 +37,13 @@ private:
 	void TriggerElectricBoard(const std::weak_ptr<Trigger>&_BattleTrigger);
 	//  광장 전광판 도발 연출 이후에 전투 시작 
 	std::weak_ptr<Trigger> TriggerElectricBoardBattle();
+
+	// 성큰 스매쉬 .
 	void Trigger2nd();
-	void Trigger3rd();
+	// 호텔 앞  
+	void TriggerInFrontOfHotel(const std::weak_ptr<Trigger>& _BattleTrigger);
+	std::weak_ptr<Trigger> TriggerInFrontOfHotelBattle();
+
 	void Trigger4st();
 
 	void LateInit();

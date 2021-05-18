@@ -214,6 +214,11 @@ HRESULT NeroFSM::ReadyFSM()
 
 	m_vecState.emplace_back(Wind_Pressure_Big::Create(this, WINDPRESSURE, m_pNero));
 	m_vecState.emplace_back(Wind_Pressure_Big_End::Create(this, WINDPRESSURE_END, m_pNero));
+
+	m_vecState.emplace_back(Provoke1::Create(this, PROVOKE1, m_pNero));
+	m_vecState.emplace_back(Provoke3::Create(this, PROVOKE3, m_pNero));
+	m_vecState.emplace_back(Provoke9::Create(this, PROVOKE9, m_pNero));
+	m_vecState.emplace_back(Provoke10::Create(this, PROVOKE10, m_pNero));
 	return S_OK;						
 }
 

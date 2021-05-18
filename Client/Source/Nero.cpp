@@ -33,6 +33,11 @@
 #include "JudgementShadow3.h"
 #include "CbsTrail.h"
 #include "NewWingSword.h"
+#include "CbsMidTrail.h"
+#include "BiAttack.h"
+#include "BlitzAttack.h"
+#include "LongBarrel.h"
+#include "Satellite.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -65,7 +70,7 @@ void Nero::Set_Weapon_Coll(NeroComponentID _eNeroComID, bool _ActiveOrNot)
 {
 	if (_ActiveOrNot)
 	{
-		std::list<std::weak_ptr<Monster>> Monsters = GetAllMonster();
+		std::list<std::weak_ptr<Monster>> Monsters = GetAliveMonster();
 		for (auto& pMonster : Monsters)
 			pMonster.lock()->Set_Coll(true);
 	}
@@ -186,6 +191,21 @@ std::list<std::weak_ptr<Monster>> Nero::GetAllMonster()
 	return FindGameObjectsWithType<Monster>();
 }
 
+std::list<std::weak_ptr<Monster>> Nero::GetAliveMonster()
+{
+	std::list<std::weak_ptr<Monster>> _AllMonsters = FindGameObjectsWithType<Monster>();
+	std::list<std::weak_ptr<Monster>> _AliveMonsters;
+
+	for (auto& pMonster : _AllMonsters)
+	{
+		if (!pMonster.lock()->Get_Dead())
+			_AliveMonsters.emplace_back(pMonster);
+	}
+	
+
+	return _AliveMonsters;
+}
+
 std::string Nero::GetName()
 {
 	return "Nero";
@@ -227,6 +247,11 @@ HRESULT Nero::Ready()
 	m_pAirHike = AddGameObject<AirHike>();
 	m_pTrail = AddGameObject<Trail>();
 	m_pIceAge = AddGameObject<IceAge>();
+	m_pCbsMidTrail = AddGameObject<CbsMidTrail>();
+	m_pBiAttack = AddGameObject<BiAttack>();
+	m_pBlitzAttack = AddGameObject<BlitzAttack>();
+	m_pLongBarrel = AddGameObject<LongBarrel>();
+	m_pSatellite = AddGameObject<Satellite>();
 	m_pJudgementSword = AddGameObject<JudgementSword>();
 	m_pJudgementShadow1 = AddGameObject<JudgementShadow1>();
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
@@ -312,12 +337,6 @@ UINT Nero::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 
 	Update_Majin(_fDeltaTime);
-
-
-	//if (Input::GetKeyDown(DIK_0))
-		//Hit(m_BattleInfo);
-
-	//m_pAirHike.lock()->PlayStart();
 	
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
@@ -361,6 +380,7 @@ UINT Nero::Update(const float _fDeltaTime)
 UINT Nero::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
+
 	return 0;
 }
 
@@ -759,6 +779,12 @@ void Nero::Editor()
 		{
 			ChangeAnimation("Idle_Battle", true, ANI_IDLE_BATTLE);
 		}
+		if (ImGui::Button("BuyItems"))
+		{
+			BuyUpgradedOverture();
+			BuyCbsMiddle();
+			BuyCbsLong();
+		}
 	}
 
 }
@@ -896,7 +922,7 @@ void Nero::SetLockOnMonster()
 	if (!m_pTargetMonster.expired())
 		return;
 
-	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
+	std::list<std::weak_ptr<Monster>> MonsterList = GetAliveMonster();
 	if (0 == MonsterList.size())
 		return;
 
@@ -972,7 +998,7 @@ void Nero::SetPosFireCircle()
 
 void Nero::CheckAutoRotate()
 {
-	std::list<std::weak_ptr<Monster>> MonsterList = FindGameObjectsWithType<Monster>();
+	std::list<std::weak_ptr<Monster>> MonsterList = GetAliveMonster();
 	std::weak_ptr<Monster> LockOnMonster;
 	if (0 == MonsterList.size())
 		return;
@@ -1319,6 +1345,12 @@ void Nero::AddRankScore(float Score)
 	m_pBtlPanel.lock()->AddRankScore(Score);
 }
 
+void Nero::BuyUpgradedOverture()
+{
+	m_pOverture.lock()->GetComponent<SphereCollider>().lock()->SetRadius(0.27f);
+	m_pEffOverture.lock()->GetComponent<Transform>().lock()->SetScale({ 0.002f, 0.002f, 0.002f });
+}
+
 void Nero::StopAnimation()
 {
 	m_pMesh[m_iMeshIndex]->StopAnimation();
@@ -1546,6 +1578,22 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		else
 			m_pCbsTrail.lock()->PlayStart(CbsTrail::Non);
 		break;
+	case Eff_CbsMidTrail:
+		m_pCbsMidTrail.lock()->PlayStart(CbsMidTrail::Non);
+		break;
+	case Eff_BiAttack:
+		m_pBiAttack.lock()->PlayStart(vMyPos, m_pTransform.lock()->GetLook());
+		break;
+	case Eff_BlitzAttack:
+		m_pBlitzAttack.lock()->PlayStart(vMyPos);
+		break;
+	case Eff_LongBarrel:
+		m_pLongBarrel.lock()->PlayStart(0);
+		m_pLongBarrel.lock()->PlayStart(2);
+		break;
+	case Eff_Satellite:
+		m_pSatellite.lock()->PlayStart(vMyPos, m_pTransform.lock()->GetLook());
+		break;
 	default:
 		break;
 	}
@@ -1581,6 +1629,12 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 	case Eff_ShapeParticle:
 		m_pShapeParticle[SP_GREEN].lock()->Reset();
 		m_pShapeParticle[SP_RED].lock()->Reset();
+		break;
+	case Eff_CbsMidTrail:
+		m_pCbsMidTrail.lock()->PlayEnd();
+		break;
+	case Eff_Satellite:
+		m_pSatellite.lock()->PlayEnd();
 		break;
 	default:
 		break;

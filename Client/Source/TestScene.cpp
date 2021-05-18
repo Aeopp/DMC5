@@ -44,10 +44,12 @@
 #include "Trigger.h"
 #include "SecretVision.h"
 #include "MakaiButterfly.h"
+#include "CbsLongTrail.h"
 #include "Smoke.h"
 #include "NhDoor.h"
 #include "ShopPanel.h"
 #include "StoneDebris.h"
+#include "TimeSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,7 +89,7 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
+	_MainCamera = AAddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -119,7 +121,8 @@ HRESULT TestScene::LoadScene()
 #pragma region RenderData & Trigger
 
 	RenderDataSetUp();
-	//TriggerSetUp();
+	TriggerSetUp();
+	MonsterWaveTriggerSetUp();
 
 #pragma endregion
 
@@ -139,7 +142,8 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
 	//AddGameObject<MakaiButterfly>();
-	
+	//AddGameObject<CbsLongTrail>();
+
 	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
 	//	pSmoke)
 	//{
@@ -200,7 +204,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 9, Until Dooms Day",
+		pFont->SetText("D 8, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
@@ -235,7 +239,7 @@ HRESULT TestScene::Start()
 {
 	Scene::Start();
 	return S_OK;
-};
+}
 
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
@@ -346,9 +350,13 @@ void TestScene::TriggerSetUp()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[/*변수 캡쳐 (되도록 포인터로 ) */]()
+			[/*변수 캡쳐 (되도록 포인터로 ) */this]()
 		{
 			// 로직 .. 
+			vector<Vector3> _LostTimes;
+			_LostTimes.emplace_back(Vector3{ 3.f,1.f,0.5f });
+			TimeSystem::GetInstance()->LostTime(_LostTimes);
+			_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE1_WAVE1, Vector3(0.338f, 1.037f, 0.524f), 3.f);
 		};
 
 		// 트리거 위치
@@ -402,22 +410,24 @@ void TestScene::MonsterWaveTriggerSetUp()
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 1.f,1.f,1.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
-		const bool ImmediatelyEnable = false;
+		const bool ImmediatelyEnable = true;
 		// 트리거 검사할 오브젝트는 플레이어 
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */this]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
 		const std::function<void()> WaveEndEvent =
-			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+			[/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */this]()
 		{
 			//... 여기서 로직 처리하세요 . 
+			_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
 		};
 
 		_Trigger->EventRegist(

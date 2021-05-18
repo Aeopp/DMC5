@@ -3,7 +3,6 @@
 #include "Transform.h"
 #include "Subset.h"
 #include "Color.h"
-
 #include "TextureType.h"
 #include "Renderer.h"
 #include <iostream>
