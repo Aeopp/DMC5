@@ -376,12 +376,7 @@ UINT Nero::Update(const float _fDeltaTime)
 UINT Nero::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
-	if (Input::GetKeyDown(DIK_1))
-	{
-		BuyUpgradedOverture();
-		BuyCbsLong();
-		BuyCbsMiddle();
-	}
+
 	return 0;
 }
 
@@ -779,6 +774,12 @@ void Nero::Editor()
 		if (ImGui::Button("ResetAnimation"))
 		{
 			ChangeAnimation("Idle_Battle", true, ANI_IDLE_BATTLE);
+		}
+		if (ImGui::Button("BuyItems"))
+		{
+			BuyUpgradedOverture();
+			BuyCbsMiddle();
+			BuyCbsLong();
 		}
 	}
 
