@@ -255,7 +255,9 @@ void Em200::State_Change(const float _fDeltaTime)
 		break;
 	case Em200::Dead:
 		if (m_bIng == true)
-			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.f, 20.f, true);
+			m_pMesh->PlayAnimation("Death_Front", false, {}, 1.5f, 20.f, true);
+		m_pCollider.lock()->SetActive(false);
+		m_bDead = true;
 		StoneDebrisPlayStart();
 		break;
 	case Em200::Hit_Air:
@@ -1221,7 +1223,7 @@ void Em200::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em200::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	if ((m_BattleInfo.iHp -= _BattleInfo.iAttack) >= 0.f)
+	if ((m_BattleInfo.iHp > _BattleInfo.iAttack))
 		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;

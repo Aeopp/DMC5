@@ -41,6 +41,8 @@ public:
 			};
 
 
+			
+
 			void Update(const float Delta)
 			{
 				CurInterval -= Delta;

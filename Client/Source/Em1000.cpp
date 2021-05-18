@@ -153,7 +153,9 @@ void Em1000::State_Change(const float _fDeltaTime)
 			break;
 		case Em1000::Dead_Wall:
 			if (m_bIng == true)
-				m_pMesh->PlayAnimation("Dead_Wall", false, {}, 1.f, 20.f, true);
+				m_pMesh->PlayAnimation("Dead_Wall", false, {}, 1.5f, 20.f, true);
+			m_bDead = true;
+			m_pCollider.lock()->SetActive(false);
 			break;
 		}
 	}
@@ -231,8 +233,9 @@ void Em1000::State_Change(const float _fDeltaTime)
 			break;
 		case Em1000::Dead_Floor:
 			if (m_bIng == true)
-				m_pMesh->PlayAnimation("Dead_Floor", false, {}, 1.f, 20.f, true);
-		
+				m_pMesh->PlayAnimation("Dead_Floor", false, {}, 1.5f, 20.f, true);
+			m_pCollider.lock()->SetActive(false);
+			m_bDead = true;
 			// µ¹»Ñ¸®±â!
 			StoneDebrisPlayStart();
 
