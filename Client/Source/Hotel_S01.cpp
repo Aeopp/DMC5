@@ -19,6 +19,7 @@
 #include "CollObject.h"
 #include "BreakableObject.h"
 #include "SoundSystem.h"
+#include "BrokenPeople.h"
 
 #include <iostream>
 #include <fstream>
@@ -86,6 +87,10 @@ HRESULT Hotel_S01::LoadScene()
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 	
+
+	auto sex = AddGameObject<BrokenPeople>().lock();
+	sex->GetComponent<Transform>().lock()->SetPosition({ 0.f, 1.f, 0.f });
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -445,6 +450,8 @@ void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
 		sFullPath = iter->FindMember("Mesh")->value.GetString();
 		sFullPath = sBasePath / sFullPath;
 		//
+	
+
 		Resources::Load<StaticMesh>(sFullPath);
 		//
 		auto objectArr = iter->FindMember("List")->value.GetArray();

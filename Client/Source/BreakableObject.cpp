@@ -343,6 +343,7 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
 	case GAMEOBJECTTAG::Tag_Cbs_Long:
+	case GAMEOBJECTTAG::Overture:
 		if (m_bDestroyObject == false)
 		{
 			_RenderProperty.bRender = false;
