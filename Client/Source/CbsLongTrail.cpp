@@ -305,7 +305,7 @@ void CbsLongTrail::VertexBufUpdate()
 		}
 	}
 
-	if (auto _GameObject = FindGameObjectWithTag(TAG_RedQueen).lock();
+	if (auto _GameObject = FindGameObjectWithTag(Tag_Cbs_Long).lock();
 		_GameObject)
 	{
 		if (auto _CbsLong= std::dynamic_pointer_cast<Cbs_Long>(_GameObject);
