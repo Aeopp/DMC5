@@ -318,8 +318,13 @@ HRESULT CoreSystem::UpdateEngine(const float Delta)
 		return E_FAIL;
 	}
 
-	Editor();
+	if (FAILED(m_pRenderer.lock()->Update(m_pTimeSystem.lock()->DeltaTime())))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateRenderer."));
+		return E_FAIL;
+	}
 
+	Editor();
 	m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
 
 	if (FAILED(m_pRenderer.lock()->Render()))

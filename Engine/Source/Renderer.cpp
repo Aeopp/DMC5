@@ -828,6 +828,29 @@ void Renderer::SkyDistortionStart()
 void Renderer::SkyDistortionEnd()
 {
 	SkyDistortion = false;
+}
+void Renderer::FadeOutStart(const float Time)
+{
+	_FadeEffect.T = 0.0f;
+	_FadeEffect.bEnable = true;
+	_FadeEffect.Time = Time;
+	_FadeEffect.FadeValues = {1.0f,0.f,0.f};
+};
+
+void Renderer::FadeInStart(const float Time)
+{
+	_FadeEffect.T = 0.0f;
+	_FadeEffect.bEnable = true;
+	_FadeEffect.Time = Time;
+	_FadeEffect.FadeValues = {0.0f,1.0f,1.0f};
+};
+
+void Renderer::FadeOutAfterIn(const float Time)
+{
+	_FadeEffect.bEnable = true;
+	_FadeEffect.T = 0.0f;
+	_FadeEffect.Time = Time;
+	_FadeEffect.FadeValues = {1.0f,0.0f,1.0f};
 };
 
 void Renderer::LateSceneInit()
@@ -2088,6 +2111,8 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 		Fx->End();
 	}
 
+
+
 	ZSortlist.clear();
 
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
@@ -2125,6 +2150,26 @@ HRESULT Renderer::RendererCollider()&
 	}
 
 	return S_OK;
+};
+
+HRESULT Renderer::Update(const float DeltaTime)&
+{
+	if (_FadeEffect.bEnable)
+	{
+		_FadeEffect.T += DeltaTime;
+
+		if (_FadeEffect.T > _FadeEffect.Time)
+		{
+			_FadeEffect.bEnable = false;
+		}
+	}
+
+	return S_OK;
+};
+
+float Renderer::FadeEffect::GetLerp()const&
+{
+	return T / Time;
 };
 
 HRESULT Renderer::LightFrustumRender()&

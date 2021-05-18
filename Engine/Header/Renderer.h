@@ -20,6 +20,15 @@ BEGIN(ENGINE)
 class ENGINE_DLL Renderer final : public Object
 {
 	DECLARE_SINGLETON(Renderer)
+public:
+	struct FadeEffect
+	{
+		std::array<float,3u> FadeValues{0.f,0.f,0.f};
+		float T = 0.0f;
+		float Time = 0.0f;
+		bool bEnable = false;
+		float GetLerp()const& ;
+	};
 private:
 	explicit Renderer();
 	virtual ~Renderer() = default;
@@ -38,6 +47,7 @@ private:
 	void    ReadyPtLightPool();
 public:
 	HRESULT Render()&;
+	HRESULT Update(const float DeltaTime)&;
 	HRESULT OptRender()&;
 	void    Editor()&;
 	// 오브젝트의 렌더 세팅이 켜져있다면 RenderInterface 인터페이스를 검사하고 엔티티에 추가 .
@@ -55,6 +65,13 @@ public:
 public:
 	void SkyDistortionStart();
 	void SkyDistortionEnd();
+	// 영상이 서서히 검은색으로 포화.
+	void FadeOutStart(const float Time);
+	// 영상이 서서히 본래의 색으로
+	void FadeInStart(const float Time);
+
+	void FadeOutAfterIn(const float Time);
+
 	void LateSceneInit();
 	void SceneChangeRender();
 private:
@@ -140,6 +157,7 @@ public:
 	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
 	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };
 private:
+	FadeEffect _FadeEffect{};
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
 	float FogStart = 1.f;
