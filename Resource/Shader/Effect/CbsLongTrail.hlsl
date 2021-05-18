@@ -148,12 +148,12 @@ void PsMain(out float4 Color : COLOR0,
     Color.rgb += EmissiveSample.rgb;
     Color.rgb *= exposure_corr;
     
-    float4 trailsample = tex2D(Trail, UV1 + finalNoise);
+    float4 trailsample = tex2D(Trail, UV1);
     Color.a *= trailsample.a;
-
+    
     float4 NoiseSample = tex2D(Noise, UV0 + finalNoise);
-
-    Color1 = trailsample * NoiseSample;
+    
+    Color1 = trailsample;
     Color1.rgb *= DistortionIntencity;
     
     // 소프트 파티클 계산 .... 

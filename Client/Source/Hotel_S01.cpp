@@ -19,6 +19,7 @@
 #include "CollObject.h"
 #include "BreakableObject.h"
 #include "SoundSystem.h"
+#include "CbsLongTrail.h"
 
 #include <iostream>
 #include <fstream>
@@ -49,6 +50,7 @@ Hotel_S01* Hotel_S01::Create()
 
 HRESULT Hotel_S01::LoadScene()
 {
+	AddGameObject<CbsLongTrail>();
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
