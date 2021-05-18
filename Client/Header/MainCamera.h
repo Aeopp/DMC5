@@ -10,7 +10,7 @@ class MainCamera :
 public:
     enum AT_TYPE { AT_PLAYER,AT_TRIGGER};
     enum PLAYER_CAM_MODE { CAM_MODE_BASIC,CAM_MODE_WAVE_END,CAM_MODE_RETURN_TO_PLAYER };
-    enum TRIGGER_CAM_MODE { STAGE1_WAVE1, STAGE1_WAVE1_END };
+	enum TRIGGER_CAM_MODE {	STAGE1_WAVE1, STAGE1_WAVE1_END, STAGE1_WAVE2_ENTER, STAGE1_WAVE2_BATTLE, STAGE1_WAVE2_END,	};
 private:
     explicit MainCamera();
     virtual ~MainCamera();
@@ -51,6 +51,9 @@ private:
     void MoveMent_Trigger(float _fDeltaTime);
     void Trigger_Cam_Stage1_Wave1(float _fDeltaTime);
     void Trigger_Cam_Stage1_Wave1_End(float _fDeltaTime);
+	void Trigger_Cam_Stage1_Wave2(float _fDeltaTime);
+    void Trigger_Cam_Stage1_Wave2_Battle(float _fDeltaTime);
+	void Trigger_Cam_Stage1_Wave2_End(float _fDeltaTime);
 private:
     std::weak_ptr<Transform>        m_pAtTranform;
     std::weak_ptr<Nero>             m_pNero;
