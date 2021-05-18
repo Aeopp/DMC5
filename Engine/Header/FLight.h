@@ -141,6 +141,7 @@ public:
 	void Edit(const uint32 Idx);
 private:
 	void EditImplementation(const uint32 Idx);
+
 };
 END
 

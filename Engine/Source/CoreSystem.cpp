@@ -11,7 +11,7 @@
 #include "IconsFontAwesome5.h"
 #include "PhysicsSystem.h"
 #include "ParticleSystem.h"
-
+#include "SoundSystem.h"
 
 USING(ENGINE)
 IMPLEMENT_SINGLETON(CoreSystem)
@@ -105,6 +105,7 @@ static void GlobalVariableSetup()
 	g_bFrameLimit = true;
 	g_bParticleEditor = false;
 	g_bFixedDeltaTime = true;
+	g_bSoundEdit = false;
 
 	ID3DXBuffer* SphereMeshAdjacency{ nullptr };
 	D3DXCreateSphere(g_pDevice, 0.00001f, 8, 8, &g_pSphereMesh, &SphereMeshAdjacency);
@@ -117,9 +118,6 @@ static void GlobalVariableFree()
 		g_pSphereMesh->Release();
 	}
 }
-
-
-
 
 CoreSystem::CoreSystem()
 {
@@ -152,6 +150,9 @@ void CoreSystem::Free()
 	m_pParticleSystem.reset();
 	ParticleSystem::DeleteInstance();
 
+	m_pSoundSystem.reset();
+	SoundSystem::DeleteInstance();
+
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -178,8 +179,16 @@ static void ImGuiSetUp()
 }
 
 HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
-								const bool bMultiSample)
+								const bool bMultiSample ,
+								const std::filesystem::path& SoundDirectoryPath)
 {
+	m_pSoundSystem = SoundSystem::GetInstance();
+	if (nullptr == m_pSoundSystem.lock() || FAILED(m_pSoundSystem.lock()->ReadySoundSystem(SoundDirectoryPath)))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to SoundSystem"));
+		return E_FAIL;
+	}
+
 	m_pGraphicSystem = GraphicSystem::GetInstance();
 	if (nullptr == m_pGraphicSystem.lock() || FAILED(m_pGraphicSystem.lock()->ReadyGraphicSystem(
 		bWindowed,
@@ -265,6 +274,7 @@ static void GlobalVariableEditor()
 			ImGui::Checkbox("RenderTargetVisible", &g_bRenderTargetVisible);
 			ImGui::Checkbox("RenderEdit",&g_bRenderEdit);
 			ImGui::Checkbox("RenderPointLightScissorTest",&g_bRenderPtLightScissorTest);
+			ImGui::Checkbox("SoundEditor", &g_bSoundEdit);
 		}
 	}
 	ImGui::End();
@@ -294,6 +304,12 @@ HRESULT CoreSystem::UpdateEngine(const float Delta)
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateSceneSystem."));
 		return E_FAIL;
+	};
+
+	if (FAILED(m_pSoundSystem.lock()->UpdateSoundSystem(m_pTimeSystem.lock()->DeltaTime())))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateSoundSystem."));
+		return E_FAIL;
 	}
 
 	if (FAILED(m_pParticleSystem.lock()->UpdateParticleSystem(m_pTimeSystem.lock()->DeltaTime())))
@@ -302,28 +318,35 @@ HRESULT CoreSystem::UpdateEngine(const float Delta)
 		return E_FAIL;
 	}
 
-	Editor();
+	if (FAILED(m_pRenderer.lock()->Update(m_pTimeSystem.lock()->DeltaTime())))
+	{
+		PRINT_LOG(TEXT("Error"), TEXT("Failed to UpdateRenderer."));
+		return E_FAIL;
+	}
 
+	Editor();
 	m_pPhysicsSystem.lock()->Simulate(m_pTimeSystem.lock()->DeltaTime());
 
 	if (FAILED(m_pRenderer.lock()->Render()))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to Renderer Render."));
 		return E_FAIL;
-	}
-	
-
+	};
 	
 	return S_OK;
 }
 
 void CoreSystem::Editor()
 {
-
 	if (g_bTime)
 	{
 		m_pTimeSystem.lock()->Editor();
 	};
+
+	if (g_bSoundEdit)
+	{
+		m_pSoundSystem.lock()->Editor();
+	}
 
 	if (g_bEditMode)
 	{
@@ -341,15 +364,7 @@ void CoreSystem::Editor()
 		if (g_bParticleEditor)
 		{
 			m_pParticleSystem.lock()->Editor();
-		}
-
-
-		//ImGui::Begin("Log");
-		////for (const auto& CurLog : g_Logs)
-		////{
-		////	ImGui::Text(CurLog.c_str());
-		////}
-		//ImGui::End();
+		};
 	}
 
 	if (!g_Logs.empty())

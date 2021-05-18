@@ -11,6 +11,7 @@ class ResourceSystem;
 class Renderer;
 class PhysicsSystem;
 class ParticleSystem;
+class SoundSystem;
 
 class CoreSystem final : public Object
 {
@@ -24,6 +25,7 @@ private:
 	std::weak_ptr<Renderer>				m_pRenderer;
 	std::weak_ptr<PhysicsSystem>		m_pPhysicsSystem;
 	std::weak_ptr<ParticleSystem>       m_pParticleSystem;
+	std::weak_ptr<SoundSystem>          m_pSoundSystem;
 private:
 	explicit CoreSystem();
 	virtual ~CoreSystem() = default;
@@ -31,7 +33,8 @@ private:
 	virtual void Free() override;
 public:
 	HRESULT ReadyEngine(
-		const bool bWindowed,const bool bMultiSample);
+		const bool bWindowed,const bool bMultiSample,
+		const std::filesystem::path& SoundDirectoryPath);
 	HRESULT UpdateEngine(const float Delta);
 private:
 	void Editor();

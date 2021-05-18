@@ -34,9 +34,13 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& PlayLocation);
+	void PlayStart(
+		const Vector3& PlayLocation,
+		const std::optional<Vector3>& PlayRotation = std::nullopt
+		, const std::optional<Vector3>& PlayScale = std::nullopt);
 	void PlayEnd();
 	float GetPlayTime();
+	bool bParticle = true;
 public:
 	void PlayParticle();
 	void RenderDebug(const DrawInfo& _Info);
@@ -44,11 +48,12 @@ public:
 
 	float PtLightRadius = 10.f;
 	float PtLightFlux = 10.f;
+	float PlayTime = 0.35f;
 private:
 	float ParticleTime = 0.06f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;
-	float PlayTime = 0.35f;
+	
 	float ColorIntencity = 0.7f;
 
 	float ScrollSpeed = 55.f;

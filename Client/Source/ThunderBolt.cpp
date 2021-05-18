@@ -39,7 +39,10 @@ void ThunderBolt::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		_RenderUpdateInfo.World = 
+			FMath::Scale(_SpTransform->GetScale())
+			* DirRotMatrix * 
+			FMath::Translation(_SpTransform->GetPosition());
 	}
 };
 
@@ -83,16 +86,83 @@ void ThunderBolt::RenderInit()
 	DistortionMap =Resources::Load<Texture>("..\\..\\Usable\\smoke_a_im.tga");
 };
 
-void ThunderBolt::PlayStart(const Vector3& PlayLocation)
+void ThunderBolt::PlayStart(
+	const Vector3& PlayLocation,
+	Vector3 Direction,
+	const float Velocity,
+	const std::optional<Vector3>& PlayScale ,
+	const bool bEditPlay)
 {
 	PlayEnd();
+	Direction = FMath::Normalize(Direction);
 
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		SpTransform->SetPosition(PlayLocation);
+		const Vector3 Up = Direction.y  > 0.f ? Vector3{ 0.f,-1.f,0.f } : Vector3{ 0.f,1.f,0.f };
+		const Vector3 Axis = FMath::Cross(Direction, Up);
+		const Vector3 NormalAxis = FMath::Normalize(Axis);
+		const float Rad = std::asinf(FMath::Length(Axis));
+
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
+		{
+			DirRotMatrix  = FMath::RotationAxisMatrix(NormalAxis, Rad);
+		};
+
+		if (PlayScale)
+		{
+			SpTransform->SetScale(*PlayScale);
+		}
+	};
+
+
+	this->Velocity = Velocity;
+	this->Direction = Direction;
+
+	T = 0.0f;
+	_RenderProperty.bRender = true;
+	CurParticleTime = 0.0f;
+
+	PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
+
+	if (auto SpPtLight = PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->bEnable = true;
+	}
+
+	Range = 0.0f;
+	EndRange = 0.35f;
+
+	this->bEditPlay = bEditPlay;
+};
+
+void ThunderBolt::PlayStart(
+	const Vector3& PlayLocation, 
+	const std::optional<Vector3>& PlayRotation, 
+	const std::optional<Vector3>& PlayScale
+)
+{
+	PlayEnd();
+	Velocity = 0.0f;
+	Direction = Vector3{ 0.f,0.f,0.f };
 	// SetActive(true);
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
+		if (PlayRotation)
+		{
+			DirRotMatrix = FMath::Rotation(*PlayRotation);
+			SpTransform->SetRotation(*PlayRotation);
+		}
+		if (PlayScale)
+		{
+			SpTransform->SetScale(*PlayScale);
+		}
 	};
 
 	T = 0.0f;
@@ -122,22 +192,31 @@ void ThunderBolt::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltEndParticle", 250u, true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-			
-			for (int32 i = 0; i < _Particle.size(); ++i)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ThunderBoltEndParticle", 250u, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(_RenderUpdateInfo.World);
+				}
 			}
-		}
-	};
+		};
+	}
+
+	if (bEditPlay)
+	{
+		GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.25f,0.f });
+	}
+	
 
 	// SetActive(false);
 }
@@ -185,21 +264,25 @@ void ThunderBolt::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void ThunderBolt::PlayParticle()
 {
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
+	if (bParticle)
 	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"ThunderBoltParticle", 1000ul, true);
-			_Particle.empty() == false)
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
 		{
-			for (int32 i = 0; i < _Particle.size(); ++i)
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ThunderBoltParticle", 500ul, true);
+				_Particle.empty() == false)
 			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(_RenderUpdateInfo.World);
+				}
 			}
-		}
-	};
+		};
+	}
+	
 }
 
 
@@ -240,11 +323,10 @@ HRESULT ThunderBolt::Ready()
 HRESULT ThunderBolt::Awake()
 {
 	GameObject::Awake();
-
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.0f,0.f });
+	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.25f,0.f } );
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.01f,0.001f });
+	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
 
 	return S_OK;
 }
@@ -275,6 +357,13 @@ UINT ThunderBolt::Update(const float _fDeltaTime)
 		PlayParticle();
 	}
 
+	if (auto SpTransform = GetComponent<Transform>().lock();
+		SpTransform)
+	{
+		SpTransform->SetPosition(
+			SpTransform->GetPosition() + Direction * Velocity);
+	}
+
 	if (PtLightFlux > 0.0f)
 	{
 		if (auto SpPtLight = PtLight.lock();
@@ -295,7 +384,8 @@ UINT ThunderBolt::Update(const float _fDeltaTime)
 		}
 	};
 
-	
+
+
 
 	return 0;
 }
@@ -324,6 +414,27 @@ void ThunderBolt::Editor()
 					PlayStart(SpTransform->GetPosition());
 				}
 			}
+
+			if (ImGui::CollapsingHeader("Dir"))
+			{
+				static Vector3 Dir{ 0.f,0.f ,0.f };
+				static float SliderVelocity = 1.f;
+				ImGui::SliderFloat3("Direction", Dir, -1.f, 1.f);
+				ImGui::SliderFloat("SliderVelocity", &SliderVelocity, 0.f, 1.f);
+				ImGui::InputFloat("In SliderVelocity", &SliderVelocity);
+				if (ImGui::SmallButton("Play_Dir"))
+				{
+					if (auto SpTransform = GetComponent<Transform>().lock();
+						SpTransform)
+					{
+						PlayStart(
+							SpTransform->GetPosition(),
+							Dir ,
+							SliderVelocity ,std::nullopt,true);
+					}
+				}
+			}
+
 
 			if (ImGui::SmallButton("PlayEnd"))
 			{

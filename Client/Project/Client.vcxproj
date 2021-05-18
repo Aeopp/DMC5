@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\fmod\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>26812</DisableSpecificWarnings>
@@ -144,7 +144,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Bin\;$(ProjectDir)..\Header\;$(ProjectDir)..\Source\;$(SolutionDir)Engine\Header\;$(SolutionDir)Reference\Header\;$(SolutionDir)Reference\Header\imgui\;$(SolutionDir)Reference\Header\fmod\;$(SolutionDir)Reference\Header\rapidjson\;$(SolutionDir)Reference\PhysX\Include\;$(SolutionDir)Reference\PhysX\Include\PxShared\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -158,12 +158,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Header\AnimationUpGround.h" />
     <ClInclude Include="..\Header\AppearEm1000.h" />
     <ClInclude Include="..\Header\AppearGroundMonster.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
     <ClInclude Include="..\Header\BreakableObject.h" />
+    <ClInclude Include="..\Header\BrokenBookShelf.h" />
+    <ClInclude Include="..\Header\BrokenPeople.h" />
+    <ClInclude Include="..\Header\BrokenTable.h" />
     <ClInclude Include="..\Header\Buster_Arm_Left.h" />
     <ClInclude Include="..\Header\CbsTrail.h" />
     <ClInclude Include="..\Header\Cbs_Long.h" />
@@ -208,6 +212,7 @@
     <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
     <ClInclude Include="..\Header\SecretVisionMagicCircle.h" />
+    <ClInclude Include="..\Header\ShopPanel.h" />
     <ClInclude Include="..\Header\TitlePanel.h" />
     <ClInclude Include="..\Header\Smoke.h" />
     <ClInclude Include="..\Header\Liquid.h" />
@@ -253,11 +258,6 @@
     <ClInclude Include="..\Header\Unit.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
-    <ClInclude Include="..\Header\WingSword.h" />
-    <ClInclude Include="..\Header\WingSword1st.h" />
-    <ClInclude Include="..\Header\WingSword2nd.h" />
-    <ClInclude Include="..\Header\WingSword3rd.h" />
-    <ClInclude Include="..\Header\WingSword4th.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
     <ClInclude Include="..\Header\Wire_Arm_Grab.h" />
     <ClInclude Include="Client.h" />
@@ -267,6 +267,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\AnimationUpGround.cpp" />
     <ClCompile Include="..\Source\AppearEm1000.cpp" />
     <ClCompile Include="..\Source\AppearGroundMonster.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -274,6 +275,9 @@
     <ClCompile Include="..\Source\Application.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\BreakableObject.cpp" />
+    <ClCompile Include="..\Source\BrokenBookShelf.cpp" />
+    <ClCompile Include="..\Source\BrokenPeople.cpp" />
+    <ClCompile Include="..\Source\BrokenTable.cpp" />
     <ClCompile Include="..\Source\Buster_Arm_Left.cpp" />
     <ClCompile Include="..\Source\CbsMidTrail.cpp" />
     <ClCompile Include="..\Source\CbsTrail.cpp" />
@@ -298,6 +302,8 @@
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\FadeOut.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
+    <ClCompile Include="..\Source\HotelAnimationWall.cpp" />
+    <ClCompile Include="..\Source\HotelBrokenFloor.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp" />
     <ClCompile Include="..\Source\Hotel_S02.cpp" />
     <ClCompile Include="..\Source\Hotel_S03.cpp" />
@@ -319,6 +325,7 @@
     <ClCompile Include="..\Source\PreLoader.cpp" />
     <ClCompile Include="..\Source\SecretVision.cpp" />
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp" />
+    <ClCompile Include="..\Source\ShopPanel.cpp" />
     <ClCompile Include="..\Source\ThunderBolt.cpp" />
     <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\TitlePanel.cpp" />
@@ -367,11 +374,6 @@
     <ClCompile Include="..\Source\Unit.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
-    <ClCompile Include="..\Source\WingSword.cpp" />
-    <ClCompile Include="..\Source\WingSword1st.cpp" />
-    <ClCompile Include="..\Source\WingSword2nd.cpp" />
-    <ClCompile Include="..\Source\WingSword3rd.cpp" />
-    <ClCompile Include="..\Source\WingSword4th.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
     <ClCompile Include="..\Source\Wire_Arm_Grab.cpp" />
     <ClCompile Include="Client.cpp" />
@@ -547,6 +549,11 @@
     <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\UI\ShopPanel.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

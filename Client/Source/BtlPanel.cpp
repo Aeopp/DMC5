@@ -6,6 +6,14 @@
 #include "Renderer.h"
 
 
+// static var
+int BtlPanel::_HPGaugeCount = 5;
+float BtlPanel::_TDTGauge = 0.f;
+uint32 BtlPanel::_StylishPoints = 0u;
+float BtlPanel::_ExGauge = 0.f;
+uint32 BtlPanel::_RedOrbCount = 0u;
+
+
 void BtlPanel::Free()
 {
 	SafeDeleteArray(_UIDescs);
@@ -37,6 +45,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	_ImplInfo.Fx->SetMatrix("Perspective", &_PerspectiveProjMatrix);
 	_ImplInfo.Fx->SetTexture("NoiseMap", _NoiseTex->GetTexture());
+	_ImplInfo.Fx->SetFloat("_GlobalAlpha", _GlobalAlpha);
 
 	if (_UIDescs[EX_GAUGE].Using)	// 레드퀸일 경우
 		_ImplInfo.Fx->SetFloatArray("LightDirection", _LightDir_ExGauge, 3u);
@@ -45,7 +54,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = HP_GLASS;
-	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+	if (!_ImplInfo.IsAfterPostProcessing && 0.f < _GlobalAlpha)
 	{
 		auto WeakSubset = _HPGlassMesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
@@ -69,7 +78,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = EX_GAUGE_BACK;
-	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+	if (!_ImplInfo.IsAfterPostProcessing && 0.f < _GlobalAlpha)
 	{
 		auto WeakSubset = _PlaneMesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
@@ -78,13 +87,18 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExBackALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _ExBackATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _ExBackNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.0075f);
 			_ImplInfo.Fx->SetBool("_Apply_ExposureCorr", true);
-
+	
 			if (_UIDescs[EX_GAUGE].Using)
+			{
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.0075f);
 				Create_ScreenMat(CurID, ScreenMat);
+			}
 			else
+			{
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.0045f);
 				Create_ScreenMat(CurID, ScreenMat, 1);
+			}
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
 			_ImplInfo.Fx->BeginPass(0);
@@ -95,7 +109,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = EX_GAUGE;
-	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[EX_GAUGE].Using && 0.f < _GlobalAlpha)
 	{
 		_ImplInfo.Fx->SetTexture("ALB0Map", _ExALBM0Tex->GetTexture());
 		_ImplInfo.Fx->SetTexture("ALB1Map", _ExFireTex->GetTexture());
@@ -143,7 +157,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = STYLISH_LETTER;
-	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+	if (!_ImplInfo.IsAfterPostProcessing && 0.f < _GlobalAlpha)
 	{
 		_ImplInfo.Fx->SetTexture("ALB0Map", _StylishALBMTex->GetTexture());
 		_ImplInfo.Fx->SetTexture("NRMR0Map", _StylishNRMRTex->GetTexture());
@@ -232,13 +246,14 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 	{
 		//
 		CurID = REDORB;
-		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		if (_ImplInfo.IsAfterPostProcessing && 0.f < _RedOrbAlpha)
 		{
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 			_ImplInfo.Fx->SetBool("_Apply_ExposureCorr", false);
+			_ImplInfo.Fx->SetFloat("_GlobalAlpha", _RedOrbAlpha);
 
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -365,12 +380,12 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = HP_GAUGE;
-		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		if (!_ImplInfo.IsAfterPostProcessing && 0.f < _GlobalAlpha)
 		{
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _HPGaugeBaseALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _HPGaugeBaseATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _HPGaugeBaseNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.012f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
 			_ImplInfo.Fx->SetBool("_Apply_ExposureCorr", true);
 
 			for (int i = 0; i < _HPGaugeCount; ++i)
@@ -408,7 +423,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = TDT_GAUGE;
-		if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		if (!_ImplInfo.IsAfterPostProcessing && 0.f < _GlobalAlpha)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _TDTGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _TDTGaugeNRMRTex->GetTexture());
@@ -575,7 +590,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		//
 		CurID = EX_GAUGE;
-		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		if (_ImplInfo.IsAfterPostProcessing && 0.f < _GlobalAlpha)
 		{
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ExFireTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
@@ -601,6 +616,23 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 			}
+		}
+
+		//
+		CurID = NULLBLACK;
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _NullBlackTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(12);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
 		}
 	}
 
@@ -788,6 +820,8 @@ HRESULT BtlPanel::Ready()
 	_SecretVision1Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\7.tga");
 	_SecretVision2Tex = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\SecretVision\\9.tga");
 
+	_NullBlackTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\NullBlack.tga");
+
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
 	
@@ -819,7 +853,6 @@ UINT BtlPanel::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
-	_DeltaTime = _fDeltaTime;
 	_TotalAccumulateTime += _fDeltaTime;
 
 	//
@@ -1053,6 +1086,8 @@ void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor/*= 0*/)
 void BtlPanel::AccumulateRedOrb(const uint32 Amount)
 {
 	_RedOrbCount += Amount;
+	_RedOrbAlphaTime = REDORB_ALIVETIME;
+	_UIDescs[REDORB].Using = true;
 
 	if (_RedOrbCount > 99999999u)
 		_RedOrbCount = 99999999u;
@@ -1070,6 +1105,20 @@ void BtlPanel::ActivateSecretVision(const int Number)
 	_UIDescs[SECRET_VISIONS].Using = true;
 }
 
+void BtlPanel::SetGlobalActive(bool IsActive, bool Force/*= false*/)
+{
+	_GlobalUsing = IsActive;
+	_GlobalUsingForce = Force;
+
+	if (IsActive)
+		_GlobalAlphaTime = GLOBAL_ALIVETIME;
+	else
+	{
+		_GlobalAlphaTime = 0.f;
+		_GlobalUsingForce = false;
+	}
+}
+
 void BtlPanel::DissolveAllSecretVision()
 {
 	if (!_UIDescs[SECRET_VISIONS].Using)
@@ -1082,13 +1131,28 @@ void BtlPanel::DissolveAllSecretVision()
 	}
 }
 
+void BtlPanel::SetNullBlackActive(bool IsActive)
+{
+	_UIDescs[NULLBLACK].Using = IsActive;
+}
+
+void BtlPanel::SetRedOrbActive(bool IsActive)
+{
+	_UIDescs[REDORB].Using = IsActive;
+
+	if (IsActive)
+		_RedOrbAlphaTime = REDORB_ALIVETIME;
+	else
+		_RedOrbAlphaTime = 0.f;
+}
+
 void BtlPanel::Init_UIDescs()
 {
 	if (!_UIDescs)
 		_UIDescs = new UI_DESC[DESC_END];
 
 	// Using, Pos, Scale
-	_UIDescs[REDORB] = { true, Vector3(1090.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
+	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
 	_UIDescs[TARGET_CURSOR] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.4f, 0.4f, 1.f) };
 	_UIDescs[TARGET_HP] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(0.56f, 0.56f, 1.f) };	// 0.46
 	_UIDescs[BOSS_GUAGE] = { false, Vector3(640.f, 660.f, 0.5f), Vector3(5.6f, 5.f, 1.f) };
@@ -1103,6 +1167,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[RANK] = { false, Vector3(6.5f, 1.3f, 15.f), Vector3(0.08f, 0.08f, 0.08f) };
 	_UIDescs[RANK_LETTER] = { false, Vector3(1120.f, 330.f, 0.8f), Vector3(1.5f, 1.5f, 1.f) };
 	_UIDescs[STYLISH_POINTS] = { false, Vector3(1060.f, 390.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
+	_UIDescs[NULLBLACK] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(12.8f, 7.2f, 1.f) };
 	_UIDescs[SECRET_VISIONS] = { false, Vector3(640.f, 60.f, 0.5f), Vector3(0.7f, 0.7f, 1.f) };
 }
 
@@ -1805,7 +1870,7 @@ void BtlPanel::Update_PlayerHP(const float _fDeltaTime)
 {
 	//
 	if (_PlayerHPRatioDelay > _PlayerHPRatio)
-		_PlayerHPRatioDelay -= _fDeltaTime * 0.5f;
+		_PlayerHPRatioDelay -= _fDeltaTime * 0.35f;
 
 	//
 	float HPGaugeOrthoWidth = 0.078125f;
@@ -1959,8 +2024,8 @@ void BtlPanel::Update_Rank(const float _fDeltaTime)
 
 void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 {
-	if (!_UIDescs[EX_GAUGE].Using)
-		return;
+	//if (!_UIDescs[EX_GAUGE].Using)
+	//	return;
 		
 	if (3.f < _ExGauge)
 		_ExGauge = 3.f;
@@ -2057,11 +2122,11 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 				Vector3(1.f, 1.f, 1.f),
 				true);
 
-			pFont->SetRenderFlag(true);
+			pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
 		}
 		else
 		{
-			pFont->SetRenderFlag(false);
+			pFont->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
 		}
 	}
 
@@ -2174,6 +2239,61 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 			_HPGlassRotY = 0.f;
 	}
 
+	// RedOrb
+	if (_UIDescs[REDORB].Using)
+	{
+		_RedOrbAlphaTime -= _fDeltaTime;
+		if (0.f > _RedOrbAlphaTime)
+		{
+			_UIDescs[REDORB].Using = false;
+			_RedOrbAlphaTime = 0.f;
+		}
+
+		if (1.f > _RedOrbAlpha)
+		{
+			_RedOrbAlpha += 2.f * _fDeltaTime;
+			if (1.f < _RedOrbAlpha)
+				_RedOrbAlpha = 1.f;
+		}
+	}
+	else
+	{
+		if (0.f < _RedOrbAlpha)
+		{
+			_RedOrbAlpha -= 2.f * _fDeltaTime;
+			if (0.f > _RedOrbAlpha)
+				_RedOrbAlpha = 0.f;
+		}
+	}
+
+	// GlobalAlpha
+	if (_GlobalUsing)
+	{
+		if (!_GlobalUsingForce)
+			_GlobalAlphaTime -= _fDeltaTime;
+		if (0.f > _GlobalAlphaTime)
+		{
+			_GlobalUsing = false;
+			_GlobalAlphaTime = 0.f;
+		}
+
+		if (1.f > _GlobalAlpha)
+		{
+			_GlobalAlpha += 3.f * _fDeltaTime;
+			if (1.f < _GlobalAlpha)
+				_GlobalAlpha = 1.f;
+		}
+	}
+	else
+	{
+		if (0.f < _GlobalAlpha)
+		{
+			_GlobalAlpha -= 3.f * _fDeltaTime;
+			if (0.f > _GlobalAlpha)
+				_GlobalAlpha = 0.f;
+		}
+	}
+
 	// SecretVision
 	if (_UIDescs[SECRET_VISIONS].Using)
 	{
@@ -2261,18 +2381,10 @@ Vector2 BtlPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 
 void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 {
-	////////////////////////////
-	if (Input::GetKeyDown(DIK_F1))
-	{
-		static bool bActive = _UIDescs[KEYBOARD].Using;
-		bActive = !bActive;
-		SetKeyInputActive(bActive);
-	}
+	//////////////////////////
 	if (Input::GetKeyDown(DIK_F2))
 	{
-		static bool bActive = _UIDescs[TARGET_CURSOR].Using;
-		bActive = !bActive;
-		SetTargetCursorActive(bActive);
+		AccumulateRedOrb(999999u);
 	}
 	if (Input::GetKeyDown(DIK_F3))
 	{
@@ -2285,12 +2397,14 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_F5))
 	{
 		UseExGauge(1);
+
+		//SetGlobalActive(false);
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		//AccumulateTDTGauge(0.5f);
+		AccumulateTDTGauge(1.f);
 		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
 		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
@@ -2300,6 +2414,8 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//ActivateSecretVision(0);
 		//ActivateSecretVision(1);
 		//ActivateSecretVision(2);
+
+		//SetGlobalActive(true, true);
 	}
 	if (Input::GetKeyDown(DIK_F7))
 	{
@@ -2308,7 +2424,7 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		//if (2 < temp)
 		//	temp = 0;
 		//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
-		ResetRankScore();
+		//ResetRankScore();
 
 		//static float Ratio = 1.f;
 		//Ratio -= 0.1f;
@@ -2320,13 +2436,53 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	}
 	////////////////////////////
 
+	if (Input::GetKeyDown(DIK_F1))
+	{
+		static bool bActive = _UIDescs[KEYBOARD].Using;
+		bActive = !bActive;
+		SetKeyInputActive(bActive);
+	}
+
+	ZeroMemory(_KeyboardInput, KEY_INPUT_END);
+	bool IsGlobalAlpha = false;
+
+	if (Input::GetKey(DIK_Q))
+	{
+		_KeyboardInput[KEY_INPUT_ID::Q] = true;
+		IsGlobalAlpha = true;
+	}
+	if (Input::GetKey(DIK_LSHIFT))
+	{
+		_KeyboardInput[KEY_INPUT_ID::SHIFT] = true;
+		IsGlobalAlpha = true;
+	}
+	if (Input::GetKey(DIK_LCONTROL))
+	{
+		_KeyboardInput[KEY_INPUT_ID::CTRL] = true;
+		IsGlobalAlpha = true;
+	}
+	if (Input::GetMouse(DIM_L))
+	{
+		_KeyboardInput[KEY_INPUT_ID::LBUTTON] = true;
+		IsGlobalAlpha = true;
+	}
+	if (Input::GetMouse(DIM_M))
+	{
+		_KeyboardInput[KEY_INPUT_ID::MBUTTON] = true;
+		IsGlobalAlpha = true;
+	}
+	if (Input::GetMouse(DIM_R))
+	{
+		_KeyboardInput[KEY_INPUT_ID::RBUTTON] = true;
+		IsGlobalAlpha = true;
+	}
+
+	if (IsGlobalAlpha)
+		SetGlobalActive(true, _GlobalUsingForce);
+
 	if (!_UIDescs[KEYBOARD].Using)
 		return;
 
-	ZeroMemory(_KeyboardInput, KEY_INPUT_END);
-
-	if (Input::GetKey(DIK_Q))
-		_KeyboardInput[KEY_INPUT_ID::Q] = true;
 	if (Input::GetKey(DIK_W))
 		_KeyboardInput[KEY_INPUT_ID::W] = true;
 	if (Input::GetKey(DIK_E))
@@ -2349,18 +2505,8 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		_KeyboardInput[KEY_INPUT_ID::C] = true;
 	if (Input::GetKey(DIK_V))
 		_KeyboardInput[KEY_INPUT_ID::V] = true;
-	if (Input::GetKey(DIK_LSHIFT))
-		_KeyboardInput[KEY_INPUT_ID::SHIFT] = true;
-	if (Input::GetKey(DIK_LCONTROL))
-		_KeyboardInput[KEY_INPUT_ID::CTRL] = true;
 	if (Input::GetKey(DIK_SPACE))
 		_KeyboardInput[KEY_INPUT_ID::SPACE] = true;
-	if (Input::GetMouse(DIM_L))
-		_KeyboardInput[KEY_INPUT_ID::LBUTTON] = true;
-	if (Input::GetMouse(DIM_M))
-		_KeyboardInput[KEY_INPUT_ID::MBUTTON] = true;
-	if (Input::GetMouse(DIM_R))
-		_KeyboardInput[KEY_INPUT_ID::RBUTTON] = true;
 }
 
 void BtlPanel::Imgui_ModifyUI(UI_DESC_ID _ID)

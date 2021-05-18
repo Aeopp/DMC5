@@ -74,9 +74,11 @@ void Renderer::ReadySky()
 	InitInfo.bLocalVertexLocationsStorage = false;
 
 	SkysphereMesh = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Sphere.fbx", InitInfo);
-
 	SkyTexMission02Sun = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\First.dds");
 	SkyTexMission02Sunset = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\Second.dds");
+
+	SkyTexMission03 = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission03\\First.tga");
+
 	SkyNoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\smoke_01_iam.tga");
 }
 
@@ -177,6 +179,24 @@ void Renderer::ReadyRenderTargets()
 
 		Distortion->Initialize(InitInfo);
 		Distortion->DebugBufferInitialize(
+			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
+			RenderTargetDebugRenderSize);
+	}
+
+	{
+		auto& VelocityBlur = RenderTargets["VelocityBlur"] =
+			std::make_shared<RenderTarget>();
+
+		RenderTarget::Info InitInfo{};
+		InitInfo.Width = g_nWndCX;
+		InitInfo.Height = g_nWndCY;
+		InitInfo.Levels = 1;
+		InitInfo.Usages = D3DUSAGE_RENDERTARGET;
+		InitInfo.Format = D3DFMT_A16B16G16R16F;
+		InitInfo._D3DPool = D3DPOOL_DEFAULT;
+
+		VelocityBlur->Initialize(InitInfo);
+		VelocityBlur->DebugBufferInitialize(
 			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
 			RenderTargetDebugRenderSize);
 	}
@@ -499,6 +519,11 @@ HRESULT Renderer::Render()&
 		ClearDistortion();
 	}
 
+	if (bVelocityBlur)
+	{
+		ClearVelocityBlur();
+	}
+
 	//  쉐도우 패스 
 	if (bShadowMapBake)
 	{
@@ -531,6 +556,12 @@ HRESULT Renderer::Render()&
 	{
 		BlendDistortion();
 	}
+
+	if (bVelocityBlur)
+	{
+		BlendVelocityBlur();
+	}
+
 	UIRender();
 	// RenderInsulatorMetal();
 	{
@@ -646,8 +677,19 @@ void Renderer::Editor()&
 			bShadowMapBake = true;
 		}
 
-		ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 1.f,
-			"%3.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("DistortionIntencity", 
+			&DistortionIntencity, 0.f, 1.f,"%3.6f");
+
+		if (ImGui::CollapsingHeader("VelocityBlur"))
+		{
+			ImGui::SliderFloat("VelocityBlurIntencity", &VelocityBlurIntencity, 0.f, 1.f,"%3.6f");
+			ImGui::SliderFloat("BlurLengthMin", &BlurLengthMin,
+				0.f, 10.f, "%3.6f");
+			ImGui::SliderInt("VelocityBlurNumBlurSamples",
+				&VelocityBlurSamples, 0, 128);
+		}
+		
+		
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
 		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
 
@@ -657,6 +699,8 @@ void Renderer::Editor()&
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
 		ImGui::Checkbox("Distortion", &bDistortion);
+		ImGui::Checkbox("bVelocityBlur", &bVelocityBlur);
+
 		ImGui::Checkbox("AfterImage", &drawafterimage);
 		ImGui::Checkbox("PtLightScrRtTest", &bPtLightScrRtTest);
 		ImGui::Checkbox("EnvironmentRender", &bEnvironmentRender);
@@ -784,6 +828,29 @@ void Renderer::SkyDistortionStart()
 void Renderer::SkyDistortionEnd()
 {
 	SkyDistortion = false;
+}
+void Renderer::FadeOutStart(const float Time)
+{
+	_FadeEffect.T = 0.0f;
+	_FadeEffect.bEnable = true;
+	_FadeEffect.Time = Time;
+	_FadeEffect.FadeValues = {1.0f,0.f,0.f};
+};
+
+void Renderer::FadeInStart(const float Time)
+{
+	_FadeEffect.T = 0.0f;
+	_FadeEffect.bEnable = true;
+	_FadeEffect.Time = Time;
+	_FadeEffect.FadeValues = {0.0f,1.0f,1.0f};
+};
+
+void Renderer::FadeOutAfterIn(const float Time)
+{
+	_FadeEffect.bEnable = true;
+	_FadeEffect.T = 0.0f;
+	_FadeEffect.Time = Time;
+	_FadeEffect.FadeValues = {1.0f,0.0f,1.0f};
 };
 
 void Renderer::LateSceneInit()
@@ -893,10 +960,10 @@ void Renderer::RenderBegin()&
 	GraphicSystem::GetInstance()->Begin();
 	Device->GetRenderTarget(0, &BackBuffer);
 	Device->GetDepthStencilSurface(&BackBufferZBuffer);
-	// Device->Clear(0, nullptr,
-	// /*Device->Clear(0, nullptr,
-	// 	D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
-	// 	0xff00ff00, 1.0f, 0);*/
+
+	/*Device->Clear(0, nullptr,
+	 	D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
+	 	0xff00ff00, 1.0f, 0);*/
 };
 
 //   등록코드수정 
@@ -923,6 +990,12 @@ void Renderer::ClearDistortion()&
 	Device->SetRenderTarget(0u, RenderTargets["Distortion"]->GetSurface(0));
 	// Device->Clear(0u, nullptr, D3DCLEAR_TARGET, 0xffffffff, 1.0f, 0);
 	 Device->Clear(0u, nullptr, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0);
+	Device->SetRenderTarget(0u, nullptr);
+}
+void Renderer::ClearVelocityBlur()&
+{
+	Device->SetRenderTarget(0u, RenderTargets["VelocityBlur"]->GetSurface(0));
+	Device->Clear(0u, nullptr, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0);
 	Device->SetRenderTarget(0u, nullptr);
 };
 
@@ -1818,6 +1891,8 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	Device->SetRenderTarget(1u, RenderTargets["Distortion"]->GetSurface(0));
+	Device->SetRenderTarget(2u, RenderTargets["VelocityBlur"]->GetSurface(0));
+
 	auto& _Group = RenderEntitys[RenderProperty::Order::AlphaBlendEffect];
 	
 	using AsType = std::pair<const std::string*,ENGINE::Renderer::RenderEntityType*>;
@@ -1937,6 +2012,8 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
 
 	Device->SetRenderTarget(1u, nullptr);
+	Device->SetRenderTarget(2u, nullptr);
+
 	return S_OK;
 };
 
@@ -2034,6 +2111,8 @@ HRESULT Renderer::UIRenderAfterPostProcessing()&
 		Fx->End();
 	}
 
+
+
 	ZSortlist.clear();
 
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
@@ -2071,6 +2150,26 @@ HRESULT Renderer::RendererCollider()&
 	}
 
 	return S_OK;
+};
+
+HRESULT Renderer::Update(const float DeltaTime)&
+{
+	if (_FadeEffect.bEnable)
+	{
+		_FadeEffect.T += DeltaTime;
+
+		if (_FadeEffect.T > _FadeEffect.Time)
+		{
+			_FadeEffect.bEnable = false;
+		}
+	}
+
+	return S_OK;
+};
+
+float Renderer::FadeEffect::GetLerp()const&
+{
+	return T / Time;
 };
 
 HRESULT Renderer::LightFrustumRender()&
@@ -2578,6 +2677,7 @@ HRESULT Renderer::Bloom()
 			Device->SetTexture(0,
 				RenderTargets[
 					"dsampletargets" + std::to_string(i)]->GetTexture());
+
 			_Quad->Render(Device, 1.f, 1.f, hdreffects);
 
 			// 세로 방향
@@ -2821,10 +2921,10 @@ HRESULT Renderer::RenderUV()
 HRESULT Renderer::BlendDistortion()
 {
 	DWORD zwrite, zenable, alphablendenable, srcblend, destblend;
-	Device->GetRenderState(D3DRS_ZWRITEENABLE,&zwrite);
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &zwrite);
 	Device->GetRenderState(D3DRS_ZENABLE, &zenable);
 	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &alphablendenable);
-	Device->GetRenderState(D3DRS_SRCBLEND,&srcblend);
+	Device->GetRenderState(D3DRS_SRCBLEND, &srcblend);
 	Device->GetRenderState(D3DRS_DESTBLEND, &destblend);
 
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
@@ -2834,7 +2934,7 @@ HRESULT Renderer::BlendDistortion()
 	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	Vector4 PixelSize{ 0.f,0.f,0.f,1.f };
-	
+
 	auto& DistortionRT = RenderTargets["SceneTarget"];
 
 	PixelSize.x = 1.0f / (float)DistortionRT->GetInfo().Width;
@@ -2847,9 +2947,9 @@ HRESULT Renderer::BlendDistortion()
 	Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
 	Fx->SetFloat("Intencity", DistortionIntencity);
 
-	Fx->Begin(nullptr,0);
+	Fx->Begin(nullptr, 0);
 	Fx->BeginPass(0);
-	Fx->SetTexture("SceneMap",RenderTargets["SceneTarget"]->GetTexture());
+	Fx->SetTexture("SceneMap", RenderTargets["SceneTarget"]->GetTexture());
 	// Fx->SetTexture("DistortionMap", DistortionTex->GetTexture());
 	Fx->SetTexture("DistortionMap", RenderTargets["Distortion"]->GetTexture());
 	_Quad->Render(Device, 1.f, 1.f, Fx);
@@ -2864,6 +2964,57 @@ HRESULT Renderer::BlendDistortion()
 
 	return S_OK;
 };
+
+HRESULT Renderer::BlendVelocityBlur()
+{
+	DWORD zwrite, zenable, alphablendenable, srcblend, destblend;
+	Device->GetRenderState(D3DRS_ZWRITEENABLE, &zwrite);
+	Device->GetRenderState(D3DRS_ZENABLE, &zenable);
+	Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &alphablendenable);
+	Device->GetRenderState(D3DRS_SRCBLEND, &srcblend);
+	Device->GetRenderState(D3DRS_DESTBLEND, &destblend);
+
+	{
+		Device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+		Device->SetRenderState(D3DRS_ZENABLE, FALSE);
+		Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+		Vector4 PixelSize{ 0.f,0.f,0.f,1.f };
+
+		auto& SceneTargetRT = RenderTargets["SceneTarget"];
+
+		PixelSize.x = 1.0f / (float)SceneTargetRT->GetInfo().Width;
+		PixelSize.y = -1.0f / (float)SceneTargetRT->GetInfo().Height;
+
+		Device->SetRenderTarget(0u, SceneTargetRT->GetSurface(0));
+		auto Fx = Shaders["VelocityBlur"]->GetEffect();
+		Fx->SetVector("PixelSize", &PixelSize);
+
+		Fx->SetFloat("VelocityBlurIntencity", VelocityBlurIntencity);
+		Fx->SetFloat("BlurLengthMin", BlurLengthMin);
+		
+		
+		Fx->Begin(nullptr, 0);
+		Fx->BeginPass(0);
+		Fx->SetTexture("SceneMap", RenderTargets["SceneTarget"]->GetTexture());
+		Fx->SetTexture("VelocityBlurMap", RenderTargets["VelocityBlur"]->GetTexture());
+		_Quad->Render(Device, 1.f, 1.f, Fx);
+		Fx->EndPass();
+		Fx->End();
+	}
+
+
+	Device->SetRenderState(D3DRS_ZWRITEENABLE, zwrite);
+	Device->SetRenderState(D3DRS_ZENABLE, zenable);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, alphablendenable);
+	Device->SetRenderState(D3DRS_SRCBLEND, srcblend);
+	Device->SetRenderState(D3DRS_DESTBLEND, destblend);
+
+	return S_OK;
+}
+;
 
 inline DWORD F2DW(FLOAT f)
 {

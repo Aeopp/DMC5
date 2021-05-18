@@ -17,9 +17,12 @@
 #include "FadeOut.h"
 #include "CollObject.h"
 #include "BreakableObject.h"
-
+#include "HotelBrokenFloor.h"
+#include "HotelAnimationWall.h"
+#include "SoundSystem.h"
 #include <iostream>
 #include <fstream>
+#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S02::Hotel_S02()
@@ -59,11 +62,11 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	//}
 	
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -84,6 +87,7 @@ HRESULT Hotel_S02::LoadScene()
 	LoadCollObjects("../../Data/Stage2_Object.json");
 	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
+	AddGameObject<HotelBrokenFloor>();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(2);
 
@@ -106,12 +110,10 @@ HRESULT Hotel_S02::LoadScene()
 	AddGameObject<NhDoor>();
 
 	// 
-	_MakaiButterflyVec.reserve(5);
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
-	_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
+	size_t ButterflyCnt = 5u;
+	_MakaiButterflyVec.reserve(ButterflyCnt);
+	for (size_t i = 0u ; i < ButterflyCnt; ++i)
+		_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
 
 #pragma endregion
 
@@ -119,7 +121,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -157,7 +159,6 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 	// 테스트용 ////////////////////////
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
 	////////////////////////////////////
@@ -388,12 +389,13 @@ void Hotel_S02::TriggerWallSmash()
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
+		auto _AnimationWall = AddGameObject<HotelAnimationWall>();
 		const std::function<void()> _CallBack =
-			[this/*변수 캡쳐*/]()
+			[this/*변수 캡쳐*/, _AnimationWall]()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
-
-
+			_AnimationWall.lock()->ContinueAnimation();
+			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			//
 			for (auto& Element : _MakaiButterflyVec)
 				Element.lock()->SetActive(false);
@@ -531,15 +533,23 @@ void Hotel_S02::TriggerNextScene()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[_FadeOut = AddGameObject<FadeOut>().lock()]()
+			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
 		{
-			// 씬전환 !!
+			auto SpPanel = _BtlPanel.lock();
+			if (SpPanel)
+			{
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
+			}
+
 			if (_FadeOut)
 			{
 				_FadeOut->PlayStart(1u,
-					[]() { 			
-						Renderer::GetInstance()->CurDirLight = nullptr; 
-						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));});
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
+					});
 			}
 		};
 
@@ -558,6 +568,11 @@ void Hotel_S02::TriggerNextScene()
 			ImmediatelyEnable,
 			TargetTag);
 	}
+}
+
+void Hotel_S02::BgmPlay()
+{
+	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 }
 
 void Hotel_S02::LateInit()
@@ -608,6 +623,6 @@ void Hotel_S02::LateInit()
 	}
 
 	Renderer::GetInstance()->LateSceneInit();
-
+	BgmPlay();
 	_LateInit = true;
 }

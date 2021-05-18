@@ -2,6 +2,7 @@
 #define __M01_HOTEL_S01_H__
 #include "Scene.h"
 
+class Trigger;
 class Hotel_S01 : public Scene
 {
 private:
@@ -25,12 +26,16 @@ public:
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:	
 	void RenderDataSetUp(const bool bTest);
+	void BgmPlay();
 	void LoadObjects(const std::filesystem::path& path, const bool _bAni = false);
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
 
 	void TriggerSetUp();
-	void Trigger1st();
+	//  플레이어가 광장 전광판을 처음 마주친 시점 .
+	void TriggerElectricBoard(const std::weak_ptr<Trigger>&_BattleTrigger);
+	//  광장 전광판 도발 연출 이후에 전투 시작 
+	std::weak_ptr<Trigger> TriggerElectricBoardBattle();
 	void Trigger2nd();
 	void Trigger3rd();
 	void Trigger4st();

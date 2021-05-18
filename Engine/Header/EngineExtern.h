@@ -24,6 +24,7 @@ extern ENGINE_DLL bool					g_bOptRender;
 extern ENGINE_DLL bool					g_bFrameLimit;
 extern ENGINE_DLL bool                  g_bFixedDeltaTime;
 extern ENGINE_DLL bool					g_bParticleEditor;
+extern ENGINE_DLL bool					g_bSoundEdit;
 
 
 extern ENGINE_DLL LPDIRECT3D9			g_pSDK;

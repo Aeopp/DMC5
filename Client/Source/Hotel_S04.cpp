@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "MapObject.h"
 #include "Monster.h"
+#include "SoundSystem.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -50,14 +51,15 @@ HRESULT Hotel_S04::LoadScene()
 		SpCamera)
 	{
 		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-4.327,
-			1.449,
-			36.596, 
+			-4.327f,
+			1.449f,
+			36.596f, 
 			});
 		
 	}
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -72,6 +74,7 @@ HRESULT Hotel_S04::LoadScene()
 #pragma region Map & Objects
 
 	LoadObjects("../../Data/Stage4_Map.json");
+
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(4);
 
@@ -97,7 +100,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
 #pragma endregion
 
@@ -136,7 +139,6 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		// TestScene으로 넘어감
-		Renderer::GetInstance()->CurDirLight = nullptr;
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
 	}
 	////////////////////////////////////
@@ -210,6 +212,11 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 	}
 };
 
+void Hotel_S04::BgmPlay()
+{
+	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+};
+
 void Hotel_S04::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
@@ -244,9 +251,10 @@ void Hotel_S04::TriggerSetUp()
 void Hotel_S04::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
-
-	_LateInit = true;
 	Renderer::GetInstance()->LateSceneInit();
 	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
 	Renderer::GetInstance()->SkyDistortionStart();
+
+	_LateInit = true;
+	BgmPlay();
 }

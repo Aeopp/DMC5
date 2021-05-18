@@ -7,7 +7,7 @@ uniform float AlphaFactor;
 uniform float ColorIntencity;
 uniform float Time;
 uniform float DistortionIntencity;
-
+uniform float BlurIntencity;
 uniform float UVYStartConstant; 
 uniform float UVYScrollSpeed;
 
@@ -68,22 +68,28 @@ sampler Grad = sampler_state
 
 
 void VsMain(in out float4 Position : POSITION0,
+            in float4 Normal : NORMAL0,
             in out float2 UV0 : TEXCOORD0,
             in out float2 UV1 : TEXCOORD1,
 
-            out float4 ClipPosition : TEXCOORD2 )
+            out float4 ClipPosition : TEXCOORD2  ,
+            out float4 LNormal : TEXCOORD3)
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
     UV0.y = UVYStartConstant;
+    LNormal = Normal;
+    
 };
 
 void PsMain(out float4 Color : COLOR0,
 out float4 Color1 : COLOR1,
+out float4 Color2 : COLOR2,
             in float2 UV0 : TEXCOORD0,
             in float2 UV1 : TEXCOORD1,
 
-            in float4 ClipPosition : TEXCOORD2
+            in float4 ClipPosition : TEXCOORD2 ,
+ in float4 LNormal : TEXCOORD3
 )
 {
     UV0.y += Time * UVYScrollSpeed;
@@ -132,6 +138,10 @@ out float4 Color1 : COLOR1,
     float scenedistance = length(scenepos.xyz);
     Color.a = Color.a * saturate((scenedistance - particledistance) * SoftParticleDepthScale);
     // 소프트 파티클 끝
+    
+    Color2.xy = LNormal.xy * BlurIntencity;
+    Color2.z = 1.f;
+    Color2.a = 1.f;
 };
 
 technique Default

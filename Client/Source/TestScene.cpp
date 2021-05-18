@@ -9,10 +9,6 @@
 #include "Camera.h"
 #include "Nero.h"
 #include "RedQueen.h"
-#include "WingSword1st.h"
-#include "WingSword2nd.h"
-#include "WingSword3rd.h"
-#include "WingSword4th.h"
 #include "Em100.h"
 #include "Em0000.h"
 #include "Em0000_Weapon.h"
@@ -50,7 +46,7 @@
 #include "MakaiButterfly.h"
 #include "Smoke.h"
 #include "NhDoor.h"
-#include "SecretVisionMagicCircle.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,11 +83,11 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
+	AddGameObject<IceAge>();
+	AddGameObject<Camera>();
 
-	//AddGameObject<Camera>();
-	
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -133,7 +129,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
-	//AddGameObject<IceAge>();
+
 	//AddGameObject<CbsTrail>();
 	//AddGameObject<ElectricOccur>();
 	//AddGameObject<BlitzAttack>();
@@ -141,8 +137,13 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
-	//AddGameObject<MakaiButterfly>();
-	//AddGameObject<SecretVisionMagicCircle>();
+
+	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
+	//	pSmoke)
+	//{
+	//	pSmoke->SetLoop(true);
+	//	pSmoke->PlayStart();
+	//}
 
 	//// Stage2 안개
 	//if (auto pSmoke = AddGameObject<Smoke>().lock();
@@ -185,6 +186,7 @@ HRESULT TestScene::LoadScene()
 #pragma region UI
 
 	AddGameObject<BtlPanel>();
+	//AddGameObject<ShopPanel>();
 
 #pragma endregion
 
@@ -196,9 +198,9 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 13, Until Dooms Day",
+		pFont->SetText("D 10, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
-			Vector2(245.f, 130.f),
+			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
 			Vector3(1.f, 1.f, 1.f),
 			true);
@@ -231,7 +233,7 @@ HRESULT TestScene::Start()
 {
 	Scene::Start();
 	return S_OK;
-}
+};
 
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
@@ -320,8 +322,8 @@ void TestScene::RenderDataSetUp()
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	// _Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	 _Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
+	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 	_Renderer->ao = 0.0005f;

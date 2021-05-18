@@ -57,9 +57,34 @@ void PsMain(
     color.rgb *= exposure_corr;
 };
 
+void VsBlackOut(
+    in out float4 pos : POSITION,
+    in out float2 tex : TEXCOORD0)
+{
+    pos.xy -= PixelSize.xy;
+}
+
+void PsBlackOut(
+    in float2 tex : TEXCOORD0,
+    out float4 color : COLOR0)
+{
+    color = float4(0.0f, 0.0f, 0.0f,Time);
+    //color = tex2D(Albm, tex);
+    ////  color.rgb *= Intencity;
+
+    //float2 noiseuv = (tex * Noisewrap) + (Time * Timecorr);
+    //float4 NoiseSample = tex2D(Noise, noiseuv);
+
+    //color1 = NoiseSample;
+    //// color1.xy *= NoiseIntencity;
+    //color.rgb *= DistortionColor;
+    //color.rgb *= exposure_corr;
+};
+
+
 technique Default
 {
-    pass p0
+    pass FadeOut
     {
         alphablendenable = true;
         srcblend = srcalpha;
@@ -69,5 +94,17 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain();
+    }
+
+    pass BlackOut
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsBlackOut();
+        pixelshader = compile ps_3_0 PsBlackOut();
     }
 };

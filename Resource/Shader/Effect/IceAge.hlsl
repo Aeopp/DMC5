@@ -4,8 +4,10 @@ matrix ViewProjection;
 uniform float exposure_corr;
 
 uniform float  DistortionIntencity;
-uniform float  ColorIntencity;
+uniform float ColorIntencity;
 uniform float  EmissiveIntencity;
+uniform float VelocityBlurIntencity = 1.f;
+uniform float VelocityBlurAlpha = 1.f;
 
 uniform matrix InverseProjection;
 uniform float  SoftParticleDepthScale;
@@ -80,14 +82,17 @@ sampler Noise = sampler_state
 };
 
 void VsMain(in out float4 Position : POSITION0,
+            in float4 Normal : NORMAL0,
             in out float2 UV0 : TEXCOORD0,
             out float4 ClipPosition : TEXCOORD1,
             out float2 UV2 : TEXCOORD2,
             out float2 UV3 : TEXCOORD3,
-            out float2 UV4 : TEXCOORD4)
+            out float2 UV4 : TEXCOORD4 ,
+            out float4 LNormal : TEXCOORD5 )
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
+    LNormal = Normal;
     
     UV2 = (UV0 * NoiseScale.x) + NoiseScrollSpeed.x;
     UV3 = (UV0 * NoiseScale.y) + NoiseScrollSpeed.y;
@@ -96,11 +101,13 @@ void VsMain(in out float4 Position : POSITION0,
 
 void PsMain(out float4 Color  : COLOR0,
             out float4 Color1 : COLOR1,
+            out float4 Color2 : COLOR2,
             in float2 UV0 : TEXCOORD0,
             in float4 ClipPosition : TEXCOORD1,
             in float2 UV2 : TEXCOORD2,
             in float2 UV3 : TEXCOORD3,
-            in float2 UV4 : TEXCOORD4
+            in float2 UV4 : TEXCOORD4 ,
+            in float4 LNormal : TEXCOORD5
 )
 {
     // 노이즈 시작 
@@ -160,6 +167,13 @@ void PsMain(out float4 Color  : COLOR0,
     
     Color.a *= AlphaFactor;
     // ....... 
+    
+    // 속도 블러 테스트
+    Color2.xy = LNormal.xy * VelocityBlurIntencity;
+    Color2.z = 1.f;
+    Color2.w = VelocityBlurAlpha;
+    // Color2 = float4(1(속도), 1(속도), 1(의미없음), 1 <-1로하길 바람);
+    //
 };
 
 technique Default
