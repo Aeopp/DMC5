@@ -206,6 +206,7 @@
     <ClInclude Include="..\Header\LoadingScene.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
     <ClInclude Include="..\Header\LogoScene.h" />
+    <ClInclude Include="..\Header\LongBarrel.h" />
     <ClInclude Include="..\Header\MakaiButterfly.h" />
     <ClInclude Include="..\Header\MapAniObject.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
@@ -274,6 +275,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\BiAttack.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\BreakableObject.cpp" />
     <ClCompile Include="..\Source\BrokenBookShelf.cpp" />
@@ -320,11 +322,13 @@
     <ClCompile Include="..\Source\LoadingScene.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp" />
+    <ClCompile Include="..\Source\LongBarrel.cpp" />
     <ClCompile Include="..\Source\MakaiButterfly.cpp" />
     <ClCompile Include="..\Source\MapAniObject.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
+    <ClCompile Include="..\Source\Satellite.cpp" />
     <ClCompile Include="..\Source\SecretVision.cpp" />
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp" />
     <ClCompile Include="..\Source\ShopPanel.cpp" />

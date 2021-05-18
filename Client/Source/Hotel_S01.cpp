@@ -19,6 +19,11 @@
 #include "CollObject.h"
 #include "BreakableObject.h"
 #include "SoundSystem.h"
+#include "CbsMidTrail.h"
+#include "BlitzAttack.h"
+#include "BiAttack.h"
+#include "Satellite.h"
+#include "LongBarrel.h"
 
 #include <iostream>
 #include <fstream>
@@ -62,6 +67,12 @@ HRESULT Hotel_S01::LoadScene()
 #pragma region Player & Camera
 
 	 // AddGameObject<Camera>();
+
+	AddGameObject<CbsMidTrail>();
+	AddGameObject<LongBarrel>();
+	AddGameObject<Satellite>();
+	AddGameObject<BlitzAttack>();
+	AddGameObject<BiAttack>();
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
