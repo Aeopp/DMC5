@@ -124,6 +124,9 @@ public:
 
 	static inline Vector3 RandomEuler(const float PiScale);
 
+	static inline Vector3 RandomScale(const float Scale);
+
+
 	static inline float BezierCurve(const float Start,const float Cp0, const float End, const float t);
 
 	static inline Vector3 BezierCurve(const Vector3& Start,const Vector3& End, const float t);
@@ -215,6 +218,12 @@ inline void FMath::DebugPrintMatrix(const Matrix& _Matrix)
 	}
 	std::cout << std::endl;
 }
+
+inline Vector3 FMath::RandomScale(const float Scale)
+{
+	const float _Scale = FMath::Random(0.f, Scale);
+	return { _Scale ,_Scale ,_Scale };
+};
 
 inline Vector3 FMath::RandomVector(const float Scale)
 {

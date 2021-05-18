@@ -260,7 +260,7 @@ void PreLoader::IceAgeParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 1000;
+	const uint64 PoolSize = 10000u;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("Ice", std::move(_PushParticle), PoolSize,false);
@@ -623,7 +623,7 @@ void PreLoader::ElectricVoertexParticleLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 1000ul;
+	const uint64 PoolSize = 3000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("ElectricVortexParticle",
@@ -647,58 +647,26 @@ void PreLoader::ElectricVoertexParticleLoad()
 			Vector3 Cp1{};
 			Vector3 End{};
 
-			const uint32 TargetIdx = (Idx % 3);
 
-			/*if (TargetIdx == 0)
-			{
+			
 				Cp0 = StartLocation + FMath::RandomVector(FMath::Random(300.f, 500.f));
 				Cp1 = Cp0 + FMath::RandomVector(FMath::Random(300.f, 500.f));
 				End = Cp1 + FMath::RandomVector(FMath::Random(300.f, 500.f));
-			}
-			else if (TargetIdx == 1)
-			{
-				Cp0 = StartLocation + FMath::RandomVector(FMath::Random(11.f, 22.f));
-				Cp1 = Cp0 + FMath::RandomVector(FMath::Random(11.f, 22.f));
-				End = Cp1 + FMath::RandomVector(FMath::Random(11.f, 22.f));
-			}
-			else
-			{
-				Cp0 = StartLocation + Dir * FMath::Random(1333.f, 2333.f);
-				Cp1 = Cp0 + Dir * FMath::Random(1333.f, 2333.f);
-				End = Cp1 + Dir * FMath::Random(1333.f, 2333.f);
-			}*/
-
-			if (TargetIdx == 0)
-			{
-				Cp0 = StartLocation + FMath::RandomVector(FMath::Random(0.f, 0.f));
-				Cp1 = Cp0 + FMath::RandomVector(FMath::Random(0.f, 0.f));
-				End = Cp1 + FMath::RandomVector(FMath::Random(0.f, 0.f));
-			}
-			else if (TargetIdx == 1)
-			{
-				Cp0 = StartLocation + FMath::RandomVector(FMath::Random(0.f, 0.f));
-				Cp1 = Cp0 + FMath::RandomVector(FMath::Random(0.f, 0.f));
-				End = Cp1 + FMath::RandomVector(FMath::Random(0.f, 0.f));
-			}
-			else
-			{
-				Cp0 = StartLocation + Dir * FMath::Random(0.f, 0.f);
-				Cp1 = Cp0 + Dir * FMath::Random(0.f, 0.f);
-				End = Cp1 + Dir * FMath::Random(0.f, 0.f);
-			}
+			
+	
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp0 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			const float RScale = FMath::Random(0.0022f, 0.006f) * GScale;
+			const float RScale = FMath::Random(0.0066f, 0.01f) * GScale;
 
 			ParticleInstance::Electric _ElectricValue{};
 
 			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
 			_ElectricValue.Color = FMath::Lerp(Vector3{ 120.f / 255.f,50.f / 255.f, 201.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
-			const float LifeTime = FMath::Random(0.1f, 3.f);
+			const float LifeTime = FMath::Random(0.1f, 0.6f);
 
 			_ParticleInstance.PreSetup({ StartLocation ,Cp0,Cp1,End },
 				{ StartRot,RotCp0,RotCp1,EndRot },

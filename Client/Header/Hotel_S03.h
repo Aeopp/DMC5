@@ -29,6 +29,7 @@ private:
 private:
 	void RenderDataSetUp(const  bool bTest);
 	void TriggerSetUp();
+	void TriggerUpGround();
 	void TriggerNextScene();
 	void LateInit();
 };

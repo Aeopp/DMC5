@@ -21,6 +21,14 @@ HRESULT             InitInstance(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 #pragma endregion
 
+
+// 윈도우 or 풀 스크린
+constexpr bool bWindowed = true;
+
+// 풀스크린 일때는 기본적으로 작동 true 일시 창모드 일때도 보더리스로 작동 !! 
+constexpr bool bBorderless = false;
+
+
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdParam, int nCmdShow)
 {
 	srand((unsigned int)time(NULL));
@@ -53,7 +61,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 	tMessage.message = WM_NULL;
 
 	Application* pApplication = new Application;
-	pApplication->ReadyApplication(true,false);
+
+	constexpr bool bMultiSample = false;
+	pApplication->ReadyApplication(bWindowed, bMultiSample);
 
 	static constexpr float TargetDelta = 1.0f / 60.f;
 	std::chrono::time_point<std::chrono::high_resolution_clock> PrevTime;
@@ -120,7 +130,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CLIENT));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+
+	if (bWindowed == false)
+	{
+		wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW);
+	}
+	else
+	{
+		wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	}
+	
+
 	wcex.lpszMenuName = nullptr;
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -147,18 +167,61 @@ HRESULT InitInstance(HINSTANCE hInstance, int nCmdShow)
 	AdjustWindowRect(&tWndRect, WS_OVERLAPPEDWINDOW, FALSE);
 
 	//윈도우 생성.
-	g_hWnd = CreateWindow(
-		szWindowClass,
-		szTitle,
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		0,
-		tWndRect.right - tWndRect.left,
-		tWndRect.bottom - tWndRect.top,
-		nullptr,
-		nullptr,
-		hInstance,
-		nullptr);
+	if (bWindowed == true)
+	{
+		// 창모드 .. 
+		if (bBorderless == false)
+		{
+			g_hWnd = CreateWindow(
+				szWindowClass,
+				szTitle,
+				WS_OVERLAPPEDWINDOW,
+				CW_USEDEFAULT,
+				0,
+				tWndRect.right - tWndRect.left,
+				tWndRect.bottom - tWndRect.top,
+				nullptr,
+				nullptr,
+				hInstance,
+				nullptr);
+		}
+		else
+		{
+
+			g_hWnd = CreateWindow(
+				szWindowClass,
+				szTitle,
+				WS_EX_TOPMOST |
+				WS_POPUP,
+				0,
+				0,
+				g_nWndCX,
+				g_nWndCY,
+				NULL,
+				NULL,
+				hInstance,
+				NULL);
+		}
+	}
+	else
+	{
+		// 전체화면 ...
+		
+		g_hWnd = CreateWindow(
+			szWindowClass,
+			szTitle,
+			WS_EX_TOPMOST |
+			WS_POPUP,
+			0,
+			0,
+			g_nWndCX,
+			g_nWndCY,
+			NULL,
+			NULL,
+			hInstance,
+			NULL);
+	};
+
 
 	if (INVALID_HANDLE_VALUE == g_hWnd)
 	{
