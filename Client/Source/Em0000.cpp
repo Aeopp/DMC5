@@ -970,7 +970,7 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	if ((m_BattleInfo.iHp -= _BattleInfo.iAttack) >= 0.f)
+	if ((m_BattleInfo.iHp > _BattleInfo.iAttack))
 		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;

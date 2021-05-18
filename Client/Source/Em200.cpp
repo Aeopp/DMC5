@@ -1221,7 +1221,7 @@ void Em200::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em200::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	if ((m_BattleInfo.iHp -= _BattleInfo.iAttack) >= 0.f)
+	if ((m_BattleInfo.iHp > _BattleInfo.iAttack))
 		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;

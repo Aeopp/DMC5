@@ -623,6 +623,7 @@ void Em100::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Slam_Damage_fall_loop", true, {}, 1.f, 20.f, true);
 
+			m_pCollider.lock()->SetTrigger(true);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_BUSTER_STRIKE_COMMON
 				&& m_pPlayer.lock()->Get_PlayingTime() >= 0.4f)
 			{
@@ -635,6 +636,7 @@ void Em100::State_Change(const float _fDeltaTime)
 				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
 
 				m_pCollider.lock()->SetRigid(true);
+				m_pCollider.lock()->SetTrigger(false);
 			}
 		}
 		break;
@@ -1276,7 +1278,7 @@ void Em100::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em100::Buster(BT_INFO _BattleInfo, void* pArg)
 {
-	if((m_BattleInfo.iHp -= _BattleInfo.iAttack) >=0.f)
+	if ((m_BattleInfo.iHp > _BattleInfo.iAttack))
 		m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;
