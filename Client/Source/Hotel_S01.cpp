@@ -112,7 +112,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Effect
 
-	// Stage2 길막
+	// Stage1 길막
 	m_vecQliphothBlock.reserve(7);
 
 	// 0: StartPoint 
@@ -121,7 +121,8 @@ HRESULT Hotel_S01::LoadScene()
 	{
 		ptr.lock()->SetScale(0.016f);
 		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-5.7f, 0.286f, -5.05f));
+		//ptr.lock()->SetPosition(Vector3(-5.7f, 0.286f, -5.05f));
+		ptr.lock()->SetPosition(Vector3(-10.2f, 0.286f, -5.05f));
 		ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}

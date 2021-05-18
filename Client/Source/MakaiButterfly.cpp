@@ -384,7 +384,7 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 				_SVMC.lock()->SetActive(true);
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
 				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
-
+				
 				//
 				Reset();
 

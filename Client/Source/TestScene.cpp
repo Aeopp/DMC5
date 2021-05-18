@@ -84,11 +84,11 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<IceAge>();
-	AddGameObject<Camera>();
 
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	//AddGameObject<Camera>();
+
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -107,7 +107,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -130,7 +130,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<CircleWave>();
 	//AddGameObject<AirHike>();
 	//AddGameObject<FireCircle>();
-
+	//AddGameObject<IceAge>();
 	//AddGameObject<CbsTrail>();
 	//AddGameObject<ElectricOccur>();
 	//AddGameObject<BlitzAttack>();
@@ -138,6 +138,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
+	//AddGameObject<MakaiButterfly>();
 	
 	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
 	//	pSmoke)
