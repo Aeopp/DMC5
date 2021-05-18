@@ -21,7 +21,13 @@ HRESULT             InitInstance(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 #pragma endregion
 
+
+// 윈도우 or 풀 스크린
 constexpr bool bWindowed = true;
+
+// 풀스크린 일때는 기본적으로 작동 true 일시 창모드 일때도 보더리스로 작동 !! 
+constexpr bool bBorderless = false;
+
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdParam, int nCmdShow)
 {
@@ -131,7 +137,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	}
 	else
 	{
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+		wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	}
 	
 
@@ -164,26 +170,47 @@ HRESULT InitInstance(HINSTANCE hInstance, int nCmdShow)
 	if (bWindowed == true)
 	{
 		// 창모드 .. 
-		g_hWnd = CreateWindow(
-			szWindowClass,
-			szTitle,
-			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,
-			0,
-			tWndRect.right - tWndRect.left,
-			tWndRect.bottom - tWndRect.top,
-			nullptr,
-			nullptr,
-			hInstance,
-			nullptr);
+		if (bBorderless == false)
+		{
+			g_hWnd = CreateWindow(
+				szWindowClass,
+				szTitle,
+				WS_OVERLAPPEDWINDOW,
+				CW_USEDEFAULT,
+				0,
+				tWndRect.right - tWndRect.left,
+				tWndRect.bottom - tWndRect.top,
+				nullptr,
+				nullptr,
+				hInstance,
+				nullptr);
+		}
+		else
+		{
+
+			g_hWnd = CreateWindow(
+				szWindowClass,
+				szTitle,
+				WS_EX_TOPMOST |
+				WS_POPUP,
+				0,
+				0,
+				g_nWndCX,
+				g_nWndCY,
+				NULL,
+				NULL,
+				hInstance,
+				NULL);
+		}
 	}
 	else
 	{
 		// 전체화면 ...
+		
 		g_hWnd = CreateWindow(
 			szWindowClass,
 			szTitle,
-			WS_EX_TOPMOST | 
+			WS_EX_TOPMOST |
 			WS_POPUP,
 			0,
 			0,
