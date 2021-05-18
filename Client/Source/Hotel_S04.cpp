@@ -214,7 +214,7 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 
 void Hotel_S04::BgmPlay()
 {
-	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 };
 
 void Hotel_S04::RenderDataSetUp(const bool bTest)

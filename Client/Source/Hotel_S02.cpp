@@ -572,7 +572,7 @@ void Hotel_S02::TriggerNextScene()
 
 void Hotel_S02::BgmPlay()
 {
-	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 }
 
 void Hotel_S02::LateInit()

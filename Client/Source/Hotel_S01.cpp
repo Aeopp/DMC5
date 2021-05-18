@@ -227,7 +227,7 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
-	if (Input::GetKeyDown(DIK_UP))
+	/*if (Input::GetKeyDown(DIK_UP))
 	{
 		SoundSystem::GetInstance()->Play("_2", 1.f, true, false);
 	}
@@ -242,7 +242,7 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_RIGHT))
 	{
 		SoundSystem::GetInstance()->RandSoundKeyPlay("Rs", { 1u,3u }, 1.f, true);
-	}
+	}*/
 	////////////////////////////////////
 
 
@@ -500,7 +500,7 @@ void Hotel_S01::RenderDataSetUp(const bool bTest)
 
 void Hotel_S01::BgmPlay()
 {
-	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 }
 
 void Hotel_S01::TriggerSetUp()
