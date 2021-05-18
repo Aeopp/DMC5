@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "TimeSystem.h"
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -63,7 +64,7 @@ HRESULT Hotel_S01::LoadScene()
 
 	// AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -78,10 +79,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage1_Map.json");
-	LoadObjects("../../Data/Stage1_AniObject.json", true);
-	LoadCollObjects("../../Data/Stage1_Object.json");
-	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
+	LoadObjects("../../Data/Test.json");
+	//LoadObjects("../../Data/Stage1_AniObject.json", true);
+	//LoadCollObjects("../../Data/Stage1_Object.json");
+	//LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -524,11 +525,15 @@ void Hotel_S01::TriggerElectricBoard(
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[_BattleTrigger]()
+			[_BattleTrigger,this]()
 		{
-			
+			vector<Vector3> _LostTimes;
+			_LostTimes.emplace_back(Vector3{ 3.f,1.f,0.5f });
+			TimeSystem::GetInstance()->LostTime(_LostTimes);
+			_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE1_WAVE1, Vector3(0.338f, 1.037f, 0.524f), 3.f);
+			_MainCamera.lock()->Set_Trigger(_BattleTrigger);
 			// 여기서 카메라 연출 시작 ....
-
+			
 			// .............
 
 			// 카메라는 연출 할만큼 하고 웨이브 시작 타이밍에
@@ -601,8 +606,8 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
-
 			// 여기서 카메라 연출 하세요 .
+			_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
 
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
@@ -695,7 +700,7 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 			//... 여기서 로직 처리하세요 . 
 
 			_SecondTrigger->TriggerEnable();
-
+			
 		};
 
 		_StartTrigger->EventRegist(

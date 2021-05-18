@@ -11982,6 +11982,7 @@ HRESULT Hit_Air_Away::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Hit_Air_Away", false, Nero::ANI_HIT_AIR_AWAY);
 	m_pNero.lock()->SetAddForce({ 0.f,30.f,0.f });
+	m_pNero.lock()->SetGravity(true);
 	return S_OK;
 }
 

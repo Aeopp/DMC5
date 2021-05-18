@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 class Nero;
+class Trigger;
 class MainCamera :
     public GameObject
 {
@@ -27,6 +28,7 @@ public:
 public:
     float Get_Angle(float _fAddAngle = 0.f) { return m_fAngle + _fAddAngle; }
 public:
+    void Set_Trigger(std::weak_ptr<Trigger> _Trigger) { m_pTrigger = _Trigger; }
     void Set_PlayerCamMode(UINT _ePlayerCamMode);
     void Set_At_Transform(std::weak_ptr<Transform> _pTransform, UINT _eAtType);
     void Set_TriggerCam(UINT _eTriggerCamMode,const Vector3& _vTriggerPos,const float& _fTriggerTime);
@@ -51,6 +53,7 @@ private:
 private:
     std::weak_ptr<Transform>        m_pAtTranform;
     std::weak_ptr<Nero>             m_pNero;
+    std::weak_ptr<Trigger>          m_pTrigger;
 
     UINT                            m_eAtType = AT_PLAYER;
     UINT                            m_ePlayerCamMode = CAM_MODE_BASIC;

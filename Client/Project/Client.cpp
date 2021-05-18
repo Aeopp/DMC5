@@ -26,7 +26,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 constexpr bool bWindowed = true;
 constexpr bool bMultiSample = false;
 // 풀스크린 일때는 기본적으로 작동 true 일시 창모드 일때도 보더리스로 작동 !! 
-constexpr bool bBorderless = true;
+constexpr bool bBorderless = false;
 
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdParam, int nCmdShow)

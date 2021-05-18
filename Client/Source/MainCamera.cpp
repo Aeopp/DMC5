@@ -3,6 +3,7 @@
 #include "Nero.h"
 #include "TimeSystem.h"
 #include "NeroFSM.h"
+#include "Trigger.h"
 MainCamera::MainCamera()
 	:m_fFovY(0.f), m_fAspect(0.f), m_fNear(0.f), m_fFar(0.f), 
 	m_fDistanceToTarget(0.f),m_bFix(true)
@@ -151,7 +152,7 @@ void MainCamera::Set_TriggerCam(UINT _eTriggerCamMode, const Vector3& _vTriggerP
 	switch (_eTriggerCamMode)
 	{
 	case STAGE1_WAVE1:
-		m_vEye.y -= 0.11f;
+		m_vEye.y -= 0.25f;
 		break;
 	case STAGE1_WAVE1_END:
 		m_vEye = { 0.04f,0.162f,-1.768f };
@@ -377,9 +378,12 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 		{
 		case STAGE1_WAVE1:
 			m_fDistanceToTarget = 1.f;
-			m_fLerpSpeed = 0.3f;
-			m_vEye = Vector3(0.338f, 1.237f, 0.524f);
+			m_fLerpSpeed = 0.5f;
+			//m_vEye = Vector3(0.338f, 1.237f, 0.524f);
+			m_vEye = m_vAt;
+			m_vAt = m_pAtTranform.lock()->GetPosition();
 			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::PROVOKE1);
+			m_pTrigger.lock()->TriggerEnable();
 			break;
 		case STAGE1_WAVE1_END:
 			m_fDistanceToTarget = OGDistance;
@@ -394,7 +398,7 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 void MainCamera::Trigger_Cam_Stage1_Wave1(float _fDeltaTime)
 {
 	m_vAt = FMath::Lerp(m_vAt, m_vTriggerPos, _fDeltaTime * 0.8f);
-	m_vTriggerAngle.x += _fDeltaTime * 0.1f;
+	m_vTriggerAngle.x -= _fDeltaTime * 25.15f;
 	long    dwMouseMove = 0;
 
 	Vector3 vLook = m_vTriggerPos - m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
@@ -409,7 +413,7 @@ void MainCamera::Trigger_Cam_Stage1_Wave1(float _fDeltaTime)
 
 	m_vLerpEye = m_vAt + vLook;
 
-	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 0.8f);
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 0.5f);
 }
 
 void MainCamera::Trigger_Cam_Stage1_Wave1_End(float _fDeltaTime)
