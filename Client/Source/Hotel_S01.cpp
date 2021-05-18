@@ -60,10 +60,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -503,6 +503,8 @@ void Hotel_S01::TriggerElectricBoard(
 		const std::function<void()> _CallBack =
 			[_BattleTrigger]()
 		{
+			PRINT_LOG(L"Camera", L"Camera");
+			_BattleTrigger.lock()->TriggerEnable();
 			// 여기서 카메라 연출 시작 ....
 
 			// .............
@@ -543,17 +545,18 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 		};
 
 		// 몬스터 위치는 미리 잡아주기  . 
+
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+			lock()->SetPosition({ -1.447, 0.02f,  -0.171 });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+			lock()->SetPosition({ -0.590, 0.02f, 0.253 });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+			lock()->SetPosition({ 0.602, 0.02f, 	 -0.374 });
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+			lock()->SetPosition({ 1.313 , 0.02f, 	-0.993 });
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
@@ -621,16 +624,16 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.93355f, 0.02f, -1.60137f });
+			lock()->SetPosition({ -1.447, 0.02f,  -0.171 });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.88708f, 0.02f, -0.92085f });
+			lock()->SetPosition({ -0.590, 0.02f, 0.253 });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.75695f, 0.02f, -0.34596f });
+			lock()->SetPosition({ 0.602, 0.02f, -0.374 });
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.54699f, 0.02f, -2.37278f });
+			lock()->SetPosition({ 1.313 , 0.02f, -0.993 });
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
@@ -963,7 +966,7 @@ void Hotel_S01::Trigger4st()
 		};
 		
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.171700f, 0.011680f, 12.167461f };
+		const Vector3 TriggerLocation { -3.171700f, 0.011680f, 12.167461f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 6.f,5.f,1.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
