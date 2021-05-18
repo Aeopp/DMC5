@@ -84,10 +84,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 	AddGameObject<IceAge>();
-	AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 

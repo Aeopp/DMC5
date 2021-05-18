@@ -47,7 +47,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Player & Camera
 
-	if (auto SpCamera = AddGameObject<Camera>().lock();
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
 		SpCamera)
 	{
 		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
@@ -56,10 +56,10 @@ HRESULT Hotel_S04::LoadScene()
 			36.596f, 
 			});
 		
-	}
+	}*/
 
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
