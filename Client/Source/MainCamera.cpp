@@ -4,6 +4,7 @@
 #include "TimeSystem.h"
 #include "NeroFSM.h"
 #include "Trigger.h"
+#include "Renderer.h"
 MainCamera::MainCamera()
 	:m_fFovY(0.f), m_fAspect(0.f), m_fNear(0.f), m_fFar(0.f), 
 	m_fDistanceToTarget(0.f),m_bFix(true)
@@ -126,12 +127,14 @@ void MainCamera::Set_PlayerCamMode(UINT _ePlayerCamMode)
 	m_ePlayerCamMode = _ePlayerCamMode;
 	if (CAM_MODE_WAVE_END == m_ePlayerCamMode)
 	{
-		m_fDistanceToTarget = 0.25f;
+		m_fDistanceToTarget = 0.15f;
 		vector<Vector3> _LostTimes;
-		_LostTimes.emplace_back(Vector3(2.f, 1.f, 0.3f));
+		_LostTimes.emplace_back(Vector3(2.5f, 1.f, 0.3f));
 		TimeSystem::GetInstance()->LostTime(_LostTimes);
-		m_fTriggerTime = 2.f;
+		
+		m_fTriggerTime = 3.5f;
 		m_fLerpSpeed = 1.2f;
+		Renderer::GetInstance()->FadeOutStart(3.3f);
 	}
 }
 
@@ -328,6 +331,7 @@ void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
 		switch (m_eTriggerCamMode)
 		{
 		case STAGE1_WAVE1:
+			Renderer::GetInstance()->FadeInStart(0.4f);
 			Set_TriggerCam(STAGE1_WAVE1_END, Vector3{ -1.081f,0.818f,0.439f }, 2.f);
 			m_fDistanceToTarget = OGDistance;
 			m_fTriggerTime = 3.f;
@@ -379,13 +383,18 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 		case STAGE1_WAVE1:
 			m_fDistanceToTarget = 1.f;
 			m_fLerpSpeed = 0.5f;
-			//m_vEye = Vector3(0.338f, 1.237f, 0.524f);
 			m_vEye = m_vAt;
+
+
+			Renderer::GetInstance()->FadeInStart(0.7f);
+
+
 			m_vAt = m_pAtTranform.lock()->GetPosition();
 			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::PROVOKE1);
 			m_pTrigger.lock()->TriggerEnable();
 			break;
 		case STAGE1_WAVE1_END:
+
 			m_fDistanceToTarget = OGDistance;
 			m_ePlayerCamMode = CAM_MODE_RETURN_TO_PLAYER;
 			m_fAngle = -200.f;
@@ -397,6 +406,12 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 
 void MainCamera::Trigger_Cam_Stage1_Wave1(float _fDeltaTime)
 {
+	static bool PlayOnce = true;
+	if (PlayOnce)
+	{
+		Renderer::GetInstance()->FadeOutStart(3.f);
+		PlayOnce = false;
+	}
 	m_vAt = FMath::Lerp(m_vAt, m_vTriggerPos, _fDeltaTime * 0.8f);
 	m_vTriggerAngle.x -= _fDeltaTime * 25.15f;
 	long    dwMouseMove = 0;
