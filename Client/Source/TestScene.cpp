@@ -44,6 +44,7 @@
 #include "Trigger.h"
 #include "SecretVision.h"
 #include "MakaiButterfly.h"
+#include "CbsLongTrail.h"
 #include "Smoke.h"
 #include "NhDoor.h"
 #include "ShopPanel.h"
@@ -83,7 +84,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<IceAge>();
+	AddGameObject<CbsLongTrail>();
 	// AddGameObject<Camera>();
 
 	AddGameObject<MainCamera>();

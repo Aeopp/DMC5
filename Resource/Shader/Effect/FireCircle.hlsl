@@ -21,7 +21,7 @@ uniform float2 NoiseDistortion2;
 
 uniform float SpriteProgressTime;
 uniform float AlphaFactor;
-;
+
 
 uniform float SpriteXStart;
 uniform float SpriteXEnd;

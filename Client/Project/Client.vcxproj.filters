@@ -932,6 +932,7 @@
     <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
     <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\CbsLongTrail.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

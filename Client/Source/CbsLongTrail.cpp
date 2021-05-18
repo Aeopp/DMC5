@@ -9,9 +9,7 @@
 #include "GraphicSystem.h"
 
 CbsLongTrail::CbsLongTrail()
-{
-
-}
+{};
 
 void CbsLongTrail::Free()
 {
@@ -96,7 +94,6 @@ void CbsLongTrail::RenderInit()
 
 	Device = g_pDevice;
 
-
 	VtxDecl = Vertex::TrailVertex::GetVertexDecl(Device);
 	Device->CreateVertexBuffer
 	(_Desc.VtxSize * _Desc.VtxCnt, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY,
@@ -117,9 +114,8 @@ void CbsLongTrail::RenderInit()
 		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
 	EmissiveMskMap = Resources::Load<Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
-	//NoiseMap = Resources::Load<Texture>(
-	//	"..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
-	//	
+	NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Effect\\noiseInput_ATOS.tga");
+
 	SpriteCol = 8;
 	SpriteRow = 8;
 
@@ -129,13 +125,8 @@ void CbsLongTrail::RenderInit()
 	EmissiveIntencity = 0.0f;
 };
 
-void CbsLongTrail::PlayStart(const std::optional<Vector3>& Location)
+void CbsLongTrail::PlayStart()
 {
-	if (Location)
-	{
-		GetComponent<Transform>().lock()->SetPosition(Location.value());
-	}
-
 	Vertex::TrailVertex* VtxPtr{ nullptr };
 	VtxBuffer->Lock(0, 0, (void**)&VtxPtr, NULL);
 
@@ -148,13 +139,15 @@ void CbsLongTrail::PlayStart(const std::optional<Vector3>& Location)
 			const auto _World = _CbsLong->_RenderUpdateInfo.World;
 
 			auto BoneLocal = _CbsLong->Get_BoneMatrixPtr("_000");
-			const Vector3 LowPos = FMath::Mul(Vector3{ 0.f,0.f,0.f }, (*BoneLocal) * _World);
+
+			BoneWorldLocation = FMath::Mul(Vector3{ 0.f,0.f,0.f }, (*BoneLocal) * _World);
+
 			const Vector3 HighPos = FMath::Mul(Offset,  ( *BoneLocal ) * _World );
 
 			for (int32 i = 0; i < _Desc.VtxCnt; i += 2)
 			{
 				VtxPtr[i + 1].Location = HighPos;
-				VtxPtr[i].Location = LowPos;
+				VtxPtr[i].Location = BoneWorldLocation;
 			}
 		}
 	};
@@ -190,9 +183,14 @@ void CbsLongTrail::RenderTrail(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetTexture("TrailMap", ExplosionTrailMap->GetTexture());
 	_Info.Fx->SetTexture("SpriteMap", FireSpriteMap->GetTexture());
+	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
 
 	_Info.Fx->SetTexture("EmissiveMskMap", EmissiveMskMap->GetTexture());
 	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
+
+	_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
 
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
@@ -201,6 +199,9 @@ void CbsLongTrail::RenderTrail(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("SpriteXEnd", (SpriteColIdx + 1) / SpriteCol);
 	_Info.Fx->SetFloat("SpriteYStart", SpriteRowIdx / SpriteRow);
 	_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
+
+	_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed,3u);
+	_Info.Fx->SetFloatArray("Scale", Scale,3u);
 
 	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
 	Device->SetVertexDeclaration(VtxDecl);
@@ -313,11 +314,12 @@ void CbsLongTrail::VertexBufUpdate()
 			const auto _World= _CbsLong->_RenderUpdateInfo.World;
 
 			auto BoneLocal = _CbsLong->Get_BoneMatrixPtr("_000");
-			const Vector3 LowPos = FMath::Mul(Vector3{ 0.f,0.f,0.f } , (*BoneLocal) * _World);
+
+			BoneWorldLocation = FMath::Mul(Vector3{ 0.f,0.f,0.f } , (*BoneLocal) * _World);
 			const Vector3 HighPos = FMath::Mul(Offset, (*BoneLocal) * _World);
 
 			VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-			VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
+			VtxPtr[_Desc.NewVtxCnt].Location = BoneWorldLocation;
 		}
 	};
 
@@ -408,9 +410,6 @@ void CbsLongTrail::RenderDebug(const DrawInfo& _Info)
 HRESULT CbsLongTrail::Ready()
 {
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 1.f,1.f,1.f });
-	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	return S_OK;
@@ -451,7 +450,7 @@ UINT CbsLongTrail::LateUpdate(const float _fDeltaTime)
 	return 0;
 }
 
-void Trail::Editor()
+void CbsLongTrail::Editor()
 {
 	GameObject::Editor();
 
@@ -465,12 +464,13 @@ void Trail::Editor()
 			ImGui::InputInt("Mode", &_Mode);
 			if (ImGui::SmallButton("Play"))
 			{
-				PlayStart(static_cast<Trail::Mode>(_Mode));
+				PlayStart();
 			}
 			if (ImGui::SmallButton("PlayEnd"))
 			{
 				PlayEnd();
 			}
+
 			ImGui::Text("Cur Col Idx : %d", (int32)SpriteColIdx);
 			ImGui::Text("Cur Row Idx : %d", (int32)SpriteRowIdx);
 			for (auto& _Vtx : _VtxLog)
@@ -480,8 +480,7 @@ void Trail::Editor()
 			}
 
 
-			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
-			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
+			ImGui::SliderFloat3("Offset", BoneWorldLocation, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
@@ -489,12 +488,15 @@ void Trail::Editor()
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 
+			ImGui::SliderFloat2("NoiseDistortion0", NoiseDistortion0, 0.0f, 100.f);
+			ImGui::SliderFloat2("NoiseDistortion1", NoiseDistortion1, 0.0f, 100.f);
+			ImGui::SliderFloat2("NoiseDistortion2", NoiseDistortion2, 0.0f, 100.f);
+
 			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
-
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
@@ -508,12 +510,12 @@ void Trail::Editor()
 }
 
 
-void Trail::OnEnable()
+void CbsLongTrail::OnEnable()
 {
 	GameObject::OnEnable();
 }
 
-void Trail::OnDisable()
+void CbsLongTrail::OnDisable()
 {
 	GameObject::OnDisable();
 };

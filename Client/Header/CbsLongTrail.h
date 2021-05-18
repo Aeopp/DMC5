@@ -5,7 +5,7 @@
 #include <optional>
 #include "Vertexs.h"
 
-class CbsLongTrail : public ENGINE::GameObject,
+class CbsLongTrail :  public ENGINE::GameObject,
 					  public ENGINE::RenderInterface
 {
 private:
@@ -18,7 +18,10 @@ private:
 	std::shared_ptr<ENGINE::Texture> ExplosionTrailMap{};
 	std::shared_ptr<ENGINE::Texture> FireSpriteMap{};
 	std::shared_ptr<ENGINE::Texture> EmissiveMskMap{};
-	/*std::shared_ptr<Texture> NoiseMap{};*/
+	std::shared_ptr<ENGINE::Texture> NoiseMap{};
+
+	Vector3 ScrollSpeed{ 1.f,1.f,1.f };
+	Vector3 Scale{ 1.f,1.f,1.f };
 
 	float SpriteRow;
 	float SpriteCol;
@@ -29,7 +32,9 @@ private:
 	float SpriteUpdateCycle = 0.016f;
 
 	Vector3 Offset{ 0.f,0.f,-231.f };
-
+	Vector2 NoiseDistortion0{ 0.3f,1.f };
+	Vector2 NoiseDistortion1{ 0.5f,0.77f };
+	Vector2 NoiseDistortion2{ 0.77f,0.5f };
 	Vector4 _Color{ 1.f,1.f,1.f,1.f / 255.f };
 
 	float NonDistortionIntencity = 1.f;
@@ -38,10 +43,7 @@ private:
 	float CurveT = 0.5f;
 	float ColorIntencity = 40.f;
 	float EmissiveIntencity = 0.0f;
-
-	Vector3 Scale{ 1.f,2.f,3.f };
-	Vector3 ScrollSpeed{ 1.f,2.f,3.f };
-
+	
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 
@@ -68,8 +70,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(
-		const std::optional<Vector3>& Location = std::nullopt);
+	void PlayStart();
 	void PlayEnd();
 private:
 	void SpriteUpdate(const float DeltaTime);
@@ -81,5 +82,7 @@ private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);
+private:
+	Vector3 BoneWorldLocation{0,0,0};
 };
 #endif //
