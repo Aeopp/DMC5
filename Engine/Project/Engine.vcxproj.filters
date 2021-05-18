@@ -680,4 +680,7 @@
       <Filter>04.HLSL</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\FadeEffect.hlsl" />
+  </ItemGroup>
 </Project>
