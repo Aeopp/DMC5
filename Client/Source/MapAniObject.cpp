@@ -42,7 +42,9 @@ HRESULT MapAniObject::Start()
 {
 	GameObject::Start();
 
-	m_pMesh->PlayAnimation(0, true, {} , 1.3f);
+	if(m_bColl == false)
+		m_pMesh->PlayAnimation(0, true, {} , 1.3f);
+
 	if(m_bFlag6 == false)
 		m_pTransform.lock()->SetScale({ 0.00002f,0.00002f,0.00002f });
 
@@ -78,6 +80,18 @@ void MapAniObject::Editor()
 	{
 
 	}
+}
+
+void MapAniObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+	if (!(GAMEOBJECTTAG::TAG_RedQueen == _pOther.lock()->m_nTag
+		|| GAMEOBJECTTAG::Tag_Cbs_Short == _pOther.lock()->m_nTag
+		|| GAMEOBJECTTAG::Tag_Cbs_Middle == _pOther.lock()->m_nTag
+		|| GAMEOBJECTTAG::Tag_Cbs_Long == _pOther.lock()->m_nTag
+		|| GAMEOBJECTTAG::Overture == _pOther.lock()->m_nTag))
+		return;
+	m_pCollider.lock()->SetActive(false);
+	m_pMesh->PlayAnimation(0, false);
 }
 
 #pragma region RENDER
@@ -144,6 +158,15 @@ void MapAniObject::RenderInit()
 			RenderDebug(_Info);
 		}
 	} };
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
 
 	/*움직임이 없는 정적 오브젝트는 그림자맵 캐쉬를 켜고 그렇지않다면 꺼주세요. */
 	_InitRenderProp.bShadowCache = false;
@@ -151,8 +174,20 @@ void MapAniObject::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp); 
 
 	m_pMesh->EnableToRootMatricies();
-	PushEditEntity(m_pMesh.get());
-	m_pMesh->EnablePrevVTF();
+	if (m_bColl == false)
+	{
+		PushEditEntity(m_pMesh.get());
+		m_pMesh->EnablePrevVTF();
+	}
+	else
+	{
+		m_pMesh->EnableToRootMatricies();
+		m_pMesh->PlayAnimation(0, false);
+		m_pMesh->Update(0.0016f);
+		m_pMesh->StopAnimation();
+
+		PushEditEntity(m_pMesh.get());
+	}
 }
 
 void MapAniObject::RenderGBuffer(const DrawInfo& _Info)
@@ -271,6 +306,32 @@ void MapAniObject::SetUp(
 		if (sFileName == "flag_06.fbx")
 		{
 			m_pTransform.lock()->SetScale({ 0.008f,0.008f,0.008f });
+			m_bFlag6 = true;
+		}
+		if (sFileName == "BrokenBookShelf.fbx")
+		{
+			m_pCollider = AddComponent<BoxCollider>();
+			m_pCollider.lock()->ReadyCollider();
+			m_pCollider.lock()->SetSize({ 0.1f,0.1f,0.1f });
+			PushEditEntity(m_pCollider.lock().get());
+			m_bColl = true;
+			m_bFlag6 = true;
+		}
+		if (sFileName == "BrokenPeople.fbx")
+		{
+			m_pCollider = AddComponent<BoxCollider>();
+			m_pCollider.lock()->ReadyCollider();
+			m_pCollider.lock()->SetSize({ 0.1f,0.1f,0.1f });
+			PushEditEntity(m_pCollider.lock().get());
+			m_bColl = true;
+			m_bFlag6 = true;
+		}
+		if (sFileName == "BrokenTable.fbx")
+		{
+			m_pCollider = AddComponent<BoxCollider>();
+			m_pCollider.lock()->ReadyCollider();
+			PushEditEntity(m_pCollider.lock().get());
+			m_bColl = true;
 			m_bFlag6 = true;
 		}
 

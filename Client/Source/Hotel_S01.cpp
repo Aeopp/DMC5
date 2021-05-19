@@ -62,10 +62,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	 // AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
@@ -88,8 +88,8 @@ HRESULT Hotel_S01::LoadScene()
 	Map->LoadMap(1);
 	
 
-	auto sex = AddGameObject<BrokenPeople>().lock();
-	sex->GetComponent<Transform>().lock()->SetPosition({ 0.f, 1.f, 0.f });
+	/*auto sex = AddGameObject<BrokenPeople>().lock();
+	sex->GetComponent<Transform>().lock()->SetPosition({ 0.f, 1.f, 0.f });*/
 
 #pragma endregion
 
