@@ -106,7 +106,8 @@ void WhirlWind::PlayStart(
 	auto SpTransform = GetComponent<Transform>().lock();
 	CurrentDirection = FMath::Normalize(Direction);
 	SpTransform->SetPosition(Location + CurrentDirection * ForwardOffset);
-	SpTransform->SetRotation(Vector3{0.f,std::atan2f(CurrentDirection.x,CurrentDirection.z),90.f});
+	SpTransform->SetRotation(Vector3{0.f,
+		FMath::ToDegree( std::atan2f(CurrentDirection.x,CurrentDirection.z) ) ,90.f});
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 

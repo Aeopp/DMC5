@@ -167,6 +167,7 @@ public:
 	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
 	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };
 private:
+	bool bStars = true;
 	FadeEffect _FadeEffect{};
 	bool bPtLightScrRtTest = false;
 	Vector3 FogColor{ 0.5f,0.5f,0.5f };
