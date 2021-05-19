@@ -473,9 +473,9 @@ void PreLoader::FireSpritePoolLoad(const uint32 SpriteIdx)
 
 		const Vector3 TargetLocation = Vector3{ 0.f,0.f,0.f };
 
-		static constexpr float StartVelocityScale = 0.1f;
+		static constexpr float StartVelocityScale = 0.05f;
 		static constexpr float SecondVelocityScale = 0.1f;
-		static constexpr float ThirdVelocityScale = 0.1f;
+		static constexpr float ThirdVelocityScale = 0.15f;
 
 		ParticleInstance::FireSprite _FireValue{};
 		_FireValue.ColorIntencity = FMath::Random(0.3f, 0.5f);
@@ -495,7 +495,6 @@ void PreLoader::FireSpritePoolLoad(const uint32 SpriteIdx)
 		const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,0.f };
 		const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,0.f };
 		const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,0.f };
-
 		
 		ParticleSystem::ParticleInstance::SpriteDesc _SpriteDesc{};
 

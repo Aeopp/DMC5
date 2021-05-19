@@ -50,7 +50,7 @@
 #include "ShopPanel.h"
 #include "StoneDebris.h"
 #include "TimeSystem.h"
-
+#include "Trail.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -75,6 +75,7 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+	AddGameObject<Trail>();
 	AddGameObject<CbsLongTrail>();
 	m_fLoadingProgress = 0.01f;
 

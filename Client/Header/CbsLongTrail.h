@@ -31,7 +31,8 @@ private:
 	float SpriteCurUpdateCycle = 0.0f;
 	float SpriteUpdateCycle = 0.016f;
 
-	Vector3 Offset{ 0.f,0.f,-430.f };
+	Vector3 LowOffset{ 0.f,0.f,0.f };
+	Vector3 HighOffset{ 0.f,0.f,-300.f };
 	Vector2 NoiseDistortion0{ 0.3f,1.f };
 	Vector2 NoiseDistortion1{ 0.5f,0.77f };
 	Vector2 NoiseDistortion2{ 0.77f,0.5f };
@@ -84,7 +85,6 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderTrail(const DrawInfo& _Info);
 private:
-	Vector3 BoneWorldLocation{0,0,0};
 	float ParticleDelta = 0.0016f;
 	float CurParticleDelta = 0.0f;
 	// first = Low second = High ;

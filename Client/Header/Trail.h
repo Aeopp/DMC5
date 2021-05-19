@@ -36,8 +36,8 @@ private:
 	float SpriteCurUpdateCycle = 0.0f;
 	float SpriteUpdateCycle = 0.016f;
 
-	Vector3 LowOffset{ 0.f,0.f,143.f};
-	Vector3 HighOffset{ 0.f,0.f,-231.f };
+	Vector3 LowOffset{ 0.f,0.f,-105.f};
+	Vector3 HighOffset{ 0.f,0.f,-300.f };
 
 	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
 
@@ -56,6 +56,12 @@ private:
 
 	std::vector<Vertex::Index32> _IdxLog{};
 	std::vector<Vertex::TrailVertex> _VtxLog{};
+
+	float ParticleDelta = 0.0016f;
+	float CurParticleDelta = 0.0f;
+
+	// first low  second high
+	std::pair<Vector3,Vector3> LatelyLocations{};
 private:
 	explicit Trail()  ;
 	virtual ~Trail() = default;
@@ -84,6 +90,7 @@ public:
 private:
 	void SpriteUpdate(const float DeltaTime);
 	void BufferUpdate(const float DeltaTime);
+	void ParticleUpdate(const float _fDeltaTime);
 	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
 	void VtxUVCalc(Vertex::TrailVertex* const VtxPtr);
 	void VertexBufUpdate();

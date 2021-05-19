@@ -108,8 +108,11 @@ void CbsLongTrail::RenderInit()
 		, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, _Desc.IdxFmt,
 		D3DPOOL_DEFAULT, &IdxBuffer, nullptr);
 
+	/*TrailMap = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");*/
 	TrailMap = Resources::Load<Texture>(
-		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
+		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
+
 	FireSpriteMap = Resources::Load<Texture >(
 		"..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
 	ExplosionTrailMap = Resources::Load<Texture >(
@@ -142,8 +145,8 @@ void CbsLongTrail::PlayStart()
 
 			auto BoneLocal = _CbsLong->Get_BoneMatrixPtr("_000");
 
-			LatelyLocations.first= FMath::Mul(Vector3{ 0.f,0.f,0.f }, (*BoneLocal) * _World);
-			LatelyLocations.second= FMath::Mul(Offset,  ( *BoneLocal ) * _World );
+			LatelyLocations.first= FMath::Mul(LowOffset, (*BoneLocal) * _World);
+			LatelyLocations.second= FMath::Mul(HighOffset,  ( *BoneLocal ) * _World );
 
 			for (int32 i = 0; i < _Desc.VtxCnt; i += 2)
 			{
@@ -336,8 +339,8 @@ void CbsLongTrail::VertexBufUpdate()
 
 		for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 		{
-			VtxPtr[i].Location =  LatelyLocations.first = VtxPtr[RemoveCount + i].Location;
-			VtxPtr[i + 1].Location = LatelyLocations.second = VtxPtr[RemoveCount + i + 1].Location;			
+			VtxPtr[i].Location =   VtxPtr[RemoveCount + i].Location;
+			VtxPtr[i + 1].Location =  VtxPtr[RemoveCount + i + 1].Location;			
 		}
 	}
 
@@ -351,11 +354,12 @@ void CbsLongTrail::VertexBufUpdate()
 
 			auto BoneLocal = _CbsLong->Get_BoneMatrixPtr("_000");
 
-			BoneWorldLocation = FMath::Mul(Vector3{ 0.f,0.f,0.f } , (*BoneLocal) * _World);
-			const Vector3 HighPos = FMath::Mul(Offset, (*BoneLocal) * _World);
+			// FMath::Mul(Vector3{ 0.f,0.f,0.f } , (*BoneLocal) * _World);
+			LatelyLocations.first = FMath::Mul(LowOffset, (*BoneLocal) * _World);
+			LatelyLocations.second = FMath::Mul(HighOffset, (*BoneLocal) * _World);
 
-			VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-			VtxPtr[_Desc.NewVtxCnt].Location = BoneWorldLocation;
+			VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyLocations.second;
+			VtxPtr[_Desc.NewVtxCnt].Location = LatelyLocations.first;
 		}
 	};
 
@@ -517,7 +521,9 @@ void CbsLongTrail::Editor()
 			}
 
 
-			ImGui::SliderFloat3("Offset", Offset, -600.f, 600.f, "%9.6f");
+			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
+			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
+
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
