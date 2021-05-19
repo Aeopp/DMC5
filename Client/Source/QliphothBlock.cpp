@@ -265,7 +265,7 @@ UINT QliphothBlock::Update(const float _fDeltaTime)
 		}
 		else
 		{
-			_SliceAmount += _fDeltaTime * 1.f;
+			_SliceAmount += _fDeltaTime * 0.5f;
 			if (1.f <= _SliceAmount)
 			{
 				_SliceAmount = 1.f;
@@ -296,11 +296,6 @@ void QliphothBlock::Editor()
 void QliphothBlock::OnEnable()
 {
 	GameObject::OnEnable();
-	if (_IsCamTrigger)
-	{
-		std::weak_ptr<MainCamera> _pCamera = static_pointer_cast<MainCamera>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_Camera).lock());
-		_pCamera.lock()->Set_At_Transform(m_pTransform, MainCamera::AT_TRIGGER);
-	}
 }
 
 void QliphothBlock::OnDisable()

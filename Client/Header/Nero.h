@@ -34,6 +34,11 @@ class JudgementShadow1;
 class JudgementShadow2;
 class JudgementShadow3;
 class CbsTrail;
+class CbsMidTrail;
+class BiAttack;
+class BlitzAttack;
+class LongBarrel;
+class Satellite;
 class NewWingSword;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
@@ -258,6 +263,10 @@ public:
 		ANI_SHINMAJIN_JUDGEMENT,
 		ANI_WINDPRESSURE,
 		ANI_WINDPRESSURE_END,
+		ANI_PROVOKE1,
+		ANI_PROVOKE3,
+		ANI_PROVOKE9,
+		ANI_PROVOKE10,
 		ANI_END
 	};
 
@@ -355,6 +364,7 @@ public:
 public:
 	std::weak_ptr<NeroFSM> GetFsm() { return m_pFSM; }
 	std::list<std::weak_ptr<Monster>> GetAllMonster();
+	std::list<std::weak_ptr<Monster>> GetAliveMonster();
 	virtual std::string GetName() override;
 	float Get_PlayingTime();
 	float Get_PlayingAccTime();
@@ -373,6 +383,8 @@ public:
 	bool Get_IsMajinMode() { return m_IsMajin; }
 	int  GetDashLoopDir() { return m_iDashLoopDir; }
 	std::string GetAniname() { return m_pMesh[m_iMeshIndex]->AnimName; }
+	bool Get_IsHaveCbsMiddle() { return m_bIsHaveCbsMiddle; }
+	bool Get_IsHaveCbsLong() { return m_bIsHaveCbsLong; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
@@ -425,6 +437,10 @@ public:
 	void ConsumeTDTGauge(const float Speed = 1.f);
 	//��ũ ���ھ�
 	void AddRankScore(float Score);
+public:
+	void BuyUpgradedOverture();
+	void BuyCbsMiddle() { m_bIsHaveCbsMiddle = true; }
+	void BuyCbsLong() { m_bIsHaveCbsLong = true; }
 public:
 	//�ִϸ��̼� ����
 	void  StopAnimation();
@@ -508,6 +524,11 @@ private:
 	std::weak_ptr<CircleWave>		m_pCircleWave;
 	std::weak_ptr<CbsTrail>			m_pCbsTrail;
 	std::weak_ptr<NewWingSword>		m_pNewWingSword;
+	std::weak_ptr<CbsMidTrail>		m_pCbsMidTrail;
+	std::weak_ptr<BiAttack>			m_pBiAttack;
+	std::weak_ptr<BlitzAttack>		m_pBlitzAttack;
+	std::weak_ptr<LongBarrel>		m_pLongBarrel;
+	std::weak_ptr<Satellite>		m_pSatellite;
 	enum { SP_RED = 0, SP_GREEN, SP_WHITE, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 
@@ -542,7 +563,8 @@ private:
 	D3DXVECTOR3 vRotationDegree;
 	D3DXVECTOR3 vAccumlatonDegree;
 
-	
+	bool	m_bIsHaveCbsMiddle = false;
+	bool	m_bIsHaveCbsLong = false;
 };
 
 

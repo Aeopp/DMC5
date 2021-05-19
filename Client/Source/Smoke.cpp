@@ -173,12 +173,15 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			{
 			case SMOKE_0: default:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
+				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			case SMOKE_1:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB1Tex->GetTexture());
+				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			case SMOKE_2:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB2Tex->GetTexture());
+				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			}
 			_Info.Fx->SetBool("_UsingNoise", false);
@@ -251,10 +254,10 @@ UINT Smoke::Update(const float _fDeltaTime)
 	{
 		if (100.f < _AccumulateTime)
 			Reset();
-		else if (95.f < _AccumulateTime)
-			_SliceAmount = (_AccumulateTime - 95.f) * 0.2f;
+		else if (90.f < _AccumulateTime)
+			_SliceAmount = (_AccumulateTime - 90.f) * 0.1f;
 		else
-			_SliceAmount = 1.f - _AccumulateTime * 0.2f;
+			_SliceAmount = 1.f - _AccumulateTime * 0.1f;
 	}
 
 	// sprite

@@ -35,10 +35,11 @@ private:
 public:
 	float   AccTime();
 	float	DeltaTime();
-	void LostTime(const std::vector<Vector2>& ALostArr);
+	float	OriginDeltaTime();
+	void LostTime(const std::vector<Vector3>& ALostArr);
 private:
 	// X :Slow Y : Re
-	std::vector<Vector2> LostArr;
+	std::vector<Vector3> LostArr;
 	uint32 LostIdx = 0u;
 	bool   bLost = false;
 	float  LostT = 0.0f;

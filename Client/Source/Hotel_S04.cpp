@@ -47,7 +47,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Player & Camera
 
-	if (auto SpCamera = AddGameObject<Camera>().lock();
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
 		SpCamera)
 	{
 		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
@@ -56,10 +56,10 @@ HRESULT Hotel_S04::LoadScene()
 			36.596f, 
 			});
 		
-	}
+	}*/
 
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -135,13 +135,16 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
-	// 테스트용 ////////////////////////
+	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		// TestScene으로 넘어감
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S01));
 	}
-	////////////////////////////////////
+	/* -------------------------- */
 
 	return S_OK;
 }
@@ -214,7 +217,7 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 
 void Hotel_S04::BgmPlay()
 {
-	SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
+	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 };
 
 void Hotel_S04::RenderDataSetUp(const bool bTest)

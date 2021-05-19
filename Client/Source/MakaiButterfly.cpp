@@ -21,6 +21,11 @@ void MakaiButterfly::SetVariationIdx(MakaiButterfly::VARIATION Idx)
 	_VariationIdx = Idx;
 }
 
+void MakaiButterfly::ResetTotalCnt()
+{
+	_TotalCnt = 0u;
+}
+
 void MakaiButterfly::Free()
 {
 	Destroy(_SVMC);
@@ -379,7 +384,7 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 				_SVMC.lock()->SetActive(true);
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
 				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
-
+				
 				//
 				Reset();
 

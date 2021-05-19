@@ -14,6 +14,8 @@ public:
 	};
 	void SetVariationIdx(MakaiButterfly::VARIATION Idx);
 
+	static void ResetTotalCnt();
+
 private:
 	MakaiButterfly::VARIATION _VariationIdx = STAY;
 

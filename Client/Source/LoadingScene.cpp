@@ -55,6 +55,9 @@ HRESULT LoadingScene::Update(const float _fDeltaTime)
 		// 다음 씬 로드
 		switch (_NextSceneID)
 		{
+		case HOTEL_S01:
+			SceneManager::LoadScene(Hotel_S01::Create(), false);
+			break;
 		case HOTEL_S02:
 			SceneManager::LoadScene(Hotel_S02::Create(), false);
 			break;
@@ -70,7 +73,6 @@ HRESULT LoadingScene::Update(const float _fDeltaTime)
 		case LIBRARY_S02:
 			SceneManager::LoadScene(TestScene::Create(), false);
 			break;
-		case HOTEL_S01:	// TitleScene에서 로드
 		default:
 			SceneManager::LoadScene(TestScene::Create(), false);
 			break;

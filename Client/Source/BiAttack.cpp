@@ -133,8 +133,7 @@ void BiAttack::OnDisable()
 
 void BiAttack::PlayStart(const Vector3& Location, 
 						const Vector3& PlayDirection)
-{
-	
+{	
 	const Vector3 NormDirection = FMath::Normalize(PlayDirection);
 	const Vector3 PlayLocation = Location + NormDirection * ElectricForwardOffset;
 

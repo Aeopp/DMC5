@@ -13,7 +13,6 @@ private:
 
 	float _SliceAmount = 1.f;
 	bool _IsAlive = false;
-	bool _IsCamTrigger = false;
 
 	std::weak_ptr<BoxCollider> _Collider{};
 
@@ -42,7 +41,5 @@ public:
 public:
 	virtual void	PlayStart(const float PlayingSpeed = 1.f) override;
 	virtual void	Reset() override;
-public:
-	void SetCamTrigger(bool _bTrigger) { _IsCamTrigger = _bTrigger; }
 };
 #endif // !__EFF_QLIPHOTH_BLOCK_H__

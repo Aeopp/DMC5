@@ -38,7 +38,7 @@ public:
 private:
 	float ElectricForwardOffset = 0.05f;
 	float LightRadius = 0.5f;
-	float OccurScale = 0.0002f;
+	float OccurScale = 0.0005f;
 	float LightFlux = 0.1f;
 	std::pair<float, float> PlayTimeRange = {0.395f,0.525f};
 	float ScaleOffset = 0.004f;

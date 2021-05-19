@@ -77,6 +77,7 @@ public:
 	float PlayTime = FMath::PI;
 
 	Matrix BillBoardMat = Matrix();
+	Vector3 PlayPos = Vector3(0.f, 0.f, 0.f);
 
 };
 #endif // !__SV_MAGICCIRCLE_H_
