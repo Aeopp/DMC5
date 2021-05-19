@@ -20,6 +20,7 @@ private:
 	static void IceAgeParticlePoolLoad();
 
 	static void FireParticlePoolLoad();
+	static void FireVortexSpritePoolLoad(const uint32 SpriteIdx);
 	static void FireSpritePoolLoad(const uint32 SpriteIdx);
 	static void ElectricEffectParticlePoolLoad(
 		const std::filesystem::path& _TexPath,

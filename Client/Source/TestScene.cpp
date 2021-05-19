@@ -20,6 +20,7 @@
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "Liquid.h"
+#include "WhirlWind.h"
 #include "AppearGroundMonster.h"
 #include "Smoke.h"
 #include "QliphothBlock.h"
@@ -77,6 +78,8 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 	AddGameObject<Trail>();
 	AddGameObject<CbsLongTrail>();
+	AddGameObject<WhirlWind>();
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
