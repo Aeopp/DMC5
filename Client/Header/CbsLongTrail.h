@@ -31,7 +31,7 @@ private:
 	float SpriteCurUpdateCycle = 0.0f;
 	float SpriteUpdateCycle = 0.016f;
 
-	Vector3 Offset{ 0.f,0.f,-231.f };
+	Vector3 Offset{ 0.f,0.f,-430.f };
 	Vector2 NoiseDistortion0{ 0.3f,1.f };
 	Vector2 NoiseDistortion1{ 0.5f,0.77f };
 	Vector2 NoiseDistortion2{ 0.77f,0.5f };
@@ -75,6 +75,7 @@ public:
 private:
 	void SpriteUpdate(const float DeltaTime);
 	void BufferUpdate(const float DeltaTime);
+	void ParticleUpdate(const float DeltaTime);
 	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
 	void VtxUVCalc(Vertex::TrailVertex* const VtxPtr);
 	void VertexBufUpdate();
@@ -84,5 +85,9 @@ public:
 	void RenderTrail(const DrawInfo& _Info);
 private:
 	Vector3 BoneWorldLocation{0,0,0};
+	float ParticleDelta = 0.0016f;
+	float CurParticleDelta = 0.0f;
+	// first = Low second = High ;
+	std::pair<Vector3, Vector3 >LatelyLocations{};
 };
 #endif //
