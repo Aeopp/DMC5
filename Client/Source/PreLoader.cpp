@@ -7,9 +7,6 @@
 
 void PreLoader::PreLoadResources()
 {
-	
-
-
 	IceAgeParticlePoolLoad();
 	IceCbsMidParticlePoolLoad();
 	FireParticlePoolLoad();
@@ -59,6 +56,13 @@ void PreLoader::PreLoadResources()
 	/*--------------------------------------------------------- */
 
 	SVMCParticleEndPoolLoad();
+	// 리소스 텍스쳐 이펙트 파이어 1 ~ 15;
+	// "..\\..\\Resource\\Texture\\Effect\\Fire\\1.tga"
+
+	for (uint32 i = 1; i <= 15; ++i)
+	{
+		FireSpritePoolLoad(i);
+	}
 };
 
 void PreLoader::IceCbsMidParticlePoolLoad()
@@ -417,6 +421,184 @@ void PreLoader::FireParticlePoolLoad()
 			ParticleSystem::ParticleInstance::SpriteDesc::Make(8, 4, 0, FMath::Random(0u, 7u),
 				FMath::Random(0.01f, 0.03f),
 				true, false);
+
+		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
+			{ StartRot,RotCp0,RotCp1,EndRot },
+			ParticleScale,
+			LifeTime, 0.0f, _FireValue, _SpriteDesc);
+	}
+};
+
+void PreLoader::FireSpritePoolLoad(const uint32 SpriteIdx)
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+	Mesh::InitializeInfo _Info{};
+	_PushParticle._Mesh = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx",_Info);
+
+	const std::string IdxName = std::to_string(SpriteIdx);
+	const std::string Ext = ".tga";
+	const std::string CurLoadPath = "..\\..\\Resource\\Texture\\Effect\\Fire\\" + IdxName + Ext;
+
+	auto _AlbTex = Resources::Load<Texture>(CurLoadPath ,_Info);
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "FireSprite";
+	// 공유 정보 바인드 
+
+	_PushParticle.SharedResourceBind = [_AlbTex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("AlbmMap", _AlbTex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::FireSprite&>(_InstanceVariable);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 10000ul;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("FireSprite", std::move(_PushParticle), PoolSize, true);
+
+	for (auto& _ParticleInstance : *ParticlePool)
+	{
+		Vector2 Range{ -1.f,1.f };
+
+		const Vector3 TargetLocation = Vector3{ 0.f,0.f,0.f };
+
+		static constexpr float StartVelocityScale = 10.f;
+		static constexpr float SecondVelocityScale = 20.f;
+		static constexpr float ThirdVelocityScale = 30.f;
+
+		ParticleInstance::FireSprite _FireValue{};
+		_FireValue.ColorIntencity = FMath::Random(0.3f, 0.5f);
+		const float LifeTime = FMath::Random(0.20f, 1.f);
+
+		const Vector3 ParticleScale =
+			FMath::Random(Vector3{ 0.05f ,0.05f ,0.05f },
+				Vector3{ 0.067,0.067,0.067f }) * GScale;
+
+		const Vector3 Cp0 = TargetLocation + FMath::RandomVector(StartVelocityScale);
+		
+		const Vector3 Cp1 = Cp0 + FMath::RandomVector(SecondVelocityScale);
+
+		const Vector3 End = Cp1 + FMath::RandomVector(ThirdVelocityScale);
+
+		const Vector3 StartRot = Vector3{ 0.f,0.f,0.f };
+		const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,0.f };
+		const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,0.f };
+		const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,0.f };
+
+		
+		const ParticleSystem::ParticleInstance::SpriteDesc _SpriteDesc{};
+
+		uint32 SpriteColCnt = 8u;
+		uint32 SpriteRowCnt = 4u;
+		uint32 SpriteCurCol = 0u;
+		uint32 SpriteCurRow = FMath::Random(0u, 7u);
+		bool bColLoop = true;
+		bool bRowLoop = true;
+
+		switch (SpriteIdx)
+		{
+		case 1:
+			SpriteColCnt = 16u;
+			SpriteRowCnt = 4u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 2:
+			SpriteColCnt = 16u;
+			SpriteRowCnt = 4u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 3:
+			SpriteColCnt = 16u;
+			SpriteRowCnt = 4u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 4:
+			SpriteColCnt = 8u;
+			SpriteRowCnt = 8u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 5:
+			SpriteColCnt = 8u;
+			SpriteRowCnt = 8u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 6:
+			SpriteColCnt = 8u;
+			SpriteRowCnt = 4u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 7:
+			SpriteColCnt = 8u;
+			SpriteRowCnt = 8u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 8:
+			SpriteColCnt = 8u;
+			SpriteRowCnt = 8u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 9:
+			SpriteColCnt = 8u;
+			SpriteRowCnt = 4u;
+			SpriteCurCol = 0u;
+			SpriteCurRow = FMath::Random(0u, SpriteRowCnt - 1u);
+			bColLoop = true;
+			bRowLoop = true;
+			break;
+		case 10:
+			break;
+		case 11:
+			break;
+		case 12:
+			break;
+		case 13:
+			break;
+		case 14:
+
+			break;
+		case 15:
+
+			break;
+		default:
+			break;
+		}
+
+		ParticleSystem::ParticleInstance::SpriteDesc::Make(
+			SpriteColCnt, SpriteRowCnt, SpriteCurCol, SpriteCurRow,
+			FMath::Random(0.016f, 0.032f),
+			true, true);
 
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },

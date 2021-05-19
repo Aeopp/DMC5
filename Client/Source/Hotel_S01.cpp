@@ -24,6 +24,9 @@
 #include <iostream>
 #include <fstream>
 #include "TimeSystem.h"
+#include "BiAttack.h"
+#include "Satellite.h"
+
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -50,7 +53,8 @@ Hotel_S01* Hotel_S01::Create()
 
 HRESULT Hotel_S01::LoadScene()
 {
-	AddGameObject<CbsLongTrail>();
+	
+
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
@@ -64,7 +68,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	 // AddGameObject<Camera>();
+	  AddGameObject<Camera>();
 
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();

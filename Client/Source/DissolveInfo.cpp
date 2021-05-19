@@ -11,7 +11,9 @@
 #include "PreLoader.h"
 
 void DissolveInfo::Initialize(const std::filesystem::path& MeshPath,
-	const Vector3& _Color)
+	const Vector3& _Color ,
+	const Vector3 BurnColor ,
+	const float BurnSize )
 {
 	_DissolveMap = Resources::Load<ENGINE::Texture>(
 		"..\\..\\Usable\\mesh_03_cs_noise_00_01.tga");
@@ -19,22 +21,48 @@ void DissolveInfo::Initialize(const std::filesystem::path& MeshPath,
 	_BurnMap = Resources::Load<ENGINE::Texture>("..\\..\\Usable\\burn.tga");
 	DissolveParticleName = MeshPath.string();
 	PreLoader::DissolveParticlePoolLoad(DissolveParticleName, _Color);
+	this->BurnColor = BurnColor;
+	this->BurnSize = BurnSize;
 };
 
-void DissolveInfo::DissolveStart()
+void DissolveInfo::DissolveStart(const bool bReverse,
+	const bool bParticle,
+	const float DissolveTime)
 {
 	if (!bDissolve)
 	{
+		const float DissolveAcc = (1.f / DissolveTime);
 		bDissolve = true;
-		SliceAmount = 0.0f;
+		this->bParticle = bParticle;
+		this->bReverse = bReverse;
 		CurDissolveParticleDelta = 0.0f;
+
+		if (bReverse == false)
+		{
+			SliceAmount = 0.0f;
+			this->DissolveAcc = DissolveAcc;
+		}
+		else
+		{
+			SliceAmount = 1.0f;
+			this->DissolveAcc = (std::fabsf(DissolveAcc) * -1.f);
+		}
 	}
-}
+};
 
 void DissolveInfo::DissolveEnd()
 {
 	bDissolve = false;
-}
+
+	if (bReverse == false)
+	{
+		SliceAmount = 1.1f;
+	}
+	else
+	{
+		SliceAmount = 0.0f;
+	};
+};
 
 void DissolveInfo::DissolveVariableBind(ID3DXEffect* const Fx)
 {
@@ -49,7 +77,7 @@ void DissolveInfo::DissolveVariableBind(ID3DXEffect* const Fx)
 	}
 }
 
-bool DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMatrix)
+bool DissolveInfo::DissolveUpdate(const float DeltaTime,const Matrix& RenderMatrix)
 {
 	if (bDissolve)
 	{
@@ -65,7 +93,7 @@ bool DissolveInfo::DissolveUpdate(const float DeltaTime , const Matrix& RenderMa
 
 		SliceAmount += DeltaTime * DissolveAcc;
 
-		if (SliceAmount > 1.f)
+		if (false == FMath::IsRange(0.0f, 1.f, SliceAmount))
 		{
 			DissolveEnd();
 			return true;
@@ -79,7 +107,7 @@ void DissolveInfo::DissolveEditor()
 {
 	if (ImGui::Button("Dissolve Play"))
 	{
-		DissolveStart();
+		DissolveStart(bEditDissolveReverse, bEditDissolveParticle, EditDissolveTime);
 	}
 
 	if (ImGui::Button("Dissolve Particle Play"))
@@ -87,23 +115,35 @@ void DissolveInfo::DissolveEditor()
 		DissolveParticle();
 	}
 
+	ImGui::SliderFloat("EditDissolveTime", &EditDissolveTime,0.0f,1.f);
+	ImGui::Checkbox("bEditDissolveParticle", &bEditDissolveParticle);
+	ImGui::Checkbox("bEditDissolveReverse", &bEditDissolveReverse);
+
 	ImGui::SliderFloat("SliceAmount", &SliceAmount, 0.0f, 10.f);
 	ImGui::SliderFloat("BurnSize", &BurnSize, 0.0f, 10.f);
 	ImGui::SliderFloat("EmissionAmount", &EmissionAmount, 0.0f, 100.f);
 	ImGui::ColorEdit3("BurnColor", BurnColor);
 };
 
+bool DissolveInfo::IsDissolve()const
+{
+	return bDissolve;
+};
+
 void DissolveInfo::DissolveParticle()
 {
-	if (auto _Particle =
-		ParticleSystem::GetInstance()->PlayParticle(
-			DissolveParticleName, DissolveParticleCount, true);
-		_Particle.empty() == false)
+	if (bParticle)
 	{
-		for (int32 i = 0; i < _Particle.size(); ++i)
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				DissolveParticleName, DissolveParticleCount, true);
+			_Particle.empty() == false)
 		{
-			auto& _PlayInstance = _Particle[i];
-			_PlayInstance->PlayDescBind(RenderMatrix);
+			for (int32 i = 0; i < _Particle.size(); ++i)
+			{
+				auto& _PlayInstance = _Particle[i];
+				_PlayInstance->PlayDescBind(RenderMatrix);
+			}
 		}
 	}
 }

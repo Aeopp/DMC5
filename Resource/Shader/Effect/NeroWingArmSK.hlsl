@@ -59,6 +59,38 @@ sampler Gradation = sampler_state
 };
 
 
+
+// 디졸브 .
+texture DissolveMap;
+texture BurnMap;
+
+sampler BurnSampler = sampler_state
+{
+    texture = BurnMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    sRGBTexture = true;
+};
+
+sampler DissolveSampler = sampler_state
+{
+    texture = DissolveMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    sRGBTexture = false;
+};
+
+uniform float3 BurnColor = float3(1, 1, 1);
+uniform float BurnSize = 0.15f;
+uniform float EmissionAmount = 2.f;
+
+float SliceAmount;
+// 디졸브 끝 
+
+
+
 struct VsIn
 {
     float4 Position : POSITION;
@@ -212,7 +244,22 @@ PsOut PsMain0(PsIn In)
     float crr = saturate(tex2D(Gradation, float2(0.f, _AccumulationTexV)).r);
     Out.Color = c1 + (1.f - crr) * c2 + (crr) * c3;
     Out.Color.a = saturate(Out.Color.a * 0.4f);
-      
+  
+    // 디졸브.
+    float Dissolve = tex2D(DissolveSampler, In.UV).r - SliceAmount;
+    clip(Dissolve);
+    float3 CurBurnColor = float3(1, 1, 1);
+    if (Dissolve < BurnSize && SliceAmount > 0.0f)
+    {
+        CurBurnColor = tex2D(BurnSampler, float2(Dissolve * (1.f / BurnSize), 0.f)).rgb;
+        CurBurnColor = CurBurnColor * BurnColor * EmissionAmount;
+        // 여기서 선택지 컬러를 번 컬러로 할것 인가 컬러에 번 컬러를 곱할 것인가 ?? 
+        // DiffuseColor.rgb  = CurBurnColor;
+        // DiffuseColor.rgb *= CurBurnColor;
+        Out.Color.rgb += CurBurnColor * exposure_corr;
+    }
+    // 디졸브 끝.
+    
     return Out;
 };
 

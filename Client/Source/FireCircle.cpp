@@ -272,7 +272,6 @@ void FireCircle::PlayParticle()
 	{
 		const Matrix Mat = SpTransform->GetRenderMatrix();
 		const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-		
 
 		{
 			auto _PlayableParticle = ParticleSystem::GetInstance()->PlayParticle(

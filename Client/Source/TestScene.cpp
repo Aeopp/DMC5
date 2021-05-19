@@ -48,10 +48,14 @@
 #include "Smoke.h"
 #include "NhDoor.h"
 #include "ShopPanel.h"
+#include "NewWingSword.h"
 
 #include <iostream>
 #include <fstream>
 #include "TimeSystem.h"
+#include "BiAttack.h"
+#include "Satellite.h"
+
 using namespace std;
 
 TestScene::TestScene()
@@ -73,6 +77,13 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
+	/*AddGameObject<CbsLongTrail>();
+	AddGameObject<BiAttack>();
+	AddGameObject<Satellite>();
+	auto _NWS = AddGameObject<NewWingSword>().lock();
+	_NWS->GetComponent<Transform>().lock()->
+		SetPosition(Vector3{0.f,0.2f,0.f});*/
+
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
@@ -85,7 +96,6 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<CbsLongTrail>();
 	// AddGameObject<Camera>();
 
 	_MainCamera = AddGameObject<MainCamera>();
@@ -108,8 +118,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
-
+	// LoadMap();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 
