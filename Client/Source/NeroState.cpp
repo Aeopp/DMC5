@@ -4019,7 +4019,7 @@ HRESULT Wind_Pressure_Big::StateUpdate(const float _fDeltaTime)
 {
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
-		m_pFSM->ChangeState(NeroFSM::STUN_START);
+		m_pFSM->ChangeState(NeroFSM::WINDPRESSURE_END);
 		return S_OK;
 	}
 	return S_OK;
@@ -4059,6 +4059,46 @@ HRESULT Wind_Pressure_Big_End::StateUpdate(const float _fDeltaTime)
 			m_pFSM->ChangeState(NeroFSM::IDLE);
 		else
 			m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		return S_OK;
+	}
+	return S_OK;
+}
+
+Wind_Pressure_CutScene::Wind_Pressure_CutScene(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+Wind_Pressure_CutScene::~Wind_Pressure_CutScene()
+{
+}
+
+Wind_Pressure_CutScene* Wind_Pressure_CutScene::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Wind_Pressure_CutScene(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT Wind_Pressure_CutScene::StateEnter()
+{
+	NeroState::StateEnter();
+	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
+		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+	else
+		NeroState::SetCbsIdle();
+	m_pNero.lock()->ChangeAnimation("WindPressure", false, Nero::ANI_WINDPRESSURE);
+	return S_OK;
+}
+
+HRESULT Wind_Pressure_CutScene::StateExit()
+{
+	return S_OK;
+}
+
+HRESULT Wind_Pressure_CutScene::StateUpdate(const float _fDeltaTime)
+{
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		m_pFSM->ChangeState(NeroFSM::STUN_START);
 		return S_OK;
 	}
 	return S_OK;
@@ -8351,6 +8391,9 @@ HRESULT Middle_Cbs_BiAttack::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_Stinger_Loop, true);
 		m_bPlayOnce = true;
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	
+	m_bPlayEff = true;
 	return S_OK;
 }
 
@@ -8368,7 +8411,11 @@ HRESULT Middle_Cbs_BiAttack::StateUpdate(const float _fDeltaTime)
 	if (0.65f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
-
+		if (m_bPlayEff)
+		{
+			m_bPlayEff = false;
+			m_pNero.lock()->PlayEffect(Eff_BiAttack);
+		}
 	}
 	else if (0.2f <= fCurrAnimationTime)
 	{
@@ -8398,6 +8445,7 @@ HRESULT Middle_Cbs_BiAttack::StateUpdate(const float _fDeltaTime)
 
 	if (0.76f <= fCurrAnimationTime)
 	{
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		NeroState::KeyInput_Cbs_Idle();
 	}
 
@@ -8428,6 +8476,8 @@ HRESULT Middle_Cbs_BlitzAttack::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_Ar3, false);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_bPlayOnce = true;
 	return S_OK;
 }
 
@@ -8456,7 +8506,14 @@ HRESULT Middle_Cbs_BlitzAttack::StateUpdate(const float _fDeltaTime)
 
 	if (0.73f <= fCurrAnimationTime)
 	{
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		NeroState::KeyInput_Cbs_Idle();
+	}
+
+	if (0.33f <= fCurrAnimationTime && m_bPlayOnce)
+	{
+		m_bPlayOnce = false;
+		m_pNero.lock()->PlayEffect(Eff_BlitzAttack);
 	}
 
 	return S_OK;
@@ -8486,6 +8543,8 @@ HRESULT Middle_Cbs_Satellite::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB1, false);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_pNero.lock()->PlayEffect(Eff_Satellite);
 	return S_OK;
 }
 
@@ -8518,6 +8577,8 @@ HRESULT Middle_Cbs_Satellite::StateUpdate(const float _fDeltaTime)
 		NeroState::SetCbsIdle();
 	if (0.72f <= fCurrAnimationTime)
 	{
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
+		m_pNero.lock()->StopEffect(Eff_Satellite);
 		NeroState::KeyInput_Cbs_Idle();
 	}
 	return S_OK;
@@ -8548,6 +8609,8 @@ HRESULT Middle_Cbs_Satellite_Air::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB1, false);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_pNero.lock()->PlayEffect(Eff_Satellite);
 	return S_OK;
 }
 
@@ -8571,6 +8634,8 @@ HRESULT Middle_Cbs_Satellite_Air::StateUpdate(const float _fDeltaTime)
 
 	if (0.77f <= fCurrAnimationTime)
 	{
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
+		m_pNero.lock()->StopEffect(Eff_Satellite);
 		NeroState::ActiveGravity(true);
 		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 			NeroState::KeyInput_Jump();
@@ -8612,6 +8677,8 @@ HRESULT Middle_Cbs_Strike::StateEnter()
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_Strike", false);
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Middle, ATTACKTYPE::Attack_KnocBack);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_pNero.lock()->PlayEffect(Eff_LongBarrel);
 	return S_OK;
 }
 
@@ -8625,6 +8692,7 @@ HRESULT Middle_Cbs_Strike::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
 	if (0.28f <= fCurrAnimationTime)
 		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
 	else if (0.1f <= fCurrAnimationTime)
@@ -8644,6 +8712,7 @@ HRESULT Middle_Cbs_Strike::StateUpdate(const float _fDeltaTime)
 
 	if (0.59f <= fCurrAnimationTime)
 	{
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		NeroState::KeyInput_Cbs_Idle();
 	}
 	return S_OK;
@@ -8671,6 +8740,7 @@ HRESULT Middle_Cbs_Strike_Air::StateEnter()
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Middle, ATTACKTYPE::Attack_KnocBack);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
 	NeroState::ActiveGravity(false);
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	return S_OK;
 }
 
@@ -8696,6 +8766,7 @@ HRESULT Middle_Cbs_Strike_Air::StateUpdate(const float _fDeltaTime)
 	if (0.65f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveGravity(true);
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 			NeroState::KeyInput_Jump();
 		else
@@ -8732,6 +8803,8 @@ HRESULT Middle_Cbs_Strike_Air_Down::StateEnter()
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Middle, ATTACKTYPE::Attack_KnocBack);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
 	NeroState::ActiveGravity(false);
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_pNero.lock()->PlayEffect(Eff_LongBarrel, {-45.f,0.f,0.f});
 	return S_OK;
 }
 
@@ -8760,6 +8833,7 @@ HRESULT Middle_Cbs_Strike_Air_Down::StateUpdate(const float _fDeltaTime)
 	if (0.65f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveGravity(true);
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 			NeroState::KeyInput_Jump();
 		else
@@ -8796,6 +8870,8 @@ HRESULT Middle_Cbs_Strike_Air_Up::StateEnter()
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Middle, ATTACKTYPE::Attack_KnocBack);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
 	NeroState::ActiveGravity(false);
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { 45.f,0.f,0.f });
 	return S_OK;
 }
 
@@ -8825,6 +8901,7 @@ HRESULT Middle_Cbs_Strike_Air_Up::StateUpdate(const float _fDeltaTime)
 	if (0.65f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveGravity(true);
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 			NeroState::KeyInput_Jump();
 		else
@@ -8860,6 +8937,8 @@ HRESULT Middle_Cbs_Strike_Down::StateEnter()
 
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Middle, ATTACKTYPE::Attack_KnocBack);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { -45.f,0.f,0.f });
 	return S_OK;
 }
 
@@ -8891,6 +8970,12 @@ HRESULT Middle_Cbs_Strike_Down::StateUpdate(const float _fDeltaTime)
 	if (0.71f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 
+	if (0.59f <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
+		NeroState::KeyInput_Cbs_Idle();
+	}
+
 	return S_OK;
 }
 
@@ -8916,7 +9001,8 @@ HRESULT Middle_Cbs_Strike_Up::StateEnter()
 
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Middle, ATTACKTYPE::Attack_KnocBack);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
-
+	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { 45.f,0.f,0.f });
 	return S_OK;
 }
 
@@ -8946,6 +9032,12 @@ HRESULT Middle_Cbs_Strike_Up::StateUpdate(const float _fDeltaTime)
 	}
 	if (0.71f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
+
+	if (0.59f <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
+		NeroState::KeyInput_Cbs_Idle();
+	}
 
 	return S_OK;
 }

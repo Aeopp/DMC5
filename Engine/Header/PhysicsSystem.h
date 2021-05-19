@@ -69,6 +69,9 @@ public:
 	//중력값 설정 임시 함수
 	void SetGravity(PxVec3 _vGravity);
 	D3DXVECTOR3 GetGravity();
+
+	//RayCast
+	bool RayCast(const D3DXVECTOR3& _vOrigin, const D3DXVECTOR3& _vDir, OUT D3DXVECTOR3& _vPoint, float _fDistance = 1000.f);
 };
 END
 #endif // !__PHYSICS_SYSTEM_H__

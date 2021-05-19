@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include "TimeSystem.h"
+#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -755,6 +756,8 @@ void Hotel_S01::Trigger2nd()
 		const std::function<void()> SpawnWaveAfterEvent =
 			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
+			_MainCamera.lock()->SetShakeInfo(0.5f, 7.f);
+			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			//... 여기서 로직 처리하세요 . 
 
 			Renderer::GetInstance()->SkyDistortionStart();
@@ -901,14 +904,6 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 				Sp->SetGlobalActive(false);
 				Sp->ResetRankScore();
 			}
-
-			//for (uint32 i = 5u; i < 7u; ++i)
-			//{
-			//	if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-			//	{
-			//		m_vecQliphothBlock[i].lock()->Reset();
-			//	}
-			//}
 		};
 
 		_EndTrigger->EventRegist(

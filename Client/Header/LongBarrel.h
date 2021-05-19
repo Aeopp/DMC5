@@ -42,7 +42,7 @@ private:
 	float LightFlux = 0.1f;
 	std::pair<float, float> PlayTimeRange = {0.5f,1.f};
 	float ScaleOffset = 0.004f;
-	std::pair<float, float> VelocityOffset{ 0.1f,0.6f};
+	std::pair<float, float> VelocityOffset{ 0.05f,0.25f};
 	float PlayLocationOffset = 0.0000f;
 	Vector3 PlayDirection{ 0.f,0.f,0.f };
 	float DirYawOffset = 0.025f;

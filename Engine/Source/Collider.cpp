@@ -15,6 +15,7 @@ Collider::Collider(std::weak_ptr<GameObject> const _pGameObject)
 	, m_vCenter(0.f, 0.f, 0.f)
 	, m_bLock{ false,false,false,false,false,false }
 	, m_bGravity(false)
+	, m_bRayCastTarget(false)
 {
 }
 
@@ -191,6 +192,14 @@ void Collider::CreateRigidActor()
 	m_pRigidActor->userData = (void*)&m_UserData;
 	//Shape ����
 	m_pRigidActor->attachShape(*m_pShape);
+
+	//RayCastTarget False;
+	m_pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+
+//#ifndef DEBUG
+//	m_pShape->setFlag(PxShapeFlag::eVISUALIZATION, false);
+//#endif // !DEBUG
+
 }
 
 bool Collider::IsRigid()
@@ -341,6 +350,23 @@ void Collider::SetGravity(const bool _bActive)
 	}
 
 	m_pRigidActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !_bActive);
+}
+
+bool Collider::IsRayCastTarget()
+{
+	return m_bRayCastTarget;
+}
+
+void Collider::SetRayCastTarget(const bool _bRayCastTarget)
+{
+	if (_bRayCastTarget == m_bRayCastTarget)
+		return;
+	if (nullptr == m_pShape)
+		return;
+
+	m_bRayCastTarget = _bRayCastTarget;
+
+	m_pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, _bRayCastTarget);
 }
 
 bool Collider::IsGround()

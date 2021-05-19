@@ -10,7 +10,8 @@ class MainCamera :
 public:
     enum AT_TYPE { AT_PLAYER,AT_TRIGGER};
     enum PLAYER_CAM_MODE { CAM_MODE_BASIC,CAM_MODE_WAVE_END,CAM_MODE_RETURN_TO_PLAYER };
-	enum TRIGGER_CAM_MODE {	STAGE1_WAVE1, STAGE1_WAVE1_END, STAGE1_WAVE2_ENTER, STAGE1_WAVE2_BATTLE, STAGE1_WAVE2_END,	};
+	enum TRIGGER_CAM_MODE {	STAGE1_WAVE1, STAGE1_WAVE1_END, STAGE1_WAVE2_ENTER, STAGE1_WAVE2_BATTLE, STAGE1_WAVE2_END,
+    STAGE2_BUTTERFLY1, STAGE2_BUTTERFLY1_END,STAGE2_BUTTERFLY2};
 private:
     explicit MainCamera();
     virtual ~MainCamera();
@@ -34,6 +35,10 @@ public:
     void Set_TriggerCam(UINT _eTriggerCamMode,const Vector3& _vTriggerPos,const float& _fTriggerTime);
     void SetDistance(float _fDistance) { m_fDistanceToTarget = _fDistance; }
     void SetQliphothBlock(std::vector<weak_ptr<class Effect>> _vecQliphothBlock) { m_vecQliphothBlock = _vecQliphothBlock; }
+    void SetLerp(bool _LerpOrNot) { m_bLerp = _LerpOrNot; }
+    void SetAngle(float _fAngle) { m_fAngle = _fAngle; }
+    void SetShakeInfo(float _fShakeTime, float _fShakePower);
+    void SetFadeSceneInfo(float _fFadeInAmout);
 public:
     void DecreaseDistance(float _GoalDis,float _fDeltaTime);
     void IncreaseDistance(float _GoalDis, float _fDeltaTime);
@@ -42,6 +47,8 @@ public:
     virtual void Editor()override;
 private:
     void Mouse_Fix();
+    void Shaking();
+    void CheckFadeOut();
     //플레이어 카메라 함수
     void MoveMent_Player(float _fDeltaTime);
     void Player_Cam_Baisc(float _fDeltaTime);
@@ -54,6 +61,9 @@ private:
 	void Trigger_Cam_Stage1_Wave2(float _fDeltaTime);
     void Trigger_Cam_Stage1_Wave2_Battle(float _fDeltaTime);
 	void Trigger_Cam_Stage1_Wave2_End(float _fDeltaTime);
+    void Trigger_Cam_Stage2_ButterFly1(float _fDeltaTime);
+    void Trigger_Cam_Stage2_ButterFly1_End(float _fDeltaTime);
+    void Trigger_Cam_Stage2_ButterFly2(float _fDeltaTime);
 private:
     std::weak_ptr<Transform>        m_pAtTranform;
     std::weak_ptr<Nero>             m_pNero;
@@ -75,6 +85,7 @@ private:
     float   m_fAngle = 0.f;
     float   m_fSensitive = 0.f;
     bool	m_bFix = false;
+    bool    m_bLerp = true;
     float   m_fRotX = 0.f;
     float   m_fFloatingAmount = 0.f;
     //////////////////////////////////////////
@@ -87,6 +98,12 @@ private:
 
     float   m_fLerpSpeed = 0.f;
     float   m_fAtLerpTime = 0.f;
+
+    float   m_fShakingTime = 0.f;
+    float   m_fShakePower = 0.f;
+
+    bool    m_bFadeOut = false;
+    float   m_fFadeInAmout = 0.f;
 };
 
 

@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include "NeroFSM.h"
+#include "TimeSystem.h"
 using namespace std;
 
 Hotel_S02::Hotel_S02()
@@ -68,7 +69,10 @@ HRESULT Hotel_S02::LoadScene()
 	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
 	//}
 	
-	AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_MainCamera.lock()->SetLerp(false);
+	_MainCamera.lock()->SetAngle(180.f);
+	_MainCamera.lock()->SetDistance(0.33f);
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -378,7 +382,7 @@ void Hotel_S02::RenderDataSetUp(const bool bTest)
 
 void Hotel_S02::TriggerSetUp()
 {
-	TriggerFirstButterFlyMeet();
+	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
 	TriggerPuzzleStart();
 	TriggerWallSmash();
 	TriggerNextScene();
@@ -395,7 +399,7 @@ void Hotel_S02::TriggerWallSmash()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
 			_AnimationWall.lock()->ContinueAnimation();
-			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
+			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::CUTSCENE_WINDPRESSURE);
 			//
 			for (auto& Element : _MakaiButterflyVec)
 				Element.lock()->SetActive(false);
@@ -418,26 +422,23 @@ void Hotel_S02::TriggerWallSmash()
 	}
 }
 
-void Hotel_S02::TriggerFirstButterFlyMeet()
+void Hotel_S02::TriggerFirstButterFlyMeetCamera(const std::weak_ptr<Trigger>& _BattleTrigger)
 {
+	// 이건 일반 트리거 
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[this/*변수 캡쳐*/]()
+			[_BattleTrigger, this]()
 		{
-			// 여기서 퍼즐용 나방과 첫 조우 연출 !
-
-			if (auto SpObject = _MakaiButterflyVec[0].lock();
-				SpObject)
-			{
-				SpObject->SetActive(true);
-				SpObject->SetRotation({ 0.f, 90.f, 0.f });
-				SpObject->SetPosition({ -3.314f, 0.886f, 14.175f });
-				SpObject->PlayStart();
-			}
+			vector<Vector3> _LostTimes;
+			_LostTimes.emplace_back(Vector3(4.f, 1.f, 0.3f));
+			TimeSystem::GetInstance()->LostTime(_LostTimes);
+			Renderer::GetInstance()->FadeOutStart(0.5f);
+			_MainCamera.lock()->Set_Trigger(_BattleTrigger);
+			_MainCamera.lock()->SetFadeSceneInfo(0.5f);
 		};
-		
+
 		// 트리거 위치
 		const Vector3 TriggerLocation{ -3.786f, 0.592f, 12.665f };
 		// 콜라이더 사이즈 
@@ -452,7 +453,47 @@ void Hotel_S02::TriggerFirstButterFlyMeet()
 			BoxSize,
 			ImmediatelyEnable,
 			TargetTag);
+	};
+}
+
+std::weak_ptr<Trigger> Hotel_S02::TriggerFirstButterFlyMeet()
+{
+	auto _Trigger = AddGameObject<Trigger>().lock();
+	if (_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this/*변수 캡쳐*/]()
+		{
+			// 여기서 퍼즐용 나방과 첫 조우 연출 !
+
+			if (auto SpObject = _MakaiButterflyVec[0].lock();
+				SpObject)
+			{
+				SpObject->SetActive(true);
+				SpObject->SetRotation({ 0.f, 90.f, 0.f });
+				SpObject->SetPosition({ -3.314f, 0.886f, 14.175f });
+				SpObject->PlayStart();
+				_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY1, { -3.314f, 0.886f, 14.175f }, 3.f);
+				_MainCamera.lock()->Set_At_Transform(SpObject->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
+			}
+		};
+		
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.786f, 0.592f, 12.665f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 2.f, 1.f, 1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
 	}
+	return _Trigger;
 }
 
 void Hotel_S02::TriggerPuzzleStart()

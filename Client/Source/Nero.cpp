@@ -316,9 +316,11 @@ HRESULT Nero::Awake()
 
 	PushEditEntity(m_pCollider.lock().get());
 
-	vDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vDegree = D3DXVECTOR3(0.f, 180.f, 0.f);
 	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+
+	m_fAngle = 180.f;
 
 	return S_OK;
 }
@@ -1206,10 +1208,10 @@ void Nero::NeroMove(NeroDirection _eDir, float _fPower)
 		m_pTransform.lock()->Translate(m_pTransform.lock()->GetLook() * _fPower);
 		break;
 	case Nero::Dir_Left:
-		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * -1.f * _fPower);
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * _fPower);
 		break;
 	case Nero::Dir_Right:
-		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * _fPower);
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * -1.f * _fPower);
 		break;
 	case Nero::Dir_Front_Down:
 		break;
@@ -1231,10 +1233,10 @@ void Nero::NeroMoveLerf(NeroDirection _eDir, float _fPower, float _fMax)
 		m_pTransform.lock()->Translate(m_pTransform.lock()->GetLook() * m_fLerfAmount);
 		break;
 	case Nero::Dir_Left:
-		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * -1.f * m_fLerfAmount);
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * m_fLerfAmount);
 		break;
 	case Nero::Dir_Right:
-		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * m_fLerfAmount);
+		m_pTransform.lock()->Translate(m_pTransform.lock()->GetRight() * -1.f * m_fLerfAmount);
 		break;
 	case Nero::Dir_Front_Down:
 		break;
@@ -1582,17 +1584,22 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		m_pCbsMidTrail.lock()->PlayStart(CbsMidTrail::Non);
 		break;
 	case Eff_BiAttack:
-		m_pBiAttack.lock()->PlayStart(vMyPos, m_pTransform.lock()->GetLook());
+		m_pBiAttack.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
 		break;
 	case Eff_BlitzAttack:
 		m_pBlitzAttack.lock()->PlayStart(vMyPos);
 		break;
 	case Eff_LongBarrel:
-		m_pLongBarrel.lock()->PlayStart(0);
-		m_pLongBarrel.lock()->PlayStart(2);
+	{
+		Vector3 vDir = -m_pTransform.lock()->GetLook();
+		Matrix RotX;
+		D3DXMatrixRotationX(&RotX, Rotation.x);
+		D3DXVec3TransformCoord(&vDir, &vDir, &RotX);
+		m_pLongBarrel.lock()->PlayStart(vMyPos, vDir);
+	}
 		break;
 	case Eff_Satellite:
-		m_pSatellite.lock()->PlayStart(vMyPos, m_pTransform.lock()->GetLook());
+		m_pSatellite.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
 		break;
 	default:
 		break;

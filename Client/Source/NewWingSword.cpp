@@ -3,6 +3,7 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+
 NewWingSword::NewWingSword()
 	:m_pParentBoneMat(nullptr)
 {
@@ -59,6 +60,15 @@ UINT NewWingSword::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	m_pMesh[m_iMeshIndex]->Update(_fDeltaTime);
 
+	// 디졸브 하고있다면 대신 SliceAmount 등등 계산 해줌 .
+	m_DissolveInfo.DissolveUpdate(_fDeltaTime,_RenderUpdateInfo.World);
+	
+	if (m_pMesh[m_iMeshIndex]->bLoop == false &&
+		0.7f <= m_pMesh[m_iMeshIndex]->PlayingTime())
+	{
+		m_DissolveInfo.DissolveStart();
+	}
+
 	if (m_pMesh[m_iMeshIndex]->IsAnimationEnd())
 	{
 		SetActive(false);
@@ -70,7 +80,7 @@ UINT NewWingSword::Update(const float _fDeltaTime)
 UINT NewWingSword::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
-	Matrix								ParentWorldMatrix, FinalWorld;
+	Matrix	ParentWorldMatrix, FinalWorld;
 
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();
 	if (nullptr != m_pParentBoneMat)
@@ -90,6 +100,7 @@ void NewWingSword::OnEnable()
 {
 	GameObject::OnEnable();
 	_RenderProperty.bRender = true;
+	m_DissolveInfo.DissolveEnd();
 }
 
 void NewWingSword::OnDisable()
@@ -124,7 +135,7 @@ void NewWingSword::Editor()
 	GameObject::Editor();
 	if (bEdit)
 	{
-
+		m_DissolveInfo.DissolveEditor();
 	}
 }
 
@@ -202,6 +213,8 @@ void NewWingSword::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh[m_iMeshIndex]->BindVTF(_Info.Fx);
+		// 쉐이더 변수를 디졸브 정보가 대신 올려줌 . 
+		m_DissolveInfo.DissolveVariableBind(_Info.Fx);
 	}
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -285,6 +298,9 @@ void NewWingSword::RenderInit()
 
 
 	Mesh::InitializeInfo _InitInfo{};
+
+	Vector3 DissolveColor = {1.f,0.f,0.f};
+	m_DissolveInfo.Initialize(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\Ar1.fbx", DissolveColor);
 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh[WingSword_Ar1] = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\Ar1.fbx", _InitInfo);
