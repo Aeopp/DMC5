@@ -64,8 +64,8 @@ HRESULT Hotel_S01::LoadScene()
 
 	AddGameObject<Camera>();
 
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -79,17 +79,15 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage1_Map.json");
-	LoadObjects("../../Data/Stage1_AniObject.json", true);
-	LoadCollObjects("../../Data/Stage1_Object.json");
-	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
+	LoadObjects("../../Data/Stage5_Map.json");
+	LoadObjects("../../Data/Stage5_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage5_Object.json");
+	LoadBreakablebjects("../../Data/Stage5_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 	
 
-	/*auto sex = AddGameObject<BrokenPeople>().lock();
-	sex->GetComponent<Transform>().lock()->SetPosition({ 0.f, 1.f, 0.f });*/
 
 #pragma endregion
 

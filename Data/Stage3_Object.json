@@ -1,7 +1,7 @@
 {
     "GameObject": [
         {
-            "Mesh": "Resource\\Map\\Object\\02_16_makaizyu_05\\02_16_makaizyu_05.fbx",
+            "Mesh": "Resource\\Map\\Object\\02_16_makaizyu_04\\02_16_makaizyu_04.fbx",
             "List": [
                 {
                     "Scale": [
@@ -45,7 +45,7 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_16_makaizyu_04\\02_16_makaizyu_04.fbx",
+            "Mesh": "Resource\\Map\\Object\\02_16_makaizyu_05\\02_16_makaizyu_05.fbx",
             "List": [
                 {
                     "Scale": [
@@ -62,28 +62,6 @@
                         0.0,
                         0.0,
                         0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Menatworka\\Menatworka.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -20.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -1760.0,
-                        174.0,
-                        27269.0
                     ]
                 }
             ]
@@ -145,7 +123,7 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\Carb_largedamage\\Carb_largedamage.fbx",
+            "Mesh": "Resource\\Map\\Object\\Menatworka\\Menatworka.fbx",
             "List": [
                 {
                     "Scale": [
@@ -155,35 +133,13 @@
                     ],
                     "Rotation": [
                         0.0,
-                        10.0,
-                        -90.0
-                    ],
-                    "Position": [
-                        -2768.6591796875,
-                        285.67901611328127,
-                        26851.046875
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Taxia_largedamage\\Taxia_largedamage.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        40.0,
+                        -20.0,
                         0.0
                     ],
                     "Position": [
-                        820.0,
-                        184.0,
-                        27569.0
+                        -1760.0,
+                        174.0,
+                        27269.0
                     ]
                 }
             ]
@@ -206,6 +162,28 @@
                         0.0,
                         0.0,
                         0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\Taxia_largedamage\\Taxia_largedamage.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        40.0,
+                        0.0
+                    ],
+                    "Position": [
+                        820.0,
+                        184.0,
+                        27569.0
                     ]
                 }
             ]
@@ -272,28 +250,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_16_makaizyu\\02_16_makaizyu.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Object\\Streetlight\\Streetlight.fbx",
             "List": [
                 {
@@ -311,6 +267,28 @@
                         111.4990234375,
                         205.74899291992188,
                         28009.494140625
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\02_16_makaizyu\\02_16_makaizyu.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
                     ]
                 }
             ]

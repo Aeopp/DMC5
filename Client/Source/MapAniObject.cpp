@@ -313,6 +313,7 @@ void MapAniObject::SetUp(
 			m_pCollider = AddComponent<BoxCollider>();
 			m_pCollider.lock()->ReadyCollider();
 			m_pCollider.lock()->SetSize({ 0.1f,0.1f,0.1f });
+			m_pCollider.lock()->SetCenter({ 0.f, 0.05f, 0.f });
 			PushEditEntity(m_pCollider.lock().get());
 			m_bColl = true;
 			m_bFlag6 = true;
@@ -330,6 +331,8 @@ void MapAniObject::SetUp(
 		{
 			m_pCollider = AddComponent<BoxCollider>();
 			m_pCollider.lock()->ReadyCollider();
+			m_pCollider.lock()->SetSize({ 0.35f,0.1f,0.1f });
+			m_pCollider.lock()->SetCenter({ 0.f,-0.05f,0.01f });
 			PushEditEntity(m_pCollider.lock().get());
 			m_bColl = true;
 			m_bFlag6 = true;
