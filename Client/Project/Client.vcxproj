@@ -567,6 +567,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\StoneDebris.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\FireSprite.hlsl">
       <FileType>Document</FileType>
     </None>

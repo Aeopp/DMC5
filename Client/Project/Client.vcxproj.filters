@@ -539,6 +539,9 @@
       <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\LongBarrel.h" />
+    <ClInclude Include="..\..\Resource\Shader\Effect\StoneDebris.hlsl">
+      <Filter>02.GameObject\Effect\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

@@ -34,6 +34,11 @@ class JudgementShadow1;
 class JudgementShadow2;
 class JudgementShadow3;
 class CbsTrail;
+class CbsMidTrail;
+class BiAttack;
+class BlitzAttack;
+class LongBarrel;
+class Satellite;
 class NewWingSword;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
@@ -519,6 +524,11 @@ private:
 	std::weak_ptr<CircleWave>		m_pCircleWave;
 	std::weak_ptr<CbsTrail>			m_pCbsTrail;
 	std::weak_ptr<NewWingSword>		m_pNewWingSword;
+	std::weak_ptr<CbsMidTrail>		m_pCbsMidTrail;
+	std::weak_ptr<BiAttack>			m_pBiAttack;
+	std::weak_ptr<BlitzAttack>		m_pBlitzAttack;
+	std::weak_ptr<LongBarrel>		m_pLongBarrel;
+	std::weak_ptr<Satellite>		m_pSatellite;
 	enum { SP_RED = 0, SP_GREEN, SP_WHITE, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 

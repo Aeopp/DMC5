@@ -10,8 +10,11 @@ void BreakableObject::Free()
 {
 	m_pStaticMesh.reset();
 
-	for (auto& Element : m_pStoneDebrisVec)
-		Destroy(Element);
+	//for (auto& Element : m_pStoneDebrisVec)
+	//{
+	//	if (!Element.expired())
+	//		Destroy(Element);
+	//}
 	m_pStoneDebrisVec.clear();
 	m_pStoneDebrisVec.shrink_to_fit();
 
@@ -198,7 +201,10 @@ void BreakableObject::SetUp(
 void BreakableObject::StoneInit()
 {
 	for (auto& Element : m_pStoneDebrisVec)
-		Destroy(Element);
+	{
+		if (!Element.expired())
+			Destroy(Element);
+	}
 	m_pStoneDebrisVec.clear();
 
 	m_pStoneDebrisVec.reserve(m_iStoneCount);
@@ -351,5 +357,4 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		}
 		break;
 	}
-
 }

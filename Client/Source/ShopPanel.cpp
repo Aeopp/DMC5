@@ -54,7 +54,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 			_ImplInfo.Fx->SetBool("_ApplyExposureCorr", false);
-	
+
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
@@ -106,7 +106,7 @@ HRESULT ShopPanel::Ready()
 
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
-	
+
 	//
 	Init_UIDescs();
 
@@ -149,7 +149,7 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 	//std::cout << ScreenPosToOrtho(TargetPos.x, TargetPos.y).x << std::endl;
 
 	return 0;
-}          
+}
 
 UINT ShopPanel::LateUpdate(const float _fDeltaTime)
 {
@@ -181,8 +181,8 @@ void ShopPanel::Init_UIDescs()
 	if (!_UIDescs)
 		_UIDescs = new UI_DESC[DESC_END];
 
-	// Using, Pos, Scale
-	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
+	// Using, Pos, Scale, Rot
+	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f),  Vector3(0.f, 0.f, 0.f) };
 }
 
 void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -215,6 +215,12 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		_Out._11 = _UIDescs[_ID].Scale.x;
 		_Out._22 = _UIDescs[_ID].Scale.y;
 		_Out._33 = _UIDescs[_ID].Scale.z;
+		D3DXMatrixRotationX(&RotMat, D3DXToRadian(_UIDescs[_ID].Rot.x));
+		_Out *= RotMat;
+		D3DXMatrixRotationY(&RotMat, D3DXToRadian(_UIDescs[_ID].Rot.y));
+		_Out *= RotMat;
+		D3DXMatrixRotationZ(&RotMat, D3DXToRadian(_UIDescs[_ID].Rot.z));
+		_Out *= RotMat;
 		_Out._41 = _UIDescs[_ID].Pos.x - (g_nWndCX >> 1);
 		_Out._42 = -(_UIDescs[_ID].Pos.y - (g_nWndCY >> 1));
 		_Out._43 = _UIDescs[_ID].Pos.z;
@@ -250,7 +256,7 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 Vector2 ShopPanel::WorldPosToScreenPos(const Vector3& WorldPos)
 {
 	const ENGINE::RenderInformation& info = Renderer::GetInstance()->_RenderInfo;
-	
+
 	Vector4 Pos = Vector4(WorldPos.x, WorldPos.y, WorldPos.z, 1.f);
 	D3DXVec4Transform(&Pos, &Pos, &info.View);
 	D3DXVec4Transform(&Pos, &Pos, &info.Projection);
@@ -263,7 +269,7 @@ Vector2 ShopPanel::WorldPosToScreenPos(const Vector3& WorldPos)
 
 Vector2 ShopPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 {
-	Vector2 Ret = Vector2(_ScreenPosX - (g_nWndCX >> 1), -(_ScreenPosY - (g_nWndCY >> 1)));	
+	Vector2 Ret = Vector2(_ScreenPosX - (g_nWndCX >> 1), -(_ScreenPosY - (g_nWndCY >> 1)));
 	D3DXVec2TransformCoord(&Ret, &Ret, &Renderer::GetInstance()->_RenderInfo.Ortho);
 	return Ret;
 }

@@ -54,7 +54,12 @@ HRESULT LogoScene::Update(const float _fDeltaTime)
 	if (!_LoadNextScene)
 	{
 		// 다음 씬 로드
-		SceneManager::LoadScene(Hotel_S01::Create(), false);
+		SceneManager::LoadScene(TitleScene::Create(), false);
+		//SceneManager::LoadScene(TestScene::Create(), false);
+		//SceneManager::LoadScene(Hotel_S01::Create(), false);
+		//SceneManager::LoadScene(Hotel_S02::Create(), false);
+		//SceneManager::LoadScene(Hotel_S03::Create(), false);
+		//SceneManager::LoadScene(Hotel_S04::Create(), false);
 
 		_LoadNextScene = true;
 	}

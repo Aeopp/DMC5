@@ -1,12 +1,10 @@
 matrix Ortho;
-matrix Perspective;  // 메시, xy 회전이 필요한 경우 
-matrix ScreenMat;    // (-width/2 ~ +width/2, +height/2 ~ -height/2)
-
+matrix Perspective; // 메시, xy 회전이 필요한 경우 
+matrix ScreenMat; // (-width/2 ~ +width/2, +height/2 ~ -height/2)
 float3 LightDirection = float3(0.f, 0.f, 1.f);
 
-float exposure_corr = 1.f;
 float _BrightScale = 1.f;
-
+float exposure_corr = 1.f;
 bool _ApplyExposureCorr = true;
 
 float _TotalAccumulateTime;
@@ -84,7 +82,7 @@ sampler ATOS0 = sampler_state
 
 struct VsIn
 {
-	float4 Position : POSITION;
+    float4 Position : POSITION;
     float3 Normal : NORMAL;
     float3 Tangent : TANGENT;
     float3 BiNormal : BINORMAL;
@@ -108,19 +106,6 @@ struct VsOut_Clip
     float3 Tangent : TEXCOORD2;
     float3 BiNormal : TEXCOORD3;
     float4 Clip : TEXCOORD4;
-};
-
-struct VsOut_NoiseClip
-{
-    float4 Position : POSITION;
-    float2 UV : TEXCOORD0;
-    float3 Normal : TEXCOORD1;
-    float3 Tangent : TEXCOORD2;
-    float3 BiNormal : TEXCOORD3;
-    float2 NoiseCoord0 : TEXCOORD4;
-    float2 NoiseCoord1 : TEXCOORD5;
-    float2 NoiseCoord2 : TEXCOORD6;
-    float Clip : TEXCOORD7;
 };
 
 struct VsOut_GUI
@@ -169,7 +154,7 @@ VsOut_Clip VsMain_ClipPos(VsIn In)
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
     Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
-    Out.UV = In.UV;        
+    Out.UV = In.UV;
     Out.Clip = Out.Position;
 
     return Out;
@@ -203,18 +188,6 @@ struct PsIn_Clip
     float3 Tangent : TEXCOORD2;
     float3 BiNormal : TEXCOORD3;
     float4 Clip : TEXCOORD4;
-};
-
-struct PsIn_NoiseClip
-{
-    float2 UV : TEXCOORD0;
-    float3 Normal : TEXCOORD1;
-    float3 Tangent : TEXCOORD2;
-    float3 BiNormal : TEXCOORD3;
-    float2 NoiseCoord0 : TEXCOORD4;
-    float2 NoiseCoord1 : TEXCOORD5;
-    float2 NoiseCoord2 : TEXCOORD6;
-    float2 Clip : TEXCOORD7;
 };
 
 struct PsIn_GUI
@@ -282,11 +255,11 @@ PsOut PsMain_GUI(PsIn_GUI In)
 
 technique Default
 {
-	pass p0
-	{
-		alphablendenable = true;
-		srcblend = srcalpha;
-		destblend = invsrcalpha;
+    pass p0
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
         zenable = false;
         zwriteenable = false;
         sRGBWRITEENABLE = false;

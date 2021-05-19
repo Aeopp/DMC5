@@ -48,14 +48,11 @@
 #include "Smoke.h"
 #include "NhDoor.h"
 #include "ShopPanel.h"
-#include "NewWingSword.h"
+#include "StoneDebris.h"
+#include "TimeSystem.h"
 
 #include <iostream>
 #include <fstream>
-#include "TimeSystem.h"
-#include "BiAttack.h"
-#include "Satellite.h"
-
 using namespace std;
 
 TestScene::TestScene()
@@ -77,12 +74,6 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	/*AddGameObject<CbsLongTrail>();
-	AddGameObject<BiAttack>();
-	AddGameObject<Satellite>();
-	auto _NWS = AddGameObject<NewWingSword>().lock();
-	_NWS->GetComponent<Transform>().lock()->
-		SetPosition(Vector3{0.f,0.2f,0.f});*/
 
 	// Load Start
 	m_fLoadingProgress = 0.01f;
@@ -96,7 +87,8 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	// AddGameObject<Camera>();
+
+	//AddGameObject<Camera>();
 
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -119,6 +111,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Map
 
 	// LoadMap();
+
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 
@@ -129,8 +122,9 @@ HRESULT TestScene::LoadScene()
 #pragma region RenderData & Trigger
 
 	RenderDataSetUp();
-	TriggerSetUp();
-	MonsterWaveTriggerSetUp();
+	//TriggerSetUp();
+	//MonsterWaveTriggerSetUp();
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.7f;
@@ -148,12 +142,14 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
+	//AddGameObject<MakaiButterfly>();
+	//AddGameObject<CbsLongTrail>();
 
-	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
-	//	pSmoke)
+	//if (auto Sp = AddGameObject<StoneDebris>().lock();
+	//	Sp)
 	//{
-	//	pSmoke->SetLoop(true);
-	//	pSmoke->PlayStart();
+	//	Sp->SetLoop(true);
+	//	Sp->PlayStart();
 	//}
 
 	//// Stage2 안개
@@ -209,7 +205,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 10, Until Dooms Day",
+		pFont->SetText("D 8, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
