@@ -473,9 +473,9 @@ void PreLoader::FireSpritePoolLoad(const uint32 SpriteIdx)
 
 		const Vector3 TargetLocation = Vector3{ 0.f,0.f,0.f };
 
-		static constexpr float StartVelocityScale = 0.05f;
-		static constexpr float SecondVelocityScale = 0.1f;
-		static constexpr float ThirdVelocityScale = 0.15f;
+		static constexpr float StartVelocityScale = 0.10f;
+		static constexpr float SecondVelocityScale = 0.10f;
+		static constexpr float ThirdVelocityScale = 0.10f;
 
 		ParticleInstance::FireSprite _FireValue{};
 		_FireValue.ColorIntencity = FMath::Random(0.3f, 0.5f);
