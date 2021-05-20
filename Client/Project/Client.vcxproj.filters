@@ -550,6 +550,8 @@
       <Filter>03.Scene\03.Mission02_Library</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\Change.h" />
+    <ClInclude Include="..\Header\Spark.h" />
+    <ClInclude Include="..\Header\DynamicLight.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -888,6 +890,8 @@
       <Filter>03.Scene\03.Mission02_Library</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Change.cpp" />
+    <ClCompile Include="..\Source\Spark.cpp" />
+    <ClCompile Include="..\Source\DynamicLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

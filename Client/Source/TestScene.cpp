@@ -54,6 +54,8 @@
 #include "ShockWave.h"
 #include "Trail.h"
 #include "Change.h"
+#include "SpriteEffect.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -80,6 +82,67 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 	AddGameObject<Change>();
 	AddGameObject<ShockWave>();
+
+	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+		_SpriteEffect)
+	{
+		_SpriteEffect->RegistSpriteInfo(8, 4);
+		_SpriteEffect->RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		_SpriteEffect->RegistAlbedoTex(
+			"..\\..\\Usable\\Spark\\1.tga");
+		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+	}
+
+	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+		_SpriteEffect)
+	{
+		_SpriteEffect->RegistSpriteInfo(2, 1);
+		_SpriteEffect->RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\2.tga");
+		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+	}
+
+	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+		_SpriteEffect)
+	{
+		_SpriteEffect->RegistSpriteInfo(2, 2);
+		_SpriteEffect->RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\3.tga");
+		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+	}
+
+	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+		_SpriteEffect)
+	{
+		_SpriteEffect->RegistSpriteInfo(4, 1);
+		_SpriteEffect->RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\4.tga");
+		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+	}
+
+	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+		_SpriteEffect)
+	{
+		_SpriteEffect->RegistSpriteInfo(8, 4);
+		_SpriteEffect->RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\5.tga");
+		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+	}
+
+	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+		_SpriteEffect)
+	{
+		_SpriteEffect->RegistSpriteInfo(4, 2);
+		_SpriteEffect->RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\6.tga");
+		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+	}
 
 	m_fLoadingProgress = 0.01f;
 
