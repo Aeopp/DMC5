@@ -34,7 +34,7 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void PlayStart(const Vector3& Location ,
-					const Vector3& PlayDirection);
+				   const Vector3& PlayDirection);
 	void PlayEnd();
 private:
 	bool bPlay = false;
@@ -45,15 +45,15 @@ private:
 	float PlayLocationOffset = 0.1f;
 	std::pair<float, float> VelocityOffset{ 0.238235f,0.721925f};
 	float LightRadius = 0.5f;
-	float BranchScale = 0.005f;
+	float BranchScale = 0.02f;
 	float LightFlux = 0.1f;
 	std::pair<float, float> PlayTimeRange = {0.1f,0.2f};
 	float ScaleOffset = 0.002674f;
 
+	Vector3 CurDirection{ 0.f,0.f,0.f };
 	Vector3 PlayDirection{ 0.f,0.f,0.f };
 	float DirYawOffset = 3.142f;
 	float DirPitchOffset = 3.142f;
 	float T = 0.0f;
-	Vector3 CurrentPlayDireciton{ 0.f,0.f,0.f };
 };
 #endif //

@@ -11,7 +11,7 @@ int BtlPanel::_HPGaugeCount = 5;
 float BtlPanel::_TDTGauge = 0.f;
 uint32 BtlPanel::_StylishPoints = 0u;
 float BtlPanel::_ExGauge = 0.f;
-uint32 BtlPanel::_RedOrbCount = 0u;
+uint32 BtlPanel::_RedOrbCount = 999999u;
 
 
 void BtlPanel::Free()
@@ -2402,9 +2402,10 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_F6))
 	{
+		AccumulateTDTGauge(1.f);
+
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
 		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
-		AccumulateTDTGauge(1.f);
 		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
 		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;

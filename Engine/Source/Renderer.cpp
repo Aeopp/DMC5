@@ -571,7 +571,10 @@ HRESULT Renderer::Render()&
 		AdaptLuminance(DeltaTime);
 		BrightPass();
 		DownSample();
-		Stars();
+		if (bStars)
+		{
+			Stars();
+		}
 		Bloom();
 		LensFlare();
 		// 백버퍼로 백업 . 
@@ -713,8 +716,12 @@ void Renderer::Editor()&
 		ImGui::SliderFloat("SoftParticleDepthScale", &SoftParticleDepthScale, 0.0f, 1.f);
 		ImGui::InputFloat("In SoftParticleDepthScale", &SoftParticleDepthScale);
 
-		ImGui::SliderFloat("StarScale", &StarScale, -10.f, 10.f);
-		ImGui::SliderFloat("StarFactor", &StarFactor, -10.f, 10.f);
+		if (ImGui::CollapsingHeader("Stars"))
+		{
+			ImGui::Checkbox("bStars", &bStars);
+			ImGui::SliderFloat("StarScale", &StarScale, -10.f, 10.f);
+			ImGui::SliderFloat("StarFactor", &StarFactor, -10.f, 10.f);
+		}
 
 		ImGui::Checkbox("SRGBAlbm", &bSRGBAlbm);
 		ImGui::Checkbox("SRGBNRMR", &bSRGBNRMR);
@@ -2074,6 +2081,7 @@ HRESULT Renderer::UIRender()&
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, AlphaEnable);
 	Device->SetRenderState(D3DRS_ZENABLE, ZEnable);
 	Device->SetRenderState(D3DRS_ZWRITEENABLE, ZWrite);
+	
 	return S_OK;
 }
 
@@ -2454,6 +2462,11 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 
 	exposure = 1.0f / (adaptedluminance_var[4] * two_ad_EV) *
 		adaptedluminance_var[5];
+
+	if (FixedExposure)
+	{
+		exposure = FixedExposure.value();
+	}
 
 	return S_OK;
 }

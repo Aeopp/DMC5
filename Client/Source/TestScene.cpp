@@ -20,6 +20,7 @@
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "Liquid.h"
+#include "WhirlWind.h"
 #include "AppearGroundMonster.h"
 #include "Smoke.h"
 #include "QliphothBlock.h"
@@ -48,10 +49,12 @@
 #include "Smoke.h"
 #include "NhDoor.h"
 #include "ShopPanel.h"
+#include "StoneDebris.h"
+#include "TimeSystem.h"
+#include "Trail.h"
 
 #include <iostream>
 #include <fstream>
-#include "TimeSystem.h"
 using namespace std;
 
 TestScene::TestScene()
@@ -85,11 +88,11 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-	AddGameObject<CbsLongTrail>();
-	// AddGameObject<Camera>();
 
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	AddGameObject<Camera>();
+
+	//_MainCamera = AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -110,8 +113,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(1);
 
 #pragma endregion
 
@@ -120,8 +123,9 @@ HRESULT TestScene::LoadScene()
 #pragma region RenderData & Trigger
 
 	RenderDataSetUp();
-	TriggerSetUp();
-	MonsterWaveTriggerSetUp();
+	//TriggerSetUp();
+	//MonsterWaveTriggerSetUp();
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.7f;
@@ -139,12 +143,17 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<SecretVision>();
 	//AddGameObject<NhDoor>();
 	//AddGameObject<BlitzAttack>();
+	//AddGameObject<MakaiButterfly>();
+	//AddGameObject<CbsLongTrail>();
+	//AddGameObject<Trail>();
+	//AddGameObject<CbsLongTrail>();
+	//AddGameObject<WhirlWind>();
 
-	//if (auto pSmoke = AddGameObject<StoneDebris>().lock();
-	//	pSmoke)
+	//if (auto Sp = AddGameObject<StoneDebris>().lock();
+	//	Sp)
 	//{
-	//	pSmoke->SetLoop(true);
-	//	pSmoke->PlayStart();
+	//	Sp->SetLoop(true);
+	//	Sp->PlayStart();
 	//}
 
 	//// Stage2 안개
@@ -188,6 +197,8 @@ HRESULT TestScene::LoadScene()
 #pragma region UI
 
 	AddGameObject<BtlPanel>();
+
+	//AddGameObject<BtlPanel>().lock()->SetActive(false);
 	//AddGameObject<ShopPanel>();
 
 #pragma endregion
@@ -200,7 +211,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 10, Until Dooms Day",
+		pFont->SetText("D 7, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
@@ -240,6 +251,13 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+
+	/*if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.2f,0.f });
+	}*/
+
 	//cout << "SceneUpdate" << endl;
 
 	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);

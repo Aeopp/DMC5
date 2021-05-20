@@ -73,8 +73,8 @@ private:
 	virtual void Imgui_Modify() override;
 private:
 	void RenderInit();
-	void RenderGBuffer(const DrawInfo& _Info);
-	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+	void RenderAlphaBlendEffect_Stone(const DrawInfo& _Info);
+	void RenderAlphaBlendEffect_Debris(const DrawInfo& _Info);
 public:
 	static StoneDebris* Create();
 public:

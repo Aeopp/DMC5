@@ -11,6 +11,7 @@
 #include "MapObject.h"
 #include "Monster.h"
 #include "SoundSystem.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -135,13 +136,16 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
-	// 테스트용 ////////////////////////
+	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		// TestScene으로 넘어감
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
 	}
-	////////////////////////////////////
+	/* -------------------------- */
 
 	return S_OK;
 }

@@ -202,6 +202,8 @@
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\Library_S05.h" />
+    <ClInclude Include="..\Header\Library_S06.h" />
     <ClInclude Include="..\Header\LoadingPanel.h" />
     <ClInclude Include="..\Header\LoadingScene.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
@@ -258,6 +260,7 @@
     <ClInclude Include="..\Header\TitleScene.h" />
     <ClInclude Include="..\Header\Trail.h" />
     <ClInclude Include="..\Header\Unit.h" />
+    <ClInclude Include="..\Header\WhirlWind.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
@@ -318,6 +321,8 @@
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\Library_S05.cpp" />
+    <ClCompile Include="..\Source\Library_S06.cpp" />
     <ClCompile Include="..\Source\LoadingPanel.cpp" />
     <ClCompile Include="..\Source\LoadingScene.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
@@ -378,6 +383,7 @@
     <ClCompile Include="..\Source\Trail.cpp" />
     <ClCompile Include="..\Source\Trigger.cpp" />
     <ClCompile Include="..\Source\Unit.cpp" />
+    <ClCompile Include="..\Source\WhirlWind.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
@@ -407,11 +413,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
-      <FileType>Document</FileType>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>
@@ -563,6 +564,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\CbsLongTrail.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Resource\Shader\Effect\StoneDebris.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\FireSprite.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\WhirlWind.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

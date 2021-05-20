@@ -1336,28 +1336,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\Upground\\Upground.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3404.31396484375,
-                        570.9299926757813,
-                        28279.2109375
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Location2\\Hotelwalla10\\Hotelwalla10.fbx",
             "List": [
                 {

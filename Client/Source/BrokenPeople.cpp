@@ -94,7 +94,8 @@ void BrokenPeople::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	if (!(GAMEOBJECTTAG::TAG_RedQueen == ObjTag
 		|| GAMEOBJECTTAG::Tag_Cbs_Short == ObjTag
 		|| GAMEOBJECTTAG::Tag_Cbs_Middle == ObjTag
-		|| GAMEOBJECTTAG::Tag_Cbs_Long == ObjTag))
+		|| GAMEOBJECTTAG::Tag_Cbs_Long == ObjTag
+		|| GAMEOBJECTTAG::Overture == ObjTag))
 		return;
 	m_pCollider.lock()->SetActive(false);
 	m_pMesh->PlayAnimation(0, false);

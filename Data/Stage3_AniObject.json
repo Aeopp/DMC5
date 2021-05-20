@@ -1,0 +1,43 @@
+{
+    "GameObject": [
+        {
+            "Mesh": "Resource\\Map\\Object\\BrokenPeople\\BrokenPeople.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -2250.0,
+                        150.0,
+                        27349.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        110.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -3140.0,
+                        150.0,
+                        25529.0
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -15,13 +15,13 @@ public:
 public:
 	static const inline float SecretVisionDisappearParticleLifeEnd{ 1.33f };
 private:
-
 	static void IceCbsMidParticlePoolLoad();
 	static void CbsMidParticlePoolLoad();
-
 	static void IceAgeParticlePoolLoad();
 
 	static void FireParticlePoolLoad();
+	static void FireVortexSpritePoolLoad(const uint32 SpriteIdx);
+	static void FireSpritePoolLoad(const uint32 SpriteIdx);
 	static void ElectricEffectParticlePoolLoad(
 		const std::filesystem::path& _TexPath,
 		const uint32 SpriteColCnt,

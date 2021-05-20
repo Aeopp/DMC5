@@ -19,6 +19,8 @@
 #include "CollObject.h"
 #include "BreakableObject.h"
 #include "SoundSystem.h"
+#include "TimeSystem.h"
+#include "BrokenPeople.h"
 
 #include <iostream>
 #include <fstream>
@@ -50,6 +52,7 @@ Hotel_S01* Hotel_S01::Create()
 
 HRESULT Hotel_S01::LoadScene()
 {
+
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
@@ -88,6 +91,8 @@ HRESULT Hotel_S01::LoadScene()
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 	
+
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -103,7 +108,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Effect
 
-	// Stage2 길막
+	// Stage1 길막
 	m_vecQliphothBlock.reserve(7);
 
 	// 0: StartPoint 
@@ -112,7 +117,8 @@ HRESULT Hotel_S01::LoadScene()
 	{
 		ptr.lock()->SetScale(0.016f);
 		ptr.lock()->SetRotation(Vector3(0.f, 262.286f, 0.f));
-		ptr.lock()->SetPosition(Vector3(-5.7f, 0.286f, -5.05f));
+		//ptr.lock()->SetPosition(Vector3(-5.7f, 0.286f, -5.05f));
+		ptr.lock()->SetPosition(Vector3(-10.2f, 0.286f, -5.05f));
 		ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
@@ -182,6 +188,7 @@ HRESULT Hotel_S01::LoadScene()
 		//ptr.lock()->PlayStart();
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
+
 	//메인 카메라에 클리포트 블록 전달
 	if(!_MainCamera.expired())
 		_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
@@ -226,29 +233,16 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
-	// 테스트용 ////////////////////////
+	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S01));
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
-	/*if (Input::GetKeyDown(DIK_UP))
-	{
-		SoundSystem::GetInstance()->Play("_2", 1.f, true, false);
-	}
-	if (Input::GetKeyDown(DIK_DOWN))
-	{
-		SoundSystem::GetInstance()->Play("Wow", 0.5f, false, false);
-	}
-	if (Input::GetKeyDown(DIK_LEFT))
-	{
-		SoundSystem::GetInstance()->Play("_1", 0.77f, true, false);
-	}
-	if (Input::GetKeyDown(DIK_RIGHT))
-	{
-		SoundSystem::GetInstance()->RandSoundKeyPlay("Rs", { 1u,3u }, 1.f, true);
-	}*/
-	////////////////////////////////////
-
+	/* -------------------------- */
 
 	return S_OK;
 }
@@ -449,6 +443,8 @@ void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
 		sFullPath = iter->FindMember("Mesh")->value.GetString();
 		sFullPath = sBasePath / sFullPath;
 		//
+	
+
 		Resources::Load<StaticMesh>(sFullPath);
 		//
 		auto objectArr = iter->FindMember("List")->value.GetArray();
@@ -531,7 +527,7 @@ void Hotel_S01::TriggerElectricBoard(
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[_BattleTrigger,this]()
+			[_BattleTrigger, this]()
 		{
 			vector<Vector3> _LostTimes;
 			_LostTimes.emplace_back(Vector3{ 3.f,1.f,0.5f });
@@ -580,16 +576,16 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 		// 몬스터 위치는 미리 잡아주기  . 
 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.162f, 0.02f,  -0.152f });
+			lock()->SetPosition({ -0.162f, 0.02f, -0.152f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -1.187f, 0.02f, -1.137f });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.602, 0.02f, 	 -0.374 });
+			lock()->SetPosition({ 0.602f, 0.02f, -0.374f });
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 1.313 , 0.02f, 	-0.993 });
+			lock()->SetPosition({ 1.313f, 0.02f, -0.993f });
 	
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
@@ -649,16 +645,16 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.162f, 0.02f,  -0.152f });
+			lock()->SetPosition({ -0.162f, 0.02f, -0.152f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -1.187f, 0.02f, -1.137f });
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.602, 0.02f, -0.374 });
+			lock()->SetPosition({ 0.602f, 0.02f, -0.374f });
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 1.313 , 0.02f, -0.993 });
+			lock()->SetPosition({ 1.313f, 0.02f, -0.993f });
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -0.66720f,0.01168f,-2.18399f };
@@ -744,7 +740,7 @@ void Hotel_S01::Trigger2nd()
 			lock()->SetPosition({ -3.52741f, 0.009f, 6.39310f});
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -3.1017f, 0.011680f, 5.662048f };
+		const Vector3 TriggerLocation{ -3.1017f, 0.011680f, 4.624099f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 6.f, 3.f, 1.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
@@ -917,8 +913,7 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 	}
 
 	auto _StartTrigger = AddGameObject<Trigger>().lock();
-	if (
-		_StartTrigger)
+	if (_StartTrigger)
 	{
 		// 몬스터 웨이브 배열로 등록. 
 		std::vector<std::weak_ptr<Monster>> MonsterWave
@@ -1052,7 +1047,7 @@ void Hotel_S01::LateInit()
 
 	Renderer::GetInstance()->LateSceneInit();
 
-	_LateInit = true;
-
 	BgmPlay();
+
+	_LateInit = true;
 }

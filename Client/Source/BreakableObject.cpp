@@ -10,8 +10,11 @@ void BreakableObject::Free()
 {
 	m_pStaticMesh.reset();
 
-	for (auto& Element : m_pStoneDebrisVec)
-		Destroy(Element);
+	//for (auto& Element : m_pStoneDebrisVec)
+	//{
+	//	if (!Element.expired())
+	//		Destroy(Element);
+	//}
 	m_pStoneDebrisVec.clear();
 	m_pStoneDebrisVec.shrink_to_fit();
 
@@ -174,7 +177,9 @@ void BreakableObject::SetUp(
 		m_iStoneCount = 12;
 	else if (sFileName == "OrbTree_White1.fbx")
 		m_iStoneCount = 6;
-
+	else if (sFileName == "OrbTree_White2.fbx")
+		m_iStoneCount = 5;
+		
 	D3DXVECTOR3 vScale = _vScale * GScale;
 	D3DXVECTOR3 vPos = _vPosition * GScale;
 	m_pTransform.lock()->SetScale(vScale);
@@ -198,7 +203,10 @@ void BreakableObject::SetUp(
 void BreakableObject::StoneInit()
 {
 	for (auto& Element : m_pStoneDebrisVec)
-		Destroy(Element);
+	{
+		if (!Element.expired())
+			Destroy(Element);
+	}
 	m_pStoneDebrisVec.clear();
 
 	m_pStoneDebrisVec.reserve(m_iStoneCount);
@@ -340,8 +348,29 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Long:
 		if (m_bDestroyObject == false)
 		{
@@ -350,6 +379,13 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			m_bDestroyObject = true;
 		}
 		break;
+	case GAMEOBJECTTAG::Overture:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
 	}
-
 }

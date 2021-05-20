@@ -5,14 +5,13 @@
 #include <optional>
 
 class LongBarrel : public ENGINE::GameObject
-		
 {
 private:
 	struct EffectDesc
 	{
 		std::weak_ptr<class ThunderBolt> _Effect{};
 	};
-	std::array<EffectDesc, 10u> _PlayEffectDescs{};
+	std::array<EffectDesc, 15u> _PlayEffectDescs{};
 private:
 	explicit LongBarrel() = default;
 	virtual ~LongBarrel() = default;

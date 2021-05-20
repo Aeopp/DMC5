@@ -10,8 +10,11 @@
 
 void Monster::Free()
 {
-	for (auto& Element : m_pStoneDebrisVec)
-		Destroy(Element);
+	//for (auto& Element : m_pStoneDebrisVec)
+	//{
+	//	if (!Element.expired())
+	//		Destroy(Element);
+	//}
 	m_pStoneDebrisVec.clear();
 	m_pStoneDebrisVec.shrink_to_fit();
 
@@ -75,7 +78,10 @@ void Monster::AddRankScore(float _fRankScore)
 void Monster::StoneDebrisInit()
 {
 	for (auto& Element : m_pStoneDebrisVec)
-		Destroy(Element);
+	{
+		if (!Element.expired())
+			Destroy(Element);
+	}
 	m_pStoneDebrisVec.clear();
 
 	m_pStoneDebrisVec.reserve(16u);

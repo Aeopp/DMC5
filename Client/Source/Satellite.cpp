@@ -83,14 +83,14 @@ UINT Satellite::Update(const float _fDeltaTime)
 			 {
 				 if (SpThunderBolt->_RenderProperty.bRender == false)
 				 {
-					 const Vector3 NormDirection = FMath::Normalize(PlayDirection);
+					 const Vector3 NormDirection = FMath::Normalize(CurDirection);
 					 const Vector3 PlayLocation = GetComponent<Transform>().lock()->GetPosition()
 												 + (NormDirection * ElectricForwardOffset);
 					 const Vector3 _Location = FMath::RandomVector(PlayLocationOffset);
 					 const float _Velocity = FMath::Random(VelocityOffset.first, VelocityOffset.second);
 					 const Vector3 _Scale = FMath::RandomScale(ScaleOffset);
-					 const Vector3 _Right = FMath::Normalize(FMath::Cross(Vector3{ 0,1,0 }, PlayDirection));
-					 const Vector3 _Up = FMath::Normalize(FMath::Cross(PlayDirection, _Right));
+					 const Vector3 _Right = FMath::Normalize(FMath::Cross(Vector3{ 0,1,0 }, CurDirection));
+					 const Vector3 _Up = FMath::Normalize(FMath::Cross(CurDirection, _Right));
 
 					 Vector3 _Direction = NormDirection;
 					 _Direction = FMath::RotationVecNormal(_Direction, _Up,
@@ -136,6 +136,10 @@ void Satellite::Editor()
 			PlayStart(GetComponent<Transform>().lock()->GetPosition(), PlayDirection);
 		}
 
+		if (ImGui::SmallButton("PlayEnd"))
+		{
+			PlayEnd();
+		}
 
 		ImGui::SliderFloat("ThunderBoltDelta", &ThunderBoltDelta, 0.f, 0.1f, "%.6f", ImGuiSliderFlags_::ImGuiSliderFlags_None);
 
@@ -165,12 +169,12 @@ void Satellite::Editor()
 void Satellite::OnEnable()
 {
 	GameObject::OnEnable();
-}
+};
 
 void Satellite::OnDisable()
 {
 	GameObject::OnDisable();
-}
+};
 
 void Satellite::PlayStart(const Vector3& Location,
 						 const Vector3& PlayDirection)
@@ -178,10 +182,9 @@ void Satellite::PlayStart(const Vector3& Location,
 	bPlay = true;
 	auto SpTransform = GetComponent<Transform>().lock();
 	SpTransform->SetPosition(Location);
-	const Vector3 CurrentPlayDireciton = FMath::Normalize(PlayDirection);
-	const Vector3 PlayLocation = Location + CurrentPlayDireciton * ElectricForwardOffset;
-
-	_ElectricBranch.lock()->PlayStart(PlayLocation, std::nullopt, Vector3{ BranchScale, BranchScale,BranchScale } );
+	CurDirection = FMath::Normalize(PlayDirection);
+	const Vector3 PlayLocation = Location + CurDirection * ElectricForwardOffset;
+	_ElectricBranch.lock()->PlayStart(PlayLocation, std::nullopt, Vector3{ BranchScale, BranchScale,BranchScale });
 }
 
 void Satellite::PlayEnd()

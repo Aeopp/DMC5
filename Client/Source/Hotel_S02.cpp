@@ -20,10 +20,12 @@
 #include "HotelBrokenFloor.h"
 #include "HotelAnimationWall.h"
 #include "SoundSystem.h"
+#include "NeroFSM.h"
+#include "Smoke.h"
+#include "QliphothBlock.h"
+#include "TimeSystem.h"
 #include <iostream>
 #include <fstream>
-#include "NeroFSM.h"
-#include "TimeSystem.h"
 using namespace std;
 
 Hotel_S02::Hotel_S02()
@@ -63,11 +65,11 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	//}
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	}*/
 	
 	_MainCamera = AddGameObject<MainCamera>();
 	_MainCamera.lock()->SetLerp(false);
@@ -92,6 +94,7 @@ HRESULT Hotel_S02::LoadScene()
 	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
 	AddGameObject<HotelBrokenFloor>();
+
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(2);
 
@@ -110,6 +113,17 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
+	// 0: StartPoint 
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.016f);
+		ptr.lock()->SetRotation(Vector3(0.f, 0.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-3.631f, 0.4f, 11.43f));
+		ptr.lock()->PlayStart();
+	}
+
+	//
 	_SecretVision = AddGameObject<SecretVision>();
 	AddGameObject<NhDoor>();
 
@@ -160,12 +174,16 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
-	// 테스트용 ////////////////////////
+	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_NUMPAD8))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
-	////////////////////////////////////
+	/* -------------------------- */
 
 	return S_OK;
 }
@@ -394,19 +412,50 @@ void Hotel_S02::TriggerWallSmash()
 		_Trigger)
 	{
 		auto _AnimationWall = AddGameObject<HotelAnimationWall>();
+		auto _Smoke0 = AddGameObject<Smoke>();
+		if (auto Sp = _Smoke0.lock(); Sp)
+			Sp->SetActive(false);
+		auto _Smoke1 = AddGameObject<Smoke>();
+		if (auto Sp = _Smoke1.lock(); Sp)
+			Sp->SetActive(false);
+
 		const std::function<void()> _CallBack =
-			[this/*변수 캡쳐*/, _AnimationWall]()
+			[this, _AnimationWall, _Smoke0, _Smoke1]()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
 			_AnimationWall.lock()->ContinueAnimation();
-			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::CUTSCENE_WINDPRESSURE);
+
+			//
+			if (auto Sp = _Player.lock(); Sp)
+				Sp->GetFsm().lock()->ChangeState(NeroFSM::CUTSCENE_WINDPRESSURE);
+
+			//
+			if (auto Sp = _Smoke0.lock(); Sp)
+			{
+				Sp->SetActive(true);
+				Sp->SetPosition({ -2.15f, 1.48f, 20.85f });
+				Sp->SetScale(0.008f);
+				Sp->SetRotation({0.f, 344.681f, 0.f});
+				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
+				Sp->PlayStart(9.6f);
+			}
+			if (auto Sp = _Smoke1.lock(); Sp)
+			{
+				Sp->SetActive(true);
+				Sp->SetPosition({ -2.15f, 1.48f, 20.78f });
+				Sp->SetScale(0.008f);
+				Sp->SetRotation({ 0.f, 344.681f, 0.f });
+				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
+				Sp->PlayStart(9.4f);
+			}
+
 			//
 			for (auto& Element : _MakaiButterflyVec)
 				Element.lock()->SetActive(false);
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.108f, 1.564f, 20.465f };
+		const Vector3 TriggerLocation{ -3.108f, 1.564f, 19.806705f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 1.f, 0.5f, 0.1f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -669,7 +718,11 @@ void Hotel_S02::LateInit()
 		SpObject->SetActive(false);
 	}
 
+	MakaiButterfly::ResetTotalCnt();
+
 	Renderer::GetInstance()->LateSceneInit();
+
 	BgmPlay();
+
 	_LateInit = true;
 }

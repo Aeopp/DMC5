@@ -75,6 +75,7 @@ enum GAMEOBJECTTAG
 	Eff_MakaiButterFly,
 	Eff_SecretVisionMagicCircle,
 	Eff_FadeOut,
+	Eff_WhirlWind,
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,
@@ -138,8 +139,8 @@ enum SCENE_ID
 	HOTEL_S02,
 	HOTEL_S03,
 	HOTEL_S04,
-	LIBRARY_S01,
-	LIBRARY_S02,
+	LIBRARY_S05,
+	LIBRARY_S06,
 
 	SCENE_ID_END
 };
