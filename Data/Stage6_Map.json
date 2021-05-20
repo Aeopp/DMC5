@@ -1,0 +1,92 @@
+{
+    "GameObject": [
+        {
+            "Mesh": "Resource\\Map\\Object\\Syoumakaizyugame_base\\ssibal.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        3.0,
+                        4.0,
+                        3.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -41719.0,
+                        -63.0,
+                        31125.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location3\\Bossarea\\Bossarea.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location3\\Lobby\\Lobby.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location3\\Domeceiling\\Domeceiling.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -371,6 +371,28 @@
                     ]
                 }
             ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\OrbTree_White_02\\OrbTree_White2.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -3908.0,
+                        197.0,
+                        34758.0
+                    ]
+                }
+            ]
         }
     ]
 }

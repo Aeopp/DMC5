@@ -1,6 +1,45 @@
 {
     "GameObject": [
         {
+            "Mesh": "Resource\\Map\\Object\\OrbTree_White_01\\OrbTree_White1.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        1020.0,
+                        580.0,
+                        230.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -2310.0,
+                        30.0,
+                        6940.0
+                    ]
+                }
+            ]
+        },
+        {
             "Mesh": "Resource\\Map\\Object\\OrbTree_Red_01\\OrbTree_Red1.fbx",
             "List": [
                 {
@@ -142,45 +181,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\OrbTree_White_01\\OrbTree_White1.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        1020.0,
-                        580.0,
-                        230.0
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -2310.0,
-                        30.0,
-                        6940.0
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Object\\OrbTree_Red_04\\OrbTree_Red4.fbx",
             "List": [
                 {
@@ -215,6 +215,45 @@
                         1200.0,
                         10.0,
                         1100.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\OrbTree_White_02\\OrbTree_White2.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -771.0,
+                        -390.0,
+                        -3919.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -4406.0,
+                        24.0,
+                        6805.0
                     ]
                 }
             ]

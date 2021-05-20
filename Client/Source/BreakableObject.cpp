@@ -177,7 +177,9 @@ void BreakableObject::SetUp(
 		m_iStoneCount = 12;
 	else if (sFileName == "OrbTree_White1.fbx")
 		m_iStoneCount = 6;
-
+	else if (sFileName == "OrbTree_White2.fbx")
+		m_iStoneCount = 5;
+		
 	D3DXVECTOR3 vScale = _vScale * GScale;
 	D3DXVECTOR3 vPos = _vPosition * GScale;
 	m_pTransform.lock()->SetScale(vScale);
