@@ -15,6 +15,11 @@ namespace ParticleInstance
 		float ColorIntencity = 0.33f;
 	};
 
+	struct FireSprite
+	{
+		float ColorIntencity = 0.33f;
+	};
+
 	struct Electric
 	{
 		float ColorIntencity = 0.33f;

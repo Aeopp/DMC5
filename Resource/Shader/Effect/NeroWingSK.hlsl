@@ -11,6 +11,8 @@ uniform float2 UVScale = { 1, 1 };
 uniform int nMaxBonesRefPerVtx = 4;
 uniform int VTFPitch;
 
+
+
 texture VTF;
 sampler VTFSampler = sampler_state
 {

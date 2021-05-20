@@ -25,9 +25,6 @@ LongBarrel* LongBarrel::Create()
 	return new LongBarrel{};
 };
 
-
-
-
 HRESULT LongBarrel::Ready()
 {
 	// 트랜스폼 초기화 .. 

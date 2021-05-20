@@ -1,6 +1,50 @@
 {
     "GameObject": [
         {
+            "Mesh": "Resource\\Map\\Location3\\Distant01\\Distant01.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location3\\Bossarea\\Bossarea.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
             "Mesh": "Resource\\Map\\Object\\Syoumakaizyugame_base\\ssibal.fbx",
             "List": [
                 {
@@ -67,51 +111,29 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location3\\Bossarea\\Bossarea.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location3\\Distant01\\Distant01.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Location3\\Cloister\\Cloister.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Location3\\Lobby\\Lobby.fbx",
             "List": [
                 {
                     "Scale": [
@@ -156,28 +178,6 @@
         },
         {
             "Mesh": "Resource\\Map\\Location3\\Stairwell01\\Stairwell01.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location3\\Lobby\\Lobby.fbx",
             "List": [
                 {
                     "Scale": [
@@ -353,28 +353,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\Libraryseta_08\\Libraryseta_08.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -20831.650390625,
-                        -542.6179809570313,
-                        30897.4453125
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Object\\Libraryseta_11\\Libraryseta_11.fbx",
             "List": [
                 {
@@ -545,6 +523,28 @@
                         -22147.12109375,
                         -1257.8170166015626,
                         31461.0546875
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\Libraryseta_08\\Libraryseta_08.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -20831.650390625,
+                        -542.6179809570313,
+                        30897.4453125
                     ]
                 }
             ]
@@ -1031,6 +1031,249 @@
                         -22789.0,
                         -530.3499755859375,
                         30097.947265625
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\Librarybook_bake_06\\Librarybook_bake_06.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -22093.0,
+                        -1965.0,
+                        31874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -21433.0,
+                        -1965.0,
+                        31874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -20773.0,
+                        -1965.0,
+                        31874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -20123.0,
+                        -1965.0,
+                        31874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -19463.0,
+                        -1965.0,
+                        31874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -90.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -22413.0,
+                        -1965.0,
+                        31704.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        90.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -19152.759765625,
+                        -1966.718994140625,
+                        31205.84375
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        90.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -19152.759765625,
+                        -1966.718994140625,
+                        30545.84375
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -19483.0,
+                        -1965.0,
+                        29874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -20143.0,
+                        -1965.0,
+                        29874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -20793.0,
+                        -1965.0,
+                        29874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -21433.0,
+                        -1965.0,
+                        29874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        180.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -22113.0,
+                        -1965.0,
+                        29874.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -90.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -22423.0,
+                        -1965.0,
+                        30104.0
                     ]
                 }
             ]

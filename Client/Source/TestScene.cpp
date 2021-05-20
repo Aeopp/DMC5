@@ -20,6 +20,7 @@
 #include "OvertureHand.h"
 #include "Glint.h"
 #include "Liquid.h"
+#include "WhirlWind.h"
 #include "AppearGroundMonster.h"
 #include "Smoke.h"
 #include "QliphothBlock.h"
@@ -50,6 +51,7 @@
 #include "ShopPanel.h"
 #include "StoneDebris.h"
 #include "TimeSystem.h"
+#include "Trail.h"
 
 #include <iostream>
 #include <fstream>
@@ -143,6 +145,9 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<BlitzAttack>();
 	//AddGameObject<MakaiButterfly>();
 	//AddGameObject<CbsLongTrail>();
+	//AddGameObject<Trail>();
+	//AddGameObject<CbsLongTrail>();
+	//AddGameObject<WhirlWind>();
 
 	//if (auto Sp = AddGameObject<StoneDebris>().lock();
 	//	Sp)
@@ -246,6 +251,13 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+
+	/*if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.2f,0.f });
+	}*/
+
 	//cout << "SceneUpdate" << endl;
 
 	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);

@@ -95,7 +95,7 @@ void VsMain(in out float4 Position : POSITION0,
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
-    
+    UV1 = UV0;
     UV2 = (UV0 * NoiseScale.x) + NoiseScrollSpeed.x;
     UV3 = (UV0 * NoiseScale.y) + NoiseScrollSpeed.y;
     UV4 = (UV0 * NoiseScale.z) + NoiseScrollSpeed.z;
@@ -148,12 +148,12 @@ void PsMain(out float4 Color : COLOR0,
     Color.rgb += EmissiveSample.rgb;
     Color.rgb *= exposure_corr;
     
-    float4 trailsample = tex2D(Trail, UV1 + finalNoise);
+    float4 trailsample = tex2D(Trail, UV1);
     Color.a *= trailsample.a;
-
+    
     float4 NoiseSample = tex2D(Noise, UV0 + finalNoise);
-
-    Color1 = trailsample * NoiseSample;
+    
+    Color1 = trailsample;
     Color1.rgb *= DistortionIntencity;
     
     // 소프트 파티클 계산 .... 

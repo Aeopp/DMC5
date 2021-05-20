@@ -260,6 +260,7 @@
     <ClInclude Include="..\Header\TitleScene.h" />
     <ClInclude Include="..\Header\Trail.h" />
     <ClInclude Include="..\Header\Unit.h" />
+    <ClInclude Include="..\Header\WhirlWind.h" />
     <ClInclude Include="..\Header\WIngArm_Left.h" />
     <ClInclude Include="..\Header\WingArm_Right.h" />
     <ClInclude Include="..\Header\Wire_Arm.h" />
@@ -382,6 +383,7 @@
     <ClCompile Include="..\Source\Trail.cpp" />
     <ClCompile Include="..\Source\Trigger.cpp" />
     <ClCompile Include="..\Source\Unit.cpp" />
+    <ClCompile Include="..\Source\WhirlWind.cpp" />
     <ClCompile Include="..\Source\WIngArm_Left.cpp" />
     <ClCompile Include="..\Source\WingArm_Right.cpp" />
     <ClCompile Include="..\Source\Wire_Arm.cpp" />
@@ -569,6 +571,16 @@
     <ClInclude Include="..\..\Resource\Shader\Effect\StoneDebris.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\FireSprite.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\WhirlWind.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

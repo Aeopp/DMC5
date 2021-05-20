@@ -9,12 +9,18 @@ public:
 	static inline const std::string ShaderStaticName = "gbuffer_ds_dissolve";
 	static inline const std::string ShaderSkeletonName = "gbuffer_dsSK_dissolve";
 public:
-	void Initialize(const std::filesystem::path& MeshPath , const Vector3& _Color);
-	void DissolveStart();
+	void Initialize(const std::filesystem::path& MeshPath , const Vector3& _Color ,
+					const Vector3 BurnColor = { 14.f / 255.f,1.f,0.f },
+					const float BurnSize =0.25f);
+	void DissolveStart(const bool bReverse=false,
+					   const bool bParticle=true,
+					   const float DissolveTime=1.f);
 	void DissolveEnd();
 	void DissolveVariableBind(ID3DXEffect*const Fx);
 	bool DissolveUpdate(const float DeltaTime,const Matrix& RenderMatrix);
 	void DissolveEditor();
+
+	bool IsDissolve()const;
 private:
 	void DissolveParticle();
 private:
@@ -27,9 +33,16 @@ private:
 	float   CurDissolveParticleDelta = 0.0f;
 	Vector3 BurnColor{ 14.f / 255.f,1.f,0.f };
 	float   SliceAmount = 0.0f;
+	bool	bReverse  = false;
+	bool	bParticle = true;
 	float   BurnSize = 0.25f;
 	float   EmissionAmount = 100.f;
 	float   DissolveAcc = 1.f;
 	bool    bDissolve = false;
+
+
+	float EditDissolveTime = 1.f;
+	bool bEditDissolveReverse = false;
+	bool bEditDissolveParticle = true;
 };
 #endif //
