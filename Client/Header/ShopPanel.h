@@ -12,6 +12,7 @@ private:
 		STATUE_BG = 0,
 		REDORB,
 		CUSTOMIZE,
+		SELECTGUIDE,
 
 		DESC_END
 	};
@@ -42,9 +43,11 @@ private:
 	std::shared_ptr<ENGINE::Texture> _RedOrbATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};
 
+	std::shared_ptr<ENGINE::Texture> _SelectGuideTex{};
+
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
-	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
+	Vector3 _LightDir = Vector3(-1.f, 1.f, 1.f);
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
@@ -56,7 +59,7 @@ private:
 	{
 		FT_REDORBCOUNT,
 		FT_CUSTOMIZE,
-
+	
 		FONT_END
 	};
 	std::vector<std::weak_ptr<class Font>> _FontVec;

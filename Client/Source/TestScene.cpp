@@ -196,10 +196,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	//AddGameObject<BtlPanel>();
 
-	//AddGameObject<BtlPanel>().lock()->SetActive(false);
-	//AddGameObject<ShopPanel>();
+	AddGameObject<BtlPanel>().lock()->SetActive(false);
+	AddGameObject<ShopPanel>();
 
 #pragma endregion
 

@@ -48,7 +48,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 	//
 	CurID = STATUE_BG;
-	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[STATUE_BG].Using)
+	if (!_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 	{
 		if (auto SharedSubset = PlaneSubset.lock();
 			SharedSubset)
@@ -131,7 +131,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 	{
 		//
 		CurID = REDORB;
-		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[REDORB].Using)
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
@@ -144,6 +144,24 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->BeginPass(0);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
+		}
+
+		//
+		CurID = SELECTGUIDE;
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		{
+			// ~~~
+			//_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
+			//_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
+			//_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
+			//_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+
+			//Create_ScreenMat(CurID, ScreenMat);
+			//_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			//_ImplInfo.Fx->BeginPass(1);
+			//SharedSubset->Render(_ImplInfo.Fx);
+			//_ImplInfo.Fx->EndPass();
 		}
 	}
 
@@ -201,6 +219,8 @@ HRESULT ShopPanel::Ready()
 	_RedOrbALBMTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_albm.tga");
 	_RedOrbATOSTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_atos.tga");
 	_RedOrbNRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\red_orb_nrmr.tga");
+
+	_SelectGuideTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\SELECTGUIDE.png");
 
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(0.5f), (float)g_nWndCX / g_nWndCY, 0.001f, 1.f);
@@ -298,7 +318,7 @@ void ShopPanel::Init_UIDescs()
 	_UIDescs[STATUE_BG] = { true, Vector3(640.f, 360.f, 0.9f), Vector3(8.f, 8.f, 1.f),  Vector3(0.f, 0.f, 0.f) };
 	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f),  Vector3(0.f, 0.f, 0.f) };
 	_UIDescs[CUSTOMIZE] = { true, Vector3(50.f, 40.f, 0.5f), Vector3(0.6f, 0.6f, 1.f),  Vector3(0.f, 0.f, 0.f) };
-
+	_UIDescs[SELECTGUIDE] = { true, Vector3(50.f, 600.f, 0.5f), Vector3(1.f, 1.f, 1.f),  Vector3(0.f, 0.f, 0.f) };
 }
 
 void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -376,6 +396,25 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		else
 		{
 			goto DEFAULT;
+		}
+		break;
+
+	case SELECTGUIDE:
+		_Out._11 = _UIDescs[_ID].Scale.x;
+		_Out._22 = _UIDescs[_ID].Scale.y;
+		_Out._33 = _UIDescs[_ID].Scale.z;
+		_Out._41 = (_UIDescs[_ID].Pos.x) - (g_nWndCX >> 1);
+		_Out._42 = -((_UIDescs[_ID].Pos.y) - (g_nWndCY >> 1));
+		_Out._43 = _UIDescs[_ID].Pos.z;
+		if (0 == _Opt)
+		{
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(1.f, 0.5f);
+		}
+		else if (1 == _Opt)
+		{
+			_MinTexUV = Vector2(0.f, 0.5f);
+			_MaxTexUV = Vector2(1.f, 1.f);
 		}
 		break;
 
