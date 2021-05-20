@@ -51,6 +51,7 @@
 #include "ShopPanel.h"
 #include "StoneDebris.h"
 #include "TimeSystem.h"
+#include "ShockWave.h"
 #include "Trail.h"
 #include <iostream>
 #include <fstream>
@@ -79,6 +80,7 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Trail>();
 	AddGameObject<CbsLongTrail>();
 	AddGameObject<WhirlWind>();
+	AddGameObject<ShockWave>();
 
 	m_fLoadingProgress = 0.01f;
 
@@ -92,9 +94,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	// AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
-	_MainCamera = AddGameObject<MainCamera>();
+	// _MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -250,11 +252,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	/*if (auto SpPlayer = _Player.lock();
+	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.2f,0.f });
-	}*/
+	}
 
 	//cout << "SceneUpdate" << endl;
 

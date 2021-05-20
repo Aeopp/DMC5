@@ -205,18 +205,6 @@
     <Filter Include="02.GameObject\Effect\Weapon\Trail">
       <UniqueIdentifier>{c2aa0ad7-cbc5-4f8f-abd5-119aa4ae70e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Effect\Puzzle">
-      <UniqueIdentifier>{57320e2d-0408-4a52-b9d5-ec1774b33f3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Effect\Weapon\Skill">
-      <UniqueIdentifier>{27c7cf31-77a8-4dd6-b6e8-f212ff1587d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\03.Interaction">
-      <UniqueIdentifier>{d946132e-2fab-49c8-859b-0e4d478536ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ETC">
-      <UniqueIdentifier>{0c70890a-fd4d-4e42-98af-5f6db89ccec8}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -465,6 +453,7 @@
     <ClInclude Include="..\Header\CbsTrail.h">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ElectricOccur.h" />
     <ClInclude Include="..\Header\LogoScene.h">
       <Filter>03.Scene\00.Logo</Filter>
     </ClInclude>
@@ -483,6 +472,11 @@
     <ClInclude Include="..\Header\TitleScene.h">
       <Filter>03.Scene\01.Title</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\JudgementShadow1.h" />
+    <ClInclude Include="..\Header\JudgementShadow2.h" />
+    <ClInclude Include="..\Header\JudgementShadow3.h" />
+    <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\Hotel_S01.h">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClInclude>
@@ -501,9 +495,13 @@
     <ClInclude Include="..\Header\Hotel_S04.h">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ElectricBranch.h" />
+    <ClInclude Include="..\Header\ElectricVortex.h" />
     <ClInclude Include="..\Header\PreLoader.h">
       <Filter>98.PreLoader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\SecretVision.h" />
+    <ClInclude Include="..\Header\NhDoor.h" />
     <ClInclude Include="..\Header\MakaiButterfly.h">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClInclude>
@@ -513,6 +511,7 @@
     <ClInclude Include="..\Header\MapAniObject.h">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\DissolveInfo.h" />
     <ClInclude Include="..\..\Resource\Shader\Effect\MakaiButterfly.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>
@@ -525,6 +524,11 @@
     <ClInclude Include="..\Header\BreakableObject.h">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\FadeOut.h" />
+    <ClInclude Include="..\Header\BrokenPeople.h" />
+    <ClInclude Include="..\Header\BrokenTable.h" />
+    <ClInclude Include="..\Header\BrokenBookShelf.h" />
+    <ClInclude Include="..\Header\AnimationUpGround.h" />
     <ClInclude Include="..\Header\ShopPanel.h">
       <Filter>02.GameObject\UI\Shop</Filter>
     </ClInclude>
@@ -534,62 +538,13 @@
     <ClInclude Include="..\Header\CbsLongTrail.h">
       <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\LongBarrel.h" />
     <ClInclude Include="..\..\Resource\Shader\Effect\StoneDebris.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\SecretVision.h">
-      <Filter>02.GameObject\Effect\Puzzle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\LongBarrel.h">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\ElectricBranch.h">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\ElectricOccur.h">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\ElectricVortex.h">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\WhirlWind.h">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\FadeOut.h">
-      <Filter>02.GameObject\Effect\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\DissolveInfo.h">
-      <Filter>02.GameObject\Effect\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\NhDoor.h">
-      <Filter>02.GameObject\Effect\Puzzle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\NewWingSword.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\AnimationUpGround.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\BrokenBookShelf.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\BrokenPeople.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\BrokenTable.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\JudgementShadow1.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\JudgementShadow2.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\JudgementShadow3.h">
-      <Filter>ETC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Header\JudgementSword.h">
-      <Filter>ETC</Filter>
+    <ClInclude Include="..\Header\WhirlWind.h" />
+    <ClInclude Include="..\Header\ShockWave.h">
+      <Filter>02.GameObject\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -838,6 +793,7 @@
     <ClCompile Include="..\Source\CbsTrail.cpp">
       <Filter>02.GameObject\Effect\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\ElectricOccur.cpp" />
     <ClCompile Include="..\Source\LogoScene.cpp">
       <Filter>03.Scene\00.Logo</Filter>
     </ClCompile>
@@ -850,9 +806,18 @@
     <ClCompile Include="..\Source\TitleScene.cpp">
       <Filter>03.Scene\01.Title</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\JudgementShadow1.cpp" />
+    <ClCompile Include="..\Source\JudgementShadow2.cpp" />
+    <ClCompile Include="..\Source\JudgementShadow3.cpp" />
+    <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\Hotel_S01.cpp">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Trigger.cpp" />
+    <ClCompile Include="..\Source\BlitzAttack.cpp" />
+    <ClCompile Include="..\Source\ThunderBolt.cpp" />
+    <ClCompile Include="..\Source\ThunderBoltSecond.cpp" />
     <ClCompile Include="..\Source\LoadingPanel.cpp">
       <Filter>02.GameObject\UI\Scene</Filter>
     </ClCompile>
@@ -868,15 +833,21 @@
     <ClCompile Include="..\Source\Hotel_S04.cpp">
       <Filter>03.Scene\02.Mission01_Hotel</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\CbsMidTrail.cpp" />
+    <ClCompile Include="..\Source\ElectricBranch.cpp" />
+    <ClCompile Include="..\Source\ElectricVortex.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp">
       <Filter>98.PreLoader</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\SecretVision.cpp" />
+    <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\MakaiButterfly.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\MapAniObject.cpp">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\DissolveInfo.cpp" />
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp">
       <Filter>02.GameObject\Effect\Monster</Filter>
     </ClCompile>
@@ -886,92 +857,25 @@
     <ClCompile Include="..\Source\BreakableObject.cpp">
       <Filter>02.GameObject\02.MapObject</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FadeOut.cpp" />
+    <ClCompile Include="..\Source\HotelBrokenFloor.cpp" />
+    <ClCompile Include="..\Source\HotelAnimationWall.cpp" />
+    <ClCompile Include="..\Source\BrokenPeople.cpp" />
+    <ClCompile Include="..\Source\BrokenTable.cpp" />
+    <ClCompile Include="..\Source\BrokenBookShelf.cpp" />
+    <ClCompile Include="..\Source\AnimationUpGround.cpp" />
     <ClCompile Include="..\Source\ShopPanel.cpp">
       <Filter>02.GameObject\UI\Shop</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\CbsLongTrail.cpp">
       <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\SecretVision.cpp">
-      <Filter>02.GameObject\Effect\Puzzle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\LongBarrel.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Satellite.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\ThunderBoltSecond.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\ThunderBolt.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\ElectricBranch.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\ElectricOccur.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\ElectricVortex.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\WhirlWind.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FadeOut.cpp">
-      <Filter>02.GameObject\Effect\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\DissolveInfo.cpp">
-      <Filter>02.GameObject\Effect\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Trigger.cpp">
-      <Filter>02.GameObject\Effect\Puzzle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\NhDoor.cpp">
-      <Filter>02.GameObject\Effect\Puzzle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\BiAttack.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\BlitzAttack.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\CbsMidTrail.cpp">
-      <Filter>02.GameObject\Effect\Weapon\Trail</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\AnimationUpGround.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\BrokenBookShelf.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\BrokenPeople.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\BrokenTable.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\HotelAnimationWall.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\HotelBrokenFloor.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\JudgementShadow1.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\JudgementShadow2.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\JudgementShadow3.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\JudgementSword.cpp">
-      <Filter>ETC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\NewWingSword.cpp">
-      <Filter>ETC</Filter>
+    <ClCompile Include="..\Source\LongBarrel.cpp" />
+    <ClCompile Include="..\Source\Satellite.cpp" />
+    <ClCompile Include="..\Source\BiAttack.cpp" />
+    <ClCompile Include="..\Source\WhirlWind.cpp" />
+    <ClCompile Include="..\Source\ShockWave.cpp">
+      <Filter>02.GameObject\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1031,49 +935,26 @@
     <None Include="..\..\Resource\Shader\Effect\SpriteEffect.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\Effect\FireParticle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\CbsTrail.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
-    <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl">
+    <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\SecretVision.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl" />
+    <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl" />
+    <None Include="..\..\Resource\Shader\gbuffer_dsSK_dissolve.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\CbsLongTrail.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\FireSprite.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\WhirlWind.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ShockWave.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\gbuffer_ds_dissolve.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\FireSprite.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\FireParticle.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\ElectricParticle.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\ElectricOccur.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\DissolveParticle.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\DissolveNhDoor.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\CbsLongTrail.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\WhirlWind.hlsl">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\SecretVisionDisappear.hlsl">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
-    </None>
-    <None Include="..\..\Resource\Shader\Effect\SecretVision.hlsl">
-      <Filter>02.GameObject\Effect\Weapon\Skill</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt">
-      <Filter>ETC</Filter>
-    </Text>
+    <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
   </ItemGroup>
 </Project>
