@@ -315,8 +315,8 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
 		break;
 	case Option::Change:
-		PlayTime = 0.15f;
-		EndT = 0.15f;
+		PlayTime = 1.0f;
+		EndT = 1.0f;
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.000f;
 		ScaleLerp.second = 0.103f;

@@ -7,6 +7,7 @@
 #include <vector>
 #include "ShapeParticle.h"
 #include "ShockWave.h"
+#include "FLight.h"
 
 
 class Change : public ENGINE::GameObject,
@@ -46,6 +47,10 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	std::weak_ptr<class FLight> PtLight;
+	float PtLightRadius = 100.f;
+	float PtLightFlux = 1.f;
+
 	std::weak_ptr<class ShockWave> _ShockWave{};
 
 	float ParticleCycle = 0.01f;

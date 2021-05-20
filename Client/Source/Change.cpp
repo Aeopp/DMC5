@@ -9,6 +9,7 @@
 #include "RedQueen.h"
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
+#include "FLight.h"
 
 Change::Change()
 {};
@@ -137,11 +138,45 @@ void Change::PlayStart(
 	}
 
 
+	if (auto SpTransform = GetComponent<Transform>().lock();
+		SpTransform)
+	{
+		if (auto SpShockWave = _ShockWave.lock();
+			SpShockWave)
+		{
+			SpShockWave->PlayStart(SpTransform->GetPosition(), ShockWave::Option::Change);
+		}
+
+		if (auto _PtLight = PtLight.lock();
+			_PtLight)
+		{
+			_PtLight->bEnable = false;
+		}
+
+		if (PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
+			PtLight.expired() == false)
+		{
+			auto SpPtLight = PtLight.lock();
+			SpPtLight->SetPosition
+			(FMath::ConvertVector4(
+				SpTransform->GetPosition(),
+				1.f
+			));
+			SpPtLight->bEnable = true;
+			SpPtLight->Color = D3DXCOLOR(
+				1.f, 0.f, 0.f, 1.f);
+			SpPtLight->PointRadius = PtLightRadius;
+			SpPtLight->lightFlux = 0.0f;
+		}
+	}
+
 
 	CurParticleTime = ParticleCycle;
 	this->PlayTime = PlayTime;
 	_RenderProperty.bRender = true;
 	T = 0.0f;
+
+	
 };
 
 
@@ -151,16 +186,11 @@ void Change::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-	if (auto SpTransform = GetComponent<Transform>().lock();
-		SpTransform)
+	if (auto _PtLight = PtLight.lock();
+		_PtLight)
 	{
-		if (auto SpShockWave = _ShockWave.lock();
-			SpShockWave)
-		{
-			SpShockWave->PlayStart(SpTransform->GetPosition(), ShockWave::Option::Change);
-		}
+		_PtLight->bEnable = false;
 	}
-
 };
 
 void Change::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -301,7 +331,29 @@ UINT Change::Update(const float _fDeltaTime)
 				}
 			}
 		}
+
+
+		if (PtLight.expired() == false)
+		{
+			auto SpPtLight = PtLight.lock();
+			SpPtLight->SetPosition
+			(FMath::ConvertVector4(
+				SpTransform->GetPosition(),
+				1.f
+			));
+			SpPtLight->Color = D3DXCOLOR(
+				1.f, 0.f, 0.f, 1.f);
+			SpPtLight->PointRadius = PtLightRadius;
+			
+			;
+
+			SpPtLight->lightFlux =
+				 ( std::sinf( (T / PlayTime) * FMath::PI)  ) * PtLightFlux;
+		}
+
 	}
+
+	
 
 
 	return 0;
@@ -343,7 +395,10 @@ void Change::Editor()
 
 			ImGui::SliderFloat("StartScale", &StartScale, 0.0f, 0.1f);
 			ImGui::SliderFloat("EndScale", &EndScale, 0.0f, 0.1f);
+			
+			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, 0.0f, 100.f);
 			;
+
 			;
 
 			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
