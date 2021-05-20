@@ -65,11 +65,11 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	//}
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	}*/
 	
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -452,7 +452,7 @@ void Hotel_S02::TriggerWallSmash()
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.108f, 1.564f, 20.465f };
+		const Vector3 TriggerLocation{ -3.108f, 1.564f, 19.806705f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 1.f, 0.5f, 0.1f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
