@@ -4,6 +4,8 @@
 #include "Hotel_S02.h"
 #include "Hotel_S03.h"
 #include "Hotel_S04.h"
+#include "Library_S05.h"
+#include "Library_S06.h"
 #include "TestScene.h"
 #include "LoadingPanel.h"
 
@@ -67,11 +69,11 @@ HRESULT LoadingScene::Update(const float _fDeltaTime)
 		case HOTEL_S04:
 			SceneManager::LoadScene(Hotel_S04::Create(), false);
 			break;
-		case LIBRARY_S01:
-			SceneManager::LoadScene(TestScene::Create(), false);
+		case LIBRARY_S05:
+			SceneManager::LoadScene(Library_S05::Create(), false);
 			break;
-		case LIBRARY_S02:
-			SceneManager::LoadScene(TestScene::Create(), false);
+		case LIBRARY_S06:
+			SceneManager::LoadScene(Library_S06::Create(), false);
 			break;
 		default:
 			SceneManager::LoadScene(TestScene::Create(), false);

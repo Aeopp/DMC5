@@ -202,6 +202,8 @@
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\Library_S05.h" />
+    <ClInclude Include="..\Header\Library_S06.h" />
     <ClInclude Include="..\Header\LoadingPanel.h" />
     <ClInclude Include="..\Header\LoadingScene.h" />
     <ClInclude Include="..\Header\LogoPanel.h" />
@@ -320,6 +322,8 @@
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\Library_S05.cpp" />
+    <ClCompile Include="..\Source\Library_S06.cpp" />
     <ClCompile Include="..\Source\LoadingPanel.cpp" />
     <ClCompile Include="..\Source\LoadingScene.cpp" />
     <ClCompile Include="..\Source\LogoPanel.cpp" />
@@ -411,11 +415,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
-      <FileType>Document</FileType>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

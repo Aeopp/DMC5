@@ -56,7 +56,7 @@ HRESULT MainCamera::Ready()
 	m_fSensitive = 15.f;
 	m_fDecreaseFactor = 0.6f;
 	m_fIncreaseFactor = 0.07f;
-	m_fLerpSpeed = 1.4f;
+	m_fLerpSpeed = 1.5f;
 
 	return S_OK;
 }
@@ -85,6 +85,7 @@ HRESULT MainCamera::Start()
 UINT MainCamera::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+	CheckFadeOut();
 	if (Input::GetKeyDown(DIK_RSHIFT))
 		m_bFix = !m_bFix;
 	Mouse_Fix();
@@ -104,6 +105,25 @@ UINT MainCamera::Update(const float _fDeltaTime)
 
 UINT MainCamera::LateUpdate(const float _fDeltaTime)
 {
+	if (m_eAtType != AT_TRIGGER)
+	{
+		Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+		Vector3 vLook = m_vEye - PlayerPos;
+		Vector3 vCollEye;
+		if (Physics::RayCast(PlayerPos, vLook, vCollEye))
+		{
+			Vector3 vLength1 = PlayerPos - vCollEye;
+			Vector3 vLength2 = PlayerPos - m_vEye;
+
+			if (D3DXVec3Length(&vLength1) <= D3DXVec3Length(&vLength2))
+			{
+				m_vEye.x = vCollEye.x;
+				m_vEye.z = vCollEye.z;
+			}
+		}
+	}
+	Shaking();
+
 	D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
 	Graphic::GetDevice()->SetTransform(D3DTS_VIEW, &m_matView);
 
@@ -134,7 +154,7 @@ void MainCamera::Set_PlayerCamMode(UINT _ePlayerCamMode)
 		TimeSystem::GetInstance()->LostTime(_LostTimes);
 		
 		m_fTriggerTime = 3.5f;
-		m_fLerpSpeed = 1.2f;
+		m_fLerpSpeed = 1.3f;
 		Renderer::GetInstance()->FadeOutStart(3.3f);
 	}
 }
@@ -161,32 +181,47 @@ void MainCamera::Set_TriggerCam(UINT _eTriggerCamMode, const Vector3& _vTriggerP
 	case STAGE1_WAVE1_END:
 		m_vEye = { 0.04f,0.162f,-1.768f };
 		break;
+	case STAGE2_BUTTERFLY1:
+		m_vEye = { -3.7f,0.79f,14.14f };
+		break;
 	}
+}
+
+void MainCamera::SetShakeInfo(float _fShakeTime, float _fShakePower)
+{
+	m_fShakingTime = _fShakeTime;
+	m_fShakePower = _fShakePower;
+}
+
+void MainCamera::SetFadeSceneInfo(float _fFadeInAmout)
+{
+	m_bFadeOut = true;
+	m_fFadeInAmout = _fFadeInAmout;
 }
 
 void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
 {
-	if (m_fDistanceToTarget <= _GoalDis)
-	{
-		m_fDecreaseFactor = 0.6f;
-		return;
-	}
-	if (m_fDecreaseFactor >= 0.02f)
-		m_fDecreaseFactor -= 0.02f;
-	m_fIncreaseFactor = 0.07f;
-	m_fDistanceToTarget -= m_fDecreaseFactor * _fDeltaTime;
+	//if (m_fDistanceToTarget <= _GoalDis)
+	//{
+	//	m_fDecreaseFactor = 0.6f;
+	//	return;
+	//}
+	//if (m_fDecreaseFactor >= 0.02f)
+	//	m_fDecreaseFactor -= 0.02f;
+	//m_fIncreaseFactor = 0.07f;
+	//m_fDistanceToTarget -= m_fDecreaseFactor * _fDeltaTime;
 }
 
 void MainCamera::IncreaseDistance(float _GoalDis, float _fDeltaTime)
 {
-	if (m_fDistanceToTarget >= _GoalDis)
-	{
-		m_fIncreaseFactor = 0.07f;
-		return;
-	}
-	m_fDecreaseFactor = 0.6f;
-	m_fIncreaseFactor += 0.005f;
-	m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
+	//if (m_fDistanceToTarget >= _GoalDis)
+	//{
+	//	m_fIncreaseFactor = 0.07f;
+	//	return;
+	//}
+	//m_fDecreaseFactor = 0.6f;
+	//m_fIncreaseFactor += 0.005f;
+	//m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
 }
 
 std::string MainCamera::GetName()
@@ -208,6 +243,8 @@ void MainCamera::Editor()
 		ImGui::InputScalar("m_fNear", ImGuiDataType_Float, &m_fNear, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("m_fFar", ImGuiDataType_Float, &m_fFar, MyButton ? &ZeroDotOne : NULL);
 		ImGui::InputScalar("m_fAngle", ImGuiDataType_Float, &m_fAngle, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("m_fShakingTime", ImGuiDataType_Float, &m_fShakingTime, MyButton ? &ZeroDotOne : NULL);
+		ImGui::InputScalar("m_fShakePower", ImGuiDataType_Float, &m_fShakePower, MyButton ? &ZeroDotOne : NULL);
 	}
 }
 
@@ -219,6 +256,44 @@ void MainCamera::Mouse_Fix()
 
 	ClientToScreen(g_hWnd, &ptMouse);
 	SetCursorPos(ptMouse.x, ptMouse.y);
+}
+
+void MainCamera::Shaking()
+{
+	float fOriginDelta = TimeSystem::GetInstance()->OriginDeltaTime();
+	if (m_fShakingTime < 0.f)
+	{
+		m_fShakePower = FMath::Lerp(m_fShakePower, 0.f, fOriginDelta);
+		if(fabs(m_fShakePower) <= FLT_EPSILON)
+			return;
+	}
+
+	m_fShakingTime -= fOriginDelta;
+	static int Test = 2;
+	Test -= 1;
+	if (Test == 0)
+	{
+		m_fShakePower *= -1.f;
+		Test = 2;
+	}
+
+	Vector3 vShake = { 0.001f,0.f,0.001f };
+	m_vEye += vShake * m_fShakePower;
+	m_vAt += vShake * m_fShakePower;
+}
+
+void MainCamera::CheckFadeOut()
+{
+	if (!m_bFadeOut)
+		return;
+	
+	if (Renderer::GetInstance()->IsBlackOut())
+	{
+		m_bFadeOut = false;
+		if(!m_pTrigger.expired())
+			m_pTrigger.lock()->TriggerEnable();
+		Renderer::GetInstance()->FadeInStart(m_fFadeInAmout);
+	}
 }
 
 void MainCamera::MoveMent_Player(float _fDeltaTime)
@@ -241,7 +316,7 @@ void MainCamera::MoveMent_Player(float _fDeltaTime)
 
 void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 {
-	if (m_fLerpSpeed <= 1.4f)
+	if (m_fLerpSpeed <= 1.5f)
 		m_fLerpSpeed += _fDeltaTime * 0.05f;
 	m_vAt = m_pAtTranform.lock()->GetPosition();
 	m_vAt.y += m_fFloatingAmount;
@@ -264,8 +339,8 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 	}
 	if (m_fRotX <= -50.f)
 		m_fRotX = -50.f;
-	if (m_fRotX >= 15.f)
-		m_fRotX = 15.f;
+	if (m_fRotX >= 13.5f)
+		m_fRotX = 13.5f;
 
 
 	Vector3 vLook = { 0.f, 0.f ,1.f };
@@ -281,7 +356,12 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 
 	m_vLerpEye = m_vAt + vLook;
 
-	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * m_fLerpSpeed);
+	if (m_bLerp)
+		m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * m_fLerpSpeed);
+	else
+		m_vEye = m_vLerpEye;
+
+	
 }
 
 void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
@@ -308,8 +388,8 @@ void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
 	}
 	if (m_fRotX <= -50.f)
 		m_fRotX = -50.f;
-	if (m_fRotX >= 15.f)
-		m_fRotX = 15.f;
+	if (m_fRotX >= 13.5f)
+		m_fRotX = 13.5f;
 
 
 	Vector3 vLook = { 0.f, 0.f ,1.f };
@@ -334,10 +414,23 @@ void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
 		{
 		case STAGE1_WAVE1:
 			Renderer::GetInstance()->FadeInStart(0.4f);
-			Set_TriggerCam(STAGE1_WAVE1_END, Vector3{ -1.081f,0.818f,0.439f }, 2.f);
+			Set_TriggerCam(STAGE1_WAVE1_END, Vector3{ -1.081f,0.818f,0.439f }, 3.f);
 			m_fDistanceToTarget = OGDistance;
-			m_fTriggerTime = 3.f;
 			for (uint32 i = 1u; i < 4u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->Reset();
+				}
+			}
+			break;
+		case STAGE1_WAVE2_BATTLE:
+			Renderer::GetInstance()->FadeInStart(0.4f);
+			Set_TriggerCam(STAGE1_WAVE2_END, Vector3{ -3.6f,0.48f,11.8f }, 5.f);
+			m_vAt = m_vTriggerPos;
+			m_vEye = { -3.716f,0.485f,10.1f };
+			m_fDistanceToTarget = OGDistance;
+			for (uint32 i = 5u; i < 7u; ++i)
 			{
 				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
 				{
@@ -381,17 +474,38 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 	case STAGE1_WAVE1_END:
 		Trigger_Cam_Stage1_Wave1_End(_fDeltaTime);
 		break;
+	case STAGE1_WAVE2_ENTER:
+		Trigger_Cam_Stage1_Wave2(_fDeltaTime);
+		break;
+	case STAGE1_WAVE2_BATTLE:
+		Trigger_Cam_Stage1_Wave2_Battle(_fDeltaTime);
+		break;
+	case STAGE1_WAVE2_END:
+		Trigger_Cam_Stage1_Wave2_End(_fDeltaTime);
+		break;
+	case STAGE2_BUTTERFLY1:
+		Trigger_Cam_Stage2_ButterFly1(_fDeltaTime);
+		break;
+	case STAGE2_BUTTERFLY1_END:
+		Trigger_Cam_Stage2_ButterFly1_End(_fDeltaTime);
+		break;
+	case STAGE2_BUTTERFLY2:
+		Trigger_Cam_Stage2_ButterFly2(_fDeltaTime);
+		break;
+	case STAGE2_BUTTERFLY2_END:
+		Trigger_Cam_Stage2_ButterFly2_End(_fDeltaTime);
 	}
 	m_fTriggerTime -= TimeSystem::GetInstance()->OriginDeltaTime();
 	//설정한 시간이 다됐다
 	if (m_fTriggerTime <= 0.f)
 	{
-		m_eAtType = AT_PLAYER;
+		
 		switch (m_eTriggerCamMode)
 		{
 		case STAGE1_WAVE1:
+			m_eAtType = AT_PLAYER;
 			m_fDistanceToTarget = 1.f;
-			m_fLerpSpeed = 0.5f;
+			m_fLerpSpeed = 0.6f;
 			m_vEye = m_vAt;
 
 
@@ -403,10 +517,30 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 			m_pTrigger.lock()->TriggerEnable();
 			break;
 		case STAGE1_WAVE1_END:
-
+			m_eAtType = AT_PLAYER;
 			m_fDistanceToTarget = OGDistance;
 			m_ePlayerCamMode = CAM_MODE_RETURN_TO_PLAYER;
 			m_fAngle = -200.f;
+			m_fRotX = 13.5f;
+			break;
+		case STAGE1_WAVE2_ENTER:
+			Renderer::GetInstance()->FadeOutStart(1.f);
+			m_eTriggerCamMode = STAGE1_WAVE2_BATTLE;
+			break;
+		case STAGE1_WAVE2_BATTLE:
+			break;
+		case STAGE1_WAVE2_END:
+			m_eAtType = AT_PLAYER;
+			m_ePlayerCamMode = CAM_MODE_BASIC;
+			break;
+		case STAGE2_BUTTERFLY1:
+			m_eTriggerCamMode = STAGE2_BUTTERFLY1_END;
+			Renderer::GetInstance()->FadeOutStart(0.4f);
+			
+			break;
+		case STAGE2_BUTTERFLY2:
+			m_eTriggerCamMode = STAGE2_BUTTERFLY2_END;
+			Renderer::GetInstance()->FadeOutStart(0.4f);
 			break;
 		}
 
@@ -455,4 +589,154 @@ void MainCamera::Trigger_Cam_Stage1_Wave1_End(float _fDeltaTime)
 	D3DXMatrixRotationAxis(&matRotAxis, &vUp, D3DXToRadian(m_vTriggerAngle.y));
 	D3DXVec3TransformNormal(&vLook, &vLook, &matRotX);
 	D3DXVec3TransformNormal(&vLook, &vLook, &matRotAxis);
+}
+
+void MainCamera::Trigger_Cam_Stage1_Wave2(float _fDeltaTime)
+{
+	m_vAt = FMath::Lerp(m_vAt, m_vTriggerPos, _fDeltaTime * 1.2f);
+	//m_vTriggerAngle.x -= _fDeltaTime * 25.15f;
+	long    dwMouseMove = 0;
+
+	Vector3 vLook = m_vTriggerPos - m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	D3DXVec3Normalize(&vLook, &vLook);
+	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
+	Matrix matRotAxis, matRotX;
+
+	D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vTriggerAngle.x));
+	D3DXMatrixRotationAxis(&matRotAxis, &vUp, D3DXToRadian(m_vTriggerAngle.y));
+	D3DXVec3TransformNormal(&vLook, &vLook, &matRotX);
+	D3DXVec3TransformNormal(&vLook, &vLook, &matRotAxis);
+
+	//m_vLerpEye = m_vAt + vLook;
+
+	m_vEye = FMath::Lerp(m_vEye, Vector3(-3.634f,1.182f,8.895f), _fDeltaTime * 0.6f);
+}
+
+void MainCamera::Trigger_Cam_Stage1_Wave2_Battle(float _fDeltaTime)
+{
+	static bool PlayOnce = true;
+	if (Renderer::GetInstance()->IsBlackOut() && PlayOnce)
+	{
+		PlayOnce = false;
+		m_vAt = m_pAtTranform.lock()->GetPosition();
+		m_vAt.y += m_fFloatingAmount;
+		Vector3 vLook = { 0.f, 0.f ,1.f };
+		Vector3 vUp = Vector3(0.f, 1.f, 0.f);
+		Matrix matRot, matTest;
+
+		vLook *= m_fDistanceToTarget;
+
+		D3DXMatrixRotationX(&matTest, D3DXToRadian(m_fRotX));
+		D3DXMatrixRotationAxis(&matRot, &vUp, D3DXToRadian(m_fAngle));
+		D3DXVec3TransformNormal(&vLook, &vLook, &matTest);
+		D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
+
+		m_vLerpEye = m_vAt + vLook;
+
+		m_vEye = m_vLerpEye;
+		Renderer::GetInstance()->FadeInStart(1.f);
+		m_eAtType = AT_PLAYER;
+		if (!m_pTrigger.expired())
+			m_pTrigger.lock()->TriggerEnable();
+	}
+}
+
+void MainCamera::Trigger_Cam_Stage1_Wave2_End(float _fDeltaTime)
+{
+	static float RequireTime = 0.f;
+	RequireTime += TimeSystem::GetInstance()->OriginDeltaTime();
+	if (RequireTime >= 1.f)
+	{
+		Vector3 vPlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+		Vector3 vLook = m_vTriggerPos - vPlayerPos;
+		vLook.y = 0.f;
+		D3DXVec3Normalize(&vLook, &vLook);
+		Vector3 LastPos = vPlayerPos - vLook * m_fDistanceToTarget;
+		LastPos.y += m_fFloatingAmount;
+
+		m_vEye = FMath::Lerp(m_vEye, LastPos, _fDeltaTime * 1.5f);
+
+		Vector3 vTestLook = { 0.f, 0.f ,1.f };
+		Vector3 vTestLook2 = vPlayerPos - m_vTriggerPos;
+		vTestLook2.y = 0;
+		float fDot = D3DXVec3Dot(&vTestLook, &vTestLook2);
+
+		if (fDot > 1.f)
+			fDot = 1.f - FLT_EPSILON;
+		else if (fDot < -1.f)
+			fDot = -1.f + FLT_EPSILON;
+
+		float fRadian = acosf(fDot);
+		Vector3	vCross;
+		D3DXVec3Cross(&vCross, &vTestLook2, &vTestLook);
+
+		if (vCross.y > 0)
+			fRadian *= -1;
+
+		m_fAngle = -D3DXToDegree(fRadian);
+		
+	}
+}
+
+void MainCamera::Trigger_Cam_Stage2_ButterFly1(float _fDeltaTime)
+{
+	m_vAt = m_pAtTranform.lock()->GetPosition();
+
+	Vector3 vLook = m_pAtTranform.lock()->GetLook();
+	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
+	Matrix matRot, matTest;
+
+	vLook *= 0.22f;
+
+	m_vLerpEye = m_vAt + vLook;
+
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 3.f);
+}
+
+void MainCamera::Trigger_Cam_Stage2_ButterFly1_End(float _fDeltaTime)
+{
+	if (Renderer::GetInstance()->IsBlackOut())
+	{
+		Renderer::GetInstance()->FadeInStart(0.4f);
+		m_pAtTranform = m_pNero.lock()->GetComponent<Transform>();
+		m_eAtType = AT_PLAYER;
+		m_ePlayerCamMode = CAM_MODE_BASIC;
+		m_bLerp = false;
+	}
+}
+
+void MainCamera::Trigger_Cam_Stage2_ButterFly2(float _fDeltaTime)
+{
+	static float WaitingTime = 0.f;
+	static bool PlayOnce = true;
+	WaitingTime += _fDeltaTime;
+	if (WaitingTime < 0.8f)
+	{
+		Player_Cam_Baisc(_fDeltaTime);
+		return;
+	}
+	if (PlayOnce)
+	{
+		PlayOnce = false;
+		Renderer::GetInstance()->FadeOutStart(0.4f);
+		return;
+	}
+	if (Renderer::GetInstance()->IsBlackOut())
+	{
+		Renderer::GetInstance()->FadeInStart(0.4f);
+		m_vAt = { -3.291f,1.548f,18.056f };
+		m_vEye = { -2.965f,1.778f,16.962f };
+	}
+}
+
+void MainCamera::Trigger_Cam_Stage2_ButterFly2_End(float _fDeltaTime)
+{
+	if (Renderer::GetInstance()->IsBlackOut())
+	{
+		Renderer::GetInstance()->FadeInStart(0.4f);
+		m_pAtTranform = m_pNero.lock()->GetComponent<Transform>();
+		m_eAtType = AT_PLAYER;
+		m_ePlayerCamMode = CAM_MODE_BASIC;
+		m_bLerp = false;
+	}
 }

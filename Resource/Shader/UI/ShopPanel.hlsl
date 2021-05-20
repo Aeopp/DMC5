@@ -4,8 +4,7 @@ matrix ScreenMat; // (-width/2 ~ +width/2, +height/2 ~ -height/2)
 float3 LightDirection = float3(0.f, 0.f, 1.f);
 
 float _BrightScale = 1.f;
-float exposure_corr = 1.f;
-bool _ApplyExposureCorr = true;
+//float exposure_corr = 1.f;    // exposure 1로 고정하고 exposure_corr을 곱하지 않음
 
 float _TotalAccumulateTime;
 float _AccumulationTexU;
@@ -122,8 +121,8 @@ VsOut VsMain(VsIn In)
     Out.Position = mul(float4(In.Position.xyz, 1.f), ScreenMat);
     Out.Position = mul(float4(Out.Position.xyz, 1.f), Ortho);
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;
     
     return Out;
@@ -136,10 +135,10 @@ VsOut VsMain_Perspective(VsIn In)
     Out.Position = mul(float4(In.Position.xyz, 1.f), ScreenMat);
     Out.Position = mul(float4(Out.Position.xyz, 1.f), Perspective);
     Out.Position.xyz /= Out.Position.w;
-    
+
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;
     
     return Out;
@@ -152,8 +151,8 @@ VsOut_Clip VsMain_ClipPos(VsIn In)
     Out.Position = mul(float4(In.Position.xyz, 1.f), ScreenMat);
     Out.Position = mul(float4(Out.Position.xyz, 1.f), Ortho);
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;
     Out.Clip = Out.Position;
 
@@ -217,8 +216,6 @@ PsOut PsMain_Plane(PsIn In)
     float Ambient = ATOSSample.b * 0.2f;
 
     Out.Color = (Diffuse + Ambient) * float4(tex2D(ALB_NOsRGB, In.UV).rgb, 1.f) * _BrightScale;
-    if (_ApplyExposureCorr)
-        Out.Color *= exposure_corr;
     Out.Color.a = ATOSSample.r;
  
     return Out;
@@ -236,7 +233,7 @@ PsOut PsMain_Mesh(PsIn In)
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
 
-    Out.Color = Diffuse * float4(tex2D(ALB0, In.UV).rgb + _ExtraColor, 1.f) * _BrightScale * exposure_corr;
+    Out.Color = Diffuse * float4(tex2D(ALB0, In.UV).rgb + _ExtraColor, 1.f) * _BrightScale;
     Out.Color.a = 1.f;
     
     return Out;
@@ -247,11 +244,32 @@ PsOut PsMain_GUI(PsIn_GUI In)
     PsOut Out = (PsOut) 0;
     
     Out.Color = tex2D(ALB_NOsRGB, In.UV);
-    Out.Color.rgb *= _BrightScale; // * exposure_corr;
+    Out.Color.rgb *= _BrightScale;
     
     return Out;
 };
 
+PsOut PsMain_StatueBG0(PsIn In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    float4 ATOSSample = tex2D(ATOS0, In.UV + float2(_AccumulationTexU, 0.f));
+    Out.Color = float4(0.69f, 0.533f, 0.659f, 1.f) * _BrightScale;
+    Out.Color.a = ATOSSample.a;
+ 
+    return Out;
+};
+
+PsOut PsMain_StatueBG1(PsIn In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    float4 ATOSSample = tex2D(ATOS0, In.UV);
+    Out.Color = float4(0.976f, 0.826f, 0.796f, 1.f) * _BrightScale;
+    Out.Color.a = saturate(ATOSSample.a * (1.f - _SliceAmount));
+ 
+    return Out;
+};
 
 technique Default
 {
@@ -266,5 +284,53 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_Plane();
+    }
+    pass p1
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain();
+        pixelshader = compile ps_3_0 PsMain_GUI();
+    }
+    pass p2
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain();
+        pixelshader = compile ps_3_0 PsMain_StatueBG0();
+    }
+    pass p3
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain();
+        pixelshader = compile ps_3_0 PsMain_StatueBG1();
+    }
+    pass p4
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = true;
+        zwriteenable = true;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain_Perspective();
+        pixelshader = compile ps_3_0 PsMain_Mesh();
     }
 };

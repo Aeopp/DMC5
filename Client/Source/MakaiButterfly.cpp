@@ -7,6 +7,7 @@
 #include "SecretVision.h"
 #include "BtlPanel.h"
 #include "SecretVisionMagicCircle.h"
+#include "MainCamera.h"
 
 
 uint32 MakaiButterfly::_TotalCnt = 0u;
@@ -384,7 +385,17 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 				_SVMC.lock()->SetActive(true);
 				_SVMC.lock()->SetTexID((SecretVisionMagicCircle::TexID)idx);
 				_SVMC.lock()->PlayStart(m_pTransform.lock()->GetPosition());
-				
+
+				//First ButterFly Die
+				if (0 == _TotalCnt)
+				{
+					std::weak_ptr<MainCamera> _MainCamera = static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
+					if (_MainCamera.lock())
+					{
+						_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY2, {}, 4.f);
+					}
+				}
+
 				//
 				Reset();
 

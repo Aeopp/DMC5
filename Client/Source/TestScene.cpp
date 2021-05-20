@@ -53,6 +53,7 @@
 #include "TimeSystem.h"
 #include "ShockWave.h"
 #include "Trail.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -91,10 +92,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	// AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	//_MainCamera = AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -113,10 +114,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	 LoadMap();
+	//LoadMap();
 
-	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(1);
 
 #pragma endregion
 
@@ -181,6 +182,8 @@ HRESULT TestScene::LoadScene()
 #pragma region UI
 
 	AddGameObject<BtlPanel>();
+
+	//AddGameObject<BtlPanel>().lock()->SetActive(false);
 	//AddGameObject<ShopPanel>();
 
 #pragma endregion
@@ -193,7 +196,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 8, Until Dooms Day",
+		pFont->SetText("D 7, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),

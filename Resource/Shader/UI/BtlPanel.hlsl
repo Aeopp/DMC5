@@ -192,8 +192,8 @@ VsOut VsMain(VsIn In)
     Out.Position = mul(float4(In.Position.xyz, 1.f), ScreenMat);
     Out.Position = mul(float4(Out.Position.xyz, 1.f), Ortho);
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;
     
     return Out;
@@ -208,8 +208,8 @@ VsOut VsMain_Perspective(VsIn In)
     Out.Position.xyz /= Out.Position.w;
     
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;
     
     return Out;
@@ -222,8 +222,8 @@ VsOut_NoiseClip VsMain_TargetHP(VsIn In)
     Out.Position = mul(float4(In.Position.xyz, 1.f), ScreenMat);
     Out.Position = mul(float4(Out.Position.xyz, 1.f), Ortho);
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;
        
     // noise
@@ -264,8 +264,8 @@ VsOut_Clip VsMain_ClipPos(VsIn In)
     Out.Position = mul(float4(In.Position.xyz, 1.f), ScreenMat);
     Out.Position = mul(float4(Out.Position.xyz, 1.f), Ortho);
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;        
     Out.Clip = Out.Position;
 
@@ -293,8 +293,8 @@ VsOut_Clip VsMain_Rank(VsIn In)
     Out.Position.xyz /= Out.Position.w;
     
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), ScreenMat));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), ScreenMat));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), ScreenMat));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), ScreenMat));
     Out.UV = In.UV;
     Out.Clip = Out.Position;
     
@@ -986,8 +986,8 @@ technique Default
         alphablendenable = true;
         srcblend = srcalpha;
         destblend = invsrcalpha;
-        zenable = false;
-        zwriteenable = false;
+        zenable = true;
+        zwriteenable = true;
         sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
@@ -1058,8 +1058,8 @@ technique Default
         alphablendenable = true;
         srcblend = srcalpha;
         destblend = invsrcalpha;
-        zenable = false;
-        zwriteenable = false;
+        zenable = true;
+        zwriteenable = true;
         sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
@@ -1070,8 +1070,8 @@ technique Default
         alphablendenable = true;
         srcblend = srcalpha;
         destblend = invsrcalpha;
-        zenable = false;
-        zwriteenable = false;
+        zenable = true;
+        zwriteenable = true;
         sRGBWRITEENABLE = false;
         
         vertexshader = compile vs_3_0 VsMain_Rank();
@@ -1094,8 +1094,8 @@ technique Default
         alphablendenable = true;
         srcblend = srcalpha;
         destblend = invsrcalpha;
-        zenable = false;
-        zwriteenable = false;
+        zenable = true;
+        zwriteenable = true;
         sRGBWRITEENABLE = false;
 
         vertexshader = compile vs_3_0 VsMain_Perspective();
