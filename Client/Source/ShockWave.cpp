@@ -253,27 +253,66 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 
 	switch (_Option)
 	{
+	case Option::None:
+		break;
 	case Option::Weak:
 		PlayTime = 0.204f;
 		EndT = 0.204f;
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.001f;
 		ScaleLerp.second = 0.004f;
-		BlurIntencity.first = 0.000f;
-		BlurIntencity.second = 1.220f;
+		BlurIntencity.first = 0.467f;
+		BlurIntencity.second = 1.1f;
 		BlurAlpha.first = 0.000f;
-		BlurAlpha.second = 1.f;
+		BlurAlpha.second = 0.711f;
 		BlurMaxLength = 65.f;
 		DistortionAlpha = 0.0f;
 		Color = {1.f/255.f , 1.f / 255.f ,1.f / 255.f ,9.f/ 255.f };
 		break;
 	case Option::Middle:
-
+		PlayTime = 0.407f;
+		EndT = 0.407f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first =  0.000f;
+		ScaleLerp.second = 0.022f;
+		BlurIntencity.first = 0.854f;
+		BlurIntencity.second = 1.179f;
+		BlurAlpha.first = 0.285f;
+		BlurAlpha.second = 0.589f;
+		BlurMaxLength = 35.f;
+		DistortionAlpha = 0.0f;
+		Color = { 2.f / 255.f , 2.f / 255.f ,2.f / 255.f ,9.f / 255.f };
 		break;
 	case Option::Strong:
 
 		break;
-	case Option::None:
+	case Option::GoliathPunch:
+		PlayTime = 0.409f;
+		EndT = 0.409f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.178f;
+		ScaleLerp.second = 0.219f;
+		BlurIntencity.first = 1.104f;
+		BlurIntencity.second = 1.186f;
+		BlurAlpha.first = 0.675f;
+		BlurAlpha.second = 1.f;
+		BlurMaxLength = 40.9f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
+		break;
+	case Option::GoliathJumpAttack:
+		PlayTime = 0.613f;
+		EndT = 0.613f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.002f;
+		ScaleLerp.second = 0.076f;
+		BlurIntencity.first = 0.700f;
+		BlurIntencity.second = 1.002f;
+		BlurAlpha.first = 0.757f;
+		BlurAlpha.second = 0.900f;
+		BlurMaxLength = 40.900f;
+		DistortionAlpha = 0.0f;
+		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
 		break;
 	default:
 		break;

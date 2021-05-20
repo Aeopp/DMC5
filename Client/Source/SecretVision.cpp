@@ -478,7 +478,7 @@ void SecretVision::Editor()
 			ImGui::SliderFloat("HitAddColorIntencity", &HitAddColorIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::SliderFloat("HitAddAlphaFactor", &HitAddAlphaFactor, FLT_MIN, 1.f, "%9.6f");
 			ImGui::SliderFloat("HitMinusDistortionIntencity", &HitMinusDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
-
+			
 			for (uint32 i = 0; i < _SVDescs.size(); ++i)
 			{
 				const std::string   Str  = std::to_string(i);

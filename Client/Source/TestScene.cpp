@@ -96,8 +96,8 @@ HRESULT TestScene::LoadScene()
 
 	AddGameObject<Camera>();
 
-	// _MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	/*_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 

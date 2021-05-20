@@ -14,6 +14,8 @@ public:
 		Weak=0,
 		Middle,
 		Strong,
+		GoliathJumpAttack,
+		GoliathPunch,
 		None,
 	};
 private:
