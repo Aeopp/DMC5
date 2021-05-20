@@ -195,7 +195,7 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
-	if (CurMode ==Mode::Explosion)
+	if (CurMode == Mode::Explosion)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 		_Info.Fx->SetTexture("TrailMap", ExplosionTrailMap->GetTexture());
@@ -203,7 +203,7 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 		/*_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
 		_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed, 3);
 		_Info.Fx->SetFloatArray("Scale", Scale, 3);*/
-		
+
 	}
 	else if (CurMode == Mode::Non)
 	{
@@ -218,17 +218,18 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 
 	_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / SpriteCol);
-	_Info.Fx->SetFloat("SpriteXEnd",  ( SpriteColIdx + 1)/ SpriteCol);
-	_Info.Fx->SetFloat("SpriteYStart",SpriteRowIdx/ SpriteRow );
+	_Info.Fx->SetFloat("SpriteXEnd", (SpriteColIdx + 1) / SpriteCol);
+	_Info.Fx->SetFloat("SpriteYStart", SpriteRowIdx / SpriteRow);
 	_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
-	
+
 	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
 	Device->SetVertexDeclaration(VtxDecl);
 	Device->SetIndices(IdxBuffer);
 	_Info.Fx->CommitChanges();
 
 	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
-}
+};
+
 void Trail::SpriteUpdate(const float DeltaTime)
 {
 	SpriteCurUpdateCycle -= DeltaTime;
@@ -481,7 +482,7 @@ void Trail::ParticleUpdate(const float _fDeltaTime)
 			{
 				const std::string CurrentSpriteIdx = std::to_string(FMath::Random(1u, 15u));
 				auto _PlayableParticle =
-					ParticleSystem::GetInstance()->PlayParticle("FireSprite" + CurrentSpriteIdx, 15ul, true);
+					ParticleSystem::GetInstance()->PlayParticle("FireSprite" + CurrentSpriteIdx, 12ul, true);
 				// 파이어 파티클 뿌리기 ....
 
 				for (int32 i = 0; i < _PlayableParticle.size(); ++i)
