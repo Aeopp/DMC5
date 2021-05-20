@@ -679,8 +679,8 @@
     <None Include="..\..\Resource\Shader\VelocityBlur.hlsl">
       <Filter>04.HLSL</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\FadeEffect.hlsl" />
+    <None Include="..\..\Resource\Shader\FadeEffect.hlsl">
+      <Filter>04.HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>
