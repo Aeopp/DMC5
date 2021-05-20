@@ -511,6 +511,8 @@ void Hotel_S02::TriggerPuzzleStart()
 				SpObject->SetRotation({ 0.f, 270.f, 0.f });
 				SpObject->SetPosition({ -3.163f, 1.555f, 15.013f });
 				SpObject->PlayStart();
+				_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY2, { -3.163f, 1.555f, 15.013f }, 2.f);
+				_MainCamera.lock()->Set_At_Transform(SpObject->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
 			}
 
 			for (uint32 i = 2u; i < 5u; ++i)
@@ -525,7 +527,7 @@ void Hotel_S02::TriggerPuzzleStart()
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.3f, 1.565f, 16.13f };
+		const Vector3 TriggerLocation{ -3.3f, 1.565f, 17.f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 0.5f, 0.5f, 0.1f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -539,16 +541,46 @@ void Hotel_S02::TriggerPuzzleStart()
 			ImmediatelyEnable,
 			TargetTag);
 	}
-
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
+	auto _CamTrigger = AddGameObject<Trigger>().lock();
+	if (_CamTrigger)
 	{
 		const std::function<void()> _CallBack =
 			[this, _SecondTrigger/*변수 캡쳐*/]()
 		{
 			_SecretVision.lock()->PuzzleStart();
+			vector<Vector3> _LostTimes;
+			_LostTimes.emplace_back(Vector3(3.f, 1.f, 0.3f));
+			TimeSystem::GetInstance()->LostTime(_LostTimes);
+			_MainCamera.lock()->Set_Trigger(_SecondTrigger);
+			Renderer::GetInstance()->FadeOutStart(0.5f);
+			_MainCamera.lock()->SetFadeSceneInfo(0.5f);
+		};
 
-			_SecondTrigger->TriggerEnable();
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -3.3f, 1.565f, 17.f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 0.5f, 0.5f, 0.1f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_CamTrigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+
+
+
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this, _CamTrigger/*변수 캡쳐*/]()
+		{
+			_CamTrigger->TriggerEnable();
 		};
 
 		// 트리거 위치

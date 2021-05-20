@@ -11,7 +11,7 @@ public:
     enum AT_TYPE { AT_PLAYER,AT_TRIGGER};
     enum PLAYER_CAM_MODE { CAM_MODE_BASIC,CAM_MODE_WAVE_END,CAM_MODE_RETURN_TO_PLAYER };
 	enum TRIGGER_CAM_MODE {	STAGE1_WAVE1, STAGE1_WAVE1_END, STAGE1_WAVE2_ENTER, STAGE1_WAVE2_BATTLE, STAGE1_WAVE2_END,
-    STAGE2_BUTTERFLY1, STAGE2_BUTTERFLY1_END,STAGE2_BUTTERFLY2};
+		STAGE2_BUTTERFLY1, STAGE2_BUTTERFLY1_END, STAGE2_BUTTERFLY2, STAGE2_BUTTERFLY2_END};
 private:
     explicit MainCamera();
     virtual ~MainCamera();
@@ -64,6 +64,7 @@ private:
     void Trigger_Cam_Stage2_ButterFly1(float _fDeltaTime);
     void Trigger_Cam_Stage2_ButterFly1_End(float _fDeltaTime);
     void Trigger_Cam_Stage2_ButterFly2(float _fDeltaTime);
+    void Trigger_Cam_Stage2_ButterFly2_End(float _fDeltaTime);
 private:
     std::weak_ptr<Transform>        m_pAtTranform;
     std::weak_ptr<Nero>             m_pNero;

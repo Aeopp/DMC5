@@ -492,6 +492,8 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 	case STAGE2_BUTTERFLY2:
 		Trigger_Cam_Stage2_ButterFly2(_fDeltaTime);
 		break;
+	case STAGE2_BUTTERFLY2_END:
+		Trigger_Cam_Stage2_ButterFly2_End(_fDeltaTime);
 	}
 	m_fTriggerTime -= TimeSystem::GetInstance()->OriginDeltaTime();
 	//설정한 시간이 다됐다
@@ -537,6 +539,8 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 			
 			break;
 		case STAGE2_BUTTERFLY2:
+			m_eTriggerCamMode = STAGE2_BUTTERFLY2_END;
+			Renderer::GetInstance()->FadeOutStart(0.4f);
 			break;
 		}
 
@@ -703,4 +707,27 @@ void MainCamera::Trigger_Cam_Stage2_ButterFly1_End(float _fDeltaTime)
 
 void MainCamera::Trigger_Cam_Stage2_ButterFly2(float _fDeltaTime)
 {
+	m_vAt = m_pAtTranform.lock()->GetPosition();
+
+	Vector3 vLook = m_pAtTranform.lock()->GetLook();
+	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
+	Matrix matRot, matTest;
+
+	vLook *= 0.22f;
+
+	m_vLerpEye = m_vAt + vLook;
+
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 3.f);
+}
+
+void MainCamera::Trigger_Cam_Stage2_ButterFly2_End(float _fDeltaTime)
+{
+	if (Renderer::GetInstance()->IsBlackOut())
+	{
+		Renderer::GetInstance()->FadeInStart(0.4f);
+		m_pAtTranform = m_pNero.lock()->GetComponent<Transform>();
+		m_eAtType = AT_PLAYER;
+		m_ePlayerCamMode = CAM_MODE_BASIC;
+		m_bLerp = false;
+	}
 }
