@@ -55,13 +55,13 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//		SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(
-	//		Vector3{ -1.77158f, 1.36541f, 23.73719 }
-	//	);
-	//}
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+			SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(
+			Vector3{ -1.77158f, 1.36541f, 23.73719 }
+		);
+	}*/
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
