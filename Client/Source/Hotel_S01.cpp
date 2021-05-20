@@ -52,7 +52,6 @@ Hotel_S01* Hotel_S01::Create()
 
 HRESULT Hotel_S01::LoadScene()
 {
-
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
@@ -90,8 +89,6 @@ HRESULT Hotel_S01::LoadScene()
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
-	
-
 
 #pragma endregion
 
@@ -192,6 +189,7 @@ HRESULT Hotel_S01::LoadScene()
 	//메인 카메라에 클리포트 블록 전달
 	if(!_MainCamera.expired())
 		_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;

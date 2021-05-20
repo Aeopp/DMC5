@@ -438,6 +438,9 @@
     <ClInclude Include="..\Header\ParticleSystem.h">
       <Filter>06.Render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Resource\Shader\gbuffer_ds_extracolor.hlsl">
+      <Filter>04.HLSL\Common\GBuffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.Object">
