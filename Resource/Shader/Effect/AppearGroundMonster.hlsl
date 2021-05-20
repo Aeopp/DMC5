@@ -71,8 +71,8 @@ VsOut VsMain(VsIn In)
     
     Out.Position = mul(float4(In.Position.xyz, 1.f), WVP);
     Out.Normal = normalize(mul(float4(In.Normal.xyz, 0.f), World));
-    Out.Tangent = normalize(mul(float4(In.BiNormal.xyz, 0.f), World));
-    Out.BiNormal = normalize(mul(float4(In.Position.xyz, 0.f), World));
+    Out.Tangent = normalize(mul(float4(In.Tangent.xyz, 0.f), World));
+    Out.BiNormal = normalize(mul(float4(In.BiNormal.xyz, 0.f), World));
     Out.UV = In.UV;
         
     return Out;

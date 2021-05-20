@@ -286,7 +286,7 @@ public:
 	void ConsumeTDTGauge(const float Speed = 1.f);	/* 0이 될때까지 Speed * DeltaTime 만큼 TDTGauge 감소 */
 
 	void SetKeyInputActive(bool IsActive);
-	
+
 	void AddRankScore(float Score);	// 처음 호출시 StylishPoints 누적 시작
 	void ResetRankScore();			// wave 하나가 끝나면 반드시 호출
 	int GetRank() const	{ return _CurRank; }	/* -1 ~ 6 */
@@ -310,4 +310,4 @@ public:
 	void SetNullBlackActive(bool IsActive);
 
 };
-#endif // !__UI_BTL_PANEL__
+#endif // !__UI_BTL_PANEL__ 

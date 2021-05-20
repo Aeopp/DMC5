@@ -11,6 +11,7 @@
 #include "MapObject.h"
 #include "Monster.h"
 #include "SoundSystem.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -142,7 +143,7 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S01));
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
 	}
 	/* -------------------------- */
 
