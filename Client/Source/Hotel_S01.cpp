@@ -49,7 +49,6 @@ Hotel_S01* Hotel_S01::Create()
 
 HRESULT Hotel_S01::LoadScene()
 {
-	
 
 	// Load Start
 	m_fLoadingProgress = 0.01f;
