@@ -18,7 +18,7 @@
 #include "Em0000.h"
 #include "CollObject.h"
 #include "SoundSystem.h"
-
+#include "AnimationUpGround.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -55,13 +55,13 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//		SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(
-	//		Vector3{ -1.77158f, 1.36541f, 23.73719 }
-	//	);
-	//}
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+			SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(
+			Vector3{ -1.77158f, 1.36541f, 23.73719 }
+		);
+	}*/
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -428,14 +428,15 @@ void Hotel_S03::TriggerUpGround()
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
+		auto _AnimationUpground = AddGameObject<AnimationUpGround>();
 		const std::function<void()> _CallBack =
-			[]()
+			[_AnimationUpground]()
 		{
 			// 여기서 UpGround 로직 처리하세요 ... 
-
+			_AnimationUpground.lock()->ContinueAnimation();
 			// 땅이 솟아오름 !! .. 
 		};
-
+		
 		// 트리거 위치
 		const Vector3 TriggerLocation{ -3.158700f ,0.565950f,27.829210f};
 		const Vector3 TriggerRotation{ 0.f ,0.f,0.f };

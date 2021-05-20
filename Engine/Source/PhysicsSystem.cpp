@@ -414,3 +414,28 @@ void PhysicsSystem::AddCallbackPair(const COLLISIONPAIR _tCollsionPair)
 {
 	m_listCallback.emplace_back(_tCollsionPair);
 }
+
+bool PhysicsSystem::RayCast(const D3DXVECTOR3& _vOrigin, const D3DXVECTOR3& _vDir, OUT D3DXVECTOR3& _vPoint, float _fDistance)
+{
+	PxVec3 vOrigin(0.f, 0.f, 0.f);
+	memcpy_s(&vOrigin, sizeof(PxVec3), &_vOrigin, sizeof(PxVec3));
+	
+	PxVec3 vDir(0.f, 0.f, 0.f);
+	D3DXVECTOR3 vNormalizedDir = _vDir;
+	D3DXVec3Normalize(&vNormalizedDir, &vNormalizedDir);
+	memcpy_s(&vDir, sizeof(PxVec3), &vNormalizedDir, sizeof(PxVec3));
+	PxRaycastBuffer tRayCastBuff;
+	
+	if (true == m_pScene->raycast(vOrigin, vDir, (PxReal)_fDistance, tRayCastBuff))
+	{
+		if (true == tRayCastBuff.hasBlock)
+		{
+			PxRaycastHit tRayCastHit = tRayCastBuff.block;
+			memcpy_s(&_vPoint, sizeof(D3DXVECTOR3), &tRayCastHit.position, sizeof(D3DXVECTOR3));
+			return true;
+		}
+		return false;
+	}
+
+	return false;
+}

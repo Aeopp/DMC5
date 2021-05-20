@@ -221,6 +221,7 @@ HRESULT TempMap::Awake()
 	m_pCollider.lock()->ReadyMeshCollider(_StaticMesh->GetVerticesPointer(), _StaticMesh->GetNumVertices(), _StaticMesh->GetIndicesPointer(), _StaticMesh->GetNumIndices());
 	m_pCollider.lock()->SetRigid(false);
 	m_pCollider.lock()->SetGravity(false);
+	m_pCollider.lock()->SetRayCastTarget(true);
 	PushEditEntity(m_pCollider.lock().get());
 
 	//auto pCollider = AddComponent<CapsuleCollider>();

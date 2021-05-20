@@ -55,9 +55,9 @@ HRESULT Hotel_S04::LoadScene()
 	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
 	//		-4.327f,
 	//		1.449f,
-	//		36.596f,
+	//		36.596f, 
 	//		});
-
+	//	
 	//}
 
 	auto _Camera = AddGameObject<MainCamera>();
@@ -90,7 +90,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(false);
+	RenderDataSetUp(true);
 	TriggerSetUp();
 
 #pragma endregion
