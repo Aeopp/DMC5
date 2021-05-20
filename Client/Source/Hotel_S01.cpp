@@ -65,7 +65,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	 // AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -88,7 +88,7 @@ HRESULT Hotel_S01::LoadScene()
 	LoadBreakablebjects("../../Data/Stage5_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);
+	Map->LoadMap(5);
 	
 
 
@@ -1051,7 +1051,8 @@ void Hotel_S01::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.8f, -0.2f, -5.02f });
+		//SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.8f, -0.2f, -5.02f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -11.1f, -3.483f, 32.696f });
 	}
 
 	Renderer::GetInstance()->LateSceneInit();
