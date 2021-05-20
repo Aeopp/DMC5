@@ -8,6 +8,14 @@
 class ShockWave : public ENGINE::GameObject,
 	              public ENGINE::RenderInterface
 {
+public:
+	enum  Option :int32
+	{
+		Weak=0,
+		Middle,
+		Strong,
+		None,
+	};
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Mesh{};
 private:
@@ -31,7 +39,8 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& PlayLocation);
+	void PlayStart(const Vector3& PlayLocation,
+				   const int32& _Option);
 	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);
@@ -49,6 +58,8 @@ private:
 	float DistortionAlpha=1.f;
 	float DistortionIntencity = 0.f;
 	Vector4 Color{ 0.f,0.f,0.f,0.f };
+
+	int32 EditOption = Option::None;
 };
 #endif //
 

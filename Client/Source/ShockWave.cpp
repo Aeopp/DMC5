@@ -34,14 +34,14 @@ ShockWave* ShockWave::Create()
 void ShockWave::RenderReady()
 {
 	// 이미 버텍스 자체가 월드 위치임 . 
-	
 
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
 	{
-		const float LerpT = std::sinf(FMath::Clamp((T / EndT), 0.f, 1.f) * FMath::HalfPI);
+		const float LerpT = std::sinf(FMath::Clamp((T / EndT), 0.f, 1.f) * FMath::PI);
 		const float _Scale = FMath::Lerp(ScaleLerp.first, ScaleLerp.second, LerpT);
 		SpTransform->SetScale(Vector3{ _Scale ,_Scale ,_Scale } );
+
 		_RenderUpdateInfo.World = 	
 			FMath::Scale(SpTransform->GetScale())
 			* Renderer::GetInstance()->_RenderInfo.Billboard 
@@ -95,14 +95,15 @@ void ShockWave::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 	
-	const float LerpT = std::sinf(FMath::Clamp((T / EndT),0.f,1.f) * FMath::HalfPI);
+	const float LerpT = std::sinf(FMath::Clamp((T / EndT),0.f,1.f) * FMath::PI);
 	_Info.Fx->SetFloat("BlurIntencity", FMath::Lerp(BlurIntencity.first, BlurIntencity.second, LerpT));
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetFloat("BlurMaxLength", BlurMaxLength);
 	_Info.Fx->SetFloat("BlurAlpha", FMath::Lerp(BlurAlpha.first, BlurAlpha.second, LerpT));
 	_Info.Fx->SetFloat("DistortionAlpha", DistortionAlpha);
-
 	_Info.Fx->SetVector("_Color", &Color);
+
+
 	{
 		const uint32 SubsetCnt = Mesh->GetNumSubset();
 
@@ -130,11 +131,6 @@ void ShockWave::RenderDebug(const DrawInfo& _Info)
 			if (auto SpSubset = Mesh->GetSubset(i).lock();
 				SpSubset)
 			{
-				/*if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-				{
-					continue;
-				}*/
-
 				SpSubset->Render(_Info.Fx);
 			};
 		};
@@ -205,8 +201,10 @@ void ShockWave::Editor()
 		{
 			if (ImGui::Button("Play"))
 			{
-				PlayStart(GetComponent<Transform>().lock()->GetPosition());
+				PlayStart(GetComponent<Transform>().lock()->GetPosition(),EditOption);
 			}
+
+			ImGui::SliderInt("Option", &EditOption, 0, Option::None);
 
 			ImGui::SliderFloat("PlayTime" ,&PlayTime,0.f, 100.f);
 			ImGui::SliderFloat("EndT", &EndT, 0.f, 100.f);
@@ -221,7 +219,6 @@ void ShockWave::Editor()
 
 			ImGui::SliderFloat("BlurAlphaLerp Begin", (float*)&BlurAlpha.first, 0.f, 10.f);
 			ImGui::SliderFloat("BlurAlphaLerp End", (float*)&BlurAlpha.second, 0.f, 10.f);
-
 
 			ImGui::SliderFloat("BlurMaxLength", &BlurMaxLength, 0.f, 1000.f);
 			
@@ -242,7 +239,8 @@ void ShockWave::OnDisable()
 	GameObject::OnDisable();
 };
 
-void ShockWave::PlayStart(const Vector3& PlayLocation)
+void ShockWave::PlayStart(const Vector3& PlayLocation ,
+						  const int32& _Option)
 {
 	_RenderProperty.bRender = true;
 	T = 0.0f;
@@ -251,6 +249,34 @@ void ShockWave::PlayStart(const Vector3& PlayLocation)
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
+	}
+
+	switch (_Option)
+	{
+	case Option::Weak:
+		PlayTime = 0.204f;
+		EndT = 0.204f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.001f;
+		ScaleLerp.second = 0.004f;
+		BlurIntencity.first = 0.000f;
+		BlurIntencity.second = 1.220f;
+		BlurAlpha.first = 0.000f;
+		BlurAlpha.second = 1.f;
+		BlurMaxLength = 65.f;
+		DistortionAlpha = 0.0f;
+		Color = {1.f/255.f , 1.f / 255.f ,1.f / 255.f ,9.f/ 255.f };
+		break;
+	case Option::Middle:
+
+		break;
+	case Option::Strong:
+
+		break;
+	case Option::None:
+		break;
+	default:
+		break;
 	}
 };
 

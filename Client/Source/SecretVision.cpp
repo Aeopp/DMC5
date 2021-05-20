@@ -124,22 +124,36 @@ void SecretVision::RenderInit()
 void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetTexture("NoiseMap", _NoiseMap->GetTexture());
-	_Info.Fx->SetFloat("NoiseWrap", NoiseWrap);
-	_Info.Fx->SetFloat("TimeCorr", TimeCorr);
 	_Info.Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
-	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
+
+	if (PuzzleStartT)
+	{
+		_Info.Fx->SetFloat("NoiseWrap", FMath::Lerp(0.0f, NoiseWrap, *PuzzleStartT));
+		_Info.Fx->SetFloat("TimeCorr", FMath::Lerp(0.0f, TimeCorr, *PuzzleStartT));
+		_Info.Fx->SetFloat("DistortionIntencity", FMath::Lerp(0.0f, DistortionIntencity, *PuzzleStartT));
+	}
+
 	_Info.Fx->SetBool("bDistortion", bDistortion);
 
 	for (uint32 i = 0; i < _SVDescs.size(); ++i)
 	{
-		if (_SVDescs[i].bSurvive ==false)
+		if ((_SVDescs[i].bSurvive ==false ) && ( _SVDescs[i].bStartInteraction==false))
 		{
 			continue;
 		}
 
 		_Info.Fx->SetTexture("AlbmMap", _TextureArr[i]->GetTexture());
-		_Info.Fx->SetFloat("ColorIntencity", _SVDescs[i].ColorIntencity);
-		_Info.Fx->SetFloat("AlphaFactor", _SVDescs[i].AlphaFactor);
+
+		if (_SVDescs[i].bStartInteraction)
+		{
+			_Info.Fx->SetFloat("ColorIntencity",0.05f);
+			_Info.Fx->SetFloat("AlphaFactor",0.05f);
+		}
+		else
+		{
+			_Info.Fx->SetFloat("ColorIntencity", _SVDescs[i].ColorIntencity);
+			_Info.Fx->SetFloat("AlphaFactor", _SVDescs[i].AlphaFactor);
+		}
 
 		auto SpTransform = GetComponent<Transform>().lock();
 		Matrix CurRenderMatrix = _RenderUpdateInfo.World;
@@ -172,10 +186,25 @@ void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 void SecretVision::Interaction(const uint32 Idx)
 {
-	DistortionIntencity += HitMinusDistortionIntencity;
-	NoiseWrap += HitMinusNoiseWrap;
-	_SVDescs[Idx].AlphaFactor += HitAddAlphaFactor;
-	_SVDescs[Idx].ColorIntencity += HitAddColorIntencity;
+	DistortionIntencity          += HitMinusDistortionIntencity;
+	NoiseWrap					 += HitMinusNoiseWrap;
+
+	if (_SVDescs[Idx].bStartInteraction)
+	{
+		_SVDescs[Idx].bStartInteraction = false;
+	}
+
+	if (_SVDescs[Idx].Life == SecretVisionDesc::DefaultLife)
+	{
+		_SVDescs[Idx].AlphaFactor    = HitAddAlphaFactor;
+		_SVDescs[Idx].ColorIntencity = HitAddColorIntencity;
+	}
+	else
+	{
+		_SVDescs[Idx].AlphaFactor    += HitAddAlphaFactor;
+		_SVDescs[Idx].ColorIntencity += HitAddColorIntencity;
+	}
+
 	--_SVDescs[Idx].Life;
 
 	auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
@@ -233,7 +262,8 @@ void SecretVision::Default()
 	{
 		PuzzleEnd();
 	}
-}
+};
+
 void SecretVision::PuzzleStart()
 {
 	if (auto SpCollider = _Collider.lock();
@@ -245,6 +275,7 @@ void SecretVision::PuzzleStart()
 	bEnable = true;
 	_RenderProperty.bRender = true;
 	InteractionIdx = 0u;
+	PuzzleStartT = 0.0f;
 };
 
 uint32 SecretVision::GetInteractionIdx() const
@@ -254,12 +285,21 @@ uint32 SecretVision::GetInteractionIdx() const
 
 void SecretVision::SetInteractionEnable(const bool bInteraction)
 {
+	StartInteraction(InteractionIdx);
 	this->bInteraction = bInteraction;
+};
+
+void SecretVision::StartInteraction(const uint32 Idx)
+{
+	_SVDescs[InteractionIdx].AlphaFactor     = 0.05f;
+	_SVDescs[InteractionIdx].ColorIntencity  = 0.05f;
+	_SVDescs[InteractionIdx].bStartInteraction = true;
 };
 
 void SecretVision::PuzzleEnd()
 {
 	// SetActive(false);
+
 	if (auto SpCollider = _Collider.lock();
 		SpCollider)
 	{
@@ -271,6 +311,7 @@ void SecretVision::PuzzleEnd()
 
 	NhDoorOpenTime = 0.0f;
 	PuzzleEndParticle();
+	PuzzleStartT = std::nullopt;
 
 	if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 		SpPanel)
@@ -331,8 +372,6 @@ HRESULT SecretVision::Awake()
 		PushEditEntity(SpCollider.get());
 	}
 
-
-
 	return S_OK;
 }
 
@@ -345,6 +384,11 @@ HRESULT SecretVision::Start()
 
 UINT SecretVision::Update(const float _fDeltaTime)
 {
+	if (PuzzleStartT)
+	{
+		(*PuzzleStartT) += _fDeltaTime;
+	}
+
 	if (NhDoorOpenTime)
 	{
 		(*NhDoorOpenTime) += _fDeltaTime;
@@ -372,6 +416,7 @@ UINT SecretVision::Update(const float _fDeltaTime)
 			if (_SVDesc.T > 1.f)
 			{
 				_SVDesc.bSurvive = false;
+				_SVDesc.bStartInteraction = false;
 				_SVDesc.ColorIntencity = 0.0f;
 				_SVDesc.AlphaFactor = 0.0f;
 				_SVDesc.Life = SecretVisionDesc::DefaultLife;
@@ -452,6 +497,7 @@ void SecretVision::Editor()
 					ImGui::InputFloat("In AlphaFactor", &_SVDescs[i].AlphaFactor, 0.f, 0.f, "%9.6f");
 
 					ImGui::Checkbox("bSurvive", &_SVDescs[i].bSurvive);
+
 
 					ImGui::TreePop();
 				}
