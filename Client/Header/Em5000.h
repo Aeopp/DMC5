@@ -109,12 +109,8 @@ public:
 private:
 	//몬스터 상태
 	Em5000_State	m_eState =State_END;		
-	//TestPlayer 받아옴.
-	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<Nero>				 m_pPlayer;
 
-	std::weak_ptr<Car>				 m_pCar;
-	std::weak_ptr<ENGINE::Transform> m_pCarTrans;
+
 	//공격 및 이동 관련
 	bool		m_bMove = false;
 	float		m_fMoveTime = 0.f;
@@ -149,6 +145,9 @@ private:
 	bool		m_bTest = false;
 	std::weak_ptr<Em5000Hand>	m_pHand[2];
 	std::weak_ptr<ENGINE::CapsuleCollider> m_pCollider;
+
+	std::weak_ptr<Car>				 m_pCar[2];
+	std::weak_ptr<ENGINE::Transform> m_pCarTrans;
 
 
 	std::weak_ptr<class StoneDebrisMulti> m_pStone;

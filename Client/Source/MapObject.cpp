@@ -162,8 +162,6 @@ void MapObject::RenderGBuffer(const DrawInfo& _Info)
 			{
 				continue;
 			}
-
-
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
 			SpSubset->Render(_Info.Fx);

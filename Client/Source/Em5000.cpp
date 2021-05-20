@@ -42,6 +42,7 @@ void Em5000::Fight(const float _fDeltaTime)
 		{
 			m_eState = Dead;
 			m_bIng = true;
+			m_bHit = true;
 		}
 	}
 	else
@@ -169,6 +170,7 @@ void Em5000::Fight(const float _fDeltaTime)
 				m_eState = Back_Jump;
 				return;
 			}
+			return;
 		}
 	}
 
@@ -182,8 +184,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 
 
-	Vector3 vCarDir(1.f,1.f,1.f); //= m_pTransform.lock()->GetPosition() - m_pCarTrans.lock()->GetPosition();
-	float   fCarDir = 1.f; //= D3DXVec3Length(&vCarDir);
+	Vector3 vCarDir = m_pTransform.lock()->GetPosition() - m_pCarTrans.lock()->GetPosition();
+	float   fCarDir = D3DXVec3Length(&vCarDir);
 
 
 	switch (m_eState)
@@ -932,7 +934,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 
 			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f, true);
 				
-			if (fCarDir <= 8.5f)
+			if (fCarDir <= 0.85f)
 			{
 				m_eState = Attack_Grap_Car;
 				return;
@@ -948,7 +950,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			Update_Angle_ToCar();
 			m_bInteraction = true;
 
-			if (fCarDir <= 8.5f)
+			if (fCarDir <= 0.85f)
 				m_eState = Attack_Grap_Car;
 
 		}
@@ -1000,7 +1002,7 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 	if (m_bRushAttack == false)
 	{
 		m_fRushAttackTime += _fDeltaTime;
-		if (m_fRushAttackTime >= 10.f)
+		if (m_fRushAttackTime >= 15.f)
 		{
 			m_bRushAttack = true;
 			m_fRushAttackTime = 0.f;
@@ -1015,19 +1017,19 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 			m_fJumpAttackTime = 0.f;
 		}
 	}
-	//if (m_bThrow == false)
-	//{
-	//	m_fThrowTime += _fDeltaTime;
-	//	if (m_fThrowTime >= 20.f)
-	//	{
-	//		m_bThrow = true;
-	//		m_fThrowTime = 0.f;
-	//	}
-	//}
+	if (m_bThrow == false)
+	{
+		m_fThrowTime += _fDeltaTime;
+		if (m_fThrowTime >= 5.f)
+		{
+			m_bThrow = true;
+			m_fThrowTime = 0.f;
+		}
+	}
 	if (m_bBackJump == false)
 	{
 		m_fBackJumpTime += _fDeltaTime;
-		if (m_fBackJumpTime >= 10.f)
+		if (m_fBackJumpTime >= 20.f)
 		{
 			m_bBackJump = true;
 			m_fBackJumpTime = 0.f;
@@ -1056,7 +1058,6 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_pTransform.lock()->SetPosition({ 0.3f, 1.f, -1.22f });
 	m_BattleInfo.iMaxHp = 5000.f;
 	m_BattleInfo.iHp = 2400.f;
 
@@ -1071,8 +1072,7 @@ HRESULT Em5000::Awake()
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	//
-	//m_pCar = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
-	//m_pCarTrans = m_pCar.lock()->GetComponent<ENGINE::Transform>();
+	
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	PushEditEntity(m_pCollider.lock().get());
@@ -1084,6 +1084,21 @@ HRESULT Em5000::Awake()
 		m_pHand[i].lock()->m_pEm5000Mesh = m_pMesh;
 		m_pHand[i].lock()->m_bLeft = (bool)i;
 	}
+	/*for (int i = 0; i < 2; ++i)
+	{
+		m_pCar[i] = AddGameObject<Car>();
+		m_pCar[i].lock()->m_pEm5000 = static_pointer_cast<Em5000>(m_pGameObject.lock());
+		m_pCar[i].lock()->m_pEm5000Mesh = m_pMesh;
+	}*/
+	m_pCar[0] = AddGameObject<Car>();
+	m_pCar[0].lock()->m_pEm5000 = static_pointer_cast<Em5000>(m_pGameObject.lock());
+	m_pCar[0].lock()->m_pEm5000Mesh = m_pMesh;
+	m_pCar[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -6.47f,-1.79f,44.16f });
+	//m_pCar[1].lock()->GetComponent<Transform>().lock()->SetPosition({ -3.77f,-1.79f,47.56f });
+
+	//m_pCar[0] = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
+	m_pCarTrans = m_pCar[0].lock()->GetComponent<ENGINE::Transform>();
+
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
@@ -1211,11 +1226,13 @@ void Em5000::OnDisable()
 
 void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
-	
+	AddRankScore(_BattleInfo.iAttack);
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 }
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
+	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
 	m_bHit = true;
@@ -1228,7 +1245,6 @@ void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
 	{
 		m_pHand[i].lock()->Set_Coll(false);
 		m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-
 	}
 }
 
@@ -1470,6 +1486,7 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	case GAMEOBJECTTAG::Overture:
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
+		AddRankScore(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack);
 		m_bHit = true;
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
@@ -1553,6 +1570,7 @@ void Em5000::Turn_To_Car()
 		fDot2 = 1.f - FLT_EPSILON;
 	else if (fDot2 < -1.f)
 		fDot2 = -1.f + FLT_EPSILON;
+
 	if (fDot2 > 0)
 	{
 		if (vCross2.y > 0)

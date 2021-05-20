@@ -74,10 +74,10 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage4_Map.json");
+	LoadObjects("../../Data/Stage6_Map.json");
 
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(4);
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(5);
 
 #pragma endregion
 
@@ -255,6 +255,12 @@ void Library_S06::TriggerSetUp()
 void Library_S06::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.8f, -0.2f, -5.02f });
+	}
 
 	Renderer::GetInstance()->LateSceneInit();
 
