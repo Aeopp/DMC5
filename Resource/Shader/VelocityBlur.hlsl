@@ -1,8 +1,8 @@
 uniform sampler2D RenderScene : register(s0);
 uniform vector PixelSize;
 
-uniform float VelocityBlurIntencity;
-uniform float BlurLengthMin;
+uniform float  VelocityBlurIntencity;
+uniform float  BlurLengthMin;
 // uniform int VelocityBlurSamples;
 #define VelocityBlurSamples 32
 
