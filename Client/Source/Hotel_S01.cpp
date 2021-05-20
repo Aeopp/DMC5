@@ -65,10 +65,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	 AddGameObject<Camera>();
+	 // AddGameObject<Camera>();
 
-	/*_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -82,10 +82,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage1_Map.json");
-	LoadObjects("../../Data/Stage1_AniObject.json", true);
-	LoadCollObjects("../../Data/Stage1_Object.json");
-	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
+	LoadObjects("../../Data/Stage5_Map.json");
+	LoadObjects("../../Data/Stage5_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage5_Object.json");
+	LoadBreakablebjects("../../Data/Stage5_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
