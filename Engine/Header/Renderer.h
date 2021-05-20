@@ -130,6 +130,7 @@ public:
 	RenderInformation _RenderInfo{};
 	RenderInformation _PrevRenderInfo{};
 public:
+	std::optional<float> FixedExposure{ std::nullopt };
 	std::shared_ptr<Texture> CurSkysphereTex{};
 	std::shared_ptr<Texture> SkyTexMission02Sun{};
 	std::shared_ptr<Texture> SkyTexMission02Sunset{};

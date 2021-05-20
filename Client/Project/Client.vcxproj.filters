@@ -354,9 +354,6 @@
     <ClInclude Include="..\..\Resource\Shader\Effect\AppearGroundMonster.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
-      <Filter>02.GameObject\Effect\HLSL</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Resource\Shader\Effect\GBufferEffect.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </ClInclude>

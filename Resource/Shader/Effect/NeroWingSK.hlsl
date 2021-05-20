@@ -87,9 +87,9 @@ VsOut VsMain0(VsIn In)
     
     float4x4 WVP = mul(World, ViewProjection);
     Out.UV = In.UV * UVScale;
-    Out.Normal = mul(float4(In.Position.xyz, 0.f), World);
-    Out.Tangent = mul(float4(In.Position.xyz, 0.f), World);
-    Out.BiNormal = mul(float4(In.Position.xyz, 0.f), World);
+    Out.Normal = mul(float4(In.Normal.xyz, 0.f), World);
+    Out.Tangent = mul(float4(In.Tangent.xyz, 0.f), World);
+    Out.BiNormal = mul(float4(In.BiNormal.xyz, 0.f), World);
     Out.Position = mul(float4(In.Position.xyz, 1.f), WVP);
 
     return Out;

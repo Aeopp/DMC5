@@ -411,11 +411,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Resource\Shader\Effect\DashImpact.hlsl">
-      <FileType>Document</FileType>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\Resource\Shader\Effect\GBufferEffect.hlsl">
       <FileType>Document</FileType>
     </ClInclude>

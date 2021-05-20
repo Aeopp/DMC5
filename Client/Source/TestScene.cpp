@@ -192,7 +192,9 @@ HRESULT TestScene::LoadScene()
 #pragma region UI
 
 	AddGameObject<BtlPanel>();
-	AddGameObject<ShopPanel>();
+
+	//AddGameObject<BtlPanel>().lock()->SetActive(false);
+	//AddGameObject<ShopPanel>();
 
 #pragma endregion
 
@@ -204,7 +206,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 8, Until Dooms Day",
+		pFont->SetText("D 7, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
