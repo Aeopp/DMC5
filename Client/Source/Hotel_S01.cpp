@@ -20,6 +20,8 @@
 #include "BreakableObject.h"
 #include "SoundSystem.h"
 #include "TimeSystem.h"
+#include "BrokenPeople.h"
+
 #include <iostream>
 #include <fstream>
 
@@ -63,7 +65,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	// AddGameObject<Camera>();
+	 // AddGameObject<Camera>();
 
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -88,6 +90,8 @@ HRESULT Hotel_S01::LoadScene()
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 	
+
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -443,6 +447,8 @@ void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
 		sFullPath = iter->FindMember("Mesh")->value.GetString();
 		sFullPath = sBasePath / sFullPath;
 		//
+	
+
 		Resources::Load<StaticMesh>(sFullPath);
 		//
 		auto objectArr = iter->FindMember("List")->value.GetArray();

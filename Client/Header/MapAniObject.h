@@ -24,6 +24,7 @@ public:
 	virtual void	OnEnable()							override;
 	virtual void	OnDisable()							override;
 	virtual void    Editor()							override;
+	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 
 public:
 	virtual void    RenderReady()                       override;
@@ -38,8 +39,13 @@ public:
 	void SetUp(const TSTRING _sMesh, const D3DXVECTOR3& _vScale, const D3DXVECTOR3& _vRotation, const D3DXVECTOR3 _vPosition);
 private:
 	shared_ptr<SkeletonMesh>	m_pMesh;
+	std::weak_ptr<BoxCollider> m_pCollider;
+
+
 	float EmissivePower = 0.05f;
 	bool  bEmissive = false;
 	bool  m_bFlag6 = false;
+
+	bool  m_bColl = false;
 };
 #endif // !__MAP_ANI_OBJECT_H__

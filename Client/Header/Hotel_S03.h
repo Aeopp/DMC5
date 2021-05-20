@@ -24,7 +24,7 @@ public:
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
-	void LoadObjects(const std::filesystem::path& path);
+	void LoadObjects(const std::filesystem::path& path, const bool _bAni = false);
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:

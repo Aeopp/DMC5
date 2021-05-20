@@ -44,6 +44,7 @@ HRESULT Cbs_Long::Awake()
 	m_pCollider = AddComponent<CapsuleCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetRadius(0.05f);
 	m_pCollider.lock()->SetHeight(0.11f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.05f, 0.f });

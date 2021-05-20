@@ -346,9 +346,38 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Long:
+		if (m_bDestroyObject == false)
+		{
+			_RenderProperty.bRender = false;
+			StoneDebrisPlayStart();
+			m_bDestroyObject = true;
+		}
+		break;
+	case GAMEOBJECTTAG::Overture:
 		if (m_bDestroyObject == false)
 		{
 			_RenderProperty.bRender = false;
