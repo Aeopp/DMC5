@@ -432,11 +432,14 @@ void Hotel_S02::TriggerFirstButterFlyMeetCamera(const std::weak_ptr<Trigger>& _B
 			[_BattleTrigger, this]()
 		{
 			vector<Vector3> _LostTimes;
-			_LostTimes.emplace_back(Vector3(4.f, 1.f, 0.3f));
+			_LostTimes.emplace_back(Vector3(3.f, 1.f, 0.3f));
 			TimeSystem::GetInstance()->LostTime(_LostTimes);
 			Renderer::GetInstance()->FadeOutStart(0.5f);
-			_MainCamera.lock()->Set_Trigger(_BattleTrigger);
-			_MainCamera.lock()->SetFadeSceneInfo(0.5f);
+			if (!_MainCamera.expired())
+			{
+				_MainCamera.lock()->Set_Trigger(_BattleTrigger);
+				_MainCamera.lock()->SetFadeSceneInfo(0.5f);
+			}
 		};
 
 		// 트리거 위치
@@ -473,8 +476,11 @@ std::weak_ptr<Trigger> Hotel_S02::TriggerFirstButterFlyMeet()
 				SpObject->SetRotation({ 0.f, 90.f, 0.f });
 				SpObject->SetPosition({ -3.314f, 0.886f, 14.175f });
 				SpObject->PlayStart();
-				_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY1, { -3.314f, 0.886f, 14.175f }, 3.f);
-				_MainCamera.lock()->Set_At_Transform(SpObject->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
+				if (!_MainCamera.expired())
+				{
+					_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY1, { -3.314f, 0.886f, 14.175f }, 2.f);
+					_MainCamera.lock()->Set_At_Transform(SpObject->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
+				}
 			}
 		};
 		
@@ -511,8 +517,6 @@ void Hotel_S02::TriggerPuzzleStart()
 				SpObject->SetRotation({ 0.f, 270.f, 0.f });
 				SpObject->SetPosition({ -3.163f, 1.555f, 15.013f });
 				SpObject->PlayStart();
-				_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY2, { -3.163f, 1.555f, 15.013f }, 2.f);
-				_MainCamera.lock()->Set_At_Transform(SpObject->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
 			}
 
 			for (uint32 i = 2u; i < 5u; ++i)
@@ -527,7 +531,7 @@ void Hotel_S02::TriggerPuzzleStart()
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.3f, 1.565f, 17.f };
+		const Vector3 TriggerLocation{ -3.3f, 1.565f, 16.13f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 0.5f, 0.5f, 0.1f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -541,46 +545,16 @@ void Hotel_S02::TriggerPuzzleStart()
 			ImmediatelyEnable,
 			TargetTag);
 	}
-	auto _CamTrigger = AddGameObject<Trigger>().lock();
-	if (_CamTrigger)
-	{
-		const std::function<void()> _CallBack =
-			[this, _SecondTrigger/*변수 캡쳐*/]()
-		{
-			_SecretVision.lock()->PuzzleStart();
-			vector<Vector3> _LostTimes;
-			_LostTimes.emplace_back(Vector3(3.f, 1.f, 0.3f));
-			TimeSystem::GetInstance()->LostTime(_LostTimes);
-			_MainCamera.lock()->Set_Trigger(_SecondTrigger);
-			Renderer::GetInstance()->FadeOutStart(0.5f);
-			_MainCamera.lock()->SetFadeSceneInfo(0.5f);
-		};
-
-		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.3f, 1.565f, 17.f };
-		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 0.5f, 0.5f, 0.1f };
-		// 트리거 정보 등록하자마자 활성화 ?? 
-		const bool ImmediatelyEnable = false;
-		// 트리거가 검사할 오브젝트 태그 
-		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
-
-		_CamTrigger->EventRegist(_CallBack,
-			TriggerLocation,
-			BoxSize,
-			ImmediatelyEnable,
-			TargetTag);
-	}
-
-
 
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[this, _CamTrigger/*변수 캡쳐*/]()
+			[this, _SecondTrigger/*변수 캡쳐*/]()
 		{
-			_CamTrigger->TriggerEnable();
+			_SecretVision.lock()->PuzzleStart();
+
+			_SecondTrigger->TriggerEnable();
 		};
 
 		// 트리거 위치

@@ -707,17 +707,26 @@ void MainCamera::Trigger_Cam_Stage2_ButterFly1_End(float _fDeltaTime)
 
 void MainCamera::Trigger_Cam_Stage2_ButterFly2(float _fDeltaTime)
 {
-	m_vAt = m_pAtTranform.lock()->GetPosition();
-
-	Vector3 vLook = m_pAtTranform.lock()->GetLook();
-	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
-	Matrix matRot, matTest;
-
-	vLook *= 0.22f;
-
-	m_vLerpEye = m_vAt + vLook;
-
-	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 3.f);
+	static float WaitingTime = 0.f;
+	static bool PlayOnce = true;
+	WaitingTime += _fDeltaTime;
+	if (WaitingTime < 0.8f)
+	{
+		Player_Cam_Baisc(_fDeltaTime);
+		return;
+	}
+	if (PlayOnce)
+	{
+		PlayOnce = false;
+		Renderer::GetInstance()->FadeOutStart(0.4f);
+		return;
+	}
+	if (Renderer::GetInstance()->IsBlackOut())
+	{
+		Renderer::GetInstance()->FadeInStart(0.4f);
+		m_vAt = { -3.291f,1.548f,18.056f };
+		m_vEye = { -2.965f,1.778f,16.962f };
+	}
 }
 
 void MainCamera::Trigger_Cam_Stage2_ButterFly2_End(float _fDeltaTime)
