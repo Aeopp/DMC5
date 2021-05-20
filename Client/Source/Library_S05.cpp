@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Header\Hotel_S04.h"
+#include "..\Header\Library_S05.h"
 #include "LoadingScene.h"
 #include "PreLoader.h"
 #include "TempMap.h"
@@ -16,24 +16,24 @@
 #include <fstream>
 using namespace std;
 
-Hotel_S04::Hotel_S04()
+Library_S05::Library_S05()
 {
 
 }
 
-void Hotel_S04::Free()
+void Library_S05::Free()
 {
 	Scene::Free();
 }
 
-Hotel_S04* Hotel_S04::Create()
+Library_S05* Library_S05::Create()
 {
-	Hotel_S04* pInstance = new Hotel_S04;
+	Library_S05* pInstance = new Library_S05;
 	return pInstance;
 }
 
 
-HRESULT Hotel_S04::LoadScene()
+HRESULT Library_S05::LoadScene()
 {
 	// Load Start
 	m_fLoadingProgress = 0.01f;
@@ -74,10 +74,10 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage4_Map.json");
+	//LoadObjects("../../Data/Stage4_Map.json");
 
-	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(4);
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(4);
 
 #pragma endregion
 
@@ -85,8 +85,8 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(false);
-	TriggerSetUp();
+	RenderDataSetUp(true);
+	//TriggerSetUp();
 
 #pragma endregion
 
@@ -117,19 +117,19 @@ HRESULT Hotel_S04::LoadScene()
 	return S_OK;
 }
 
-HRESULT Hotel_S04::Awake()
+HRESULT Library_S05::Awake()
 {
 	Scene::Awake();
 	return S_OK;
 }
 
-HRESULT Hotel_S04::Start()
+HRESULT Library_S05::Start()
 {
 	Scene::Start();
 	return S_OK;
 }
 
-HRESULT Hotel_S04::Update(const float _fDeltaTime)
+HRESULT Library_S05::Update(const float _fDeltaTime)
 {
 	if (!_LateInit)
 		LateInit();
@@ -139,25 +139,25 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	/* ---------- 치트 ---------- */
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
 	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
 	}
 	/* -------------------------- */
 
 	return S_OK;
 }
 
-HRESULT Hotel_S04::LateUpdate(const float _fDeltaTime)
+HRESULT Library_S05::LateUpdate(const float _fDeltaTime)
 {
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
 }
 
 
-void Hotel_S04::LoadObjects(const std::filesystem::path& path)
+void Library_S05::LoadObjects(const std::filesystem::path& path)
 {
 	std::ifstream inputStream{ path };
 
@@ -216,12 +216,12 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 	}
 };
 
-void Hotel_S04::BgmPlay()
+void Library_S05::BgmPlay()
 {
 	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 };
 
-void Hotel_S04::RenderDataSetUp(const bool bTest)
+void Library_S05::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
@@ -232,7 +232,7 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S04.json");
+		//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S04.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
@@ -247,18 +247,18 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 	_Renderer->StarFactor = 0.9f;
 }
 
-void Hotel_S04::TriggerSetUp()
+void Library_S05::TriggerSetUp()
 {
 
 }
 
-void Hotel_S04::LateInit()
+void Library_S05::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
+
 	Renderer::GetInstance()->LateSceneInit();
-	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
-	Renderer::GetInstance()->SkyDistortionStart();
+
+	BgmPlay();
 
 	_LateInit = true;
-	BgmPlay();
 }

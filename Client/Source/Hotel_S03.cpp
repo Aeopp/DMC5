@@ -17,6 +17,7 @@
 #include "Em0000.h"
 #include "CollObject.h"
 #include "SoundSystem.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -972,6 +973,7 @@ void Hotel_S03::LateInit()
 
 	Renderer::GetInstance()->LateSceneInit();
 
-	_LateInit = true;
 	BgmPlay();
+
+	_LateInit = true;
 }
