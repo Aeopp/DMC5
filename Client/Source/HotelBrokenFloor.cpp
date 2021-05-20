@@ -2,6 +2,8 @@
 #include "HotelBrokenFloor.h"
 #include "Subset.h"
 #include "Renderer.h"
+#include "Smoke.h"
+
 HotelBrokenFloor::HotelBrokenFloor()
 {
 }
@@ -23,6 +25,26 @@ HRESULT HotelBrokenFloor::Ready()
 	RenderInit();
 	m_pTransform.lock()->SetScale({ 0.0001f, 0.0001f, 0.0001f });
 	PushEditEntity(m_pTransform.lock().get());
+
+	// smoke
+	m_pSmoke[0] = AddGameObject<Smoke>();
+	if (auto Sp = m_pSmoke[0].lock(); Sp)
+	{
+		Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
+		Sp->SetScale(0.006f);
+		Sp->SetPosition({ 0.f, 1.44f, 16.5f });
+		Sp->SetRotation({ 84.255f, 0.f, 61.277f });
+		Sp->SetActive(false);
+	}
+	m_pSmoke[1] = AddGameObject<Smoke>();
+	if (auto Sp = m_pSmoke[1].lock(); Sp)
+	{
+		Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
+		Sp->SetScale(0.009f);
+		Sp->SetPosition({ -1.1f, 0.98f, 16.7f });
+		Sp->SetRotation({ 0.f, 222.128f, 0.f });
+		Sp->SetActive(false);
+	}
 
 	return S_OK;
 }
@@ -91,10 +113,35 @@ void HotelBrokenFloor::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 	if (GAMEOBJECTTAG::TAG_RedQueen != ObjTag)
 		return;
+
 	++m_iCollCount;
 	if (m_iCollCount > 4)
 	{
 		m_pMesh->ContinueAnimation();
+		
+		if (auto Sp = m_pSmoke[0].lock(); Sp)
+		{
+			Sp->SetScale(0.009f);
+			Sp->SetPosition({ 0.3f, 0.98f, 15.4f });
+			Sp->SetRotation({ 0.f, 46.f, 0.f });
+			Sp->PlayStart(25.f);
+		}
+		if (auto Sp = m_pSmoke[1].lock(); Sp)
+		{
+			Sp->SetActive(true);
+			Sp->PlayStart(25.f);
+		}
+	}
+	else
+	{
+		if (auto Sp = m_pSmoke[0].lock(); Sp)
+		{
+			if (!Sp->IsPlaying())
+			{
+				Sp->SetActive(true);
+				Sp->PlayStart(15.f);
+			}
+		}
 	}
 }
 
