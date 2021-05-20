@@ -16,6 +16,7 @@ public:
 		Strong,
 		GoliathJumpAttack,
 		GoliathPunch,
+		Change,
 		None,
 	};
 private:

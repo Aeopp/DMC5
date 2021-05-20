@@ -37,6 +37,7 @@ void Hotel_S02::Free()
 {
 	for (auto& Element : _MakaiButterflyVec)
 		Destroy(Element);
+
 	_MakaiButterflyVec.clear();
 	_MakaiButterflyVec.shrink_to_fit();
 

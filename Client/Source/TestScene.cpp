@@ -53,7 +53,7 @@
 #include "TimeSystem.h"
 #include "ShockWave.h"
 #include "Trail.h"
-
+#include "Change.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -78,6 +78,7 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+	AddGameObject<Change>();
 	AddGameObject<ShockWave>();
 
 	m_fLoadingProgress = 0.01f;
@@ -114,10 +115,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(1);
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);
 
 #pragma endregion
 

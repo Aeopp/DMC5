@@ -70,6 +70,7 @@ enum GAMEOBJECTTAG
 	Eff_ElectricBranch,
 	Eff_ElectricVortex,
 	Eff_IceAge,
+	Eff_Change,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
 	Eff_DashTrail,

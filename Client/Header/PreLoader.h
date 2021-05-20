@@ -18,6 +18,7 @@ private:
 	static void IceCbsMidParticlePoolLoad();
 	static void CbsMidParticlePoolLoad();
 	static void IceAgeParticlePoolLoad();
+	static void ChangeParticlePoolLoad();
 
 	static void FireParticlePoolLoad();
 	static void FireVortexSpritePoolLoad(const uint32 SpriteIdx);

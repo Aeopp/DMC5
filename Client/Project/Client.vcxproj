@@ -174,6 +174,7 @@
     <ClInclude Include="..\Header\Cbs_Long.h" />
     <ClInclude Include="..\Header\Cbs_Middle.h" />
     <ClInclude Include="..\Header\Cbs_Short.h" />
+    <ClInclude Include="..\Header\Change.h" />
     <ClInclude Include="..\Header\CircleWave.h" />
     <ClInclude Include="..\Header\CollObject.h" />
     <ClInclude Include="..\Header\DashTrail.h" />
@@ -292,6 +293,7 @@
     <ClCompile Include="..\Source\Cbs_Long.cpp" />
     <ClCompile Include="..\Source\Cbs_Middle.cpp" />
     <ClCompile Include="..\Source\Cbs_Short.cpp" />
+    <ClCompile Include="..\Source\Change.cpp" />
     <ClCompile Include="..\Source\CircleWave.cpp" />
     <ClCompile Include="..\Source\CollObject.cpp" />
     <ClCompile Include="..\Source\DashTrail.cpp" />
@@ -586,6 +588,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\ShockWave.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\Change.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ChangeParticle.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

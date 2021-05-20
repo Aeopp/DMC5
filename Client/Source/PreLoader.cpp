@@ -40,7 +40,7 @@ void PreLoader::PreLoadResources()
 
 	SecretVisionDisappearParticlePoolLoad();
 	DissolveNhDoorParticlePoolLoad();
-
+	ChangeParticlePoolLoad();
 
 	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
 	Mesh::InitializeInfo _Info{};
@@ -336,6 +336,94 @@ void PreLoader::IceAgeParticlePoolLoad()
 		ParticleInstance::Ice _IceValue{};
 
 		_IceValue.ColorIntencity = FMath::Random(0.02f, 0.08f);
+
+		const float LifeTime = FMath::Random(0.8f, 1.3f);
+
+		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
+			{ StartRot,RotCp0,RotCp1,EndRot },
+			PScale, LifeTime, 0.0f, _IceValue, std::nullopt);
+	}
+}
+
+void PreLoader::ChangeParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "ChangeParticle";
+	// 공유 정보 바인드 
+	_PushParticle.SharedResourceBind = [](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
+			Subset)
+		{
+			Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
+			Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
+		}
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 10000u;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("ChangeParticle", std::move(_PushParticle), PoolSize, false);
+
+	Mesh::InitializeInfo _TargetInfo{};
+	_TargetInfo.bLocalVertexLocationsStorage = true;
+	// 메시
+	auto Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _TargetInfo);
+
+	const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
+
+	for (auto& _ParticleInstance : *ParticlePool)
+	{
+		Vector2 Range{ -1.f,1.f };
+
+		const Vector3 TargetLocation = (*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)];
+
+		Vector3 LocalVtxDir = FMath::Normalize(TargetLocation);
+		const Vector3 Right = FMath::Normalize(FMath::Cross(Vector3{ 0.f,1.f,0.f }, LocalVtxDir));
+		const Vector3 Up = FMath::Normalize(FMath::Cross(Up, LocalVtxDir));
+
+		static constexpr std::pair<float, float> StartScaleRange = { 100.f,200.f };
+
+		static constexpr std::pair<float, float> SecondScaleRange = { StartScaleRange.second * 1.5f * 0.5f,
+																      StartScaleRange.second * 1.5f };
+
+		static constexpr std::pair<float, float> ThirdScaleRange = { SecondScaleRange.second * 2.f * 0.5f,
+																   SecondScaleRange.second * 2.f };
+
+		const Vector3 Cp0=TargetLocation + FMath::RandomVector(FMath::Random(StartScaleRange));
+		const Vector3 Cp1= Cp0+FMath::RandomVector(FMath::Random(SecondScaleRange));
+		const Vector3 End = Cp1 + FMath::RandomVector(FMath::Random(ThirdScaleRange));
+		
+		const Vector3 PScale = FMath::Random(
+			Vector3(0.025f, 0.025f, 0.025f),
+			Vector3(0.05f, 0.05f, 0.05f)) * GScale;
+
+		const Vector3 StartRot = {
+			FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
+		const Vector3 RotCp0 = StartRot + FMath::RandomEuler(1.f);
+		const Vector3 RotCp1 = RotCp0 + FMath::RandomEuler(1.f);
+		const Vector3 EndRot = RotCp1 + FMath::RandomEuler(1.f);
+
+		ParticleInstance::Ice _IceValue{};
+
+		_IceValue.ColorIntencity = FMath::Random(1.f, 2.f);
 
 		const float LifeTime = FMath::Random(0.8f, 1.3f);
 
