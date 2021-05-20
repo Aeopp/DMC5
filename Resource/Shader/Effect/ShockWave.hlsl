@@ -22,9 +22,10 @@ void VsMain(in out float4 Position : POSITION0,
             out float4 LNormal : TEXCOORD2,        
             out float4 ClipPosition : TEXCOORD3)
 {
+    LNormal = Position;
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
-    LNormal = Position;
+    
 };
 
 
