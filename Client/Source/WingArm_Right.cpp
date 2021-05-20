@@ -76,6 +76,11 @@ UINT WingArm_Right::Update(const float _fDeltaTime)
 		if(m_pNero.lock()->Get_IsMajinMode())
 			m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, true);
 	}
+	//if (0.3f <= fCurAnimationTime && m_bDissovleOnce)
+	//{
+	//	m_bDissovleOnce = false;
+	//	m_DissolveInfo.DissolveStart(false, false, 0.3f);
+	//}
 
 	//
 	m_fAccTime += _fDeltaTime;
@@ -102,7 +107,7 @@ UINT WingArm_Right::LateUpdate(const float _fDeltaTime)
 		FinalWorld._43 += PlayerLook.z * 0.02f;
 		m_pTransform.lock()->SetWorldMatrix(FinalWorld);
 	}
-
+	m_DissolveInfo.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World);
 
 	return 0;
 }
@@ -112,7 +117,8 @@ void WingArm_Right::OnEnable()
 	GameObject::OnEnable();
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
-
+	//m_DissolveInfo.DissolveEnd();
+	//m_bDissovleOnce = true;
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_RWing, false);
 }
 
@@ -205,6 +211,9 @@ void WingArm_Right::RenderInit()
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
+	m_DissolveInfo.Initialize(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing_Arm\\Wing_Arm_Right.fbx",
+		Vector3{ 0.f,0.f,0.f }, Vector3{ 1.f / 255.f , 0.f , 1.f / 255.f }, 0.85f);
+
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing_Arm\\Wing_Arm_Right.fbx");
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
@@ -216,12 +225,13 @@ void WingArm_Right::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	//	return;
 
 	m_pMesh->BindVTF(_Info.Fx);
-
+	m_DissolveInfo.DissolveVariableBind(_Info.Fx);
 	auto WeakSubset = m_pMesh->GetSubset(0u);
 	if (auto SharedSubset = WeakSubset.lock();
 		SharedSubset)
 	{
 		const Matrix World = _RenderUpdateInfo.World;
+
 		_Info.Fx->SetMatrix("World", &World);
 		_Info.Fx->SetTexture("NRMR0Map", m_NRMRTex->GetTexture());
 		_Info.Fx->SetTexture("ATOS0Map", m_ATOSTex->GetTexture());

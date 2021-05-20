@@ -380,6 +380,11 @@ UINT Nero::Update(const float _fDeltaTime)
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
 	//}
 
+	if (Input::GetKeyDown(DIK_1))
+	{
+		m_pBtlPanel.lock()->ConsumeTDTGauge(100.f);
+	}
+
 	return 0;
 }
 
@@ -790,6 +795,12 @@ void Nero::Editor()
 			BuyUpgradedOverture();
 			BuyCbsMiddle();
 			BuyCbsLong();
+		}
+
+		if (auto SpWingSword = m_pWingArm_Right.lock();
+			SpWingSword)
+		{
+			SpWingSword->m_DissolveInfo.DissolveEditor();
 		}
 	}
 
@@ -1520,6 +1531,9 @@ void Nero::ChangeWeaponCollSize(float _fSize)
 void Nero::ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap)
 {
 	m_pNewWingSword.lock()->SetActive(true);
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveEnd();
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveStart(true, false, 0.1f);
+	m_pNewWingSword.lock()->m_bDissovleOnce = true;
 	m_pNewWingSword.lock()->ChangeAnimation(_eAniList, _bLoop, _Overlap);
 }
 
