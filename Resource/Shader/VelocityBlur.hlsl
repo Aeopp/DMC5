@@ -45,6 +45,7 @@ out float4 Color : COLOR0)
     
     float4 VelocitySample = tex2D(VelocityBlur, UV);
     
+    VelocitySample.y *= -1.f;
     
     if (length(VelocitySample.xy) > BlurLengthMin)
     {

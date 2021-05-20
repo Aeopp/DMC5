@@ -3,6 +3,8 @@
 
 #include "GameObject.h"
 #include "RenderInterface.h"
+#include "DissolveInfo.h"
+
 class Nero;
 class NewWingSword : public GameObject,
 	public ENGINE::RenderInterface
@@ -49,6 +51,7 @@ private:
 
     float	m_fAccTime = 0.f;
 
+    DissolveInfo m_DissolveInfo{};
 };
 
 

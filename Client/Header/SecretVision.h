@@ -6,7 +6,7 @@
 #include <optional>
 
 class SecretVision : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+					 public ENGINE::RenderInterface
 {
 	struct SecretVisionDesc
 	{
@@ -18,6 +18,7 @@ class SecretVision : public ENGINE::GameObject,
 		float AlphaFactor = 0.0f;
 		int32 Life = DefaultLife;
 		bool bSurvive = true;
+		bool bStartInteraction = false;
 		float T = 0.0f;
 	};
 private:
@@ -54,6 +55,7 @@ public:
 	void   PuzzleStart();
 	uint32 GetInteractionIdx()const;
 	void   SetInteractionEnable(const bool bInteraction);
+	void   StartInteraction(const uint32 Idx);
 private:
 	void Interaction(const uint32 Idx);
 	void Disappear(const uint32 Idx);
@@ -67,6 +69,7 @@ private:
 	//
 	bool   bInteraction = false;
 	uint32 InteractionIdx = 0u;
+	std::optional<float> PuzzleStartT = std::nullopt;
 
 	static const inline float DefaultNoiseWrap = 0.6f;
 	static const inline float DefaultDistortionIntencity = 1.f;
@@ -82,7 +85,7 @@ private:
 	float HitMinusDistortionIntencity = -0.2f;
 
 	float HitAddColorIntencity = 0.2f;
-	float HitAddAlphaFactor  = 0.2f;
+	float HitAddAlphaFactor    = 0.2f;
 
 	std::optional<float> NhDoorOpenTime{ std::nullopt };
 

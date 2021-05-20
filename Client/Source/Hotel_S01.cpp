@@ -24,7 +24,8 @@
 
 #include <iostream>
 #include <fstream>
-
+#include "TimeSystem.h"
+#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -65,7 +66,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	 // AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -82,10 +83,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage5_Map.json");
-	LoadObjects("../../Data/Stage5_AniObject.json", true);
-	LoadCollObjects("../../Data/Stage5_Object.json");
-	LoadBreakablebjects("../../Data/Stage5_BreakableObject.json");
+	LoadObjects("../../Data/Stage1_Map.json");
+	LoadObjects("../../Data/Stage1_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage1_Object.json");
+	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -189,13 +190,8 @@ HRESULT Hotel_S01::LoadScene()
 	}
 
 	//메인 카메라에 클리포트 블록 전달
-	
-	if (auto SpMainCamera = _MainCamera.lock();
-		SpMainCamera)
-	{
-		SpMainCamera->SetQliphothBlock(m_vecQliphothBlock);
-	}
-
+	if(!_MainCamera.expired())
+		_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;
@@ -756,6 +752,8 @@ void Hotel_S01::Trigger2nd()
 		const std::function<void()> SpawnWaveAfterEvent =
 			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
+			_MainCamera.lock()->SetShakeInfo(0.5f, 7.f);
+			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			//... 여기서 로직 처리하세요 . 
 
 			Renderer::GetInstance()->SkyDistortionStart();
@@ -820,11 +818,12 @@ void Hotel_S01::TriggerInFrontOfHotel(const std::weak_ptr<Trigger>& _BattleTrigg
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[_BattleTrigger]()
+			[_BattleTrigger,this]()
 		{
 			// 여기서 카메라 연출 시작 ....
 			// .............
-
+			_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE1_WAVE2_ENTER, Vector3(-3.628f, 0.831f, 11.067f), 3.f);
+			_MainCamera.lock()->Set_Trigger(_BattleTrigger);
 			// 카메라는 연출 할만큼 하고 웨이브 시작 타이밍에
 			// _BattleTrigger.lock()->TriggerEnable()  <- 웨이브 시작 ..
 		};
@@ -890,7 +889,7 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
-
+			_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
 			// 웨이브가 끝났어요 필요한 로직 작성해주세요 ....
 			// ... 연출 !! 
 			//
@@ -900,14 +899,6 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 				Sp->SetRedOrbActive(false);
 				Sp->SetGlobalActive(false);
 				Sp->ResetRankScore();
-			}
-
-			for (uint32 i = 5u; i < 7u; ++i)
-			{
-				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
-				{
-					m_vecQliphothBlock[i].lock()->Reset();
-				}
 			}
 		};
 

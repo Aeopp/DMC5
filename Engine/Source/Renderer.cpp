@@ -2941,9 +2941,15 @@ HRESULT Renderer::ToneMap()
 			std::to_string(1 - currentafterimage)]->GetTexture());
 		Device->SetTexture(5, RenderTargets["Depth"]->GetTexture());
 
-		Device->SetSamplerState(5, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-		Device->SetSamplerState(5, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-		Device->SetSamplerState(5, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+
+
+		for (int i = 0; i < 6; ++i)
+		{
+			Device->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+			Device->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+			Device->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+		}
+		
 
 
 		_Quad->Render(Device, 1.f, 1.f, hdreffects);

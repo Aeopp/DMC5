@@ -491,6 +491,22 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
 
+class Wind_Pressure_CutScene : public NeroState
+{
+private:
+	explicit Wind_Pressure_CutScene(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~Wind_Pressure_CutScene();
+
+public:
+	static Wind_Pressure_CutScene* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
 class KnockBack_Front : public NeroState
 {
 private:
@@ -1704,6 +1720,7 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 private:
 	bool m_bPlayOnce = false;
+	bool m_bPlayEff = true;
 };
 
 class Middle_Cbs_BlitzAttack : public NeroState
@@ -1720,6 +1737,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool m_bPlayOnce = true;
 };
 
 class Middle_Cbs_Satellite : public NeroState
@@ -2029,6 +2048,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool		m_bPlayOnce = true;
 };
 
 class ComboA_Dash : public NeroState
