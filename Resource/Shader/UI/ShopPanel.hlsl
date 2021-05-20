@@ -294,7 +294,7 @@ technique Default
         zwriteenable = false;
         sRGBWRITEENABLE = false;
 
-        vertexshader = compile vs_3_0 VsMain();
+        vertexshader = compile vs_3_0 VsMain_GUI();
         pixelshader = compile ps_3_0 PsMain_GUI();
     }
     pass p2
