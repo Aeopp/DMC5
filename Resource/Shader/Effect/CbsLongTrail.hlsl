@@ -95,7 +95,7 @@ void VsMain(in out float4 Position : POSITION0,
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
-    
+    UV1 = UV0;
     UV2 = (UV0 * NoiseScale.x) + NoiseScrollSpeed.x;
     UV3 = (UV0 * NoiseScale.y) + NoiseScrollSpeed.y;
     UV4 = (UV0 * NoiseScale.z) + NoiseScrollSpeed.z;

@@ -11,7 +11,7 @@ private:
 	{
 		std::weak_ptr<class ThunderBolt> _Effect{};
 	};
-	std::array<EffectDesc, 25u> _PlayEffectDescs{};
+	std::array<EffectDesc, 15u> _PlayEffectDescs{};
 private:
 	explicit LongBarrel() = default;
 	virtual ~LongBarrel() = default;

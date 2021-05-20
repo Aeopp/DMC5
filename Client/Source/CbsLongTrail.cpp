@@ -7,6 +7,8 @@
 #include "Renderer.h"
 #include <iostream>
 #include "GraphicSystem.h"
+#include "ParticleSystem.h"
+
 
 CbsLongTrail::CbsLongTrail()
 {};
@@ -106,8 +108,11 @@ void CbsLongTrail::RenderInit()
 		, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, _Desc.IdxFmt,
 		D3DPOOL_DEFAULT, &IdxBuffer, nullptr);
 
+	/*TrailMap = Resources::Load<Texture>(
+		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");*/
 	TrailMap = Resources::Load<Texture>(
-		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
+		"..\\..\\Resource\\Texture\\Effect\\fire.tga");
+
 	FireSpriteMap = Resources::Load<Texture >(
 		"..\\..\\Resource\\Texture\\Effect\\Sprite\\Fire\\tex_capcom_fire_explosive_0014_alpg.tex_noesispreviewdata.tga");
 	ExplosionTrailMap = Resources::Load<Texture >(
@@ -140,14 +145,13 @@ void CbsLongTrail::PlayStart()
 
 			auto BoneLocal = _CbsLong->Get_BoneMatrixPtr("_000");
 
-			BoneWorldLocation = FMath::Mul(Vector3{ 0.f,0.f,0.f }, (*BoneLocal) * _World);
-
-			const Vector3 HighPos = FMath::Mul(Offset,  ( *BoneLocal ) * _World );
+			LatelyLocations.first= FMath::Mul(LowOffset, (*BoneLocal) * _World);
+			LatelyLocations.second= FMath::Mul(HighOffset,  ( *BoneLocal ) * _World );
 
 			for (int32 i = 0; i < _Desc.VtxCnt; i += 2)
 			{
-				VtxPtr[i + 1].Location = HighPos;
-				VtxPtr[i].Location = BoneWorldLocation;
+				VtxPtr[i + 1].Location = LatelyLocations.second;
+				VtxPtr[i].Location = LatelyLocations.first;
 			}
 		}
 	};
@@ -242,6 +246,41 @@ void CbsLongTrail::BufferUpdate(const float DeltaTime)
 	}
 };
 
+void CbsLongTrail::ParticleUpdate(const float DeltaTime)
+{
+	CurParticleDelta -= DeltaTime;
+
+	if (CurParticleDelta < 0.0f)
+	{
+		CurParticleDelta += ParticleDelta;
+
+		if (auto SpTransform = m_pTransform.lock();
+			SpTransform)
+		{
+			const std::string CurrentSpriteIdx = std::to_string(FMath::Random(1u, 15u));
+			auto _PlayableParticle =
+				ParticleSystem::GetInstance()->PlayParticle("FireSprite" + CurrentSpriteIdx, 33ul , true);
+			// 파이어 파티클 뿌리기 ....
+
+			for (int32 i = 0; i < _PlayableParticle.size(); ++i)
+			{
+				auto& _PlayInstance = _PlayableParticle[i];
+
+				const Vector3 WorldLocation =
+					FMath::Lerp(LatelyLocations.first,
+						LatelyLocations.second,
+						FMath::Random(0.0f, 1.f));
+
+				const Vector3 Scale = SpTransform->GetScale();
+				const Vector3 Rotation = Vector3{ 0.f,0.f,0.f };
+
+				_PlayInstance->PlayDescBind(
+					FMath::WorldMatrix(Scale, Rotation, WorldLocation));
+			}
+		}
+	}
+};
+
 void CbsLongTrail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr)
 {
 	// 곡선 보간 .....
@@ -300,8 +339,8 @@ void CbsLongTrail::VertexBufUpdate()
 
 		for (uint32 i = 0; i < _Desc.NewVtxCnt; i += 2)
 		{
-			VtxPtr[i].Location = VtxPtr[RemoveCount + i].Location;
-			VtxPtr[i + 1].Location = VtxPtr[RemoveCount + i + 1].Location;
+			VtxPtr[i].Location =   VtxPtr[RemoveCount + i].Location;
+			VtxPtr[i + 1].Location =  VtxPtr[RemoveCount + i + 1].Location;			
 		}
 	}
 
@@ -315,11 +354,12 @@ void CbsLongTrail::VertexBufUpdate()
 
 			auto BoneLocal = _CbsLong->Get_BoneMatrixPtr("_000");
 
-			BoneWorldLocation = FMath::Mul(Vector3{ 0.f,0.f,0.f } , (*BoneLocal) * _World);
-			const Vector3 HighPos = FMath::Mul(Offset, (*BoneLocal) * _World);
+			// FMath::Mul(Vector3{ 0.f,0.f,0.f } , (*BoneLocal) * _World);
+			LatelyLocations.first = FMath::Mul(LowOffset, (*BoneLocal) * _World);
+			LatelyLocations.second = FMath::Mul(HighOffset, (*BoneLocal) * _World);
 
-			VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-			VtxPtr[_Desc.NewVtxCnt].Location = BoneWorldLocation;
+			VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyLocations.second;
+			VtxPtr[_Desc.NewVtxCnt].Location = LatelyLocations.first;
 		}
 	};
 
@@ -439,6 +479,7 @@ UINT CbsLongTrail::Update(const float _fDeltaTime)
 	T += _fDeltaTime;
 	SpriteUpdate(_fDeltaTime);
 	BufferUpdate(_fDeltaTime);
+	ParticleUpdate(_fDeltaTime);
 
 	return 0;
 }
@@ -480,13 +521,18 @@ void CbsLongTrail::Editor()
 			}
 
 
-			ImGui::SliderFloat3("Offset", BoneWorldLocation, -300.f, 300.f, "%9.6f");
+			ImGui::SliderFloat3("LowOffset", LowOffset, -300.f, 300.f, "%9.6f");
+			ImGui::SliderFloat3("HighOffset", HighOffset, -300.f, 300.f, "%9.6f");
+
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderFloat("SpriteUpdateCycle", &SpriteUpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
+
+			ImGui::SliderFloat("ParticleDelta", &ParticleDelta, FLT_MIN, 1.f, "%9.6f");
+			ImGui::InputFloat("In ParticleDelta", &ParticleDelta, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::SliderFloat2("NoiseDistortion0", NoiseDistortion0, 0.0f, 100.f);
 			ImGui::SliderFloat2("NoiseDistortion1", NoiseDistortion1, 0.0f, 100.f);
@@ -500,6 +546,8 @@ void CbsLongTrail::Editor()
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
+
+			
 
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply, 0.f, 10.f, "%1.6f");

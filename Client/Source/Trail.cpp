@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include <iostream>
 #include "GraphicSystem.h"
+#include "ParticleSystem.h"
 #include "RedQueen.h"
 
 Trail::Trail()
@@ -147,22 +148,19 @@ void Trail::PlayStart(const Mode _Mode,
 		if (auto RQ = std::dynamic_pointer_cast<RedQueen>(_GameObject);
 			RQ)
 		{
-			;
-
 			const auto SwordWorld = RQ->_RenderUpdateInfo.World;
 
-			// 	RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
 
 			auto Low = RQ->Get_BoneMatrixPtr("_000");
-			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
+			LatelyLocations.first = FMath::Mul(LowOffset, *Low * SwordWorld);
 
 			auto High = RQ->Get_BoneMatrixPtr("_001");
-			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
+			LatelyLocations.second  = FMath::Mul(HighOffset, *High * SwordWorld);
 
 			for (int32 i = 0; i < _Desc.VtxCnt; i+=2)
 			{
-				VtxPtr[i +1].Location = HighPos;
-				VtxPtr[i].Location = LowPos;
+				VtxPtr[i +1].Location = LatelyLocations.second;
+				VtxPtr[i].Location = LatelyLocations.first;
 			}
 		}
 	};
@@ -197,7 +195,7 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
-	if (CurMode ==Mode::Explosion)
+	if (CurMode == Mode::Explosion)
 	{
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 		_Info.Fx->SetTexture("TrailMap", ExplosionTrailMap->GetTexture());
@@ -205,7 +203,7 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 		/*_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
 		_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed, 3);
 		_Info.Fx->SetFloatArray("Scale", Scale, 3);*/
-		
+
 	}
 	else if (CurMode == Mode::Non)
 	{
@@ -220,17 +218,18 @@ void Trail::RenderTrail(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 
 	_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / SpriteCol);
-	_Info.Fx->SetFloat("SpriteXEnd",  ( SpriteColIdx + 1)/ SpriteCol);
-	_Info.Fx->SetFloat("SpriteYStart",SpriteRowIdx/ SpriteRow );
+	_Info.Fx->SetFloat("SpriteXEnd", (SpriteColIdx + 1) / SpriteCol);
+	_Info.Fx->SetFloat("SpriteYStart", SpriteRowIdx / SpriteRow);
 	_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1) / SpriteRow);
-	
+
 	Device->SetStreamSource(0, VtxBuffer, 0, _Desc.VtxSize);
 	Device->SetVertexDeclaration(VtxDecl);
 	Device->SetIndices(IdxBuffer);
 	_Info.Fx->CommitChanges();
 
 	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _Desc.VtxCnt, 0, _Desc.NewVtxCnt);
-}
+};
+
 void Trail::SpriteUpdate(const float DeltaTime)
 {
 	SpriteCurUpdateCycle -= DeltaTime;
@@ -334,13 +333,13 @@ void Trail::VertexBufUpdate()
 			// RQ->GetComponent<Transform>().lock()->GetWorldMatrix();
 			
 			auto Low = RQ->Get_BoneMatrixPtr("_000");
-			const Vector3 LowPos = FMath::Mul(LowOffset, *Low * SwordWorld);
+			LatelyLocations.first = FMath::Mul(LowOffset, *Low * SwordWorld);
 
 			auto High = RQ->Get_BoneMatrixPtr("_001");
-			const Vector3 HighPos = FMath::Mul(HighOffset, *High * SwordWorld);
+			LatelyLocations.second= FMath::Mul(HighOffset, *High * SwordWorld);
 
-			VtxPtr[_Desc.NewVtxCnt + 1].Location = HighPos;
-			VtxPtr[_Desc.NewVtxCnt].Location = LowPos;
+			VtxPtr[_Desc.NewVtxCnt].Location = LatelyLocations.first;
+			VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyLocations.second;
 		}
 	};
 
@@ -464,8 +463,47 @@ UINT Trail::Update(const float _fDeltaTime)
 	T += _fDeltaTime;
 	SpriteUpdate(_fDeltaTime);
 	BufferUpdate(_fDeltaTime);
+	ParticleUpdate(_fDeltaTime);
 
 	return 0;
+}
+
+void Trail::ParticleUpdate(const float _fDeltaTime)
+{
+	if (CurMode == Trail::Mode::Explosion)
+	{
+		CurParticleDelta -= _fDeltaTime;
+
+		if (CurParticleDelta < 0.0f)
+		{
+			CurParticleDelta += ParticleDelta;
+			if (auto SpTransform = m_pTransform.lock();
+				SpTransform)
+			{
+				const std::string CurrentSpriteIdx = std::to_string(FMath::Random(1u, 15u));
+				auto _PlayableParticle =
+					ParticleSystem::GetInstance()->PlayParticle("FireSprite" + CurrentSpriteIdx, 12ul, true);
+				// 파이어 파티클 뿌리기 ....
+
+				for (int32 i = 0; i < _PlayableParticle.size(); ++i)
+				{
+					auto& _PlayInstance = _PlayableParticle[i];
+
+					const Vector3 WorldLocation =
+						FMath::Lerp(LatelyLocations.first,
+							LatelyLocations.second,
+							FMath::Random(0.0f, 1.f));
+
+					const Vector3 Scale = SpTransform->GetScale();
+					const Vector3 Rotation = Vector3{ 0.f,0.f,0.f };
+
+					_PlayInstance->PlayDescBind(
+						FMath::WorldMatrix(Scale, Rotation, WorldLocation));
+				}
+			}
+		}
+	}
+	
 }
 
 UINT Trail::LateUpdate(const float _fDeltaTime)

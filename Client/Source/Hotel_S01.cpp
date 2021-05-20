@@ -51,7 +51,6 @@ Hotel_S01* Hotel_S01::Create()
 
 HRESULT Hotel_S01::LoadScene()
 {
-	
 
 	// Load Start
 	m_fLoadingProgress = 0.01f;
@@ -66,10 +65,10 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	 // AddGameObject<Camera>();
 
-	/*_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -190,7 +189,12 @@ HRESULT Hotel_S01::LoadScene()
 	}
 
 	//메인 카메라에 클리포트 블록 전달
-	//_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
+	
+	if (auto SpMainCamera = _MainCamera.lock();
+		SpMainCamera)
+	{
+		SpMainCamera->SetQliphothBlock(m_vecQliphothBlock);
+	}
 
 #pragma endregion
 
@@ -740,7 +744,7 @@ void Hotel_S01::Trigger2nd()
 			lock()->SetPosition({ -3.52741f, 0.009f, 6.39310f});
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -3.1017f, 0.011680f, 5.662048f };
+		const Vector3 TriggerLocation{ -3.1017f, 0.011680f, 4.624099f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 6.f, 3.f, 1.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
