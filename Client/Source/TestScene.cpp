@@ -77,9 +77,6 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
-	AddGameObject<Trail>();
-	AddGameObject<CbsLongTrail>();
-	AddGameObject<WhirlWind>();
 	AddGameObject<ShockWave>();
 
 	m_fLoadingProgress = 0.01f;
@@ -94,10 +91,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 
-	/*_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -136,21 +133,6 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.7f;
 
 #pragma region Effect
-
-	//AddGameObject<CircleWave>();
-	//AddGameObject<AirHike>();
-	//AddGameObject<FireCircle>();
-	//AddGameObject<IceAge>();
-	//AddGameObject<CbsTrail>();
-	//AddGameObject<ElectricOccur>();
-	//AddGameObject<BlitzAttack>();
-	//AddGameObject<CbsMidTrail>();
-	//AddGameObject<SecretVision>();
-	//AddGameObject<NhDoor>();
-	//AddGameObject<BlitzAttack>();
-	//AddGameObject<MakaiButterfly>();
-	//AddGameObject<CbsLongTrail>();
-
 	//if (auto Sp = AddGameObject<StoneDebris>().lock();
 	//	Sp)
 	//{
@@ -252,11 +234,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	if (auto SpPlayer = _Player.lock();
-		SpPlayer)
-	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.2f,0.f });
-	}
+	//if (auto SpPlayer = _Player.lock();
+	//	SpPlayer)
+	//{
+	//	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.2f,0.f });
+	//}
 
 	//cout << "SceneUpdate" << endl;
 
