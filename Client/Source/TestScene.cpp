@@ -92,9 +92,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	// AddGameObject<Camera>();
 
-	// _MainCamera = AddGameObject<ManCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -249,11 +249,13 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-	if (auto SpPlayer = _Player.lock();
+
+	/*if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{ 0.f,0.2f,0.f });
-	}
+	}*/
+
 	//cout << "SceneUpdate" << endl;
 
 	/*auto _RefParticles = ParticleSystem::GetInstance()->PlayableParticles("Ice", 3.f);
