@@ -74,9 +74,6 @@ HRESULT Hotel_S02::LoadScene()
 	//}
 	
 	_MainCamera = AddGameObject<MainCamera>();
-	_MainCamera.lock()->SetLerp(false);
-	_MainCamera.lock()->SetAngle(180.f);
-	_MainCamera.lock()->SetDistance(0.33f);
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -403,9 +400,9 @@ void Hotel_S02::RenderDataSetUp(const bool bTest)
 void Hotel_S02::TriggerSetUp()
 {
 	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
-	//TriggerPuzzleStart();
-	//TriggerWallSmash();
-	//TriggerNextScene();
+	TriggerPuzzleStart();
+	TriggerWallSmash();
+	TriggerNextScene();
 }
 
 void Hotel_S02::TriggerWallSmash()
@@ -679,8 +676,17 @@ void Hotel_S02::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.70365f });
-		SpPlayer->GetComponent<Transform>().lock()->SetRotation({ 0.f, 180.f, 0.f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.75365f });
+		SpPlayer->SetAngle(180.f);
+	}
+
+	if (auto SpMainCamera = _MainCamera.lock();
+		SpMainCamera)
+	{
+		SpMainCamera->SetLerp(false);
+		SpMainCamera->SetAngle({ 0.f,180.f,0.f });
+		SpMainCamera->SetDistance(0.33f);
+		SpMainCamera->SetStartPos();
 	}
 
 	//

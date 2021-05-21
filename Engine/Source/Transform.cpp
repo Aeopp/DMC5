@@ -11,6 +11,7 @@ Transform::Transform(std::weak_ptr<GameObject> const _pGameObject)
 	, m_vWorldPosition(0.f, 0.f, 0.f)
 	, m_bSimulation(false)
 	, m_bUpdated(false)
+	, m_bSetPosition(false)
 {
 	m_matBillboard = m_matScale = m_matRotation = m_matTranlation = *D3DXMatrixIdentity(&m_matWorld);
 	D3DXQuaternionRotationYawPitchRoll(&m_tWorldQuaternion, D3DXToRadian(m_vWorldRotation.x), D3DXToRadian(m_vWorldRotation.y), D3DXToRadian(m_vWorldRotation.z));
@@ -135,6 +136,8 @@ void Transform::SetSimulationResult(const D3DXQUATERNION& _tQuaternion, const D3
 	m_bSimulation = true;
 
 	m_bUpdated = false;
+
+	m_bSetPosition = false;
 }
 
 std::string Transform::GetName()
@@ -197,6 +200,7 @@ void Transform::SetPosition(const D3DXVECTOR3& _vPosition, const SPACE& _eSpace)
 	m_vWorldPosition = _vPosition;
 	D3DXMatrixTranslation(&m_matTranlation, m_vWorldPosition.x, m_vWorldPosition.y, m_vWorldPosition.z);
 	m_bUpdated = true;
+	m_bSetPosition = true;
 }
 
 D3DXMATRIX Transform::GetBiilBoard()
@@ -260,6 +264,11 @@ D3DXVECTOR3 Transform::GetLook()
 bool Transform::IsUpdated()
 {
 	return m_bUpdated;
+}
+
+bool Transform::IsSetPosition()
+{
+	return m_bSetPosition;
 }
 
 void Transform::Translate(const D3DXVECTOR3 _vTranslate)

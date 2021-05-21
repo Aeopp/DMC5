@@ -67,7 +67,7 @@ HRESULT Hotel_S03::LoadScene()
 	//	);
 	//}
 
-	AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -785,7 +785,15 @@ void Hotel_S03::LateInit()
 	if (_Player.expired() == false)
 	{
 		_Player.lock()->GetComponent<Transform>().lock()->SetPosition
-		({ -1.77158f, 1.36541f, 23.73719f });
+		({ -1.77158f, 1.36541f, 23.86f });
+		_Player.lock()->SetAngle(180.f);
+	}
+
+	if (auto SpMainCamera = _MainCamera.lock();
+		SpMainCamera)
+	{
+		SpMainCamera->SetAngle({ -5.f,170.f,0.f });
+		SpMainCamera->SetStartPos();
 	}
 
 	Renderer::GetInstance()->LateSceneInit();

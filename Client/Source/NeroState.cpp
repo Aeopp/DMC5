@@ -11036,6 +11036,7 @@ HRESULT To_Majin::StateEnter()
 		NeroState::SetCbsIdle();
 	m_pNero.lock()->Change_To_MajinMode();
 	m_pNero.lock()->PlayEffect(Eff_Change);
+	
 	return S_OK;
 }
 

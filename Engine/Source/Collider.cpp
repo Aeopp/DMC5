@@ -16,6 +16,7 @@ Collider::Collider(std::weak_ptr<GameObject> const _pGameObject)
 	, m_bLock{ false,false,false,false,false,false }
 	, m_bGravity(false)
 	, m_bRayCastTarget(false)
+	, m_fOffsetRadius(0.f)
 {
 }
 
@@ -150,6 +151,34 @@ void Collider::ReadySimulate()
 
 	memcpy_s(&pxPos, sizeof(D3DXVECTOR3), &vPosition, sizeof(D3DXVECTOR3));
 	memcpy_s(&pxQuat, sizeof(D3DXQUATERNION), &tQuaternion, sizeof(D3DXQUATERNION));
+
+	if (pTransform.lock()->IsSetPosition() || !m_bRigid || m_bTrigger)
+	{
+		m_pRigidActor->setGlobalPose(physx::PxTransform(pxPos, pxQuat));
+		return;
+	}
+
+	PxVec3 vCurrPos = m_pRigidActor->getGlobalPose().p;
+
+	PxVec3 vRayDir = pxPos - vCurrPos;
+
+	float fDistance = vRayDir.magnitude();
+
+	vRayDir = vRayDir.getNormalized();
+
+	PxVec3 vOrigin = vCurrPos + m_pShape->getLocalPose().p;
+
+	PxRaycastBuffer rayCastBuffer;
+
+	PxScene* pScene = m_pRigidActor->getScene();
+
+	if (pScene->raycast(vOrigin, vRayDir, 100.f, rayCastBuffer))
+	{
+		if (rayCastBuffer.block.distance < fDistance)
+		{
+			pxPos = m_pRigidActor->getGlobalPose().p + vRayDir * (rayCastBuffer.block.distance - m_fOffsetRadius);
+		}
+	}
 
 	m_pRigidActor->setGlobalPose(physx::PxTransform(pxPos, pxQuat));
 }
@@ -411,4 +440,14 @@ void Collider::SetContactOffset(const float _fOffset)
 		return;
 
 	m_pShape->setContactOffset(_fOffset);
+}
+
+float Collider::GetOffsetRadius()
+{
+	return m_fOffsetRadius;
+}
+
+void Collider::SetOffsetRadius(const float _fOffsetRadius)
+{
+	m_fOffsetRadius = _fOffsetRadius;
 }
