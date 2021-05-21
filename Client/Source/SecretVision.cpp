@@ -13,7 +13,6 @@
 #include "NhDoor.h"
 #include "BtlPanel.h"
 
-
 SecretVision::SecretVision()
 {
 
