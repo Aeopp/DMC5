@@ -332,6 +332,104 @@ void SpriteEffect::OnDisable()
 {
 	GameObject::OnDisable();
 }
+void SpriteEffect::InitializeFromOption(const uint32 Option)
+{
+	if (Option == 1)
+	{
+		RegistSpriteInfo(8, 4);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex(
+			"..\\..\\Usable\\Spark\\1.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		ColorIntencity = 0.400f;
+		//  «√≈Ω 0.3f
+
+		DynamicLight _LightDesc{};
+		_LightDesc.Color = { Vector4{1.f,0.25f,0.25f,1.f },
+			Vector4{1.f,0.25f,0.25f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 2)
+	{		//  «√≈Ω 0.11f
+
+		RegistSpriteInfo(2, 1);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\2.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		ColorIntencity = 0.3f;
+		DynamicLight _LightDesc{};
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 3)
+	{
+		RegistSpriteInfo(2, 2);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\3.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		ColorIntencity = 0.08f;
+		DynamicLight _LightDesc{};
+
+		// «√≈Ω 0.1f
+
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.080f };
+		_LightDesc.PointRadius = { 0.08f,0.08f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 4)
+	{
+		RegistSpriteInfo(4, 1);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\4.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		DynamicLight _LightDesc{};
+		// «√≈Ω 0.2
+		_LightDesc.Color = {
+			Vector4{9.f / 255.f,83.f / 255.f,242.f / 255.f,1.f },
+			Vector4{126.f / 255.f,153.f / 255.f,247.f / 255.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 5)
+	{
+		RegistSpriteInfo(8, 4);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\5.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		DynamicLight _LightDesc{};
+		// «√≈Ω 0.2
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 6)
+	{
+		RegistSpriteInfo(4, 2);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\6.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		DynamicLight _LightDesc{};
+		// «√≈Ω 0.2
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+};
+
 void SpriteEffect::RegistInfo(
 	const float DistortionIntencity, 
 	const float ColorIntencity,

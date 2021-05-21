@@ -48,6 +48,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
+	void InitializeFromOption(const uint32 Option);
 	void RegistInfo(
 		const float DistortionIntencity = 1.f,
 		const float   ColorIntencity = 1.f,

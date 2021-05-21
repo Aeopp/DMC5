@@ -85,7 +85,6 @@ HRESULT TestScene::LoadScene()
 
 	HitEffectLoad();
 
-
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -393,7 +392,6 @@ void TestScene::HitEffectLoad()
 			"..\\..\\Usable\\Spark\\1.tga");
 		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
 		_SpriteEffect->ColorIntencity = 0.400f;
-
 		//  플탐 0.3f
 
 		DynamicLight _LightDesc{};
