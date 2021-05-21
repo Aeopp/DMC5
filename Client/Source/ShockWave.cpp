@@ -88,7 +88,14 @@ void ShockWave::RenderInit()
 
 	Mesh = Resources::Load<StaticMesh>(
 		"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe02.fbx", _InitInfo);
-};
+
+	BlurMskMap = Resources::Load<Texture>("..\\..\\Usable\\BlurMsk.tga");
+
+	_PlaneMesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _InitInfo);
+
+	
+}; 
 
 
 void ShockWave::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -101,9 +108,24 @@ void ShockWave::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("BlurMaxLength", BlurMaxLength);
 	_Info.Fx->SetFloat("BlurAlpha", FMath::Lerp(BlurAlpha.first, BlurAlpha.second, LerpT));
 	_Info.Fx->SetFloat("DistortionAlpha", DistortionAlpha);
-	_Info.Fx->SetVector("_Color", &Color);
+	_Info.Fx->SetVector("_Color", &Color); 
+	_Info.Fx->SetBool("bBlurMsk", bBlurMsk);
+	_Info.Fx->SetTexture("BlurMskMap", BlurMskMap->GetTexture());
 
+	if (bBlurMsk)
+	{
+		const uint32 SubsetCnt = _PlaneMesh->GetNumSubset();
 
+		for (uint32 i = 0; i < SubsetCnt; ++i)
+		{
+			if (auto SpSubset = _PlaneMesh->GetSubset(i).lock();
+				SpSubset)
+			{
+				SpSubset->Render(_Info.Fx);
+			};
+		};
+	}
+	else
 	{
 		const uint32 SubsetCnt = Mesh->GetNumSubset();
 
@@ -199,11 +221,15 @@ void ShockWave::Editor()
 		const std::string ChildName = GetName() + "_Play";
 		ImGui::BeginChild(ChildName.c_str());
 		{
+			static bool bEditBlurMsk = false;
+
 			if (ImGui::Button("Play"))
 			{
-				PlayStart(GetComponent<Transform>().lock()->GetPosition(),EditOption);
+				PlayStart(GetComponent<Transform>().lock()->GetPosition(),EditOption ,bEditBlurMsk);
 			}
-
+			
+			ImGui::Checkbox("BlurMsk", &bEditBlurMsk);
+			
 			ImGui::SliderInt("Option", &EditOption, 0, Option::None);
 
 			ImGui::SliderFloat("PlayTime" ,&PlayTime,0.f, 100.f);
@@ -240,11 +266,12 @@ void ShockWave::OnDisable()
 };
 
 void ShockWave::PlayStart(const Vector3& PlayLocation ,
-						  const int32& _Option)
+						  const int32& _Option ,
+					       const bool bBlurMsk)
 {
 	_RenderProperty.bRender = true;
 	T = 0.0f;
-
+	this->bBlurMsk = bBlurMsk;
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
 	{
@@ -312,8 +339,36 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurAlpha.second = 0.900f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
-		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
+		Color = { 15.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
 		break;
+	case Option::Change:
+		PlayTime = 1.0f;
+		EndT = 1.0f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.000f;
+		ScaleLerp.second = 0.103f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 1.f;
+		BlurAlpha.first = 0.0f;
+		BlurAlpha.second = 0.600f;
+		BlurMaxLength = 27.833f;
+		DistortionAlpha = 1.f;
+		Color = { 15.f / 255.f , 0.f / 255.f ,0.f / 255.f ,5.f / 255.f };
+		break;
+	case Option::Hit:
+		PlayTime = 0.2f;
+		EndT = 0.2f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.002f;
+		ScaleLerp.second = 0.005f;
+		BlurIntencity.first = 1.f;
+		BlurIntencity.second = 2.f;
+		BlurAlpha.first = 0.5;
+		BlurAlpha.second = 1.f;
+		BlurMaxLength = 34.5f;
+		DistortionAlpha = 1.f;
+		Color = { 2.f/ 255.f , 2.f / 255.f ,2.f / 255.f ,1.f / 255.f };
+		this->bBlurMsk = true;
 	default:
 		break;
 	}

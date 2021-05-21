@@ -44,6 +44,7 @@ public:
 	static inline Vector3 GetNormalFromFace(const Vector3& p0,
 		const Vector3& p1, const Vector3& p2);
 
+	static inline D3DXCOLOR ToColor(const Vector4& _Color);
 	static inline Vector3 Reflection(const Vector3& Dir, const Vector3& Normal);
 
 	static inline Vector4 ConvertVector4(const Vector3& Lhs, const float w);;
@@ -191,6 +192,10 @@ private:
 
 };
 
+inline D3DXCOLOR FMath::ToColor(const Vector4& _Color)
+{
+	return D3DXCOLOR{ _Color .x,_Color .y,_Color .z,_Color .w};
+}
 inline float FMath::MaxScala(const Vector3& Lhs)
 {
 	return (std::max)({ Lhs.x,Lhs.y,Lhs.z });

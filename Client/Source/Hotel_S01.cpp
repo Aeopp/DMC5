@@ -52,7 +52,6 @@ Hotel_S01* Hotel_S01::Create()
 
 HRESULT Hotel_S01::LoadScene()
 {
-
 	// Load Start
 	m_fLoadingProgress = 0.01f;
 
@@ -83,15 +82,13 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage1_Map.json");
-	LoadObjects("../../Data/Stage1_AniObject.json", true);
-	LoadCollObjects("../../Data/Stage1_Object.json");
-	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
+	//LoadObjects("../../Data/Stage1_Map.json");
+	//LoadObjects("../../Data/Stage1_AniObject.json", true);
+	//LoadCollObjects("../../Data/Stage1_Object.json");
+	//LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
-	
-
 
 #pragma endregion
 
@@ -192,6 +189,7 @@ HRESULT Hotel_S01::LoadScene()
 	//메인 카메라에 클리포트 블록 전달
 	if(!_MainCamera.expired())
 		_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;

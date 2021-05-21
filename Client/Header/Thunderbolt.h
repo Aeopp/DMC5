@@ -45,8 +45,8 @@ public:
 	void PlayStart(
 		const Vector3& PlayLocation,
 		const std::optional<Vector3>& PlayRotation = std::nullopt
-		, const std::optional<Vector3>& PlayScale = std::nullopt
-	);
+		,const std::optional<Vector3>& PlayScale = std::nullopt);
+
 	void PlayEnd();
 	float GetPlayTime();
 public:
@@ -59,7 +59,7 @@ public:
 	float PlayTime = 0.58f;
 	float DistortionIntencity = 0.1f;
 private:
-	bool bEditPlay = false;
+	bool  bEditPlay = false;
 	float ParticleTime = 0.03f;
 	float CurParticleTime = 0.0f;
 	float T = 0.0f;

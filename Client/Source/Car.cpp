@@ -20,7 +20,7 @@ std::string Car::GetName()
 
 Car* Car::Create()
 {
-	return new Car{};
+	return new Car;
 }
 
 
@@ -53,15 +53,7 @@ void Car::RenderInit()
 			RenderShadowSK(_Info);
 		}
 	} };
-	_InitRenderProp.RenderOrders[RenderProperty::Order::DebugBone]
-		=
-	{
-		{"DebugBone" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderDebugBone(_Info);
-		}
-	} };
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
 	{
@@ -71,6 +63,17 @@ void Car::RenderInit()
 			RenderDebugSK(_Info);
 		}
 	} };
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
+
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 스켈레톤 메쉬 로딩 ... 
@@ -79,7 +82,7 @@ void Car::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	// 스태틱 메쉬 로딩
 	_StaticMesh = Resources::Load<ENGINE::SkeletonMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Car\\CarC.fbx");
+		L"..\\..\\Resource\\Map\\Object\\Carc_dent01\\Carc_dent01.fbx");
 	PushEditEntity(_StaticMesh.get());
 	_StaticMesh->EnableToRootMatricies();
 
@@ -133,11 +136,7 @@ void Car::RenderShadowSK(const DrawInfo& _Info)
 	};
 }
 
-void Car::RenderDebugBone(const DrawInfo& _Info)
-{
-	const Matrix ScaleOffset = FMath::Scale({ 0.01,0.01 ,0.01 });
-	_StaticMesh->BoneDebugRender(_RenderUpdateInfo.World, _Info.Fx);
-}
+
 
 void Car::RenderDebugSK(const DrawInfo& _Info)
 {
@@ -190,12 +189,15 @@ void Car::RenderReady()
 
 HRESULT Car::Ready()
 {
-
-	m_nTag = ThrowCar;
+	m_vBangDir = { 0.f, 2.f, 0.f };
+	m_fBangPower = 30.f;
+	m_nTag = MonsterWeapon;
+	m_BattleInfo.eAttackType = Attack_KnocBack;
+	m_bCollEnable = true;
 	RenderInit();
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.01,0.01,0.01});
+	InitTransform.lock()->SetScale({ 0.001f,0.001f,0.001f});
 	PushEditEntity(InitTransform.lock().get());
 
 
@@ -213,16 +215,25 @@ HRESULT Car::Awake()
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
-	m_pMonster= std::static_pointer_cast<Em5000>(FindGameObjectWithTag(Monster5000).lock());
-	m_pMonsterTrans = m_pMonster.lock()->GetComponent<ENGINE::Transform>();
-	m_pMonsterMesh = m_pMonster.lock()->Get_Mesh();
+	m_pEm5000Trans = m_pEm5000.lock()->GetComponent<ENGINE::Transform>();
 
+	m_pCollider = AddComponent<BoxCollider>();
+	m_pCollider.lock()->ReadyCollider();
+
+
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
+	m_pCollider.lock()->SetCenter({ 0.f,0.07f,0.f });
+	m_pCollider.lock()->SetSize({ 0.2f,0.15f,0.42f });
+	PushEditEntity(m_pCollider.lock().get());
+
+	m_vTemp = m_pTransform.lock()->GetPosition();
 	return S_OK;
 }
 
 HRESULT Car::Start()
 {
-	m_pParentBone = m_pMonsterMesh.lock()->GetToRootMatrixPtr("R_Hand");
+	m_pParentBone = m_pEm5000Mesh.lock()->GetToRootMatrixPtr("R_Hand");
 	return S_OK;
 }
 
@@ -235,27 +246,50 @@ UINT Car::Update(const float _fDeltaTime)
 	_StaticMesh->VTFUpdate();
 	
 	//다 짜면 이렇게 바꾸셈
-	if (m_pMonster.lock()->Get_State() == Em5000::Attack_Grap_Car)
+	if (m_pEm5000.lock()->Get_State() == Em5000::Attack_Grap_Car)
 	{
-		if (m_pMonsterMesh.lock()->PlayingTime() >= 0.65f && m_bThrow == false)
+		if (m_pEm5000Mesh.lock()->PlayingTime() >= 0.65f && m_bThrow == false)
 		{
-			// 손에 붙이기
-			m_ParentWorld = m_pMonsterTrans.lock()->GetWorldMatrix();
-			m_Result = (*m_pParentBone * m_ParentWorld);
-			m_pTransform.lock()->SetWorldMatrix(m_Result);
-		}
-	}
-	if (m_pMonster.lock()->Get_State() == Em5000::Attack_Throw_Car)
-	{
+			m_pCollider.lock()->SetTrigger(true);
+			m_pCollider.lock()->SetRigid(false);
+			m_pCollider.lock()->SetGravity(false);
 
+
+			// 손에 붙이기
+			m_ParentWorld = m_pEm5000Trans.lock()->GetWorldMatrix();
+			m_Result = (*m_pParentBone * m_ParentWorld);
+			m_pTransform.lock()->SetWorldMatrix(m_Result);
+
+		}
+	}
+	if (m_pEm5000.lock()->Get_State() == Em5000::Attack_Throw_Car)
+	{
+		m_pCollider.lock()->SetTrigger(true);
+		m_pCollider.lock()->SetRigid(false);
+		m_pCollider.lock()->SetGravity(false);
 		// 손에 붙이기
-		if (m_pMonsterMesh.lock()->PlayingTime() <= 0.5f && m_bThrow == false)
+		if (m_pEm5000Mesh.lock()->PlayingTime() <= 0.5f && m_bThrow == false)
 		{
-			m_ParentWorld = m_pMonsterTrans.lock()->GetWorldMatrix();
+			m_ParentWorld = m_pEm5000Trans.lock()->GetWorldMatrix();
 			m_Result = (*m_pParentBone * m_ParentWorld);
 			m_pTransform.lock()->SetWorldMatrix(m_Result);
 		}
 	}
+	if (m_pEm5000.lock()->Get_State() == Em5000::Car_Turn_L ||
+		m_pEm5000.lock()->Get_State() == Em5000::Car_Turn_R)
+		m_bCollEnable = true;
+
+
+	if (Input::GetKeyDown(DIK_Y))
+	{
+		if (m_bBang == false)
+			m_bBang = true;
+		else
+			m_bBang = false;
+	}
+
+	if (m_bBang)
+		BangBang(_fDeltaTime);
 
 		
 
@@ -284,6 +318,14 @@ void Car::OnDisable()
 	GameObject::OnDisable();
 }
 
+void Car::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
+
+void Car::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
+{
+}
+
 void Car::Throw(const float _fDeltaTime)
 {
 	if(m_bThrow)
@@ -291,26 +333,32 @@ void Car::Throw(const float _fDeltaTime)
 		Vector3 vDir = m_vPlayerPos - m_pTransform.lock()->GetPosition();
 		float	fDir = D3DXVec3Length(&vDir);
 		D3DXVec3Normalize(&vDir, &vDir);
-
+		m_pCollider.lock()->SetTrigger(true);
+		m_pCollider.lock()->SetRigid(false);
+		m_pCollider.lock()->SetGravity(false);
 		//플레이어충돌or바닥 충돌되면으로 조건 바꿔야함
-		if (fDir < 3.f)
+		if (fDir < 0.3f)
 		{
 			m_fThrowTime = 0.f;
-			m_pTransform.lock()->SetRotation({ 0.f,0.f,0.f });
+			//m_pTransform.lock()->SetRotation({ 0.f,0.f,0.f });
+
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
+			m_pCollider.lock()->SetGravity(true);
 		}
 		else
 		{
-			m_pTransform.lock()->Rotate({ 5.f, 0.f,0.f });
-			m_pTransform.lock()->Translate(vDir * 1.f);
+			m_pTransform.lock()->Rotate({ 0.f, 0.f,20.f });
+			m_pTransform.lock()->Translate(vDir * 0.1f);
 		}
 
-		if (m_pMonster.lock()->Get_State() == Em5000::Attack_Throw_Car && m_pMonsterMesh.lock()->PlayingTime()>=0.9f)
+		if (m_pEm5000.lock()->Get_State() == Em5000::Attack_Throw_Car && m_pEm5000Mesh.lock()->PlayingTime()>=0.9f)
 			m_bThrow = false;
 
 	}
 	else
 	{
-		if (m_pMonster.lock()->Get_State() == Em5000::Attack_Throw_Car)
+		if (m_pEm5000.lock()->Get_State() == Em5000::Attack_Throw_Car)
 		{
 			m_fThrowTime += _fDeltaTime;
 			if (m_fThrowTime >= 1.f)
@@ -321,5 +369,10 @@ void Car::Throw(const float _fDeltaTime)
 
 		}
 	}
+}
+
+void Car::BangBang(const float _fDeltaTime)
+{	
+
 }
 

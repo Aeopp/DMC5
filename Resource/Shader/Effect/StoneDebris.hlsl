@@ -91,7 +91,7 @@ PsOut PsMain(PsIn In)
     float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
     float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
     
-    Out.Color = float4(saturate(tex2D(ALB0, In.UV).rgb + _ExtraColor) * _BrightScale * exposure_corr, 0.25f);
+    Out.Color = float4(saturate(tex2D(ALB0, In.UV).rgb + _ExtraColor) * _BrightScale * exposure_corr, 0.4f);
       
     return Out;
 };

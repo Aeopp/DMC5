@@ -549,6 +549,9 @@
     <ClInclude Include="..\Header\Library_S06.h">
       <Filter>03.Scene\03.Mission02_Library</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Change.h" />
+    <ClInclude Include="..\Header\Spark.h" />
+    <ClInclude Include="..\Header\DynamicLight.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -886,6 +889,9 @@
     <ClCompile Include="..\Source\Library_S06.cpp">
       <Filter>03.Scene\03.Mission02_Library</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Change.cpp" />
+    <ClCompile Include="..\Source\Spark.cpp" />
+    <ClCompile Include="..\Source\DynamicLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -962,6 +968,8 @@
     <None Include="..\..\Resource\Shader\Effect\ShockWave.hlsl">
       <Filter>02.GameObject\Effect\HLSL</Filter>
     </None>
+    <None Include="..\..\Resource\Shader\Effect\Change.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ChangeParticle.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

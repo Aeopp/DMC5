@@ -32,7 +32,11 @@ void SpriteEffect::RenderReady()
 			SpTransform)
 		{
 			const float CurScale = SpTransform->GetScale().x;
-			_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+			_RenderUpdateInfo.World =
+				FMath::Scale(_SpTransform->GetScale()) *
+				Renderer::GetInstance()->_RenderInfo.Billboard *
+				FMath::Translation(_SpTransform->GetPosition());
+
 			if (_StaticMesh)
 			{
 				const uint32  Numsubset = _StaticMesh->GetNumSubset();
@@ -89,26 +93,49 @@ void SpriteEffect::RenderInit()
 };
 
 void SpriteEffect::PlayStart(
-	/*const uint32 Col, const uint32 Row,*/ const float SpriteUpdateTime,
+	const float PlayTime,
 	const std::optional<Vector3>& Location)
 {
 	if (Location)
 	{
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
+
+		if (_DynamicLight)
+		{
+			_DynamicLight->PlayStart(Location.value() ,PlayTime);
+		}
 	}
 
-	/*SpriteCol = Col;
-	SpriteRow = Row;*/
 	SpriteColIdx = 0.f;
 	SpriteRowIdx = 0.f;
-	CurSpriteUpdateTime = this->SpriteUpdateTime = SpriteUpdateTime;
+	if (ConstantPlayTime)
+	{
+		this->PlayTime=*ConstantPlayTime;
+	}
+	else
+	{
+		this->PlayTime = PlayTime;
+	}
+
+	SpriteUpdateTime = PlayTime / static_cast<float>((SpriteCol) * (SpriteRow));
+
+	CurSpriteUpdateTime = SpriteUpdateTime;
 
 	_RenderProperty.bRender = true;
+	T = 0.0f;
+
+	
 };
 
 void SpriteEffect::PlayEnd()
 {
 	_RenderProperty.bRender = false;
+	T = 0.0f;
+
+	if (_DynamicLight)
+	{
+		_DynamicLight->PlayEnd();
+	}
 };
 
 void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -125,7 +152,10 @@ void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+		const float AlphaFactor = std::sinf((FMath::Clamp(T / PlayTime,0.0f,1.f) * FMath::PI));
+		_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
 		_Info.Fx->SetVector("_Color", &_Color);
+
 
 		_Info.Fx->SetMatrix("matWorld", &World);
 
@@ -171,8 +201,7 @@ void SpriteEffect::RenderDebug(const DrawInfo& _Info)
 		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
 			SpSubset)
 		{
-			if (false ==
-				_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
+			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
 			{
 				continue;
 			}
@@ -188,8 +217,7 @@ HRESULT SpriteEffect::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.001,0.001,0.001 });
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.5f });
+	
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -199,7 +227,9 @@ HRESULT SpriteEffect::Ready()
 HRESULT SpriteEffect::Awake()
 {
 	GameObject::Awake();
-	m_pTransform.lock()->SetPosition(Vector3{0.f,0.5f,0.5f });
+	m_pTransform.lock()->SetScale({ 0.001,0.001,0.001 });
+	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.11141f,0.0f });
+	m_pTransform.lock()->SetRotation(Vector3{ 0.f,0.2f,0.0f });
 	return S_OK;
 }
 
@@ -216,7 +246,14 @@ UINT SpriteEffect::Update(const float _fDeltaTime)
 
 	if (_RenderProperty.bRender == false) return 0;
 
+	T += _fDeltaTime;
+
 	CurSpriteUpdateTime -= _fDeltaTime;
+
+	if (_DynamicLight)
+	{
+		_DynamicLight->Update(_fDeltaTime ,GetComponent<Transform>().lock()->GetPosition());
+	}
 
 	if (CurSpriteUpdateTime < 0.0f)
 	{
@@ -267,9 +304,7 @@ void SpriteEffect::Editor()
 			ImGui::SameLine();
 			ImGui::Text("Cur Row %2.6f", SpriteRowIdx);
 
-			/*ImGui::InputInt("Play Row", &EditRow);
-			ImGui::InputInt("Play Col", &EditCol);*/
-			ImGui::InputFloat("Play SpriteUpdateTime", &EditSpriteUpdateTime);
+			ImGui::InputFloat("Play Time", &EditPlayTime);
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, 0.f, 10000.f);
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 10000.f);
@@ -279,9 +314,15 @@ void SpriteEffect::Editor()
 
 			ImGui::ColorEdit4("_Color",_Color);
 
+			if (_DynamicLight)
+			{
+				_DynamicLight->Editor();
+			}
+		
+
 			if (ImGui::SmallButton("Play"))
 			{
-				PlayStart(EditSpriteUpdateTime);
+				PlayStart(EditPlayTime, GetComponent<Transform>().lock()->GetPosition());
 			}
 
 			ImGui::TreePop();
@@ -298,6 +339,104 @@ void SpriteEffect::OnDisable()
 {
 	GameObject::OnDisable();
 }
+void SpriteEffect::InitializeFromOption(const uint32 Option)
+{
+	if (Option == 0)
+	{
+		RegistSpriteInfo(8, 4);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex(
+			"..\\..\\Usable\\Spark\\0.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		ColorIntencity = 0.400f;
+		ConstantPlayTime = 0.3f;
+		DynamicLight _LightDesc{};
+		_LightDesc.Color = { Vector4{1.f,0.25f,0.25f,1.f },
+			Vector4{1.f,0.25f,0.25f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 1)
+	{	
+		ConstantPlayTime = 0.11f;
+		RegistSpriteInfo(2, 1);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\1.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		ColorIntencity = 0.3f;
+		DynamicLight _LightDesc{};
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 2)
+	{
+		RegistSpriteInfo(2, 2);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\2.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		ColorIntencity = 0.08f;
+		DynamicLight _LightDesc{};
+		ConstantPlayTime = 0.1f;
+		
+
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.080f };
+		_LightDesc.PointRadius = { 0.08f,0.08f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 3)
+	{
+		RegistSpriteInfo(4, 1);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\3.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		DynamicLight _LightDesc{};
+		ConstantPlayTime = 0.2f;
+		_LightDesc.Color = {
+			Vector4{9.f / 255.f,83.f / 255.f,242.f / 255.f,1.f },
+			Vector4{126.f / 255.f,153.f / 255.f,247.f / 255.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 4)
+	{
+		RegistSpriteInfo(8, 4);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\4.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		DynamicLight _LightDesc{};
+		ConstantPlayTime = 0.2f;
+
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+	else if (Option == 5)
+	{
+		RegistSpriteInfo(4, 2);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Usable\\Spark\\5.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		DynamicLight _LightDesc{};
+		ConstantPlayTime = 0.2f;
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
+};
+
 void SpriteEffect::RegistInfo(
 	const float DistortionIntencity, 
 	const float ColorIntencity,
@@ -325,8 +464,7 @@ void SpriteEffect::RegistSpriteInfo(const uint32 Col, const uint32 Row)
 	SpriteRow = Row;
 };
 
-void SpriteEffect::RegistAlbedoTex(const std::string& TexPath 
-	)
+void SpriteEffect::RegistAlbedoTex(const std::string& TexPath )
 {
 	_SpriteTex = Resources::Load<Texture>(TexPath);
 	if (_SpriteTex)
@@ -342,5 +480,12 @@ void SpriteEffect::RegistDistortionTex(const std::string& TexPath)
 	{
 		PushEditEntity(_DistortionTex.get());
 	};
+}
+
+;
+
+void SpriteEffect::RegistDynamicLight(const DynamicLight& _DynamicLight)
+{
+	this->_DynamicLight = _DynamicLight;
 };
 

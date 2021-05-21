@@ -24,6 +24,7 @@
 #include "Smoke.h"
 #include "QliphothBlock.h"
 #include "TimeSystem.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -37,6 +38,7 @@ void Hotel_S02::Free()
 {
 	for (auto& Element : _MakaiButterflyVec)
 		Destroy(Element);
+
 	_MakaiButterflyVec.clear();
 	_MakaiButterflyVec.shrink_to_fit();
 
@@ -65,11 +67,11 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	//}
 	
 	_MainCamera = AddGameObject<MainCamera>();
 	_MainCamera.lock()->SetLerp(false);

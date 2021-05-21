@@ -11,6 +11,7 @@
 #include "MapObject.h"
 #include "Monster.h"
 #include "SoundSystem.h"
+#include "Em5000.h"
 
 #include <iostream>
 #include <fstream>
@@ -59,7 +60,8 @@ HRESULT Hotel_S04::LoadScene()
 	//	
 	//}
 
-	AddGameObject<MainCamera>();
+	auto _Camera = AddGameObject<MainCamera>();
+	_Camera.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -67,6 +69,9 @@ HRESULT Hotel_S04::LoadScene()
 	m_fLoadingProgress = 0.2f;
 
 #pragma region Monster
+	auto _pMonster = AddGameObject<Em5000>();
+	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
+
 
 #pragma endregion
 
@@ -85,7 +90,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -254,9 +259,13 @@ void Hotel_S04::TriggerSetUp()
 
 void Hotel_S04::LateInit()
 {
-	// + 플레이어 초기 위치 잡기 등
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-5.218f, -1.5f, 43.326f });
+	}
+
 	Renderer::GetInstance()->LateSceneInit();
-	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
 	Renderer::GetInstance()->SkyDistortionStart();
 
 	_LateInit = true;
