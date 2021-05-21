@@ -676,7 +676,7 @@ void Hotel_S02::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.70365f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.75365f });
 		SpPlayer->SetAngle(180.f);
 	}
 

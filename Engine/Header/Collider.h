@@ -23,6 +23,8 @@ protected:
 	bool			m_bLock[6];
 	bool			m_bGravity;
 	bool			m_bRayCastTarget;
+
+	float			m_fOffsetRadius;
 protected:
 	explicit Collider(std::weak_ptr<GameObject> const _pGameObject);
 	virtual ~Collider() = default;
@@ -68,6 +70,9 @@ public:
 	float		GetContactOffset();
 
 	void		SetContactOffset(const float _fOffset);
+
+	float		GetOffsetRadius();
+	void		SetOffsetRadius(const float _fOffsetRadius);
 };
 END
 #endif // !__COLLIDER_H__

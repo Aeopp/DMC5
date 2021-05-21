@@ -56,6 +56,7 @@ Nero::Nero()
 	m_nTag = Player;
 	m_BattleInfo.iMaxHp = 100;
 	m_BattleInfo.iHp = 100;
+	m_bDebugButton = false;
 }
 void Nero::Free()
 {
@@ -321,6 +322,7 @@ HRESULT Nero::Awake()
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.09f, 0.f));
 	m_pCollider.lock()->SetRadius(0.04f);
 	m_pCollider.lock()->SetHeight(0.1f);
+	m_pCollider.lock()->SetOffsetRadius(0.04f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
