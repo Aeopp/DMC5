@@ -9,6 +9,7 @@ private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class MainCamera> _MainCamera{};
+	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
 	bool _LateInit = false;
 private:
 	explicit Hotel_S03();
@@ -35,22 +36,10 @@ private:
 
 	void TriggerSetUp();
 	void TriggerUpGround();
-	void TriggerShop(const std::weak_ptr<Trigger>& _BattleTrigger);
-	std::weak_ptr<Trigger> TriggerBattleStart();
+	void TriggerBeforeShop(const std::weak_ptr<class Trigger>& _NextTrigger);
+	std::weak_ptr<Trigger> TriggerShop(const std::weak_ptr<class Trigger>& _NextTrigger);
+	std::weak_ptr<Trigger> TriggerHole();
 	void TriggerNextScene();
 
-	//// 일단 폐기된 트리거 ..... 
-	////   UpGround 오른쪽 위치 Battle
-	//void TriggerFirstBattle();
-	////   상점 앞에서의 전투 . 
-	//void TriggerBattleInFrontShop();
-	//// 폐기된 트리거 ... 
-	// 
-	// 일단 폐기된 트리거 ..... 
-	//   UpGround 오른쪽 위치 Battle
-	void TriggerFirstBattle();
-	//   상점 앞에서의 전투 . 
-	void TriggerBattleInFrontShop();
-	// 폐기된 트리거 ... 
 };
 #endif // !__M01_HOTEL_S03_H__

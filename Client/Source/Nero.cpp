@@ -56,7 +56,7 @@ Nero::Nero()
 	m_nTag = Player;
 	m_BattleInfo.iMaxHp = 100;
 	m_BattleInfo.iHp = 100;
-	m_bDebugButton = false;
+	//m_bDebugButton = false;
 }
 void Nero::Free()
 {
