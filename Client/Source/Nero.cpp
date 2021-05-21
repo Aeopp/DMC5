@@ -224,8 +224,13 @@ HRESULT Nero::Ready()
 	Unit::Ready();
 	RenderInit();
 
+	vDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+
+	m_fAngle = 0.f;
+
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{ -4.8f, 3.f, -5.02f });
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -323,11 +328,7 @@ HRESULT Nero::Awake()
 
 	PushEditEntity(m_pCollider.lock().get());
 
-	vDegree = D3DXVECTOR3(0.f, 180.f, 0.f);
-	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
-	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 
-	m_fAngle = 180.f;
 
 	return S_OK;
 }
@@ -1020,6 +1021,12 @@ void Nero::SetPosFireCircle()
 	}
 }
 
+void Nero::SetAngle(float _fAngle)
+{
+	vDegree.y = _fAngle;
+	m_fAngle = _fAngle;
+}
+
 
 void Nero::CheckAutoRotate()
 {
@@ -1104,7 +1111,7 @@ void Nero::Locking()
 	case GAMEOBJECTTAG::Monster5000:
 		if (!m_pBtlPanel.expired())
 			m_pBtlPanel.lock()->SetTargetCursor(
-			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Neck"),
+			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
 			fHpRatio);
 		break;
 	default:
@@ -1287,7 +1294,7 @@ void Nero::WireFly()
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
 		break;
 	case GAMEOBJECTTAG::Monster5000:
-		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Neck");
+		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");
 		break;
 	default:
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");

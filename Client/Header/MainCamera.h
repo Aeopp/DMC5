@@ -36,9 +36,10 @@ public:
     void SetDistance(float _fDistance) { m_fDistanceToTarget = _fDistance; }
     void SetQliphothBlock(std::vector<weak_ptr<class Effect>> _vecQliphothBlock) { m_vecQliphothBlock = _vecQliphothBlock; }
     void SetLerp(bool _LerpOrNot) { m_bLerp = _LerpOrNot; }
-    void SetAngle(float _fAngle) { m_fAngle = _fAngle; }
+    void SetAngle(const Vector3& _vAngle);
     void SetShakeInfo(float _fShakeTime, float _fShakePower);
     void SetFadeSceneInfo(float _fFadeInAmout);
+    void SetStartPos();
 public:
     void DecreaseDistance(float _GoalDis,float _fDeltaTime);
     void IncreaseDistance(float _GoalDis, float _fDeltaTime);

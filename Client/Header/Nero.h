@@ -410,6 +410,7 @@ public:
 	void SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster);
 	void SetFly(bool _ActiveOrNot) { m_IsFly = _ActiveOrNot; }
 	void SetPosFireCircle();
+	void SetAngle(float _fAngle);
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
