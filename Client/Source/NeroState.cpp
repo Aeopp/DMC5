@@ -2,6 +2,7 @@
 #include "NeroState.h"
 #include "Nero.h"
 #include "NeroFSM.h"
+#include "SoundSystem.h"
 
 #pragma region PARENT // ºÎ¸ð
 
