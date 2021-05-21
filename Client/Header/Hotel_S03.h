@@ -28,22 +28,29 @@ private:
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:
+	void LateInit();
 	void RenderDataSetUp(const bool bTest);
 	void BgmPlay();
+
 	void TriggerSetUp();
 	void TriggerUpGround();
-	void TriggerNextScene();
 	void TriggerShop(const std::weak_ptr<Trigger>& _BattleTrigger);
 	std::weak_ptr<Trigger> TriggerBattleStart();
+	void TriggerNextScene();
 
+	//// 일단 폐기된 트리거 ..... 
+	////   UpGround 오른쪽 위치 Battle
+	//void TriggerFirstBattle();
+	////   상점 앞에서의 전투 . 
+	//void TriggerBattleInFrontShop();
+	//// 폐기된 트리거 ... 
 
+	void LateInit();
 	// 일단 폐기된 트리거 ..... 
 	//   UpGround 오른쪽 위치 Battle
 	void TriggerFirstBattle();
 	//   상점 앞에서의 전투 . 
 	void TriggerBattleInFrontShop();
 	// 폐기된 트리거 ... 
-
-	void LateInit();
 };
 #endif // !__M01_HOTEL_S03_H__

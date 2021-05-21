@@ -142,6 +142,8 @@ HRESULT TestScene::LoadScene()
 	//	Sp->PlayStart();
 	//}
 
+	AddGameObject<MakaiButterfly>();
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;

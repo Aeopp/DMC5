@@ -105,9 +105,9 @@ void WhirlWind::PlayStart(
 {
 	auto SpTransform = GetComponent<Transform>().lock();
 	CurrentDirection = FMath::Normalize(Direction);
-	SpTransform->SetPosition(Location + CurrentDirection * ForwardOffset);
+	SpTransform->SetPosition(Location + CurrentDirection*ForwardOffset);
 	SpTransform->SetRotation(Vector3{0.f,
-		FMath::ToDegree( std::atan2f(CurrentDirection.x,CurrentDirection.z) ) ,90.f});
+		FMath::ToDegree( std::atan2f(-CurrentDirection.x,-CurrentDirection.z) ) ,90.f});
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 
@@ -187,7 +187,7 @@ void WhirlWind::ParticleUpdate(const float DeltaTime)
 			auto _PlayableParticle =
 				ParticleSystem::GetInstance()->
 				PlayParticle("FireVortexSprite" + 
-					CurrentSpriteIdx, 400ul, true);
+					CurrentSpriteIdx, 300ul, true);
 			// 파이어 파티클 뿌리기 ....
 
 			for (int32 i = 0; i < _PlayableParticle.size(); ++i)

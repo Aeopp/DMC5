@@ -775,7 +775,7 @@ void PreLoader::FireSpritePoolLoad(const uint32 SpriteIdx)
 		return;
 	};
 
-	const uint64 PoolSize = 20000ul;
+	const uint64 PoolSize = 15000ul;
 
 	const std::string ParticleName = "FireSprite" + IdxName;
 
@@ -794,7 +794,7 @@ void PreLoader::FireSpritePoolLoad(const uint32 SpriteIdx)
 		static constexpr float ThirdVelocityScale = 0.10f;
 
 		ParticleInstance::FireSprite _FireValue{};
-		_FireValue.ColorIntencity = FMath::Random(0.3f, 0.5f);
+		_FireValue.ColorIntencity = FMath::Random(0.2f, 0.4f);
 		const float LifeTime = FMath::Random(0.20f, 0.5f);
 
 		const Vector3 ParticleScale =

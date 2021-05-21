@@ -133,7 +133,7 @@ HRESULT Hotel_S02::LoadScene()
 	size_t ButterflyCnt = 5u;
 	_MakaiButterflyVec.reserve(ButterflyCnt);
 	for (size_t i = 0u ; i < ButterflyCnt; ++i)
-		_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>().lock());
+		_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>());
 
 #pragma endregion
 
@@ -403,9 +403,9 @@ void Hotel_S02::RenderDataSetUp(const bool bTest)
 void Hotel_S02::TriggerSetUp()
 {
 	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
-	TriggerPuzzleStart();
-	TriggerWallSmash();
-	TriggerNextScene();
+	//TriggerPuzzleStart();
+	//TriggerWallSmash();
+	//TriggerNextScene();
 }
 
 void Hotel_S02::TriggerWallSmash()
@@ -482,9 +482,9 @@ void Hotel_S02::TriggerFirstButterFlyMeetCamera(const std::weak_ptr<Trigger>& _B
 		const std::function<void()> _CallBack =
 			[_BattleTrigger, this]()
 		{
-			vector<Vector3> _LostTimes;
-			_LostTimes.emplace_back(Vector3(3.f, 1.f, 0.3f));
-			TimeSystem::GetInstance()->LostTime(_LostTimes);
+			//vector<Vector3> _LostTimes;
+			//_LostTimes.emplace_back(Vector3(2.f, 1.f, 0.3f));
+			//TimeSystem::GetInstance()->LostTime(_LostTimes);
 			Renderer::GetInstance()->FadeOutStart(0.5f);
 			if (!_MainCamera.expired())
 			{
@@ -525,11 +525,11 @@ std::weak_ptr<Trigger> Hotel_S02::TriggerFirstButterFlyMeet()
 			{
 				SpObject->SetActive(true);
 				SpObject->SetRotation({ 0.f, 90.f, 0.f });
-				SpObject->SetPosition({ -3.314f, 0.886f, 14.175f });
+				SpObject->SetPosition({ -3.808f, 0.886f, 14.175f });
 				SpObject->PlayStart();
 				if (!_MainCamera.expired())
 				{
-					_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY1, { -3.314f, 0.886f, 14.175f }, 2.f);
+					_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE2_BUTTERFLY1, { -3.808f, 0.886f, 14.175f }, 2.f);
 					_MainCamera.lock()->Set_At_Transform(SpObject->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
 				}
 			}

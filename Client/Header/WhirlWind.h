@@ -47,7 +47,7 @@ public:
 private:
 	float PlayTime = 0.2f;
 	float T = 0.0f;
-	float ForwardOffset    = 0.25f;
+	float ForwardOffset    = 0.30f;
 	float ParticleDelta    = 0.0016f;
 	float CurParticleDelta = 0.0f;
 	float Velocity = 0.f;
