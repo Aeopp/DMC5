@@ -119,7 +119,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -145,6 +145,8 @@ HRESULT TestScene::LoadScene()
 	//	Sp->SetLoop(true);
 	//	Sp->PlayStart();
 	//}
+
+	AddGameObject<MakaiButterfly>();
 
 #pragma endregion
 

@@ -162,6 +162,7 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 			_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 			_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
+			_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 
 			SharedSubset->Render(_Info.Fx);
 			SharedSubset->Render(_Info.Fx);	// 옅어서 한번 더 그림
@@ -173,15 +174,15 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			{
 			case SMOKE_0: default:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
-				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
+				_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			case SMOKE_1:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB1Tex->GetTexture());
-				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
+				_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			case SMOKE_2:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB2Tex->GetTexture());
-				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
+				_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			}
 			_Info.Fx->SetBool("_UsingNoise", false);
