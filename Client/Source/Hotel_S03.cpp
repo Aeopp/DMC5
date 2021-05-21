@@ -463,20 +463,20 @@ void Hotel_S03::TriggerUpGround()
 			if (auto Sp = _Smoke0.lock(); Sp)
 			{
 				Sp->SetActive(true);
-				Sp->SetPosition({ -2.4f, 0.24f, 27.8f });
+				Sp->SetPosition({ -2.4f, 0.22f, 27.8f });
 				Sp->SetScale(0.008f);
 				Sp->SetRotation({ 0.f, 344.681f, 0.f });
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
-				Sp->PlayStart(8.1f);
+				Sp->PlayStart(7.9f);
 			}
 			if (auto Sp = _Smoke1.lock(); Sp)
 			{
 				Sp->SetActive(true);
-				Sp->SetPosition({ -2.15f, 0.22f, 28.6f });
+				Sp->SetPosition({ -2.15f, 0.2f, 28.6f });
 				Sp->SetScale(0.008f);
 				Sp->SetRotation({ 0.f, 306.383f, 0.f });
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
-				Sp->PlayStart(8.3f);
+				Sp->PlayStart(8.1f);
 			}
 		};
 		
@@ -485,7 +485,7 @@ void Hotel_S03::TriggerUpGround()
 		const Vector3 TriggerRotation{ 0.f,0.f,0.f };
 
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 1.705f,1.0630f,0.827000f };
+		const Vector3 BoxSize{ 1.705f, 1.0630f, 0.827000f };
 		// 트리거 정보 등록하자마자 활성화 할까요 ?  
 		const bool ImmediatelyEnable = true;
 		// 트리거가 검사할 오브젝트 태그 
