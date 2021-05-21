@@ -766,7 +766,7 @@ void Nero::Update_Majin(float _fDeltaTime)
 	if (m_IsMajin)
 	{
 		if (!m_pBtlPanel.expired())
-			m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
+			m_pBtlPanel.lock()->ConsumeTDTGauge();
 	}
 
 	if (!m_pBtlPanel.expired() && m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)

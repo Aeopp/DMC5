@@ -70,6 +70,7 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
+		m_pPlayer.lock()->Add_ExGauge(0.25f);
 		break;
 	case Tag_Cbs_Long:
 		m_pEffect[0].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
