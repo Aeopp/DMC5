@@ -771,9 +771,27 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 {
 	if (m_pAtTranform.expired())
 		return;
+	UINT _CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
+	UINT _CurStateIndex = m_pNero.lock()->GetFsm().lock()->GetCurrentIndex();
+
+	if (_CurStateIndex == NeroFSM::WIRE_HELLHOUND_LOOP
+		|| _CurStateIndex == NeroFSM::WIRE_HELLHOUND_START)
+	{
+		if (m_fDistanceToTarget >= 0.65f)
+		{
+			m_fDistanceToTarget -= _fDeltaTime;
+		}
+	}
+	else if(_CurStateIndex == NeroFSM::RUNLOOP
+		|| _CurStateIndex == NeroFSM::DASHLOOP)
+	{
+		if (m_fDistanceToTarget <= 1.1f)
+		{
+			m_fDistanceToTarget += _fDeltaTime * 0.08f;
+		}
+	}
 
 	std::weak_ptr<Transform>	_PlayerTransform = m_pNero.lock()->GetComponent<Transform>();
-	UINT _CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	if (!(Nero::ANI_EM5000_BUSTER_START <= _CurAnimationIndex
 		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))
 	{
@@ -790,7 +808,7 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 
 	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
 	{
-		m_fDistanceToTarget -= dwMouseMove / 10000.f;
+		m_fDistanceToTarget -= dwMouseMove / 8000.f;
 	}
 
 
@@ -804,10 +822,7 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 	if (!(Nero::ANI_EM5000_BUSTER_START <= _CurAnimationIndex
 		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))
 	{
-		if (m_bLerp)
-			m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 4.f);
-		else
-			m_vEye = m_vLerpEye;
+		m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 4.f);
 	}
 }
 
