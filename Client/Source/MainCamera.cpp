@@ -104,11 +104,12 @@ UINT MainCamera::Update(const float _fDeltaTime)
 
 UINT MainCamera::LateUpdate(const float _fDeltaTime)
 {
-	if (m_eAtType != AT_TRIGGER)
+	Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	Vector3 vLook = m_vEye - PlayerPos;
+	Vector3 vCollEye{};
+	switch (m_eAtType)
 	{
-		Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
-		Vector3 vLook = m_vEye - PlayerPos;
-		Vector3 vCollEye;
+	case AT_PLAYER:
 		if (Physics::RayCast(PlayerPos, vLook, vCollEye))
 		{
 			Vector3 vLength1 = PlayerPos - vCollEye;
@@ -120,6 +121,38 @@ UINT MainCamera::LateUpdate(const float _fDeltaTime)
 				m_vEye.z = vCollEye.z;
 			}
 		}
+		break;
+	case AT_BOSS1:
+		if (Physics::RayCast(PlayerPos, vLook, vCollEye))
+		{
+			Vector3 vLength1 = PlayerPos - vCollEye;
+			Vector3 vLength2 = PlayerPos - m_vEye;
+
+			float fLength1 = D3DXVec3Length(&vLength1);
+			float fLength2 = D3DXVec3Length(&vLength2);
+			if (fLength1 <= fLength2)
+			{
+				if (fLength1 <= 0.28f)
+				{
+					std::weak_ptr<Transform>	_PlayerTransform = m_pNero.lock()->GetComponent<Transform>();
+					Vector3 vLook = _PlayerTransform.lock()->GetPosition() - m_vAt;
+					vLook.y = 0.f;
+					D3DXVec3Normalize(&vLook, &vLook);
+
+					m_vLerpEye = _PlayerTransform.lock()->GetPosition() + vLook * 0.33f;
+					m_vLerpEye.y += 0.2f;
+					m_vEye = m_vLerpEye;
+				}
+				else
+				{
+					m_vEye.x = vCollEye.x;
+					m_vEye.z = vCollEye.z;
+				}
+			}
+		}
+		break;
+	default:
+		break;
 	}
 	Shaking();
 

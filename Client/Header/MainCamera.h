@@ -28,6 +28,7 @@ public:
     virtual void OnDisable() override;
 public:
     float Get_Angle(float _fAddAngle = 0.f) { return m_fAngle + _fAddAngle; }
+    Vector3 GetEye() { return m_vEye; }
 public:
     void Set_Trigger(std::weak_ptr<Trigger> _Trigger) { m_pTrigger = _Trigger; }
     void Set_PlayerCamMode(UINT _ePlayerCamMode);
