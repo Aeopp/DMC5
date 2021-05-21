@@ -69,9 +69,11 @@ public:
 	bool	m_bThrow = false;
 	bool	m_bBone = false;
 	bool	m_bBang = false;
+	bool	m_bTest = false;
+	bool	m_bTest2 = false;
 	
 	Vector3	m_vPlayerPos;
-
+	Vector3	m_vTemp;
 
 };
 #endif //

@@ -189,8 +189,8 @@ void Car::RenderReady()
 
 HRESULT Car::Ready()
 {
-	m_vBangDir = { 0.f, 1.f, 0.f };
-	m_fBangPower = 8.f;
+	m_vBangDir = { 0.f, 2.f, 0.f };
+	m_fBangPower = 30.f;
 	m_nTag = MonsterWeapon;
 	m_BattleInfo.eAttackType = Attack_KnocBack;
 	m_bCollEnable = true;
@@ -218,12 +218,16 @@ HRESULT Car::Awake()
 	m_pEm5000Trans = m_pEm5000.lock()->GetComponent<ENGINE::Transform>();
 
 	m_pCollider = AddComponent<BoxCollider>();
-	//m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->ReadyCollider();
+
+
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
-	m_pCollider.lock()->SetCenter({ 0.f,0.1f,0.f });
+	m_pCollider.lock()->SetCenter({ 0.f,0.07f,0.f });
 	m_pCollider.lock()->SetSize({ 0.2f,0.15f,0.42f });
 	PushEditEntity(m_pCollider.lock().get());
+
+	m_vTemp = m_pTransform.lock()->GetPosition();
 	return S_OK;
 }
 
@@ -246,15 +250,23 @@ UINT Car::Update(const float _fDeltaTime)
 	{
 		if (m_pEm5000Mesh.lock()->PlayingTime() >= 0.65f && m_bThrow == false)
 		{
+			m_pCollider.lock()->SetTrigger(true);
+			m_pCollider.lock()->SetRigid(false);
+			m_pCollider.lock()->SetGravity(false);
+
+
 			// 손에 붙이기
 			m_ParentWorld = m_pEm5000Trans.lock()->GetWorldMatrix();
 			m_Result = (*m_pParentBone * m_ParentWorld);
 			m_pTransform.lock()->SetWorldMatrix(m_Result);
+
 		}
 	}
 	if (m_pEm5000.lock()->Get_State() == Em5000::Attack_Throw_Car)
 	{
-
+		m_pCollider.lock()->SetTrigger(true);
+		m_pCollider.lock()->SetRigid(false);
+		m_pCollider.lock()->SetGravity(false);
 		// 손에 붙이기
 		if (m_pEm5000Mesh.lock()->PlayingTime() <= 0.5f && m_bThrow == false)
 		{
@@ -321,15 +333,22 @@ void Car::Throw(const float _fDeltaTime)
 		Vector3 vDir = m_vPlayerPos - m_pTransform.lock()->GetPosition();
 		float	fDir = D3DXVec3Length(&vDir);
 		D3DXVec3Normalize(&vDir, &vDir);
+		m_pCollider.lock()->SetTrigger(true);
+		m_pCollider.lock()->SetRigid(false);
+		m_pCollider.lock()->SetGravity(false);
 		//플레이어충돌or바닥 충돌되면으로 조건 바꿔야함
 		if (fDir < 0.3f)
 		{
 			m_fThrowTime = 0.f;
-			m_pTransform.lock()->SetRotation({ 0.f,0.f,0.f });
+			//m_pTransform.lock()->SetRotation({ 0.f,0.f,0.f });
+
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
+			m_pCollider.lock()->SetGravity(true);
 		}
 		else
 		{
-			m_pTransform.lock()->Rotate({ 20.f, 0.f,0.f });
+			m_pTransform.lock()->Rotate({ 0.f, 0.f,20.f });
 			m_pTransform.lock()->Translate(vDir * 0.1f);
 		}
 
@@ -353,23 +372,7 @@ void Car::Throw(const float _fDeltaTime)
 }
 
 void Car::BangBang(const float _fDeltaTime)
-{
-	m_pTransform.lock()->Rotate({ 10.f, 0.f,0.f });
+{	
 
-	if (m_pTransform.lock()->GetPosition().y >= -1.85f &&
-		m_pTransform.lock()->GetPosition().y <= -1.7f)
-	{
-		m_pCollider.lock()->AddForce(m_fBangPower * m_vBangDir);
-		m_fBangPower -= 2.f;
-	}
-	/*if (m_pCollider.lock()->IsGround())
-	{
-
-	}*/
-	if (m_fBangPower <= 0.f)
-	{
-		m_bBang = false;
-		m_fBangPower = 8.f;
-	}
 }
 
