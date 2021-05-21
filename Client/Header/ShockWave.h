@@ -17,10 +17,12 @@ public:
 		GoliathJumpAttack,
 		GoliathPunch,
 		Change,
+		Hit,
 		None,
 	};
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Mesh{};
+	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
 private:
 	explicit ShockWave();
 	virtual ~ShockWave() = default;
@@ -43,16 +45,18 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void PlayStart(const Vector3& PlayLocation,
-				   const int32& _Option);
+				   const int32& _Option ,
+					const bool bBlurMsk=false);
 	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	bool bBlurMsk = false;
 	float T = 0.0f;
 	float EndT = 1.f;
 	float PlayTime = 1.f;
-
+	std::shared_ptr<ENGINE::Texture> BlurMskMap{};
 	std::pair<float, float> ScaleLerp{0.001f,0.01f};
 	std::pair<float, float> BlurAlpha{0.f,0.5f};
 	std::pair<float, float> BlurIntencity{0.f,2.f};

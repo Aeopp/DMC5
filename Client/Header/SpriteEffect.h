@@ -3,16 +3,13 @@
 #include "GameObject.h"
 #include "RenderInterface.h"
 #include <optional>
+#include "FLight.h"
+#include "DynamicLight.h"
 
 class SpriteEffect : public ENGINE::GameObject,
 					 public ENGINE::RenderInterface
 {
 public:
-	enum class MeshType : int32
-	{
-		Static,
-		Skeleton
-	};
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
 	std::shared_ptr<ENGINE::Texture>    _SpriteTex{};
@@ -24,12 +21,12 @@ private:
 	float SpriteRowIdx;
 	float CurSpriteUpdateTime = 0.0f;
 
-
-
 	float PlayTime = 0.15f;
 	float SpriteUpdateTime = 0.0f;
 	float EditPlayTime = 0.0f;
 	float T = 0.0f;
+
+	std::optional<DynamicLight> _DynamicLight{std::nullopt};
 private:
 	explicit SpriteEffect() = default;
 	virtual ~SpriteEffect() = default;
@@ -59,6 +56,7 @@ public:
 	void RegistSpriteInfo(const uint32 Col,const uint32 Row);
 	void RegistAlbedoTex(const std::string& TexPath);
 	void RegistDistortionTex(const std::string& TexPath);
+	void RegistDynamicLight(const DynamicLight& _DynamicLight);
 public:
 	void PlayStart(
 		const float PlayTime,const std::optional<Vector3>& Location = std::nullopt);
@@ -71,5 +69,6 @@ public:
 	float DistortionIntencity = 1.f;
 	float ColorIntencity = 0.01f;
 	Vector4 _Color{ 1.f,1.f,1.f,1.f };
+
 };
 #endif //

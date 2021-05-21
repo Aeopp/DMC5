@@ -15,6 +15,20 @@ uniform float SoftParticleDepthScale;
 uniform vector _Color;
 uniform float AlphaFactor;
 
+uniform bool bBlurMsk = false;
+
+texture BlurMskMap;
+sampler BlurMsk= sampler_state
+{
+    texture = BlurMskMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
+};
+
 void VsMain(in out float4 Position : POSITION0,
             in float4 Normal :NORMAL0,
             in out float2 UV0 : TEXCOORD0,
@@ -48,9 +62,20 @@ void PsMain(out float4 Color : COLOR0,
     Color1.z = 1.f;
     Color1.w = DistortionAlpha;
     
-    Color2.xy = LNormal.xy * CurBlurIntencity;
+    
+    float BlurMskAlphaFactor = 1.f;
+    float BlurMskVelocityFactor = 1.f;
+    
+    if (bBlurMsk)
+    {
+        float4 MskSample = tex2D(BlurMsk, UV0).a;
+        BlurMskAlphaFactor = MskSample.a;
+        BlurMskVelocityFactor = MskSample.x;
+    }
+    
+    Color2.xy = LNormal.xy * CurBlurIntencity * BlurMskVelocityFactor;
     Color2.z = 1.f;
-    Color2.w = BlurAlpha;
+    Color2.w = BlurAlpha * BlurMskAlphaFactor;
 };
 
 technique Default

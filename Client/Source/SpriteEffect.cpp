@@ -99,6 +99,11 @@ void SpriteEffect::PlayStart(
 	if (Location)
 	{
 		GetComponent<Transform>().lock()->SetPosition(Location.value());
+
+		if (_DynamicLight)
+		{
+			_DynamicLight->PlayStart(Location.value() ,PlayTime);
+		}
 	}
 
 	SpriteColIdx = 0.f;
@@ -111,12 +116,19 @@ void SpriteEffect::PlayStart(
 
 	_RenderProperty.bRender = true;
 	T = 0.0f;
+
+	
 };
 
 void SpriteEffect::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+
+	if (_DynamicLight)
+	{
+		_DynamicLight->PlayEnd();
+	}
 };
 
 void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -136,6 +148,7 @@ void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		const float AlphaFactor = std::sinf((FMath::Clamp(T / PlayTime,0.0f,1.f) * FMath::PI));
 		_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
 		_Info.Fx->SetVector("_Color", &_Color);
+
 
 		_Info.Fx->SetMatrix("matWorld", &World);
 
@@ -208,7 +221,7 @@ HRESULT SpriteEffect::Awake()
 {
 	GameObject::Awake();
 	m_pTransform.lock()->SetScale({ 0.001,0.001,0.001 });
-	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.2f,0.0f });
+	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.11141f,0.0f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.f,0.2f,0.0f });
 	return S_OK;
 }
@@ -229,6 +242,11 @@ UINT SpriteEffect::Update(const float _fDeltaTime)
 	T += _fDeltaTime;
 
 	CurSpriteUpdateTime -= _fDeltaTime;
+
+	if (_DynamicLight)
+	{
+		_DynamicLight->Update(_fDeltaTime ,GetComponent<Transform>().lock()->GetPosition());
+	}
 
 	if (CurSpriteUpdateTime < 0.0f)
 	{
@@ -289,9 +307,15 @@ void SpriteEffect::Editor()
 
 			ImGui::ColorEdit4("_Color",_Color);
 
+			if (_DynamicLight)
+			{
+				_DynamicLight->Editor();
+			}
+		
+
 			if (ImGui::SmallButton("Play"))
 			{
-				PlayStart(EditPlayTime);
+				PlayStart(EditPlayTime, GetComponent<Transform>().lock()->GetPosition());
 			}
 
 			ImGui::TreePop();
@@ -351,5 +375,12 @@ void SpriteEffect::RegistDistortionTex(const std::string& TexPath)
 	{
 		PushEditEntity(_DistortionTex.get());
 	};
+}
+
+;
+
+void SpriteEffect::RegistDynamicLight(const DynamicLight& _DynamicLight)
+{
+	this->_DynamicLight = _DynamicLight;
 };
 
