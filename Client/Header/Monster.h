@@ -29,7 +29,7 @@ public:
 	
 	Vector3			GetMonsterBoneWorldPos(std::string _BoneName);
 public:
-	virtual HRESULT Ready() override PURE;
+	virtual HRESULT Ready() override;
 	virtual HRESULT Awake() override PURE;
 	virtual HRESULT Start() override PURE;
 	virtual UINT    Update(const float _fDeltaTime) override PURE;
@@ -89,6 +89,10 @@ protected:
 	DissolveInfo						m_pDissolve;
 	bool								m_bDissolve = false;
 	bool m_bStoneDebrisPlayStart = false;
+	int	 m_iWaveIndex = 0;
+
+	weak_ptr<class SpriteEffect>		  m_pEffect[6];
+	weak_ptr<class ShockWave>			  m_pHitWave[3];
 };
 
 

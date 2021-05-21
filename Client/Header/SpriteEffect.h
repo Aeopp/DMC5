@@ -70,6 +70,7 @@ public:
 	float DistortionIntencity = 1.f;
 	float ColorIntencity = 0.01f;
 	Vector4 _Color{ 1.f,1.f,1.f,1.f };
-
+private:
+	std::optional<float > ConstantPlayTime{ std::nullopt };
 };
 #endif //

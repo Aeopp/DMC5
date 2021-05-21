@@ -7,6 +7,8 @@
 #include "RedQueen.h"
 #include "Subset.h"
 #include "StoneDebris.h"
+#include "SpriteEffect.h"
+#include "ShockWave.h"
 
 void Monster::Free()
 {
@@ -50,6 +52,8 @@ void Monster::RenderReady()
 			}
 		}
 	}
+
+
 };
 
 void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
@@ -57,6 +61,43 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
 	{
 		static_pointer_cast<Nero>(_pOther.lock())->Set_GrabEnd(true);
+	}
+
+	switch (_pOther.lock()->m_nTag)
+	{
+	case TAG_RedQueen:
+		m_pEffect[3].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
+		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+		++m_iWaveIndex;
+		m_iWaveIndex %= 3;
+		break;
+	case Tag_Cbs_Long:
+		m_pEffect[0].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
+
+		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+		++m_iWaveIndex;
+		m_iWaveIndex %= 3;
+		break;
+	case Tag_Cbs_Middle:
+		m_pEffect[4].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
+		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+		++m_iWaveIndex;
+		m_iWaveIndex %= 3;
+		break;
+	case Tag_Cbs_Short:
+		m_pEffect[5].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
+		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+		++m_iWaveIndex;
+		m_iWaveIndex %= 3;
+		break;
+	case Overture:
+		m_pEffect[1].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
+		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+		++m_iWaveIndex;
+		m_iWaveIndex %= 3;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -147,4 +188,19 @@ Vector3 Monster::GetMonsterBoneWorldPos(std::string _BoneName)
 	Vector3 WorldPos;
 	memcpy(&WorldPos, (*m_pMesh->GetNodeToRoot(_BoneName) * m_pTransform.lock()->GetWorldMatrix()).m[3], sizeof(Vector3));
 	return WorldPos;
+}
+
+HRESULT Monster::Ready()
+{
+	Unit::Ready();
+	for (int i = 0; i < 6; ++i)
+	{
+		m_pEffect[i] = AddGameObject<SpriteEffect>();
+		m_pEffect[i].lock()->InitializeFromOption(i);
+	}
+	for (int i = 0; i < 3; ++i)
+		m_pHitWave[i] = AddGameObject<ShockWave>();
+
+
+	return E_NOTIMPL;
 }

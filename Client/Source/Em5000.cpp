@@ -11,9 +11,9 @@
 #include "Em5000Hand.h"
 #include "Liquid.h"
 #include "StoneDebrisMulti.h"
-#include "ShockWave.h"
 #include "Smoke.h"
 #include "MainCamera.h"
+#include "ShockWave.h"
 
 void Em5000::Free()
 {
@@ -1048,7 +1048,7 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 			m_fJumpAttackTime = 0.f;
 		}
 	}
-	if (m_bThrow == false)
+	/*if (m_bThrow == false)
 	{
 		m_fThrowTime += _fDeltaTime;
 		if (m_fThrowTime >= 3.f)
@@ -1056,7 +1056,7 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 			m_bThrow = true;
 			m_fThrowTime = 0.f;
 		}
-	}
+	}*/
 	if (m_bBackJump == false)
 	{
 		m_fBackJumpTime += _fDeltaTime;
