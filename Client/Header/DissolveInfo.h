@@ -25,7 +25,7 @@ private:
 	void DissolveParticle();
 private:
 	std::string DissolveParticleName{};
-	uint32 DissolveParticleCount = 100u;
+	uint32 DissolveParticleCount = 60u;
 	std::shared_ptr<ENGINE::Texture>    _DissolveMap{};
 	std::shared_ptr<ENGINE::Texture>    _BurnMap{};
 	Matrix  RenderMatrix{ FMath::Identity() };

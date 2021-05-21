@@ -8,6 +8,7 @@ class Hotel_S03 : public Scene
 private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
+	std::weak_ptr<class MainCamera> _MainCamera{};
 	bool _LateInit = false;
 private:
 	explicit Hotel_S03();
@@ -38,6 +39,13 @@ private:
 	std::weak_ptr<Trigger> TriggerBattleStart();
 	void TriggerNextScene();
 
+	//// 일단 폐기된 트리거 ..... 
+	////   UpGround 오른쪽 위치 Battle
+	//void TriggerFirstBattle();
+	////   상점 앞에서의 전투 . 
+	//void TriggerBattleInFrontShop();
+	//// 폐기된 트리거 ... 
+	// 
 	// 일단 폐기된 트리거 ..... 
 	//   UpGround 오른쪽 위치 Battle
 	void TriggerFirstBattle();

@@ -1,6 +1,7 @@
 #include "..\Header\SoundSystem.h"
 #include <random>
 #include <string>
+#include "FMath.hpp"
 
 USING(ENGINE)
 IMPLEMENT_SINGLETON(SoundSystem)
@@ -13,18 +14,48 @@ SoundSystem::SoundSystem()
 void SoundSystem::Free()
 {
 
-}
+};
+
+void SoundSystem::PlayFromLocation(
+	const std::string& SoundKey,
+	float Volume,
+	const bool bBeginIfPlaying,
+	const std::optional<Vector3>& TargetLocation,
+	const bool bLoop)
+{
+	if (TargetLocation.has_value())
+	{
+		if (auto SpTargetTransform = TargetTransform.lock();
+			SpTargetTransform)
+		{
+			const float Distance = FMath::Length(TargetLocation.value()-SpTargetTransform->GetPosition());
+			Play(SoundKey, Volume, bBeginIfPlaying, Distance, bLoop);
+		}
+		else
+		{
+			PRINT_LOG(L"Warning!", L"거리를 비교할 트랜스폼을 설정 안한거 같음.");
+		}
+	}
+	else
+	{
+		Play(SoundKey, Volume, bBeginIfPlaying, std::nullopt, bLoop);
+	}
+};
+
 void SoundSystem::Play(
 	const std::string& SoundKey,
-	const float Volume, 
-	const bool bBeginIfPlaying, 
-	const bool IsBgm)&
+	float Volume,
+	const bool bBeginIfPlaying,
+	const std::optional<float>& Distance,
+	const bool bLoop)
 {
-	if (IsBgm)
-		CurrentBgmKey = SoundKey;
-
 	FMOD_RESULT Result;
 	bool bPlay = false;
+
+	if (Distance)
+	{
+		Volume *= _DistanceDecrease.GetFactor(Distance.value());
+	}
 
 	if (auto iter = Sounds.find(SoundKey); iter != std::end(Sounds))
 	{
@@ -32,21 +63,53 @@ void SoundSystem::Play(
 		{
 			Channel->isPlaying(&bPlay);
 
-			if (  bBeginIfPlaying || !bPlay )
+			if (bBeginIfPlaying || !bPlay)
 			{
 				Result = FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
+				if (bLoop)
+				{
+					LoopSoundKeys.insert(SoundKey);
+				}
 			}
 
 			Channel->setVolume(Volume);
 		}
 	}
-}
+};
+
+void SoundSystem::VolumeChange(const std::string& SoundKey, 
+							   float Volume,
+							   const std::optional<float>& Distance)
+{
+	FMOD_RESULT Result;
+	bool bPlay = false;
+
+	if (Distance)
+	{
+		Volume *= _DistanceDecrease.GetFactor(Distance.value());
+	}
+
+	if (auto iter = Sounds.find(SoundKey); iter != std::end(Sounds))
+	{
+		auto& [Sound, Channel] = iter->second;
+		{
+			Channel->isPlaying(&bPlay);
+
+			if (bPlay)
+			{
+				Channel->setVolume(Volume);
+			}
+		}
+	}
+};
+
 void SoundSystem::Stop(const std::string& SoundKey)&
 {
 	if (auto iter = Sounds.find(SoundKey); iter != std::end(Sounds))
 	{
 		auto& Channel = iter->second.second;
 		Channel->stop();
+		LoopSoundKeys.erase(SoundKey);
 	}
 };
 
@@ -91,18 +154,28 @@ void SoundSystem::RandSoundKeyPlay(
 	const std::string& SoundKey, 
 	const std::pair<uint32, uint32> Range,
 	const float Volume,
-	const bool bBeginIfPlaying)&
+	const bool bBeginIfPlaying ,
+	const std::optional<float>& Distance,
+	const bool bLoop)&
 {
 	static std::random_device Device;
 	static std::mt19937 Mt19937(Device());
 	std::uniform_int_distribution<uint32> Distribution(Range.first, Range.second);
-	Play(SoundKey + "_" + std::to_string(Distribution(Mt19937)), Volume, bBeginIfPlaying);
+
+	Play(SoundKey + "_" + std::to_string(Distribution(Mt19937)), 
+		Volume, bBeginIfPlaying ,
+		Distance,bLoop);
+
 }
 
-std::string SoundSystem::GetCurrentBgmKey()
+
+void SoundSystem::SetDisanceDecrease(const float DistanceMin, const float DistanceMax ,
+									std::weak_ptr<Transform> TargetTransform)
 {
-	return CurrentBgmKey;
-}
+	_DistanceDecrease.DistanceMin = DistanceMin;
+	_DistanceDecrease.DistanceMax = DistanceMax;
+	this->TargetTransform = TargetTransform;
+};
 
 HRESULT SoundSystem::ReadySoundSystem(const std::filesystem::path& SoundDirectoryPath)
 {
@@ -145,19 +218,22 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 	// Update 함수는 매프레임마다 반드시 호출해줘야함을 요구함
 	FmodSystem->update();
 
-	// BGM 무한 재생 루프
-	auto iter = Sounds.find(CurrentBgmKey);
-	if (iter != std::end(Sounds))
+	// 무한 재생 루프
+	for (auto& LoopSoundKey : LoopSoundKeys)
 	{
-		auto& [Sound, Channel] = iter->second;
-
-		bool bPlayedBgm = false;
-		Channel->isPlaying(&bPlayedBgm);
-		if (!bPlayedBgm)
+		auto iter = Sounds.find(LoopSoundKey);
+		if (iter != std::end(Sounds))
 		{
-			FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
-		}
-	};
+			auto& [Sound, Channel] = iter->second;
+
+			bool bPlayed = false;
+			Channel->isPlaying(&bPlayed);
+			if (!bPlayed)
+			{
+				FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
+			}
+		};
+	}
 
 	return S_OK;
 }
@@ -166,5 +242,49 @@ void SoundSystem::Editor()
 {
 	ImGui::Begin("Sound");
 
+	static float EditVolume = 1.f;
+	static bool bEditBeginIfPlaying = false;
+	static float EditDistance = 0.0f;
+	static bool bEditLoop = false;
+
+	ImGui::SliderFloat("EditVolume", &EditVolume, 0.0f, 10.f);
+	ImGui::SliderFloat("EditDistance", &EditDistance, 0.0f, 100.f);
+	ImGui::Checkbox("bEditBeginIfPlaying", &bEditBeginIfPlaying);
+	ImGui::Checkbox("bEditLoop", &bEditLoop);
+
+	ImGui::SliderFloat("Distance Min", &_DistanceDecrease.DistanceMin, 0.0f, 20.f);
+	ImGui::SliderFloat("Distance Max", &_DistanceDecrease.DistanceMax, 0.0f, 20.f);
+
+	for (auto& [_SoundKey,_Channel]: Sounds)
+	{
+		if (ImGui::TreeNode(_SoundKey.c_str()))
+		{
+			if (ImGui::SmallButton("Play"))
+			{
+				std::optional<float> OEditDistance;
+				if (FMath::AlmostEqual<float>(0.0f, EditDistance))
+					OEditDistance = std::nullopt;
+				else
+					OEditDistance = EditDistance;
+
+				Play(_SoundKey, EditVolume, bEditBeginIfPlaying, EditDistance, bEditLoop);
+			};
+
+			if (ImGui::SmallButton("Stop"))
+			{
+				Stop(_SoundKey);
+			};
+
+			ImGui::TreePop();
+		}
+	}
+
 	ImGui::End();
+};
+
+float SoundSystem::DistanceDecrease::GetFactor(const float Distance) const
+{
+	const float ClampDistance = FMath::Clamp(Distance, DistanceMin, DistanceMax);
+
+	return  (1.0f - (ClampDistance - DistanceMin) / (DistanceMax - DistanceMin));
 }

@@ -209,5 +209,7 @@ void BlitzAttack::PlayStart(const Vector3& Location)
 	}
 	T = 0.0f;
 
+	GetComponent<Transform>().lock()->SetPosition(Location);
+
 	SetActive(true);
 }

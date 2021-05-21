@@ -27,6 +27,8 @@ private:
 	bool			m_bSimulation;
 	//Transform에 변화가 있었는지 판단하는 변수.
 	bool			m_bUpdated;
+
+	bool			m_bSetPosition;
 private:
 	explicit Transform(std::weak_ptr<GameObject> const _pGameObject);
 	virtual ~Transform() = default;
@@ -65,6 +67,8 @@ public:
 	D3DXVECTOR3		GetLook();
 
 	bool IsUpdated();
+
+	bool IsSetPosition();
 
 	const D3DXMATRIX&	GetRotationMatrix() const { return m_matRotation; }
 public:

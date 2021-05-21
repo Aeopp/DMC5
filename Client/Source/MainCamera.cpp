@@ -70,10 +70,6 @@ HRESULT MainCamera::Awake()
 
 	m_vAt = m_pAtTranform.lock()->GetPosition();
 
-	Vector3 vLook;
-	memcpy(&vLook, m_pAtTranform.lock()->GetWorldMatrix().m[2], sizeof(Vector3));
-
-	m_vEye = m_vAt + vLook * -5.f;
 	return S_OK;
 }
 
@@ -187,6 +183,12 @@ void MainCamera::Set_TriggerCam(UINT _eTriggerCamMode, const Vector3& _vTriggerP
 	}
 }
 
+void MainCamera::SetAngle(const Vector3& _vAngle)
+{
+	m_fRotX = _vAngle.x;
+	m_fAngle = _vAngle.y;
+}
+
 void MainCamera::SetShakeInfo(float _fShakeTime, float _fShakePower)
 {
 	m_fShakingTime = _fShakeTime;
@@ -197,6 +199,27 @@ void MainCamera::SetFadeSceneInfo(float _fFadeInAmout)
 {
 	m_bFadeOut = true;
 	m_fFadeInAmout = _fFadeInAmout;
+}
+
+void MainCamera::SetStartPos()
+{
+	m_vAt = m_pAtTranform.lock()->GetPosition();
+	m_vAt.y += m_fFloatingAmount;
+
+	Vector3 vLook = { 0.f, 0.f ,1.f };
+	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
+	Matrix matRot, matTest;
+
+	vLook *= m_fDistanceToTarget;
+
+	D3DXMatrixRotationX(&matTest, D3DXToRadian(m_fRotX));
+	D3DXMatrixRotationAxis(&matRot, &vUp, D3DXToRadian(m_fAngle));
+	D3DXVec3TransformNormal(&vLook, &vLook, &matTest);
+	D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
+
+	m_vLerpEye = m_vAt + vLook;
+
+	m_vEye = m_vLerpEye;
 }
 
 void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
