@@ -38,8 +38,8 @@ private:
 	std::weak_ptr<BoxCollider> m_pCollider;
 
 	UINT m_iCollCount = 0;
+
+	std::weak_ptr<class Smoke> m_pSmoke[2];
 };
-
-
 
 #endif // HotelBrokenFloor_h__
