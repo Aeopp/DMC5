@@ -32,7 +32,7 @@ HRESULT HotelBrokenFloor::Ready()
 	{
 		Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
 		Sp->SetScale(0.006f);
-		Sp->SetPosition({ 0.f, 1.44f, 16.5f });
+		Sp->SetPosition({ 0.f, 1.48f, 16.5f });
 		Sp->SetRotation({ 84.255f, 0.f, 61.277f });
 		Sp->SetActive(false);
 	}

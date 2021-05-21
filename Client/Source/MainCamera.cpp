@@ -182,7 +182,7 @@ void MainCamera::Set_TriggerCam(UINT _eTriggerCamMode, const Vector3& _vTriggerP
 		m_vEye = { 0.04f,0.162f,-1.768f };
 		break;
 	case STAGE2_BUTTERFLY1:
-		m_vEye = { -3.7f,0.79f,14.14f };
+		m_vEye = { -4.094f,0.79f,14.14f };
 		break;
 	}
 }
@@ -690,7 +690,7 @@ void MainCamera::Trigger_Cam_Stage2_ButterFly1(float _fDeltaTime)
 
 	m_vLerpEye = m_vAt + vLook;
 
-	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 3.f);
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 0.8f);
 }
 
 void MainCamera::Trigger_Cam_Stage2_ButterFly1_End(float _fDeltaTime)
