@@ -366,7 +366,8 @@ UINT Nero::Update(const float _fDeltaTime)
 
 
 	//m_pBtlPanel.lock()->AccumulateTDTGauge(0.00005f);
-	m_pBtlPanel.lock()->AccumulateTDTGauge(0.003f * _fDeltaTime);
+	if(!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AccumulateTDTGauge(0.003f * _fDeltaTime);
 	//m_pBtlPanel.lock()->AccumulateTDTGauge(1.f);
 
 
@@ -385,7 +386,9 @@ UINT Nero::Update(const float _fDeltaTime)
 
 	if (Input::GetKeyDown(DIK_1))
 	{
-		m_pBtlPanel.lock()->ConsumeTDTGauge(100.f);
+		BuyUpgradedOverture();
+		BuyCbsMiddle();
+		BuyCbsLong();
 	}
 
 	
@@ -419,7 +422,8 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	m_pBlood.lock()->PlayStart(40.f);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
-	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 	RotateToHitMonster(*(std::weak_ptr<GameObject>*)(pArg));
 	if (m_IsFly)
 	{
@@ -758,10 +762,11 @@ void Nero::Update_Majin(float _fDeltaTime)
 {
 	if (m_IsMajin)
 	{
-		m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
 	}
 
-	if (m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
+	if (!m_pBtlPanel.expired() && m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
 	{
 		m_IsMajin = false;
 		SetActive_NeroComponent(NeroCom_Wings, false);
@@ -959,13 +964,15 @@ void Nero::SetLockOnMonster()
 			m_pTargetMonster = pMonster;
 		}
 	}
-	m_pBtlPanel.lock()->SetTargetCursorActive(true);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetTargetCursorActive(true);
 	//RotateToTargetMonster();
 }
 
 void Nero::SetOffLockOnMonster()
 {
-	m_pBtlPanel.lock()->SetTargetCursorActive(false);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetTargetCursorActive(false);
 	m_pTargetMonster.reset();
 }
 
@@ -996,7 +1003,8 @@ void Nero::SetCbsIdle()
 	m_pCbsShort.lock()->SetWeaponState(Nero::WS_Idle);
 	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
 	m_pCbsTrail.lock()->PlayEnd();
-	m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
 }
 
 void Nero::SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster)
@@ -1088,17 +1096,20 @@ void Nero::Locking()
 	switch (iMonsterTag)
 	{
 	case GAMEOBJECTTAG::Monster1000:
-		m_pBtlPanel.lock()->SetTargetCursor(
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->SetTargetCursor(
 			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Vine01_IK"),
 			fHpRatio);
 		break;
 	case GAMEOBJECTTAG::Monster5000:
-		m_pBtlPanel.lock()->SetTargetCursor(
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->SetTargetCursor(
 			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Neck"),
 			fHpRatio);
 		break;
 	default:
-		m_pBtlPanel.lock()->SetTargetCursor(
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->SetTargetCursor(
 			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
 			fHpRatio);
 		break;
@@ -1319,47 +1330,59 @@ void Nero::IncreaseHp(int _Hp)
 		m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
-	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 }
 
 float Nero::Get_ExGauge()
 {
-	return m_pBtlPanel.lock()->GetExGauge();
+	if (!m_pBtlPanel.expired())
+		return m_pBtlPanel.lock()->GetExGauge();
+	return 0.f;
 }
 
 uint32 Nero::Get_ExGaugeCount()
 {
-	return m_pBtlPanel.lock()->GetExGaugeCount();
+	if (!m_pBtlPanel.expired())
+		return m_pBtlPanel.lock()->GetExGaugeCount();
+	return 0;
 }
 
 void Nero::Add_ExGauge(float ExGauge)
 {
-	m_pBtlPanel.lock()->AddExGauge(ExGauge);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AddExGauge(ExGauge);
 }
 
 void Nero::Use_ExGauge(const uint32 Count)
 {
-	m_pBtlPanel.lock()->UseExGauge(Count);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->UseExGauge(Count);
 }
 
 float Nero::Get_TDTGauge()
 {
-	return m_pBtlPanel.lock()->GetTDTGauge();
+	if (!m_pBtlPanel.expired())
+		return m_pBtlPanel.lock()->GetTDTGauge();
+	return 0.f;
 }
 
 void Nero::AccumulateTDTGauge(const float Amount)
 {
-	m_pBtlPanel.lock()->AccumulateTDTGauge(Amount);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AccumulateTDTGauge(Amount);
 }
 
 void Nero::ConsumeTDTGauge(const float Speed)
 {
-	m_pBtlPanel.lock()->ConsumeTDTGauge(Speed);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->ConsumeTDTGauge(Speed);
 }
 
 void Nero::AddRankScore(float Score)
 {
-	m_pBtlPanel.lock()->AddRankScore(Score);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AddRankScore(Score);
 }
 
 void Nero::BuyUpgradedOverture()
@@ -1387,6 +1410,18 @@ void Nero::ChangeNeroDirection(UINT _NeroDirection)
 {
 	m_iPreDirIndex = m_iCurDirIndex;
 	m_iCurDirIndex = _NeroDirection;
+}
+
+void Nero::Change_To_MajinMode()
+{
+	m_IsMajin = true;
+	for (auto pMonster : GetAliveMonster())
+	{
+		BT_INFO _Info;
+		ZeroMemory(&_Info, sizeof(BT_INFO));
+		_Info.eAttackType = Attack_KnocBack;
+		pMonster.lock()->Hit(_Info);
+	}
 }
 
 void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const UINT AnimationIndex, const AnimNotify& _Notify, const bool bOverlap)
@@ -1470,7 +1505,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pRedQueen.lock()->SetActive(true);
 		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
 		break;
 	case Nero::NeroCom_Cbs_Short:
 		m_pRedQueen.lock()->SetActive(false);
@@ -1481,7 +1517,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pCbsShort.lock()->SetActive(true);
 		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
 		m_pRedQueen.lock()->SetActive(false);
@@ -1492,7 +1529,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pCbsMiddle.lock()->SetActive(true);
 		m_pCbsMiddle.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 1);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 1);
 		break;
 	case Nero::NeroCom_Cbs_Long:
 		m_pRedQueen.lock()->SetActive(false);
@@ -1503,7 +1541,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pCbsLong.lock()->SetActive(true);
 		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 2);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 2);
 		break;
 	}
 }
@@ -1511,10 +1550,14 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 void Nero::ChangeWeaponUI(NeroComponentID _iWeaponIndex)
 {
 	if (Nero::NeroCom_RedQueen == _iWeaponIndex)
-		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+	{
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+	}
 	else
 	{
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
 	}
 }
 
@@ -1547,10 +1590,13 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		m_pAirHike.lock()->PlayStart(vMyPos);
 		break;
 	case Eff_Trail:
-		if (0 < m_pBtlPanel.lock()->GetExGaugeCount())
-			m_pTrail.lock()->PlayStart(Trail::Mode::Explosion);
-		else
-			m_pTrail.lock()->PlayStart(Trail::Mode::Non);
+		if (!m_pBtlPanel.expired())
+		{
+			if (0 < m_pBtlPanel.lock()->GetExGaugeCount())
+				m_pTrail.lock()->PlayStart(Trail::Mode::Explosion);
+			else
+				m_pTrail.lock()->PlayStart(Trail::Mode::Non);
+		}
 		break;
 	case Eff_FireCircle:
 		switch (StartSpriteRow)

@@ -452,7 +452,7 @@ public:
 	void  Set_PlayingTime(float NewTime);
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
-	void Change_To_MajinMode() { m_IsMajin = true; }
+	void Change_To_MajinMode();
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {}, const bool bOverlap = false);
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
