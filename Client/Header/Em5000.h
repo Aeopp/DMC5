@@ -151,6 +151,7 @@ private:
 
 
 	std::weak_ptr<class StoneDebrisMulti> m_pStone;
+	std::weak_ptr<class ShockWave>		  m_pWave;
 	std::weak_ptr<class StoneDebrisMulti> m_pStone2;
 	bool								  m_bStone = false;
 

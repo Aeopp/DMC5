@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Em5000.h"
 #include "Em5000Hand.h"
+#include "ShockWave.h"
+#include "Smoke.h"
 
 void Em5000Hand::Free()
 {
@@ -51,6 +53,11 @@ HRESULT Em5000Hand::Awake()
 		m_pCollider.lock()->SetCenter({ 0.f, 0.f, 0.f });
 		m_pCollider.lock()->SetRadius(0.2f);
 	}
+
+	m_pWave = AddGameObject<ShockWave>();
+
+	for (int i = 0; i < 2; ++i)
+		m_pSmoke[i] = AddGameObject<Smoke>();
 
 	return S_OK;
 }

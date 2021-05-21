@@ -11,7 +11,9 @@
 #include "Em5000Hand.h"
 #include "Liquid.h"
 #include "StoneDebrisMulti.h"
-
+#include "ShockWave.h"
+#include "Smoke.h"
+#include "MainCamera.h"
 
 void Em5000::Free()
 {
@@ -207,6 +209,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_Coll(false);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+
 				}
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingTime() >= 0.4f)
@@ -221,6 +224,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_Front);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
 			}
 		}
@@ -256,6 +260,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
 			}
 		}
@@ -311,6 +316,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
 			}
 		}
@@ -376,6 +382,16 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
+
+
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetPosition(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition());
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetScale(0.010f);
+					auto Look = m_pTransform.lock()->GetLook();
+					const float SmokeYaw = FMath::ToDegree(std::atan2f(Look.x, Look.z));
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetRotation({ 0.f, SmokeYaw,0.f });
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetVariationIdx(Smoke::VARIATION::SMOKE_2);
+					m_pHand[i].lock()->m_pSmoke[i].lock()->PlayStart(5.f);
 				}
 			}
 		}
@@ -435,6 +451,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathJumpAttack);
 				}
 			}
 		}
@@ -443,7 +460,6 @@ void Em5000::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_Punch_Twice", false, {}, 1.5f, 50.f, true);
-
 			if (m_BattleInfo.iHp <= 2500.f)
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.9f)
@@ -464,8 +480,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.5f)
 			{
 				for (int i = 0; i < 2; ++i)
-					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-					
+					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);		
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.2f)
 			{
@@ -476,6 +491,19 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
+
+					
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetPosition(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition());
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetScale(0.010f);
+					auto Look = m_pTransform.lock()->GetLook();
+					const float SmokeYaw = FMath::ToDegree(std::atan2f(Look.x, Look.z)); 
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetRotation({0.f, SmokeYaw,0.f });
+					m_pHand[i].lock()->m_pSmoke[i].lock()->SetVariationIdx(Smoke::VARIATION::SMOKE_2);
+					m_pHand[i].lock()->m_pSmoke[i].lock()->PlayStart(5.f);
+					// 포지션 벡터2 , 스케일 플롯 2개 , 로테이션 Y  플롯 2개 시간은 상수 플롯 하나
+					 
+					static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 				}
 			}
 		}
@@ -537,6 +565,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
 			}
 		}
@@ -570,6 +599,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathJumpAttack);
 				}
 			}
 		}
@@ -603,6 +633,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathJumpAttack);
 				}
 			}
 		}
@@ -1017,7 +1048,7 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 			m_fJumpAttackTime = 0.f;
 		}
 	}
-	if (m_bThrow == false)
+	/*if (m_bThrow == false)
 	{
 		m_fThrowTime += _fDeltaTime;
 		if (m_fThrowTime >= 5.f)
@@ -1025,7 +1056,7 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 			m_bThrow = true;
 			m_fThrowTime = 0.f;
 		}
-	}
+	}*/
 	if (m_bBackJump == false)
 	{
 		m_fBackJumpTime += _fDeltaTime;
@@ -1112,6 +1143,7 @@ HRESULT Em5000::Awake()
 
 	m_pStone = AddGameObject<StoneDebrisMulti>();
 	m_pStone2 = AddGameObject<StoneDebrisMulti>();
+	
 
 	return S_OK;
 }

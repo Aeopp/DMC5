@@ -190,7 +190,7 @@ void Car::RenderReady()
 HRESULT Car::Ready()
 {
 	m_vBangDir = { 0.f, 1.f, 0.f };
-	m_fBangPower = 100.f;
+	m_fBangPower = 8.f;
 	m_nTag = MonsterWeapon;
 	m_BattleInfo.eAttackType = Attack_KnocBack;
 	m_bCollEnable = true;
@@ -218,8 +218,9 @@ HRESULT Car::Awake()
 	m_pEm5000Trans = m_pEm5000.lock()->GetComponent<ENGINE::Transform>();
 
 	m_pCollider = AddComponent<BoxCollider>();
-	m_pCollider.lock()->SetTrigger(true);
+	//m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetGravity(true);
 	m_pCollider.lock()->SetCenter({ 0.f,0.1f,0.f });
 	m_pCollider.lock()->SetSize({ 0.2f,0.15f,0.42f });
 	PushEditEntity(m_pCollider.lock().get());
@@ -353,10 +354,22 @@ void Car::Throw(const float _fDeltaTime)
 
 void Car::BangBang(const float _fDeltaTime)
 {
-	if (m_pCollider.lock()->IsGround())
+	m_pTransform.lock()->Rotate({ 10.f, 0.f,0.f });
+
+	if (m_pTransform.lock()->GetPosition().y >= -1.85f &&
+		m_pTransform.lock()->GetPosition().y <= -1.7f)
 	{
 		m_pCollider.lock()->AddForce(m_fBangPower * m_vBangDir);
-		m_fBangPower -= 10.f;
+		m_fBangPower -= 2.f;
+	}
+	/*if (m_pCollider.lock()->IsGround())
+	{
+
+	}*/
+	if (m_fBangPower <= 0.f)
+	{
+		m_bBang = false;
+		m_fBangPower = 8.f;
 	}
 }
 

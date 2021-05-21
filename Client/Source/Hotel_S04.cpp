@@ -79,7 +79,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage4_Map.json");
+	LoadObjects("../../Data/Stage4_Map.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(4);
@@ -90,7 +90,7 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -259,16 +259,13 @@ void Hotel_S04::TriggerSetUp()
 
 void Hotel_S04::LateInit()
 {
-	// + 플레이어 초기 위치 잡기 등
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-5.218f, -1.5f, 43.326f });
 	}
 
-
 	Renderer::GetInstance()->LateSceneInit();
-	// 보스전 진입시 하늘 노이즈 왜곡 시작 ! 
 	Renderer::GetInstance()->SkyDistortionStart();
 
 	_LateInit = true;
