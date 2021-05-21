@@ -362,7 +362,8 @@ void TestScene::HitEffectLoad()
 
 		DynamicLight _LightDesc{};
 		_LightDesc.Color = { Vector4{1.f,0.25f,0.25f,1.f }, Vector4{1.f,0.25f,0.25f,1.f } };
-		_LightDesc.Flux = { 0.0f,0.161f };
+		// _LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.Flux = { 0.0f,0.0161f };
 		_LightDesc.PointRadius = { 0.161f,0.161f };
 		_SpriteEffect->RegistDynamicLight(_LightDesc);
 	}
@@ -378,7 +379,8 @@ void TestScene::HitEffectLoad()
 		_SpriteEffect->ColorIntencity = 0.3f;
 		DynamicLight _LightDesc{};
 		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		_LightDesc.Flux = { 0.0f,0.161f };
+		// _LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.Flux = { 0.0f,0.0161f };
 		_LightDesc.PointRadius = { 0.161f,0.161f };
 		_SpriteEffect->RegistDynamicLight(_LightDesc);
 
@@ -399,7 +401,9 @@ void TestScene::HitEffectLoad()
 		// 플탐 0.1f
 
 		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		_LightDesc.Flux = { 0.0f,0.080f };
+		// _LightDesc.Flux = { 0.0f,0.080f };
+		_LightDesc.Flux = { 0.0f,0.0080f };
+
 		_LightDesc.PointRadius = { 0.08f,0.08f };
 		_SpriteEffect->RegistDynamicLight(_LightDesc);
 	}
@@ -417,7 +421,9 @@ void TestScene::HitEffectLoad()
 		_LightDesc.Color = { 
 			Vector4{9.f/255.f,83.f /255.f,242.f /255.f,1.f }, 
 			Vector4{126.f/255.f,153.f /255.f,247.f /255.f,1.f } };
-		_LightDesc.Flux = { 0.0f,0.161f };
+// 		_LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.Flux = { 0.0f,0.0161f };
+
 		_LightDesc.PointRadius = { 0.161f,0.161f };
 		_SpriteEffect->RegistDynamicLight(_LightDesc);
 	}
@@ -433,7 +439,8 @@ void TestScene::HitEffectLoad()
 		DynamicLight _LightDesc{};
 		// 플탐 0.2
 		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		_LightDesc.Flux = { 0.0f,0.161f };
+		// _LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.Flux = { 0.0f,0.0161f };
 		_LightDesc.PointRadius = { 0.161f,0.161f };
 		_SpriteEffect->RegistDynamicLight(_LightDesc);
 	}
@@ -449,7 +456,8 @@ void TestScene::HitEffectLoad()
 		DynamicLight _LightDesc{};
 		// 플탐 0.2
 		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		_LightDesc.Flux = { 0.0f,0.161f };
+		// _LightDesc.Flux = { 0.0f,0.161f };
+		_LightDesc.Flux = { 0.0f,0.0161f };
 		_LightDesc.PointRadius = { 0.161f,0.161f };
 		_SpriteEffect->RegistDynamicLight(_LightDesc);
 	}

@@ -815,7 +815,7 @@ void Em100::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em100::Ready()
 {
-	Unit::Ready();
+	Monster::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster100;
 
@@ -1021,6 +1021,10 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		int iRandom = FMath::Random<int>(0, 6);
 		if (iRandom >= 4)
 			++iRandom;
+
+
+		CalcEffectPos();
+		m_vEffectPos += GetMonsterBoneWorldPos("Waist");
 
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
@@ -1397,6 +1401,8 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+
+	HitEffectPlay(_pOther);
 }
 
 void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)

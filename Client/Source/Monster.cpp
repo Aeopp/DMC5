@@ -63,6 +63,11 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		static_pointer_cast<Nero>(_pOther.lock())->Set_GrabEnd(true);
 	}
 
+	
+}
+
+void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
+{
 	switch (_pOther.lock()->m_nTag)
 	{
 	case TAG_RedQueen:
@@ -181,6 +186,11 @@ void Monster::StoneDebrisPlayStart()
 	}
 
 	m_bStoneDebrisPlayStart = true;
+}
+
+void Monster::CalcEffectPos()
+{
+	m_vEffectPos = FMath::RandomVector(FMath::Random(0.008f, 0.016f));
 }
 
 Vector3 Monster::GetMonsterBoneWorldPos(std::string _BoneName)

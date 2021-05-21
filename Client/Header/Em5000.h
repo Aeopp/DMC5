@@ -144,7 +144,7 @@ private:
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
 	std::weak_ptr<Em5000Hand>	m_pHand[2];
-	std::weak_ptr<ENGINE::CapsuleCollider> m_pCollider;
+	std::weak_ptr<ENGINE::BoxCollider> m_pCollider;
 
 	std::weak_ptr<Car>				 m_pCar[2];
 	std::weak_ptr<ENGINE::Transform> m_pCarTrans;
