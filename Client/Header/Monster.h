@@ -45,6 +45,7 @@ public:
 public:
 	//형의 부하가 추가함
 	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
+	virtual void	HitEffectPlay(std::weak_ptr<GameObject> _pOther);
 public:
 	//형의 부하가 추가함
 	virtual void	SetGravity(bool _bActiveOrNot);
@@ -58,6 +59,7 @@ protected:
 protected:
 	void StoneDebrisInit();
 	void StoneDebrisPlayStart();
+	void CalcEffectPos();
 protected:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh = nullptr;
 
@@ -93,6 +95,9 @@ protected:
 
 	weak_ptr<class SpriteEffect>		  m_pEffect[6];
 	weak_ptr<class ShockWave>			  m_pHitWave[3];
+
+
+	Vector3								m_vEffectPos;
 };
 
 

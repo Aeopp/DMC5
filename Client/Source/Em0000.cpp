@@ -620,7 +620,7 @@ void Em0000::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em0000::Ready()
 {
-	Unit::Ready();
+	Monster::Ready();
 	m_nTag = Monster0000;
 
 	RenderInit();
@@ -813,6 +813,10 @@ void Em0000::Hit(BT_INFO _BattleInfo, void* pArg)
 		int iRandom = FMath::Random<int>(0, 6);
 		if (iRandom >= 4)
 			++iRandom;
+
+
+		CalcEffectPos();
+		m_vEffectPos += GetMonsterBoneWorldPos("Waist");
 
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
@@ -1411,6 +1415,7 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	}
 
+	HitEffectPlay(_pOther);
 }
 
 void Em0000::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)

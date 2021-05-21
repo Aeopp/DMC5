@@ -259,7 +259,7 @@ void Em1000::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em1000::Ready()
 {
-	Unit::Ready();
+	Monster::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster1000;
 
@@ -446,6 +446,11 @@ void Em1000::Hit(BT_INFO _BattleInfo, void* pArg)
 	//////////////////////////
 	if (!m_pBlood.expired())
 	{
+
+		CalcEffectPos();
+		m_vEffectPos += GetMonsterBoneWorldPos("Vine01_IK");
+
+
 		int iRandom = FMath::Random<int>(6, 7);
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
@@ -516,6 +521,8 @@ void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+
+	HitEffectPlay(_pOther);
 }
 
 void Em1000::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
