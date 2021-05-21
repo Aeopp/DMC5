@@ -233,7 +233,7 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 				FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
 			}
 		};
-	}
+	};
 
 	return S_OK;
 }

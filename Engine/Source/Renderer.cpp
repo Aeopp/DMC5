@@ -1802,10 +1802,12 @@ HRESULT Renderer::RenderSkySphere()&
 		}
 		
 		const Matrix World = FMath::WorldMatrix(SkysphereScale, FMath::ToRadian( SkysphereRot ) , SkysphereLoc);
+
 		Fx->SetMatrix("matSkyRotation", &World);
 		Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
 		Fx->SetFloat("intencity", SkyIntencity);
 		Fx->SetBool("Distortion", SkyDistortion);
+
 		if (SkyDistortion)
 		{
 			Fx->SetFloat("noisewrap", SkyNoisewrap);
@@ -1814,6 +1816,7 @@ HRESULT Renderer::RenderSkySphere()&
 			Fx->SetTexture("NoiseMap", SkyNoiseMap->GetTexture());
 			Fx->SetFloat("DistortionIntencity", SkyDistortionIntencity);
 		}
+
 		Fx->SetTexture("SkyMap", CurSkysphereTex->GetTexture());
 		Fx->Begin(NULL, 0);
 		Fx->BeginPass(0);

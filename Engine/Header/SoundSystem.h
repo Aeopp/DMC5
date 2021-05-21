@@ -35,13 +35,18 @@ public:
 		float GetFactor(const float Distance)const;
 	};
 
+	struct DistanceInfo
+	{
+	
+	};
+
 	static inline auto FmodDeleter = [](auto  Target)
 	{
 		Target->release();
 	};
 	using SoundType = std::pair<
-		std::unique_ptr<FMOD::Sound, decltype(FmodDeleter)>, FMOD::Channel*>;
-	std::unique_ptr<FMOD::System, decltype(FmodDeleter)> FmodSystem{};
+		std::unique_ptr<FMOD::Sound,decltype(FmodDeleter)>, FMOD::Channel*>;
+	std::unique_ptr<FMOD::System,decltype(FmodDeleter)> FmodSystem{};
 
 	void Play(
 		// 사운드 키 (확장자 필요없음 ) 
@@ -68,6 +73,7 @@ public:
 	void VolumeChange(const std::string& SoundKey,
 					  float Volume,
 				      const std::optional<float>& Distance = std::nullopt);
+
 	// 멈추기 . 
 	void Stop(const std::string & SoundKey)&;
 	void Load(const std::string & FullPath, std::string Key)&;
@@ -88,7 +94,8 @@ public:
 							,const float DistanceMax,
 							std::weak_ptr<Transform> _Transform);
 private:
-	std::unordered_map<std::string, SoundType> Sounds;
+	std::unordered_map<std::string, SoundType> Sounds{};
+	std::unordered_map<std::string, DistanceInfo> DistanceInfoMap{};
 	DistanceDecrease _DistanceDecrease{};
 	std::set<std::string> LoopSoundKeys{};
 	std::weak_ptr<Transform> TargetTransform{};
