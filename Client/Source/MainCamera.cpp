@@ -796,7 +796,7 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))
 	{
 		m_vAt = m_pAtTranform.lock()->GetPosition();
-		m_vAt.y += 0.3f;
+		m_vAt.y += 0.4f;
 	}
 
 	long    dwMouseMove = 0;
@@ -809,6 +809,14 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
 	{
 		m_fDistanceToTarget -= dwMouseMove / 8000.f;
+		if (m_fDistanceToTarget <= 0.65f)
+		{
+			m_fDistanceToTarget = 0.65f;
+		}
+		if (m_fDistanceToTarget >= 1.1f)
+		{
+			m_fDistanceToTarget = 1.1f;
+		}
 	}
 
 
@@ -817,7 +825,7 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 	D3DXVec3Normalize(&vLook, &vLook);
 
 	m_vLerpEye = _PlayerTransform.lock()->GetPosition() + vLook * m_fDistanceToTarget;
-	m_vLerpEye.y += 0.4f;
+	m_vLerpEye.y += 0.2f;
 
 	if (!(Nero::ANI_EM5000_BUSTER_START <= _CurAnimationIndex
 		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))

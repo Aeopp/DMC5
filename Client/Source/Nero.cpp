@@ -810,6 +810,37 @@ void Nero::Editor()
 			BuyCbsMiddle();
 			BuyCbsLong();
 		}
+		std::weak_ptr<GameObject> _Monster = FindGameObjectWithTag(Monster5000).lock();
+		if (_Monster.expired())
+			return;
+		std::weak_ptr<Transform> _MonsterTransform = _Monster.lock()->GetComponent<Transform>();
+		Vector3 vMonsterPos = _MonsterTransform.lock()->GetPosition();
+		Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+		Vector3 vDir = vMonsterPos - vMyPos;
+		vDir.y = 0;
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+		float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+		if (fDot > 1.f)
+			fDot = 1.f - FLT_EPSILON;
+		else if (fDot < -1.f)
+			fDot = -1.f + FLT_EPSILON;
+
+		float fRadian = acosf(fDot);
+
+		Vector3	vCross;
+		D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+		if (vCross.y > 0)
+			fRadian *= -1;
+		if (ImGui::TreeNode("Angle"))
+		{
+			ImGui::Text("%f", -D3DXToDegree(fRadian));
+		}
 	}
 
 }
