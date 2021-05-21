@@ -9,7 +9,6 @@
 #include "ShockWave.h"
 #include "FLight.h"
 
-
 class Change : public ENGINE::GameObject,
 			   public ENGINE::RenderInterface
 {

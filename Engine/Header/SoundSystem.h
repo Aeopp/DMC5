@@ -2,6 +2,8 @@
 #define __SOUNDSYSTEM_H_
 #include "fmod.hpp"
 #include "Object.h"
+#include "Transform.h"
+#include <optional>
 #include <chrono>
 #include <unordered_map>
 #include <functional>
@@ -24,6 +26,15 @@ private:
 	// Object을(를) 통해 상속됨
 	virtual void Free() override;
 public:
+	// 거리가 Min 보다 작거나 같으면 볼륨 그대로 Min ~ Max 사이에 있다면 선형으로 감소 . 
+	// Max 보다 크다면 0 
+	struct DistanceDecrease
+	{
+		float DistanceMin{ 0.f };
+		float DistanceMax{ 1.f };
+		float GetFactor(const float Distance)const;
+	};
+
 	static inline auto FmodDeleter = [](auto  Target)
 	{
 		Target->release();
@@ -35,12 +46,28 @@ public:
 	void Play(
 		// 사운드 키 (확장자 필요없음 ) 
 		const std::string & SoundKey,
-		// 볼륨 0~1
-		const float Volume,
-		/*플레이 요청 사운드가 현재 재생중일 경우 다시 시작할지 여부*/
+		// 볼륨 0~1 
+		float Volume,
+		/* 플레이 요청 사운드가 현재 재생중일 경우 처음부터 다시 시작할지 여부*/
 		const bool bBeginIfPlaying,
-		// 배경 음악 여부 . 
-		const bool IsBgm = false)&;
+		// 거리를 넘겨주지 않으면 요청한 볼륨 그대로 출력 ! 
+		// 거리를 넘겨주면 거리비례 감소 적용해서 내부적으로 볼륨 줄여서 재생 .
+		const std::optional<float>& Distance=std::nullopt,
+		// 재생 끝나면 자동으로 다시 재생 할까요 ?
+		const bool bLoop=false);
+
+	void PlayFromLocation(
+		const std::string& SoundKey,
+		float Volume,
+		const bool bBeginIfPlaying,
+		const std::optional<Vector3>& TargetLocation = std::nullopt,
+		const bool bLoop = false);
+
+
+	// 해당 사운드 키가 재생 중이라면 볼륨을 바꿔줘요 .
+	void VolumeChange(const std::string& SoundKey,
+					  float Volume,
+				      const std::optional<float>& Distance = std::nullopt);
 	// 멈추기 . 
 	void Stop(const std::string & SoundKey)&;
 	void Load(const std::string & FullPath, std::string Key)&;
@@ -52,12 +79,21 @@ public:
 		const std::string & SoundKey,
 		const std::pair<uint32, uint32> Range,
 		const float Volume,
-		const bool bBeginIfPlaying)&;
-	std::string GetCurrentBgmKey();
+		const bool bBeginIfPlaying ,
+		const std::optional<float>& Distance = std::nullopt,
+		const bool bLoop = false)&;
+
+	// 씬마다 해야 할듯.
+	void SetDisanceDecrease(const  float  DistanceMin
+							,const float DistanceMax,
+							std::weak_ptr<Transform> _Transform);
 private:
 	std::unordered_map<std::string, SoundType> Sounds;
-	std::string CurrentBgmKey{};
+	DistanceDecrease _DistanceDecrease{};
+	std::set<std::string> LoopSoundKeys{};
+	std::weak_ptr<Transform> TargetTransform{};
 public:
+	// 거리 비례 감소 활성화 여부 .
 	HRESULT ReadySoundSystem(const std::filesystem::path & SoundDirectoryPath);
 	HRESULT UpdateSoundSystem(const float Delta);
 	void Editor();

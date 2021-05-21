@@ -44,8 +44,6 @@ private:
 	////   상점 앞에서의 전투 . 
 	//void TriggerBattleInFrontShop();
 	//// 폐기된 트리거 ... 
-
-	void LateInit();
 	// 일단 폐기된 트리거 ..... 
 	//   UpGround 오른쪽 위치 Battle
 	void TriggerFirstBattle();
