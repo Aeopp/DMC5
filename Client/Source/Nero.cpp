@@ -41,6 +41,7 @@
 #include "CbsLongTrail.h"
 #include "WhirlWind.h"
 #include "Change.h"
+#include "SoundSystem.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -339,13 +340,13 @@ HRESULT Nero::Start()
 	Unit::Start();
 	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
-
 	return S_OK;
 }
 
 UINT Nero::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
+	
 
 	Update_Majin(_fDeltaTime);
 

@@ -93,6 +93,9 @@ UINT MainCamera::Update(const float _fDeltaTime)
 	case AT_TRIGGER:
 		MoveMent_Trigger(_fDeltaTime);
 		break;
+	case AT_BOSS1:
+		Boss_Cam_Em5000(_fDeltaTime);
+		break;
 	default:
 		break;
 	}
@@ -769,17 +772,16 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 	if (m_pAtTranform.expired())
 		return;
 
-	if (m_fLerpSpeed <= 1.5f)
-		m_fLerpSpeed += _fDeltaTime * 0.05f;
-	m_vAt = m_pAtTranform.lock()->GetPosition();
-	m_vAt.y += m_fFloatingAmount;
+	std::weak_ptr<Transform>	_PlayerTransform = m_pNero.lock()->GetComponent<Transform>();
+	UINT _CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
+	if (!(Nero::ANI_EM5000_BUSTER_START <= _CurAnimationIndex
+		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))
+	{
+		m_vAt = m_pAtTranform.lock()->GetPosition();
+		m_vAt.y += 0.3f;
+	}
 
 	long    dwMouseMove = 0;
-
-	if (dwMouseMove = Input::GetMouseMove(DIM_Y))
-	{
-		m_fRotX -= dwMouseMove / m_fSensitive;
-	}
 
 	if (dwMouseMove = Input::GetMouseMove(DIM_X))
 	{
@@ -788,31 +790,25 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 
 	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
 	{
-		//m_fDistanceToTarget -= dwMouseMove / 100.f;
+		m_fDistanceToTarget -= dwMouseMove / 10000.f;
 	}
-	if (m_fRotX <= -50.f)
-		m_fRotX = -50.f;
-	if (m_fRotX >= 13.5f)
-		m_fRotX = 13.5f;
 
 
-	Vector3 vLook = { 0.f, 0.f ,1.f };
-	Vector3 vUp = Vector3(0.f, 1.f, 0.f);
-	Matrix matRot, matTest;
+	Vector3 vLook = _PlayerTransform.lock()->GetPosition() - m_vAt;
+	vLook.y = 0.f;
+	D3DXVec3Normalize(&vLook, &vLook);
 
-	vLook *= m_fDistanceToTarget;
+	m_vLerpEye = _PlayerTransform.lock()->GetPosition() + vLook * m_fDistanceToTarget;
+	m_vLerpEye.y += 0.4f;
 
-	D3DXMatrixRotationX(&matTest, D3DXToRadian(m_fRotX));
-	D3DXMatrixRotationAxis(&matRot, &vUp, D3DXToRadian(m_fAngle));
-	D3DXVec3TransformNormal(&vLook, &vLook, &matTest);
-	D3DXVec3TransformNormal(&vLook, &vLook, &matRot);
-
-	m_vLerpEye = m_vAt + vLook;
-
-	if (m_bLerp)
-		m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * m_fLerpSpeed);
-	else
-		m_vEye = m_vLerpEye;
+	if (!(Nero::ANI_EM5000_BUSTER_START <= _CurAnimationIndex
+		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))
+	{
+		if (m_bLerp)
+			m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 4.f);
+		else
+			m_vEye = m_vLerpEye;
+	}
 }
 
 void MainCamera::Boss_Cam_Em5300(float _fDeltaTime)

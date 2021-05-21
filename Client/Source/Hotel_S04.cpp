@@ -60,8 +60,9 @@ HRESULT Hotel_S04::LoadScene()
 	//	
 	//}
 
-	auto _Camera = AddGameObject<MainCamera>();
+	_Camera = AddGameObject<MainCamera>();
 	_Camera.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
+	
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -71,7 +72,7 @@ HRESULT Hotel_S04::LoadScene()
 #pragma region Monster
 	auto _pMonster = AddGameObject<Em5000>();
 	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
-
+	
 
 #pragma endregion
 
@@ -149,6 +150,13 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
+	}
+	if (Input::GetKeyDown(DIK_NUMPAD1))
+	{
+		_Camera.lock()->Set_At_Transform(
+			FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>(),
+			MainCamera::AT_BOSS1);
+		_Camera.lock()->SetDistance(1.1f);
 	}
 	/* -------------------------- */
 
@@ -264,6 +272,10 @@ void Hotel_S04::LateInit()
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-5.218f, -1.5f, 43.326f });
 	}
+	/*_Camera.lock()->Set_At_Transform(
+		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,
+		MainCamera::AT_BOSS1);*/
+	
 
 	Renderer::GetInstance()->LateSceneInit();
 	Renderer::GetInstance()->SkyDistortionStart();
