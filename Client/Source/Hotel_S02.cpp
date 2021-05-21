@@ -72,7 +72,7 @@ HRESULT Hotel_S02::LoadScene()
 	//{
 	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
 	//}
-	
+
 	_MainCamera = AddGameObject<MainCamera>();
 	_MainCamera.lock()->SetLerp(false);
 	_MainCamera.lock()->SetAngle(180.f);
@@ -403,9 +403,9 @@ void Hotel_S02::RenderDataSetUp(const bool bTest)
 void Hotel_S02::TriggerSetUp()
 {
 	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
-	//TriggerPuzzleStart();
-	//TriggerWallSmash();
-	//TriggerNextScene();
+	TriggerPuzzleStart();
+	TriggerWallSmash();
+	TriggerNextScene();
 }
 
 void Hotel_S02::TriggerWallSmash()
@@ -702,21 +702,21 @@ void Hotel_S02::LateInit()
 		SpObject)
 	{
 		// 퍼즐용 나비
-		SpObject->SetPosition({ -4319.212f * GScale, 470.248f * GScale, 16593.594f * GScale });
+		SpObject->SetPosition({ -4319.212f * GScale, 240.248f * GScale, 16593.594f * GScale });
 		SpObject->SetActive(false);
 	}
 	if (auto SpObject = _MakaiButterflyVec[3].lock();
 		SpObject)
 	{
 		// 퍼즐용 나비
-		SpObject->SetPosition({ -804.781f * GScale, 1097.678f * GScale, 16376.986f * GScale });
+		SpObject->SetPosition({ -804.781f * GScale, 867.678f * GScale, 16376.986f * GScale });
 		SpObject->SetActive(false);
 	}
 	if (auto SpObject = _MakaiButterflyVec[4].lock();
 		SpObject)
 	{
 		// 퍼즐용 나비
-		SpObject->SetPosition({ -4696.414f * GScale, 1683.205f * GScale, 15569.233f * GScale });
+		SpObject->SetPosition({ -4696.414f * GScale, 1453.205f * GScale, 15569.233f * GScale });
 		SpObject->SetActive(false);
 	}
 

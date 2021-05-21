@@ -69,9 +69,9 @@ HRESULT Hotel_S04::LoadScene()
 	m_fLoadingProgress = 0.2f;
 
 #pragma region Monster
+
 	auto _pMonster = AddGameObject<Em5000>();
 	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
-
 
 #pragma endregion
 
@@ -262,12 +262,13 @@ void Hotel_S04::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-5.218f, -1.5f, 43.326f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
 	}
 
 	Renderer::GetInstance()->LateSceneInit();
 	Renderer::GetInstance()->SkyDistortionStart();
 
-	_LateInit = true;
 	BgmPlay();
+
+	_LateInit = true;
 }
