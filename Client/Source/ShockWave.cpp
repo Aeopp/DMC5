@@ -176,7 +176,7 @@ HRESULT ShockWave::Awake()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.25f,0.f } );
 	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale(Vector3{ 0.001f,0.001f,0.001f });
+	InitTransform.lock()->SetScale(Vector3{ 0.002f ,0.002f ,0.002f });
 
 	return S_OK;
 }
