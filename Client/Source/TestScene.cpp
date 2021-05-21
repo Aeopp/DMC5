@@ -97,10 +97,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -146,40 +146,6 @@ HRESULT TestScene::LoadScene()
 	//	Sp->PlayStart();
 	//}
 
-	//// Stage2 안개
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 274.03f, 0.f));
-	//	pSmoke->SetPosition(Vector3(-10.f, -4.f, 30.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 0.f, 0.f));
-	//	pSmoke->SetPosition(Vector3(30.f, -4.f, 10.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 91.343f, 0.f));
-	//	pSmoke->SetPosition(Vector3(10.f, -4.f, -25.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
-	//if (auto pSmoke = AddGameObject<Smoke>().lock();
-	//	pSmoke)
-	//{
-	//	pSmoke->SetScale(0.3f);
-	//	pSmoke->SetRotation(Vector3(0.f, 150.448f, 0.f));
-	//	pSmoke->SetPosition(Vector3(-20.f, -4.f, -30.f));
-	//	pSmoke->PlayStart(10.f);
-	//}
-
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;
@@ -201,7 +167,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 7, Until Dooms Day",
+		pFont->SetText("D 6, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),

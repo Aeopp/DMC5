@@ -69,7 +69,7 @@ void BreakableObject::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_ds",
+		{"gbuffer_ds_extracolor",
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBuffer(_Info);
@@ -128,9 +128,14 @@ void BreakableObject::RenderGBuffer(const DrawInfo& _Info)
 				continue; 
 			}
 			
-
 			SpSubset->BindProperty(TextureType::DIFFUSE, 0, 0, _Info._Device);
 			SpSubset->BindProperty(TextureType::NORMALS, 0, 1, _Info._Device);
+			
+			if (6 == m_iStoneCount && (0 == i || 1 == i))
+				_Info.Fx->SetFloatArray("extraColor", Vector3(0.09f, 0.596f, 0.518f), 3u);
+			else
+				_Info.Fx->SetFloatArray("extraColor", Vector3(1.f, 1.f, 1.f), 3u);
+
 			SpSubset->Render(_Info.Fx);
 		};
 	};
@@ -225,6 +230,20 @@ void BreakableObject::StoneInit()
 			m_pStoneDebrisVec.push_back(p);
 		}
 	}
+	else if (m_iStoneCount == 5)
+	{
+		for (uint32 i = 0u; i < m_iStoneCount; ++i)
+		{
+			weak_ptr<StoneDebris> p = AddGameObject<StoneDebris>();
+			p.lock()->SetVariationIdx((StoneDebris::VARIATION)FMath::Random<uint32>((uint32)StoneDebris::WHITEORB_0, (uint32)StoneDebris::WHITEORB_3));
+			p.lock()->SetScale(FMath::Random<float>(0.002f, 0.003f));
+			p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
+			// position은 죽을 때 위치
+			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.12f, 0.145f, -0.12f), Vector3(0.12f, 0.16f, 0.12f)));
+			p.lock()->SetActive(false);
+			m_pStoneDebrisVec.push_back(p);
+		}
+	}
 	else
 	{
 		for (uint32 i = 0u; i < m_iStoneCount; ++i)
@@ -239,7 +258,6 @@ void BreakableObject::StoneInit()
 			m_pStoneDebrisVec.push_back(p);
 		}
 	}
-
 
 	m_bStoneDebrisPlayStart = false;
 }
@@ -311,7 +329,7 @@ UINT BreakableObject::Update(const float _fDeltaTime)
 	if (m_bDestroyObject)
 		m_fStoneTime += _fDeltaTime;
 
-	if (m_fStoneTime >= 3.f)
+	if (m_fStoneTime >= 1.5f)
 	{
 		m_fStoneTime = 0.f;
 		m_bDestroyObject = false;

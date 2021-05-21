@@ -168,6 +168,10 @@ void TempMap::LoadMap(const int _iStage)
 		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
 			L"..\\..\\Resource\\Map\\Collmap\\BossStage.fbx", _InitInfo);
 		break;
+	case 5:
+		_StaticMesh = Resources::Load<ENGINE::StaticMesh>(
+			L"..\\..\\Resource\\Map\\Collmap\\Stage4.fbx", _InitInfo);
+		break;
 	default:
 		break;
 	}

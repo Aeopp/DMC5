@@ -9,6 +9,9 @@
 #include "MainCamera.h"
 #include "Renderer.h"
 #include "MapObject.h"
+#include "MapAniObject.h"
+#include "BreakableObject.h"
+#include "CollObject.h"
 #include "Monster.h"
 #include "SoundSystem.h"
 
@@ -74,11 +77,13 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage4_Map.json");
+	LoadObjects("../../Data/Stage5_Map.json");
+	LoadObjects("../../Data/Stage5_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage5_Object.json");
+	LoadBreakablebjects("../../Data/Stage5_BreakableObject.json");
 
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(4);
-
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(5);
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
@@ -157,7 +162,7 @@ HRESULT Library_S05::LateUpdate(const float _fDeltaTime)
 }
 
 
-void Library_S05::LoadObjects(const std::filesystem::path& path)
+void Library_S05::LoadObjects(const std::filesystem::path& path, const bool _bAni)
 {
 	std::ifstream inputStream{ path };
 
@@ -216,6 +221,128 @@ void Library_S05::LoadObjects(const std::filesystem::path& path)
 	}
 };
 
+void Library_S05::LoadCollObjects(const std::filesystem::path& path)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+		Mesh::InitializeInfo _InitInfo{};
+		_InitInfo.bLocalVertexLocationsStorage = true;
+		Resources::Load<StaticMesh>(sFullPath, _InitInfo);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<CollObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+		}
+	}
+}
+
+void Library_S05::LoadBreakablebjects(const std::filesystem::path& path)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+
+
+		Resources::Load<StaticMesh>(sFullPath);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<BreakableObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+		}
+	}
+}
+
 void Library_S05::BgmPlay()
 {
 	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
@@ -255,6 +382,12 @@ void Library_S05::TriggerSetUp()
 void Library_S05::LateInit()
 {
 	// + 플레이어 초기 위치 잡기 등
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -11.1f, -3.483f, 32.696f });
+	}
 
 	Renderer::GetInstance()->LateSceneInit();
 

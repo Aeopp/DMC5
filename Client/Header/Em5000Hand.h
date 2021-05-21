@@ -48,6 +48,8 @@ public:
 	bool								  m_bLeft;
 
 	weak_ptr<SphereCollider>			m_pCollider;
+	weak_ptr<class ShockWave>			m_pWave;
+	weak_ptr<class Smoke>				m_pSmoke[2];
 };
 
 #endif // Em5000Hand_h__

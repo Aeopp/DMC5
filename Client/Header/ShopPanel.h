@@ -12,6 +12,8 @@ private:
 		STATUE_BG = 0,
 		REDORB,
 		CUSTOMIZE,
+		SELECT_CATEGORY,
+		SELECT_GUIDE,
 
 		DESC_END
 	};
@@ -42,26 +44,51 @@ private:
 	std::shared_ptr<ENGINE::Texture> _RedOrbATOSTex{};
 	std::shared_ptr<ENGINE::Texture> _RedOrbNRMRTex{};
 
+	std::shared_ptr<ENGINE::Texture> _SelectGuideTex{};
+	std::shared_ptr<ENGINE::Texture> _SelectCategoryFontTex{};
+
+	std::shared_ptr<ENGINE::Texture> _SelectCategoryCursorTex{};
+
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
-	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
+	Vector3 _LightDir = Vector3(-1.f, 1.f, 1.f);
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
-	Vector3 _DebugPos = Vector3(0.f, -0.07f, 7.f);
+	Vector3 _DebugPos = Vector3(640.f, 320.f, 0.5f);
 	Vector3 _DebugScale = Vector3(0.001f, 0.001f, 0.001f);
 	Vector3 _DebugRot = Vector3(0.f, 0.f, 0.f);
+	Vector2 _DebugMinUV = Vector2(0.f, 0.f);
+	Vector2 _DebugMaxUV = Vector2(1.f, 1.f);
 
 	enum FONT_ID
 	{
 		FT_REDORBCOUNT,
 		FT_CUSTOMIZE,
-
+	
 		FONT_END
 	};
 	std::vector<std::weak_ptr<class Font>> _FontVec;
 
 	std::weak_ptr<class BtlPanel> _BtlPanel;
+	
+	enum DEPTH
+	{
+		NONE = -1,
+		CATEGORY = 0
+	};
+	DEPTH _CurDepth = CATEGORY;
+	DEPTH _PreDepth = NONE;
+
+	enum CMD
+	{
+		CATEGORY_WEAPON = 1,
+		CATEGORY_ITEM = 2,
+	};
+	CMD _CurCmd = CATEGORY_WEAPON;
+	CMD _PreCmd = CATEGORY_WEAPON;
+
+	CMD _CategoryPreCmd = CATEGORY_WEAPON;
 
 private:
 	explicit ShopPanel() = default;

@@ -95,7 +95,7 @@ void Smoke::Imgui_Modify()
 
 		{
 			static float PlayingSpeed = _PlayingSpeed;
-			ImGui::SliderFloat("PlayingSpeed##Smoke", &PlayingSpeed, 0.1f, 10.f);
+			ImGui::SliderFloat("PlayingSpeed##Smoke", &PlayingSpeed, 0.1f, 100.f);
 			_PlayingSpeed = PlayingSpeed;
 		}
 

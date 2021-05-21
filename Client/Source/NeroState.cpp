@@ -9122,12 +9122,14 @@ HRESULT Pole_ComboA1::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboA1, false);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
 HRESULT Pole_ComboA1::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9174,7 +9176,10 @@ HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 	if (0.71 <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.45 <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA1_End", false, {}, true);
+	}
 
 	if (0.59f <= fCurrAnimationTime)
 	{
@@ -9207,12 +9212,14 @@ HRESULT Pole_ComboA2::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboA2, false);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
 HRESULT Pole_ComboA2::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9248,7 +9255,10 @@ HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 	if (0.72f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.36f <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA2_End", false, {}, true);
+	}
 
 	if (0.46f <= fCurrAnimationTime)
 	{
@@ -9281,12 +9291,14 @@ HRESULT Pole_ComboA3::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_HT, false);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
 HRESULT Pole_ComboA3::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9312,7 +9324,10 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 	if (0.72f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.53f <= fCurrAnimationTime)
+	{
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA3_End", false, {}, true);
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
+	}
 
 	if (0.53f <= fCurrAnimationTime)
 	{
@@ -9346,12 +9361,14 @@ HRESULT Pole_ComboB1::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB2_Loop, true);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
 HRESULT Pole_ComboB1::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9401,7 +9418,10 @@ HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 	if (0.83f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.53f <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB1_End", false, {}, true);
+	}
 
 	if (0.53f <= fCurrAnimationTime)
 	{
@@ -9430,12 +9450,14 @@ HRESULT Pole_ComboB2::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Pole_ComboB2", false, Nero::ANI_POLE_COMBOB2);
 	m_pNero.lock()->CheckAutoRotate();
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
 HRESULT Pole_ComboB2::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9485,7 +9507,10 @@ HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 	if (0.76f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.59f <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB2_End", false, {}, true);
+	}
 
 	if (0.62f <= fCurrAnimationTime)
 	{
@@ -9514,12 +9539,14 @@ HRESULT Pole_ComboB3::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Pole_ComboB3", false, Nero::ANI_POLE_COMBOB3);
 	m_pNero.lock()->CheckAutoRotate();
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
 HRESULT Pole_ComboB3::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9570,7 +9597,10 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	if (0.83 <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.53 <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB3_End", false, {}, true);
+	}
 
 	if (0.53f <= fCurrAnimationTime)
 	{
@@ -9603,12 +9633,14 @@ HRESULT Pole_ComboB4::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB2_End, false);
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
 HRESULT Pole_ComboB4::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9645,7 +9677,10 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 	if (0.81f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.55f <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB4_End", false, {}, true);
+	}
 
 	if (0.48f <= fCurrAnimationTime)
 	{
@@ -9683,6 +9718,7 @@ HRESULT Pole_WhirlWind_Start::StateEnter()
 			m_pPlayOnce[i] = true;
 		}
 	}
+	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9829,12 +9865,14 @@ HRESULT Pole_WhirlWind_End::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_HT, false);
 	}
+	m_bPlayOnce = true;
 	return S_OK;
 }
 
 HRESULT Pole_WhirlWind_End::StateExit()
 {
 	NeroState::StateExit();
+	m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 	return S_OK;
 }
 
@@ -9844,7 +9882,14 @@ HRESULT Pole_WhirlWind_End::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.25f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayOnce)
+		{
+			m_bPlayOnce = false;
+			m_pNero.lock()->PlayEffect(Eff_WhirlWind);
+		}
+	}
 	else if (0.21f <= fCurrAnimationTime)
 	{
 		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Long, ATTACKTYPE::Attack_KnocBack);
@@ -9867,7 +9912,10 @@ HRESULT Pole_WhirlWind_End::StateUpdate(const float _fDeltaTime)
 	if (0.8f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	else if (0.6f <= fCurrAnimationTime)
+	{
+		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_Flame_WhirlWInd_Club_Finish", false, {}, true);
+	}
 
 	return S_OK;
 }

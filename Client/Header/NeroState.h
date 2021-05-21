@@ -2048,6 +2048,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	bool		m_bPlayOnce = true;
 };
 
 class ComboA_Dash : public NeroState
