@@ -2167,9 +2167,11 @@ void PreLoader::DissolveParticlePoolLoad(
 		{
 			const uint32 Idx = FMath::Random(0u, uint32(_TargetMesh->m_spVertexLocations->size() - 1));
 			Vector3 StartLocation = (*_TargetMesh->m_spVertexLocations)[Idx];
-			Vector3 Cp0 = StartLocation + FMath::RandomVector(3.3f);
-			Vector3 Cp1 = Cp0 + FMath::RandomVector(30.f);
-			Vector3 End = Cp1 + FMath::RandomVector(50.f);
+
+			 Vector3 Cp0 = StartLocation + FMath::RandomVector(3.3f);
+			  Vector3 Cp1 = Cp0 + FMath::RandomVector(30.f);
+			  Vector3 End = Cp1 + FMath::RandomVector(50.f); 
+
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp0 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
@@ -2186,7 +2188,7 @@ void PreLoader::DissolveParticlePoolLoad(
 			const float LifeTime = FMath::Random(0.5f, 1.33f);
 			static const float StartT = 0.0f;
 
-			Cp0.y += FMath::Random(0.f,40.f);
+			Cp0.y += FMath::Random(0.f, 40.f);
 			Cp1.y += FMath::Random(0.f, 400.f);
 			End.y += FMath::Random(0.f, 1000.f);
 

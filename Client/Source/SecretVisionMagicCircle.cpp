@@ -261,7 +261,7 @@ UINT SecretVisionMagicCircle::Update(const float _fDeltaTime)
 	T += _fDeltaTime * Speed;
 	Sin = std::sinf(T);
 
-	if (bPlayedEndParticle == false && T >=  ( FMath::PI / 4.f) )
+	if (bPlayedEndParticle == false && T >=  (FMath::PI / 4.f) )
 	{
 		bPlayedEndParticle = true;
 
@@ -277,7 +277,11 @@ UINT SecretVisionMagicCircle::Update(const float _fDeltaTime)
 				for (int32 i = 0; i < _Particle.size(); ++i)
 				{
 					auto& _PlayInstance = _Particle[i];
-					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+
+					Matrix World = SpTransform->GetRenderMatrix();
+					*reinterpret_cast<Vector3*>(&World.m[3][0]) = PlayPos;	// ¤Ð¤Ð
+
+					_PlayInstance->PlayDescBind(World);
 				}
 			}
 		};

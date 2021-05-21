@@ -19,6 +19,9 @@
 #include "CollObject.h"
 #include "SoundSystem.h"
 #include "AnimationUpGround.h"
+#include "Smoke.h"
+#include "MakaiButterfly.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -55,16 +58,17 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Player & Camera
 
-	if (auto SpCamera = AddGameObject<Camera>().lock();
-			SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(
-			Vector3{ -1.77158f, 1.36541f, 23.73719 }
-		);
-	}
+	
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//		SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(
+	//		Vector3{ -1.77158f, 1.36541f, 23.73719f }
+	//	);
+	//}
 
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -101,6 +105,11 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Effect
 
+	if (auto Sp = AddGameObject<MakaiButterfly>().lock(); Sp)
+	{
+		// 보스가는길에 배치
+		Sp->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -162,7 +171,6 @@ HRESULT Hotel_S03::LateUpdate(const float _fDeltaTime)
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
 }
-
 
 void Hotel_S03::LoadObjects(const std::filesystem::path& path, const bool _bAni)
 {
@@ -436,21 +444,48 @@ void Hotel_S03::TriggerUpGround()
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
+		auto _Smoke0 = AddGameObject<Smoke>();
+		if (auto Sp = _Smoke0.lock(); Sp)
+			Sp->SetActive(false);
+		auto _Smoke1 = AddGameObject<Smoke>();
+		if (auto Sp = _Smoke1.lock(); Sp)
+			Sp->SetActive(false);
+
 		auto _AnimationUpground = AddGameObject<AnimationUpGround>();
 		const std::function<void()> _CallBack =
-			[_AnimationUpground]()
+			[_AnimationUpground, _Smoke0, _Smoke1]()
 		{
 			// 여기서 UpGround 로직 처리하세요 ... 
 			_AnimationUpground.lock()->ContinueAnimation();
 			// 땅이 솟아오름 !! .. 
+
+			//
+			if (auto Sp = _Smoke0.lock(); Sp)
+			{
+				Sp->SetActive(true);
+				Sp->SetPosition({ -2.4f, 0.24f, 27.8f });
+				Sp->SetScale(0.008f);
+				Sp->SetRotation({ 0.f, 344.681f, 0.f });
+				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
+				Sp->PlayStart(8.1f);
+			}
+			if (auto Sp = _Smoke1.lock(); Sp)
+			{
+				Sp->SetActive(true);
+				Sp->SetPosition({ -2.15f, 0.22f, 28.6f });
+				Sp->SetScale(0.008f);
+				Sp->SetRotation({ 0.f, 306.383f, 0.f });
+				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
+				Sp->PlayStart(8.3f);
+			}
 		};
 		
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -3.158700f ,0.565950f,27.829210f};
-		const Vector3 TriggerRotation{ 0.f ,0.f,0.f };
+		const Vector3 TriggerLocation{ -3.158700f, 0.565950f, 27.829210f };
+		const Vector3 TriggerRotation{ 0.f,0.f,0.f };
 
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 1.705f,1.0630f,0.827000f};
+		const Vector3 BoxSize{ 1.705f,1.0630f,0.827000f };
 		// 트리거 정보 등록하자마자 활성화 할까요 ?  
 		const bool ImmediatelyEnable = true;
 		// 트리거가 검사할 오브젝트 태그 
@@ -463,7 +498,7 @@ void Hotel_S03::TriggerUpGround()
 			TargetTag,
 			TriggerRotation);
 	}
-};
+}
 
 void Hotel_S03::TriggerNextScene()
 {
@@ -490,12 +525,12 @@ void Hotel_S03::TriggerNextScene()
 					});
 			}
 		};
-
+		
 		// 트리거 위치
 		const Vector3 TriggerLocation{
 			-4.610800f, 0.765100f ,36.625561f };
 		const Vector3 TriggerRotation{ -451.22879f, 13.12937f, 0.00000f };
-		;
+
 		// -4.55710 1.59400 37.21000
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 4.f,1.f,1.f };

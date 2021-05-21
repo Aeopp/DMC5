@@ -40,6 +40,7 @@
 #include "Satellite.h"
 #include "CbsLongTrail.h"
 #include "WhirlWind.h"
+#include "Change.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -162,7 +163,7 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 {
 	m_pEffOverture.lock()->PlayStart();
 	Matrix World = m_pTransform.lock()->GetWorldMatrix();
-	Vector3 Pos,Rot;
+	Vector3 Pos, Rot;
 	memcpy(&Pos, World.m[3], sizeof(Vector3));
 	switch (eDir)
 	{
@@ -183,7 +184,7 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 		break;
 	}
 	Vector3 MyRotation = (Transform::QuaternionToEuler(m_pTransform.lock()->GetQuaternion()));
-	
+
 	m_pEffOverture.lock()->SetRotation(MyRotation + Rot);
 	m_pEffOverture.lock()->SetPosition(Pos);
 }
@@ -203,7 +204,7 @@ std::list<std::weak_ptr<Monster>> Nero::GetAliveMonster()
 		if (!pMonster.lock()->Get_Dead())
 			_AliveMonsters.emplace_back(pMonster);
 	}
-	
+
 
 	return _AliveMonsters;
 }
@@ -224,7 +225,7 @@ HRESULT Nero::Ready()
 	RenderInit();
 
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 3.f, -5.02f});
+	m_pTransform.lock()->SetPosition(Vector3{ -4.8f, 3.f, -5.02f });
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -261,6 +262,8 @@ HRESULT Nero::Ready()
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
 	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
 
+	m_pChange = AddGameObject<Change>();
+
 	m_pCbsTrail = AddGameObject<CbsTrail>();
 	for (int i = 0; i < 3; ++i)
 	{
@@ -296,7 +299,7 @@ HRESULT Nero::Ready()
 
 	m_iCurAnimationIndex = ANI_END;
 	m_iPreAnimationIndex = ANI_END;
-	
+
 	return S_OK;
 }
 
@@ -343,11 +346,11 @@ UINT Nero::Update(const float _fDeltaTime)
 	Unit::Update(_fDeltaTime);
 
 	Update_Majin(_fDeltaTime);
-	
+
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
 
-	auto [Scale,Rot,Pos] =m_pMesh[m_iMeshIndex]->Update(_fDeltaTime);
+	auto [Scale, Rot, Pos] = m_pMesh[m_iMeshIndex]->Update(_fDeltaTime);
 	Pos.y = 0.f;
 
 	vAccumlatonDegree += Transform::QuaternionToEuler(Rot);
@@ -371,7 +374,7 @@ UINT Nero::Update(const float _fDeltaTime)
 	for (int i = 0; i < SP_END; ++i)
 	{
 		//if (m_pShapeParticle[i].lock()->IsPlaying())
-			m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
+		m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	}
 	/* ----------------------------------- */
 
@@ -379,6 +382,13 @@ UINT Nero::Update(const float _fDeltaTime)
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
 	//}
+
+	if (Input::GetKeyDown(DIK_1))
+	{
+		m_pBtlPanel.lock()->ConsumeTDTGauge(100.f);
+	}
+
+	
 
 	return 0;
 }
@@ -404,6 +414,7 @@ void Nero::OnDisable()
 
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	StopEffect(Tag_END);
 	m_pBlood.lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	m_pBlood.lock()->PlayStart(40.f);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
@@ -417,7 +428,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 			m_pRedQueen.lock()->SetWeaponState(WS_Idle);
 		else
 			SetCbsIdle();
-		
+
 		return;
 	}
 	switch (_BattleInfo.eAttackType)
@@ -473,7 +484,7 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 			return;
 		}
 	}
-		break;
+	break;
 	case Monster5000:
 	{
 		//현재 상태가 플라이 루프일때
@@ -506,9 +517,9 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		}
 	}
 	break;
-		//보스가 아니라 여러마리있는애들이면
-		//태그 검사이후에
-		//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
+	//보스가 아니라 여러마리있는애들이면
+	//태그 검사이후에
+	//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
 	}
 }
 
@@ -530,7 +541,7 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 			m_fFlySpeed = 0.f;
 			return;
 		}
-	break;
+		break;
 	case Monster5000:
 		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
 			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
@@ -540,7 +551,7 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 			m_fFlySpeed = 0.f;
 			return;
 		}
-	break;
+		break;
 	case Monster1000:
 		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
 			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
@@ -553,27 +564,27 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 			}
 			return;
 		}
-	break;
-	//보스가 아니라 여러마리있는애들이면
-	//태그 검사이후에
-	//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
+		break;
+		//보스가 아니라 여러마리있는애들이면
+		//태그 검사이후에
+		//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
 	}
 }
 
 void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	UINT iFsmTag = m_pFSM->GetCurrentIndex();
-	
+
 	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
 	switch (eTag)
 	{
-	case MonsterWeapon:	
+	case MonsterWeapon:
 		//회피기일때 탈출
-		if (NeroFSM::EVADE_L == iFsmTag	|| NeroFSM::EVADE_R == iFsmTag)
+		if (NeroFSM::EVADE_L == iFsmTag || NeroFSM::EVADE_R == iFsmTag)
 			return;
 		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
 			return;
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(),(void*)&_pOther);
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(), (void*)&_pOther);
 		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
 		break;
 	default:
@@ -667,7 +678,7 @@ void Nero::RenderDebugSK(const DrawInfo& _Info)
 void Nero::RenderInit()
 {
 	// ������ �����ؾ��ϴ� ������Ʈ��� (�������� ��� ����) �˸�.
-    // ���� �������̽� ��ӹ��� �ʾҴٸ� Ű��������.
+	// ���� �������̽� ��ӹ��� �ʾҴٸ� Ű��������.
 	SetRenderEnable(true);
 
 	// ���� �Ӽ� ��ü �ʱ�ȭ 
@@ -898,7 +909,7 @@ void Nero::SetAddForce(Vector3 _vJumpPos)
 	m_pCollider.lock()->AddForce(_vJumpPos);
 }
 
-void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
+void Nero::SetAddForce_Dir(NeroDirection _eDir, float _fPower)
 {
 	switch (_eDir)
 	{
@@ -917,7 +928,7 @@ void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
 		vFrontDownDir.y = -0.5f;
 		m_pCollider.lock()->AddForce(vFrontDownDir * _fPower);
 	}
-		break;
+	break;
 	default:
 		break;
 	}
@@ -1043,7 +1054,7 @@ void Nero::CheckAutoRotate()
 			fDot = -1.f + FLT_EPSILON;
 
 		float fRadian = acosf(fDot);
-		
+
 		Vector3	vCross;
 		D3DXVec3Cross(&vCross, &vLook, &vDir);
 
@@ -1141,7 +1152,7 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 
 	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
 	//와이어팔 회전할 각도 구해주는곳
-	
+
 	vLook = -m_pTransform.lock()->GetLook();
 	fDot = D3DXVec3Dot(&vNewDir, &vLook);
 	if (fDot > 1.f)
@@ -1382,7 +1393,7 @@ void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, co
 {
 	m_iPreAnimationIndex = m_iCurAnimationIndex;
 	m_iCurAnimationIndex = AnimationIndex;
-	m_pMesh[m_iMeshIndex]->PlayAnimation(InitAnimName, bLoop, _Notify, 1.f,1.f, bOverlap);
+	m_pMesh[m_iMeshIndex]->PlayAnimation(InitAnimName, bLoop, _Notify, 1.f, 1.f, bOverlap);
 }
 
 void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify, const bool bOverlap)
@@ -1492,7 +1503,7 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pCbsLong.lock()->SetActive(true);
 		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs,2);
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 2);
 		break;
 	}
 }
@@ -1520,11 +1531,14 @@ void Nero::ChangeWeaponCollSize(float _fSize)
 void Nero::ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap)
 {
 	m_pNewWingSword.lock()->SetActive(true);
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveEnd();
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveStart(true, false, 0.1f);
+	m_pNewWingSword.lock()->m_bDissovleOnce = true;
 	m_pNewWingSword.lock()->ChangeAnimation(_eAniList, _bLoop, _Overlap);
 }
 
 void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float CurRoll,
-	const int32 StartSpriteRow,	const float PlayTime, const Vector3& Scale)
+	const int32 StartSpriteRow, const float PlayTime, const Vector3& Scale)
 {
 	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
 	switch (_eTag)
@@ -1548,7 +1562,7 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 			m_pFireCircle[1].lock()->PlayStart(Rotation, vMyPos + Vector3{ 0.f,0.1f,0.f }, CurRoll, FMath::PI * 4.f, StartSpriteRow, PlayTime, 0, Scale);
 			break;
 		case 5://그 담으로 밝은거
-			m_pFireCircle[2].lock()->PlayStart(Rotation, vMyPos + Vector3{ 0.f,0.1f,0.f }, CurRoll, FMath::PI * 4.f, StartSpriteRow, PlayTime,0, Scale);
+			m_pFireCircle[2].lock()->PlayStart(Rotation, vMyPos + Vector3{ 0.f,0.1f,0.f }, CurRoll, FMath::PI * 4.f, StartSpriteRow, PlayTime, 0, Scale);
 			break;
 		}
 		break;
@@ -1578,7 +1592,7 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		}
 		break;
 	case Eff_CbsTrail:
-		if(Nero::ANI_CBS_SKILL_ICEAGE_END <= m_iCurAnimationIndex
+		if (Nero::ANI_CBS_SKILL_ICEAGE_END <= m_iCurAnimationIndex
 			&& m_iCurAnimationIndex <= Nero::ANI_CBS_SKILL_ICEAGE_START)
 			m_pCbsTrail.lock()->PlayStart(CbsTrail::IceAge);
 		else
@@ -1604,12 +1618,15 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		D3DXVec3TransformCoord(&vDir, &vDir, &RotX);
 		m_pLongBarrel.lock()->PlayStart(vMyPos, vDir);
 	}
-		break;
+	break;
 	case Eff_Satellite:
 		m_pSatellite.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
 		break;
 	case Eff_WhirlWind:
 		m_pWhirlWind.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
+		break;
+	case Eff_Change:
+		m_pChange.lock()->PlayStart(vMyPos);
 		break;
 	default:
 		break;
@@ -1655,6 +1672,17 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		break;
 	case Eff_Satellite:
 		m_pSatellite.lock()->PlayEnd();
+		break;
+	case Eff_Change:
+		m_pChange.lock()->PlayEnd();
+		break;
+	case Tag_END:
+		m_pTrail.lock()->PlayEnd();
+		m_pIceAge.lock()->PlayEnd();
+		m_pCbsTrail.lock()->PlayEnd();
+		m_pCbsMidTrail.lock()->PlayEnd();
+		m_pSatellite.lock()->PlayEnd();
+		m_pCbsLongTrail.lock()->PlayEnd();
 		break;
 	default:
 		break;
