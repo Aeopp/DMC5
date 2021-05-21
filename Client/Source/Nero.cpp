@@ -40,6 +40,7 @@
 #include "Satellite.h"
 #include "CbsLongTrail.h"
 #include "WhirlWind.h"
+#include "Change.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -261,6 +262,8 @@ HRESULT Nero::Ready()
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
 	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
 
+	m_pChange = AddGameObject<Change>();
+
 	m_pCbsTrail = AddGameObject<CbsTrail>();
 	for (int i = 0; i < 3; ++i)
 	{
@@ -379,6 +382,13 @@ UINT Nero::Update(const float _fDeltaTime)
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
 	//}
+
+	if (Input::GetKeyDown(DIK_1))
+	{
+		m_pBtlPanel.lock()->ConsumeTDTGauge(100.f);
+	}
+
+	
 
 	return 0;
 }
@@ -1521,6 +1531,9 @@ void Nero::ChangeWeaponCollSize(float _fSize)
 void Nero::ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap)
 {
 	m_pNewWingSword.lock()->SetActive(true);
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveEnd();
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveStart(true, false, 0.1f);
+	m_pNewWingSword.lock()->m_bDissovleOnce = true;
 	m_pNewWingSword.lock()->ChangeAnimation(_eAniList, _bLoop, _Overlap);
 }
 
@@ -1612,6 +1625,9 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 	case Eff_WhirlWind:
 		m_pWhirlWind.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
 		break;
+	case Eff_Change:
+		m_pChange.lock()->PlayStart(vMyPos);
+		break;
 	default:
 		break;
 	}
@@ -1656,6 +1672,9 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		break;
 	case Eff_Satellite:
 		m_pSatellite.lock()->PlayEnd();
+		break;
+	case Eff_Change:
+		m_pChange.lock()->PlayEnd();
 		break;
 	case Tag_END:
 		m_pTrail.lock()->PlayEnd();

@@ -42,6 +42,7 @@ class LongBarrel;
 class Satellite;
 class WhirlWind;
 class NewWingSword;
+class Change;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -535,6 +536,7 @@ private:
 	std::weak_ptr<WhirlWind>		m_pWhirlWind;
 	enum { SP_RED = 0, SP_GREEN, SP_WHITE, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
+	std::weak_ptr<Change>			m_pChange;
 
 	std::weak_ptr<JudgementSword>	m_pJudgementSword;
 	std::weak_ptr<JudgementShadow1> m_pJudgementShadow1;
