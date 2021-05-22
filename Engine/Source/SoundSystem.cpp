@@ -123,9 +123,9 @@ void SoundSystem::Play(
 
 		if (bBeginIfPlaying || !bPlay)
 		{
+			Channel->stop();
 			Result = FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
 		}
-
 
 		SoundInfo _SoundInfo{};
 		_SoundInfo.LoopInfo = std::nullopt;
@@ -340,7 +340,7 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 						{
 							const float Distance =
 								FMath::Length(SpListnerTransform->GetPosition() - TargetTransform->GetPosition());
-
+							Channel->stop();
 							FmodSystem->playSound(FmodSound.get(), nullptr, false, &Channel);
 
 							const float Volume = _SoundInfo.OriginVolume * _DistanceDecrease.GetFactor(Distance);
@@ -357,7 +357,7 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 						{
 							const float Distance =
 								FMath::Length(SpListnerTransform->GetPosition() - _SoundInfo.Location.value());
-
+							Channel->stop();
 							FmodSystem->playSound(FmodSound.get(), nullptr, false, &Channel);
 
 							const float Volume = _SoundInfo.OriginVolume * _DistanceDecrease.GetFactor(Distance);
@@ -367,6 +367,7 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 				}
 				else if (_SoundInfo._Option == SoundInfo::Option::None)
 				{
+					Channel->stop();
 					FmodSystem->playSound(FmodSound.get(), nullptr, false, &Channel);
 					Channel->setVolume(_SoundInfo.OriginVolume);
 				}
