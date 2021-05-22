@@ -42,8 +42,6 @@ private:
 	void RenderDataSetUp();
 	void MonsterWaveTriggerSetUp();
 	void TriggerSetUp();
-
-	void HitEffectLoad();
 	
 };
 #endif // !__TEST_SCENE_H__

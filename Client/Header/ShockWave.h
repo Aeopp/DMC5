@@ -18,6 +18,7 @@ public:
 		GoliathPunch,
 		Change,
 		Hit,
+		SnatchRush,
 		None,
 	};
 private:

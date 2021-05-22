@@ -21,6 +21,7 @@
 #include "SoundSystem.h"
 #include "TimeSystem.h"
 #include "BrokenPeople.h"
+#include "ShockWave.h"
 
 
 #include <iostream>

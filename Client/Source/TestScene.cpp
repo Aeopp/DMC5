@@ -56,6 +56,7 @@
 #include "Change.h"
 #include "SpriteEffect.h"
 #include "SoundSystem.h"
+#include "ShockWave.h"
 
 #include <iostream>
 #include <fstream>
@@ -84,6 +85,8 @@ HRESULT TestScene::LoadScene()
 
 	m_fLoadingProgress = 0.01f;
 
+	AddGameObject<ShockWave>();
+
 #pragma region PreLoad
 
 	PreLoader::PreLoadResources();
@@ -94,11 +97,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	// _Camera = AddGameObject<Camera>();
+	_Camera = AddGameObject<Camera>();
 
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
-
+	/*_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();*/
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -116,8 +118,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
-
+	LoadMap();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 
@@ -126,7 +127,6 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
-
 	RenderDataSetUp();
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();

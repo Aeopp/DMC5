@@ -63,6 +63,16 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		static_pointer_cast<Nero>(_pOther.lock())->Set_GrabEnd(true);
 	}
 
+	// 이호준 히트이펙트 디버깅용
+	/*if (auto Other = _pOther.lock() ;
+		Other)
+	{
+		auto _TargetTag = Other->m_nTag;
+		m_pHitWave[0].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+	}*/
+	// 
+
+
 	switch (_pOther.lock()->m_nTag)
 	{
 	case TAG_RedQueen:

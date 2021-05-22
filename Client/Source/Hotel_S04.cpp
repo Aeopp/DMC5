@@ -31,8 +31,7 @@ Hotel_S04* Hotel_S04::Create()
 {
 	Hotel_S04* pInstance = new Hotel_S04;
 	return pInstance;
-}
-
+};
 
 HRESULT Hotel_S04::LoadScene()
 {
@@ -72,8 +71,6 @@ HRESULT Hotel_S04::LoadScene()
 #pragma region Monster
 	auto _pMonster = AddGameObject<Em5000>();
 	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
-	
-
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
