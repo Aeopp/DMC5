@@ -13,6 +13,7 @@
 #include "Em5300Missile.h"
 #include "Em5300Rain.h"
 #include "Em5300Homing.h"
+#include "BtlPanel.h"
 
 void Em5300::Free()
 {
@@ -605,6 +606,14 @@ HRESULT Em5300::Awake()
 HRESULT Em5300::Start()
 {
 	Unit::Start();
+
+	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+
+	// 나중에 트리거를 밟으면 true로 바꾸도록 할것
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetBossGaugeActive(true);
+	///////////////////////////////////////////
+
 	return S_OK;
 }
 
@@ -701,6 +710,12 @@ void Em5300::OnDisable()
 
 void Em5300::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	AddRankScore(_BattleInfo.iAttack);
+	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+
 	if (!m_pBlood.expired())
 	{
 		int iRandom = FMath::Random<int>(0, 6);
@@ -708,8 +723,8 @@ void Em5300::Hit(BT_INFO _BattleInfo, void* pArg)
 			++iRandom;
 
 		auto pBlood = m_pBlood.lock();
-		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
-		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
+		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));
+		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));	// 아르테미스도 허리에 피 튀나염? - hscho
 		pBlood->SetScale(0.008f);
 		//pBlood->SetRotation()	// 상황에 맞게 각도 조절
 		pBlood->PlayStart(40.f);

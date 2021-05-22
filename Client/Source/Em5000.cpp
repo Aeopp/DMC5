@@ -1151,17 +1151,21 @@ HRESULT Em5000::Awake()
 HRESULT Em5000::Start()
 {
 	Unit::Start();
+
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+	
+	// 나중에 트리거를 밟으면 true로 바꾸도록 할것
 	if(!m_pBtlPanel.expired())
 		m_pBtlPanel.lock()->SetBossGaugeActive(true);
+	///////////////////////////////////////////
+
 	return S_OK;
 }
 
 UINT Em5000::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
-	if (!m_pBtlPanel.expired())
-		m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp)));
+
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -1265,6 +1269,9 @@ void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 }
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)

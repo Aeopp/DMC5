@@ -93,10 +93,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
+	AddGameObject<Camera>();
 
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	//_MainCamera = AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -117,8 +117,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(1);
 
 #pragma endregion
 
@@ -135,6 +135,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.7f;
 
 #pragma region Effect
+
 	//if (auto Sp = AddGameObject<StoneDebris>().lock();
 	//	Sp)
 	//{
@@ -142,7 +143,7 @@ HRESULT TestScene::LoadScene()
 	//	Sp->PlayStart();
 	//}
 
-	AddGameObject<MakaiButterfly>();
+	//AddGameObject<MakaiButterfly>();
 
 #pragma endregion
 
@@ -165,7 +166,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 5, Until Dooms Day",
+		pFont->SetText("D 4, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),

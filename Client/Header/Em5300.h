@@ -146,6 +146,7 @@ private:
 	Vector3	m_vPower;
 	bool	m_bFight = false;
 
+	std::weak_ptr<class BtlPanel>		  m_pBtlPanel;
 
 };
 
