@@ -78,7 +78,7 @@ public:
 		// 거리를 넘겨주지 않으면 요청한 볼륨 그대로 출력 ! 
 		// 거리를 넘겨주면 거리비례 감소 적용해서 내부적으로 볼륨 줄여서 재생 .
 		const std::optional<float>& Distance=std::nullopt,
-		// 재생 끝나면 자동으로 다시 재생 할까요 ?
+		// 재생 끝나면 자동으로 다시 재생 할까요 ? (0 이면 무조건 끝까지 재생하고 리플레이 0 을 초과하면 해당 값보다 플레이시간이 추월했을경우 리플레이  ) 
 		const std::optional<int32>& LoopEnd = std::nullopt);
 
 	// 거리기반으로 재생 ( 재생 시킨 이후에 거리를 다시 측정해서 볼륨을 조절해줌 ! 대상이 움직이지 않을때 사용.)
@@ -102,11 +102,13 @@ public:
 					  float Volume,
 				      const std::optional<float>& Distance = std::nullopt);
 
-	// 멈추기 . 
+	// 사운드 재생을 끝내버림 .
 	void Stop(const std::string & SoundKey)&;
 	void Load(const std::string & FullPath, std::string Key)&;
-	// 현재 재생중인가 ? 
+	// 현재 재생중인가요 ?
 	bool IsPlay(const std::string & SoundKey)const&;
+	// 재생 중이지 않을 경우 음수 재생 중일 경우 현재 포지션 리턴 .
+	int32 CurrentPosition(const std::string& SoundKey)const&;
 	// 랜덤 사운드 . 네이밍 규칙은 ex [ Rs_1 ,Rs_2 , Rs_3 .... Rs_n ] 이다 .
 	/*   호출 방법 ex "Rs",{1u,3u} .*/
 	void RandSoundKeyPlay(
@@ -121,6 +123,7 @@ public:
 	void SetDisanceDecrease(const  float  DistanceMin
 							,const float DistanceMax,
 							std::weak_ptr<Transform> ListenerTransform);
+	void ClearSound();
 private:
 	std::unordered_map<std::string, SoundType> Sounds{};
 	std::unordered_map<std::string, SoundInfo> CurSoundInfoMap{};
