@@ -32,7 +32,10 @@ using namespace std;
 
 Hotel_S02::Hotel_S02()
 {
-
+	for (auto& Element : m_vecQliphothBlock)
+		Destroy(Element);
+	m_vecQliphothBlock.clear();
+	m_vecQliphothBlock.shrink_to_fit();
 }
 
 void Hotel_S02::Free()
@@ -68,14 +71,14 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	}
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	//}
 	
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -113,6 +116,9 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
+	// Stage3 길막
+	m_vecQliphothBlock.reserve(3);
+
 	// 0: StartPoint 
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
 		!ptr.expired())
@@ -121,6 +127,29 @@ HRESULT Hotel_S02::LoadScene()
 		ptr.lock()->SetRotation(Vector3(0.f, 0.f, 0.f));
 		ptr.lock()->SetPosition(Vector3(-3.631f, 0.4f, 11.43f));
 		ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+
+	// 1 ~ 2: 마지막 방
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.002f);
+		ptr.lock()->SetRotation(Vector3(0.f, 180.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-3.3f, 1.47f, 21.96f));
+		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.003f);
+		ptr.lock()->SetRotation(Vector3(0.f, 0.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-1.718f, 1.52f, 23.42f));
+		ptr.lock()->SetActive(false);
+		//ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 
 	//
@@ -640,7 +669,7 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 			AddGameObject<Em0000>(),
 			AddGameObject<Em0000>(),
 			AddGameObject<Em0000>(),
-			AddGameObject<Em0000>()
+			//AddGameObject<Em0000>()
 		};
 
 		// 몬스터 위치는 미리 잡아주기  . 
@@ -653,8 +682,8 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -3.126f, 1.367f, 22.957f });
 
-		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -3.180f, 1.367f, 22.462f });
+		//MonsterWave[3].lock()->GetComponent<Transform>().
+		//	lock()->SetPosition({ -3.180f, 1.367f, 22.462f });
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -2.573f, 1.820050f, 22.48850f };
@@ -681,17 +710,15 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 				if (auto SpTargetLight = TargetLight.lock();
 					SpTargetLight)
 				{
-					SpTargetLight->lightFlux *= 0.6f;
+					SpTargetLight->lightFlux *= 0.3f;
 				}
 			};
 
 			PtLightDecrease(Renderer::GetInstance()->RefPointLights(15));
 			PtLightDecrease(Renderer::GetInstance()->RefPointLights(16));
 
-
-
-			/*	
-			for (uint32 i = 1u; i < 4u; ++i)
+			//
+			for (uint32 i = 1u; i < 3u; ++i)
 			{
 				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
 				{
@@ -699,7 +726,6 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 					m_vecQliphothBlock[i].lock()->PlayStart();
 				}
 			}
-			*/
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
@@ -711,8 +737,14 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 			//	_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
 			//}
 
-
-
+			//
+			for (uint32 i = 1u; i < 3u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->Reset();
+				}
+			}
 
 			//
 			if (auto Sp = _BtlPanel.lock(); Sp)
@@ -797,7 +829,7 @@ void Hotel_S02::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.4f, 11.75365f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.077f, 11.75365f });
 		SpPlayer->SetAngle(180.f);
 	}
 
@@ -829,21 +861,21 @@ void Hotel_S02::LateInit()
 		SpObject)
 	{
 		// 퍼즐용 나비
-		SpObject->SetPosition({ -4319.212f * GScale, 240.248f * GScale, 16593.594f * GScale });
+		SpObject->SetPosition({ -4319.212f * GScale, 340.248f * GScale, 16593.594f * GScale });
 		SpObject->SetActive(false);
 	}
 	if (auto SpObject = _MakaiButterflyVec[3].lock();
 		SpObject)
 	{
 		// 퍼즐용 나비
-		SpObject->SetPosition({ -804.781f * GScale, 867.678f * GScale, 16376.986f * GScale });
+		SpObject->SetPosition({ -804.781f * GScale, 967.678f * GScale, 16376.986f * GScale });
 		SpObject->SetActive(false);
 	}
 	if (auto SpObject = _MakaiButterflyVec[4].lock();
 		SpObject)
 	{
 		// 퍼즐용 나비
-		SpObject->SetPosition({ -4696.414f * GScale, 1453.205f * GScale, 15569.233f * GScale });
+		SpObject->SetPosition({ -4696.414f * GScale, 1553.205f * GScale, 15569.233f * GScale });
 		SpObject->SetActive(false);
 	}
 

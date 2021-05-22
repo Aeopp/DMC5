@@ -253,7 +253,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 
 	if (MakaiButterfly::VARIATION::MOVE_FORWARD == _VariationIdx)
 	{
-		if (80.f < _AccumulateTime)
+		if (55.f < _AccumulateTime)
 			_IsAlive = false;
 
 		auto WeakTransform = GetComponent<ENGINE::Transform>();

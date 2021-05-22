@@ -113,7 +113,7 @@ void Monster::Set_Snatch(bool _bSnatch)
 void Monster::AddRankScore(float _fRankScore)
 {
 	//넘겨주는 값은 들어온 공격력 만큼인데 지금 너무낮아서 올려버림
-	return m_pPlayer.lock()->AddRankScore(_fRankScore * 5.f);
+	return m_pPlayer.lock()->AddRankScore(_fRankScore * 3.f);
 }
 
 void Monster::StoneDebrisInit()

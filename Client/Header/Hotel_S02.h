@@ -12,6 +12,7 @@ private:
 	std::weak_ptr<class MainCamera> _MainCamera{};
 	std::vector<std::weak_ptr<class MakaiButterfly>> _MakaiButterflyVec{};
 	std::weak_ptr<class SecretVision> _SecretVision{};
+	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
 	bool _LateInit = false;
 private:
 	explicit Hotel_S02();
