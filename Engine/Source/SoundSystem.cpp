@@ -18,18 +18,30 @@ void SoundSystem::Free()
 
 void SoundSystem::PlayFromLocation(
 	const std::string& SoundKey,
-	float Volume,
+	const float Volume,
 	const bool bBeginIfPlaying,
 	const std::optional<Vector3>& TargetLocation,
-	const bool bLoop)
+	const std::optional<float>& LoopEnd)
 {
 	if (TargetLocation.has_value())
 	{
-		if (auto SpTargetTransform = TargetTransform.lock();
-			SpTargetTransform)
+		if (auto SpListenerTransform = ListenerTransform.lock();
+			SpListenerTransform)
 		{
-			const float Distance = FMath::Length(TargetLocation.value()-SpTargetTransform->GetPosition());
-			Play(SoundKey, Volume, bBeginIfPlaying, Distance, bLoop);
+			const float Distance = FMath::Length(TargetLocation.value() - SpListenerTransform->GetPosition());
+			Play(SoundKey, Volume, bBeginIfPlaying, Distance, LoopEnd);
+
+			SoundInfo _SoundInfo{};
+			_SoundInfo.LoopInfo = std::nullopt;
+			if (LoopEnd)
+			{
+				_SoundInfo.LoopInfo = LoopEnd.value();
+			}
+			_SoundInfo.Location = TargetLocation.value();
+			_SoundInfo.OriginVolume = Volume;
+			_SoundInfo._Option = SoundInfo::Option::Static;
+			_SoundInfo._Transform = {};
+			CurSoundInfoMap[SoundKey] = _SoundInfo;
 		}
 		else
 		{
@@ -38,7 +50,53 @@ void SoundSystem::PlayFromLocation(
 	}
 	else
 	{
-		Play(SoundKey, Volume, bBeginIfPlaying, std::nullopt, bLoop);
+		Play(SoundKey, Volume, bBeginIfPlaying, std::nullopt, LoopEnd);
+	}
+};
+
+void SoundSystem::PlayFromLocation(
+	const std::string& SoundKey, 
+	float Volume,
+	const bool bBeginIfPlaying, const std::weak_ptr<Transform>& TargetTransform, 
+	const std::optional<float>& LoopEnd )
+{
+	if (auto SpListenerTransform = ListenerTransform.lock();
+		SpListenerTransform)
+	{
+		if (auto SpTargetTransform = TargetTransform.lock();
+			SpTargetTransform)
+		{
+			const float Distance = FMath::Length(SpListenerTransform->GetPosition() -
+												SpTargetTransform->GetPosition());
+
+			Play(SoundKey, Volume, bBeginIfPlaying, Distance, LoopEnd);
+
+			{
+				SoundInfo _SoundInfo{};
+
+				_SoundInfo._Transform = TargetTransform;
+				_SoundInfo.LoopInfo = std::nullopt;
+				if (LoopEnd)
+				{
+					_SoundInfo.LoopInfo = LoopEnd.value();
+				}
+				_SoundInfo.OriginVolume = Volume;
+				_SoundInfo._Option = SoundInfo::Option::Dynamic;
+				_SoundInfo.Location = std::nullopt;
+
+				CurSoundInfoMap[SoundKey] = _SoundInfo;
+			}
+		
+		}
+		else
+		{
+			PRINT_LOG(L"Warning!", L"거리를 비교할 트랜스폼을 설정 안한거 같음.");
+		}
+	}
+	else
+	{
+		Play(SoundKey, Volume, bBeginIfPlaying, std::nullopt, LoopEnd);
+
 	}
 };
 
@@ -47,7 +105,7 @@ void SoundSystem::Play(
 	float Volume,
 	const bool bBeginIfPlaying,
 	const std::optional<float>& Distance,
-	const bool bLoop)
+	const std::optional<float>& LoopEnd)
 {
 	FMOD_RESULT Result;
 	bool bPlay = false;
@@ -66,12 +124,19 @@ void SoundSystem::Play(
 			if (bBeginIfPlaying || !bPlay)
 			{
 				Result = FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
-				if (bLoop)
+
+				SoundInfo _SoundInfo{};
+				_SoundInfo.LoopInfo = std::nullopt;
+				if (LoopEnd)
 				{
-					LoopInfo _InsertLoopInfo{};
-					_InsertLoopInfo.Volume = Volume;
-					LoopSoundMap[SoundKey] = _InsertLoopInfo;
+					_SoundInfo.LoopInfo = LoopEnd.value();
 				}
+				_SoundInfo.Location = std::nullopt;
+				_SoundInfo.OriginVolume = Volume;
+				_SoundInfo._Option = SoundInfo::Option::None;
+				_SoundInfo._Transform = {};
+
+				CurSoundInfoMap[SoundKey] = _SoundInfo;
 			}
 
 			Channel->setVolume(Volume);
@@ -85,6 +150,8 @@ void SoundSystem::VolumeChange(const std::string& SoundKey,
 {
 	FMOD_RESULT Result;
 	bool bPlay = false;
+
+	const float OriginVolume = Volume;
 
 	if (Distance)
 	{
@@ -100,11 +167,9 @@ void SoundSystem::VolumeChange(const std::string& SoundKey,
 			if (bPlay)
 			{
 				Channel->setVolume(Volume);
-
-				if (auto LoopSoundIter = LoopSoundMap.find(SoundKey);
-					LoopSoundIter != LoopSoundMap.end())
+				if (CurSoundInfoMap.contains(SoundKey))
 				{
-					LoopSoundIter->second.Volume = Volume;
+					CurSoundInfoMap[SoundKey].OriginVolume = OriginVolume;
 				}
 			}
 		}
@@ -117,7 +182,7 @@ void SoundSystem::Stop(const std::string& SoundKey)&
 	{
 		auto& Channel = iter->second.second;
 		Channel->stop();
-		LoopSoundMap.erase(SoundKey);
+		CurSoundInfoMap.erase(SoundKey);
 	}
 };
 
@@ -173,16 +238,15 @@ void SoundSystem::RandSoundKeyPlay(
 	Play(SoundKey + "_" + std::to_string(Distribution(Mt19937)), 
 		Volume, bBeginIfPlaying ,
 		Distance,bLoop);
-
 }
 
 
 void SoundSystem::SetDisanceDecrease(const float DistanceMin, const float DistanceMax ,
-									std::weak_ptr<Transform> TargetTransform)
+									std::weak_ptr<Transform> ListenerTransform)
 {
 	_DistanceDecrease.DistanceMin = DistanceMin;
 	_DistanceDecrease.DistanceMax = DistanceMax;
-	this->TargetTransform = TargetTransform;
+	this->ListenerTransform = ListenerTransform;
 };
 
 HRESULT SoundSystem::ReadySoundSystem(const std::filesystem::path& SoundDirectoryPath)
@@ -226,22 +290,110 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 	// Update 함수는 매프레임마다 반드시 호출해줘야함을 요구함
 	FmodSystem->update();
 
-	// 무한 재생 루프
-	for (auto&  [LoopSoundKey,LoopDesc]: LoopSoundMap)
+	for (auto& [SoundKey, _SoundType] : Sounds)
 	{
-		auto iter = Sounds.find(LoopSoundKey);
-		if (iter != std::end(Sounds))
+		if (auto iter = CurSoundInfoMap.find(SoundKey);
+			iter != std::end(CurSoundInfoMap))
 		{
-			auto& [Sound, Channel] = iter->second;
-
+			auto& _SoundInfo = iter->second;
 			bool bPlayed = false;
+			auto& [FmodSound,Channel] = _SoundType;
 			Channel->isPlaying(&bPlayed);
+
+			// 재생중이 아님 !! 
 			if (!bPlayed)
 			{
-				FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
-				Channel->setVolume(LoopDesc.Volume);
+				// 루프 !! 
+				if (_SoundInfo.LoopInfo)
+				{
+					
+					if (_SoundInfo._Option == SoundInfo::Option::Dynamic)
+					{
+						if (auto TargetTransform = _SoundInfo._Transform.lock();
+							TargetTransform)
+						{
+							if (auto SpListnerTransform = ListenerTransform.lock();
+								SpListnerTransform)
+							{
+								const float Distance = 
+									FMath::Length(SpListnerTransform->GetPosition() - TargetTransform->GetPosition());
+
+								FmodSystem->playSound(FmodSound.get(), nullptr, false, &Channel);
+								
+								const float Volume = _SoundInfo.OriginVolume * _DistanceDecrease.GetFactor(Distance);
+								Channel->setVolume(Volume);
+							}
+						}
+					}
+					else if (_SoundInfo._Option == SoundInfo::Option::Static)
+					{
+							if (auto SpListnerTransform = ListenerTransform.lock();
+								SpListnerTransform)
+							{
+								if (_SoundInfo.Location)
+								{
+									const float Distance =
+										FMath::Length(SpListnerTransform->GetPosition() - _SoundInfo.Location.value());
+
+									FmodSystem->playSound(FmodSound.get(), nullptr, false, &Channel);
+
+									const float Volume = _SoundInfo.OriginVolume * _DistanceDecrease.GetFactor(Distance);
+									Channel->setVolume(Volume);
+								}
+							}
+					}
+					else if (_SoundInfo._Option == SoundInfo::Option::None)
+					{
+						FmodSystem->playSound(FmodSound.get(), nullptr, false, &Channel);
+						Channel->setVolume(_SoundInfo.OriginVolume);
+					}
+				}
+				else // 루프 옵션이 아님 !! 
+				{
+					CurSoundInfoMap.erase(SoundKey);
+				}
 			}
-		};
+			else
+			{
+				const float LoopEndPosition = *_SoundInfo.LoopInfo;
+
+				if (_SoundInfo._Option == SoundInfo::Option::Dynamic)
+				{
+					if (auto TargetTransform = _SoundInfo._Transform.lock();
+						TargetTransform)
+					{
+						if (auto SpListnerTransform = ListenerTransform.lock();
+							SpListnerTransform)
+						{
+							const float Distance =
+								FMath::Length(SpListnerTransform->GetPosition() - TargetTransform->GetPosition());
+
+							const float Volume = _SoundInfo.OriginVolume * _DistanceDecrease.GetFactor(Distance);
+							Channel->setVolume(Volume);
+						}
+					}
+				}
+				else if (_SoundInfo._Option == SoundInfo::Option::Static)
+				{
+					if (auto SpListnerTransform = ListenerTransform.lock();
+						SpListnerTransform)
+					{
+						if (_SoundInfo.Location)
+						{
+							const float Distance =
+								FMath::Length(SpListnerTransform->GetPosition() - _SoundInfo.Location.value());
+
+							const float Volume = _SoundInfo.OriginVolume * _DistanceDecrease.GetFactor(Distance);
+							Channel->setVolume(Volume);
+						}
+					}
+				}
+				else if (_SoundInfo._Option == SoundInfo::Option::None)
+				{
+					
+				}
+			}
+		}
 	};
 
 	return S_OK;
@@ -283,6 +435,15 @@ void SoundSystem::Editor()
 			{
 				Stop(_SoundKey);
 			};
+
+			bool bPlayed = false;
+			_Channel.second->isPlaying(&bPlayed);
+			unsigned int Position{ 0 };
+			_Channel.second->getPosition(&Position,FMOD_TIMEUNIT_MS);
+
+			std::string Msg = bPlayed ? "Play" : "Stop";
+			Msg += ("Position : " + std::to_string(Position));
+			ImGui::Text(Msg.c_str());
 
 			ImGui::TreePop();
 		}

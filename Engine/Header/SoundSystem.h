@@ -35,14 +35,19 @@ public:
 		float GetFactor(const float Distance)const;
 	};
 
-	struct DistanceInfo
+	struct SoundInfo
 	{
-	
-	};
-
-	struct LoopInfo
-	{
-		float Volume = 1.f;
+		enum class Option :uint8
+		{
+			None=0u,
+			Static,
+			Dynamic,
+		};
+		std::optional<float> LoopInfo{std::nullopt};
+		Option _Option = Option::None;
+		std::optional<Vector3> Location{ std::nullopt };
+		std::weak_ptr<Transform> _Transform{};
+		float OriginVolume = 1.f;
 	};
 
 	static inline auto FmodDeleter = [](auto  Target)
@@ -53,6 +58,7 @@ public:
 		std::unique_ptr<FMOD::Sound,decltype(FmodDeleter)>, FMOD::Channel*>;
 	std::unique_ptr<FMOD::System,decltype(FmodDeleter)> FmodSystem{};
 
+	// 거리기반으로 재생 ( 재생 시킨 이후에 거리를 다시 측정해서 볼륨을 조절해주지 않음)
 	void Play(
 		// 사운드 키 (확장자 필요없음 ) 
 		const std::string & SoundKey,
@@ -64,15 +70,23 @@ public:
 		// 거리를 넘겨주면 거리비례 감소 적용해서 내부적으로 볼륨 줄여서 재생 .
 		const std::optional<float>& Distance=std::nullopt,
 		// 재생 끝나면 자동으로 다시 재생 할까요 ?
-		const bool bLoop=false);
+		const std::optional<float>& LoopEnd = std::nullopt);
 
+	// 거리기반으로 재생 ( 재생 시킨 이후에 거리를 다시 측정해서 볼륨을 조절해줌 ! 대상이 움직이지 않을때 사용.)
 	void PlayFromLocation(
 		const std::string& SoundKey,
-		float Volume,
+		const float Volume,
 		const bool bBeginIfPlaying,
 		const std::optional<Vector3>& TargetLocation = std::nullopt,
-		const bool bLoop = false);
+		const std::optional<float>&  LoopEnd = std::nullopt);
 
+	// 거리기반으로 재생 ( 재생 시킨 이후에 거리를 다시 측정해서 볼륨을 조절해줌 ! 대상이 움직일때 사용.)
+	void PlayFromLocation(
+		const std::string& SoundKey,
+		const float Volume,
+		const bool bBeginIfPlaying,
+		const std::weak_ptr<Transform>& TargetTransform = {},
+		const std::optional<float>& LoopEnd = std::nullopt);
 
 	// 해당 사운드 키가 재생 중이라면 볼륨을 바꿔줘요 .
 	void VolumeChange(const std::string& SoundKey,
@@ -97,13 +111,13 @@ public:
 	// 씬마다 해야 할듯.
 	void SetDisanceDecrease(const  float  DistanceMin
 							,const float DistanceMax,
-							std::weak_ptr<Transform> _Transform);
+							std::weak_ptr<Transform> ListenerTransform);
 private:
 	std::unordered_map<std::string, SoundType> Sounds{};
-	std::unordered_map<std::string, DistanceInfo> DistanceInfoMap{};
+	std::unordered_map<std::string, SoundInfo> CurSoundInfoMap{};
+
 	DistanceDecrease _DistanceDecrease{};
-	std::map<std::string, LoopInfo > LoopSoundMap{};
-	std::weak_ptr<Transform> TargetTransform{};
+	std::weak_ptr<Transform> ListenerTransform{};
 public:
 	// 거리 비례 감소 활성화 여부 .
 	HRESULT ReadySoundSystem(const std::filesystem::path & SoundDirectoryPath);
