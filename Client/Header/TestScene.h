@@ -8,6 +8,7 @@ private:
 	physx::PxRigidStatic* pPlane;
 
 	// 임시 트리거 
+	std::weak_ptr<class Camera> _Camera{};
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class Em1000> _Em1000{};
 	std::weak_ptr<class MainCamera> _MainCamera{};

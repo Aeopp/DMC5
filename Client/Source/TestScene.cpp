@@ -55,6 +55,7 @@
 #include "Trail.h"
 #include "Change.h"
 #include "SpriteEffect.h"
+#include "SoundSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -93,10 +94,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	AddGameObject<Camera>();
+	// _Camera = AddGameObject<Camera>();
 
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -117,8 +118,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(1);
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);
 
 #pragma endregion
 
@@ -180,6 +181,11 @@ HRESULT TestScene::LoadScene()
 
 	// Load Complete
 	m_fLoadingProgress = 1.f;
+
+	if (_Camera.expired() == false)
+	{
+		SoundSystem::GetInstance()->SetDisanceDecrease(0.1f, 3.f, _Camera.lock()->GetComponent<Transform>());
+	};
 
 	return S_OK;
 }

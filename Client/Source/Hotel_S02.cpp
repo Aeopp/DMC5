@@ -24,6 +24,7 @@
 #include "Smoke.h"
 #include "QliphothBlock.h"
 #include "TimeSystem.h"
+#include "Em0000.h"
 
 #include <iostream>
 #include <fstream>
@@ -67,11 +68,13 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	//}
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	}*/
+	
+	
 
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -402,7 +405,7 @@ void Hotel_S02::TriggerSetUp()
 	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
 	TriggerPuzzleStart();
 	TriggerWallSmash();
-	TriggerNextScene();
+	TriggerLastRoomBattle(TriggerNextScene());
 }
 
 void Hotel_S02::TriggerWallSmash()
@@ -620,9 +623,118 @@ void Hotel_S02::TriggerPuzzleStart()
 			ImmediatelyEnable,
 			TargetTag);
 	}
-}
+};
 
-void Hotel_S02::TriggerNextScene()
+void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger)
+{
+	// 트리거 생성 !! 
+	std::shared_ptr<Trigger> _BattleTrigger{};
+	if (_BattleTrigger = AddGameObject<Trigger>().lock();
+		_BattleTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -2.313 , 1.367, 23.006 });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -2.176, 1.367,  22.574 });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -3.126 , 1.367,  22.957 });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -3.180, 1.367,22.462});
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -2.573f,1.820050f,22.48850f};
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 2.524000f,1.f,0.894000f};
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			};
+
+			auto PtLightDecrease = [](std::weak_ptr<FLight> TargetLight)
+			{
+				if (auto SpTargetLight = TargetLight.lock();
+					SpTargetLight)
+				{
+					SpTargetLight->lightFlux *= 0.6f;
+					SpTargetLight->Color = D3DXCOLOR(1.f,
+						0.5f, 0.5f, 1.f);
+				}
+			};
+
+			PtLightDecrease(Renderer::GetInstance()->RefPointLights(15));
+			PtLightDecrease(Renderer::GetInstance()->RefPointLights(16));
+
+		/*	for (uint32 i = 1u; i < 4u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->SetActive(true);
+					m_vecQliphothBlock[i].lock()->PlayStart();
+				}
+			}*/
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this,
+			_NextSceneTrigger]()
+		{
+			//... 여기서 로직 처리하세요 . 
+			if (_MainCamera.expired() == false)
+			{
+				_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
+			}
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			}
+
+			if (_NextSceneTrigger.expired() == false)
+			{
+				_NextSceneTrigger.lock()->TriggerEnable();
+			}
+		};
+
+		_BattleTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	};
+};
+
+
+std::weak_ptr<Trigger>  Hotel_S02::TriggerNextScene()
 {
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
@@ -653,7 +765,7 @@ void Hotel_S02::TriggerNextScene()
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 4.f,1.f,1.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
-		const bool ImmediatelyEnable = true;
+		const bool ImmediatelyEnable = false;
 		// 트리거가 검사할 오브젝트 태그 
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
 
@@ -662,7 +774,11 @@ void Hotel_S02::TriggerNextScene()
 			BoxSize,
 			ImmediatelyEnable,
 			TargetTag);
+
+		return _Trigger;
 	}
+
+	return std::weak_ptr<Trigger>();
 }
 
 void Hotel_S02::BgmPlay()

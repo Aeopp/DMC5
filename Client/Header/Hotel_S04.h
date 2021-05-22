@@ -27,7 +27,8 @@ private:
 	void LoadObjects(const std::filesystem::path& path);
 	void BgmPlay();
 	void RenderDataSetUp(const bool bTest);
-	void TriggerSetUp();
+	void TriggerSetUp(); 
+	void TriggerMeetingWithGoliath();
 	void LateInit();
 };
 #endif // !__M01_HOTEL_S04_H__
