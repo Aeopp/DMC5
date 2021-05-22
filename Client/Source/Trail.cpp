@@ -503,7 +503,6 @@ void Trail::ParticleUpdate(const float _fDeltaTime)
 			}
 		}
 	}
-	
 }
 
 UINT Trail::LateUpdate(const float _fDeltaTime)

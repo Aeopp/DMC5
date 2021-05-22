@@ -107,10 +107,19 @@ void ShockWave::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetFloat("BlurMaxLength", BlurMaxLength);
 	_Info.Fx->SetFloat("BlurAlpha", FMath::Lerp(BlurAlpha.first, BlurAlpha.second, LerpT));
+	
 	_Info.Fx->SetFloat("DistortionAlpha", DistortionAlpha);
 	_Info.Fx->SetVector("_Color", &Color); 
 	_Info.Fx->SetBool("bBlurMsk", bBlurMsk);
 	_Info.Fx->SetTexture("BlurMskMap", BlurMskMap->GetTexture());
+
+	if (bDirectionReverse==false)
+		_Info.Fx->SetFloat("DirectionFactor", 1.f);
+	else
+		_Info.Fx->SetFloat("DirectionFactor", -1.f);
+
+
+	
 
 	if (bBlurMsk)
 	{
@@ -229,6 +238,9 @@ void ShockWave::Editor()
 			}
 			
 			ImGui::Checkbox("BlurMsk", &bEditBlurMsk);
+			ImGui::Checkbox
+			("bDirectionReverse", &bDirectionReverse);
+			
 			
 			ImGui::SliderInt("Option", &EditOption, 0, Option::None);
 
@@ -356,19 +368,20 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		Color = { 15.f / 255.f , 0.f / 255.f ,0.f / 255.f ,5.f / 255.f };
 		break;
 	case Option::Hit:
-		PlayTime = 0.25f;
-		EndT = 0.25f;
+		PlayTime = 0.55f;
+		EndT = 0.55f;
 		DistortionIntencity = 0.000f;
-		ScaleLerp.first = 0.002f;
-		ScaleLerp.second = 0.005f;
-		BlurIntencity.first = 1.f;
-		BlurIntencity.second = 2.f;
-		BlurAlpha.first = 0.5;
-		BlurAlpha.second = 1.f;
-		BlurMaxLength = 34.5f;
-		DistortionAlpha = 1.f;
+		ScaleLerp.first = 0.0f;
+		ScaleLerp.second = 0.0065f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 4.0f;
+		BlurAlpha.first = 0.0f;
+		BlurAlpha.second = 0.40f;
+		BlurMaxLength = 70.f;
+		DistortionAlpha = 0.0f;
 		Color = { 0.0f/ 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
 		this->bBlurMsk = true;
+		this->bDirectionReverse = true;
 		break;
 	case Option::SnatchRush:
 		PlayTime = 0.4f;

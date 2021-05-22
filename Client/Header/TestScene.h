@@ -39,7 +39,7 @@ public:
 
 private:
 	void LoadMap();
-	void RenderDataSetUp();
+	void RenderDataSetUp(const bool bTestLight);
 	void MonsterWaveTriggerSetUp();
 	void TriggerSetUp();
 	

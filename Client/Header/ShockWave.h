@@ -53,6 +53,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	bool bDirectionReverse = false;
 	bool bBlurMsk = false;
 	float T = 0.0f;
 	float EndT = 1.f;
