@@ -25,6 +25,13 @@ private:
 	virtual ~SoundSystem() = default;
 	// Object을(를) 통해 상속됨
 	virtual void Free() override;
+
+	/*struct SoundTransform
+	{
+		Vector3 Position{};
+		Vector3 GetPosition() { return Position; };
+	};
+	using SoundTransformType = SoundTransform;*/
 public:
 	// 거리가 Min 보다 작거나 같으면 볼륨 그대로 Min ~ Max 사이에 있다면 선형으로 감소 . 
 	// Max 보다 크다면 0 
@@ -37,13 +44,15 @@ public:
 
 	struct SoundInfo
 	{
-		enum class Option :uint8
+		enum Option : int32
 		{
 			None=0u,
 			Static,
 			Dynamic,
+
+			Max,
 		};
-		std::optional<float> LoopInfo{std::nullopt};
+		std::optional<int32> LoopInfo{std::nullopt};
 		Option _Option = Option::None;
 		std::optional<Vector3> Location{ std::nullopt };
 		std::weak_ptr<Transform> _Transform{};
@@ -70,7 +79,7 @@ public:
 		// 거리를 넘겨주면 거리비례 감소 적용해서 내부적으로 볼륨 줄여서 재생 .
 		const std::optional<float>& Distance=std::nullopt,
 		// 재생 끝나면 자동으로 다시 재생 할까요 ?
-		const std::optional<float>& LoopEnd = std::nullopt);
+		const std::optional<int32>& LoopEnd = std::nullopt);
 
 	// 거리기반으로 재생 ( 재생 시킨 이후에 거리를 다시 측정해서 볼륨을 조절해줌 ! 대상이 움직이지 않을때 사용.)
 	void PlayFromLocation(
@@ -78,7 +87,7 @@ public:
 		const float Volume,
 		const bool bBeginIfPlaying,
 		const std::optional<Vector3>& TargetLocation = std::nullopt,
-		const std::optional<float>&  LoopEnd = std::nullopt);
+		const std::optional<int32>&  LoopEnd = std::nullopt);
 
 	// 거리기반으로 재생 ( 재생 시킨 이후에 거리를 다시 측정해서 볼륨을 조절해줌 ! 대상이 움직일때 사용.)
 	void PlayFromLocation(
@@ -86,7 +95,7 @@ public:
 		const float Volume,
 		const bool bBeginIfPlaying,
 		const std::weak_ptr<Transform>& TargetTransform = {},
-		const std::optional<float>& LoopEnd = std::nullopt);
+		const std::optional<int32>& LoopEnd = std::nullopt);
 
 	// 해당 사운드 키가 재생 중이라면 볼륨을 바꿔줘요 .
 	void VolumeChange(const std::string& SoundKey,
