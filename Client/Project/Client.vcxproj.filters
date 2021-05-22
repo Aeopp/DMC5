@@ -552,6 +552,7 @@
     <ClInclude Include="..\Header\Change.h" />
     <ClInclude Include="..\Header\Spark.h" />
     <ClInclude Include="..\Header\DynamicLight.h" />
+    <ClInclude Include="..\Header\ArtemisMissile.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -892,6 +893,7 @@
     <ClCompile Include="..\Source\Change.cpp" />
     <ClCompile Include="..\Source\Spark.cpp" />
     <ClCompile Include="..\Source\DynamicLight.cpp" />
+    <ClCompile Include="..\Source\ArtemisMissile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -970,6 +972,8 @@
     </None>
     <None Include="..\..\Resource\Shader\Effect\Change.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\ChangeParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissile.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissileParticle.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

@@ -57,6 +57,7 @@
 #include "SpriteEffect.h"
 #include "SoundSystem.h"
 #include "ShockWave.h"
+#include "ArtemisMissile.h"
 
 #include <iostream>
 #include <fstream>
@@ -86,8 +87,9 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.01f;
 
 	AddGameObject<Change>();
-
 	AddGameObject<ShockWave>();
+	AddGameObject<ArtemisMissile>();
+
 	for (int i = 0; i < 6; ++i)
 	{
 		if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();

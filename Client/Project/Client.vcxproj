@@ -164,6 +164,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
+    <ClInclude Include="..\Header\ArtemisMissile.h" />
     <ClInclude Include="..\Header\BreakableObject.h" />
     <ClInclude Include="..\Header\BrokenBookShelf.h" />
     <ClInclude Include="..\Header\BrokenPeople.h" />
@@ -282,6 +283,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\ArtemisMissile.cpp" />
     <ClCompile Include="..\Source\BiAttack.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\BreakableObject.cpp" />
@@ -602,6 +604,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\ChangeParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissile.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissileParticle.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
