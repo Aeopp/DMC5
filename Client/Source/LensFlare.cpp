@@ -28,14 +28,17 @@ void LensFlare::RenderReady()
 
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
-	{		
-		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+	{
+		_RenderUpdateInfo.World =
+			FMath::Scale(_SpTransform->GetScale()) * 
+			Renderer::GetInstance()->_RenderInfo.Billboard * 
+			FMath::Translation(_SpTransform->GetPosition());
 	}
 };
 
 void LensFlare::RenderInit()
 {
-	m_nTag  = Eff_LensFlare;
+	m_nTag = Eff_LensFlare;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -46,21 +49,21 @@ void LensFlare::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = false;
-	
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
 	{
 		{"Debug" ,
 		[this](const DrawInfo& _Info)
-		{
+			{
 			RenderDebug(_Info);
-		}
-	} };
+			}
+		} 
+	};
 
-	
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		
+
 		{"LensFlare",
 		[this](const DrawInfo& _Info)
 			{
@@ -76,8 +79,8 @@ void LensFlare::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
-	_Mesh= Resources::Load<ENGINE::StaticMesh>
-			(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx" , _InitInfo);
+	_Mesh = Resources::Load<ENGINE::StaticMesh>
+		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _InitInfo);
 
 	_Alpg = Resources::Load<ENGINE::Texture>
 		(L"..\\..\\Usable\\LensFlare\\1.tga");
@@ -87,87 +90,69 @@ void LensFlare::RenderInit()
 
 };
 
-void AirHike::PlayStart(
-	const std::optional<Vector3>& Location,
-	const float StartScale,
-	const float FinalScale,
-	const float PlayTime)
+void LensFlare::PlayStart(
+	const Vector3& Location)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
 	{
-		if (Location)
-		{
-			SpTransform->SetPosition(Location.value());
-		}
+		SpTransform->SetPosition(Location);
 	}
 
-	CurParticleTime = 0.0f;
-	this->StartScale = StartScale;
-	this->FinalScale = FinalScale;
-	this->PlayTime = PlayTime;
 	T = 0.0f;
 	_RenderProperty.bRender = true;
-	bPlayedEndParticle = false;
 };
 
-void AirHike::PlayEnd()
+void LensFlare::PlayEnd()
 {
 	_RenderProperty.bRender = false;
-    T = 0.0f;
-
+	T = 0.0f;
 };
 
-void AirHike::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void LensFlare::
+		RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
-	const float CurIntencity = FMath::Lerp(StartIntencity, FinalIntencity, Sin);
-	const Vector4 CurColor = FMath::Lerp(StartColor, FinalColor, Sin);
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	const uint32 Numsubset = _Mesh->GetNumSubset();
 
 	if (Numsubset > 0)
 	{
 		_Info.Fx->SetMatrix("matWorld", &World);
-		_Info.Fx->SetVector("CurColor", &CurColor);
-		_Info.Fx->SetFloat("Intencity", CurIntencity);
-		_Info.Fx->SetTexture("MagicMap", _MagicTexture->GetTexture());
-		_Info.Fx->SetTexture("MagicMsk", _MagicMsk->GetTexture());
-		_Info.Fx->SetTexture("MagicAlb", _MagicAlb->GetTexture());
+
+		const float SinFactor = std::sinf((T / PlayTime) * FMath::PI); 
+		const float CurColorIntencity = SinFactor * ColorIntencity;
+
+		_Info.Fx->SetFloat(
+			"ColorIntencity", CurColorIntencity);
+
+		const float AlphaFactor= SinFactor;
+		_Info.Fx->SetFloat(
+			"AlphaFactor", AlphaFactor);
+		_Info.Fx->SetTexture("AlpgMap", _Alpg->GetTexture());
 	}
 
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = _Mesh->GetSubset(i).lock();
 			SpSubset)
 		{
-			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-			{
-				continue;
-			}
-
 			SpSubset->Render(_Info.Fx);
 		};
 	};
 }
 
 
-void AirHike::RenderDebug(const DrawInfo& _Info)
+void LensFlare::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
 
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	const uint32 Numsubset = _Mesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = _Mesh->GetSubset(i).lock();
 			SpSubset)
 		{
-			if (false ==
-				_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-			{
-				continue;
-			}
-
 			SpSubset->Render(_Info.Fx);
 		};
 	};
@@ -175,7 +160,7 @@ void AirHike::RenderDebug(const DrawInfo& _Info)
 };
 
 
-HRESULT AirHike::Ready()
+HRESULT LensFlare::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
@@ -185,66 +170,37 @@ HRESULT AirHike::Ready()
 	return S_OK;
 };
 
-HRESULT AirHike::Awake()
+HRESULT LensFlare::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,0.5f,0.5f });
-	m_pTransform.lock()->SetScale({ 0.0027f,0.0027f,0.0027f });
-	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.11544f,0.f });
-	m_pTransform.lock()->SetRotation(Vector3{ 90.f ,0.f ,0.0f });
+	m_pTransform.lock()->SetPosition(Vector3{0.f,0.12f,0.f });
+	m_pTransform.lock()->SetScale({ 0.001f,0.001f ,0.001f });
+	m_pTransform.lock()->SetRotation(Vector3{ 0.0f ,0.f ,0.0f });
 
 	return S_OK;
 }
 
-HRESULT AirHike::Start()
+HRESULT LensFlare::Start()
 {
 	GameObject::Start();
 
 	return S_OK;
 }
 
-UINT AirHike::Update(const float _fDeltaTime)
+UINT LensFlare::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
-	T += _fDeltaTime * Speed;
-	Sin = std::sinf(T);
+	T += _fDeltaTime;
 
-	if (bPlayedEndParticle == false && T >=  ( FMath::PI / 4.f) )
-	{
-		bPlayedEndParticle = true;
 
-		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-			SpTransform)
-		{
-			if (auto _Particle =
-				ParticleSystem::GetInstance()->PlayParticle(
-					"AirHikeEndParticle", 2000ul, true);
-				_Particle.empty() == false)
-			{
-
-				for (int32 i = 0; i < _Particle.size(); ++i)
-				{
-					auto& _PlayInstance = _Particle[i];
-					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-				}
-			}
-		};
-	}
-
-	CurParticleTime -= _fDeltaTime;
-	if (CurParticleTime < 0.0f)
-	{
-		CurParticleTime += ParticleTime;
-		PlayParticle();
-	}
-
-	
+	const float CurScale = FMath::Lerp(StartScale, EndScale, T /PlayTime);
+	GetComponent<Transform>().lock()->SetScale(Vector3{ CurScale ,CurScale ,CurScale });
 
 	// 끝날 쯔음 .
-	if (T >= PlayTime)
+	if (T > PlayTime)
 	{
 		PlayEnd();
 	};
@@ -252,67 +208,43 @@ UINT AirHike::Update(const float _fDeltaTime)
 	return 0;
 }
 
-void AirHike::PlayParticle()
-{
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
-	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"AirHikeParticle", 333ul, true);
-			_Particle.empty() == false)
-		{
-
-			for (int32 i = 0; i < _Particle.size(); ++i)
-			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-			}
-		}
-	};
-};
-
-UINT AirHike::LateUpdate(const float _fDeltaTime)
+UINT LensFlare::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
 
 	return 0;
 }
 
-void AirHike::Editor()
+void LensFlare::Editor()
 {
 	GameObject::Editor();
 
 	if (bEdit)
 	{
 		const std::string ChildName = GetName() + "_Play";
-		ImGui::BeginChild(ChildName.c_str()); 
+		ImGui::BeginChild(ChildName.c_str());
+
 		if (ImGui::SmallButton("Play"))
 		{
-			PlayStart();
+			PlayStart(GetComponent<Transform>().lock()->GetPosition());
 		}
 
-		ImGui::Text("T : %2.6f", T);
-		ImGui::SliderFloat("Speed", &Speed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("StartScale", &StartScale, 0.0f, 1.f);
+		ImGui::SliderFloat("EndScale", &EndScale, 0.0f, 1.f);
 
-		ImGui::SliderFloat("StartIntencity", &StartIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("StartScale", &StartScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::ColorEdit4("StartColor", StartColor);
-
-		ImGui::SliderFloat("FinalIntencity", &FinalIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-		ImGui::ColorEdit4("FinalColor", FinalColor);
+		ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.0f, 0.001f);
+		;
 		ImGui::EndChild();
 	}
 }
 
 
-void AirHike::OnEnable()
+void LensFlare::OnEnable()
 {
 	GameObject::OnEnable();
 }
 
-void AirHike::OnDisable()
+void LensFlare::OnDisable()
 {
 	GameObject::OnDisable();
 }

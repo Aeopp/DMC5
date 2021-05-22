@@ -33,9 +33,14 @@ public:
 public:
 	void PlayStart(const Vector3& Location);
 	void PlayEnd();
-private:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+private:
+	float T = 0.0f;
+	float PlayTime = 0.4f;
+	float ColorIntencity = 0.001f;
+	float StartScale = 0.000f;
+	float EndScale = 0.006f;
 };
 #endif //

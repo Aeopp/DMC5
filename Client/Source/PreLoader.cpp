@@ -525,7 +525,7 @@ void PreLoader::ArtemisMissileParticlePoolLoad()
 			_Value.ColorIntencity = FMath::Random(0.7f, 1.4f);
 
 			_Value.Color = FMath::Lerp(
-				Vector3{ 241.f / 255.f,  218.f / 255.f,  237.f / 255.f }, 
+				Vector3{ 241.f / 255.f,  190.f / 255.f,  190.f / 255.f }, 
 				Vector3{ 1.f,1.f,1.f }, 
 				FMath::Random(0.f, 1.f));
 

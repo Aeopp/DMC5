@@ -58,6 +58,7 @@
 #include "SoundSystem.h"
 #include "ShockWave.h"
 #include "ArtemisMissile.h"
+#include "LensFlare.h"
 
 #include <iostream>
 #include <fstream>
@@ -88,7 +89,13 @@ HRESULT TestScene::LoadScene()
 
 	AddGameObject<Change>();
 	AddGameObject<ShockWave>();
-	AddGameObject<ArtemisMissile>();
+
+	for (int32 i = 0; i < 16; ++i)
+	{
+		AddGameObject<ArtemisMissile>();
+	}
+
+	AddGameObject<LensFlare>();
 
 	for (int i = 0; i < 6; ++i)
 	{
