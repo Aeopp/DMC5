@@ -254,7 +254,20 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 
 void Hotel_S04::TriggerSetUp()
 {
+	TriggerMeetingWithGoliath();
+}
 
+void Hotel_S04::TriggerMeetingWithGoliath()
+{
+	// 여기서 왜곡 계수 조절해야함 !! 
+
+	{
+		constexpr float NoiseWrap = 2.020390f;
+		constexpr float TimeCorr = 0.009006f;
+		Renderer::GetInstance()->SkyDistortionStart(
+			NoiseWrap,
+			TimeCorr);
+	}
 }
 
 void Hotel_S04::LateInit()
@@ -266,8 +279,7 @@ void Hotel_S04::LateInit()
 	}
 
 	Renderer::GetInstance()->LateSceneInit();
-	Renderer::GetInstance()->SkyDistortionStart();
-
+	
 	_LateInit = true;
 	BgmPlay();
 }

@@ -68,7 +68,9 @@ void SoundSystem::Play(
 				Result = FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
 				if (bLoop)
 				{
-					LoopSoundKeys.insert(SoundKey);
+					LoopInfo _InsertLoopInfo{};
+					_InsertLoopInfo.Volume = Volume;
+					LoopSoundMap[SoundKey] = _InsertLoopInfo;
 				}
 			}
 
@@ -98,6 +100,12 @@ void SoundSystem::VolumeChange(const std::string& SoundKey,
 			if (bPlay)
 			{
 				Channel->setVolume(Volume);
+
+				if (auto LoopSoundIter = LoopSoundMap.find(SoundKey);
+					LoopSoundIter != LoopSoundMap.end())
+				{
+					LoopSoundIter->second.Volume = Volume;
+				}
 			}
 		}
 	}
@@ -109,7 +117,7 @@ void SoundSystem::Stop(const std::string& SoundKey)&
 	{
 		auto& Channel = iter->second.second;
 		Channel->stop();
-		LoopSoundKeys.erase(SoundKey);
+		LoopSoundMap.erase(SoundKey);
 	}
 };
 
@@ -219,7 +227,7 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 	FmodSystem->update();
 
 	// 무한 재생 루프
-	for (auto& LoopSoundKey : LoopSoundKeys)
+	for (auto&  [LoopSoundKey,LoopDesc]: LoopSoundMap)
 	{
 		auto iter = Sounds.find(LoopSoundKey);
 		if (iter != std::end(Sounds))
@@ -231,6 +239,7 @@ HRESULT SoundSystem::UpdateSoundSystem(const float Delta)
 			if (!bPlayed)
 			{
 				FmodSystem->playSound(Sound.get(), nullptr, false, &Channel);
+				Channel->setVolume(LoopDesc.Volume);
 			}
 		};
 	};

@@ -40,6 +40,11 @@ public:
 	
 	};
 
+	struct LoopInfo
+	{
+		float Volume = 1.f;
+	};
+
 	static inline auto FmodDeleter = [](auto  Target)
 	{
 		Target->release();
@@ -97,7 +102,7 @@ private:
 	std::unordered_map<std::string, SoundType> Sounds{};
 	std::unordered_map<std::string, DistanceInfo> DistanceInfoMap{};
 	DistanceDecrease _DistanceDecrease{};
-	std::set<std::string> LoopSoundKeys{};
+	std::map<std::string, LoopInfo > LoopSoundMap{};
 	std::weak_ptr<Transform> TargetTransform{};
 public:
 	// 거리 비례 감소 활성화 여부 .

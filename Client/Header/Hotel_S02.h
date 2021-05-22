@@ -2,6 +2,8 @@
 #define __M01_HOTEL_S02_H__
 #include "Scene.h"
 
+class Trigger;
+
 class Hotel_S02 : public Scene
 {
 private:
@@ -34,9 +36,10 @@ private:
 	void TriggerSetUp();
 	void TriggerWallSmash();
 	void TriggerFirstButterFlyMeetCamera(const std::weak_ptr<class Trigger>& _BattleTrigger);
-	std::weak_ptr<class Trigger> TriggerFirstButterFlyMeet();
+	std::weak_ptr<Trigger> TriggerFirstButterFlyMeet();
 	void TriggerPuzzleStart();
-	void TriggerNextScene();
+	void TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger);
+	std::weak_ptr<Trigger> TriggerNextScene();
 	void BgmPlay();
 
 	void LateInit();
