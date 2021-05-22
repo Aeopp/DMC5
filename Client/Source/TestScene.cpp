@@ -94,10 +94,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
+	// _Camera = AddGameObject<Camera>();
 
-	/*_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
