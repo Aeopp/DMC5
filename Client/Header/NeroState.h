@@ -1092,6 +1092,7 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
 };
 
 class BT_Air_ComboB : public NeroState

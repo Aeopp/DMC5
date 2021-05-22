@@ -80,8 +80,8 @@ TestScene* TestScene::Create()
 
 HRESULT TestScene::LoadScene()
 {
-	SoundSystem::GetInstance()->Play("Hotel01", 0.2f, true, {}, true);
-	SoundSystem::GetInstance()->Play("Rain", 0.2f, true, {}, false);
+	//SoundSystem::GetInstance()->Play("Hotel01", 0.1f, true, {}, true);
+	SoundSystem::GetInstance()->Play("Rain", 0.15f, true, {}, false);
 	// Load Start
 
 	m_fLoadingProgress = 0.01f;
