@@ -1038,6 +1038,8 @@ void Hotel_S01::Trigger4st()
 
 void Hotel_S01::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
 	if (!_Player.expired())
 	{
 		_Player.lock()->GetComponent<Transform>().lock()->SetPosition({ -9.5f, -0.23f, -5.13f });

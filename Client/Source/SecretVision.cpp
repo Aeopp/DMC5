@@ -106,7 +106,7 @@ void SecretVision::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
-
+	
 	RenderInterface::Initialize(_InitRenderProp);
 
 	Mesh::InitializeInfo _Info{};
@@ -118,6 +118,8 @@ void SecretVision::RenderInit()
 	_TextureArr[2] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\9.tga");
 
 	_NoiseMap = Resources::Load<Texture>("..\\..\\Resource\\Texture\\Sky\\mission02\\smoke_01_iam.tga");
+
+	PuzzleStart();
 };
 
 void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -143,7 +145,7 @@ void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		if (_SVDescs[i].bStartInteraction)
 		{
 			_Info.Fx->SetFloat("ColorIntencity",0.05f);
-			_Info.Fx->SetFloat("AlphaFactor",0.05f);
+			_Info.Fx->SetFloat("AlphaFactor", 0.05f);
 		}
 		else
 		{

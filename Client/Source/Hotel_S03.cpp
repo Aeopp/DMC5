@@ -863,6 +863,9 @@ void Hotel_S03::TriggerNextScene()
 
 void Hotel_S03::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
+
 	// + 플레이어 초기 위치 잡기 등
 	if (_Player.expired() == false)
 	{

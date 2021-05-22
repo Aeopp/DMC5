@@ -277,6 +277,8 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 
 void Hotel_S04::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{

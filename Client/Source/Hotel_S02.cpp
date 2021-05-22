@@ -68,16 +68,16 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+	if (auto SpCamera = AddGameObject<Camera>().lock();
 		SpCamera)
 	{
 		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	}*/
+	}
 	
 	
 
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	/*_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
@@ -788,6 +788,8 @@ void Hotel_S02::BgmPlay()
 
 void Hotel_S02::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
 	// + 플레이어 초기 위치 잡기 등
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
