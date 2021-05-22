@@ -32,16 +32,16 @@ private:
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:
+	void LateInit();
 	void RenderDataSetUp(const bool bTest);
+	void BgmPlay();
+
 	void TriggerSetUp();
 	void TriggerWallSmash();
-	void TriggerFirstButterFlyMeetCamera(const std::weak_ptr<class Trigger>& _BattleTrigger);
+	void TriggerFirstButterFlyMeetCamera(const std::weak_ptr<class Trigger>& _NextTrigger);
 	std::weak_ptr<Trigger> TriggerFirstButterFlyMeet();
 	void TriggerPuzzleStart();
 	void TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger);
 	std::weak_ptr<Trigger> TriggerNextScene();
-	void BgmPlay();
-
-	void LateInit();
 };
 #endif // !__M01_HOTEL_S02_H__
