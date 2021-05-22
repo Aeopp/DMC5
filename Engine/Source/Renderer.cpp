@@ -2483,7 +2483,7 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 	// 델타타임에 영향을 매우 많이 받음 . 
 	adaptedluminance = adaptedluminance +
 		(averageluminance - adaptedluminance) *
-		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime  )));
+		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime  *2.0f)));
 
 	float two_ad_EV = adaptedluminance *
 		(adaptedluminance_var[2] / adaptedluminance_var[3]);

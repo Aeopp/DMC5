@@ -57,7 +57,7 @@ private:
 
 	float Radian = 0.0f;
 	float RadianSpeed = 1.f;
-	float VelocityBlurAlpha = 0.7f;
+	float VelocityBlurAlpha = 0.5f;
 
 	Vector3 NoiseScale      { 1.f,2.f,3.f };
 	Vector3 NoiseScrollSpeed{ 1.f,2.f,3.f };

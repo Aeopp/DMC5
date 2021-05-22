@@ -67,7 +67,7 @@ HRESULT Hotel_S01::LoadScene()
 #pragma region Player & Camera
 
 	// AddGameObject<Camera>();
-
+	   
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 

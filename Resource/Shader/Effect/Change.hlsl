@@ -173,7 +173,7 @@ void PsMain(out float4 Color  : COLOR0,
     // ....... 
     
     // 속도 블러 테스트
-    Color2.xy = LNormal.xy * VelocityBlurIntencity;
+    Color2.xy = (-LNormal.xy)  * VelocityBlurIntencity;
     Color2.z = 1.f;
     Color2.w = VelocityBlurAlpha;
     // Color2 = float4(1(속도), 1(속도), 1(의미없음), 1 <-1로하길 바람);

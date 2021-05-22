@@ -85,6 +85,8 @@ HRESULT TestScene::LoadScene()
 
 	m_fLoadingProgress = 0.01f;
 
+	AddGameObject<Change>();
+
 	AddGameObject<ShockWave>();
 	for (int i = 0; i < 6; ++i)
 	{
