@@ -21,6 +21,7 @@
 #include "AnimationUpGround.h"
 #include "Smoke.h"
 #include "MakaiButterfly.h"
+#include "QliphothBlock.h"
 
 #include <iostream>
 #include <fstream>
@@ -58,7 +59,6 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Player & Camera
 
-	
 	//if (auto SpCamera = AddGameObject<Camera>().lock();
 	//		SpCamera)
 	//{
@@ -105,10 +105,44 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Effect
 
+	// Stage3 길막
+	m_vecQliphothBlock.reserve(7);
+
+	// 0: 보스 가는길
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.003f);
+		ptr.lock()->SetRotation(Vector3(0.f, 264.7f, 0.f));
+		ptr.lock()->SetPosition(Vector3(-0.555f, 0.35f, 30.835f));
+		ptr.lock()->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+
+	// 1 ~ 2: 구덩이
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.015f);
+		ptr.lock()->SetRotation(Vector3(0.f, 180.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(0.21f, 0.9f, 31.3f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
+		!ptr.expired())
+	{
+		ptr.lock()->SetScale(0.015f);
+		ptr.lock()->SetRotation(Vector3(0.f, 0.f, 0.f));
+		ptr.lock()->SetPosition(Vector3(0.21f, 0.9f, 33.75f));
+		ptr.lock()->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
+	}
+
 	if (auto Sp = AddGameObject<MakaiButterfly>().lock(); Sp)
 	{
-		// 보스가는길에 배치
-		Sp->SetActive(false);
+		Sp->SetPosition({ -4.366f, 0.55f, 34.1f });
+		Sp->PlayStart();
 	}
 
 #pragma endregion
@@ -426,21 +460,77 @@ void Hotel_S03::BgmPlay()
 void Hotel_S03::TriggerSetUp()
 {
 	TriggerUpGround();
-	// 상점 터치다운 -> 배틀 트리거 켜기
-	TriggerShop(TriggerBattleStart());
+	TriggerBeforeShop(TriggerShop(TriggerHole())); // ㅋㅋ
 	TriggerNextScene();
 };
 
 void Hotel_S03::TriggerUpGround()
 {
-	/*auto _BattleTrigger = AddGameObject<Trigger>().lock();
+	auto _BattleTrigger = AddGameObject<Trigger>().lock();
 	if (_BattleTrigger)
 	{
 		std::vector<std::weak_ptr<Monster>> MonsterWave
 		{
-
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>()
 		};
-	}*/
+
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.653f, 0.182f, 26.911f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.207f, 0.182f, 26.821f });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.511f, 0.182f, 27.558f });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.246f, 0.205f, 28.158f });
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -3.158700f, 0.565950f, 27.829210f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 100.f, 100.f, 100.f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this]()
+		{
+			// + 카메라 연출?????
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this]()
+		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			}
+		};
+
+		_BattleTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	}
+
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
@@ -453,7 +543,7 @@ void Hotel_S03::TriggerUpGround()
 
 		auto _AnimationUpground = AddGameObject<AnimationUpGround>();
 		const std::function<void()> _CallBack =
-			[_AnimationUpground, _Smoke0, _Smoke1]()
+			[_AnimationUpground, _Smoke0, _Smoke1, _BattleTrigger]()
 		{
 			// 여기서 UpGround 로직 처리하세요 ... 
 			_AnimationUpground.lock()->ContinueAnimation();
@@ -463,21 +553,24 @@ void Hotel_S03::TriggerUpGround()
 			if (auto Sp = _Smoke0.lock(); Sp)
 			{
 				Sp->SetActive(true);
-				Sp->SetPosition({ -2.4f, 0.24f, 27.8f });
+				Sp->SetPosition({ -2.4f, 0.1f, 27.8f });
 				Sp->SetScale(0.008f);
 				Sp->SetRotation({ 0.f, 344.681f, 0.f });
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
-				Sp->PlayStart(8.1f);
+				Sp->PlayStart(7.3f);
 			}
 			if (auto Sp = _Smoke1.lock(); Sp)
 			{
 				Sp->SetActive(true);
-				Sp->SetPosition({ -2.15f, 0.22f, 28.6f });
+				Sp->SetPosition({ -2.15f, 0.12f, 28.6f });
 				Sp->SetScale(0.008f);
 				Sp->SetRotation({ 0.f, 306.383f, 0.f });
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
-				Sp->PlayStart(8.3f);
+				Sp->PlayStart(7.5f);
 			}
+
+			//
+			_BattleTrigger->TriggerEnable();
 		};
 		
 		// 트리거 위치
@@ -485,7 +578,7 @@ void Hotel_S03::TriggerUpGround()
 		const Vector3 TriggerRotation{ 0.f,0.f,0.f };
 
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 1.705f,1.0630f,0.827000f };
+		const Vector3 BoxSize{ 1.705f, 1.0630f, 0.827000f };
 		// 트리거 정보 등록하자마자 활성화 할까요 ?  
 		const bool ImmediatelyEnable = true;
 		// 트리거가 검사할 오브젝트 태그 
@@ -499,6 +592,228 @@ void Hotel_S03::TriggerUpGround()
 			TriggerRotation);
 	}
 }
+
+void Hotel_S03::TriggerBeforeShop(const std::weak_ptr<class Trigger>& _NextTrigger)
+{
+	auto _BattleTrigger = AddGameObject<Trigger>().lock();
+	if (_BattleTrigger)
+	{
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>()
+		};
+
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.514f, 0.185f, 34.686f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -0.170f, 0.185f, 34.701f });
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -0.23f, 0.0637f, 34.569f };
+		const Vector3 TriggerRotation{ -451.22879f, 13.12937f, 0.00000f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize{ 1.354f, 1.873f, 1.608f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this]()
+		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this, _NextTrigger]()
+		{
+			_NextTrigger.lock()->TriggerEnable();
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			}
+		};
+
+		_BattleTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	}
+};
+
+std::weak_ptr<Trigger> Hotel_S03::TriggerShop(const std::weak_ptr<class Trigger>& _NextTrigger)
+{
+	auto _Trigger = AddGameObject<Trigger>().lock();
+	if (_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this, _NextTrigger]()
+		{
+			// 임시
+			_Player.lock()->BuyCbsLong();
+			_Player.lock()->BuyCbsMiddle();
+			_Player.lock()->BuyUpgradedOverture();
+			//
+
+			_NextTrigger.lock()->TriggerEnable();
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -2.406498f, 0.299f, 34.539822f };
+		const Vector3 TriggerRotation{ -451.22879f, 13.12937f, 0.00000f };
+
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 2.354f, 4.262f, 1.8820f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			TriggerRotation);
+	}
+
+	return _Trigger;
+};
+
+std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
+{
+	auto _SecondTrigger = AddGameObject<Trigger>().lock();
+	if (_SecondTrigger)
+	{
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()
+		};
+
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.464f, -0.275f, 32.011f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.071f, -0.3f, 33.407f });
+
+		const Vector3 TriggerLocation{ -0.23f, 0.0637f, 32.f };
+		const Vector3 TriggerBoxSize{ 100.f, 100.f, 100.f };
+		const bool ImmediatelyEnable = false;
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[]()
+		{
+
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this]()
+		{
+			// 여기서 카메라 거미줄 비치기.
+			_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
+
+			// 여기서 거미줄 없애기. << 알아서 밖에서 지워주길 바람 - hscho
+			m_vecQliphothBlock[0].lock()->Reset();
+			m_vecQliphothBlock[1].lock()->Reset();
+			m_vecQliphothBlock[2].lock()->Reset();
+
+
+			// 여기서 하늘 왜곡 풀어주기 .
+			Renderer::GetInstance()->SkyDistortionEnd();
+
+			//
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			}
+		};
+
+		_SecondTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	}
+
+	auto _StartTrigger = AddGameObject<Trigger>().lock();
+	if (_StartTrigger)
+	{
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()
+		};
+
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.464f, -0.275f, 32.011f });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ 0.028f, -0.339f, 31.884f });
+
+		const Vector3 TriggerLocation{ -0.23f, 0.0637f, 32.f };
+		const Vector3 TriggerBoxSize { 6.259999f, 1.f, 1.414996f };
+		const bool ImmediatelyEnable = false;
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this]()
+		{
+			// 스카이 왜곡 시작 ...
+			Renderer::GetInstance()->SkyDistortionStart();
+
+			// 구덩이 길막
+			m_vecQliphothBlock[1].lock()->PlayStart();
+			m_vecQliphothBlock[2].lock()->PlayStart();
+
+			//
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[_SecondTrigger]()
+		{
+			_SecondTrigger->TriggerEnable();
+		};
+
+		_StartTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	}
+
+	return _StartTrigger;
+};
 
 void Hotel_S03::TriggerNextScene()
 {
@@ -525,13 +840,11 @@ void Hotel_S03::TriggerNextScene()
 					});
 			}
 		};
-		
+
 		// 트리거 위치
-		const Vector3 TriggerLocation{
-			-4.610800f, 0.765100f ,36.625561f };
+		const Vector3 TriggerLocation{ -4.610800f, 0.765100f, 36.625561f };
 		const Vector3 TriggerRotation{ -451.22879f, 13.12937f, 0.00000f };
 
-		// -4.55710 1.59400 37.21000
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 4.f,1.f,1.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -547,237 +860,6 @@ void Hotel_S03::TriggerNextScene()
 			TriggerRotation);
 	}
 };
-
-void Hotel_S03::TriggerShop(const std::weak_ptr<class Trigger>& _BattleTrigger)
-{
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
-	{
-		const std::function<void()> _CallBack =
-			[_BattleTrigger]()
-		{
-			_BattleTrigger.lock()->TriggerEnable();
-		};
-
-		// 트리거 위치
-		const Vector3 TriggerLocation{ -2.406498f,0.299f,34.539822f };
-		const Vector3 TriggerRotation{ -451.22879f, 13.12937f, 0.00000f };
-		;
-		// -4.55710 1.59400 37.21000
-		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 2.354f, 4.262f, 1.8820f };
-		// 트리거 정보 등록하자마자 활성화 ?? 
-		const bool ImmediatelyEnable = true;
-		// 트리거가 검사할 오브젝트 태그 
-		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
-
-		_Trigger->EventRegist(_CallBack,
-			TriggerLocation,
-			BoxSize,
-			ImmediatelyEnable,
-			TargetTag,
-			TriggerRotation);
-	};
-};
-
-std::weak_ptr<Trigger> Hotel_S03::TriggerBattleStart()
-{
-	auto _ThirdTrigger = AddGameObject<Trigger>().lock();
-	if (_ThirdTrigger)
-	{
-		// 몬스터 웨이브 배열로 등록. 
-		std::vector<std::weak_ptr<Monster>> MonsterWave
-		{
-			AddGameObject<Em0000>(),
-			AddGameObject<Em0000>(),
-			AddGameObject<Em100>(),
-			AddGameObject<Em100>()
-		};
-
-		// 몬스터 위치는 미리 잡아주기  . 
-		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.791f , 0.239, 28.937f });
-
-		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.164f, 0.293f, 29.090f });
-
-		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.517f, 0.256f, 26.847f });
-
-		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.586, 0.337, 27.124 });
-
-		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation
-			{ -2.792f, 0.409f, 27.183f};
-		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = 
-				{ 2.805f,1.063000f,1.419001f};
-
-		// 트리거 정보 등록 하자마자 트리거는 활성화 
-		const bool ImmediatelyEnable = false;
-		// 트리거 검사할 오브젝트는 플레이어 
-		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
-
-		// 스폰 직후 이벤트 . 
-		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
-		{
-			Renderer::GetInstance()->SkyDistortionEnd();
-			//... 여기서 로직 처리하세요 . 
-		};
-
-		// 몬스터 전부 사망 하였을때 이벤트 . 
-		const std::function<void()> WaveEndEvent =
-			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */
-			]()
-		{
-				// 여기서 거미줄 없애기.
-				// 여기서 카메라 거미줄 비치기.
-				// 여기서 하늘 왜곡 풀어주기 .
-				
-		};
-
-		_ThirdTrigger->EventRegist(
-			MonsterWave,
-			TriggerLocation,
-			TriggerBoxSize,
-			ImmediatelyEnable,
-			TargetTag,
-			SpawnWaveAfterEvent,
-			WaveEndEvent);
-	}
-
-	auto _SecondTrigger = AddGameObject<Trigger>().lock();
-	if (_SecondTrigger)
-	{
-		// 몬스터 웨이브 배열로 등록. 
-		std::vector<std::weak_ptr<Monster>> MonsterWave
-		{
-			AddGameObject<Em0000>(),
-			AddGameObject<Em0000>(),
-			AddGameObject<Em100>(),
-			AddGameObject<Em100>()
-		};
-
-		// 몬스터 위치는 미리 잡아주기  . 
-		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.791f , 0.239, 28.937f });
-
-		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.164f, 0.293f, 29.090f });
-
-		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.517f, 0.256f, 26.847f });
-
-		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.586, 0.337, 27.124 });
-
-		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation
-				{ -1.144f, 0.734000f ,26.896f};
-		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize
-						{ 6.259999f,1.f,1.414996f};
-		// 트리거 정보 등록 하자마자 트리거는 활성화 
-		const bool ImmediatelyEnable = false;
-		// 트리거 검사할 오브젝트는 플레이어 
-		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
-
-		// 스폰 직후 이벤트 . 
-		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
-		{
-			//... 여기서 로직 처리하세요 . 
-		};
-
-		// 몬스터 전부 사망 하였을때 이벤트 . 
-		const std::function<void()> WaveEndEvent =
-			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */ ,
-			_ThirdTrigger]()
-		{
-			//... 여기서 로직 처리하세요 . 
-			_ThirdTrigger->TriggerEnable();
-		};
-
-		_SecondTrigger->EventRegist(
-			MonsterWave,
-			TriggerLocation,
-			TriggerBoxSize,
-			ImmediatelyEnable,
-			TargetTag,
-			SpawnWaveAfterEvent,
-			WaveEndEvent);
-	}
-
-	// 트리거 생성 !! 
-	std::shared_ptr<Trigger> _StartTrigger{};
-	if (_StartTrigger = AddGameObject<Trigger>().lock();
-		_StartTrigger)
-	{
-		// 몬스터 웨이브 배열로 등록. 
-		std::vector<std::weak_ptr<Monster>> MonsterWave
-		{
-			AddGameObject<Em0000>(),
-			AddGameObject<Em0000>(),
-			AddGameObject<Em100>(),
-			AddGameObject<Em100>()
-		};
-
-		// 몬스터 위치는 미리 잡아주기  . 
-		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.791f , 0.239f, 28.937f });
-
-		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.164f, 0.293f, 29.090f });
-
-		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.517f, 0.256f, 26.847f });
-
-		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -0.586, 0.337, 27.124 });
-
-		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation
-			{ 0.198f, 0.662000f,30.821f};
-		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 1.705f,1.f,0.827000f};
-		// 트리거 정보 등록 하자마자 트리거는 활성화 
-		const bool ImmediatelyEnable = false;
-		// 트리거 검사할 오브젝트는 플레이어 
-		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
-
-		// 스폰 직후 이벤트 . 
-		const std::function<void()> SpawnWaveAfterEvent =
-			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
-		{
-			// 스카이 왜곡 시작 ...
-			Renderer::GetInstance()->SkyDistortionStart();
-		};
-
-		// 몬스터 전부 사망 하였을때 이벤트 . 
-		const std::function<void()> WaveEndEvent =
-			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */,
-			_SecondTrigger]()
-		{
-			//... 여기서 로직 처리하세요 . 
-			_SecondTrigger->TriggerEnable();
-		};
-
-		_StartTrigger->EventRegist(
-			MonsterWave,
-			TriggerLocation,
-			TriggerBoxSize,
-			ImmediatelyEnable,
-			TargetTag,
-			SpawnWaveAfterEvent,
-			WaveEndEvent);
-	}
-
-
-	return _StartTrigger;
-};
-
 
 void Hotel_S03::LateInit()
 {

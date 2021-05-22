@@ -171,7 +171,14 @@ void Scene::TransferStatic(std::weak_ptr<Scene> const _pDestScene)
 {
 	if (_pDestScene.expired() || 0 == m_Pool[POOL_STATIC].size())
 		return;
-	_pDestScene.lock()->m_Pool[POOL_STATIC].splice(m_Pool[POOL_STATIC].end(), m_Pool[POOL_STATIC]);
+	for (auto iter = m_Pool[POOL_STATIC].begin(); iter != m_Pool[POOL_STATIC].end(); ++iter)
+	{
+		_pDestScene.lock()->m_Pool[POOL_STATIC].push_back(*iter);
+
+		ACTIVESTATE eActiveState = (*iter)->IsActive() ? ACTIVESTATE::ACTIVE : ACTIVESTATE::INACTIVE;
+
+		_pDestScene.lock()->m_Loop[eActiveState][LOOP_UPDATE].push_back(*iter);
+	}
 }
 
 std::weak_ptr<GameObject> Scene::FindGameObjectWithTag(const UINT& _nTag)

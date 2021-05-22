@@ -93,6 +93,9 @@ UINT MainCamera::Update(const float _fDeltaTime)
 	case AT_TRIGGER:
 		MoveMent_Trigger(_fDeltaTime);
 		break;
+	case AT_BOSS1:
+		Boss_Cam_Em5000(_fDeltaTime);
+		break;
 	default:
 		break;
 	}
@@ -101,11 +104,12 @@ UINT MainCamera::Update(const float _fDeltaTime)
 
 UINT MainCamera::LateUpdate(const float _fDeltaTime)
 {
-	if (m_eAtType != AT_TRIGGER)
+	Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	Vector3 vLook = m_vEye - PlayerPos;
+	Vector3 vCollEye{};
+	switch (m_eAtType)
 	{
-		Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
-		Vector3 vLook = m_vEye - PlayerPos;
-		Vector3 vCollEye;
+	case AT_PLAYER:
 		if (Physics::RayCast(PlayerPos, vLook, vCollEye))
 		{
 			Vector3 vLength1 = PlayerPos - vCollEye;
@@ -117,6 +121,38 @@ UINT MainCamera::LateUpdate(const float _fDeltaTime)
 				m_vEye.z = vCollEye.z;
 			}
 		}
+		break;
+	case AT_BOSS1:
+		if (Physics::RayCast(PlayerPos, vLook, vCollEye))
+		{
+			Vector3 vLength1 = PlayerPos - vCollEye;
+			Vector3 vLength2 = PlayerPos - m_vEye;
+
+			float fLength1 = D3DXVec3Length(&vLength1);
+			float fLength2 = D3DXVec3Length(&vLength2);
+			if (fLength1 <= fLength2)
+			{
+				if (fLength1 <= 0.28f)
+				{
+					std::weak_ptr<Transform>	_PlayerTransform = m_pNero.lock()->GetComponent<Transform>();
+					Vector3 vLook = _PlayerTransform.lock()->GetPosition() - m_vAt;
+					vLook.y = 0.f;
+					D3DXVec3Normalize(&vLook, &vLook);
+
+					m_vLerpEye = _PlayerTransform.lock()->GetPosition() + vLook * 0.33f;
+					m_vLerpEye.y += 0.2f;
+					m_vEye = m_vLerpEye;
+				}
+				else
+				{
+					m_vEye.x = vCollEye.x;
+					m_vEye.z = vCollEye.z;
+				}
+			}
+		}
+		break;
+	default:
+		break;
 	}
 	Shaking();
 
@@ -762,4 +798,75 @@ void MainCamera::Trigger_Cam_Stage2_ButterFly2_End(float _fDeltaTime)
 		m_ePlayerCamMode = CAM_MODE_BASIC;
 		m_bLerp = false;
 	}
+}
+
+void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
+{
+	if (m_pAtTranform.expired())
+		return;
+	UINT _CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
+	UINT _CurStateIndex = m_pNero.lock()->GetFsm().lock()->GetCurrentIndex();
+
+	if (_CurStateIndex == NeroFSM::WIRE_HELLHOUND_LOOP
+		|| _CurStateIndex == NeroFSM::WIRE_HELLHOUND_START)
+	{
+		if (m_fDistanceToTarget >= 0.65f)
+		{
+			m_fDistanceToTarget -= _fDeltaTime;
+		}
+	}
+	else if(_CurStateIndex == NeroFSM::RUNLOOP
+		|| _CurStateIndex == NeroFSM::DASHLOOP)
+	{
+		if (m_fDistanceToTarget <= 1.1f)
+		{
+			m_fDistanceToTarget += _fDeltaTime * 0.08f;
+		}
+	}
+
+	std::weak_ptr<Transform>	_PlayerTransform = m_pNero.lock()->GetComponent<Transform>();
+	if (!(Nero::ANI_EM5000_BUSTER_START <= _CurAnimationIndex
+		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))
+	{
+		m_vAt = m_pAtTranform.lock()->GetPosition();
+		m_vAt.y += 0.4f;
+	}
+
+	long    dwMouseMove = 0;
+
+	if (dwMouseMove = Input::GetMouseMove(DIM_X))
+	{
+		m_fAngle += dwMouseMove / m_fSensitive;
+	}
+
+	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
+	{
+		m_fDistanceToTarget -= dwMouseMove / 8000.f;
+		if (m_fDistanceToTarget <= 0.65f)
+		{
+			m_fDistanceToTarget = 0.65f;
+		}
+		if (m_fDistanceToTarget >= 1.1f)
+		{
+			m_fDistanceToTarget = 1.1f;
+		}
+	}
+
+
+	Vector3 vLook = _PlayerTransform.lock()->GetPosition() - m_vAt;
+	vLook.y = 0.f;
+	D3DXVec3Normalize(&vLook, &vLook);
+
+	m_vLerpEye = _PlayerTransform.lock()->GetPosition() + vLook * m_fDistanceToTarget;
+	m_vLerpEye.y += 0.2f;
+
+	if (!(Nero::ANI_EM5000_BUSTER_START <= _CurAnimationIndex
+		&& _CurAnimationIndex <= Nero::ANI_EM5000_BUSTER_SWING_LOOP))
+	{
+		m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 4.f);
+	}
+}
+
+void MainCamera::Boss_Cam_Em5300(float _fDeltaTime)
+{
 }

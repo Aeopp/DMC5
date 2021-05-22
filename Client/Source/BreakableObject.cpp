@@ -202,10 +202,10 @@ void BreakableObject::SetUp(
 	PushEditEntity(m_pCollider.lock().get());
 
 	RenderInit();
-	StoneInit();
 
 	if (90.f < _vRotation.x && 270.f > _vRotation.x)
 		m_bReverse = true;
+	StoneInit();
 }
 
 void BreakableObject::StoneInit()
@@ -261,12 +261,13 @@ void BreakableObject::StoneInit()
 			float MaxVy = 0.16f;
 			if (m_bReverse)
 			{
-				MinVy = 0.f;
-				MaxVy = 0.f;
+				MinVy = -0.1f;
+				MaxVy = -0.08f;
 			}
 			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.09f, MinVy, -0.09f), Vector3(0.09f, MaxVy, 0.09f)));
 
 			p.lock()->SetActive(false);
+
 			m_pStoneDebrisVec.push_back(p);
 		}
 	}

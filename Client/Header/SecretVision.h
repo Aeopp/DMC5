@@ -11,7 +11,7 @@ class SecretVision : public ENGINE::GameObject,
 	struct SecretVisionDesc
 	{
 		static const uint32  DefaultLife = 4u;
-		static inline float  DisappearEndColorIntencity = 333.f;
+		static inline float  DisappearEndColorIntencity = 177.f;
 		static inline float  DisappearAcc = 0.6f;
 
 		float ColorIntencity = 0.0f;
