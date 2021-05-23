@@ -63,8 +63,8 @@ private:
 	float ColorIntencityHigh = 0.7f;
 	float ColorIntencityLow = 0.5f;
 	float TimeAcc = 1.0f;
-	float StartScale = 0.001f;
-	float EndScale = 0.0012f;
+	float StartScale = 0.00075f;
+	float EndScale = 0.001f;
 };
 #endif //
 

@@ -575,7 +575,7 @@ void PreLoader::ReverberationParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 10000u;
+	const uint64 PoolSize = 20000u;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("ReverberationParticle",
@@ -644,7 +644,7 @@ void PreLoader::ReverberationParticlePoolLoad()
 				Vector3{ 1.f,1.f,1.f },
 				FMath::Random(0.f, 1.f));
 
-			const float LifeTime = FMath::Random(0.2f, 0.3f);
+			const float LifeTime = FMath::Random(0.4f, 0.6f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },

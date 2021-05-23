@@ -96,7 +96,10 @@ HRESULT TestScene::LoadScene()
 		AddGameObject<ArtemisMissile>();
 	}
 
-	AddGameObject<Reverberation>();
+	for (int32 i = 0; i < 16; ++i)
+	{
+		AddGameObject<Reverberation>();
+	}
 
 	AddGameObject<LensFlare>();
 
