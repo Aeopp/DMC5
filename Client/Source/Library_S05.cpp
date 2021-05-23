@@ -359,7 +359,7 @@ void Library_S05::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S04.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S05.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;

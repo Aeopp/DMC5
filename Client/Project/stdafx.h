@@ -66,7 +66,7 @@ enum GAMEOBJECTTAG
 	Eff_BiAttack,
 	Eff_Satellite,
 	Eff_FireCircle,
-	Eff_ElectricOccur ,
+	Eff_ElectricOccur,
 	Eff_ThunderBolt,
 	Eff_ShockWave,
 	Eff_ThunderBoltSecond,
@@ -101,6 +101,8 @@ enum GAMEOBJECTTAG
 	TAG_JudgementShadow3,
 	TAG_Trigger,
 	TAG_NhDoor,
+	Eff_SnatchRush,
+	Eff_Streak,
 	Tag_END
 };
 

@@ -88,7 +88,7 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -235,7 +235,7 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S04.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
