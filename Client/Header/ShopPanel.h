@@ -53,6 +53,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _SelectWeaponCursorTex{};
 	std::shared_ptr<ENGINE::Texture> _SelectWeaponInfoBaseTex{};
 	std::shared_ptr<ENGINE::Texture> _ItemAndInfoBaseTex{};
+	std::shared_ptr<ENGINE::Texture> _ButtonBaseTex{};
+	std::shared_ptr<ENGINE::Texture> _ButtonUpgradeFontTex{};
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
@@ -75,6 +77,16 @@ private:
 		FT_WP_OVERTURE,
 		FT_WP_CBS,
 		FT_WP_REBELLION,
+
+		FT_WP_RQ_EXGAUGEUP,
+		FT_WP_OT_BATTERY,
+		FT_WP_CBS_TRANSFORM,
+		FT_WP_RB_REBELLION,
+
+		FT_WP_RQ_EXGAUGEUP_COST,
+		FT_WP_OT_BATTERY_COST,
+		FT_WP_CBS_TRANSFORM_COST,
+		FT_WP_RB_REBELLION_COST,
 
 		FONT_END
 	};
@@ -112,6 +124,14 @@ private:
 	float _CategoryWeaponBrightOffset = 1.f;
 	float _CategoryWeaponInfoXPos = 410.f;
 	float _CategoryWeaponInfoSliceAmount = 0.f;
+
+	uint32 _ExgaugeUpCost = 1u;
+	uint32 _BatteryCost = 2u;
+	uint32 _TransformCost = 3u;
+	uint32 _RebellionCost = 9999999u;
+
+	float _ButtonBright = 1.f;
+	float _ButtonBrightAccTime = 0.f;
 
 private:
 	explicit ShopPanel() = default;
