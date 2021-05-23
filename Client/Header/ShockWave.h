@@ -19,6 +19,9 @@ public:
 		Change,
 		Hit,
 		SnatchRush,
+		ArtemisRush,
+		ArtemisLaunch,
+		ArtemisEnd,
 		None,
 	};
 private:

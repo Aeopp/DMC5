@@ -64,7 +64,7 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 	}
 
 	// 이호준 히트이펙트 디버깅용
-	if (auto Other = _pOther.lock() ;
+	/*if (auto Other = _pOther.lock() ;
 		Other)
 	{
 		auto _TargetTag = Other->m_nTag;
@@ -72,7 +72,7 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
-	}
+	}*/
 	// 
 
 

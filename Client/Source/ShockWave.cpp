@@ -400,6 +400,50 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
 		this->bBlurMsk = true;
 		break;
+	case Option::ArtemisRush:
+		PlayTime = 1.f;
+		EndT = 1.f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.002f;
+		ScaleLerp.second = 0.076f;
+		BlurIntencity.first = 0.700f;
+		BlurIntencity.second = 1.002f;
+		BlurAlpha.first = 0.757f;
+		BlurAlpha.second = 0.900f;
+		BlurMaxLength = 40.900f;
+		DistortionAlpha = 0.0f;
+		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
+		break;
+	case Option::ArtemisLaunch:
+		PlayTime = 0.2f;
+		EndT = 0.2f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.000f;
+		ScaleLerp.second = 0.022f;
+		BlurIntencity.first = 0.700f;
+		BlurIntencity.second = 1.002f;
+		BlurAlpha.first = 0.757f;
+		BlurAlpha.second = 0.900f;
+		BlurMaxLength = 40.900f;
+		DistortionAlpha = 0.0f;
+		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
+		break;
+	case Option::ArtemisEnd:
+		PlayTime = 1.5f;
+		EndT = 1.5f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.000f;
+		ScaleLerp.second = 0.3f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 1.f;
+		BlurAlpha.first = 0.0f;
+		BlurAlpha.second = 0.4f;
+		BlurMaxLength = 27.833f;
+		DistortionAlpha = 1.f;
+		Color = { 13.f / 255.f , 3.5f/ 255.f ,10.f / 255.f ,5.f / 255.f };
+		this->bBlurMsk = true;
+		this->bDirectionReverse = true;
+		break;
 	default:
 		break;
 	}
