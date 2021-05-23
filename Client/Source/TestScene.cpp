@@ -196,7 +196,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 4, Until Dooms Day",
+		pFont->SetText("D 3, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),

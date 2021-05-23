@@ -55,6 +55,13 @@ private:
 	std::shared_ptr<ENGINE::Texture> _ItemAndInfoBaseTex{};
 	std::shared_ptr<ENGINE::Texture> _ButtonBaseTex{};
 	std::shared_ptr<ENGINE::Texture> _ButtonUpgradeFontTex{};
+	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeInfoFontTex{};
+	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeProgressTex{};
+
+	std::shared_ptr<ENGINE::Texture> _WeaponBgTex0{};
+	std::shared_ptr<ENGINE::Texture> _WeaponBgTex1{};
+	std::shared_ptr<ENGINE::Texture> _WeaponBgTex2{};
+	std::shared_ptr<ENGINE::Texture> _WeaponBgTex3{};
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
@@ -98,13 +105,15 @@ private:
 	{
 		NONE = -1,
 		CATEGORY = 0,
-		WEAPON_SELECT = 2
+		WEAPON_SELECT = 2,
 	};
 	DEPTH _CurDepth = CATEGORY;
 	DEPTH _PreDepth = NONE;
 
 	enum CMD
 	{
+		NO_CMD = 0,
+
 		CATEGORY_WEAPON = 1,
 		CATEGORY_ITEM = 2,
 
@@ -130,8 +139,19 @@ private:
 	uint32 _TransformCost = 3u;
 	uint32 _RebellionCost = 9999999u;
 
+	uint32 _ExgaugeUpUpgradeCount = 1u;
+	uint32 _BatteryUpgradeCount = 1u;
+	uint32 _TransformUpgradeCount = 1u;
+	uint32 _RebellionUpgradeCount = 0u;
+
+	float _BrightAccTime = 0.f;
 	float _ButtonBright = 1.f;
-	float _ButtonBrightAccTime = 0.f;
+	float _UpgradeProgressBright = 1.f;
+
+	bool _ButtonBlinkStart = false;
+	float _ButtonBlinkBrightOffset = 1.f;
+	float _ButtonBlinkAccTime = 0.f;
+	int _ButtonBlinkCnt = 0;
 
 private:
 	explicit ShopPanel() = default;

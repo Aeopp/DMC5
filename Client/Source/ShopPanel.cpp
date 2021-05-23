@@ -135,24 +135,6 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 		SharedSubset)
 	{
 		//
-		CurID = REDORB;
-		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
-		{
-			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
-			_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
-			_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
-			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
-
-			Create_ScreenMat(CurID, ScreenMat);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
-			_ImplInfo.Fx->BeginPass(0);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-		}
-
-		//
 		CurID = SELECT_GUIDE;
 		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
@@ -269,6 +251,57 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 			if (WP_REDQUEEN <= _PreCmd && WP_REBELLION >= _PreCmd)
 			{
+				uint32 CurRedOrbCount = _BtlPanel.lock()->GetRedOrbCount();
+				bool Buyable = false;
+				int ScreenMatOpt = 0;
+				int ProgressMaxCnt = 0;
+				int ProgressCurCnt = 0;
+				switch (_PreCmd)
+				{
+				case ShopPanel::WP_REDQUEEN:
+					if (_ExgaugeUpCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 20;
+					ProgressMaxCnt = 3;
+					ProgressCurCnt = _ExgaugeUpUpgradeCount;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex0->GetTexture());
+					break;
+				case ShopPanel::WP_OVERTURE:
+					if (_BatteryCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 21;
+					ProgressMaxCnt = 2;
+					ProgressCurCnt = _BatteryUpgradeCount;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex1->GetTexture());
+					break;
+				case ShopPanel::WP_CBS:
+					if (_TransformCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 22;
+					ProgressMaxCnt = 3;
+					ProgressCurCnt = _TransformUpgradeCount;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex2->GetTexture());
+					break;
+				case ShopPanel::WP_REBELLION:
+					if (_RebellionCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 23;
+					ProgressMaxCnt = 1;
+					ProgressCurCnt = _RebellionUpgradeCount;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex3->GetTexture());
+					break;
+				}
+
+				Create_ScreenMat(CurID, ScreenMat, 27);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
 				//
 				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectWeaponCursorTex->GetTexture());
 
@@ -324,31 +357,9 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
 				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount);
 
-				uint32 CurRedOrbCount = _BtlPanel.lock()->GetRedOrbCount();
-				bool Buyable = false;
-				switch (_PreCmd)
-				{
-				case ShopPanel::WP_REDQUEEN:
-					if (_ExgaugeUpCost <= CurRedOrbCount)
-						Buyable = true;
-					break;
-				case ShopPanel::WP_OVERTURE:
-					if (_BatteryCost <= CurRedOrbCount)
-						Buyable = true;
-					break;
-				case ShopPanel::WP_CBS:
-					if (_TransformCost <= CurRedOrbCount)
-						Buyable = true;
-					break;
-				case ShopPanel::WP_REBELLION:
-					if (_RebellionCost <= CurRedOrbCount)
-						Buyable = true;
-					break;
-				}
-
 				if (Buyable)
 				{
-					_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
+					_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright * _ButtonBlinkBrightOffset);
 
 					Create_ScreenMat(CurID, ScreenMat, 16);
 					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -368,7 +379,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				}
 				else
 				{
-					_ImplInfo.Fx->SetFloat("_BrightScale", 0.9f);
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.9f * _ButtonBlinkBrightOffset);
 
 					Create_ScreenMat(CurID, ScreenMat, 18);
 					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -421,7 +432,68 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				_ImplInfo.Fx->BeginPass(0);
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
+
+				// info
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponUpgradeInfoFontTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount);
+
+				Create_ScreenMat(CurID, ScreenMat, ScreenMatOpt);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+				
+				// upgrade progress
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponUpgradeProgressTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", _UpgradeProgressBright);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount);
+
+				for (int i = 0; i < ProgressMaxCnt; ++i)
+				{
+					Create_ScreenMat(CurID, ScreenMat, 24 + i);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+					if (ProgressCurCnt > i)
+					{
+						_MinTexUV = Vector2(0.f, 0.688f);
+						_MaxTexUV = Vector2(0.129f, 0.875f);
+					}
+					else
+					{
+						_MinTexUV = Vector2(0.130f, 0.688f);
+						_MaxTexUV = Vector2(0.259f, 0.875f);
+					}
+
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
 			}
+		}
+
+		//
+		CurID = REDORB;
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
+			_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(0);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
 		}
 	}
 
@@ -490,6 +562,13 @@ HRESULT ShopPanel::Ready()
 	_ItemAndInfoBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2010_iam.tga");
 	_ButtonBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2011_00_iam.tga");
 	_ButtonUpgradeFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\Upgrade.png");
+	_WeaponUpgradeInfoFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\WeaponUpgradeInfo.png");
+	_WeaponUpgradeProgressTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui4000_iam.tga");
+
+	_WeaponBgTex0 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_00_iam.tga");
+	_WeaponBgTex1 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_02_iam.tga");
+	_WeaponBgTex2 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_15_iam.tga");
+	_WeaponBgTex3 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_10_iam.tga");
 
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(0.5f), (float)g_nWndCX / g_nWndCY, 0.001f, 1.f);
@@ -583,8 +662,14 @@ void ShopPanel::ResetOffset()
 	_FontVec[FT_WP_CBS_TRANSFORM_COST].lock()->SetRenderFlag(false);
 	_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(false);
 
+	_BrightAccTime = 0.f;
 	_ButtonBright = 1.f;
-	_ButtonBrightAccTime = 0.f;
+	_UpgradeProgressBright = 1.f;
+
+	_ButtonBlinkStart = false;
+	_ButtonBlinkBrightOffset = 1.f;
+	_ButtonBlinkAccTime = 0.f;
+	_ButtonBlinkCnt = 0;
 }
 
 UINT ShopPanel::Update(const float _fDeltaTime)
@@ -651,10 +736,7 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 				_FontVec[FT_WP_RB_REBELLION].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
 				_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
 				break;
-			default:
-				break;
 			}
-
 			break;
 
 		default:
@@ -734,9 +816,34 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 				_CategoryWeaponInfoSliceAmount = 0.f;
 		}
 
-		_ButtonBrightAccTime += _fDeltaTime;
-		_ButtonBright = 1.f + 0.15f * sinf(_ButtonBrightAccTime * 2.5f);
+		_BrightAccTime += _fDeltaTime;
+		_ButtonBright = 1.f + 0.15f * sinf(_BrightAccTime * 2.5f);
+		_UpgradeProgressBright = 1.f + 0.5f * sinf(_BrightAccTime * 2.5f);
 
+		if (_ButtonBlinkStart)
+		{
+			_ButtonBlinkAccTime += _fDeltaTime;
+
+			if (4u <= _ButtonBlinkCnt)
+			{
+				// + »õ ÆË¾÷Ã¢
+
+				_ButtonBlinkStart = false;
+				_ButtonBlinkBrightOffset = 1.f;
+				_ButtonBlinkAccTime = 0.f;
+				_ButtonBlinkCnt = 0;
+			}
+			else if (0.08f < _ButtonBlinkAccTime && 4u > _ButtonBlinkCnt)
+			{
+				if (1 == _ButtonBlinkCnt % 2)
+					_ButtonBlinkBrightOffset = 1.f;
+				else
+					_ButtonBlinkBrightOffset = 0.4f;
+
+				++_ButtonBlinkCnt;
+				_ButtonBlinkAccTime = 0.f;
+			}
+		}
 		break;
 
 	default:
@@ -1107,6 +1214,90 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MinTexUV = Vector2(0.f, 0.f);
 			_MaxTexUV = Vector2(1.f, 1.f);
 			break;
+		// Weapon Info
+		case 20:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.8f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + 20.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 350.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(1.f, 0.25f);
+			break;
+		case 21:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.8f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + 20.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 350.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.5f);
+			break;
+		case 22:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.8f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + 20.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 350.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.5f);
+			_MaxTexUV = Vector2(1.f, 0.75f);
+			break;
+		case 23:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.8f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + 20.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 350.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.75f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+		// Upgrade Progress
+		case 24:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos - 85.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
+		case 25:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos - 20.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
+		case 26:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + 45.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
+		case 27:
+			_Out._11 = 9.351f;
+			_Out._22 = 7.2f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 810.f - (g_nWndCX >> 1);
+			_Out._42 = -(360.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.359f, 0.001f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+		default:
+			goto DEFAULT;
 			//_Out._11 = _UIDescs[_ID].Scale.x * _DebugScale.x;
 			//_Out._22 = _UIDescs[_ID].Scale.y * _DebugScale.y;
 			//_Out._33 = _UIDescs[_ID].Scale.z;
@@ -1393,24 +1584,30 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 				break;
 			}
 		}
-		else if (Input::GetKeyDown(DIK_S) || Input::GetKeyDown(DIK_D))
+		else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 		{
 			_CurDepth = WEAPON_SELECT;
 			_CurCmd = WP_REDQUEEN;
 		}
-		else if (Input::GetKeyDown(DIK_W) || Input::GetKeyDown(DIK_A))
+		else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 		{
 			_CurDepth = WEAPON_SELECT;
 			_CurCmd = WP_REBELLION;
 		}
 		break;
+
 	case WEAPON_SELECT:
 		if (Input::GetKeyDown(DIK_TAB))
 		{
 			_CurDepth = CATEGORY;
 			_CurCmd = CATEGORY_ITEM;
 		}
-		else if (Input::GetKeyDown(DIK_S) || Input::GetKeyDown(DIK_D))
+		else if (Input::GetKeyDown(DIK_RETURN))
+		{
+			if (!_ButtonBlinkStart)
+				_ButtonBlinkStart = true;
+		}
+		else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 		{
 			switch (_PreCmd)
 			{
@@ -1428,7 +1625,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 				break;
 			}
 		}
-		else if (Input::GetKeyDown(DIK_W) || Input::GetKeyDown(DIK_A))
+		else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 		{
 			switch (_PreCmd)
 			{
