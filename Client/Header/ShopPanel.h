@@ -51,6 +51,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _SelectWeaponTex0{};	// Nero
 	std::shared_ptr<ENGINE::Texture> _SelectWeaponTex1{};	// Dante
 	std::shared_ptr<ENGINE::Texture> _SelectWeaponCursorTex{};
+	std::shared_ptr<ENGINE::Texture> _SelectWeaponInfoBaseTex{};
+	std::shared_ptr<ENGINE::Texture> _ItemAndInfoBaseTex{};
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
@@ -59,7 +61,7 @@ private:
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
 	Vector3 _DebugPos = Vector3(640.f, 320.f, 0.5f);
-	Vector3 _DebugScale = Vector3(0.001f, 0.001f, 0.001f);
+	Vector3 _DebugScale = Vector3(1.f, 1.f, 1.f);
 	Vector3 _DebugRot = Vector3(0.f, 0.f, 0.f);
 	Vector2 _DebugMinUV = Vector2(0.f, 0.f);
 	Vector2 _DebugMaxUV = Vector2(1.f, 1.f);
@@ -108,6 +110,8 @@ private:
 	float _CategoryCursorXScaleOffset = 1.f;
 	float _CategoryWeaponSliceAmount = 0.f;
 	float _CategoryWeaponBrightOffset = 1.f;
+	float _CategoryWeaponInfoXPos = 410.f;
+	float _CategoryWeaponInfoSliceAmount = 0.f;
 
 private:
 	explicit ShopPanel() = default;

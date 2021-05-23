@@ -264,6 +264,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 			if (WP_REDQUEEN <= _PreCmd && WP_REBELLION >= _PreCmd)
 			{
+				//
 				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectWeaponCursorTex->GetTexture());
 
 				Create_ScreenMat(CurID, ScreenMat, (int)_PreCmd + 1);	// 4 ~ 7
@@ -276,12 +277,53 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 
+				//
 				Create_ScreenMat(CurID, ScreenMat, (int)_PreCmd + 5);	// 8 ~ 11
 				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
 				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
 				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f * _CategoryWeaponBrightOffset);
 				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponSliceAmount + 0.5f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				//
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectWeaponInfoBaseTex->GetTexture());
+
+				Create_ScreenMat(CurID, ScreenMat, 12);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.3f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount + 0.2f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				//
+				Create_ScreenMat(CurID, ScreenMat, 13);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.7f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount + 0.2f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				//
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
+
+				Create_ScreenMat(CurID, ScreenMat, 14);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount + 0.2f);
 
 				_ImplInfo.Fx->BeginPass(1);
 				SharedSubset->Render(_ImplInfo.Fx);
@@ -351,7 +393,9 @@ HRESULT ShopPanel::Ready()
 	_SelectWeaponTex0 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui_2020_02_iam.tga");
 	_SelectWeaponTex1 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui_2020_03_iam.tga");
 	_SelectWeaponCursorTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2013_iam.tga");
-
+	_SelectWeaponInfoBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2016_00_iam.tga");
+	_ItemAndInfoBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2010_iam.tga");
+	
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(0.5f), (float)g_nWndCX / g_nWndCY, 0.001f, 1.f);
 
@@ -467,6 +511,8 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 			_FontVec[FT_WP_OVERTURE].lock()->SetRenderFlag(true);
 			_FontVec[FT_WP_CBS].lock()->SetRenderFlag(true);
 			_FontVec[FT_WP_REBELLION].lock()->SetRenderFlag(true);
+			_CategoryWeaponInfoXPos = 210.f;
+			_CategoryWeaponInfoSliceAmount = 1.f;
 			break;
 
 		default:
@@ -533,6 +579,19 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 			if (1.f > _CategoryWeaponBrightOffset)
 				_CategoryWeaponBrightOffset = 1.f;
 		}
+		if (410.f > _CategoryWeaponInfoXPos)
+		{
+			_CategoryWeaponInfoXPos += 800.f * _fDeltaTime;
+			if (410.f < _CategoryWeaponInfoXPos)
+				_CategoryWeaponInfoXPos = 410.f;
+		}
+		if (0.f < _CategoryWeaponInfoSliceAmount)
+		{
+			_CategoryWeaponInfoSliceAmount -= 2.f * _fDeltaTime;
+			if (0.f > _CategoryWeaponInfoSliceAmount)
+				_CategoryWeaponInfoSliceAmount = 0.f;
+		}
+
 		break;
 
 	default:
@@ -627,7 +686,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._22 = 0.001f;
 			_Out._33 = FLT_MIN; // ¤Ð¤Ð
 			_Out._41 = 0.f;
-			_Out._42 = -0.08f;
+			_Out._42 = -0.085f;
 			_Out._43 = 7.f;
 
 			//_Out._11 = _DebugScale.x;
@@ -635,6 +694,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			//_Out._33 = _DebugScale.z;
 			//D3DXMatrixRotationX(&RotMat, D3DXToRadian(_DebugRot.x));
 			//_Out *= RotMat;
+			// 
 			//D3DXMatrixRotationY(&RotMat, D3DXToRadian(_DebugRot.y));
 			//_Out *= RotMat;
 			//D3DXMatrixRotationZ(&RotMat, D3DXToRadian(_DebugRot.z));
@@ -819,6 +879,37 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.f);
 			_MaxTexUV = Vector2(0.9f, 0.25f);
+			break;
+		// info base
+		case 12:
+			_Out._11 = _UIDescs[_ID].Scale.x * 3.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.7f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 200.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.332f);
+			_MaxTexUV = Vector2(1.f, 0.707f);
+			break;
+		case 13:
+			_Out._11 = _UIDescs[_ID].Scale.x * 3.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.4f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + 3.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 248.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.43f, 0.879f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+		case 14:
+			_Out._11 = _UIDescs[_ID].Scale.x * 3.3f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + 5.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 380.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.41f);
+			_MaxTexUV = Vector2(1.f, 0.72f);
 			break;
 		}
 		break;
