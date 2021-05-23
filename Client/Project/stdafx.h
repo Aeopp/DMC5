@@ -72,6 +72,7 @@ enum GAMEOBJECTTAG
 	Eff_ElectricVortex,
 	Eff_IceAge,
 	Eff_ArteMisMissile,
+	Eff_Reverberation,
 	Eff_Change,
 	Eff_CircleWave,
 	Eff_SpriteEffect,

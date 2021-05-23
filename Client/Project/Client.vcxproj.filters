@@ -554,6 +554,7 @@
     <ClInclude Include="..\Header\DynamicLight.h" />
     <ClInclude Include="..\Header\ArtemisMissile.h" />
     <ClInclude Include="..\Header\LensFlare.h" />
+    <ClInclude Include="..\Header\Reverberation.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -896,6 +897,7 @@
     <ClCompile Include="..\Source\DynamicLight.cpp" />
     <ClCompile Include="..\Source\ArtemisMissile.cpp" />
     <ClCompile Include="..\Source\LensFlare.cpp" />
+    <ClCompile Include="..\Source\Reverberation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -977,6 +979,7 @@
     <None Include="..\..\Resource\Shader\Effect\ArtemisMissile.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\ArtemisMissileParticle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\LensFlare.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Reverberation.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

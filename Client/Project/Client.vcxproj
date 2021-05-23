@@ -218,6 +218,7 @@
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
+    <ClInclude Include="..\Header\Reverberation.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
     <ClInclude Include="..\Header\SecretVisionMagicCircle.h" />
     <ClInclude Include="..\Header\ShockWave.h" />
@@ -343,6 +344,7 @@
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
+    <ClCompile Include="..\Source\Reverberation.cpp" />
     <ClCompile Include="..\Source\Satellite.cpp" />
     <ClCompile Include="..\Source\SecretVision.cpp" />
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp" />
@@ -621,6 +623,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\LensFlare.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\Reverberation.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

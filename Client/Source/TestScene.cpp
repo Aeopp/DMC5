@@ -59,6 +59,7 @@
 #include "ShockWave.h"
 #include "ArtemisMissile.h"
 #include "LensFlare.h"
+#include "Reverberation.h"
 
 #include <iostream>
 #include <fstream>
@@ -94,6 +95,8 @@ HRESULT TestScene::LoadScene()
 	{
 		AddGameObject<ArtemisMissile>();
 	}
+
+	AddGameObject<Reverberation>();
 
 	AddGameObject<LensFlare>();
 

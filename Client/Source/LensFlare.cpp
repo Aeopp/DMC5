@@ -236,18 +236,14 @@ void LensFlare::Editor()
 		;
 		ImGui::EndChild();
 	}
-}
-
+};
 
 void LensFlare::OnEnable()
 {
 	GameObject::OnEnable();
-}
+};
 
 void LensFlare::OnDisable()
 {
 	GameObject::OnDisable();
-}
-
-
-
+};
