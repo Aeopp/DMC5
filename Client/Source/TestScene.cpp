@@ -60,6 +60,7 @@
 #include "ArtemisMissile.h"
 #include "LensFlare.h"
 #include "Reverberation.h"
+#include "ParticleSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -111,6 +112,8 @@ HRESULT TestScene::LoadScene()
 			_SpriteEffect->InitializeFromOption(i);
 		}
 	}
+
+
 #pragma region PreLoad
 
 	PreLoader::PreLoadResources();

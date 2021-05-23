@@ -118,6 +118,7 @@ void ArtemisMissile::PlayEnd()
 	T = 0.0f;
 };
 
+
 void ArtemisMissile::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
@@ -176,6 +177,19 @@ void ArtemisMissile::ParticleUpdate(const float DeltaTime)
 
 		}
 	}
+}
+void ArtemisMissile::RushParticle()
+{
+	const uint32 ParticleCnt = 1000u;
+	auto _PlayableParticle = ParticleSystem::GetInstance()->
+		PlayParticle("ArtemisRushParticle", ParticleCnt, true);
+
+	for (int32 i = 0; i < _PlayableParticle.size();
+		++i)
+	{
+		auto& _PlayInstance = _PlayableParticle[i];
+		_PlayInstance->PlayDescBind(_RenderUpdateInfo.World);
+	};
 };
 
 void ArtemisMissile::RenderDebug(const DrawInfo& _Info)
@@ -263,10 +277,14 @@ void ArtemisMissile::Editor()
 				PlayEnd();
 			}
 
+			if (ImGui::SmallButton("RushParticle"))
+			{
+				RushParticle();
+			}
+
 			ImGui::ColorEdit4("Color", Color);
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.f, 10.f);
 			ImGui::SliderFloat("StartColorIntencity", &StartColorIntencity, 0.f, 10.f);
-			
 		}
 		ImGui::EndChild();
 	}

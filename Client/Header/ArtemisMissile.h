@@ -41,6 +41,8 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void ParticleUpdate(const float DeltaTime);
 private:
+	void RushParticle();
+private:
 	float ParticleDelta = 0.01f;
 	float CurParticleDelta = 0.0f;
 	float T = 0.0f;

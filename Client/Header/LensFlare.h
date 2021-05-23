@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "RenderInterface.h"
 #include <optional>
+#include "DynamicLight.h"
 
 class LensFlare : public ENGINE::GameObject,
 				public ENGINE::RenderInterface
@@ -38,9 +39,11 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
 	float T = 0.0f;
-	float PlayTime = 0.4f;
-	float ColorIntencity = 0.001f;
+	float PlayTime = 0.6f;
+	float ColorIntencity = 0.002f;
 	float StartScale = 0.000f;
 	float EndScale = 0.006f;
+
+	DynamicLight _DynamicLight{};
 };
 #endif //

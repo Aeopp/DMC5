@@ -9,7 +9,7 @@ class ShockWave : public ENGINE::GameObject,
 	              public ENGINE::RenderInterface
 {
 public:
-	enum  Option :int32
+	enum Option :int32
 	{
 		Weak=0,
 		Middle,

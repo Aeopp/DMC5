@@ -30,8 +30,8 @@ void LensFlare::RenderReady()
 		_SpTransform)
 	{
 		_RenderUpdateInfo.World =
-			FMath::Scale(_SpTransform->GetScale()) * 
-			Renderer::GetInstance()->_RenderInfo.Billboard * 
+			FMath::Scale(_SpTransform->GetScale()) *
+			Renderer::GetInstance()->_RenderInfo.Billboard *
 			FMath::Translation(_SpTransform->GetPosition());
 	}
 };
@@ -58,7 +58,7 @@ void LensFlare::RenderInit()
 			{
 			RenderDebug(_Info);
 			}
-		} 
+		}
 	};
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
@@ -88,6 +88,19 @@ void LensFlare::RenderInit()
 	PushEditEntity(_Mesh.get());
 	PushEditEntity(_Alpg.get());
 
+	_DynamicLight.Color =
+	{
+		Vector4
+		{
+			1.f , 68.f / 255.f  , 211.f / 255.f,1.f
+		} ,
+		Vector4 
+		{
+			1.f,1.f,1.f,1.f
+		}
+	};
+	_DynamicLight.Flux = { 0.0f,0.1f };
+	_DynamicLight.PointRadius = { 0.5f,0.5f };
 };
 
 void LensFlare::PlayStart(
@@ -97,7 +110,13 @@ void LensFlare::PlayStart(
 		SpTransform)
 	{
 		SpTransform->SetPosition(Location);
+
+
+		_DynamicLight.PlayStart(
+			Location, this->PlayTime);
 	}
+
+
 
 	T = 0.0f;
 	_RenderProperty.bRender = true;
@@ -107,10 +126,11 @@ void LensFlare::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+	_DynamicLight.PlayEnd();
 };
 
 void LensFlare::
-		RenderAlphaBlendEffect(const DrawInfo& _Info)
+RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	const uint32 Numsubset = _Mesh->GetNumSubset();
@@ -119,13 +139,13 @@ void LensFlare::
 	{
 		_Info.Fx->SetMatrix("matWorld", &World);
 
-		const float SinFactor = std::sinf((T / PlayTime) * FMath::PI); 
+		const float SinFactor = std::sinf((T / PlayTime) * FMath::PI);
 		const float CurColorIntencity = SinFactor * ColorIntencity;
 
 		_Info.Fx->SetFloat(
 			"ColorIntencity", CurColorIntencity);
 
-		const float AlphaFactor= SinFactor;
+		const float AlphaFactor = SinFactor;
 		_Info.Fx->SetFloat(
 			"AlphaFactor", AlphaFactor);
 		_Info.Fx->SetTexture("AlpgMap", _Alpg->GetTexture());
@@ -174,7 +194,7 @@ HRESULT LensFlare::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetPosition(Vector3{0.f,0.12f,0.f });
+	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.12f,0.f });
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f ,0.001f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f ,0.f ,0.0f });
 
@@ -196,7 +216,7 @@ UINT LensFlare::Update(const float _fDeltaTime)
 	T += _fDeltaTime;
 
 
-	const float CurScale = FMath::Lerp(StartScale, EndScale, T /PlayTime);
+	const float CurScale = FMath::Lerp(StartScale, EndScale, T / PlayTime);
 	GetComponent<Transform>().lock()->SetScale(Vector3{ CurScale ,CurScale ,CurScale });
 
 	// ³¡³¯ ÂêÀ½ .
@@ -204,6 +224,12 @@ UINT LensFlare::Update(const float _fDeltaTime)
 	{
 		PlayEnd();
 	};
+
+
+
+	_DynamicLight.Update(_fDeltaTime, GetComponent<Transform>().lock()->GetPosition());
+
+
 
 	return 0;
 }
