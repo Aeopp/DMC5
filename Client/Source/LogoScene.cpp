@@ -8,6 +8,7 @@
 #include "Hotel_S01.h"
 #include "Hotel_S03.h"
 #include "Hotel_S04.h"
+#include "Library_S06.h"
 
 void LogoScene::Free()
 {
@@ -54,7 +55,7 @@ HRESULT LogoScene::Update(const float _fDeltaTime)
 	if (!_LoadNextScene)
 	{
 		// 다음 씬 로드
-		SceneManager::LoadScene(Hotel_S04::Create(), false);
+		SceneManager::LoadScene(Library_S06 ::Create(), false);
 
 		_LoadNextScene = true;
 	}

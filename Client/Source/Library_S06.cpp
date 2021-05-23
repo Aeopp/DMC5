@@ -2,6 +2,7 @@
 #include "..\Header\Library_S06.h"
 #include "LoadingScene.h"
 #include "PreLoader.h"
+#include "Trigger.h"
 #include "TempMap.h"
 #include "Nero.h"
 #include "BtlPanel.h"
@@ -11,6 +12,7 @@
 #include "MapObject.h"
 #include "Monster.h"
 #include "SoundSystem.h"
+#include "Em5300.h"
 
 #include <iostream>
 #include <fstream>
@@ -48,16 +50,16 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-4.327f,
-			1.449f,
-			36.596f,
-			});
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+	//		-4.327f,
+	//		1.449f,
+	//		36.596f,
+	//		});
 
-	}*/
+	//}
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -67,7 +69,8 @@ HRESULT Library_S06::LoadScene()
 	m_fLoadingProgress = 0.2f;
 
 #pragma region Monster
-
+	m_pBoss = AddGameObject<Em5300>();
+	m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -38.744f, -0.388f, 30.861f });
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -86,7 +89,7 @@ HRESULT Library_S06::LoadScene()
 #pragma region RenderData & Trigger
 
 	RenderDataSetUp(true);
-	//TriggerSetUp();
+	TriggerSetUp();
 
 #pragma endregion
 
@@ -249,7 +252,42 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 
 void Library_S06::TriggerSetUp()
 {
+	if (auto SpBoss = m_pBoss.lock();
+		SpBoss)
+	{
+		SpBoss->SetTrigger(TriggerUlte());
+	}
+}
 
+std::weak_ptr<Trigger> Library_S06::TriggerUlte()
+{
+	// 이건 일반 트리거 
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this]()
+		{
+			this->m_pBoss.lock()->Set_Ulte();
+		};
+		
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -37.148f, -0.5f, 30.902f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 0.5f, 0.5f, 0.5f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Monster5300;
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+		return _Trigger;
+	};
+
+	return {};
 }
 
 void Library_S06::LateInit()
@@ -259,7 +297,7 @@ void Library_S06::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.8f, -0.2f, -5.02f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-33.711f,-0.994f,30.884f });
 	}
 
 	Renderer::GetInstance()->LateSceneInit();

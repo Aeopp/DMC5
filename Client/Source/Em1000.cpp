@@ -415,15 +415,7 @@ void Em1000::Editor()
 	Unit::Editor();
 	if (bEdit)
 	{
-		ImGui::Text("Deg %3.4f", m_fRadian);
-		ImGui::Text("Acc Deg %3.4f", m_fAccuangle);
-
-		ImGui::InputFloat("Power", &m_fPower);
-
-		ImGui::InputFloat("vPowerX", &m_vPower.x);
-		ImGui::InputFloat("vPowerY", &m_vPower.y);
-		ImGui::InputFloat("vPowerZ", &m_vPower.z);
-
+	
 
 	}
 }

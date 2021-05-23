@@ -75,7 +75,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 	//거리가 멀때만 이동 or 회전을 함.
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
-	if (fDir >= 2.f)
+	if (fDir >= 1.5f)
 	{
 		if (m_bThrow && m_bIng == false)
 		{
@@ -1137,8 +1137,8 @@ HRESULT Em5000::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 	
-	m_pCollider.lock()->SetSize({ 0.8f,0.8f,0.8f });
-	m_pCollider.lock()->SetCenter({ 0.f,0.5f,0.f });
+	m_pCollider.lock()->SetSize({ 0.6f,0.8f,0.6f });
+	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
 
 	m_pStone = AddGameObject<StoneDebrisMulti>();
 	m_pStone2 = AddGameObject<StoneDebrisMulti>();

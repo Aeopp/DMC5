@@ -133,6 +133,6 @@ void BoxCollider::SetSize(const D3DXVECTOR3 _vSize)
 	boxGeometry.halfExtents.x = m_vSize.x * 0.5f;
 	boxGeometry.halfExtents.y = m_vSize.y * 0.5f;
 	boxGeometry.halfExtents.z = m_vSize.z * 0.5f;
-
+	
 	m_pShape->setGeometry(boxGeometry);
 }

@@ -37,6 +37,7 @@ enum GAMEOBJECTTAG
 	Monster5300,
 	Monster1000,
 	MonsterWeapon,
+	MonsterSnatchPoint,
 	UI_BtlPanel,
 	UI_Font,
 	UI_LogoPanel,
