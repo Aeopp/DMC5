@@ -160,9 +160,6 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300">
       <UniqueIdentifier>{23e32db9-0a9f-4310-8475-f20a0fcb6eb9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\00.Zako">
-      <UniqueIdentifier>{d0171c98-637c-432c-bc84-1b5ce8a1deab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\01.Rush">
       <UniqueIdentifier>{15603b03-2209-4816-8c71-1734e0e63408}</UniqueIdentifier>
     </Filter>
@@ -204,6 +201,12 @@
     </Filter>
     <Filter Include="02.GameObject\Effect\Weapon\Trail">
       <UniqueIdentifier>{c2aa0ad7-cbc5-4f8f-abd5-119aa4ae70e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\05.Ulte">
+      <UniqueIdentifier>{5f7205bc-ea9b-47a9-898a-50622ba7e2b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\00.SnatchPoint">
+      <UniqueIdentifier>{d0171c98-637c-432c-bc84-1b5ce8a1deab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -552,10 +555,12 @@
     <ClInclude Include="..\Header\Change.h" />
     <ClInclude Include="..\Header\Spark.h" />
     <ClInclude Include="..\Header\DynamicLight.h" />
-    <ClInclude Include="..\Header\ArtemisMissile.h" />
-    <ClInclude Include="..\Header\LensFlare.h" />
-    <ClInclude Include="..\Header\Reverberation.h" />
-    <ClInclude Include="..\Header\FinalReady.h" />
+    <ClInclude Include="..\Header\Em5300Ulte.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\05.Ulte</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\SnatchPoint.h">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\00.SnatchPoint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -896,10 +901,12 @@
     <ClCompile Include="..\Source\Change.cpp" />
     <ClCompile Include="..\Source\Spark.cpp" />
     <ClCompile Include="..\Source\DynamicLight.cpp" />
-    <ClCompile Include="..\Source\ArtemisMissile.cpp" />
-    <ClCompile Include="..\Source\LensFlare.cpp" />
-    <ClCompile Include="..\Source\Reverberation.cpp" />
-    <ClCompile Include="..\Source\FinalReady.cpp" />
+    <ClCompile Include="..\Source\Em5300Ulte.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\05.Ulte</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\SnatchPoint.cpp">
+      <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\00.SnatchPoint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -978,15 +985,8 @@
     </None>
     <None Include="..\..\Resource\Shader\Effect\Change.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\ChangeParticle.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\ArtemisMissile.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\ArtemisMissileParticle.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\LensFlare.hlsl" />
-    <None Include="..\..\Resource\Shader\Effect\Reverberation.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\FinalReady.hlsl" />
   </ItemGroup>
 </Project>

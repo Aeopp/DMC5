@@ -516,9 +516,9 @@ void SecretVision::OnTriggerEnter(std::weak_ptr<GameObject> _Target)
 	static const std::set<uint32> HitEnableTargetSet
 	{
 			TAG_RedQueen,
-			Tag_Cbs_Short,
-			Tag_Cbs_Middle,
-			Tag_Cbs_Long,
+			//Tag_Cbs_Short,
+			//Tag_Cbs_Middle,
+			//Tag_Cbs_Long,
 	};
 
 	if (auto SpTarget = _Target.lock();

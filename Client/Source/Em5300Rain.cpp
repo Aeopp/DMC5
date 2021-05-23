@@ -224,7 +224,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 0.6f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -247,7 +247,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 0.8f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -271,7 +271,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 1.f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -292,7 +292,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 1.2f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -313,7 +313,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 1.4f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -334,7 +334,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 1.6f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -354,7 +354,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 1.8f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -375,7 +375,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 2.f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -396,7 +396,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 2.2f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -417,7 +417,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 2.4f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -438,7 +438,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >=2.6f)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
@@ -460,7 +460,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			}
 			else if (!m_bRaindir && m_fRainDownTime >= 2.8)
 			{
-				if (m_pTransform.lock()->GetPosition().y >= -0.1f)
+				if (m_pTransform.lock()->GetPosition().y >= -1.038f)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;

@@ -1022,6 +1022,10 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 		if (iRandom >= 4)
 			++iRandom;
 
+
+		CalcEffectPos();
+		m_vEffectPos += GetMonsterBoneWorldPos("Waist");
+
 		auto pBlood = m_pBlood.lock();
 		pBlood->SetVariationIdx(Liquid::VARIATION(iRandom));	// 0 6 7 이 자연스러운듯?
 		pBlood->SetPosition(GetMonsterBoneWorldPos("Waist"));
@@ -1397,6 +1401,8 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+
+	HitEffectPlay(_pOther);
 }
 
 void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)

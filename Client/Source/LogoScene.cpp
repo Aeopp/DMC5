@@ -8,6 +8,7 @@
 #include "Hotel_S01.h"
 #include "Hotel_S03.h"
 #include "Hotel_S04.h"
+#include "Library_S06.h"
 
 void LogoScene::Free()
 {

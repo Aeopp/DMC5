@@ -253,7 +253,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 
 	if (MakaiButterfly::VARIATION::MOVE_FORWARD == _VariationIdx)
 	{
-		if (80.f < _AccumulateTime)
+		if (55.f < _AccumulateTime)
 			_IsAlive = false;
 
 		auto WeakTransform = GetComponent<ENGINE::Transform>();
@@ -357,10 +357,10 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 		switch (_pOther.lock()->m_nTag)
 		{
-		case GAMEOBJECTTAG::TAG_RedQueen:
-		case GAMEOBJECTTAG::Tag_Cbs_Middle:
-		case GAMEOBJECTTAG::Tag_Cbs_Short:
-		case GAMEOBJECTTAG::Tag_Cbs_Long:
+		case GAMEOBJECTTAG::TAG_RedQueen:	// 레드퀸으로만 잡도록
+		//case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		//case GAMEOBJECTTAG::Tag_Cbs_Short:
+		//case GAMEOBJECTTAG::Tag_Cbs_Long:
 
 			if (auto SpSecretVision = std::static_pointer_cast<SecretVision>(FindGameObjectWithTag(TAG_SecretVision).lock());
 				SpSecretVision)

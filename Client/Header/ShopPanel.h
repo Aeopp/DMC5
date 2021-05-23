@@ -13,6 +13,7 @@ private:
 		REDORB,
 		CUSTOMIZE,
 		SELECT_CATEGORY,
+		SELECT_WEAPON,
 		SELECT_GUIDE,
 
 		DESC_END
@@ -22,7 +23,7 @@ private:
 		bool	Using;
 		Vector3	Pos;	// z -> plane 기준 0.02보다 작으면 짤림
 		Vector3 Scale;
-		Vector3 Rot;
+		//Vector3 Rot;
 	};
 	UI_DESC* _UIDescs = nullptr;
 
@@ -46,8 +47,10 @@ private:
 
 	std::shared_ptr<ENGINE::Texture> _SelectGuideTex{};
 	std::shared_ptr<ENGINE::Texture> _SelectCategoryFontTex{};
-
 	std::shared_ptr<ENGINE::Texture> _SelectCategoryCursorTex{};
+	std::shared_ptr<ENGINE::Texture> _SelectWeaponTex0{};	// Nero
+	std::shared_ptr<ENGINE::Texture> _SelectWeaponTex1{};	// Dante
+	std::shared_ptr<ENGINE::Texture> _SelectWeaponCursorTex{};
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
@@ -65,7 +68,12 @@ private:
 	{
 		FT_REDORBCOUNT,
 		FT_CUSTOMIZE,
-	
+
+		FT_WP_REDQUEEN,
+		FT_WP_OVERTURE,
+		FT_WP_CBS,
+		FT_WP_REBELLION,
+
 		FONT_END
 	};
 	std::vector<std::weak_ptr<class Font>> _FontVec;
@@ -75,7 +83,8 @@ private:
 	enum DEPTH
 	{
 		NONE = -1,
-		CATEGORY = 0
+		CATEGORY = 0,
+		WEAPON_SELECT = 2
 	};
 	DEPTH _CurDepth = CATEGORY;
 	DEPTH _PreDepth = NONE;
@@ -84,11 +93,21 @@ private:
 	{
 		CATEGORY_WEAPON = 1,
 		CATEGORY_ITEM = 2,
+
+		WP_REDQUEEN,
+		WP_OVERTURE,
+		WP_CBS,
+		WP_REBELLION
+
 	};
 	CMD _CurCmd = CATEGORY_WEAPON;
 	CMD _PreCmd = CATEGORY_WEAPON;
 
 	CMD _CategoryPreCmd = CATEGORY_WEAPON;
+	float _CategoryCursorXPos = 194.f;
+	float _CategoryCursorXScaleOffset = 1.f;
+	float _CategoryWeaponSliceAmount = 0.f;
+	float _CategoryWeaponBrightOffset = 1.f;
 
 private:
 	explicit ShopPanel() = default;
@@ -120,7 +139,7 @@ public:
 	virtual void    Editor() override;
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
-public:
-
+private:
+	void ResetOffset();
 };
 #endif // !__UI_SHOP_PANEL__

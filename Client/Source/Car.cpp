@@ -190,8 +190,8 @@ void Car::RenderReady()
 HRESULT Car::Ready()
 {
 	m_vBangDir = { 0.f, 2.f, 0.f };
-	m_fBangPower = 30.f;
-	m_nTag = MonsterWeapon;
+	m_fBangPower = 100.f;
+	m_nTag = ThrowCar;
 	m_BattleInfo.eAttackType = Attack_KnocBack;
 	m_bCollEnable = true;
 	RenderInit();
@@ -223,7 +223,7 @@ HRESULT Car::Awake()
 
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
-	m_pCollider.lock()->SetCenter({ 0.f,0.07f,0.f });
+	m_pCollider.lock()->SetCenter({ 0.f,0.07f,-0.1f });
 	m_pCollider.lock()->SetSize({ 0.2f,0.15f,0.42f });
 	PushEditEntity(m_pCollider.lock().get());
 
@@ -275,9 +275,7 @@ UINT Car::Update(const float _fDeltaTime)
 			m_pTransform.lock()->SetWorldMatrix(m_Result);
 		}
 	}
-	if (m_pEm5000.lock()->Get_State() == Em5000::Car_Turn_L ||
-		m_pEm5000.lock()->Get_State() == Em5000::Car_Turn_R)
-		m_bCollEnable = true;
+
 
 
 	if (Input::GetKeyDown(DIK_Y))
@@ -326,6 +324,10 @@ void Car::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 }
 
+void Car::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+}
+
 void Car::Throw(const float _fDeltaTime)
 {
 	if(m_bThrow)
@@ -333,23 +335,23 @@ void Car::Throw(const float _fDeltaTime)
 		Vector3 vDir = m_vPlayerPos - m_pTransform.lock()->GetPosition();
 		float	fDir = D3DXVec3Length(&vDir);
 		D3DXVec3Normalize(&vDir, &vDir);
-		m_pCollider.lock()->SetTrigger(true);
-		m_pCollider.lock()->SetRigid(false);
-		m_pCollider.lock()->SetGravity(false);
+
 		//플레이어충돌or바닥 충돌되면으로 조건 바꿔야함
-		if (fDir < 0.3f)
+		if (fDir < 0.5f)
 		{
 			m_fThrowTime = 0.f;
 			//m_pTransform.lock()->SetRotation({ 0.f,0.f,0.f });
-
-			m_pCollider.lock()->SetTrigger(false);
-			m_pCollider.lock()->SetRigid(true);
-			m_pCollider.lock()->SetGravity(true);
 		}
 		else
 		{
-			m_pTransform.lock()->Rotate({ 0.f, 0.f,20.f });
-			m_pTransform.lock()->Translate(vDir * 0.1f);
+			m_bCollEnable = true;
+			m_pTransform.lock()->Rotate({ 10.f, 0.f,0.f });
+			//m_pTransform.lock()->Translate(vDir * 0.1f);
+			m_pCollider.lock()->AddForce(vDir * m_fBangPower);
+			
+			m_pCollider.lock()->SetRigid(true);
+			m_pCollider.lock()->SetGravity(true);
+			m_pCollider.lock()->SetTrigger(false);
 		}
 
 		if (m_pEm5000.lock()->Get_State() == Em5000::Attack_Throw_Car && m_pEm5000Mesh.lock()->PlayingTime()>=0.9f)
@@ -358,6 +360,7 @@ void Car::Throw(const float _fDeltaTime)
 	}
 	else
 	{
+		m_bCollEnable = false;
 		if (m_pEm5000.lock()->Get_State() == Em5000::Attack_Throw_Car)
 		{
 			m_fThrowTime += _fDeltaTime;

@@ -50,7 +50,6 @@ HRESULT Wire_Arm::Awake()
 	Unit::Awake();
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 
-	
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
@@ -223,6 +222,18 @@ void Wire_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
 		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetMonsterBoneWorldPos("Hip");
+		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
+		SetActive(false);
+	}
+	break;
+	case GAMEOBJECTTAG::MonsterSnatchPoint:
+	{
+		m_pNero.lock()->SetLetMeFlyMonster(static_pointer_cast<Monster>(_pOther.lock()));
+		m_pMesh->PlayAnimation("Wire_Arm_End_Short", false);
+		m_pCollider.lock()->SetActive(false);
+
+		m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::WIRE_HELLHOUND_START);
+		Vector3 MonsterBoneWorldPos = static_pointer_cast<Monster>(_pOther.lock())->GetComponent<Transform>().lock()->GetPosition();
 		memcpy(m_MyRenderMatrix.m[3], MonsterBoneWorldPos, sizeof(Vector3));
 		SetActive(false);
 	}
