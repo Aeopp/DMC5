@@ -56,6 +56,11 @@
 #include "Change.h"
 #include "SpriteEffect.h"
 #include "SoundSystem.h"
+#include "ShockWave.h"
+#include "ArtemisMissile.h"
+#include "LensFlare.h"
+#include "Reverberation.h"
+#include "ParticleSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -83,6 +88,31 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 
 	m_fLoadingProgress = 0.01f;
+
+	AddGameObject<Change>();
+	AddGameObject<ShockWave>();
+
+	for (int32 i = 0; i < 16; ++i)
+	{
+		AddGameObject<ArtemisMissile>();
+	}
+
+	for (int32 i = 0; i < 16; ++i)
+	{
+		AddGameObject<Reverberation>();
+	}
+
+	AddGameObject<LensFlare>();
+
+	for (int i = 0; i < 6; ++i)
+	{
+		if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+			_SpriteEffect)
+		{
+			_SpriteEffect->InitializeFromOption(i);
+		}
+	}
+
 
 #pragma region PreLoad
 
@@ -126,8 +156,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
-
-	RenderDataSetUp();
+	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
 
@@ -299,23 +328,45 @@ void TestScene::LoadMap()
 	}
 };
 
-void TestScene::RenderDataSetUp()
+void TestScene::RenderDataSetUp(const bool bTestLight)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Mission02.json");
-	_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+	
+	if (bTestLight)
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
 
-	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.0005f;
-	_Renderer->SkyIntencity = 0.005f;
-	_Renderer->SkysphereScale = 0.078f;
-	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
-	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
-	_Renderer->SoftParticleDepthScale = 0.7f;
-	_Renderer->SkyRotationSpeed = 1.5f;
-	_Renderer->StarScale = 4.f;
-	_Renderer->StarFactor = 0.9f;
+		_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+		_Renderer->ao = 0.001f;
+		_Renderer->SkyIntencity = 0.005f;
+		_Renderer->SkysphereScale = 0.078f;
+		_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+		_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
+		_Renderer->SoftParticleDepthScale = 0.7f;
+		_Renderer->SkyRotationSpeed = 1.5f;
+		_Renderer->StarScale = 4.f;
+		_Renderer->StarFactor = 0.9f;
+	}
+	else
+	{
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S01.json");
+
+		_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+		_Renderer->ao = 0.001f;
+		_Renderer->SkyIntencity = 0.005f;
+		_Renderer->SkysphereScale = 0.078f;
+		_Renderer->SkysphereRot = { 0.f,0.f,0.f };
+		_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
+		_Renderer->SoftParticleDepthScale = 0.7f;
+		_Renderer->SkyRotationSpeed = 1.5f;
+		_Renderer->StarScale = 4.f;
+		_Renderer->StarFactor = 0.9f;
+
+	}
+	
+
+	Renderer::GetInstance()->LateSceneInit();
 }
 
 void TestScene::TriggerSetUp()

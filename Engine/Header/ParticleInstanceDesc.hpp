@@ -25,6 +25,12 @@ namespace ParticleInstance
 		float ColorIntencity = 0.33f;
 	};
 
+	struct Artemis
+	{
+		float ColorIntencity = 0.33f;
+		Vector3 Color{ 1.f,1.f,1.f };
+	};
+
 	struct Electric
 	{
 		float ColorIntencity = 0.33f;

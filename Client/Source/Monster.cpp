@@ -63,6 +63,11 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		static_pointer_cast<Nero>(_pOther.lock())->Set_GrabEnd(true);
 	}
 
+	
+}
+
+void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
+{
 	switch (_pOther.lock()->m_nTag)
 	{
 	case TAG_RedQueen:
@@ -70,6 +75,7 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
+		m_pPlayer.lock()->Add_ExGauge(0.25f);
 		break;
 	case Tag_Cbs_Long:
 		m_pEffect[0].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
@@ -181,6 +187,11 @@ void Monster::StoneDebrisPlayStart()
 	}
 
 	m_bStoneDebrisPlayStart = true;
+}
+
+void Monster::CalcEffectPos()
+{
+	m_vEffectPos = FMath::RandomVector(FMath::Random(0.008f, 0.016f));
 }
 
 Vector3 Monster::GetMonsterBoneWorldPos(std::string _BoneName)

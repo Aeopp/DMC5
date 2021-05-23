@@ -99,6 +99,7 @@ void ThunderBolt::PlayStart(
 		SpTransform)
 	{
 		SpTransform->SetPosition(PlayLocation);
+
 		const Vector3 Up = Direction.y  > 0.f ? Vector3{ 0.f,-1.f,0.f } : Vector3{ 0.f,1.f,0.f };
 		const Vector3 Axis = FMath::Cross(Direction, Up);
 		const Vector3 NormalAxis = FMath::Normalize(Axis);

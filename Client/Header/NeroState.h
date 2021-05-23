@@ -39,11 +39,18 @@ protected:
 	void SetCbsIdle();
 	void IsGround();
 	void ActiveTrail(bool _ActvieOrNot);
+	void Play_Sound(GAMEOBJECTTAG _Tag, const std::string& SoundKey, bool _Overlap = true);
 	//static inline bool m_bActive_Gravity = true; // 스테이트 클래스 공통적으로 쓸 그래비티 함수;
 	static bool m_bActive_Gravity;
 	static bool	m_bActiveColl_Cbs;
 	static bool m_bCbsIdle;
 	static bool m_bPlayTrail;
+	static bool m_bPlayRedQueenSound;
+	static bool m_bPlayOvertureSound;
+	static bool m_bPlayCbsShortSound;
+	static bool m_bPlayCbsMiddleSound;
+	static bool m_bPlayCbsLongSound;
+	static bool m_bPlayDanteVoice;
 	static UINT m_iNeroCurWeaponIndex;
 };
 
@@ -1085,6 +1092,7 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
 };
 
 class BT_Air_ComboB : public NeroState

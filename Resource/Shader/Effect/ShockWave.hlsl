@@ -6,6 +6,8 @@ uniform float DistortionIntencity= 1.f;
 uniform float BlurMaxLength=200.f;
 uniform float BlurAlpha;
 uniform float DistortionAlpha;
+uniform float DirectionFactor;
+
 
 uniform float exposure_corr;
 
@@ -73,7 +75,7 @@ void PsMain(out float4 Color : COLOR0,
         BlurMskVelocityFactor = MskSample.x;
     }
     
-    Color2.xy = LNormal.xy * CurBlurIntencity * BlurMskVelocityFactor;
+    Color2.xy = LNormal.xy * DirectionFactor * CurBlurIntencity * BlurMskVelocityFactor;
     Color2.z = 1.f;
     Color2.w = BlurAlpha * BlurMskAlphaFactor;
 };

@@ -9,7 +9,7 @@ class ShockWave : public ENGINE::GameObject,
 	              public ENGINE::RenderInterface
 {
 public:
-	enum  Option :int32
+	enum Option :int32
 	{
 		Weak=0,
 		Middle,
@@ -18,6 +18,10 @@ public:
 		GoliathPunch,
 		Change,
 		Hit,
+		SnatchRush,
+		ArtemisRush,
+		ArtemisLaunch,
+		ArtemisEnd,
 		None,
 	};
 private:
@@ -52,6 +56,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	bool bDirectionReverse = false;
 	bool bBlurMsk = false;
 	float T = 0.0f;
 	float EndT = 1.f;
