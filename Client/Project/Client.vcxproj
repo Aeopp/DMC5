@@ -164,6 +164,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Header\Application.h" />
+    <ClInclude Include="..\Header\ArtemisMissile.h" />
     <ClInclude Include="..\Header\BreakableObject.h" />
     <ClInclude Include="..\Header\BrokenBookShelf.h" />
     <ClInclude Include="..\Header\BrokenPeople.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\Em5300Ulte.h" />
     <ClInclude Include="..\Header\FadeOut.h" />
+    <ClInclude Include="..\Header\FinalReady.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
     <ClInclude Include="..\Header\Hotel_S01.h" />
     <ClInclude Include="..\Header\Hotel_S02.h" />
@@ -205,6 +207,7 @@
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\LensFlare.h" />
     <ClInclude Include="..\Header\Library_S05.h" />
     <ClInclude Include="..\Header\Library_S06.h" />
     <ClInclude Include="..\Header\LoadingPanel.h" />
@@ -217,6 +220,7 @@
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
+    <ClInclude Include="..\Header\Reverberation.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
     <ClInclude Include="..\Header\SecretVisionMagicCircle.h" />
     <ClInclude Include="..\Header\ShockWave.h" />
@@ -284,6 +288,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Application.cpp" />
+    <ClCompile Include="..\Source\ArtemisMissile.cpp" />
     <ClCompile Include="..\Source\BiAttack.cpp" />
     <ClCompile Include="..\Source\BlitzAttack.cpp" />
     <ClCompile Include="..\Source\BreakableObject.cpp" />
@@ -317,6 +322,7 @@
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\Em5300Ulte.cpp" />
     <ClCompile Include="..\Source\FadeOut.cpp" />
+    <ClCompile Include="..\Source\FinalReady.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
     <ClCompile Include="..\Source\HotelAnimationWall.cpp" />
     <ClCompile Include="..\Source\HotelBrokenFloor.cpp" />
@@ -330,6 +336,7 @@
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\LensFlare.cpp" />
     <ClCompile Include="..\Source\Library_S05.cpp" />
     <ClCompile Include="..\Source\Library_S06.cpp" />
     <ClCompile Include="..\Source\LoadingPanel.cpp" />
@@ -342,6 +349,7 @@
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
+    <ClCompile Include="..\Source\Reverberation.cpp" />
     <ClCompile Include="..\Source\Satellite.cpp" />
     <ClCompile Include="..\Source\SecretVision.cpp" />
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp" />
@@ -606,6 +614,31 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\ChangeParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissile.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissileParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\LensFlare.hlsl">
+      <FileType>HLSL</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\Reverberation.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\FinalReady.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

@@ -381,6 +381,8 @@ void Library_S05::TriggerSetUp()
 
 void Library_S05::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
 	// + 플레이어 초기 위치 잡기 등
 
 	if (auto SpPlayer = _Player.lock();
