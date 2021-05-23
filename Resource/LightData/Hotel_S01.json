@@ -5,7 +5,7 @@
             "cosAngularRadius": 0.9999889731407166,
             "specularPower": 80.0,
             "lightIlluminance": 1.1682791709899903,
-            "lightFlux": 0.001475091208703816,
+            "lightFlux": 0.002,
             "Color": [
                 1.0,
                 0.9343629479408264,
@@ -840,6 +840,90 @@
             "ShadowMapSize": 1024.0,
             "Type": "Point"
         },
+      {
+        "sinAngularRadius": 0.004625000059604645,
+        "cosAngularRadius": 0.9999889731407166,
+        "specularPower": 80.0,
+        "lightIlluminance": 1.5,
+        "lightFlux": 0.08,
+        "Color": [
+          0.9686274528503418,
+          0.42352941632270815,
+          0.06666667014360428,
+          1.0
+        ],
+        "Near": 0.10000000149011612,
+        "Far": 3.5,
+        "Projparams": [
+          0.0,
+          0.0,
+          0.10000000149011612,
+          3.5
+        ],
+        "PointRadius": 3.5,
+        "Direction": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Lradiance": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "Position": [
+          -4.450325965881348,
+          0.31338250637054446,
+          8.023303985595704,
+          1.0
+        ],
+        "shadowmin": 0.0,
+        "shadowdepthbias": 0.000009999999747378752,
+        "ShadowMapSize": 512.0,
+        "Type": "Point"
+      },
+      {
+        "sinAngularRadius": 0.004625000059604645,
+        "cosAngularRadius": 0.9999889731407166,
+        "specularPower": 80.0,
+        "lightIlluminance": 1.5,
+        "lightFlux": 0.08,
+        "Color": [
+          0.9686274528503418,
+          0.42352941632270815,
+          0.06666667014360428,
+          1.0
+        ],
+        "Near": 0.10000000149011612,
+        "Far": 3.5,
+        "Projparams": [
+          0.0,
+          0.0,
+          0.10000000149011612,
+          3.5
+        ],
+        "PointRadius": 3.5,
+        "Direction": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "Lradiance": [
+          1.2198290824890137,
+          1.0,
+          1.0
+        ],
+        "Position": [
+          -2.8059678077697756,
+          0.2787123918533325,
+          7.666167259216309,
+          1.0
+        ],
+        "shadowmin": 0.0,
+        "shadowdepthbias": 0.000009999999747378752,
+        "ShadowMapSize": 512.0,
+        "Type": "Point"
+      },
         {
             "sinAngularRadius": 0.004625000059604645,
             "cosAngularRadius": 0.9999889731407166,
@@ -852,91 +936,7 @@
                 0.06666667014360428,
                 1.0
             ],
-            "Near": 0.10000000149011612,
-            "Far": 3.5,
-            "Projparams": [
-                0.0,
-                0.0,
-                0.10000000149011612,
-                3.5
-            ],
-            "PointRadius": 3.5,
-            "Direction": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Lradiance": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "Position": [
-                -4.450325965881348,
-                0.31338250637054446,
-                8.023303985595704,
-                1.0
-            ],
-            "shadowmin": 0.0,
-            "shadowdepthbias": 0.000009999999747378752,
-            "ShadowMapSize": 512.0,
-            "Type": "Point"
-        },
-        {
-            "sinAngularRadius": 0.004625000059604645,
-            "cosAngularRadius": 0.9999889731407166,
-            "specularPower": 80.0,
-            "lightIlluminance": 1.5,
-            "lightFlux": 0.10000000149011612,
-            "Color": [
-                0.9686274528503418,
-                0.42352941632270815,
-                0.06666667014360428,
-                1.0
-            ],
-            "Near": 0.10000000149011612,
-            "Far": 3.5,
-            "Projparams": [
-                0.0,
-                0.0,
-                0.10000000149011612,
-                3.5
-            ],
-            "PointRadius": 3.5,
-            "Direction": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Lradiance": [
-                1.2198290824890137,
-                1.0,
-                1.0
-            ],
-            "Position": [
-                -2.8059678077697756,
-                0.2787123918533325,
-                7.666167259216309,
-                1.0
-            ],
-            "shadowmin": 0.0,
-            "shadowdepthbias": 0.000009999999747378752,
-            "ShadowMapSize": 512.0,
-            "Type": "Point"
-        },
-        {
-            "sinAngularRadius": 0.004625000059604645,
-            "cosAngularRadius": 0.9999889731407166,
-            "specularPower": 80.0,
-            "lightIlluminance": 1.5,
-            "lightFlux": 0.10000000149011612,
-            "Color": [
-                0.9686274528503418,
-                0.42352941632270815,
-                0.06666667014360428,
-                1.0
-            ],
-            "Near": 0.10000000149011612,
+            "Near": 0.08,
             "Far": 3.5,
             "Projparams": [
                 0.0,
@@ -971,7 +971,7 @@
             "cosAngularRadius": 0.9999889731407166,
             "specularPower": 80.0,
             "lightIlluminance": 1.5,
-            "lightFlux": 0.10000000149011612,
+            "lightFlux": 0.08,
             "Color": [
                 0.9686274528503418,
                 0.42352941632270815,

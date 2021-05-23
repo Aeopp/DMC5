@@ -30,9 +30,9 @@ HRESULT HotelBrokenFloor::Ready()
 	m_pSmoke[0] = AddGameObject<Smoke>();
 	if (auto Sp = m_pSmoke[0].lock(); Sp)
 	{
-		Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
+		Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1_SHORT);
 		Sp->SetScale(0.006f);
-		Sp->SetPosition({ 0.f, 1.44f, 16.5f });
+		Sp->SetPosition({ 0.f, 1.46f, 16.5f });
 		Sp->SetRotation({ 84.255f, 0.f, 61.277f });
 		Sp->SetActive(false);
 	}
@@ -41,8 +41,8 @@ HRESULT HotelBrokenFloor::Ready()
 	{
 		Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
 		Sp->SetScale(0.009f);
-		Sp->SetPosition({ -1.1f, 0.98f, 16.7f });
-		Sp->SetRotation({ 0.f, 222.128f, 0.f });
+		Sp->SetPosition({ -1.15f, 0.98f, 15.5f });
+		Sp->SetRotation({ 0.f, 131.128f, 0.f });
 		Sp->SetActive(false);
 	}
 
@@ -70,7 +70,7 @@ UINT HotelBrokenFloor::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
-	if(0.16f <= m_pMesh->PlayingTime())
+	if (0.16f <= m_pMesh->PlayingTime())
 		m_pCollider.lock()->SetActive(false);
 	return 0;
 }
@@ -121,15 +121,16 @@ void HotelBrokenFloor::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		
 		if (auto Sp = m_pSmoke[0].lock(); Sp)
 		{
+			Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
 			Sp->SetScale(0.009f);
 			Sp->SetPosition({ 0.3f, 0.98f, 15.4f });
 			Sp->SetRotation({ 0.f, 46.f, 0.f });
-			Sp->PlayStart(25.f);
+			Sp->PlayStart(33.f);
 		}
 		if (auto Sp = m_pSmoke[1].lock(); Sp)
 		{
 			Sp->SetActive(true);
-			Sp->PlayStart(25.f);
+			Sp->PlayStart(33.f);
 		}
 	}
 	else
@@ -139,7 +140,7 @@ void HotelBrokenFloor::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			if (!Sp->IsPlaying())
 			{
 				Sp->SetActive(true);
-				Sp->PlayStart(15.f);
+				Sp->PlayStart(10.f);
 			}
 		}
 	}

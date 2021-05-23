@@ -8,7 +8,7 @@ class MainCamera :
     public GameObject
 {
 public:
-    enum AT_TYPE { AT_PLAYER,AT_TRIGGER};
+    enum AT_TYPE { AT_PLAYER,AT_TRIGGER,AT_BOSS1,};
     enum PLAYER_CAM_MODE { CAM_MODE_BASIC,CAM_MODE_WAVE_END,CAM_MODE_RETURN_TO_PLAYER };
 	enum TRIGGER_CAM_MODE {	STAGE1_WAVE1, STAGE1_WAVE1_END, STAGE1_WAVE2_ENTER, STAGE1_WAVE2_BATTLE, STAGE1_WAVE2_END,
         STAGE2_BUTTERFLY1, STAGE2_BUTTERFLY1_END, STAGE2_BUTTERFLY2, STAGE2_BUTTERFLY2_END};
@@ -28,6 +28,7 @@ public:
     virtual void OnDisable() override;
 public:
     float Get_Angle(float _fAddAngle = 0.f) { return m_fAngle + _fAddAngle; }
+    Vector3 GetEye() { return m_vEye; }
 public:
     void Set_Trigger(std::weak_ptr<Trigger> _Trigger) { m_pTrigger = _Trigger; }
     void Set_PlayerCamMode(UINT _ePlayerCamMode);
@@ -36,9 +37,10 @@ public:
     void SetDistance(float _fDistance) { m_fDistanceToTarget = _fDistance; }
     void SetQliphothBlock(std::vector<weak_ptr<class Effect>> _vecQliphothBlock) { m_vecQliphothBlock = _vecQliphothBlock; }
     void SetLerp(bool _LerpOrNot) { m_bLerp = _LerpOrNot; }
-    void SetAngle(float _fAngle) { m_fAngle = _fAngle; }
+    void SetAngle(const Vector3& _vAngle);
     void SetShakeInfo(float _fShakeTime, float _fShakePower);
     void SetFadeSceneInfo(float _fFadeInAmout);
+    void SetStartPos();
 public:
     void DecreaseDistance(float _GoalDis,float _fDeltaTime);
     void IncreaseDistance(float _GoalDis, float _fDeltaTime);
@@ -65,6 +67,9 @@ private:
     void Trigger_Cam_Stage2_ButterFly1_End(float _fDeltaTime);
     void Trigger_Cam_Stage2_ButterFly2(float _fDeltaTime);
     void Trigger_Cam_Stage2_ButterFly2_End(float _fDeltaTime);
+    //보스 카메라 함수
+    void Boss_Cam_Em5000(float _fDeltaTime);
+    void Boss_Cam_Em5300(float _fDeltaTime);
 private:
     std::weak_ptr<Transform>        m_pAtTranform;
     std::weak_ptr<Nero>             m_pNero;

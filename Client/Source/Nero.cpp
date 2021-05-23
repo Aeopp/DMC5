@@ -40,6 +40,8 @@
 #include "Satellite.h"
 #include "CbsLongTrail.h"
 #include "WhirlWind.h"
+#include "Change.h"
+#include "SoundSystem.h"
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -55,6 +57,7 @@ Nero::Nero()
 	m_nTag = Player;
 	m_BattleInfo.iMaxHp = 100;
 	m_BattleInfo.iHp = 100;
+	//m_bDebugButton = false;
 }
 void Nero::Free()
 {
@@ -162,7 +165,7 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 {
 	m_pEffOverture.lock()->PlayStart();
 	Matrix World = m_pTransform.lock()->GetWorldMatrix();
-	Vector3 Pos,Rot;
+	Vector3 Pos, Rot;
 	memcpy(&Pos, World.m[3], sizeof(Vector3));
 	switch (eDir)
 	{
@@ -183,7 +186,7 @@ void Nero::CreateOvertureEff(EffDircetion eDir)
 		break;
 	}
 	Vector3 MyRotation = (Transform::QuaternionToEuler(m_pTransform.lock()->GetQuaternion()));
-	
+
 	m_pEffOverture.lock()->SetRotation(MyRotation + Rot);
 	m_pEffOverture.lock()->SetPosition(Pos);
 }
@@ -203,7 +206,7 @@ std::list<std::weak_ptr<Monster>> Nero::GetAliveMonster()
 		if (!pMonster.lock()->Get_Dead())
 			_AliveMonsters.emplace_back(pMonster);
 	}
-	
+
 
 	return _AliveMonsters;
 }
@@ -223,8 +226,13 @@ HRESULT Nero::Ready()
 	Unit::Ready();
 	RenderInit();
 
+	vDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
+
+	m_fAngle = 0.f;
+
 	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
-	m_pTransform.lock()->SetPosition(Vector3{-4.8f, 3.f, -5.02f});
 
 	PushEditEntity(m_pTransform.lock().get());
 
@@ -261,6 +269,8 @@ HRESULT Nero::Ready()
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
 	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
 
+	m_pChange = AddGameObject<Change>();
+
 	m_pCbsTrail = AddGameObject<CbsTrail>();
 	for (int i = 0; i < 3; ++i)
 	{
@@ -296,7 +306,7 @@ HRESULT Nero::Ready()
 
 	m_iCurAnimationIndex = ANI_END;
 	m_iPreAnimationIndex = ANI_END;
-	
+
 	return S_OK;
 }
 
@@ -313,6 +323,7 @@ HRESULT Nero::Awake()
 	m_pCollider.lock()->SetCenter(D3DXVECTOR3(0.f, 0.09f, 0.f));
 	m_pCollider.lock()->SetRadius(0.04f);
 	m_pCollider.lock()->SetHeight(0.1f);
+	m_pCollider.lock()->SetOffsetRadius(0.04f);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
@@ -320,11 +331,7 @@ HRESULT Nero::Awake()
 
 	PushEditEntity(m_pCollider.lock().get());
 
-	vDegree = D3DXVECTOR3(0.f, 180.f, 0.f);
-	vRotationDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
-	vAccumlatonDegree = D3DXVECTOR3(0.f, 0.f, 0.f);
 
-	m_fAngle = 180.f;
 
 	return S_OK;
 }
@@ -334,20 +341,20 @@ HRESULT Nero::Start()
 	Unit::Start();
 	m_pCamera = std::static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock());
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
-
 	return S_OK;
 }
 
 UINT Nero::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
+	
 
 	Update_Majin(_fDeltaTime);
-	
+
 	if (nullptr != m_pFSM && m_bDebugButton)
 		m_pFSM->UpdateFSM(_fDeltaTime);
 
-	auto [Scale,Rot,Pos] =m_pMesh[m_iMeshIndex]->Update(_fDeltaTime);
+	auto [Scale, Rot, Pos] = m_pMesh[m_iMeshIndex]->Update(_fDeltaTime);
 	Pos.y = 0.f;
 
 	vAccumlatonDegree += Transform::QuaternionToEuler(Rot);
@@ -363,7 +370,8 @@ UINT Nero::Update(const float _fDeltaTime)
 
 
 	//m_pBtlPanel.lock()->AccumulateTDTGauge(0.00005f);
-	m_pBtlPanel.lock()->AccumulateTDTGauge(0.003f * _fDeltaTime);
+	if(!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AccumulateTDTGauge(0.003f * _fDeltaTime);
 	//m_pBtlPanel.lock()->AccumulateTDTGauge(1.f);
 
 
@@ -371,7 +379,7 @@ UINT Nero::Update(const float _fDeltaTime)
 	for (int i = 0; i < SP_END; ++i)
 	{
 		//if (m_pShapeParticle[i].lock()->IsPlaying())
-			m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
+		m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	}
 	/* ----------------------------------- */
 
@@ -379,6 +387,15 @@ UINT Nero::Update(const float _fDeltaTime)
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
 	//}
+
+	if (Input::GetKeyDown(DIK_1))
+	{
+		BuyUpgradedOverture();
+		BuyCbsMiddle();
+		BuyCbsLong();
+	}
+
+	
 
 	return 0;
 }
@@ -404,11 +421,13 @@ void Nero::OnDisable()
 
 void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 {
+	StopEffect(Tag_END);
 	m_pBlood.lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	m_pBlood.lock()->PlayStart(40.f);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
-	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 	RotateToHitMonster(*(std::weak_ptr<GameObject>*)(pArg));
 	if (m_IsFly)
 	{
@@ -417,7 +436,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 			m_pRedQueen.lock()->SetWeaponState(WS_Idle);
 		else
 			SetCbsIdle();
-		
+
 		return;
 	}
 	switch (_BattleInfo.eAttackType)
@@ -473,7 +492,7 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 			return;
 		}
 	}
-		break;
+	break;
 	case Monster5000:
 	{
 		//현재 상태가 플라이 루프일때
@@ -518,17 +537,6 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		}
 	}
 	break;
-	case ThrowCar:
-		if (NeroFSM::EVADE_L == iFsmTag || NeroFSM::EVADE_R == iFsmTag)
-			return;
-		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
-			return;
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(), (void*)&_pOther);
-		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
-		break;
-		//보스가 아니라 여러마리있는애들이면
-		//태그 검사이후에
-		//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
 	}
 }
 
@@ -550,7 +558,7 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 			m_fFlySpeed = 0.f;
 			return;
 		}
-	break;
+		break;
 	case Monster5000:
 		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
 			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
@@ -560,7 +568,7 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 			m_fFlySpeed = 0.f;
 			return;
 		}
-	break;
+		break;
 	case Monster1000:
 		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
 			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
@@ -596,17 +604,17 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	UINT iFsmTag = m_pFSM->GetCurrentIndex();
-	
+
 	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
 	switch (eTag)
 	{
-	case MonsterWeapon:	
+	case MonsterWeapon:
 		//회피기일때 탈출
-		if (NeroFSM::EVADE_L == iFsmTag	|| NeroFSM::EVADE_R == iFsmTag)
+		if (NeroFSM::EVADE_L == iFsmTag || NeroFSM::EVADE_R == iFsmTag)
 			return;
 		if (!static_pointer_cast<Unit>(_pOther.lock())->Get_Coll())
 			return;
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(),(void*)&_pOther);
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(), (void*)&_pOther);
 		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
 		break;
 	default:
@@ -700,7 +708,7 @@ void Nero::RenderDebugSK(const DrawInfo& _Info)
 void Nero::RenderInit()
 {
 	// ������ �����ؾ��ϴ� ������Ʈ��� (�������� ��� ����) �˸�.
-    // ���� �������̽� ��ӹ��� �ʾҴٸ� Ű��������.
+	// ���� �������̽� ��ӹ��� �ʾҴٸ� Ű��������.
 	SetRenderEnable(true);
 
 	// ���� �Ӽ� ��ü �ʱ�ȭ 
@@ -780,10 +788,11 @@ void Nero::Update_Majin(float _fDeltaTime)
 {
 	if (m_IsMajin)
 	{
-		m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
 	}
 
-	if (m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
+	if (!m_pBtlPanel.expired() && m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
 	{
 		m_IsMajin = false;
 		SetActive_NeroComponent(NeroCom_Wings, false);
@@ -824,6 +833,44 @@ void Nero::Editor()
 			BuyCbsMiddle();
 			BuyCbsLong();
 		}
+		//std::weak_ptr<GameObject> _Monster = FindGameObjectWithTag(Monster5000).lock();
+		//if (_Monster.expired())
+		//	return;
+		//std::weak_ptr<Transform> _MonsterTransform = _Monster.lock()->GetComponent<Transform>();
+		//Vector3 vMonsterPos = _MonsterTransform.lock()->GetPosition();
+		//Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+		//Vector3 vDir = vMonsterPos - vMyPos;
+		//vDir.y = 0;
+		//D3DXVec3Normalize(&vDir, &vDir);
+
+		//Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+		//float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+		//if (fDot > 1.f)
+		//	fDot = 1.f - FLT_EPSILON;
+		//else if (fDot < -1.f)
+		//	fDot = -1.f + FLT_EPSILON;
+
+		//float fRadian = acosf(fDot);
+
+		//Vector3	vCross;
+		//D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+		//if (vCross.y > 0)
+		//	fRadian *= -1;
+		//if (ImGui::TreeNode("Angle"))
+		//{
+		//	ImGui::Text("%f", -D3DXToDegree(fRadian));
+		//}
+		//Vector3 vEye = m_pCamera.lock()->GetEye();
+		//Vector3 Length = vEye - m_pTransform.lock()->GetPosition();
+
+		//if (ImGui::TreeNode("Distance22222"))
+		//{
+		//	ImGui::Text("%f", D3DXVec3Length(&Length));
+		//}
 	}
 
 }
@@ -931,7 +978,7 @@ void Nero::SetAddForce(Vector3 _vJumpPos)
 	m_pCollider.lock()->AddForce(_vJumpPos);
 }
 
-void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
+void Nero::SetAddForce_Dir(NeroDirection _eDir, float _fPower)
 {
 	switch (_eDir)
 	{
@@ -950,7 +997,7 @@ void Nero::SetAddForce_Dir(NeroDirection _eDir,float _fPower)
 		vFrontDownDir.y = -0.5f;
 		m_pCollider.lock()->AddForce(vFrontDownDir * _fPower);
 	}
-		break;
+	break;
 	default:
 		break;
 	}
@@ -981,13 +1028,15 @@ void Nero::SetLockOnMonster()
 			m_pTargetMonster = pMonster;
 		}
 	}
-	m_pBtlPanel.lock()->SetTargetCursorActive(true);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetTargetCursorActive(true);
 	//RotateToTargetMonster();
 }
 
 void Nero::SetOffLockOnMonster()
 {
-	m_pBtlPanel.lock()->SetTargetCursorActive(false);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetTargetCursorActive(false);
 	m_pTargetMonster.reset();
 }
 
@@ -1018,7 +1067,8 @@ void Nero::SetCbsIdle()
 	m_pCbsShort.lock()->SetWeaponState(Nero::WS_Idle);
 	m_pCbsShort.lock()->ChangeAnimation("Cbs_Idle", true);
 	m_pCbsTrail.lock()->PlayEnd();
-	m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
 }
 
 void Nero::SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster)
@@ -1032,6 +1082,12 @@ void Nero::SetPosFireCircle()
 	{
 		m_pFireCircle[i].lock()->GetComponent<Transform>().lock()->SetPosition(m_pTransform.lock()->GetPosition() + Vector3{ 0.f,0.1f,0.f });
 	}
+}
+
+void Nero::SetAngle(float _fAngle)
+{
+	vDegree.y = _fAngle;
+	m_fAngle = _fAngle;
 }
 
 
@@ -1076,7 +1132,7 @@ void Nero::CheckAutoRotate()
 			fDot = -1.f + FLT_EPSILON;
 
 		float fRadian = acosf(fDot);
-		
+
 		Vector3	vCross;
 		D3DXVec3Cross(&vCross, &vLook, &vDir);
 
@@ -1110,13 +1166,15 @@ void Nero::Locking()
 	switch (iMonsterTag)
 	{
 	case GAMEOBJECTTAG::Monster1000:
-		m_pBtlPanel.lock()->SetTargetCursor(
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->SetTargetCursor(
 			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Vine01_IK"),
 			fHpRatio);
 		break;
 	case GAMEOBJECTTAG::Monster5000:
-		m_pBtlPanel.lock()->SetTargetCursor(
-			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Neck"),
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->SetTargetCursor(
+			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
 			fHpRatio);
 		break;
 	case GAMEOBJECTTAG::MonsterSnatchPoint:
@@ -1124,7 +1182,8 @@ void Nero::Locking()
 			m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition());
 		break;
 	default:
-		m_pBtlPanel.lock()->SetTargetCursor(
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->SetTargetCursor(
 			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
 			fHpRatio);
 		break;
@@ -1181,7 +1240,7 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 
 	m_pTransform.lock()->SetRotation(vDegree + vRotationDegree + vAccumlatonDegree);
 	//와이어팔 회전할 각도 구해주는곳
-	
+
 	vLook = -m_pTransform.lock()->GetLook();
 	fDot = D3DXVec3Dot(&vNewDir, &vLook);
 	if (fDot > 1.f)
@@ -1305,7 +1364,7 @@ void Nero::WireFly()
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
 		break;
 	case GAMEOBJECTTAG::Monster5000:
-		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Neck");
+		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");
 		break;
 	case GAMEOBJECTTAG::MonsterSnatchPoint:
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
@@ -1351,47 +1410,59 @@ void Nero::IncreaseHp(int _Hp)
 		m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
-	m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 }
 
 float Nero::Get_ExGauge()
 {
-	return m_pBtlPanel.lock()->GetExGauge();
+	if (!m_pBtlPanel.expired())
+		return m_pBtlPanel.lock()->GetExGauge();
+	return 0.f;
 }
 
 uint32 Nero::Get_ExGaugeCount()
 {
-	return m_pBtlPanel.lock()->GetExGaugeCount();
+	if (!m_pBtlPanel.expired())
+		return m_pBtlPanel.lock()->GetExGaugeCount();
+	return 0;
 }
 
 void Nero::Add_ExGauge(float ExGauge)
 {
-	m_pBtlPanel.lock()->AddExGauge(ExGauge);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AddExGauge(ExGauge);
 }
 
 void Nero::Use_ExGauge(const uint32 Count)
 {
-	m_pBtlPanel.lock()->UseExGauge(Count);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->UseExGauge(Count);
 }
 
 float Nero::Get_TDTGauge()
 {
-	return m_pBtlPanel.lock()->GetTDTGauge();
+	if (!m_pBtlPanel.expired())
+		return m_pBtlPanel.lock()->GetTDTGauge();
+	return 0.f;
 }
 
 void Nero::AccumulateTDTGauge(const float Amount)
 {
-	m_pBtlPanel.lock()->AccumulateTDTGauge(Amount);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AccumulateTDTGauge(Amount);
 }
 
 void Nero::ConsumeTDTGauge(const float Speed)
 {
-	m_pBtlPanel.lock()->ConsumeTDTGauge(Speed);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->ConsumeTDTGauge(Speed);
 }
 
 void Nero::AddRankScore(float Score)
 {
-	m_pBtlPanel.lock()->AddRankScore(Score);
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->AddRankScore(Score);
 }
 
 void Nero::BuyUpgradedOverture()
@@ -1421,11 +1492,23 @@ void Nero::ChangeNeroDirection(UINT _NeroDirection)
 	m_iCurDirIndex = _NeroDirection;
 }
 
+void Nero::Change_To_MajinMode()
+{
+	m_IsMajin = true;
+	for (auto pMonster : GetAliveMonster())
+	{
+		BT_INFO _Info;
+		ZeroMemory(&_Info, sizeof(BT_INFO));
+		_Info.eAttackType = Attack_KnocBack;
+		pMonster.lock()->Hit(_Info);
+	}
+}
+
 void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const UINT AnimationIndex, const AnimNotify& _Notify, const bool bOverlap)
 {
 	m_iPreAnimationIndex = m_iCurAnimationIndex;
 	m_iCurAnimationIndex = AnimationIndex;
-	m_pMesh[m_iMeshIndex]->PlayAnimation(InitAnimName, bLoop, _Notify, 1.f,1.f, bOverlap);
+	m_pMesh[m_iMeshIndex]->PlayAnimation(InitAnimName, bLoop, _Notify, 1.f, 1.f, bOverlap);
 }
 
 void Nero::ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify, const bool bOverlap)
@@ -1502,7 +1585,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pRedQueen.lock()->SetActive(true);
 		m_pRedQueen.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
 		break;
 	case Nero::NeroCom_Cbs_Short:
 		m_pRedQueen.lock()->SetActive(false);
@@ -1513,7 +1597,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pCbsShort.lock()->SetActive(true);
 		m_pCbsShort.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 0);
 		break;
 	case Nero::NeroCom_Cbs_Middle:
 		m_pRedQueen.lock()->SetActive(false);
@@ -1524,7 +1609,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pCbsMiddle.lock()->SetActive(true);
 		m_pCbsMiddle.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 1);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 1);
 		break;
 	case Nero::NeroCom_Cbs_Long:
 		m_pRedQueen.lock()->SetActive(false);
@@ -1535,7 +1621,8 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 			return;
 		m_pCbsLong.lock()->SetActive(true);
 		m_pCbsLong.lock()->GetComponent<CapsuleCollider>().lock()->SetActive(false);
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs,2);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs, 2);
 		break;
 	}
 }
@@ -1543,10 +1630,14 @@ void Nero::ChangeWeapon(NeroComponentID _iWeaponIndex)
 void Nero::ChangeWeaponUI(NeroComponentID _iWeaponIndex)
 {
 	if (Nero::NeroCom_RedQueen == _iWeaponIndex)
-		m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+	{
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(RQ);
+	}
 	else
 	{
-		m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->ChangeWeaponUI(Cbs);
 	}
 }
 
@@ -1563,11 +1654,14 @@ void Nero::ChangeWeaponCollSize(float _fSize)
 void Nero::ChangeNewSword(UINT _eAniList, bool _bLoop, bool _Overlap)
 {
 	m_pNewWingSword.lock()->SetActive(true);
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveEnd();
+	m_pNewWingSword.lock()->m_DissolveInfo.DissolveStart(true, false, 0.1f);
+	m_pNewWingSword.lock()->m_bDissovleOnce = true;
 	m_pNewWingSword.lock()->ChangeAnimation(_eAniList, _bLoop, _Overlap);
 }
 
 void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float CurRoll,
-	const int32 StartSpriteRow,	const float PlayTime, const Vector3& Scale)
+	const int32 StartSpriteRow, const float PlayTime, const Vector3& Scale)
 {
 	Vector3 vMyPos = m_pTransform.lock()->GetPosition();
 	switch (_eTag)
@@ -1576,10 +1670,13 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		m_pAirHike.lock()->PlayStart(vMyPos);
 		break;
 	case Eff_Trail:
-		if (0 < m_pBtlPanel.lock()->GetExGaugeCount())
-			m_pTrail.lock()->PlayStart(Trail::Mode::Explosion);
-		else
-			m_pTrail.lock()->PlayStart(Trail::Mode::Non);
+		if (!m_pBtlPanel.expired())
+		{
+			if (0 < m_pBtlPanel.lock()->GetExGaugeCount())
+				m_pTrail.lock()->PlayStart(Trail::Mode::Explosion);
+			else
+				m_pTrail.lock()->PlayStart(Trail::Mode::Non);
+		}
 		break;
 	case Eff_FireCircle:
 		switch (StartSpriteRow)
@@ -1591,7 +1688,7 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 			m_pFireCircle[1].lock()->PlayStart(Rotation, vMyPos + Vector3{ 0.f,0.1f,0.f }, CurRoll, FMath::PI * 4.f, StartSpriteRow, PlayTime, 0, Scale);
 			break;
 		case 5://그 담으로 밝은거
-			m_pFireCircle[2].lock()->PlayStart(Rotation, vMyPos + Vector3{ 0.f,0.1f,0.f }, CurRoll, FMath::PI * 4.f, StartSpriteRow, PlayTime,0, Scale);
+			m_pFireCircle[2].lock()->PlayStart(Rotation, vMyPos + Vector3{ 0.f,0.1f,0.f }, CurRoll, FMath::PI * 4.f, StartSpriteRow, PlayTime, 0, Scale);
 			break;
 		}
 		break;
@@ -1621,7 +1718,7 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		}
 		break;
 	case Eff_CbsTrail:
-		if(Nero::ANI_CBS_SKILL_ICEAGE_END <= m_iCurAnimationIndex
+		if (Nero::ANI_CBS_SKILL_ICEAGE_END <= m_iCurAnimationIndex
 			&& m_iCurAnimationIndex <= Nero::ANI_CBS_SKILL_ICEAGE_START)
 			m_pCbsTrail.lock()->PlayStart(CbsTrail::IceAge);
 		else
@@ -1647,12 +1744,15 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		D3DXVec3TransformCoord(&vDir, &vDir, &RotX);
 		m_pLongBarrel.lock()->PlayStart(vMyPos, vDir);
 	}
-		break;
+	break;
 	case Eff_Satellite:
 		m_pSatellite.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
 		break;
 	case Eff_WhirlWind:
 		m_pWhirlWind.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
+		break;
+	case Eff_Change:
+		m_pChange.lock()->PlayStart(vMyPos);
 		break;
 	default:
 		break;
@@ -1698,6 +1798,17 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		break;
 	case Eff_Satellite:
 		m_pSatellite.lock()->PlayEnd();
+		break;
+	case Eff_Change:
+		m_pChange.lock()->PlayEnd();
+		break;
+	case Tag_END:
+		m_pTrail.lock()->PlayEnd();
+		m_pIceAge.lock()->PlayEnd();
+		m_pCbsTrail.lock()->PlayEnd();
+		m_pCbsMidTrail.lock()->PlayEnd();
+		m_pSatellite.lock()->PlayEnd();
+		m_pCbsLongTrail.lock()->PlayEnd();
 		break;
 	default:
 		break;

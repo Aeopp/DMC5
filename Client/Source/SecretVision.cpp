@@ -13,7 +13,6 @@
 #include "NhDoor.h"
 #include "BtlPanel.h"
 
-
 SecretVision::SecretVision()
 {
 
@@ -126,12 +125,9 @@ void SecretVision::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetTexture("NoiseMap", _NoiseMap->GetTexture());
 	_Info.Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
 
-	if (PuzzleStartT)
-	{
-		_Info.Fx->SetFloat("NoiseWrap", FMath::Lerp(0.0f, NoiseWrap, *PuzzleStartT));
-		_Info.Fx->SetFloat("TimeCorr", FMath::Lerp(0.0f, TimeCorr, *PuzzleStartT));
-		_Info.Fx->SetFloat("DistortionIntencity", FMath::Lerp(0.0f, DistortionIntencity, *PuzzleStartT));
-	}
+	_Info.Fx->SetFloat("NoiseWrap", NoiseWrap);
+	_Info.Fx->SetFloat("TimeCorr", TimeCorr);
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 
 	_Info.Fx->SetBool("bDistortion", bDistortion);
 
@@ -275,7 +271,6 @@ void SecretVision::PuzzleStart()
 	bEnable = true;
 	_RenderProperty.bRender = true;
 	InteractionIdx = 0u;
-	PuzzleStartT = 0.0f;
 };
 
 uint32 SecretVision::GetInteractionIdx() const
@@ -311,7 +306,7 @@ void SecretVision::PuzzleEnd()
 
 	NhDoorOpenTime = 0.0f;
 	PuzzleEndParticle();
-	PuzzleStartT = std::nullopt;
+	
 
 	if (auto SpPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 		SpPanel)
@@ -384,11 +379,6 @@ HRESULT SecretVision::Start()
 
 UINT SecretVision::Update(const float _fDeltaTime)
 {
-	if (PuzzleStartT)
-	{
-		(*PuzzleStartT) += _fDeltaTime;
-	}
-
 	if (NhDoorOpenTime)
 	{
 		(*NhDoorOpenTime) += _fDeltaTime;
@@ -524,9 +514,9 @@ void SecretVision::OnTriggerEnter(std::weak_ptr<GameObject> _Target)
 	static const std::set<uint32> HitEnableTargetSet
 	{
 			TAG_RedQueen,
-			Tag_Cbs_Short,
-			Tag_Cbs_Middle,
-			Tag_Cbs_Long,
+			//Tag_Cbs_Short,
+			//Tag_Cbs_Middle,
+			//Tag_Cbs_Long,
 	};
 
 	if (auto SpTarget = _Target.lock();

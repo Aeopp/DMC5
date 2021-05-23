@@ -202,6 +202,9 @@ void BreakableObject::SetUp(
 	PushEditEntity(m_pCollider.lock().get());
 
 	RenderInit();
+
+	if (90.f < _vRotation.x && 270.f > _vRotation.x)
+		m_bReverse = true;
 	StoneInit();
 }
 
@@ -253,8 +256,18 @@ void BreakableObject::StoneInit()
 			p.lock()->SetScale(FMath::Random<float>(0.002f, 0.004f));
 			p.lock()->SetRotation(FMath::Random<Vector3>(Vector3(0.f, 0.f, 0.f), Vector3(180.f, 180.f, 180.f)));
 			// position은 죽을 때 위치
-			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.09f, 0.145f, -0.09f), Vector3(0.09f, 0.16f, 0.09f)));
+			
+			float MinVy = 0.145f;
+			float MaxVy = 0.16f;
+			if (m_bReverse)
+			{
+				MinVy = -0.1f;
+				MaxVy = -0.08f;
+			}
+			p.lock()->SetVelocity(FMath::Random<Vector3>(Vector3(-0.09f, MinVy, -0.09f), Vector3(0.09f, MaxVy, 0.09f)));
+
 			p.lock()->SetActive(false);
+
 			m_pStoneDebrisVec.push_back(p);
 		}
 	}

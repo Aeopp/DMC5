@@ -147,6 +147,8 @@ public:
 		const Ray& Lhs, const Sphere& Rhs,
 		float& t0, float& t1, Vector3& OutIntersectPoint);
 
+	static float ToSecFromMilli(const float MilliSce);
+
 	static inline bool
 		IsSegmentToSphere(
 			const Segment& Lhs, const Sphere& Rhs,
@@ -751,6 +753,11 @@ bool FMath::IsRayToSphere(
 	}
 
 	return false;
+}
+
+inline float FMath::ToSecFromMilli(const float MilliSec)
+{
+	return MilliSec / 1000.f;
 }
 
 inline bool FMath::InnerPointFromFace(const Vector3& Point, const std::array<Vector3, 3ul>& Face)

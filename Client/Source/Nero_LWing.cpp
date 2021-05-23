@@ -66,6 +66,7 @@ UINT Nero_LWing::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
+
 	m_pMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {});
 	m_pMesh->UpdateToRootMatricies();
 	m_pMesh->VTFUpdate();
@@ -98,7 +99,7 @@ UINT Nero_LWing::LateUpdate(const float _fDeltaTime)
 			m_pTransform.lock()->SetWorldMatrix(FinalWorld);
 		}
 	}
-
+	m_DissolveInfo.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World);
 	//m_pTransform.lock()->UpdateTransform();
 
 	return 0;
@@ -109,6 +110,7 @@ void Nero_LWing::OnEnable()
 	GameObject::OnEnable();
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
+	m_DissolveInfo.DissolveStart(true, false,1.f);
 }
 
 void Nero_LWing::OnDisable()
@@ -178,6 +180,9 @@ void Nero_LWing::RenderInit()
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
+	m_DissolveInfo.Initialize(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing\\Wing_Left.fbx",
+		Vector3{ 0.f,0.f,0.f }, Vector3{ 1.f / 255.f , 0.f , 1.f / 255.f }, 0.85f);
+
 	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\Wing\\Wing_Left.fbx" , _InitInfo);
 	m_pMesh->EnableToRootMatricies();
 	PushEditEntity(m_pMesh.get());
@@ -210,7 +215,7 @@ void Nero_LWing::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	else if (1 == _Info.PassIndex)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
-
+		m_DissolveInfo.DissolveVariableBind(_Info.Fx);
 		auto WeakSubset = m_pMesh->GetSubset(0u);
 		if (auto SharedSubset = WeakSubset.lock();
 			SharedSubset)

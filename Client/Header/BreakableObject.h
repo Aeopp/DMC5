@@ -47,9 +47,10 @@ private:
 	bool	m_bStoneDebrisPlayStart = false;
 	int		m_iStoneCount = 0;
 
-
+	bool	m_bReverse = false;
 	float	m_fStoneTime = 0.f;
 	bool	m_bDestroyObject = false;
+
 
 };
 #endif //__BreakableObject__H_

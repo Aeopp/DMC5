@@ -4,6 +4,7 @@
 
 #include "GameObject.h"
 #include "RenderInterface.h"
+#include "DissolveInfo.h"
 class Nero;
 class WingArm_Right : public GameObject,
 	public ENGINE::RenderInterface
@@ -40,7 +41,8 @@ public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;
 	virtual void Editor()override;
-
+	DissolveInfo m_DissolveInfo{};
+	bool	m_bDissovleOnce = true;
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
 	std::weak_ptr<Nero>					  m_pNero;

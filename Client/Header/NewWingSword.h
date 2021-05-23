@@ -38,6 +38,8 @@ public:
     void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderInit();
 
+    DissolveInfo m_DissolveInfo{};
+    bool    m_bDissovleOnce = false;
 private:
     std::weak_ptr<Nero>     m_pNero;
     std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh[WingSword_End];
@@ -51,7 +53,7 @@ private:
 
     float	m_fAccTime = 0.f;
 
-    DissolveInfo m_DissolveInfo{};
+
 };
 
 

@@ -9,7 +9,6 @@
 #include "ShockWave.h"
 #include "FLight.h"
 
-
 class Change : public ENGINE::GameObject,
 			   public ENGINE::RenderInterface
 {
@@ -57,7 +56,7 @@ private:
 	float CurParticleTime = 0.0f;
 	
 	float EmissiveIntencity{ 0.0f };
-	float ColorIntencity{ 10.f };
+	float ColorIntencity{ 7.f };
 	float DistortionIntencity{ 1.f };
 
 	float Radian = 0.0f;

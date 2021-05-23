@@ -64,9 +64,13 @@ UINT NewWingSword::Update(const float _fDeltaTime)
 	m_DissolveInfo.DissolveUpdate(_fDeltaTime,_RenderUpdateInfo.World);
 	
 	if (m_pMesh[m_iMeshIndex]->bLoop == false &&
-		0.7f <= m_pMesh[m_iMeshIndex]->PlayingTime())
+		0.5f <= m_pMesh[m_iMeshIndex]->PlayingTime())
 	{
-		m_DissolveInfo.DissolveStart();
+		if (m_bDissovleOnce)
+		{
+			m_bDissovleOnce = false;
+			m_DissolveInfo.DissolveStart(false, false, 0.5f);
+		}
 	}
 
 	if (m_pMesh[m_iMeshIndex]->IsAnimationEnd())
@@ -100,7 +104,7 @@ void NewWingSword::OnEnable()
 {
 	GameObject::OnEnable();
 	_RenderProperty.bRender = true;
-	m_DissolveInfo.DissolveEnd();
+
 }
 
 void NewWingSword::OnDisable()
@@ -122,6 +126,9 @@ void NewWingSword::ChangeAnimation(UINT _eAniList, bool _bLoop, bool _Overlap)
 
 void NewWingSword::RenderReady()
 {
+	// 첫번째 매개변수 디졸브 거꾸로 할지 여부
+
+	
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
@@ -299,8 +306,9 @@ void NewWingSword::RenderInit()
 
 	Mesh::InitializeInfo _InitInfo{};
 
-	Vector3 DissolveColor = {1.f,0.f,0.f};
-	m_DissolveInfo.Initialize(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\Ar1.fbx", DissolveColor);
+
+	m_DissolveInfo.Initialize(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\Ar1.fbx",
+		Vector3{ 0.f,0.f,0.f } , Vector3{ 1.f / 255.f , 0.f , 1.f / 255.f } , 0.85f);
 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	m_pMesh[WingSword_Ar1] = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\Ar1.fbx", _InitInfo);

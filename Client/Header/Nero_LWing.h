@@ -4,6 +4,7 @@
 
 #include "GameObject.h"
 #include "RenderInterface.h"
+#include "DissolveInfo.h"
 class Nero;
 class Nero_LWing :	public GameObject,
 	public ENGINE::RenderInterface
@@ -56,7 +57,7 @@ private:
 	Matrix	m_AuraWorldMatrix = Matrix();
 
 	//Vector3 m_AuraRot = Vector3(0.f, 0.f, 0.f);
-
+	DissolveInfo m_DissolveInfo{};
 };
 
 

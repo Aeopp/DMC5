@@ -17,9 +17,11 @@ void Smoke::SetVariationIdx(Smoke::VARIATION Idx)
 		_BrightScale = 0.00005f;
 		break;
 	case SMOKE_1:
+	case SMOKE_1_SHORT:
 		_BrightScale = 0.01f;
 		break;
 	case SMOKE_2:
+	case SMOKE_2_SHORT:
 		_BrightScale = 0.01f;
 		break;
 	case APPEAR_AERIAL_MONSTER:
@@ -101,7 +103,7 @@ void Smoke::Imgui_Modify()
 
 		{
 			static int VariationIdx = _VariationIdx;
-			ImGui::SliderInt("VariationIdx##Smoke", &VariationIdx, 0, 2);
+			ImGui::SliderInt("VariationIdx##Smoke", &VariationIdx, 0, 4);
 			if (ImGui::Button("Apply##Smoke"))
 				SetVariationIdx((Smoke::VARIATION)VariationIdx);
 		}
@@ -162,6 +164,7 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			//_Info.Fx->SetFloat("SoftParticleDepthScale", _SoftParticleDepthScale);
 			_Info.Fx->SetFloatArray("_MinTexUV", _SmokeMinTexUV, 2u);
 			_Info.Fx->SetFloatArray("_MaxTexUV", _SmokeMaxTexUV, 2u);
+			_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 
 			SharedSubset->Render(_Info.Fx);
 			SharedSubset->Render(_Info.Fx);	// 옅어서 한번 더 그림
@@ -173,15 +176,15 @@ void Smoke::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			{
 			case SMOKE_0: default:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB0Tex->GetTexture());
-				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
+				_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			case SMOKE_1:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB1Tex->GetTexture());
-				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
+				_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			case SMOKE_2:
 				_Info.Fx->SetTexture("ALB0Map", _SmokeALB2Tex->GetTexture());
-				//_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
+				_Info.Fx->SetFloatArray("_ExtraColor", Vector3(1.f, 1.f, 1.f), 3u);
 				break;
 			}
 			_Info.Fx->SetBool("_UsingNoise", false);
@@ -240,24 +243,34 @@ UINT Smoke::Update(const float _fDeltaTime)
 	if (!_IsPlaying)
 		return 0;
 
-	if (APPEAR_AERIAL_MONSTER == _VariationIdx)
+	switch (_VariationIdx)
 	{
-		//
+	case APPEAR_AERIAL_MONSTER:
 		if (5.f < _AccumulateTime)
 			Reset();
 		else if (4.f < _AccumulateTime)
 			_SliceAmount = (_AccumulateTime - 4.f) * 0.6f;
 		else
 			_SliceAmount = 1.f - _AccumulateTime * 0.6f;
-	}
-	else
-	{
+		break;
+	case SMOKE_1_SHORT:
+	case SMOKE_2_SHORT:
+		if (10.f < _AccumulateTime)
+			Reset();
+		else if (9.f < _AccumulateTime)
+			_SliceAmount = (_AccumulateTime - 9.f) * 1.f;
+		else
+			_SliceAmount = 1.f - _AccumulateTime * 1.f;
+		break;
+	case SMOKE_1:
+	case SMOKE_2:
 		if (100.f < _AccumulateTime)
 			Reset();
 		else if (90.f < _AccumulateTime)
 			_SliceAmount = (_AccumulateTime - 90.f) * 0.1f;
 		else
 			_SliceAmount = 1.f - _AccumulateTime * 0.1f;
+		break;
 	}
 
 	// sprite

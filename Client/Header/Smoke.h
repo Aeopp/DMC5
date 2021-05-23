@@ -9,7 +9,9 @@ public:
 	{
 		SMOKE_0 = 0u,
 		SMOKE_1,
+		SMOKE_1_SHORT,
 		SMOKE_2,
+		SMOKE_2_SHORT,
 
 		APPEAR_AERIAL_MONSTER,
 

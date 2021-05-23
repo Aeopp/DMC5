@@ -2,6 +2,8 @@
 #define __M01_HOTEL_S02_H__
 #include "Scene.h"
 
+class Trigger;
+
 class Hotel_S02 : public Scene
 {
 private:
@@ -10,6 +12,7 @@ private:
 	std::weak_ptr<class MainCamera> _MainCamera{};
 	std::vector<std::weak_ptr<class MakaiButterfly>> _MakaiButterflyVec{};
 	std::weak_ptr<class SecretVision> _SecretVision{};
+	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
 	bool _LateInit = false;
 private:
 	explicit Hotel_S02();
@@ -30,15 +33,16 @@ private:
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:
+	void LateInit();
 	void RenderDataSetUp(const bool bTest);
-	void TriggerSetUp();
-	void TriggerWallSmash();
-	void TriggerFirstButterFlyMeetCamera(const std::weak_ptr<class Trigger>& _BattleTrigger);
-	std::weak_ptr<class Trigger> TriggerFirstButterFlyMeet();
-	void TriggerPuzzleStart();
-	void TriggerNextScene();
 	void BgmPlay();
 
-	void LateInit();
+	void TriggerSetUp();
+	void TriggerWallSmash();
+	void TriggerFirstButterFlyMeetCamera(const std::weak_ptr<class Trigger>& _NextTrigger);
+	std::weak_ptr<Trigger> TriggerFirstButterFlyMeet();
+	void TriggerPuzzleStart();
+	void TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger);
+	std::weak_ptr<Trigger> TriggerNextScene();
 };
 #endif // !__M01_HOTEL_S02_H__

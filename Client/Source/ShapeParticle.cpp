@@ -94,7 +94,7 @@ void ShapeParticle::Reset()
 			switch (_ShapeIdx)
 			{
 			case SPHERE:
-				divide = 10;
+				divide = 20;
 				break;
 			case PIPE00:
 				divide = 10;
@@ -134,7 +134,9 @@ void ShapeParticle::Reset()
 				//	break;
 				}
 
-				_BezierCurveDescVec.push_back({ StartPos, EndPos, Vector3(0.f, 0.f, 0.f) });
+				Vector3 StartPosOffset = FMath::Random<Vector3>(Vector3(-25.f, -25.f, -25.f), Vector3(25.f, 25.f, 25.f));
+
+				_BezierCurveDescVec.push_back({ StartPos + StartPosOffset, EndPos, Vector3(0.f, 0.f, 0.f) });
 			}
 
 			_ChangedShape = false;

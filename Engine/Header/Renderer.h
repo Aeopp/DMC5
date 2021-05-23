@@ -73,7 +73,11 @@ public:
 	void RequestShadowMapBake();
 	bool IsBlackOut()const&;
 public:
-	void SkyDistortionStart();
+	std::weak_ptr<FLight> RefPointLights(const uint32 Idx);
+
+	void SkyDistortionStart(
+		const float NoiseWrap = 8.173007f,
+		const float TimeCorr= 0.304011f);
 	void SkyDistortionEnd();
 	// 영상이 서서히 검은색으로 포화. (검은색으로 되고 복구하지 않음 )
 	void FadeOutStart(const float Time);
@@ -84,6 +88,7 @@ public:
 
 	void LateSceneInit();
 	void SceneChangeRender();
+	void SetSkyOriginColor(const Vector4& SkyOriginColor);
 private:
 	void RenderReady()&;
 	void RenderBegin()&;
@@ -164,6 +169,7 @@ public:
 	bool    SkyDistortion = false;
 	float   SkyIntencity = 0.111f;
 	float   SkyRotationSpeed = 0.001f;	
+	Vector4 SkyOriginColor{ 1.f,1.f,1.f,1.f };
 	float   SkysphereScale = 0.078f;
 	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
 	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };

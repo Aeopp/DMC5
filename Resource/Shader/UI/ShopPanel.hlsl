@@ -245,6 +245,7 @@ PsOut PsMain_GUI(PsIn_GUI In)
     
     Out.Color = tex2D(ALB_NOsRGB, In.UV);
     Out.Color.rgb *= _BrightScale;
+    Out.Color.a *= saturate(1.f - _SliceAmount);
     
     return Out;
 };

@@ -42,6 +42,7 @@ class LongBarrel;
 class Satellite;
 class WhirlWind;
 class NewWingSword;
+class Change;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -409,6 +410,7 @@ public:
 	void SetLetMeFlyMonster(std::weak_ptr<Monster> _pMonster);
 	void SetFly(bool _ActiveOrNot) { m_IsFly = _ActiveOrNot; }
 	void SetPosFireCircle();
+	void SetAngle(float _fAngle);
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
@@ -451,7 +453,7 @@ public:
 	void  Set_PlayingTime(float NewTime);
 public:
 	void ChangeNeroDirection(UINT _NeroDirection);
-	void Change_To_MajinMode() { m_IsMajin = true; }
+	void Change_To_MajinMode();
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const UINT AnimationIndex, const AnimNotify& _Notify = {}, const bool bOverlap = false);
 	void ChangeAnimation_Weapon(NeroComponentID _eNeroComID, const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void ChangeWeapon(NeroComponentID _iWeaponIndex);
@@ -535,6 +537,7 @@ private:
 	std::weak_ptr<WhirlWind>		m_pWhirlWind;
 	enum { SP_RED = 0, SP_GREEN, SP_WHITE, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
+	std::weak_ptr<Change>			m_pChange;
 
 	std::weak_ptr<JudgementSword>	m_pJudgementSword;
 	std::weak_ptr<JudgementShadow1> m_pJudgementShadow1;

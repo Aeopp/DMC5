@@ -55,6 +55,7 @@
 #include "Trail.h"
 #include "Change.h"
 #include "SpriteEffect.h"
+#include "SoundSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -80,10 +81,6 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
-	AddGameObject<Change>();
-	AddGameObject<ShockWave>();
-
-	HitEffectLoad();
 
 	m_fLoadingProgress = 0.01f;
 
@@ -97,7 +94,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
+	// _Camera = AddGameObject<Camera>();
 
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -119,7 +116,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -139,12 +136,15 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.7f;
 
 #pragma region Effect
+
 	//if (auto Sp = AddGameObject<StoneDebris>().lock();
 	//	Sp)
 	//{
 	//	Sp->SetLoop(true);
 	//	Sp->PlayStart();
 	//}
+
+	//AddGameObject<MakaiButterfly>();
 
 #pragma endregion
 
@@ -167,7 +167,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 6, Until Dooms Day",
+		pFont->SetText("D 4, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
@@ -181,6 +181,11 @@ HRESULT TestScene::LoadScene()
 
 	// Load Complete
 	m_fLoadingProgress = 1.f;
+
+	if (_Camera.expired() == false)
+	{
+		SoundSystem::GetInstance()->SetDisanceDecrease(0.1f, 3.f, _Camera.lock()->GetComponent<Transform>());
+	};
 
 	return S_OK;
 }
@@ -346,122 +351,6 @@ void TestScene::TriggerSetUp()
 	}
 };
 
-void TestScene::HitEffectLoad()
-{
-	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-		_SpriteEffect)
-	{
-		_SpriteEffect->RegistSpriteInfo(8, 4);
-		_SpriteEffect->RegistMesh(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-		_SpriteEffect->RegistAlbedoTex(
-			"..\\..\\Usable\\Spark\\1.tga");
-		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
-		_SpriteEffect->ColorIntencity = 0.400f;
-		//  플탐 0.3f
-
-		DynamicLight _LightDesc{};
-		_LightDesc.Color = { Vector4{1.f,0.25f,0.25f,1.f }, Vector4{1.f,0.25f,0.25f,1.f } };
-		// _LightDesc.Flux = { 0.0f,0.161f };
-		_LightDesc.Flux = { 0.0f,0.0161f };
-		_LightDesc.PointRadius = { 0.161f,0.161f };
-		_SpriteEffect->RegistDynamicLight(_LightDesc);
-	}
-
-	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-		_SpriteEffect)
-	{
-		_SpriteEffect->RegistSpriteInfo(2, 1);
-		_SpriteEffect->RegistMesh(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\2.tga");
-		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
-		_SpriteEffect->ColorIntencity = 0.3f;
-		DynamicLight _LightDesc{};
-		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		// _LightDesc.Flux = { 0.0f,0.161f };
-		_LightDesc.Flux = { 0.0f,0.0161f };
-		_LightDesc.PointRadius = { 0.161f,0.161f };
-		_SpriteEffect->RegistDynamicLight(_LightDesc);
-
-		//  플탐 0.11f
-	}
-
-	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-		_SpriteEffect)
-	{
-		_SpriteEffect->RegistSpriteInfo(2, 2);
-		_SpriteEffect->RegistMesh(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\3.tga");
-		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
-		_SpriteEffect->ColorIntencity = 0.08f;
-		DynamicLight _LightDesc{};
-		
-		// 플탐 0.1f
-
-		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		// _LightDesc.Flux = { 0.0f,0.080f };
-		_LightDesc.Flux = { 0.0f,0.0080f };
-
-		_LightDesc.PointRadius = { 0.08f,0.08f };
-		_SpriteEffect->RegistDynamicLight(_LightDesc);
-	}
-
-	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-		_SpriteEffect)
-	{
-		_SpriteEffect->RegistSpriteInfo(4, 1);
-		_SpriteEffect->RegistMesh(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\4.tga");
-		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
-		DynamicLight _LightDesc{};
-		// 플탐 0.2
-		_LightDesc.Color = { 
-			Vector4{9.f/255.f,83.f /255.f,242.f /255.f,1.f }, 
-			Vector4{126.f/255.f,153.f /255.f,247.f /255.f,1.f } };
-// 		_LightDesc.Flux = { 0.0f,0.161f };
-		_LightDesc.Flux = { 0.0f,0.0161f };
-
-		_LightDesc.PointRadius = { 0.161f,0.161f };
-		_SpriteEffect->RegistDynamicLight(_LightDesc);
-	}
-
-	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-		_SpriteEffect)
-	{
-		_SpriteEffect->RegistSpriteInfo(8, 4);
-		_SpriteEffect->RegistMesh(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\5.tga");
-		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
-		DynamicLight _LightDesc{};
-		// 플탐 0.2
-		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		// _LightDesc.Flux = { 0.0f,0.161f };
-		_LightDesc.Flux = { 0.0f,0.0161f };
-		_LightDesc.PointRadius = { 0.161f,0.161f };
-		_SpriteEffect->RegistDynamicLight(_LightDesc);
-	}
-
-	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-		_SpriteEffect)
-	{
-		_SpriteEffect->RegistSpriteInfo(4, 2);
-		_SpriteEffect->RegistMesh(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
-		_SpriteEffect->RegistAlbedoTex("..\\..\\Usable\\Spark\\6.tga");
-		_SpriteEffect->RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
-		DynamicLight _LightDesc{};
-		// 플탐 0.2
-		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
-		// _LightDesc.Flux = { 0.0f,0.161f };
-		_LightDesc.Flux = { 0.0f,0.0161f };
-		_LightDesc.PointRadius = { 0.161f,0.161f };
-		_SpriteEffect->RegistDynamicLight(_LightDesc);
-	}
-}
 
 void TestScene::MonsterWaveTriggerSetUp()
 {

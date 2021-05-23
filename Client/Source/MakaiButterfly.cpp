@@ -222,7 +222,7 @@ HRESULT MakaiButterfly::Ready()
 
 	_Collider = AddComponent<CapsuleCollider>();
 	_Collider.lock()->ReadyCollider();
-	_Collider.lock()->SetRadius(0.05f);
+	_Collider.lock()->SetRadius(0.06f);
 	_Collider.lock()->SetHeight(0.03f);
 	_Collider.lock()->SetCenter({ 0.f, 0.f, 0.f });
 	_Collider.lock()->SetActive(false);
@@ -253,7 +253,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 
 	if (MakaiButterfly::VARIATION::MOVE_FORWARD == _VariationIdx)
 	{
-		if (80.f < _AccumulateTime)
+		if (55.f < _AccumulateTime)
 			_IsAlive = false;
 
 		auto WeakTransform = GetComponent<ENGINE::Transform>();
@@ -261,7 +261,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 			SpTransform)
 		{
 			Vector3 vDir = SpTransform->GetLook(); 
-			SpTransform->SetPosition(SpTransform->GetPosition() + vDir * 0.01f);
+			SpTransform->SetPosition(SpTransform->GetPosition() + vDir * 0.008f);
 		}
 	}
 
@@ -303,7 +303,7 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 	}
 
 	//
-	_SubsetIdx += _PlayingSpeed * _fDeltaTime;
+	_SubsetIdx += _PlayingSpeed * 1.3f * _fDeltaTime;
 	if (MAX_SUBSET_IDX < static_cast<uint32>(_SubsetIdx))
 	{
 		_SubsetIdx = 0.f;
@@ -357,10 +357,10 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 		switch (_pOther.lock()->m_nTag)
 		{
-		case GAMEOBJECTTAG::TAG_RedQueen:
-		case GAMEOBJECTTAG::Tag_Cbs_Middle:
-		case GAMEOBJECTTAG::Tag_Cbs_Short:
-		case GAMEOBJECTTAG::Tag_Cbs_Long:
+		case GAMEOBJECTTAG::TAG_RedQueen:	// 레드퀸으로만 잡도록
+		//case GAMEOBJECTTAG::Tag_Cbs_Middle:
+		//case GAMEOBJECTTAG::Tag_Cbs_Short:
+		//case GAMEOBJECTTAG::Tag_Cbs_Long:
 
 			if (auto SpSecretVision = std::static_pointer_cast<SecretVision>(FindGameObjectWithTag(TAG_SecretVision).lock());
 				SpSecretVision)
