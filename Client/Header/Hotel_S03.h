@@ -40,6 +40,5 @@ private:
 	std::weak_ptr<Trigger> TriggerShop(const std::weak_ptr<class Trigger>& _NextTrigger);
 	std::weak_ptr<Trigger> TriggerHole();
 	void TriggerNextScene();
-
 };
 #endif // !__M01_HOTEL_S03_H__
