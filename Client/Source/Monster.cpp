@@ -9,7 +9,7 @@
 #include "StoneDebris.h"
 #include "SpriteEffect.h"
 #include "ShockWave.h"
-
+#include "SoundSystem.h"
 void Monster::Free()
 {
 	//for (auto& Element : m_pStoneDebrisVec)
@@ -76,6 +76,27 @@ void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
 		m_pPlayer.lock()->Add_ExGauge(0.25f);
+		{
+			int RandomPlaySound = rand() % 5;
+			switch (RandomPlaySound)
+			{
+			case 0:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("RedQueenHit1", { 1,4 }, 0.2f, false);
+				break;
+			case 1:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("RedQueenHit2", { 1,4 }, 0.2f, false);
+				break;
+			case 2:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("RedQueenHit3", { 1,4 }, 0.2f, false);
+				break;
+			case 3:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("RedQueenHit4", { 1,4 }, 0.2f, false);
+				break;
+			case 4:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("RedQueenHit5", { 1,4 }, 0.2f, false);
+				break;
+			}
+		}
 		break;
 	case Tag_Cbs_Long:
 		m_pEffect[0].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());

@@ -268,7 +268,7 @@ HRESULT Nero::Ready()
 	m_pJudgementShadow1 = AddGameObject<JudgementShadow1>();
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
 	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
-
+	m_pShockWave = AddGameObject<ShockWave>();
 	m_pChange = AddGameObject<Change>();
 
 	m_pCbsTrail = AddGameObject<CbsTrail>();
@@ -1753,6 +1753,11 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		break;
 	case Eff_Change:
 		m_pChange.lock()->PlayStart(vMyPos);
+		break;
+	case Eff_SnatchRush:
+		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::SnatchRush);
+		break;
+	case Eff_Streak:
 		break;
 	default:
 		break;

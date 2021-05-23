@@ -117,7 +117,7 @@ public:
 		const float Volume,
 		const bool bBeginIfPlaying ,
 		const std::optional<float>& Distance = std::nullopt,
-		const bool bLoop = false)&;
+		const std::optional<int32>& LoopEnd = std::nullopt)&;
 
 	// 씬마다 해야 할듯.
 	void SetDisanceDecrease(const  float  DistanceMin

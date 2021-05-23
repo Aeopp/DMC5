@@ -87,31 +87,31 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
-	m_fLoadingProgress = 0.01f;
+	//m_fLoadingProgress = 0.01f;
 
-	AddGameObject<Change>();
-	AddGameObject<ShockWave>();
+	//AddGameObject<Change>();
+	//AddGameObject<ShockWave>();
 
-	for (int32 i = 0; i < 16; ++i)
-	{
-		AddGameObject<ArtemisMissile>();
-	}
+	//for (int32 i = 0; i < 16; ++i)
+	//{
+	//	AddGameObject<ArtemisMissile>();
+	//}
 
-	for (int32 i = 0; i < 16; ++i)
-	{
-		AddGameObject<Reverberation>();
-	}
+	//for (int32 i = 0; i < 16; ++i)
+	//{
+	//	AddGameObject<Reverberation>();
+	//}
 
-	AddGameObject<LensFlare>();
+	//AddGameObject<LensFlare>();
 
-	for (int i = 0; i < 6; ++i)
-	{
-		if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-			_SpriteEffect)
-		{
-			_SpriteEffect->InitializeFromOption(i);
-		}
-	}
+	//for (int i = 0; i < 6; ++i)
+	//{
+	//	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+	//		_SpriteEffect)
+	//	{
+	//		_SpriteEffect->InitializeFromOption(i);
+	//	}
+	//}
 
 
 #pragma region PreLoad
@@ -124,10 +124,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
+	//_Camera = AddGameObject<Camera>();
 	
-	/*_MainCamera = AddGameObject<MainCamera>();
-	_Player     = AddGameObject<Nero>();*/
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -135,7 +135,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Monster
 
 	//AddGameObject<Em0000>();
-	//AddGameObject<Em1000>();
+	AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -145,7 +145,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 

@@ -4660,6 +4660,7 @@ HRESULT Wire_Fly_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Wire_HellHound_F", false, Nero::ANI_WIRE_HELLHOUND_F);
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->SetFly(true);
+	m_pNero.lock()->PlayEffect(Eff_SnatchRush);
 	return S_OK;
 }
 
