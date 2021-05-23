@@ -63,6 +63,11 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		static_pointer_cast<Nero>(_pOther.lock())->Set_GrabEnd(true);
 	}
 
+	
+}
+
+void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
+{
 	switch (_pOther.lock()->m_nTag)
 	{
 	case TAG_RedQueen:
@@ -114,7 +119,7 @@ void Monster::Set_Snatch(bool _bSnatch)
 void Monster::AddRankScore(float _fRankScore)
 {
 	//넘겨주는 값은 들어온 공격력 만큼인데 지금 너무낮아서 올려버림
-	return m_pPlayer.lock()->AddRankScore(_fRankScore * 5.f);
+	return m_pPlayer.lock()->AddRankScore(_fRankScore * 3.f);
 }
 
 void Monster::StoneDebrisInit()
@@ -182,6 +187,11 @@ void Monster::StoneDebrisPlayStart()
 	}
 
 	m_bStoneDebrisPlayStart = true;
+}
+
+void Monster::CalcEffectPos()
+{
+	m_vEffectPos = FMath::RandomVector(FMath::Random(0.008f, 0.016f));
 }
 
 Vector3 Monster::GetMonsterBoneWorldPos(std::string _BoneName)

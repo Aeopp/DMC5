@@ -75,7 +75,7 @@ void Em5000::Fight(const float _fDeltaTime)
 
 	//거리가 멀때만 이동 or 회전을 함.
 	//거리가 가까우면 공격으로 회전을 시킬 수 있음
-	if (fDir >= 2.f)
+	if (fDir >= 1.5f)
 	{
 		if (m_bThrow && m_bIng == false)
 		{
@@ -94,7 +94,7 @@ void Em5000::Fight(const float _fDeltaTime)
 			m_bIng = true;
 			int iRandom = FMath::Random<int>(1, 7);
 
-			if (iRandom == 1 || iRandom == 2)
+			if (iRandom == 4)
 				m_eState = Back_Jump;
 			else
 				m_eState = Move_Start;
@@ -163,7 +163,7 @@ void Em5000::Fight(const float _fDeltaTime)
 		{
 			int iRush = FMath::Random<int>(1, 7);
 
-			if (iRush == 1)
+			if (iRush == 4)
 			{
 				m_bIng = true;
 				Update_Angle();
@@ -1071,7 +1071,7 @@ void Em5000::Skill_CoolTime(const float _fDeltaTime)
 
 HRESULT Em5000::Ready()
 {
-	Unit::Ready();
+	Monster::Ready();
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster5000;
 
@@ -1104,7 +1104,7 @@ HRESULT Em5000::Awake()
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 	//
 	
-	m_pCollider = AddComponent<CapsuleCollider>();
+	m_pCollider = AddComponent<BoxCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	PushEditEntity(m_pCollider.lock().get());
 
@@ -1137,9 +1137,8 @@ HRESULT Em5000::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 	
-	m_pCollider.lock()->SetRadius(0.4f);
-	m_pCollider.lock()->SetHeight(0.f);
-	m_pCollider.lock()->SetCenter({ 0.f,0.4f,-0.1f });
+	m_pCollider.lock()->SetSize({ 0.6f,0.8f,0.6f });
+	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
 
 	m_pStone = AddGameObject<StoneDebrisMulti>();
 	m_pStone2 = AddGameObject<StoneDebrisMulti>();
@@ -1151,17 +1150,21 @@ HRESULT Em5000::Awake()
 HRESULT Em5000::Start()
 {
 	Unit::Start();
+
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
+	
+	// 나중에 트리거를 밟으면 true로 바꾸도록 할것
 	if(!m_pBtlPanel.expired())
 		m_pBtlPanel.lock()->SetBossGaugeActive(true);
+	///////////////////////////////////////////
+
 	return S_OK;
 }
 
 UINT Em5000::Update(const float _fDeltaTime)
 {
 	Unit::Update(_fDeltaTime);
-	if (!m_pBtlPanel.expired())
-		m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp)));
+
 	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
 	auto [DeltaScale, DeltaQuat, DeltaPos] = m_pMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
@@ -1265,6 +1268,9 @@ void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 {
 	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
+
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 }
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
@@ -1544,6 +1550,8 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+
+	HitEffectPlay(_pOther);
 }
 
 void Em5000::Turn()

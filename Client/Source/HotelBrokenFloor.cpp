@@ -125,12 +125,12 @@ void HotelBrokenFloor::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Sp->SetScale(0.009f);
 			Sp->SetPosition({ 0.3f, 0.98f, 15.4f });
 			Sp->SetRotation({ 0.f, 46.f, 0.f });
-			Sp->PlayStart(30.f);
+			Sp->PlayStart(33.f);
 		}
 		if (auto Sp = m_pSmoke[1].lock(); Sp)
 		{
 			Sp->SetActive(true);
-			Sp->PlayStart(30.f);
+			Sp->PlayStart(33.f);
 		}
 	}
 	else

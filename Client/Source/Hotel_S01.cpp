@@ -21,6 +21,7 @@
 #include "SoundSystem.h"
 #include "TimeSystem.h"
 #include "BrokenPeople.h"
+#include "ShockWave.h"
 
 
 #include <iostream>
@@ -65,8 +66,8 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	//AddGameObject<Camera>();
-
+	// AddGameObject<Camera>();
+	   
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
@@ -1037,6 +1038,8 @@ void Hotel_S01::Trigger4st()
 
 void Hotel_S01::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
 	if (!_Player.expired())
 	{
 		_Player.lock()->GetComponent<Transform>().lock()->SetPosition({ -9.5f, -0.23f, -5.13f });

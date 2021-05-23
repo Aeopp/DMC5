@@ -33,9 +33,9 @@ private:
 	static  inline std::array<std::pair<Vector3,Vector3>,3u> Offset
 	{
 		// Non
-		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} },
+		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,91.5f} },
 		// IceAge
-		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,122.f} }
+		std::pair<Vector3,Vector3>{ Vector3{0.f,0.f,18.f}, Vector3{ 0.f,0.f,91.5f} }
 	};
 
 	static constexpr uint32 BoneCnt = 3u;

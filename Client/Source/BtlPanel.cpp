@@ -676,7 +676,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 		if (!RankMesh.expired())
 		{
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.07f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.06f);
 			_ImplInfo.Fx->SetFloat("_SliceAmount", _RankDissolveAmount);
 
 			auto WeakSubset0 = RankMesh.lock()->GetSubset(0u);

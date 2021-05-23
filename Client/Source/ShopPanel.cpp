@@ -55,6 +55,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 		{
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _NullBlackTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 0.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
 
 			Create_ScreenMat(CurID, ScreenMat, 1);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -152,10 +153,10 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 		{
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectGuideTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
 
 			Create_ScreenMat(CurID, ScreenMat, (int)_CategoryPreCmd);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
 
@@ -169,13 +170,13 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
 
 			// Font
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectCategoryFontTex->GetTexture());
 
 			Create_ScreenMat(CurID, ScreenMat, 0);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
 
@@ -188,13 +189,104 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 			Create_ScreenMat(CurID, ScreenMat, (int)_CategoryPreCmd);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
 
 			_ImplInfo.Fx->BeginPass(1);
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
+		}
+
+		//
+		CurID = SELECT_WEAPON;
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectWeaponTex0->GetTexture());
+			_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponSliceAmount);
+
+			// RedQueen
+			Create_ScreenMat(CurID, ScreenMat, 0);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			if (WP_REDQUEEN == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.4f);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			// Overture
+			Create_ScreenMat(CurID, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			if (WP_OVERTURE == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.4f);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectWeaponTex1->GetTexture());
+			
+			// Cbs
+			Create_ScreenMat(CurID, ScreenMat, 2);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			if (WP_CBS == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.4f);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			// Rebellion
+			Create_ScreenMat(CurID, ScreenMat, 3);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			if (WP_REBELLION == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.4f);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			if (WP_REDQUEEN <= _PreCmd && WP_REBELLION >= _PreCmd)
+			{
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectWeaponCursorTex->GetTexture());
+
+				Create_ScreenMat(CurID, ScreenMat, (int)_PreCmd + 1);	// 4 ~ 7
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f * _CategoryWeaponBrightOffset);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				Create_ScreenMat(CurID, ScreenMat, (int)_PreCmd + 5);	// 8 ~ 11
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f * _CategoryWeaponBrightOffset);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponSliceAmount + 0.5f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+			}
 		}
 	}
 
@@ -256,6 +348,9 @@ HRESULT ShopPanel::Ready()
 	_SelectGuideTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\SELECTGUIDE.png");
 	_SelectCategoryFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\SELECT_CATEGORY_FONT.png");
 	_SelectCategoryCursorTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui0021_iam.tga");
+	_SelectWeaponTex0 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui_2020_02_iam.tga");
+	_SelectWeaponTex1 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui_2020_03_iam.tga");
+	_SelectWeaponCursorTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2013_iam.tga");
 
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(0.5f), (float)g_nWndCX / g_nWndCY, 0.001f, 1.f);
@@ -288,8 +383,10 @@ void ShopPanel::Init_Font()
 	for (uint32 i = 0u; i < FONT_END; ++i)
 		_FontVec.push_back(static_pointer_cast<Font>(AddGameObject<Font>().lock()));
 	
+	//
 	_FontVec[FT_REDORBCOUNT].lock()->SetRenderFlag(true);
 	
+	//
 	_FontVec[FT_CUSTOMIZE].lock()->SetText(
 		"C U S T O  M I  Z E",
 		Font::TEX_ID::DMC5_WHITE,
@@ -298,6 +395,33 @@ void ShopPanel::Init_Font()
 		Vector3(0.537f, 0.494f, 0.408f),
 		false);
 	_FontVec[FT_CUSTOMIZE].lock()->SetRenderFlag(true);
+
+	//
+	_FontVec[FT_WP_REDQUEEN].lock()->SetRenderFlag(true);
+	_FontVec[FT_WP_OVERTURE].lock()->SetRenderFlag(true);
+	_FontVec[FT_WP_CBS].lock()->SetRenderFlag(true);
+	_FontVec[FT_WP_REBELLION].lock()->SetRenderFlag(true);
+}
+
+void ShopPanel::ResetOffset()
+{
+	if (CATEGORY_WEAPON == _CategoryPreCmd)
+	{
+		_CategoryCursorXPos = 194.f;
+	}
+	else if (CATEGORY_ITEM == _CategoryPreCmd)
+	{
+		_CategoryCursorXPos = 394.f;
+	}
+		
+	_CategoryCursorXScaleOffset = 1.f;
+
+	_CategoryWeaponBrightOffset = 1.f;
+
+	_FontVec[FT_WP_REDQUEEN].lock()->SetRenderFlag(false);
+	_FontVec[FT_WP_OVERTURE].lock()->SetRenderFlag(false);
+	_FontVec[FT_WP_CBS].lock()->SetRenderFlag(false);
+	_FontVec[FT_WP_REBELLION].lock()->SetRenderFlag(false);
 }
 
 UINT ShopPanel::Update(const float _fDeltaTime)
@@ -308,27 +432,111 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 	//
 	Check_KeyInput(_fDeltaTime);
 
-	//
+	// 상태가 바뀌면 갱신되야 할 것들
 	if ((_PreDepth != _CurDepth) || (_PreCmd != _CurCmd))
 	{
+		ResetOffset();
+
 		switch (_CurDepth)
 		{
 		case CATEGORY:
 			switch (_CurCmd)
 			{
 			case CATEGORY_WEAPON:
+				_CategoryCursorXPos = 194.f;
+				_FontVec[FT_WP_REDQUEEN].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_WP_OVERTURE].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_WP_CBS].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_WP_REBELLION].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
 				break;
 			case CATEGORY_ITEM:
+				_CategoryCursorXPos = 394.f;
+				_FontVec[FT_WP_REDQUEEN].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_WP_OVERTURE].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_WP_CBS].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_WP_REBELLION].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
 				break;
 			}
+			_CategoryCursorXScaleOffset = 1.35f;
 			_CategoryPreCmd = _CurCmd;
 			break;
+			
+		case WEAPON_SELECT:
+			_CategoryWeaponBrightOffset = 2.5f;
+			_FontVec[FT_WP_REDQUEEN].lock()->SetRenderFlag(true);
+			_FontVec[FT_WP_OVERTURE].lock()->SetRenderFlag(true);
+			_FontVec[FT_WP_CBS].lock()->SetRenderFlag(true);
+			_FontVec[FT_WP_REBELLION].lock()->SetRenderFlag(true);
+			break;
+
 		default:
 			break;
 		}
 
 		_PreDepth = _CurDepth;
 		_PreCmd = _CurCmd;
+	}
+
+	// 계속 업데이트 되어야 할 것들
+	switch (_PreDepth)
+	{
+	case CATEGORY:
+		switch (_PreCmd)
+		{
+		case CATEGORY_WEAPON:
+			if (1.f < _CategoryCursorXScaleOffset)
+			{
+				_CategoryCursorXScaleOffset -= 4.f * _fDeltaTime;
+				if (1.f > _CategoryCursorXScaleOffset)
+					_CategoryCursorXScaleOffset = 1.f;
+			}
+			if (0.f < _CategoryWeaponSliceAmount)
+			{
+				_CategoryWeaponSliceAmount -= 6.f * _fDeltaTime;
+				if (0.f > _CategoryWeaponSliceAmount)
+					_CategoryWeaponSliceAmount = 0.f;
+			}
+			if (0.f > _UIDescs[SELECT_WEAPON].Pos.x)
+			{
+				_UIDescs[SELECT_WEAPON].Pos.x += 600.f * _fDeltaTime;
+				if (0.f < _UIDescs[SELECT_WEAPON].Pos.x)
+					_UIDescs[SELECT_WEAPON].Pos.x = 0.f;
+			}
+			break;
+		case CATEGORY_ITEM:
+			if (1.f < _CategoryCursorXScaleOffset)
+			{
+				_CategoryCursorXScaleOffset -= 4.f * _fDeltaTime;
+				if (1.f > _CategoryCursorXScaleOffset)
+					_CategoryCursorXScaleOffset = 1.f;
+			}
+			if (1.f > _CategoryWeaponSliceAmount)
+			{
+				_CategoryWeaponSliceAmount += 6.f * _fDeltaTime;
+				if (1.f < _CategoryWeaponSliceAmount)
+					_CategoryWeaponSliceAmount = 1.f;
+			}
+			if (-180.f < _UIDescs[SELECT_WEAPON].Pos.x)
+			{
+				_UIDescs[SELECT_WEAPON].Pos.x -= 800.f * _fDeltaTime;
+				if (-180.f > _UIDescs[SELECT_WEAPON].Pos.x)
+					_UIDescs[SELECT_WEAPON].Pos.x = -180.f;
+			}
+			break;
+		}
+		break;
+
+	case WEAPON_SELECT:
+		if (1.f < _CategoryWeaponBrightOffset)
+		{
+			_CategoryWeaponBrightOffset -= 7.5f * _fDeltaTime;
+			if (1.f > _CategoryWeaponBrightOffset)
+				_CategoryWeaponBrightOffset = 1.f;
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	//
@@ -375,11 +583,12 @@ void ShopPanel::Init_UIDescs()
 		_UIDescs = new UI_DESC[DESC_END];
 
 	// Using, Pos, Scale, Rot
-	_UIDescs[STATUE_BG] = { true, Vector3(640.f, 360.f, 0.9f), Vector3(8.f, 8.f, 1.f),  Vector3(0.f, 0.f, 0.f) };
-	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f),  Vector3(0.f, 0.f, 0.f) };
-	_UIDescs[CUSTOMIZE] = { true, Vector3(50.f, 40.f, 0.5f), Vector3(0.6f, 0.6f, 1.f),  Vector3(0.f, 0.f, 0.f) };
-	_UIDescs[SELECT_GUIDE] = { true, Vector3(285.f, 655.f, 0.5f), Vector3(5.12f, 0.32f, 1.f),  Vector3(0.f, 0.f, 0.f) };
-	_UIDescs[SELECT_CATEGORY] = { true, Vector3(552.f, 100.f, 0.5f), Vector3(10.24f, 0.32f, 1.f),  Vector3(0.f, 0.f, 0.f) };
+	_UIDescs[STATUE_BG] = { true, Vector3(640.f, 360.f, 0.9f), Vector3(8.f, 8.f, 1.f) };
+	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
+	_UIDescs[CUSTOMIZE] = { true, Vector3(50.f, 40.f, 0.5f), Vector3(0.6f, 0.6f, 1.f) };
+	_UIDescs[SELECT_GUIDE] = { true, Vector3(285.f, 655.f, 0.5f), Vector3(5.12f, 0.32f, 1.f) };
+	_UIDescs[SELECT_WEAPON] = { true, Vector3(0.f, 0.f, 0.5f), Vector3(1.f, 1.f, 1.f) };
+	_UIDescs[SELECT_CATEGORY] = { true, Vector3(552.f, 100.f, 0.5f), Vector3(10.24f, 0.32f, 1.f) };
 }
 
 void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -483,34 +692,144 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MinTexUV = Vector2(0.f, 0.5f);
 			_MaxTexUV = Vector2(1.f, 1.f);
 		}
+		break;
 
+	case SELECT_WEAPON:
+		switch (_Opt)
+		{
+		// base
+		case 0:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 190.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.5f, 0.f);
+			_MaxTexUV = Vector2(1.f, 0.25f);
+			break;
+		case 1:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 300.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.5f);
+			_MaxTexUV = Vector2(0.5f, 0.75f);
+			break;
+		case 2:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 410.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(0.25f, 0.5f);
+			break;
+		case 3:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 520.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.0f);
+			_MaxTexUV = Vector2(0.25f, 0.25f);
+			break;
+		// cursor 
+		case 4:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.55f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 190.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.53f);
+			break;
+		case 5:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.55f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 300.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.53f);
+			break;
+		case 6:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.55f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 410.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.53f);
+			break;
+		case 7:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.2f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.55f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 140.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 520.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.53f);
+			break;
+		// font base 
+		case 8:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.022f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.485f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 142.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 239.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(0.9f, 0.25f);
+			break;
+		case 9:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.022f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.485f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 142.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 349.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(0.9f, 0.25f);
+			break;
+		case 10:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.022f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.485f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 142.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 459.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(0.9f, 0.25f);
+			break;
+		case 11:
+			_Out._11 = _UIDescs[_ID].Scale.x * 2.022f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.485f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 142.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 569.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(0.9f, 0.25f);
+			break;
+		}
 		break;
 
 	case SELECT_CATEGORY:
-		//_Out._11 = _DebugScale.x;
-		//_Out._22 = _DebugScale.y;
-		//_Out._33 = _DebugScale.z;
-		//_Out._41 = _DebugPos.x - (g_nWndCX >> 1);
-		//_Out._42 = -((_DebugPos.y) - (g_nWndCY >> 1));
-		//_Out._43 = _DebugPos.z;
-
-		if ((int)CATEGORY_WEAPON == _Opt)
+		if ((int)CATEGORY_WEAPON == _Opt || (int)CATEGORY_ITEM == _Opt)
 		{
-			_Out._11 = 2.f;
+			_Out._11 = 2.f * _CategoryCursorXScaleOffset;
 			_Out._22 = 0.6f;
 			_Out._33 = 1.f;
-			_Out._41 = 194.f - (g_nWndCX >> 1);
-			_Out._42 = -(98.f - (g_nWndCY >> 1));
-			_Out._43 = 0.4f;
-			_MinTexUV = Vector2(0.f, 0.405f);
-			_MaxTexUV = Vector2(0.133f, 0.505f);
-		}
-		else if ((int)CATEGORY_ITEM == _Opt)
-		{
-			_Out._11 = 2.f;
-			_Out._22 = 0.6f;
-			_Out._33 = 1.f;
-			_Out._41 = 394.f - (g_nWndCX >> 1);
+			_Out._41 = _CategoryCursorXPos - (g_nWndCX >> 1);	// 194.f ~ 394.f
 			_Out._42 = -(98.f - (g_nWndCY >> 1));
 			_Out._43 = 0.4f;
 			_MinTexUV = Vector2(0.f, 0.405f);
@@ -526,12 +845,6 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		_Out._11 = _UIDescs[_ID].Scale.x;
 		_Out._22 = _UIDescs[_ID].Scale.y;
 		_Out._33 = _UIDescs[_ID].Scale.z;
-		D3DXMatrixRotationX(&RotMat, D3DXToRadian(_UIDescs[_ID].Rot.x));
-		_Out *= RotMat;
-		D3DXMatrixRotationY(&RotMat, D3DXToRadian(_UIDescs[_ID].Rot.y));
-		_Out *= RotMat;
-		D3DXMatrixRotationZ(&RotMat, D3DXToRadian(_UIDescs[_ID].Rot.z));
-		_Out *= RotMat;
 		_Out._41 = _UIDescs[_ID].Pos.x - (g_nWndCX >> 1);
 		_Out._42 = -(_UIDescs[_ID].Pos.y - (g_nWndCY >> 1));
 		_Out._43 = _UIDescs[_ID].Pos.z;
@@ -574,6 +887,105 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 		else
 			pFont->SetRenderFlag(false);
 	}
+
+	//
+	if (auto pFont = _FontVec[FT_WP_REDQUEEN].lock();
+		pFont)
+	{
+		if (WP_REDQUEEN == _PreCmd)
+		{
+			pFont->SetText(
+				"RED QUEEN",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 230.f },
+				{ 0.45f, 0.45f }
+			);
+		}
+		else
+		{
+			pFont->SetText(
+				"RED QUEEN",
+				Font::TEX_ID::DMC5_WHITE,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 230.f },
+				{ 0.45f, 0.45f },
+				Vector3(0.3f, 0.3f, 0.3f),
+				false
+			
+			);
+		}
+	}
+	if (auto pFont = _FontVec[FT_WP_OVERTURE].lock();
+		pFont)
+	{
+		if (WP_OVERTURE == _PreCmd)
+		{
+			pFont->SetText(
+				"OVERTURE",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 340.f },
+				{ 0.45f, 0.45f }
+			);
+		}
+		else
+		{
+			pFont->SetText(
+				"OVERTURE",
+				Font::TEX_ID::DMC5_WHITE,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 340.f },
+				{ 0.45f, 0.45f },
+				Vector3(0.3f, 0.3f, 0.3f),
+				false
+			);
+		}
+	}
+	if (auto pFont = _FontVec[FT_WP_CBS].lock();
+		pFont)
+	{
+		if (WP_CBS == _PreCmd)
+		{
+			pFont->SetText(
+				"CERBERUS",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 450.f },
+				{ 0.45f, 0.45f }
+			);
+		}
+		else
+		{
+			pFont->SetText(
+				"CERBERUS",
+				Font::TEX_ID::DMC5_WHITE,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 450.f },
+				{ 0.45f, 0.45f },
+				Vector3(0.3f, 0.3f, 0.3f),
+				false
+			);
+		}
+	}
+	if (auto pFont = _FontVec[FT_WP_REBELLION].lock();
+		pFont)
+	{
+		if (WP_REBELLION == _PreCmd)
+		{
+			pFont->SetText(
+				"REBELLION",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 560.f },
+				{ 0.45f, 0.45f }
+			);
+		}
+		else
+		{
+			pFont->SetText(
+				"REBELLION",
+				Font::TEX_ID::DMC5_WHITE,
+				{ _UIDescs[SELECT_WEAPON].Pos.x + 52.f, _UIDescs[SELECT_WEAPON].Pos.y + 560.f },
+				{ 0.45f, 0.45f },
+				Vector3(0.3f, 0.3f, 0.3f),
+				false
+			);
+		}
+	}
 }
 
 Vector2 ShopPanel::WorldPosToScreenPos(const Vector3& WorldPos)
@@ -611,6 +1023,59 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 				break;
 			case CATEGORY_ITEM:
 				_CurCmd = CATEGORY_WEAPON;
+				break;
+			}
+		}
+		else if (Input::GetKeyDown(DIK_S) || Input::GetKeyDown(DIK_D))
+		{
+			_CurDepth = WEAPON_SELECT;
+			_CurCmd = WP_REDQUEEN;
+		}
+		else if (Input::GetKeyDown(DIK_W) || Input::GetKeyDown(DIK_A))
+		{
+			_CurDepth = WEAPON_SELECT;
+			_CurCmd = WP_REBELLION;
+		}
+		break;
+	case WEAPON_SELECT:
+		if (Input::GetKeyDown(DIK_TAB))
+		{
+			_CurDepth = CATEGORY;
+			_CurCmd = CATEGORY_ITEM;
+		}
+		else if (Input::GetKeyDown(DIK_S) || Input::GetKeyDown(DIK_D))
+		{
+			switch (_PreCmd)
+			{
+			case WP_REDQUEEN:
+				_CurCmd = WP_OVERTURE;
+				break;
+			case WP_OVERTURE:
+				_CurCmd = WP_CBS;
+				break;
+			case WP_CBS:
+				_CurCmd = WP_REBELLION;
+				break;
+			case WP_REBELLION:
+				_CurCmd = WP_REDQUEEN;
+				break;
+			}
+		}
+		else if (Input::GetKeyDown(DIK_W) || Input::GetKeyDown(DIK_A))
+		{
+			switch (_PreCmd)
+			{
+			case WP_REDQUEEN:
+				_CurCmd = WP_REBELLION;
+				break;
+			case WP_OVERTURE:
+				_CurCmd = WP_REDQUEEN;
+				break;
+			case WP_CBS:
+				_CurCmd = WP_OVERTURE;
+				break;
+			case WP_REBELLION:
+				_CurCmd = WP_CBS;
 				break;
 			}
 		}

@@ -10,6 +10,9 @@ class Em5300Rush;
 class Em5300Missile;
 class Em5300Rain;
 class Em5300Homing;
+class Em5300Ulte;
+class SnatchPoint;
+class Trigger;
 class Em5300 final : public Monster
 {
 public:
@@ -40,6 +43,12 @@ public:
 		Hit_Buster_Stab_Loop,
 		Hit_Buster_Stab_Throw,
 		Hit_Buster_Stab_End,
+		Attack_Ulte_Move,
+		Attack_Ulte_Start,
+		Attack_Ulte_Loop,
+		Attack_Ulte_Loop2,
+		Attack_Ulte_End,
+		Attack_Ulte_End_Down,
 		Dead,
 		Down_Dead,
 		Down_Loop,
@@ -65,8 +74,6 @@ private:
 public:
 	static Em5300* Create();
 public:
-
-
 	virtual void Fight(const float _fDeltaTime)override;
 	virtual void State_Change(const float _fDeltaTime)override;
 	virtual void Skill_CoolTime(const float _fDeltaTime)override;
@@ -96,6 +103,8 @@ public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
 	void		 Set_Rotate();
+	void		 SetTrigger(weak_ptr<class Trigger> _Trigger);
+	void		 Set_Ulte();
 
 	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
 
@@ -105,12 +114,7 @@ public:
 private:
 	//몬스터 상태
 	Em5300_State	m_eState =State_END;		
-	//TestPlayer 받아옴.
-	std::weak_ptr<ENGINE::Transform> m_pPlayerTrans;
-	std::weak_ptr<Nero>				 m_pPlayer;
 
-	std::weak_ptr<Car>				 m_pCar;
-	std::weak_ptr<ENGINE::Transform> m_pCarTrans;
 	//공격 및 이동 관련
 	bool		m_bMove = false;
 	float		m_fMoveTime = 0.f;
@@ -135,16 +139,26 @@ private:
 	weak_ptr<Em5300Missile>	m_pBullet[32];
 	weak_ptr<Em5300Rain>	m_pRain[12];
 	weak_ptr<Em5300Homing>	m_pHoming[8];
+	weak_ptr<Em5300Ulte>	m_pUlte;
+	weak_ptr<SnatchPoint>   m_pSnatchPoint[4];
 
 	//전투 시작 테스트 용
 	std::weak_ptr<Em5300Rush>	m_pRush;
-	std::weak_ptr<ENGINE::CapsuleCollider> m_pCollider;
+	std::weak_ptr<ENGINE::BoxCollider> m_pCollider;
 	weak_ptr<class Liquid> m_pBlood;
 
-	float	m_fTest = 0.f;
+	float	m_fTest = 0.01f;
+	float	m_fHeight = 0.7f;
 	float	m_fPower = 0.f;
 	Vector3	m_vPower;
+	
+	
 	bool	m_bFight = false;
+
+	weak_ptr<class Trigger> m_pTrigger;
+	weak_ptr<class BtlPanel> m_pPanel;
+
+	bool	m_bUlte = false;
 
 
 };

@@ -525,9 +525,18 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		}
 	}
 	break;
-	//보스가 아니라 여러마리있는애들이면
-	//태그 검사이후에
-	//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
+	case MonsterSnatchPoint:
+	{
+		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
+			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
+		{
+			m_pLetMeFlyMonster.reset();
+			m_pFSM->ChangeState(NeroFSM::WIRE_HELLHOUND_END);
+			m_fFlySpeed = 0.f;
+			return;
+		}
+	}
+	break;
 	}
 }
 
@@ -572,10 +581,23 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 			}
 			return;
 		}
+	break;
+	case MonsterSnatchPoint:
+		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
+			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
+		{
+			if (m_pLetMeFlyMonster.lock() == static_pointer_cast<Monster>(_pOther.lock()))
+			{
+				m_pLetMeFlyMonster.reset();
+				m_pFSM->ChangeState(NeroFSM::WIRE_HELLHOUND_END);
+				m_fFlySpeed = 0.f;
+			}
+			return;
+		}
 		break;
-		//보스가 아니라 여러마리있는애들이면
-		//태그 검사이후에
-		//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
+	//보스가 아니라 여러마리있는애들이면
+	//태그 검사이후에
+	//_pOther를 Monster로 캐스팅하고 m_pLetMeFly몬스터랑 같은건지 이중검사해줘야함
 	}
 }
 
@@ -1155,6 +1177,10 @@ void Nero::Locking()
 			m_pTargetMonster.lock()->GetMonsterBoneWorldPos("Hip"),
 			fHpRatio);
 		break;
+	case GAMEOBJECTTAG::MonsterSnatchPoint:
+		m_pBtlPanel.lock()->SetTargetCursor(
+			m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition());
+		break;
 	default:
 		if (!m_pBtlPanel.expired())
 			m_pBtlPanel.lock()->SetTargetCursor(
@@ -1174,6 +1200,9 @@ Nero::NeroDirection Nero::RotateToTargetMonster()
 	switch (iMonsterTag)
 	{
 	case GAMEOBJECTTAG::Monster1000:
+		vMonsterPos = m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+		break;
+	case GAMEOBJECTTAG::MonsterSnatchPoint:
 		vMonsterPos = m_pTargetMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
 		break;
 	default:
@@ -1336,6 +1365,9 @@ void Nero::WireFly()
 		break;
 	case GAMEOBJECTTAG::Monster5000:
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");
+		break;
+	case GAMEOBJECTTAG::MonsterSnatchPoint:
+		vMonsterPos = m_pLetMeFlyMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
 		break;
 	default:
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");

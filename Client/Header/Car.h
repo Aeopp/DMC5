@@ -39,6 +39,7 @@ public:
 
 	virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 	virtual void OnTriggerEnter(std::weak_ptr<GameObject> _pOther) override;
+	virtual void OnCollisionEnter(std::weak_ptr<GameObject> _pOther) override;
 
 
 

@@ -785,7 +785,9 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 			Renderer::GetInstance()->SkyDistortionStart();
 
 			// 구덩이 길막
+			m_vecQliphothBlock[1].lock()->SetActive(true);
 			m_vecQliphothBlock[1].lock()->PlayStart();
+			m_vecQliphothBlock[2].lock()->SetActive(true);
 			m_vecQliphothBlock[2].lock()->PlayStart();
 
 			//
@@ -863,6 +865,9 @@ void Hotel_S03::TriggerNextScene()
 
 void Hotel_S03::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
+
 	// + 플레이어 초기 위치 잡기 등
 	if (_Player.expired() == false)
 	{

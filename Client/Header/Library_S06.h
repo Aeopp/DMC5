@@ -2,6 +2,9 @@
 #define __M02_LIBRARY_S06_H__
 #include "Scene.h"
 
+class Em5300;
+class Trigger;
+
 class Library_S06 : public Scene
 {
 private:
@@ -27,6 +30,9 @@ private:
 	void BgmPlay();
 	void RenderDataSetUp(const bool bTest);
 	void TriggerSetUp();
+	std::weak_ptr<Trigger> TriggerUlte();
 	void LateInit();
+private:
+	std::weak_ptr<Em5300> m_pBoss{};
 };
 #endif // !__M02_LIBRARY_S06_H__

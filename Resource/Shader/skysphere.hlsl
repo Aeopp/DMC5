@@ -4,6 +4,7 @@ uniform float  noisewrap;
 uniform float  timecorr;
 uniform vector DistortionColor;
 uniform float  DistortionIntencity;
+uniform vector OriginColor;
 
 texture SkyMap;
 sampler Sky = sampler_state
@@ -60,6 +61,10 @@ void ps_main(
         color1 = NoiseSample;
         
         color.rgba *= DistortionColor;
+    }
+    else
+    {
+        color.rgba *= OriginColor;
     }
 }
 

@@ -649,6 +649,11 @@ HRESULT Renderer::OptRender()&
 	return S_OK;
 };
 
+void Renderer::SetSkyOriginColor(const Vector4& SkyOriginColor)
+{
+	this->SkyOriginColor = SkyOriginColor;
+}
+
 void Renderer::Editor()&
 {
 	ImGui::Begin("Render Editor");
@@ -847,15 +852,19 @@ void Renderer::Editor()&
 	ImGui::End();
 };
 
-void Renderer::SkyDistortionStart()
+void Renderer::SkyDistortionStart(const float NoiseWrap,
+								  const float TimeCorr)
 {
 	SkyDistortion = true;
+	SkyNoisewrap = NoiseWrap;
+	SkyTimecorr = TimeCorr;
 };
 
 void Renderer::SkyDistortionEnd()
 {
 	SkyDistortion = false;
-}
+};
+
 void Renderer::FadeOutStart(const float Time)
 {
 	_FadeEffect.T = 0.0f;
@@ -889,6 +898,7 @@ void Renderer::LateSceneInit()
 void Renderer::SceneChangeRender()
 {
 	CurDirLight = nullptr;
+	SkyOriginColor = { 1.f,1.f,1.f,1.f };
 };
 
 void Renderer::RequestShadowMapBake()
@@ -1769,6 +1779,18 @@ HRESULT Renderer::RenderSky()&
 	return S_OK;
 };
 
+std::weak_ptr<FLight> Renderer::RefPointLights(const uint32 Idx)
+{
+	std::weak_ptr<FLight > ReturnVal{};
+
+	if (Idx >= PointLights.size())
+	{
+		return ReturnVal;
+	}
+
+	return PointLights[Idx];
+}
+
 HRESULT Renderer::RenderSkySphere()&
 {
 	if (CurSkysphereTex)
@@ -1796,16 +1818,20 @@ HRESULT Renderer::RenderSkySphere()&
 		auto Fx = Shaders["skysphere"]->GetEffect();
 		Fx->SetMatrix("matViewProj", &ViewProj);
 		const float Dt = TimeSystem::GetInstance()->DeltaTime();
+
 		if (!SkyDistortion)
 		{
 			SkysphereRot.y += Dt * SkyRotationSpeed;
 		}
 		
 		const Matrix World = FMath::WorldMatrix(SkysphereScale, FMath::ToRadian( SkysphereRot ) , SkysphereLoc);
+
 		Fx->SetMatrix("matSkyRotation", &World);
 		Fx->SetFloat("Time", TimeSystem::GetInstance()->AccTime());
 		Fx->SetFloat("intencity", SkyIntencity);
 		Fx->SetBool("Distortion", SkyDistortion);
+		Fx->SetVector("OriginColor", &SkyOriginColor);
+
 		if (SkyDistortion)
 		{
 			Fx->SetFloat("noisewrap", SkyNoisewrap);
@@ -1814,6 +1840,8 @@ HRESULT Renderer::RenderSkySphere()&
 			Fx->SetTexture("NoiseMap", SkyNoiseMap->GetTexture());
 			Fx->SetFloat("DistortionIntencity", SkyDistortionIntencity);
 		}
+		
+
 		Fx->SetTexture("SkyMap", CurSkysphereTex->GetTexture());
 		Fx->Begin(NULL, 0);
 		Fx->BeginPass(0);
@@ -2455,7 +2483,7 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 	// 델타타임에 영향을 매우 많이 받음 . 
 	adaptedluminance = adaptedluminance +
 		(averageluminance - adaptedluminance) *
-		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime *2.5f )));
+		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime  *2.0f)));
 
 	float two_ad_EV = adaptedluminance *
 		(adaptedluminance_var[2] / adaptedluminance_var[3]);

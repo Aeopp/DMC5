@@ -359,7 +359,7 @@ void Library_S05::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S04.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S05.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
@@ -381,6 +381,8 @@ void Library_S05::TriggerSetUp()
 
 void Library_S05::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
 	// + 플레이어 초기 위치 잡기 등
 
 	if (auto SpPlayer = _Player.lock();

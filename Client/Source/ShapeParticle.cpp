@@ -94,7 +94,7 @@ void ShapeParticle::Reset()
 			switch (_ShapeIdx)
 			{
 			case SPHERE:
-				divide = 25;
+				divide = 20;
 				break;
 			case PIPE00:
 				divide = 10;

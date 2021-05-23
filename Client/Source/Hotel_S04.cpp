@@ -31,8 +31,7 @@ Hotel_S04* Hotel_S04::Create()
 {
 	Hotel_S04* pInstance = new Hotel_S04;
 	return pInstance;
-}
-
+};
 
 HRESULT Hotel_S04::LoadScene()
 {
@@ -72,8 +71,6 @@ HRESULT Hotel_S04::LoadScene()
 #pragma region Monster
 	auto _pMonster = AddGameObject<Em5000>();
 	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
-	
-
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -262,11 +259,26 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 
 void Hotel_S04::TriggerSetUp()
 {
+	TriggerMeetingWithGoliath();
+}
 
+void Hotel_S04::TriggerMeetingWithGoliath()
+{
+	// 여기서 왜곡 계수 조절해야함 !! 
+
+	{
+		constexpr float NoiseWrap = 2.020390f;
+		constexpr float TimeCorr = 0.009006f;
+		Renderer::GetInstance()->SkyDistortionStart(
+			NoiseWrap,
+			TimeCorr);
+	}
 }
 
 void Hotel_S04::LateInit()
 {
+	SoundSystem::GetInstance()->ClearSound();
+
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
@@ -278,8 +290,7 @@ void Hotel_S04::LateInit()
 	
 
 	Renderer::GetInstance()->LateSceneInit();
-	Renderer::GetInstance()->SkyDistortionStart();
-
+	
 	_LateInit = true;
 	BgmPlay();
 }
