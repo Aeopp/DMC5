@@ -50,16 +50,14 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-	//		-4.327f,
-	//		1.449f,
-	//		36.596f,
-	//		});
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+		-38.744f, -0.388f, 30.861f
+			});
 
-	//}
+	}*/
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -88,7 +86,7 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -235,7 +233,7 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		//_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S04.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
