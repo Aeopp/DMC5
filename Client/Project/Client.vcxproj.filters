@@ -555,6 +555,7 @@
     <ClInclude Include="..\Header\ArtemisMissile.h" />
     <ClInclude Include="..\Header\LensFlare.h" />
     <ClInclude Include="..\Header\Reverberation.h" />
+    <ClInclude Include="..\Header\FinalReady.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -898,6 +899,7 @@
     <ClCompile Include="..\Source\ArtemisMissile.cpp" />
     <ClCompile Include="..\Source\LensFlare.cpp" />
     <ClCompile Include="..\Source\Reverberation.cpp" />
+    <ClCompile Include="..\Source\FinalReady.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -983,5 +985,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\FinalReady.hlsl" />
   </ItemGroup>
 </Project>

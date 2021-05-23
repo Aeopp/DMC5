@@ -54,6 +54,7 @@ enum GAMEOBJECTTAG
 	Eff_AppearEm1000,
 	Eff_ShapeParticle,
 	Eff_AirHike,
+	Eff_FinalReady,
 	Eff_LensFlare,
 	Eff_Trail,
 	Eff_CbsTrail,

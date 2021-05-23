@@ -333,8 +333,9 @@ void TestScene::RenderDataSetUp(const bool bTestLight)
 	if (bTestLight)
 	{
 		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
+
 		_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-		_Renderer->ao = 0.0005f;
+		_Renderer->ao = 0.001f;
 		_Renderer->SkyIntencity = 0.005f;
 		_Renderer->SkysphereScale = 0.078f;
 		_Renderer->SkysphereRot = { 0.f,0.f,0.f };
@@ -347,6 +348,7 @@ void TestScene::RenderDataSetUp(const bool bTestLight)
 	else
 	{
 		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Hotel_S01.json");
+
 		_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
 		_Renderer->ao = 0.001f;
 		_Renderer->SkyIntencity = 0.005f;
