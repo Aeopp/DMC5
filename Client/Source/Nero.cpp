@@ -42,6 +42,9 @@
 #include "WhirlWind.h"
 #include "Change.h"
 #include "SoundSystem.h"
+
+#include "NeroCoat.h"
+
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -331,7 +334,8 @@ HRESULT Nero::Awake()
 
 	PushEditEntity(m_pCollider.lock().get());
 
-
+	m_pNeroCoat = AddGameObject<NeroCoat>();
+	m_pNeroCoat.lock()->SetMesh(m_pMesh[ORIGIN_DANTE]);
 
 	return S_OK;
 }
@@ -1016,10 +1020,16 @@ void Nero::SetLockOnMonster()
 	float Distance = D3DXVec3Length(&Dir);
 	//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
 	m_pTargetMonster = MonsterList.begin()->lock();
-
+	if (!m_pTargetMonster.lock()->Get_TargetEnable())
+	{
+		m_pTargetMonster.reset();
+		Distance = 1000.f;
+	}
 	for (auto& pMonster : MonsterList)
 	{
 		Vector3 Direction = pMonster.lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		if(!pMonster.lock()->Get_TargetEnable())
+			continue;
 		float Temp = D3DXVec3Length(&Direction);
 		//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
 		if (Distance >= Temp)

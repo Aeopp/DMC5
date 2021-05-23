@@ -208,6 +208,9 @@
     <Filter Include="02.GameObject\01.Unit\02.Monster\05.Em5300\00.SnatchPoint">
       <UniqueIdentifier>{d0171c98-637c-432c-bc84-1b5ce8a1deab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\01.Unit\01.Player\08.NeroCoat">
+      <UniqueIdentifier>{bd985b7e-68e0-48cf-8358-44baf74a7bfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -561,6 +564,13 @@
     <ClInclude Include="..\Header\SnatchPoint.h">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\00.SnatchPoint</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\ArtemisMissile.h" />
+    <ClInclude Include="..\Header\FinalReady.h" />
+    <ClInclude Include="..\Header\LensFlare.h" />
+    <ClInclude Include="..\Header\Reverberation.h" />
+    <ClInclude Include="..\Header\NeroCoat.h">
+      <Filter>02.GameObject\01.Unit\01.Player\08.NeroCoat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -907,6 +917,13 @@
     <ClCompile Include="..\Source\SnatchPoint.cpp">
       <Filter>02.GameObject\01.Unit\02.Monster\05.Em5300\00.SnatchPoint</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\ArtemisMissile.cpp" />
+    <ClCompile Include="..\Source\FinalReady.cpp" />
+    <ClCompile Include="..\Source\LensFlare.cpp" />
+    <ClCompile Include="..\Source\Reverberation.cpp" />
+    <ClCompile Include="..\Source\NeroCoat.cpp">
+      <Filter>02.GameObject\01.Unit\01.Player\08.NeroCoat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -985,6 +1002,11 @@
     </None>
     <None Include="..\..\Resource\Shader\Effect\Change.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\ChangeParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissile.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\ArtemisMissileParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\LensFlare.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Reverberation.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\FinalReady.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

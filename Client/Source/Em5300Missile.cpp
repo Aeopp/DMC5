@@ -7,6 +7,8 @@
 #include <iostream>
 #include "Em5300.h"
 #include "Nero.h"
+#include "ArtemisMissile.h"
+#include "Reverberation.h"
 
 void Em5300Missile::Free()
 {
@@ -55,30 +57,13 @@ void Em5300Missile::RenderInit()
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
 
+	
 	// 렌더 정보 초기화 ...
 	ENGINE::RenderProperty _InitRenderProp;
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
-	{
-		{"gbuffer_ds",
-		[this](const DrawInfo& _Info)
-			{
-				RenderGBuffer(_Info);
-			}
-		},
-	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"Shadow" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadow(_Info);
-		}
-	} };
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
@@ -187,11 +172,14 @@ void Em5300Missile::Missile()
 		Vector3 vTest = vParentBone - m_pTransform.lock()->GetPosition();
 		
 		float fTest = D3DXVec3Length(&vTest);
+		Vector3 LowPos, HighPos{};
 
 		if (m_iMissilePos <= 15)
 		{
 			if (fTest <= 0.05f)
 			{
+				LowPos = m_pTransform.lock()->GetPosition();
+
 				m_bStartMissile = true;
 				m_bMissileDir = true;
 				m_bRotMissile = true;
@@ -201,14 +189,50 @@ void Em5300Missile::Missile()
 		{
 			if (fTest <= 0.23f)
 			{
+				HighPos = m_pTransform.lock()->GetPosition();
+
 				m_bStartMissile = true;
 				m_bMissileDir = true;
 				m_bRotMissile = true;
 			}
 		}
 
-		
+		m_vTest = FMath::Lerp(HighPos, LowPos, 0.5f);
 
+		Matrix ssibal = *m_pParentBone * m_ParentWorld;
+
+		Vector3 vPos = { ssibal._41, ssibal._42,ssibal._43 };
+		Vector3 vLook2;
+		
+		switch (m_iCount)
+		{
+		case 0:
+			vLook2 = { ssibal._11, ssibal._12,ssibal._13 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 1:
+			vLook2 = { ssibal._21, ssibal._22,ssibal._23 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 2:
+			vLook2 = { ssibal._31, ssibal._32,ssibal._33 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 3:
+			if (m_bJustOne == false)
+			{
+				vLook2 = { -ssibal._31, -ssibal._32,-ssibal._33 };
+				D3DXVec3Normalize(&vLook2, &vLook2);
+				m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+				m_bJustOne = true;
+			}
+			break;
+		}
+
+		
 	}
 	else
 	{
@@ -217,6 +241,8 @@ void Em5300Missile::Missile()
 			m_vMissileDir = m_pPlayerTrans.lock()->GetPosition() - m_pEm5300Trasform.lock()->GetPosition();
 			D3DXVec3Normalize(&m_vMissileDir, &m_vMissileDir);
 			m_bMissileDir = false;
+			m_bJustOne = false;
+			m_iCount = (m_iCount + 1) % 4;
 		}
 
 		if (m_bRotMissile)
@@ -497,6 +523,43 @@ void Em5300Missile::Missile2()
 			m_bMissileDir2 = true;
 			m_bRotMissile2 = true;
 		}
+
+		Matrix ssibal = *m_pParentBone * m_ParentWorld;
+
+		Vector3 vPos = { ssibal._41, ssibal._42,ssibal._43 };
+		Vector3 vLook2;
+
+
+
+
+		switch (m_iCount)
+		{
+		case 0:
+			vLook2 = { ssibal._11, ssibal._12,ssibal._13 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 1:
+			vLook2 = { ssibal._21, ssibal._22,ssibal._23 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 2:
+			vLook2 = { ssibal._31, ssibal._32,ssibal._33 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 3:
+			if (m_bJustOne == false)
+			{
+				vLook2 = { -ssibal._31, -ssibal._32,-ssibal._33 };
+				D3DXVec3Normalize(&vLook2, &vLook2);
+				m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+				m_bJustOne = true;
+			}
+			break;
+		}
+
 	}
 	else
 	{
@@ -505,6 +568,8 @@ void Em5300Missile::Missile2()
 			m_vMissileDir = m_pPlayerTrans.lock()->GetPosition() - m_pEm5300Trasform.lock()->GetPosition();
 			D3DXVec3Normalize(&m_vMissileDir, &m_vMissileDir);
 			m_bMissileDir = false;
+			m_bJustOne = false;
+			m_iCount = (m_iCount + 1) % 4;
 		}
 		if (m_bRotMissile2)
 		{
@@ -643,6 +708,8 @@ HRESULT Em5300Missile::Awake()
 
 	m_pEm5300Trasform = m_pEm5300.lock()->GetComponent<Transform>();
 	
+	m_pMissile = AddGameObject<ArtemisMissile>();
+
 	if(m_iMissilePos == 0 || m_iMissilePos == 16)
 		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("R_UpperArm_01_03");
 	else if (m_iMissilePos == 1 || m_iMissilePos == 17)
@@ -689,6 +756,10 @@ HRESULT Em5300Missile::Awake()
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
+
+
+	m_pRever = AddGameObject<Reverberation>();
+
 	return S_OK;
 }
 
@@ -701,6 +772,7 @@ HRESULT Em5300Missile::Start()
 UINT Em5300Missile::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+		
 
 	if (m_bReadyMissile == false && m_bReadyMissile2 == false)
 	{
@@ -719,6 +791,8 @@ UINT Em5300Missile::Update(const float _fDeltaTime)
 UINT Em5300Missile::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
+
+	m_pMissile.lock()->GetComponent<Transform>().lock()->SetPosition(m_pTransform.lock()->GetPosition());
 	return 0;
 }
 

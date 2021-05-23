@@ -54,8 +54,8 @@ private:
 		1.f };
 
 	float LuminDecayTime = 2.f;
-	float StartColorIntencity = 100.f;
-	float ColorIntencity = 1.f;
+	float StartColorIntencity = 11.f;
+	float ColorIntencity = 0.2f;
 };
 #endif //
 

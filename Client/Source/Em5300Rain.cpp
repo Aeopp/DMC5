@@ -7,6 +7,8 @@
 #include <iostream>
 #include "Em5300.h"
 #include "Nero.h"
+#include "ArtemisMissile.h"
+#include "Reverberation.h"
 
 void Em5300Rain::Free()
 {
@@ -61,24 +63,6 @@ void Em5300Rain::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
-	{
-		{"gbuffer_ds",
-		[this](const DrawInfo& _Info)
-			{
-				RenderGBuffer(_Info);
-			}
-		},
-	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"Shadow" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadow(_Info);
-		}
-	} };
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
@@ -170,17 +154,49 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 			m_bRaindir = true;
 		}
 
+		Matrix ssibal = *m_pParentBone * m_ParentWorld;
+
+		Vector3 vPos = { ssibal._41, ssibal._42,ssibal._43 };
+		Vector3 vLook2;
+
+		switch (m_iCount)
+		{
+		case 0:
+			vLook2 = { ssibal._11, ssibal._12,ssibal._13 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 1:
+			vLook2 = { ssibal._21, ssibal._22,ssibal._23 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 2:
+			vLook2 = { ssibal._31, ssibal._32,ssibal._33 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 3:
+			if (m_bJustOne == false)
+			{
+				vLook2 = { -ssibal._31, -ssibal._32,-ssibal._33 };
+				D3DXVec3Normalize(&vLook2, &vLook2);
+				m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+				m_bJustOne = true;
+			}
+			break;
+		}
+
 	}
 	else
 	{
 		m_fRainDownTime += _fDeltaTime;
-		//if (m_bRaindir)
-		//{
-		//	Vector3 vTemp = m_pTransform.lock()->GetPosition();
-		//	Vector3 vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
-		//	m_pTransform.lock()->SetPosition({ vPlayerPos.x, vTemp.y, vPlayerPos.z });
-		//	m_bRaindir = false;
-		//}
+	
+		if (m_bJustOne)
+		{
+			m_bJustOne = false;
+			m_iCount = 3;
+		}
 
 		if (m_iRainPos >= 0.f && m_iRainPos < 3)
 		{
@@ -526,6 +542,7 @@ HRESULT Em5300Rain::Awake()
 
 	m_pEm5300Trasform = m_pEm5300.lock()->GetComponent<Transform>();
 	
+	m_pMissile = AddGameObject<ArtemisMissile>();
 
 	if (m_iRainPos == 0)
 		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("R_UpperArm_02_02");
@@ -552,14 +569,11 @@ HRESULT Em5300Rain::Awake()
 	else if (m_iRainPos == 11)
 		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("L_Hand_02_07");
 
-	
-
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetGravity(false);;
 	PushEditEntity(m_pCollider.lock().get());
-
 
 	m_pCollider.lock()->SetRadius(0.015f);
 	m_pTransform.lock()->SetScale({0.00015f,0.00015f,0.00015f});
@@ -567,6 +581,7 @@ HRESULT Em5300Rain::Awake()
 	m_pPlayer = std::static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
 	m_pPlayerTrans = m_pPlayer.lock()->GetComponent<ENGINE::Transform>();
 
+	m_pRever = AddGameObject<Reverberation>();
 	return S_OK;
 }
 
@@ -595,6 +610,8 @@ UINT Em5300Rain::Update(const float _fDeltaTime)
 UINT Em5300Rain::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
+
+	m_pMissile.lock()->GetComponent<Transform>().lock()->SetPosition(m_pTransform.lock()->GetPosition());
 	return 0;
 }
 

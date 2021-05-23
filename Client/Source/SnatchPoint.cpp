@@ -97,7 +97,10 @@ UINT SnatchPoint::Update(const float _fDeltaTime)
 		if (fDir >= 0.4f)
 			m_pTransform.lock()->Translate(vDir * 0.03f);
 		else
+		{
 			m_pTransform.lock()->SetPosition(m_vStartPos);
+			m_bTargetEnable = true;
+		}
 	}
 	
 	return 0;
@@ -311,11 +314,13 @@ void SnatchPoint::Fly()
 	float   fDir = D3DXVec3Length(&vDir);
 
 	D3DXVec3Normalize(&vDir, &vDir);
+	m_bTargetEnable = false;
 
 	if (fDir >= 0.3f)
 		m_pTransform.lock()->Translate(vDir * 0.035f);
 	else
 		m_bFly = false;
+
 
 
 

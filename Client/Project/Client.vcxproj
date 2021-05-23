@@ -217,6 +217,7 @@
     <ClInclude Include="..\Header\LongBarrel.h" />
     <ClInclude Include="..\Header\MakaiButterfly.h" />
     <ClInclude Include="..\Header\MapAniObject.h" />
+    <ClInclude Include="..\Header\NeroCoat.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
@@ -346,6 +347,7 @@
     <ClCompile Include="..\Source\LongBarrel.cpp" />
     <ClCompile Include="..\Source\MakaiButterfly.cpp" />
     <ClCompile Include="..\Source\MapAniObject.cpp" />
+    <ClCompile Include="..\Source\NeroCoat.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />

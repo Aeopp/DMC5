@@ -105,6 +105,7 @@ public:
 	void		 Set_Rotate();
 	void		 SetTrigger(weak_ptr<class Trigger> _Trigger);
 	void		 Set_Ulte();
+	void		 Particle();
 
 	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
 
@@ -136,6 +137,9 @@ private:
 
 	bool		m_bHoming = false;
 	float		m_fHomingTime = 0.f;
+
+	bool		m_bLaser = false;
+	float		m_fLaserTime = 0.f;
 	weak_ptr<Em5300Missile>	m_pBullet[32];
 	weak_ptr<Em5300Rain>	m_pRain[12];
 	weak_ptr<Em5300Homing>	m_pHoming[8];
@@ -157,10 +161,32 @@ private:
 
 	weak_ptr<class Trigger> m_pTrigger;
 	weak_ptr<class BtlPanel> m_pPanel;
+	weak_ptr<class ShockWave> m_pShockWave;
+	weak_ptr<class LensFlare> m_pLens;
+	weak_ptr<class Reverberation> m_pRever[10];
 
 	bool	m_bUlte = false;
+	bool	m_bLens = false;
+	bool	m_bRushLens = false;
 
 
+	//∑ØΩ¨ ¿Ã∆Â∆Æ
+	float	m_fOuterCricle = 0.f;
+	weak_ptr<class Reverberation> m_pRushRever[12];
+	bool	m_bRushCricle = false;
+	int		m_iRushIndex = 0;
+
+	float m_fStartScale = 0.0055f;
+	float m_fStartScaleAdder = 0.f;
+
+	float m_fEndScale = 0.005f;
+	float m_fEndScaleAdder = 0.f;
+
+	///////////
+	//»£π÷ ¿Ã∆Â∆Æ
+	weak_ptr<class Reverberation> m_pHomingRever[12];
+
+	bool	m_bCollPlayer = false;
 };
 
 #endif // Em5300_h__

@@ -277,8 +277,11 @@ void Node::NodeUpdate(const Matrix& ParentToRoot,
 	{
 		Transform = OriginTransform;
 	}
+	if (ClothTransform.has_value())
+		Transform = ClothTransform.value();
 
 	ToRoot =  Transform * ParentToRoot;
+
 	Final = Offset * ToRoot;
 
 	for (auto& ChildrenTarget : Childrens)
