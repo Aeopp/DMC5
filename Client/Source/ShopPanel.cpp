@@ -1569,11 +1569,11 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MaxTexUV = Vector2(1.f, 0.75f);
 			break;
 		case 5:
-			_Out._11 = 4.2f;
+			_Out._11 = 4.4f;
 			_Out._22 = 0.8f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = 745.f - (g_nWndCX >> 1);
-			_Out._42 = -(340.f - (g_nWndCY >> 1));
+			_Out._41 = 750.f - (g_nWndCX >> 1);
+			_Out._42 = -(350.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.f);
 			_MaxTexUV = Vector2(1.f, 0.25f);
