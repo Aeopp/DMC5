@@ -362,9 +362,9 @@ void Library_S05::RenderDataSetUp(const bool bTest)
 		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S05.json");
 	}
 
-	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
+	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission03;
 	_Renderer->ao = 0.5f;
-	_Renderer->SkyIntencity = 0.005f;
+	_Renderer->SkyIntencity = 0.035f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
