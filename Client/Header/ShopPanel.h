@@ -212,5 +212,7 @@ public:
 	virtual void    OnDisable() override;
 private:
 	void ResetOffset();
+public:
+	void ResetCmd();	// SetActive(false) 전에 초기상태로 돌리자
 };
 #endif // !__UI_SHOP_PANEL__

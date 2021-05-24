@@ -22,10 +22,11 @@
 #include "Smoke.h"
 #include "MakaiButterfly.h"
 #include "QliphothBlock.h"
+#include "NeroFSM.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
-#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S03::Hotel_S03()
@@ -50,6 +51,7 @@ HRESULT Hotel_S03::LoadScene()
 	// Load Start
 	SoundSystem::GetInstance()->Stop("Hotel02");
 	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false, {}, 0);
+	
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -109,7 +111,7 @@ HRESULT Hotel_S03::LoadScene()
 #pragma region Effect
 
 	// Stage3 길막
-	m_vecQliphothBlock.reserve(7);
+	m_vecQliphothBlock.reserve(3);
 
 	// 0: 보스 가는길
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
@@ -155,6 +157,12 @@ HRESULT Hotel_S03::LoadScene()
 #pragma region UI
 
 	_BtlPanel = AddGameObject<BtlPanel>();
+	_ShopPanel = AddGameObject<ShopPanel>();
+	if (auto Sp = _ShopPanel.lock(); Sp)
+	{
+		Sp->ResetCmd();
+		Sp->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -199,6 +207,28 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	/* -------------------------- */
+
+	if (_IsShopAvailable)
+	{
+		if (Input::GetKeyDown(DIK_P))
+		{
+			if (auto Sp = _ShopPanel.lock(); Sp)
+			{
+				if (!Sp->IsActive())
+				{
+					Sp->SetActive(true);
+					_BtlPanel.lock()->SetActive(false);
+				}
+				else
+				{
+					Sp->ResetCmd();
+					Sp->SetActive(false);
+					_BtlPanel.lock()->SetActive(true);
+				}
+			}
+		}
+	}
+
 	if (_DecreaseHotel03_Volume)
 		_Hotel03_Volume = FMath::Lerp(_Hotel03_Volume, 0.f, _fDeltaTime);
 	else
@@ -211,6 +241,7 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 	}
 
 	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false);
+
 	return S_OK;
 }
 
@@ -683,15 +714,17 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerShop(const std::weak_ptr<class Trigger>
 			_Player.lock()->BuyUpgradedOverture();
 			//
 
+			_IsShopAvailable = true;
+
 			_NextTrigger.lock()->TriggerEnable();
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -2.406498f, 0.299f, 34.539822f };
-		const Vector3 TriggerRotation{ -451.22879f, 13.12937f, 0.00000f };
+		const Vector3 TriggerLocation{ -2.932f, 0.299f, 34.539822f };
+		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
 
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 2.354f, 4.262f, 1.8820f };
+		const Vector3 BoxSize{ 1.128f, 0.839f, 1.73f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
 		const bool ImmediatelyEnable = false;
 		// 트리거가 검사할 오브젝트 태그 
@@ -742,13 +775,12 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 			[this]()
 		{
 			// 여기서 카메라 거미줄 비치기.
-			_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
+			//_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
 
 			// 여기서 거미줄 없애기. << 알아서 밖에서 지워주길 바람 - hscho
 			m_vecQliphothBlock[0].lock()->Reset();
 			m_vecQliphothBlock[1].lock()->Reset();
 			m_vecQliphothBlock[2].lock()->Reset();
-
 
 			// 여기서 하늘 왜곡 풀어주기 .
 			Renderer::GetInstance()->SkyDistortionEnd();
@@ -881,7 +913,6 @@ void Hotel_S03::TriggerNextScene()
 void Hotel_S03::LateInit()
 {
 	SoundSystem::GetInstance()->ClearSound();
-
 
 	// + 플레이어 초기 위치 잡기 등
 	if (_Player.expired() == false)

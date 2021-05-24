@@ -757,6 +757,9 @@ void ShopPanel::ResetOffset()
 
 	_CategoryWeaponBrightOffset = 1.f;
 
+	_FontVec[FT_REDORBCOUNT].lock()->SetRenderFlag(true);
+	_FontVec[FT_CUSTOMIZE].lock()->SetRenderFlag(true);
+
 	_FontVec[FT_WP_REDQUEEN].lock()->SetRenderFlag(false);
 	_FontVec[FT_WP_OVERTURE].lock()->SetRenderFlag(false);
 	_FontVec[FT_WP_CBS].lock()->SetRenderFlag(false);
@@ -782,6 +785,26 @@ void ShopPanel::ResetOffset()
 	_ButtonBlinkCnt = 0;
 
 	_FontVec[FT_ATTENTION].lock()->SetRenderFlag(false);
+}
+
+void ShopPanel::ResetCmd()
+{
+	_CurDepth = CATEGORY;
+	_PreDepth = NONE;
+	_CurCmd = CATEGORY_WEAPON;
+	_PreCmd = CATEGORY_WEAPON;
+	_SavedCmd = CMD_NONE;	// 팝업창때 폰트 날려야 해서 시발...
+	_CategoryPreCmd = CATEGORY_WEAPON;
+	_CurPopupDepth = POPUP_DEPTH_NONE;
+	_PrePopupDepth = POPUP_DEPTH_NONE;
+	_CurPopupCmd = POPUP_CMD_NONE;
+	_PrePopupCmd = POPUP_CMD_NONE;
+
+	ResetOffset();
+
+	//
+	_FontVec[FT_REDORBCOUNT].lock()->SetRenderFlag(false);
+	_FontVec[FT_CUSTOMIZE].lock()->SetRenderFlag(false);
 }
 
 UINT ShopPanel::Update(const float _fDeltaTime)
