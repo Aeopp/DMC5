@@ -7,6 +7,8 @@
 #include <iostream>
 #include "Em5300.h"
 #include "Nero.h"
+#include "ArtemisMissile.h"
+#include "Reverberation.h"
 
 void Em5300Homing::Free()
 {
@@ -61,24 +63,8 @@ void Em5300Homing::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
-	{
-		{"gbuffer_ds",
-		[this](const DrawInfo& _Info)
-			{
-				RenderGBuffer(_Info);
-			}
-		},
-	};
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-		=
-	{
-		{"Shadow" ,
-		[this](const DrawInfo& _Info)
-		{
-			RenderShadow(_Info);
-		}
-	} };
+
+
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
@@ -160,6 +146,41 @@ void Em5300Homing::Homing(const float _fDeltaTime)
 	{
 		m_bStartHoming = true;
 		m_bHomingDir = true;
+
+
+		Matrix ssibal = *m_pParentBone * m_ParentWorld;
+
+		Vector3 vPos = { ssibal._41, ssibal._42,ssibal._43 };
+		Vector3 vLook2;
+
+		switch (m_iCount)
+		{
+		case 0:
+			vLook2 = { ssibal._11, ssibal._12,ssibal._13 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 1:
+			vLook2 = { ssibal._21, ssibal._22,ssibal._23 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 2:
+			vLook2 = { ssibal._31, ssibal._32,ssibal._33 };
+			D3DXVec3Normalize(&vLook2, &vLook2);
+			m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+			break;
+		case 3:
+			if (m_bJustOne == false)
+			{
+				vLook2 = { -ssibal._31, -ssibal._32,-ssibal._33 };
+				D3DXVec3Normalize(&vLook2, &vLook2);
+				m_pRever.lock()->PlayStart(vPos, vLook2, 0.0075f * 0.1f, 0.01f * 0.2f);
+				m_bJustOne = true;
+			}
+			break;
+		}
+
 	}
 	else
 	{
@@ -176,6 +197,9 @@ void Em5300Homing::Homing(const float _fDeltaTime)
 			D3DXVec3Normalize(&m_vHomingDir, &m_vHomingDir);
 
 			m_bHomingDir = false;
+			m_bJustOne = false;
+
+			m_iCount = (m_iCount + 1) % 4;
 		}
 
 		
@@ -241,6 +265,9 @@ HRESULT Em5300Homing::Awake()
 
 	m_pEm5300Trasform = m_pEm5300.lock()->GetComponent<Transform>();
 	
+	m_pRever = AddGameObject<Reverberation>();
+
+	m_pMissile = AddGameObject<ArtemisMissile>();
 
 	if (m_iHomingPos == 0)
 		m_pParentBone = m_pEm5300Mesh.lock()->GetToRootMatrixPtr("L_Breast_00_01");
@@ -302,6 +329,8 @@ UINT Em5300Homing::Update(const float _fDeltaTime)
 UINT Em5300Homing::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
+
+	m_pMissile.lock()->GetComponent<Transform>().lock()->SetPosition(m_pTransform.lock()->GetPosition());
 	return 0;
 }
 

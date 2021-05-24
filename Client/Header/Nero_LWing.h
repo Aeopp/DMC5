@@ -10,6 +10,21 @@ class Nero_LWing :	public GameObject,
 	public ENGINE::RenderInterface
 {
 private:
+	typedef struct tagClothBone
+	{
+		string			sName;
+		D3DXMATRIX		matToRoot;
+		tagClothBone* pParent;
+		Node* pNode;
+		UINT			nParticleIndex;
+	}CLOTHBONE, * LPCLOTHBONE;
+
+	vector<LPCLOTHBONE> m_vecClothBone;
+
+	PxCloth* m_pCloth;
+
+	Matrix* m_pChestRoot;
+private:
 	explicit Nero_LWing();
 	virtual ~Nero_LWing() = default;
 	// GameObject을(를) 통해 상속됨

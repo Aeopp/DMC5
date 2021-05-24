@@ -88,32 +88,9 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
-	//m_fLoadingProgress = 0.01f;
 
-	//AddGameObject<Change>();
-	//AddGameObject<ShockWave>();
 
-	//for (int32 i = 0; i < 16; ++i)
-	//{
-	//	AddGameObject<ArtemisMissile>();
-	//}
-
-	//for (int32 i = 0; i < 16; ++i)
-	//{
-	//	AddGameObject<Reverberation>();
-	//}
-
-	//AddGameObject<LensFlare>();
-
-	//for (int i = 0; i < 6; ++i)
-	//{
-	//	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-	//		_SpriteEffect)
-	//	{
-	//		_SpriteEffect->InitializeFromOption(i);
-	//	}
-	//}
-
+	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
 
@@ -155,6 +132,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
+
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -165,14 +143,29 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
-	//if (auto Sp = AddGameObject<StoneDebris>().lock();
-	//	Sp)
+	//AddGameObject<Change>();
+	//AddGameObject<ShockWave>();
+
+	//for (int32 i = 0; i < 16; ++i)
 	//{
-	//	Sp->SetLoop(true);
-	//	Sp->PlayStart();
+	//	AddGameObject<ArtemisMissile>();
 	//}
 
-	//AddGameObject<MakaiButterfly>();
+	//for (int32 i = 0; i < 16; ++i)
+	//{
+	//	AddGameObject<Reverberation>();
+	//}
+
+	//AddGameObject<LensFlare>();
+
+	//for (int i = 0; i < 6; ++i)
+	//{
+	//	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+	//		_SpriteEffect)
+	//	{
+	//		_SpriteEffect->InitializeFromOption(i);
+	//	}
+	//}
 
 #pragma endregion
 
@@ -195,7 +188,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 4, Until Dooms Day",
+		pFont->SetText("D 3, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
