@@ -386,8 +386,8 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		this->bDirectionReverse = true;
 		break;
 	case Option::SnatchRush:
-		PlayTime = 0.4f;
-		EndT = 0.4f;
+		PlayTime = 0.8f;
+		EndT = 0.8f;
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.0f;
 		ScaleLerp.second = 0.307f;
@@ -412,7 +412,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurAlpha.second = 0.7f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
-		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
+		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
 		break;
 	case Option::ArtemisLaunch:
 		PlayTime = 0.409f;
@@ -426,7 +426,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurAlpha.second = 0.650f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
-		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
+		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
 		break;
 	case Option::ArtemisEnd:
 		PlayTime = 1.5f;
