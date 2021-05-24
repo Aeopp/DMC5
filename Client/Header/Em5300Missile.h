@@ -42,6 +42,11 @@ public:
 	void Set_Missile2(const bool _bMissile) { m_bReadyMissile2 = _bMissile; }
 	void Set_StartMissile2(const bool _bStartMissile) { m_bStartMissile2 = _bStartMissile; }
 
+	Vector3 Get_Test() { return m_vTest; }
+
+	bool Get_StartMissile() { return m_bStartMissile; }
+	bool Get_StartMissile2() { return m_bStartMissile2; }
+
 public:
 	virtual void	Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
@@ -63,6 +68,8 @@ public:
 	std::weak_ptr<ENGINE::Transform>	  m_pPlayerTrans;
 	std::weak_ptr<Nero>					  m_pPlayer;
 
+	
+	weak_ptr<class ArtemisMissile>		  m_pMissile;
 private:
 	//무지성 불변수 파티
 	bool								  m_bReadyMissile = false;	//불렛 준비
@@ -78,5 +85,12 @@ private:
 	bool								  m_bRotMissile2 = false;
 
 
+	Vector3								m_vTest;
+
+	weak_ptr<class Reverberation>		m_pRever;
+
+	bool								m_bJustOne = false;
+	int									m_iCount = 0;
+	
 };
 #endif //

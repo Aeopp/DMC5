@@ -58,6 +58,7 @@ public:
 	std::weak_ptr<ENGINE::Transform>	  m_pPlayerTrans;
 	std::weak_ptr<Nero>					  m_pPlayer;
 
+	weak_ptr<class ArtemisMissile>		  m_pMissile;
 private:
 	//무지성 불변수 파티
 	bool								  m_bReadyRain = false;	//불렛 준비
@@ -72,5 +73,11 @@ private:
 	Vector3								  m_vRainDir;
 	Vector3								  m_vPlayerPos[4];
 
+	weak_ptr<class Reverberation>		m_pRever;
+
+	bool								m_bJustOne = false;
+	int									m_iCount = 3;
+
+	
 };
 #endif //

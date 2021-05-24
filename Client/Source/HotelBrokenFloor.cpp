@@ -113,7 +113,7 @@ void HotelBrokenFloor::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 	if (GAMEOBJECTTAG::TAG_RedQueen != ObjTag)
 		return;
-
+	SoundSystem::GetInstance()->RandSoundKeyPlay("HitStone", {1,3}, 0.7f, false);
 	++m_iCollCount;
 	if (m_iCollCount > 4)
 	{

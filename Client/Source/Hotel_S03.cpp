@@ -49,9 +49,8 @@ Hotel_S03* Hotel_S03::Create()
 HRESULT Hotel_S03::LoadScene()
 {
 	// Load Start
-	SoundSystem::GetInstance()->Stop("Hotel02");
-	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false, {}, 0);
-	
+	SoundSystem::GetInstance()->ClearSound();
+	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false);
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -87,10 +86,10 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage3_Map.json");
-	LoadObjects("../../Data/Stage3_AniObject.json", true);
-	LoadCollObjects("../../Data/Stage3_Object.json");
-	LoadBreakablebjects("../../Data/Stage3_BreakableObject.json");
+	//LoadObjects("../../Data/Stage3_Map.json");
+	//LoadObjects("../../Data/Stage3_AniObject.json", true);
+	//LoadCollObjects("../../Data/Stage3_Object.json");
+	//LoadBreakablebjects("../../Data/Stage3_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(3);
@@ -237,7 +236,7 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 	if (_DecreaseBattle1_Volume)
 	{
 		_Battle1_Volume = FMath::Lerp(_Battle1_Volume, 0.f, _fDeltaTime);
-		SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume, false);
+		SoundSystem::GetInstance()->Play("Battle3", _Battle1_Volume, false);
 	}
 
 	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false);
@@ -594,7 +593,8 @@ void Hotel_S03::TriggerUpGround()
 			_AnimationUpground.lock()->ContinueAnimation();
 			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			// 땅이 솟아오름 !! .. 
-
+			SoundSystem::GetInstance()->Play("UpGround1", 0.6f, false);
+			SoundSystem::GetInstance()->Play("UpGround2", 0.6f, false);
 			//
 			if (auto Sp = _Smoke0.lock(); Sp)
 			{
@@ -670,6 +670,9 @@ void Hotel_S03::TriggerBeforeShop(const std::weak_ptr<class Trigger>& _NextTrigg
 		const std::function<void()> SpawnWaveAfterEvent =
 			[this]()
 		{
+			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
+			SoundSystem::GetInstance()->Play("Em100Spawn", 0.7f, true);
+			SoundSystem::GetInstance()->Play("Em100Spawn2", 0.6f, true);
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetGlobalActive(true, true);
@@ -765,15 +768,17 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[]()
+			[this]()
 		{
-
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
 		const std::function<void()> WaveEndEvent =
 			[this]()
 		{
+			_DecreaseHotel03_Volume = false;
+			_DecreaseBattle1_Volume = true;
+
 			// 여기서 카메라 거미줄 비치기.
 			//_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
 
@@ -828,6 +833,11 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 		const std::function<void()> SpawnWaveAfterEvent =
 			[this]()
 		{
+			_DecreaseHotel03_Volume = true;
+			SoundSystem::GetInstance()->Play("Battle3", _Battle1_Volume, false);
+			SoundSystem::GetInstance()->Play("BattleStart1", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
 			// 스카이 왜곡 시작 ...
 			Renderer::GetInstance()->SkyDistortionStart();
 
@@ -912,7 +922,7 @@ void Hotel_S03::TriggerNextScene()
 
 void Hotel_S03::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	//SoundSystem::GetInstance()->ClearSound();
 
 	// + 플레이어 초기 위치 잡기 등
 	if (_Player.expired() == false)

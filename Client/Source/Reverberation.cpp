@@ -179,7 +179,7 @@ void Reverberation::ParticleUpdate(const float DeltaTime)
 			CurParticleDelta += ParticleDelta;
 
 			{
-				const uint32 ParticleCnt = 66u;
+				const uint32 ParticleCnt = 11u;
 
 				auto _PlayableParticle = ParticleSystem::GetInstance()->
 					PlayParticle("ReverberationParticle", ParticleCnt, true);

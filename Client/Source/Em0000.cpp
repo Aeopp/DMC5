@@ -507,7 +507,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				&& m_pPlayer.lock()->IsAnimationEnd())
 			{
 				m_eState = Hit_Buster_End;
-
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				Vector3 vRot(0.f, 0.f, 0.f);
 				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
 				Vector3 vPos = m_pTransform.lock()->GetPosition();
@@ -535,6 +535,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				Vector3 vRot(0.f, 0.f, 0.f);
 				m_pTransform.lock()->SetRotation(vRot);
 				m_pCollider.lock()->SetGravity(true);
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 			}
 		}
 		break;

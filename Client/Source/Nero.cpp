@@ -42,6 +42,9 @@
 #include "WhirlWind.h"
 #include "Change.h"
 #include "SoundSystem.h"
+
+#include "NeroCoat.h"
+
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
 	, m_iPreAnimationIndex(ANI_END)
@@ -331,7 +334,8 @@ HRESULT Nero::Awake()
 
 	PushEditEntity(m_pCollider.lock().get());
 
-
+	m_pNeroCoat = AddGameObject<NeroCoat>();
+	m_pNeroCoat.lock()->SetMesh(m_pMesh[ORIGIN_DANTE]);
 
 	return S_OK;
 }
@@ -386,15 +390,33 @@ UINT Nero::Update(const float _fDeltaTime)
 	//if (Input::GetKeyDown(DIK_9))
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	//}
+	//}w
 
-	if (Input::GetKeyDown(DIK_1))
+
+	if (80 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb1"))
 	{
-		BuyUpgradedOverture();
-		BuyCbsMiddle();
-		BuyCbsLong();
+		SoundSystem::GetInstance()->Play("GetOrb2", 0.6f, false);
 	}
-
+	if (90 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb2"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb3", 0.6f, false);
+	}
+	if (70 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb3"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb4", 0.6f, false);
+	}
+	if (90 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb4"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb5", 0.6f, false);
+	}
+	if (80 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb5"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb6", 0.6f, false);
+	}
+	if (90 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb6"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb7", 0.6f, false);
+	}
 	
 
 	return 0;
@@ -1020,10 +1042,16 @@ void Nero::SetLockOnMonster()
 	float Distance = D3DXVec3Length(&Dir);
 	//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
 	m_pTargetMonster = MonsterList.begin()->lock();
-
+	if (!m_pTargetMonster.lock()->Get_TargetEnable())
+	{
+		m_pTargetMonster.reset();
+		Distance = 1000.f;
+	}
 	for (auto& pMonster : MonsterList)
 	{
 		Vector3 Direction = pMonster.lock()->GetComponent<Transform>().lock()->GetPosition() - m_pTransform.lock()->GetPosition();
+		if(!pMonster.lock()->Get_TargetEnable())
+			continue;
 		float Temp = D3DXVec3Length(&Direction);
 		//여기서 조건 검사해야됨 너무 멀면 찾지도못하게
 		if (Distance >= Temp)
@@ -1708,7 +1736,10 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		if (1.f < CurRoll)
 		{
 			if (!m_pShapeParticle[SP_RED].lock()->IsPlaying())
+			{
+				SoundSystem::GetInstance()->Play("GetOrb1", 0.6f, false);
 				m_pShapeParticle[SP_RED].lock()->PlayStart(5.f);
+			}
 		}
 		else if (0.f < CurRoll)
 		{

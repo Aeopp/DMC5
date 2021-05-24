@@ -549,7 +549,10 @@ void Em200::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Buster_Loop", true, {}, 1.f, 1.f, true);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
+			{
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				m_eState = Hit_Buster_End;
+			}
 			
 		}
 		break;
@@ -605,7 +608,10 @@ void Em200::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Air_Buster_Loop", true, {}, 1.f, 1.f, true);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_AIR_FINISH)
+			{
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				m_eState = Hit_Air_Buster_End;
+			}
 
 		}
 		break;

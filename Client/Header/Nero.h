@@ -44,6 +44,9 @@ class WhirlWind;
 class NewWingSword;
 class Change;
 class ShockWave;
+
+/*Coat Test*/
+class NeroCoat;
 class Nero : public Unit,
 	public ENGINE::RenderInterface
 
@@ -574,6 +577,9 @@ private:
 
 	bool	m_bIsHaveCbsMiddle = false;
 	bool	m_bIsHaveCbsLong = false;
+
+	/*Coat Test*/
+	weak_ptr<NeroCoat> m_pNeroCoat;
 };
 
 

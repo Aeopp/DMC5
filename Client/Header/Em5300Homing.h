@@ -58,6 +58,8 @@ public:
 	std::weak_ptr<ENGINE::Transform>	  m_pPlayerTrans;
 	std::weak_ptr<Nero>					  m_pPlayer;
 
+	weak_ptr<class ArtemisMissile>		  m_pMissile;
+
 private:
 	//무지성 불변수 파티
 	bool	m_bReadyHoming = false;
@@ -67,5 +69,11 @@ private:
 	int		m_iHomingPos;
 
 	Vector3	m_vHomingDir;
+
+
+	weak_ptr<class Reverberation>		m_pRever;
+
+	bool								m_bJustOne = false;
+	int									m_iCount = 0;
 };
 #endif //

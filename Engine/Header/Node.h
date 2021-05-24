@@ -28,6 +28,8 @@ public:
 	int32 Index{ -1 };
 	std::bitset<3> RootMotionFlag{};
 
+	std::optional<Matrix> ClothTransform;
+
 	
 
 
