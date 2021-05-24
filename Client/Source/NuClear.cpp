@@ -86,7 +86,11 @@ void NuClear::RenderInit()
 		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _InitInfo);
 
 	_LightMsk = Resources::Load<ENGINE::Texture>(
-		L"..\\..\\Usable\\Artemis\\LightSphere.tga"
+		L"..\\..\\Usable\\Artemis\\LightSphere2.tga"
+		);
+
+	_Noise = Resources::Load<ENGINE::Texture>(
+		L"..\\..\\Usable\\Artemis\\1.tga"
 		);
 
 	_AlbmMap = Resources::Load<ENGINE::Texture>(
@@ -115,7 +119,7 @@ void NuClear::RenderInit()
 	};
 };
 
-void NuClear::PlayStart(const Vector3& Location , const bool bEditPlay )
+void NuClear::PlayStart(const Vector3& Location, const bool bEditPlay)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -124,10 +128,10 @@ void NuClear::PlayStart(const Vector3& Location , const bool bEditPlay )
 		{
 			SpTransform->SetPosition(Location);
 			_NuclearLensFlare.lock()->PlayStart(Location);
-			_DynamicLight.PlayStart(Location, ExplosionReadyTime  + FreeFallTime+ ExplosionTime);
+			_DynamicLight.PlayStart(Location, ExplosionReadyTime + FreeFallTime + ExplosionTime);
 		}
 	}
-	
+
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	CurParticleDelta = 0.0f;
@@ -138,18 +142,33 @@ void NuClear::PlayStart(const Vector3& Location , const bool bEditPlay )
 	bExplosion = false;
 };
 
-void NuClear::PlayEnd()
+void NuClear::Kaboom()
 {
+	KaboomParticle();
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+};
+
+void NuClear::PlayEnd()
+{
 	_DynamicLight.PlayEnd();
+	bExplosion = false;
+	auto SpTransform = GetComponent<Transform>().lock();
+
+	Vector3 _KaboomLocation = SpTransform->GetPosition();
+	_KaboomLocation.y = -1.035f;
+
+	KaboomMatrix = 
+		FMath::Scale(Vector3{ ParticleWorldScale ,ParticleWorldScale ,ParticleWorldScale })
+		*
+		SpTransform->GetRotationMatrix()
+		*
+		FMath::Translation(_KaboomLocation);
 
 	if (bEditPlay)
 	{
-		GetComponent<Transform>().lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
+		SpTransform->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
 	}
-	bExplosion = false;
-
 };
 
 void NuClear::KaboomParticle()
@@ -162,16 +181,10 @@ void NuClear::KaboomParticle()
 				"Kaboom", 3333u, true);
 			_Particle.empty() == false)
 		{
-			const Matrix ParticleWorld = FMath::Scale(Vector3{ ParticleWorldScale ,ParticleWorldScale ,ParticleWorldScale })
-				*
-				SpTransform->GetRotationMatrix()
-				*
-				FMath::Translation(SpTransform->GetPosition());
-
 			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(ParticleWorld);
+				_PlayInstance->PlayDescBind(KaboomMatrix);
 			}
 		}
 	};
@@ -188,7 +201,8 @@ void NuClear::ParticleUpdate(const float DeltaTime)
 		CurParticleDelta += ParticleDelta;
 		PlayParticle();
 	}
-}
+};
+
 void NuClear::PlayParticle()
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -224,13 +238,16 @@ void NuClear::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetMatrix("matWorld", &World);
 		_Info.Fx->SetTexture("LightMskMap", _LightMsk->GetTexture());
 		_Info.Fx->SetTexture("AlbmMap", _AlbmMap->GetTexture());
+		_Info.Fx->SetTexture("NoiseMap", _Noise->GetTexture());
 
+		
 		const float LerpT = 
 			FMath::Clamp(T / GrowEndT, 0.0f, 1.f);
 
 		const float CurColor =
 			FMath::Lerp(0.0f, ColorIntencity, LerpT);
 
+		_Info.Fx->SetFloat("Time", T * NoiseTimeCorr);
 		_Info.Fx->SetFloat("ColorIntencity", CurColor);
 		_Info.Fx->SetFloat("AlphaFactor", LerpT);
 	}
@@ -302,10 +319,19 @@ UINT NuClear::Update(const float _fDeltaTime)
 	T += _fDeltaTime;
 
 	// ³¡³¯ ÂêÀ½ .
-	if (T >  (ExplosionReadyTime + FreeFallTime  + ExplosionTime) )
+	const float BeyondPlay = ExplosionReadyTime + FreeFallTime + ExplosionTime;
+	const float BeyondKaboom = ExplosionReadyTime + FreeFallTime + ExplosionTime + 0.6f;
+
+	if (T > BeyondKaboom)
+	{
+		Kaboom();
+		return 0;
+	}
+	else if (T > BeyondPlay)
 	{
 		PlayEnd();
-	};
+	}
+	
 
 	ParticleUpdate(_fDeltaTime);
 
@@ -327,7 +353,7 @@ UINT NuClear::Update(const float _fDeltaTime)
 	else if (FMath::IsRange(ExplosionReadyTime, ExplosionReadyTime + FreeFallTime, T))
 	{
 		Vector3 CurPosition = GetComponent<Transform>().lock()->GetPosition();
-		CurPosition.y -= EditYVelocity;
+		CurPosition.y -= EditYVelocity * _fDeltaTime;
 		GetComponent<Transform>().lock()->SetPosition(CurPosition);
 	}
 	else if (T > BeyondReady)
@@ -335,7 +361,7 @@ UINT NuClear::Update(const float _fDeltaTime)
 		if (false == bExplosion)
 		{
 			bExplosion = true;
-			KaboomParticle();
+			// KaboomParticle();
 		}
 
 		const float ExplosionT =  ( T - BeyondReady ) / ExplosionTime;
@@ -372,6 +398,7 @@ void NuClear::Editor()
 		}
 
 		ImGui::Text("T : %2.6f", T);
+		ImGui::SliderFloat("NoiseTimeCorr", &NoiseTimeCorr, 0.0f, 1.f);
 
 		ImGui::SliderFloat("EditYVelocity", &EditYVelocity, 0.0f, 1.f);
 		

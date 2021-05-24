@@ -8,6 +8,7 @@ uniform float exposure_corr;
 
 uniform float ColorIntencity;
 uniform float AlphaFactor;
+float Time;
 
 
 texture LightMskMap;
@@ -21,6 +22,18 @@ sampler LightMsk = sampler_state
     AddressV = wrap;
     sRGBTexture = false;
 };
+texture NoiseMap;
+sampler Noise = sampler_state
+{
+    texture = NoiseMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
+};
+
 
 texture AlbmMap;
 sampler Albm = sampler_state
@@ -61,7 +74,13 @@ void PsMain(out float4 Color : COLOR0,
 {
     Color.rgb = tex2D(Albm, UV).rgb;
     float4 LightMskSample = tex2D(LightMsk, UV);
+    Color.rgb *= LightMskSample.a;
+    float4 NoiseSample =     tex2D(Noise, UV + Time);
+    // Color.rgb *= NoiseSample.a;
+    
     Color.a = LightMskSample.a;
+    // Color.a *= NoiseSample.a;
+    
     Color.a *= AlphaFactor;
     
     Color.rgb *= ColorIntencity;

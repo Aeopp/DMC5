@@ -798,12 +798,12 @@ void PreLoader::ArtemisCylinderParticlePoolLoad()
 			Vector3 StartLocation =
 				(*_TargetMesh->m_spVertexLocations)[Idx] + FMath::RandomVector(22.f);
 
-			static const Vector3 Up { 0.f,1.f,0.f }; 
+			static const Vector3 Up{ 0.f,1.f,0.f };
 
-			Vector3 Dir = 
+			Vector3 Dir =
 				FMath::RotationVecNormal(FMath::Normalize(StartLocation), Up,
-				-FMath::HalfPI);
-			
+					-FMath::HalfPI);
+
 			Vector3 Cp0 = StartLocation + Dir * 200.f;
 			Dir = FMath::RotationVecNormal(FMath::Normalize(Dir), Up, -FMath::HalfPI);
 			Vector3 Cp1 = Cp0 + Dir * 200.f;
@@ -843,7 +843,7 @@ void PreLoader::ArtemisCylinderParticlePoolLoad()
 				std::nullopt);
 		}
 	}
-}
+};
 
 void PreLoader::NuClearParticlePoolLoad()
 {
@@ -973,9 +973,11 @@ void PreLoader::KaboomParticlePoolLoad()
 		for (auto& _ParticleInstance : *ParticlePool)
 		{
 			const Vector3 StartLocation = {0.f,0.f,0.f};
-			const Vector3 Cp0 = StartLocation + FMath::RandomVector(2000.f);
-			const Vector3 Cp1 = Cp0 + FMath::RandomVector(500.f);
-			const Vector3 End = Cp1 + FMath::RandomVector(250.f);
+			const Vector3 Next = FMath::Random(Vector3{ -3000.f , 0.f,-3000.f }, { 3000.f , 2000.f,3000.f });
+			const Vector3 Cp0 = StartLocation + Next;
+			const Vector3 Dir = FMath::Normalize(Next);
+			const Vector3 Cp1 = Cp0 + Dir*(500.f);
+			const Vector3 End = Cp1 + Dir*(250.f);
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };

@@ -13,6 +13,8 @@ private:
 	std::shared_ptr<ENGINE::StaticMesh> _Mesh{};
 	std::shared_ptr<ENGINE::Texture> _LightMsk{};
 	std::shared_ptr<ENGINE::Texture> _AlbmMap{};
+	std::shared_ptr<ENGINE::Texture> _Noise{};
+	
 	float T = 0.0f;
 private:
 	explicit NuClear() = default;
@@ -36,6 +38,7 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void PlayStart(const Vector3& Location , const bool bEditPlay=false);
+	void Kaboom();
 	void PlayEnd();
 private:
 	void ParticleUpdate(const float DeltaTime);
@@ -45,6 +48,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	Matrix KaboomMatrix{ FMath::Identity() };
 	bool bExplosion = false;
 	bool bEditPlay = false;
 	std::weak_ptr<class NuclearLensFlare> _NuclearLensFlare{};
@@ -57,7 +61,9 @@ private:
 	{ 194.f / 255.f, 181.f / 255.f, 247.f / 255.f ,1.f };
 
 	// 에디터 변수
-	float EditYVelocity = 0.0115f;
+	float NoiseTimeCorr = 1.f;
+
+	float EditYVelocity = 0.69f;
 
 	float ExplosionReadyFluxLow = 0.f;
 	float ExplosionReadyFluxHigh = 1.f;
