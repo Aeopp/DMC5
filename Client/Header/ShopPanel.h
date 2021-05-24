@@ -56,7 +56,7 @@ private:
 	std::shared_ptr<ENGINE::Texture> _SelectWeaponInfoBaseTex{};
 	std::shared_ptr<ENGINE::Texture> _ItemAndInfoBaseTex{};
 	std::shared_ptr<ENGINE::Texture> _ButtonBaseTex{};
-	std::shared_ptr<ENGINE::Texture> _ButtonUpgradeFontTex{};
+	std::shared_ptr<ENGINE::Texture> _ButtonFontTex{};
 	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeInfoFontTex{};
 	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeProgressTex{};
 
@@ -66,6 +66,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex3{};
 
 	std::shared_ptr<ENGINE::Texture> _PopupBaseTex{};
+	std::shared_ptr<ENGINE::Texture> _PopupLineTex{};
+	std::shared_ptr<ENGINE::Texture> _PopupTextTex{};
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
@@ -98,6 +100,8 @@ private:
 		FT_WP_OT_BATTERY_COST,
 		FT_WP_CBS_TRANSFORM_COST,
 		FT_WP_RB_REBELLION_COST,
+
+		FT_ATTENTION,
 
 		FONT_END
 	};

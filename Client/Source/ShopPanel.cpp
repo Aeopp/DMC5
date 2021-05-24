@@ -390,7 +390,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 					_ImplInfo.Fx->EndPass();
 				}
 
-				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonUpgradeFontTex->GetTexture());
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
 				if (Buyable)
 					_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 				else
@@ -528,6 +528,37 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _PopupLineTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+			Create_ScreenMat(CurID, ScreenMat, 6);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			switch (_PrePopupDepth)
+			{
+			case ShopPanel::POPUP_DEPTH_NOREDORB:
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _PopupTextTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+				Create_ScreenMat(CurID, ScreenMat, 5);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				break;
+			}
+
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
 			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
@@ -541,6 +572,18 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			_ImplInfo.Fx->EndPass();
 
 			Create_ScreenMat(CurID, ScreenMat, 3);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+			Create_ScreenMat(CurID, ScreenMat, 4);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
 			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
@@ -614,7 +657,7 @@ HRESULT ShopPanel::Ready()
 	_SelectWeaponInfoBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2016_00_iam.tga");
 	_ItemAndInfoBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2010_iam.tga");
 	_ButtonBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2011_00_iam.tga");
-	_ButtonUpgradeFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\Upgrade.png");
+	_ButtonFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\Upgrade.png");
 	_WeaponUpgradeInfoFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\WeaponUpgradeInfo.png");
 	_WeaponUpgradeProgressTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui4000_iam.tga");
 
@@ -624,6 +667,8 @@ HRESULT ShopPanel::Ready()
 	_WeaponBgTex3 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_10_iam.tga");
 
 	_PopupBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui3006_iam.tga");
+	_PopupLineTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui0002_00_iam.tga");
+	_PopupTextTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\popuptext.png");
 
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(0.5f), (float)g_nWndCX / g_nWndCY, 0.001f, 1.f);
@@ -685,6 +730,16 @@ void ShopPanel::Init_Font()
 	_FontVec[FT_WP_OT_BATTERY_COST].lock()->SetRenderFlag(false);
 	_FontVec[FT_WP_CBS_TRANSFORM_COST].lock()->SetRenderFlag(false);
 	_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(false);
+
+	//
+	_FontVec[FT_ATTENTION].lock()->SetText(
+		"A T T E N T I O N",
+		Font::TEX_ID::DMC5_WHITE,
+		{ _UIDescs[POPUP].Pos.x + 560.f, _UIDescs[POPUP].Pos.y + 230.f },
+		{ 0.5f, 0.5f },
+		Vector3(0.537f, 0.494f, 0.408f),
+		false);
+	_FontVec[FT_ATTENTION].lock()->SetRenderFlag(false);
 }
 
 void ShopPanel::ResetOffset()
@@ -725,6 +780,8 @@ void ShopPanel::ResetOffset()
 	_ButtonBlinkBrightOffset = 1.f;
 	_ButtonBlinkAccTime = 0.f;
 	_ButtonBlinkCnt = 0;
+
+	_FontVec[FT_ATTENTION].lock()->SetRenderFlag(false);
 }
 
 UINT ShopPanel::Update(const float _fDeltaTime)
@@ -914,6 +971,7 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 		switch (_CurPopupDepth)
 		{
 		case POPUP_DEPTH_NONE:
+			_FontVec[FT_ATTENTION].lock()->SetRenderFlag(false);
 			switch (_PreCmd)
 			{
 			case ShopPanel::WP_REDQUEEN:
@@ -936,6 +994,7 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 			break;
 
 		case POPUP_DEPTH_NOREDORB:
+			_FontVec[FT_ATTENTION].lock()->SetRenderFlag(true);
 			switch (_PreCmd)
 			{
 			case ShopPanel::WP_REDQUEEN:
@@ -1325,7 +1384,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._42 = -(_UIDescs[_ID].Pos.y + 265.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.f);
-			_MaxTexUV = Vector2(1.f, 1.f);
+			_MaxTexUV = Vector2(1.f, 0.25f);
 			break;
 		// Weapon Info
 		case 20:
@@ -1475,6 +1534,37 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.279f, 0.736f);
 			_MaxTexUV = Vector2(0.616f, 0.795f);
+			break;
+		case 4:
+			_Out._11 = 1.6f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 672.f - (g_nWndCX >> 1);
+			_Out._42 = -(502.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.5f);
+			_MaxTexUV = Vector2(1.f, 0.75f);
+			break;
+		case 5:
+			_Out._11 = 4.2f;
+			_Out._22 = 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 745.f - (g_nWndCX >> 1);
+			_Out._42 = -(340.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(1.f, 0.25f);
+			break;
+		case 6:
+			_Out._11 = 7.f;
+			_Out._22 = 0.2f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 660.f - (g_nWndCX >> 1);
+			_Out._42 = -(255.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(1.f, 0.0625f);
+			break;
 		default:
 			goto DEFAULT;
 

@@ -89,31 +89,6 @@ HRESULT TestScene::LoadScene()
 
 	m_fLoadingProgress = 0.01f;
 
-	AddGameObject<Change>();
-	AddGameObject<ShockWave>();
-
-	for (int32 i = 0; i < 16; ++i)
-	{
-		AddGameObject<ArtemisMissile>();
-	}
-
-	for (int32 i = 0; i < 16; ++i)
-	{
-		AddGameObject<Reverberation>();
-	}
-
-	AddGameObject<LensFlare>();
-
-	for (int i = 0; i < 6; ++i)
-	{
-		if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-			_SpriteEffect)
-		{
-			_SpriteEffect->InitializeFromOption(i);
-		}
-	}
-
-
 #pragma region PreLoad
 
 	PreLoader::PreLoadResources();
@@ -156,6 +131,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
+
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -166,14 +142,29 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
-	//if (auto Sp = AddGameObject<StoneDebris>().lock();
-	//	Sp)
+	//AddGameObject<Change>();
+	//AddGameObject<ShockWave>();
+
+	//for (int32 i = 0; i < 16; ++i)
 	//{
-	//	Sp->SetLoop(true);
-	//	Sp->PlayStart();
+	//	AddGameObject<ArtemisMissile>();
 	//}
 
-	//AddGameObject<MakaiButterfly>();
+	//for (int32 i = 0; i < 16; ++i)
+	//{
+	//	AddGameObject<Reverberation>();
+	//}
+
+	//AddGameObject<LensFlare>();
+
+	//for (int i = 0; i < 6; ++i)
+	//{
+	//	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+	//		_SpriteEffect)
+	//	{
+	//		_SpriteEffect->InitializeFromOption(i);
+	//	}
+	//}
 
 #pragma endregion
 
