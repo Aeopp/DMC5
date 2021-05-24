@@ -59,9 +59,9 @@ private:
 		218.f / 255.f,
 		237.f / 255.f  ,
 		1.f };
-	float Velocity = 0.01f;
-	float ColorIntencityHigh = 0.7f;
-	float ColorIntencityLow = 0.5f;
+	float Velocity = 0.3f;
+	float ColorIntencityHigh = 0.02f;
+	float ColorIntencityLow = 0.01;
 	float TimeAcc = 1.0f;
 	float StartScale = 0.00075f;
 	float EndScale = 0.001f;

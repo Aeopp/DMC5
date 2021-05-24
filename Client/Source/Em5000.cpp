@@ -186,8 +186,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 	float	 fDir = D3DXVec3Length(&vDir);
 
 
-	Vector3 vCarDir = m_pTransform.lock()->GetPosition() - m_pCarTrans.lock()->GetPosition();
-	float   fCarDir = D3DXVec3Length(&vCarDir);
+	//Vector3 vCarDir = m_pTransform.lock()->GetPosition() - m_pCarTrans.lock()->GetPosition();
+	//float   fCarDir = D3DXVec3Length(&vCarDir);
+	Vector3 vCarDir = { 1.f,1.f,1.f };
+	float	fCarDir = 1.f;
 
 
 	switch (m_eState)
@@ -204,18 +206,33 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-
-				for (int i = 0; i < 2; ++i)
-				{
-					m_pHand[i].lock()->Set_Coll(false);
-					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-
-				}
+				m_bStone = false;
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingTime() >= 0.4f)
 			{
 				for (int i = 0; i < 2; ++i)
+				{
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+					m_pHand[i].lock()->Set_Coll(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingAccTime() >= 0.31f)
+			{
+				for (int i = 0; i < 6; ++i)
+				{
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+
+						if (i == 5)
+							m_bStone = true;
+					}
+				}
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_L" && m_pMesh->PlayingTime() >= 0.2f)
 			{
@@ -241,17 +258,33 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
-
-				for (int i = 0; i < 2; ++i)
-				{
-					m_pHand[i].lock()->Set_Coll(false);
-					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-				}
+				m_bStone = false;
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->PlayingTime() >= 0.4f)
 			{
 				for (int i = 0; i < 2; ++i)
+				{
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+					m_pHand[i].lock()->Set_Coll(false);
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->PlayingAccTime() >= 0.31f)
+			{
+				for (int i = 0; i < 6; ++i)
+				{
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+
+						if (i == 5)
+							m_bStone = true;
+					}
+				}
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Back_R" && m_pMesh->PlayingTime() >= 0.2f)
 			{
@@ -292,17 +325,23 @@ void Em5000::State_Change(const float _fDeltaTime)
 			{
 				if (m_bStone == false)
 				{
-					if (!m_pStone.expired())
+					for (int i = 0; i < 6; ++i)
 					{
-						m_pStone.lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
-						m_pStone.lock()->SetScale(0.0025f);
-						m_pStone.lock()->PlayStart(40.f);
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
 					}
-					if (!m_pStone2.expired())
+					for (int i = 6; i < 12; ++i)
 					{
-						m_pStone2.lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
-						m_pStone2.lock()->SetScale(0.0025f);
-						m_pStone2.lock()->PlayStart(40.f);
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
 					}
 					m_bStone = true;
 				}
@@ -365,12 +404,19 @@ void Em5000::State_Change(const float _fDeltaTime)
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.35f)
 			{
-				if (!m_pStone.expired() && m_bStone == false)
+				for (int i = 0; i < 6; ++i)
 				{
-					m_pStone.lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
-					m_pStone.lock()->SetScale(0.0015f);
-					m_pStone.lock()->PlayStart(40.f);
-					m_bStone = true;
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+						if(i == 5)
+							m_bStone = true;
+					}
 				}
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hack" && m_pMesh->PlayingTime() >= 0.2f)
@@ -382,16 +428,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
+
 					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
-
-
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetPosition(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition());
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetScale(0.010f);
-					auto Look = m_pTransform.lock()->GetLook();
-					const float SmokeYaw = FMath::ToDegree(std::atan2f(Look.x, Look.z));
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetRotation({ 0.f, SmokeYaw,0.f });
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetVariationIdx(Smoke::VARIATION::SMOKE_2);
-					m_pHand[i].lock()->m_pSmoke[i].lock()->PlayStart(5.f);
 				}
 			}
 		}
@@ -401,6 +439,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_Jump_Attack", false, {}, 1.5f, 10.f, true);
 
+		
+
 			if (m_pMesh->PlayingTime() >= 0.1f && m_pMesh->PlayingTime() <= 0.4f)
 			{
 				Update_Angle();
@@ -409,37 +449,41 @@ void Em5000::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Jump_Attack" && m_pMesh->IsAnimationEnd())
 			{
-				int iRandom = FMath::Random<int>(1, 4);
-
 				m_eState = Idle;
 				m_bIng = false;
 				m_bJumpAttack = false;
 				m_bStone = false;
-				for (int i = 0; i < 2; ++i)
-				{
-					m_pHand[i].lock()->Set_Coll(false);
-					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-				}
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Jump_Attack" && m_pMesh->PlayingTime() >= 0.4f)
 			{
+				
 				for (int i = 0; i < 2; ++i)
+				{
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+					m_pHand[i].lock()->Set_Coll(false);
+				}
 
 				if (m_bStone == false)
 				{
-					if (!m_pStone.expired())
+					for (int i = 0; i < 6; ++i)
 					{
-						m_pStone.lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
-						m_pStone.lock()->SetScale(0.002f);
-						m_pStone.lock()->PlayStart(40.f);
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
 					}
-					if (!m_pStone2.expired())
+					for (int i = 6; i < 12; ++i)
 					{
-						m_pStone2.lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
-						m_pStone2.lock()->SetScale(0.002f);
-						m_pStone2.lock()->PlayStart(40.f);
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
 					}
+					m_pCollider.lock()->SetGravity(true);
 					m_bStone = true;
 				}
 
@@ -451,8 +495,9 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
-					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathJumpAttack);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
+				m_pCollider.lock()->SetGravity(false);
 			}
 		}
 		break;
@@ -470,17 +515,68 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
+				m_bStone = false;
 
 				for (int i = 0; i < 2; ++i)
 				{
 					m_pHand[i].lock()->Set_Coll(false);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+					m_bJustOne[i] = false;
 				}
+				
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.5f)
 			{
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);		
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingAccTime() >= 0.42f)
+			{
+				if (m_bJustOne[1] == false)
+				{
+					m_vStonePos = GetMonsterBoneWorldPos("L_Hand");
+					m_bJustOne[1] = true;
+					m_bStone = false;
+				}
+				for (int i = 6; i < 12; ++i)
+				{
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(m_vStonePos);
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+						if (i == 11)
+							m_bStone = true;
+					}
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingAccTime() >= 0.235f)
+			{
+				if (m_bJustOne[0] == false)
+				{
+					m_bStone = false;
+					m_vStonePos = GetMonsterBoneWorldPos("R_Hand");
+					m_bJustOne[0] = true;
+				}
+				for (int i = 0; i < 6; ++i)
+				{
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						
+						m_pStone[i].lock()->SetPosition(m_vStonePos);
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+
+						if (i == 5)
+							m_bStone = true;
+					}
+				}
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.2f)
 			{
@@ -492,17 +588,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
 					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
-
-					
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetPosition(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition());
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetScale(0.010f);
-					auto Look = m_pTransform.lock()->GetLook();
-					const float SmokeYaw = FMath::ToDegree(std::atan2f(Look.x, Look.z)); 
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetRotation({0.f, SmokeYaw,0.f });
-					m_pHand[i].lock()->m_pSmoke[i].lock()->SetVariationIdx(Smoke::VARIATION::SMOKE_2);
-					m_pHand[i].lock()->m_pSmoke[i].lock()->PlayStart(5.f);
-					// 포지션 벡터2 , 스케일 플롯 2개 , 로테이션 Y  플롯 2개 시간은 상수 플롯 하나
-					 
+						 
 					static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 				}
 			}
@@ -515,8 +601,23 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f, true);
 			
+			for (int i = 0; i < 12; ++i)
+			{
+				if (!m_pStone[i].expired() && m_bStone == false)
+				{
+					float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+					Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+					m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+					m_pStone[i].lock()->SetScale(fRandom);
+					m_pStone[i].lock()->PlayStart(40.f);
+					m_pStone[i].lock()->SetRotation(vRot);
+				}
+			}
+
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && fDir <= 2.5f)
 				m_eState = Attack_Rush_End;
+			
 
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && m_pMesh->PlayingTime() >= 0.95f)
@@ -530,13 +631,42 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f, true);
 
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 3.5f)
+			for (int i = 0; i < 12; ++i)
+			{
+				if (!m_pStone[i].expired() && m_bStone == false)
+				{
+					float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+					Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+					m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+					m_pStone[i].lock()->SetScale(fRandom);
+					m_pStone[i].lock()->PlayStart(40.f);
+					m_pStone[i].lock()->SetRotation(vRot);
+				}
+			}
+
+
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 2.5f)
 				m_eState = Attack_Rush_End;
 		}
 		break;
 	case Em5000::Attack_Rush_End:
 		if (m_bIng == true)
 		{
+			for (int i = 0; i < 12; ++i)
+			{
+				if (!m_pStone[i].expired() && m_bStone == false)
+				{
+					float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+					Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+					m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+					m_pStone[i].lock()->SetScale(fRandom);
+					m_pStone[i].lock()->PlayStart(40.f);
+					m_pStone[i].lock()->SetRotation(vRot);
+				}
+			}
+
+
 			m_pMesh->PlayAnimation("Attack_Rush_End", false, {}, 1.f, 10.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->IsAnimationEnd())
 			{
@@ -546,6 +676,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_bMove = false;
 				m_bRushAttack = false;
+				m_bStone = false;
 
 				for (int i = 0; i < 2; ++i)
 				{
@@ -558,6 +689,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime() >= 0.15f)
+				m_bStone = true;
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime() >= 0.1f)
 			{
 				for (int i = 0; i < 2; ++i)
@@ -581,6 +714,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
+				m_bStone = false;
 				for (int i = 0; i < 2; ++i)
 				{
 					m_pHand[i].lock()->Set_Coll(false);
@@ -592,6 +726,24 @@ void Em5000::State_Change(const float _fDeltaTime)
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_L" && m_pMesh->PlayingAccTime() >= 0.28f)
+			{
+				for (int i = 0; i < 6; ++i)
+				{
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("L_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+
+						if (i == 5)
+							m_bStone = true;
+					}
+				}
+			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_L" && m_pMesh->PlayingTime() >= 0.2f)
 			{
 				for (int i = 0; i < 2; ++i)
@@ -599,7 +751,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
-					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathJumpAttack);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
 			}
 		}
@@ -615,6 +767,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bIng = false;
 				m_bAttack = false;
+				m_bStone = false;
 				for (int i = 0; i < 2; ++i)
 				{
 					m_pHand[i].lock()->Set_Coll(false);
@@ -626,6 +779,24 @@ void Em5000::State_Change(const float _fDeltaTime)
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_R" && m_pMesh->PlayingAccTime() >= 0.28f)
+			{
+				for (int i = 0; i < 6; ++i)
+				{
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+
+						if (i == 5)
+							m_bStone = true;
+					}
+				}
+			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Side_R" && m_pMesh->PlayingTime() >= 0.2f)
 			{
 				for (int i = 0; i < 2; ++i)
@@ -633,7 +804,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 					m_pHand[i].lock()->Set_Coll(true);
-					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathJumpAttack);
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
 			}
 		}
@@ -724,17 +895,69 @@ void Em5000::State_Change(const float _fDeltaTime)
 			{
 				m_eState = Idle;
 				m_bGroggy = false;
-			
+				m_bStone = false;
+				
 				for (int i = 0; i < 2; ++i)
-				{
-					m_pHand[i].lock()->Set_Coll(false);
-					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-				}
+					m_bJustOne[i] = false;
+				
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->PlayingTime() >= 0.5f)
 			{
 				for (int i = 0; i < 2; ++i)
+				{
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
+					m_pHand[i].lock()->Set_Coll(false);
+
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->PlayingTime() >= 0.34f)
+			{
+				if (m_bJustOne[1] == false)
+				{
+					m_vStonePos = GetMonsterBoneWorldPos("R_Hand");
+					m_bJustOne[1] = true;
+					m_bStone = false;
+				}
+
+				for (int i = 6; i < 12; ++i)
+				{
+					if (m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(m_vStonePos);
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+
+						if (i == 11)
+							m_bStone = true;
+					}
+				}
+			}
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->PlayingTime() >= 0.23f)
+			{
+				if (m_bJustOne[0] == false)
+				{
+					m_vStonePos = GetMonsterBoneWorldPos("L_Hand");
+					m_bJustOne[0] = true;
+					m_bStone = false;
+				}
+				for (int i = 0; i < 6; ++i)
+				{
+					if (m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(m_vStonePos);
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+
+						if (i == 5)
+							m_bStone = true;
+					}
+				}
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->PlayingTime() >= 0.2f)
 			{
@@ -825,6 +1048,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Hit_Buster_Swing_End", false, {}, 1.f, 1.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_End" && m_pMesh->IsAnimationEnd())
 			{
+				m_BattleInfo.iHp -= 700;
 				m_eState = Hit_Buster_Standup;
 				m_bBuster = false;
 			}
@@ -841,7 +1065,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_bHit = false;
 				m_bBuster = false;
+				m_bHitBuster = true;
+				m_bStone = false;
 			}
+
 		}
 		break;
 	case Em5000::Howling:
@@ -1089,8 +1316,8 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_BattleInfo.iMaxHp = 5000.f;
-	m_BattleInfo.iHp = 2400.f;
+	m_BattleInfo.iMaxHp = 3500;
+	m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 
 	m_pMesh->EnableToRootMatricies();
@@ -1121,26 +1348,30 @@ HRESULT Em5000::Awake()
 		m_pCar[i].lock()->m_pEm5000 = static_pointer_cast<Em5000>(m_pGameObject.lock());
 		m_pCar[i].lock()->m_pEm5000Mesh = m_pMesh;
 	}*/
-	m_pCar[0] = AddGameObject<Car>();
-	m_pCar[0].lock()->m_pEm5000 = static_pointer_cast<Em5000>(m_pGameObject.lock());
-	m_pCar[0].lock()->m_pEm5000Mesh = m_pMesh;
-	m_pCar[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -6.47f,-1.79f,44.16f });
+	//m_pCar[0] = AddGameObject<Car>();
+	//m_pCar[0].lock()->m_pEm5000 = static_pointer_cast<Em5000>(m_pGameObject.lock());
+	//m_pCar[0].lock()->m_pEm5000Mesh = m_pMesh;
+	//m_pCar[0].lock()->GetComponent<Transform>().lock()->SetPosition({ -6.47f,-1.79f,44.16f });
 	//m_pCar[1].lock()->GetComponent<Transform>().lock()->SetPosition({ -3.77f,-1.79f,47.56f });
 
 	//m_pCar[0] = std::static_pointer_cast<Car>(FindGameObjectWithTag(ThrowCar).lock());
-	m_pCarTrans = m_pCar[0].lock()->GetComponent<ENGINE::Transform>();
+	//m_pCarTrans = m_pCar[0].lock()->GetComponent<ENGINE::Transform>();
 
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
+	m_pCollider.lock()->SetOffsetRadius(0.56f);
+
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 	
-	m_pCollider.lock()->SetSize({ 0.6f,0.8f,0.6f });
+	m_pCollider.lock()->SetSize({ 0.4f,0.8f,0.4f });
 	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
 
-	m_pStone = AddGameObject<StoneDebrisMulti>();
+	for(int i = 0; i < 12; ++i)
+		m_pStone[i] = AddGameObject<StoneDebrisMulti>();
+
 	m_pStone2 = AddGameObject<StoneDebrisMulti>();
 	
 
@@ -1154,8 +1385,9 @@ HRESULT Em5000::Start()
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 	
 	// 나중에 트리거를 밟으면 true로 바꾸도록 할것
-	if(!m_pBtlPanel.expired())
-		m_pBtlPanel.lock()->SetBossGaugeActive(true);
+	// -> TriggerMeetingWithGoliath()
+	//if(!m_pBtlPanel.expired())
+	//	m_pBtlPanel.lock()->SetBossGaugeActive(true);
 	///////////////////////////////////////////
 
 	return S_OK;
@@ -1206,8 +1438,8 @@ UINT Em5000::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_Y))
 	{
-		m_eState = Groggy_Start;
-		m_bGroggy = true;
+		m_bIng = true;
+		m_eState = Attack_Rush_Start;
 	}
 
 
@@ -1275,6 +1507,10 @@ void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
 {
+	if (m_bHitBuster == true)
+		return;
+
+
 	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
@@ -1530,6 +1766,14 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::Overture:
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
 		AddRankScore(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack);
+		if (m_eState == Attack_Rush_End)
+		{
+			if (m_pMesh->PlayingTime() > 0.15f && m_pMesh->PlayingTime() < 0.5f)
+			{
+				m_bGroggy = true;
+				m_eState = Groggy_Start;
+			}
+		}
 		m_bHit = true;
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:

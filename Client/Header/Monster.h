@@ -5,7 +5,7 @@
 #include "RenderInterface.h"
 #include "SkeletonMesh.h"
 #include "DissolveInfo.h"
-
+#include "SoundSystem.h"
 class Nero;
 class RedQueen;
 class Monster : public Unit,
@@ -53,6 +53,8 @@ public:
 	void	AddRankScore(float _fRankScore);
 	bool	Get_Groggy() { return m_bGroggy; }
 	bool	Get_Dead() { return m_bDead; }
+
+	bool	Get_TargetEnable() { return m_bTargetEnable; }
 protected:
 	virtual void   Rotate(const float _fDeltaTime) PURE;
 	virtual void   Update_Angle() PURE;
@@ -98,6 +100,7 @@ protected:
 
 
 	Vector3								m_vEffectPos;
+	bool								m_bTargetEnable = true;
 };
 
 

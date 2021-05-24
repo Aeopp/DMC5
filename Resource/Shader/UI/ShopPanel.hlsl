@@ -216,7 +216,7 @@ PsOut PsMain_Plane(PsIn In)
     float Ambient = ATOSSample.b * 0.2f;
 
     Out.Color = (Diffuse + Ambient) * float4(tex2D(ALB_NOsRGB, In.UV).rgb, 1.f) * _BrightScale;
-    Out.Color.a = ATOSSample.r;
+    Out.Color.a = ATOSSample.r * saturate(1.f - _SliceAmount);
  
     return Out;
 };

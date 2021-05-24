@@ -115,7 +115,7 @@ HRESULT PhysicsSystem::ReadyPhysicsSystem()
 	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, m_pPhysics->getTolerancesScale());
 
 	//Default Material
-	m_pDefaultMaterial = m_pPhysics->createMaterial(0.3f, 0.3f, 0.f);
+	m_pDefaultMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.f);
 	
 	m_pDispatcher = PxDefaultCpuDispatcherCreate(2);
 

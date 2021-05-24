@@ -4649,6 +4649,7 @@ HRESULT Wire_Pull::StateEnter()
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WireArm,"Wire_Arm_Start31", false);
 	if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 		NeroState::SetCbsIdle();
+	SoundSystem::GetInstance()->Play("Snatch", 0.4f, true);
 	return S_OK;
 }
 
@@ -4709,6 +4710,7 @@ HRESULT Wire_Fly_Start::StateEnter()
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->SetFly(true);
 	m_pNero.lock()->PlayEffect(Eff_SnatchRush);
+	SoundSystem::GetInstance()->Play("Snatch", 0.4f, true);
 	return S_OK;
 }
 
@@ -4751,7 +4753,7 @@ HRESULT Wire_Fly_Loop::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Wire_HellHound_Loop", true, Nero::ANI_WIRE_HELLHOUND_LOOP);
-
+	
 	return S_OK;
 }
 
@@ -4789,6 +4791,7 @@ HRESULT Wire_Fly_End::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Wire_HellHound_End", false, Nero::ANI_WIRE_HELLHOUND_END);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_WireArm, false);
 	m_pNero.lock()->SetAddForce({ 0.f,40.f,0.f });
+	SoundSystem::GetInstance()->Play("Clothes", 0.4f, true);
 	return S_OK;
 }
 
@@ -4866,6 +4869,7 @@ HRESULT Wire_Pull_Air::StateEnter()
 	if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 		NeroState::SetCbsIdle();
 	NeroState::ActiveGravity(false);
+	SoundSystem::GetInstance()->Play("Snatch", 0.4f, true);
 	return S_OK;
 }
 
@@ -6298,6 +6302,7 @@ HRESULT BT_Air_ComboB::StateEnter()
 
 	SoundSystem::GetInstance()->Play("AirComboB2", 0.2f, true);
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,11 }, 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -6421,6 +6426,7 @@ HRESULT Skill_Split::StateEnter()
 	NeroState::ActiveGravity(false);
 	SoundSystem::GetInstance()->Play("Jump", 0.6f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -6527,6 +6533,7 @@ HRESULT Skill_Split_Landing::StateEnter()
 	m_pNero.lock()->SetLinearVelocity();
 	NeroState::ActiveGravity(true);
 	SoundSystem::GetInstance()->Play("ComboA4,ComboC", 0.3f, true);
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 
@@ -6877,6 +6884,7 @@ HRESULT Skill_Streak::StateEnter()
 	}
 	NeroState::ActiveTrail(true);
 	SoundSystem::GetInstance()->Play("Clothes", 0.7f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak);
 	return S_OK;
 }
 
@@ -6935,6 +6943,7 @@ HRESULT Skill_Streak_Ex3::StateEnter()
 	m_pNero.lock()->Use_ExGauge(1);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 	SoundSystem::GetInstance()->Play("EX", 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak);
 	return S_OK;
 }
 
@@ -7038,6 +7047,7 @@ HRESULT Skill_Streak_End::StateEnter()
 	m_pNero.lock()->Reset_LerfAmount();
 	Play_Sound(TAG_RedQueen, "Streak");
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteSkill", { 1,10 }, 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak_End);
 	return S_OK;
 }
 
@@ -7207,6 +7217,7 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateEnter()
 	m_pNero.lock()->Reset_LerfAmount();
 	m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,0.f,0.f }, 0, 1);
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteSkill", { 1,10 }, 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak_End);
 	return S_OK;
 }
 
@@ -8896,6 +8907,7 @@ HRESULT Middle_Cbs_Strike::StateEnter()
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel);
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
@@ -9156,6 +9168,7 @@ HRESULT Middle_Cbs_Strike_Down::StateEnter()
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { -45.f,0.f,0.f });
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
@@ -9220,6 +9233,7 @@ HRESULT Middle_Cbs_Strike_Up::StateEnter()
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { 45.f,0.f,0.f });
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
@@ -10242,6 +10256,7 @@ HRESULT Skill_Caliber::StateEnter()
 	//m_pNero.lock()->SetAddForce_Dir(Nero::Dir_Front, 3.f);
 	SoundSystem::GetInstance()->Play("Jump", 0.3f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -10297,7 +10312,7 @@ HRESULT Skill_Caliber_End::StateEnter()
 	}
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "Streak");
-
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 
@@ -10736,6 +10751,7 @@ HRESULT Skill_Split_Ex::StateEnter()
 	m_pNero.lock()->Use_ExGauge(1);
 	SoundSystem::GetInstance()->Play("Jump", 0.6f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -10842,6 +10858,7 @@ HRESULT Skill_Split_Ex_Landing::StateEnter()
 
 	NeroState::ActiveGravity(true);
 	SoundSystem::GetInstance()->Play("ComboA4,ComboC", 0.3f, true);
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 
@@ -10915,6 +10932,7 @@ HRESULT Air_Dive_Slash_Start::StateEnter()
 	SoundSystem::GetInstance()->Play("Jump", 0.6f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
 	SoundSystem::GetInstance()->Play("DanteSkill_5", 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -11027,6 +11045,7 @@ HRESULT Air_Dive_Slash_End::StateEnter()
 	m_pNero.lock()->SetLinearVelocity();
 	NeroState::ActiveGravity(true);
 	SoundSystem::GetInstance()->Play("ComboC4-1", 0.3f, true);
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 
@@ -11380,6 +11399,8 @@ HRESULT Buster_Strike_Common::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("Buster_Strike_Common", false, Nero::ANI_BUSTER_STRIKE_COMMON);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "Buster_Common", false);
+	SoundSystem::GetInstance()->Play("Buster1", 0.5f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	return S_OK;
 }
 
@@ -11423,6 +11444,8 @@ HRESULT Buster_Strike_Common_Air::StateEnter()
 
 	m_pNero.lock()->ChangeAnimation("Buster_Strike_Common_Air", false, Nero::ANI_BUSTER_STRIKE_COMMON_AIR);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "Buster_Common", false);
+	SoundSystem::GetInstance()->Play("Buster1", 0.5f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	NeroState::ActiveGravity(false);
 	return S_OK;
 }
@@ -11541,6 +11564,8 @@ HRESULT em0000_Buster_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation("em0000_Buster_Start", false,Nero::ANI_EM0000_BUSTER_START);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "em0000_Buster_Start", false);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm_Left, "em0000_Buster_Start", false);
+	SoundSystem::GetInstance()->Play("Buster1", 0.5f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	return S_OK;
 }
 
@@ -11657,6 +11682,8 @@ HRESULT em0000_Buster_Air::StateEnter()
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "em0000_Buster_Air", false);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm_Left, "em0000_Buster_Air", false);
 	NeroState::ActiveGravity(false);
+	SoundSystem::GetInstance()->Play("Buster1", 0.5f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	return S_OK;
 }
 
@@ -11714,6 +11741,8 @@ HRESULT em5000_Buster_Start::StateEnter()
 	m_pNero.lock()->Set_PlayingTime(0.25f);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "em5000_Buster_Start", false);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm_Left, "em5000_Buster_Start", false);
+	SoundSystem::GetInstance()->Play("Buster1", 0.5f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	return S_OK;
 }
 
@@ -12044,6 +12073,8 @@ HRESULT em200_Buster_Start::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("em200_Buster_Start", false, Nero::ANI_EM200_BUSTER_START);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "em200_Buster_Start", false);
+	SoundSystem::GetInstance()->Play("Buster1", 0.5f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	return S_OK;
 }
 
@@ -12172,6 +12203,8 @@ HRESULT em200_Buster_Air_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation("em200_Buster_Air_Start", false, Nero::ANI_EM200_BUSTER_AIR_START);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm, "em200_Buster_Air_Start", false);
 	NeroState::ActiveGravity(false);
+	SoundSystem::GetInstance()->Play("Buster1", 0.5f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	return S_OK;
 }
 
@@ -12454,7 +12487,7 @@ HRESULT Hit_Ground_Away::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Hit_Ground_Away", false, Nero::ANI_HIT_GROUND_AWAY);
-
+	SoundSystem::GetInstance()->Play("DashStop", 0.6f, true);
 	return S_OK;
 }
 

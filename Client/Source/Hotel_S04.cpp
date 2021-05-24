@@ -71,8 +71,10 @@ HRESULT Hotel_S04::LoadScene()
 	m_fLoadingProgress = 0.2f;
 
 #pragma region Monster
+
 	auto _pMonster = AddGameObject<Em5000>();
 	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -280,6 +282,13 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 			// 다른 후처리가 묻히니 스카이 왜곡을 약하게 .... 
 
 			// 로직 작성 .... 
+
+			//
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+				Sp->SetBossGaugeActive(true);
+			}
 		};
 
 		// 트리거 위치
@@ -301,8 +310,6 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 			TargetTag,
 			TriggerRotation);
 	}
-
-
 }
 
 void Hotel_S04::LateInit()
@@ -318,9 +325,9 @@ void Hotel_S04::LateInit()
 		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,
 		MainCamera::AT_BOSS1);*/
 	
-
 	Renderer::GetInstance()->LateSceneInit();
 	
-	_LateInit = true;
 	BgmPlay();
+
+	_LateInit = true;
 }

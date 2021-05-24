@@ -6,7 +6,7 @@
 #include "DynamicLight.h"
 
 class LensFlare : public ENGINE::GameObject,
-				public ENGINE::RenderInterface
+				  public ENGINE::RenderInterface
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _Mesh{};
@@ -42,7 +42,7 @@ private:
 	float PlayTime = 0.6f;
 	float ColorIntencity = 0.002f;
 	float StartScale = 0.000f;
-	float EndScale = 0.006f;
+	float EndScale = 0.018f;
 
 	DynamicLight _DynamicLight{};
 };

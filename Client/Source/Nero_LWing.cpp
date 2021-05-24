@@ -53,6 +53,141 @@ HRESULT Nero_LWing::Awake()
 	if (!m_pNero.expired())
 		m_pParentBoneMat = m_pNero.lock()->Get_BoneMatrixPtr("L_Shoulder");
 
+	m_pChestRoot = m_pNero.lock()->Get_BoneMatrixPtr("Chest");
+
+	LPCLOTHBONE pClothBone = nullptr;
+	Node* pNode = nullptr;
+
+	pClothBone = new CLOTHBONE;
+	pNode = m_pMesh->GetNode("L_WingCloth01_end");
+	pClothBone->sName = pNode->Name;
+	pClothBone->pParent = nullptr;
+	pClothBone->matToRoot = pNode->ToRoot;
+	pClothBone->pNode = pNode;
+	m_vecClothBone.push_back(pClothBone);
+
+	pClothBone = new CLOTHBONE;
+	pNode = m_pMesh->GetNode("L_WingCloth00_00");
+	pClothBone->sName = pNode->Name;
+	pClothBone->pParent = nullptr;
+	pClothBone->matToRoot = pNode->ToRoot;
+	pClothBone->pNode = pNode;
+	m_vecClothBone.push_back(pClothBone);
+
+	pClothBone = new CLOTHBONE;
+	pNode = m_pMesh->GetNode("L_WingCloth00_01");
+	pClothBone->sName = pNode->Name;
+	pClothBone->pParent = nullptr;
+	pClothBone->matToRoot = pNode->ToRoot;
+	pClothBone->pNode = pNode;
+	m_vecClothBone.push_back(pClothBone);
+
+	pClothBone = new CLOTHBONE;
+	pNode = m_pMesh->GetNode("L_WingCloth00_02");
+	pClothBone->sName = pNode->Name;
+	pClothBone->pParent = m_vecClothBone.back();
+	pClothBone->matToRoot = pNode->ToRoot;
+	pClothBone->pNode = pNode;
+	m_vecClothBone.push_back(pClothBone);
+
+	pClothBone = new CLOTHBONE;
+	pNode = m_pMesh->GetNode("L_WingCloth00_03");
+	pClothBone->sName = pNode->Name;
+	pClothBone->pParent = m_vecClothBone.back();
+	pClothBone->matToRoot = pNode->ToRoot;
+	pClothBone->pNode = pNode;
+	m_vecClothBone.push_back(pClothBone);
+
+	pClothBone = new CLOTHBONE;
+	pNode = m_pMesh->GetNode("L_WingCloth00_end");
+	pClothBone->sName = pNode->Name;
+	pClothBone->pParent = m_vecClothBone.back();
+	pClothBone->matToRoot = pNode->ToRoot;
+	pClothBone->pNode = pNode;
+	m_vecClothBone.push_back(pClothBone);
+
+	vector<PxVec4> vecVertex;
+
+	for (UINT i = 0; i < m_vecClothBone.size(); ++i)
+	{
+		PxVec3 vPos(0.f, 0.f, 0.f);
+
+		memcpy_s(&vPos, sizeof(PxVec3), m_vecClothBone[i]->matToRoot.m[3], sizeof(PxVec3));
+
+		float fInvMass = m_vecClothBone[i]->pParent == nullptr ? 0.f : 1.f;
+
+		vecVertex.push_back(PxVec4(vPos, fInvMass));
+	}
+
+	vector<PxU32> vecIndex;
+	
+	for (UINT i = 0; i < 4; ++i)
+	{
+		vecIndex.push_back(0);
+		vecIndex.push_back(i + 2);
+		vecIndex.push_back(i + 1);
+	}
+
+	PxClothMeshDesc meshDesc;
+
+	meshDesc.setToDefault();
+
+	meshDesc.points.data = vecVertex.data();
+	meshDesc.points.count = vecVertex.size();
+	meshDesc.points.stride = sizeof(PxVec4);
+
+	meshDesc.invMasses.data = &vecVertex.data()->w;
+	meshDesc.invMasses.count = vecVertex.size();
+	meshDesc.invMasses.stride = sizeof(PxVec4);
+
+	meshDesc.triangles.data = vecIndex.data();
+	meshDesc.triangles.count = vecIndex.size() / 3;
+	meshDesc.triangles.stride = sizeof(PxU32) * 3;
+
+	PxClothMeshQuadifier quadifier(meshDesc);
+
+	PxClothFabric* pClothFabric = PxClothFabricCreate(*Physics::GetPxPhysics(), quadifier.getDescriptor(), PxVec3(0, -1, 0));
+
+	PxClothParticle* pParticles = (PxClothParticle*)meshDesc.points.data;
+
+	PxTransform transform(PxVec3(0.f, 0.f, 0.f), PxQuat(0.f, 0.f, 0.f, 1.f));
+
+	m_pCloth = Physics::GetPxPhysics()->createCloth(transform, *pClothFabric, pParticles, PxClothFlags());
+
+	//m_pCloth->setSolverFrequency(240);
+
+	//m_pCloth->setStiffnessFrequency(10.0f);
+
+	//// damp global particle velocity to 90% every 0.1 seconds
+	////m_pCloth->setDampingCoefficient(PxVec3(0.5f)); // damp local particle velocity
+	////m_pCloth->setLinearDragCoefficient(PxVec3(0.2f)); // transfer frame velocity
+	////m_pCloth->setAngularDragCoefficient(PxVec3(0.2f)); // transfer frame rotation
+
+	//// reduce impact of frame acceleration
+	//// x, z: cloth swings out less when walking in a circle
+	//// y: cloth responds less to jump acceleration
+	////m_pCloth->setLinearInertiaScale(PxVec3(0.8f, 0.6f, 0.8f));
+
+	//// leave impact of frame torque at default
+	////m_pCloth->setAngularInertiaScale(PxVec3(1.0f));
+
+	////// reduce centrifugal force of rotating frame
+	////m_pCloth->setCentrifugalInertiaScale(PxVec3(0.3f));
+
+
+	////m_pCloth->setClothFlag(PxClothFlag::eSWEPT_CONTACT, true);
+
+
+	////PxClothStretchConfig stretchConfig;
+	////stretchConfig.stiffness = 1.0f;
+
+	//m_pCloth->setStretchConfig(PxClothFabricPhaseType::eVERTICAL, PxClothStretchConfig(0.5f));
+	//m_pCloth->setStretchConfig(PxClothFabricPhaseType::eVERTICAL, PxClothStretchConfig(0.5f));
+	//m_pCloth->setStretchConfig(PxClothFabricPhaseType::eSHEARING, PxClothStretchConfig(0.75f));
+	//m_pCloth->setStretchConfig(PxClothFabricPhaseType::eBENDING, PxClothStretchConfig(0.5f));
+	//m_pCloth->setTetherConfig(PxClothTetherConfig(1.0f));
+
+	Physics::AddActor(GetSceneID(), *m_pCloth);
 	return S_OK;
 }
 
@@ -65,7 +200,58 @@ HRESULT Nero_LWing::Start()
 UINT Nero_LWing::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+	PxClothParticleData* pParticleData = m_pCloth->lockParticleData();
 
+	PxClothParticle* pParticles = pParticleData->particles;
+
+	for (UINT i = 0; i < m_vecClothBone.size(); ++i)
+	{
+		if (nullptr == m_vecClothBone[i]->pParent)
+			continue;
+
+		D3DXMATRIX matParent = m_vecClothBone[i]->pParent->matToRoot;
+		D3DXMatrixInverse(&matParent, nullptr, &matParent);
+
+		memcpy_s(m_vecClothBone[i]->matToRoot.m[3], sizeof(PxVec3), &pParticles[i].pos, sizeof(PxVec3));
+
+		D3DXMATRIX newTransform = m_vecClothBone[i]->matToRoot * matParent;
+
+		m_vecClothBone[i]->pNode->ClothTransform = newTransform;
+	}
+
+	pParticleData->unlock();
+
+	D3DXVECTOR3 vScale, vPos;
+	D3DXQUATERNION tQuat;
+	D3DXMatrixDecompose(&vScale, &tQuat, &vPos, m_pChestRoot);
+
+	PxVec3 targetPos;
+	memcpy_s(&targetPos, sizeof(PxVec3), &vPos, sizeof(PxVec3));
+	PxQuat targetQuat;
+	memcpy_s(&targetQuat, sizeof(PxQuat), &tQuat, sizeof(PxQuat));
+
+	m_pCloth->setTargetPose(PxTransform(targetPos, targetQuat));
+
+	PxVec3 vWindDir(1.f, 0.2f, 0.5f);
+	PxReal fWindStrength = 100.f;
+	PxVec3 vWindRange(0.f, 10.f, 10.f);
+
+	static PxReal fTime = 0.f;
+
+	fTime += _fDeltaTime * (rand() % 10);
+
+	float st = 1.f + (float)sin(fTime);
+	float windStrength = (((rand() / 10) * (float)sin(fTime)) + 1.f) * fWindStrength;
+	float windRangeStrength = (rand() % 20) * 0.1f;
+
+	PxVec3 vOffset((rand() % 10) * 0.1f * (rand() % 2 == 0 ? 1 : -1), (rand() % 10) * 0.1f * (rand() % 2 == 0 ? 1 : -1), (rand() % 10) * 0.1f * (rand() % 2 == 0 ? 1 : -1));
+
+	float ct = 1.f + (float)cos(fTime + 0.1);
+	vOffset *= ct;
+
+	PxVec3 vWindAcceleration = fWindStrength * vWindDir + windRangeStrength * vWindRange.multiply(vOffset);
+
+	m_pCloth->setExternalAcceleration(vWindAcceleration);
 
 	m_pMesh->GetRootNode()->NodeUpdate(FMath::Identity(), 0.f, "", {});
 	m_pMesh->UpdateToRootMatricies();
@@ -80,7 +266,6 @@ UINT Nero_LWing::Update(const float _fDeltaTime)
 	m_AuraMesh->UpdateToRootMatricies();
 	m_AuraMesh->VTFUpdate();
 	//
-
 	return 0;
 }
 
