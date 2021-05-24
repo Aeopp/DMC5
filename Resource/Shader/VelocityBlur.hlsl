@@ -1,6 +1,8 @@
 uniform sampler2D RenderScene : register(s0);
 uniform vector PixelSize;
 
+uniform float exposure_corr;
+
 uniform float  VelocityBlurIntencity;
 uniform float  BlurLengthMin;
 // uniform int VelocityBlurSamples;
@@ -65,10 +67,10 @@ out float4 Color : COLOR0)
         //}
             Color += BColor;
         }
-        Color /= (float) VelocityBlurSamples;
+        Color /= (float)VelocityBlurSamples;
     }
-    
-    
+
+    Color.rgb *= exposure_corr;
     Color.a *= VelocitySample.a;
 };
 

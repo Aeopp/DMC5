@@ -2000,7 +2000,7 @@ HRESULT Renderer::AlphaBlendEffectRender()&
 		Fx->SetMatrix("InverseProjection", &_RenderInfo.ProjectionInverse);
 		Fx->SetTexture("DepthMap", RenderTargets["Depth"]->GetTexture());
 		Fx->SetFloat("SoftParticleDepthScale", SoftParticleDepthScale);
-		Fx->SetFloat("exposure_corr",1.f/(exposure *0.002f));
+		Fx->SetFloat("exposure_corr",1.f/(exposure *0.002f)   );
 		
 		Vector3  LightDirection = { 0,-1,0 };
 
@@ -2483,13 +2483,23 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 	// 델타타임에 영향을 매우 많이 받음 . 
 	adaptedluminance = adaptedluminance +
 		(averageluminance - adaptedluminance) *
-		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime  *2.0f)));
+		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime  *3.5f)));
+
 
 	float two_ad_EV = adaptedluminance *
 		(adaptedluminance_var[2] / adaptedluminance_var[3]);
 
 	exposure = 1.0f / (adaptedluminance_var[4] * two_ad_EV) *
 		adaptedluminance_var[5];
+
+	if (std::isnan(exposure))
+	{
+		exposure = PreviousExposure;
+	}
+	else
+	{
+		PreviousExposure = exposure;
+	}
 
 	if (FixedExposure)
 	{
@@ -3118,7 +3128,8 @@ HRESULT Renderer::BlendVelocityBlur()
 
 		Fx->SetFloat("VelocityBlurIntencity", VelocityBlurIntencity);
 		Fx->SetFloat("BlurLengthMin", BlurLengthMin);
-		
+		Fx->SetFloat("exposure_corr", 1.f / (exposure * 0.002f) );
+		;
 		
 		Fx->Begin(nullptr, 0);
 		Fx->BeginPass(0);
