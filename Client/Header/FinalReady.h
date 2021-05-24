@@ -9,7 +9,7 @@
 //{
 //private:
 //	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
-//	std::shared_ptr<ENGINE::Texture> _Albm{};
+//	std::shared_ptr<ENGINE::Texture>    _Alpg{};
 //private:
 //	explicit FinalReady() = default;
 //	virtual ~FinalReady() = default;
@@ -36,9 +36,13 @@
 //	void PlayParticle();
 //public:
 //	float T = 0.0f;
+//	float LerpEndT = 2.f;
 //	float PlayTime = 5.f;
 //
 //	void RenderDebug(const DrawInfo& _Info);
 //	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+//
+//	// 에디터 변수
+//	float ColorIntencity = 0.01f;
 //};
 //#endif //

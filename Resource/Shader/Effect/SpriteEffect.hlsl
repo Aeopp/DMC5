@@ -53,7 +53,7 @@ sampler Distortion = sampler_state
 
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV0 : TEXCOORD0 ,
-            out float4 ClipPosition : TEXCOORD1)
+            out float4 ClipPosition : TEXCOORD1 )
 {
     Position = mul(Position, matWorld);
     ClipPosition=Position = mul(Position, ViewProjection);

@@ -314,7 +314,7 @@ HRESULT NeroState::KeyInput_Idle(const int _nIndex)
 	else if (Input::GetKeyDown(DIK_LCONTROL))
 	{
 		//m_pNero.lock()->ChangeWeapon(Nero::Cbs);
-		//m_pFSM->ChangeState(NeroFSM::CBS_IDLE);
+		//m_pFSM->ChangeState(NeroFSM::CBS_IDLE) ;
 	}
 
 	else if (Input::GetKey(DIK_Q))
@@ -1189,7 +1189,6 @@ HRESULT NeroState::KeyInput_Jump(const int _nIndex)
 	}
 	else if (Input::GetKey(DIK_W))
 	{
-		m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 		if (0 < JumpCount && Input::GetKeyDown(DIK_SPACE))
 		{
 			//앞으로 2단 점프
@@ -1952,7 +1951,7 @@ HRESULT Jump_Twice::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->DecreaseJumpCount();
-	
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
 	UINT iJumpDir = m_pNero.lock()->Get_JumpDir();
 
 	switch (iJumpDir)
@@ -2128,7 +2127,7 @@ HRESULT RunStartLeft::StateEnter()
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
-	
+	SoundSystem::GetInstance()->Play("Walk1", 0.6f, true);
 
 	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
@@ -2373,7 +2372,14 @@ HRESULT RunStartLeft::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	m_pNero.lock()->SetAngleFromCamera();
-
+	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
+	{
+		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+	}
+	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
+	{
+		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+	}
 	if (Input::GetKey(DIK_A))
 	{
 		if (m_pNero.lock()->IsAnimationEnd())
@@ -2418,7 +2424,7 @@ HRESULT RunStartRight::StateEnter()
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
-
+	SoundSystem::GetInstance()->Play("Walk1", 0.6f, true);
 
 	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
@@ -2663,7 +2669,14 @@ HRESULT RunStartRight::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	m_pNero.lock()->SetAngleFromCamera();
-
+	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
+	{
+		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+	}
+	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
+	{
+		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+	}
 	if (Input::GetKey(DIK_D))
 	{
 		if (m_pNero.lock()->IsAnimationEnd())
@@ -2709,7 +2722,7 @@ HRESULT RunStart180::StateEnter()
 	NeroState::StateEnter();
 	UINT CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	UINT NeroPreDir = m_pNero.lock()->Get_PreDirIndex();
-
+	SoundSystem::GetInstance()->Play("Walk1", 0.6f, true);
 
 	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
@@ -2952,6 +2965,14 @@ HRESULT RunStart180::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	m_pNero.lock()->SetAngleFromCamera();
+	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
+	{
+		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+	}
+	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
+	{
+		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+	}
 	if (Input::GetKey(DIK_S))
 	{
 		if (m_pNero.lock()->IsAnimationEnd())
@@ -3020,7 +3041,7 @@ HRESULT RunLoop::StateEnter()
 		m_pNero.lock()->ChangeAnimation("Cbs_RunLoop", true, Nero::ANI_CBS_RUNLOOP);
 
 	
-
+	SoundSystem::GetInstance()->Play("Walk1", 0.6f, true);
 	return S_OK;
 }
 
@@ -3034,6 +3055,14 @@ HRESULT RunLoop::StateExit()
 
 HRESULT RunLoop::StateUpdate(const float _fDeltaTime)
 {
+	if (260 <=SoundSystem::GetInstance()->CurrentPosition("Walk1"))
+	{
+		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+	}
+	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
+	{
+		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+	}
 	//NeroState::StateUpdate(_fDeltaTime);
 	if (Input::GetKey(DIK_LSHIFT))
 		m_pNero.lock()->Locking();
@@ -3095,7 +3124,7 @@ HRESULT RunStartFront::StateEnter()
 	m_pNero.lock()->Reset_RotationAngle();
 	m_pNero.lock()->Reset_RootRotation();
 	m_pNero.lock()->SetAngleFromCamera();
-
+	SoundSystem::GetInstance()->Play("Walk1", 0.6f, true);
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	if (Nero::NeroCom_RedQueen == m_iNeroCurWeaponIndex)
 	{
@@ -3200,6 +3229,14 @@ HRESULT RunStartFront::StateExit()
 HRESULT RunStartFront::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
+	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
+	{
+		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+	}
+	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
+	{
+		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+	}
 	// 시작하는 애니메니메이션이 끝났으면 Loop로 변환
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	m_pNero.lock()->SetAngleFromCamera();
@@ -3407,6 +3444,8 @@ HRESULT DashLoop::StateEnter()
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
 	m_fGradient = 0.f;
+	SoundSystem::GetInstance()->Play("DashStartCloth", 0.4f, true);
+
 	return S_OK;
 }
 
@@ -3417,6 +3456,14 @@ HRESULT DashLoop::StateExit()
 
 HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 {
+	if (200 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
+	{
+		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+	}
+	if (250 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
+	{
+		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+	}
 	//NeroState::StateUpdate(_fDeltaTime);
 	UINT Ex_Gauge = m_pNero.lock()->Get_ExGaugeCount();
 	m_pNero.lock()->IncreaseDistance(MaxDistance, _fDeltaTime);
@@ -3648,6 +3695,7 @@ HRESULT DashStop::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("DashStop", false, Nero::ANI_DASHSTOP);
+	SoundSystem::GetInstance()->Play("DashStop", 0.6f, true);
 	return S_OK;
 }
 
@@ -4660,6 +4708,7 @@ HRESULT Wire_Fly_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Wire_HellHound_F", false, Nero::ANI_WIRE_HELLHOUND_F);
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->SetFly(true);
+	m_pNero.lock()->PlayEffect(Eff_SnatchRush);
 	return S_OK;
 }
 
@@ -5965,6 +6014,7 @@ HRESULT BT_Air_Att1::StateEnter()
 {
 	m_iNeroCurWeaponIndex = Nero::NeroCom_RedQueen;
 	NeroState::StateEnter();
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 	UINT  CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
 	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_R);
@@ -10190,6 +10240,8 @@ HRESULT Skill_Caliber::StateEnter()
 	}
 	NeroState::ActiveGravity(false);
 	//m_pNero.lock()->SetAddForce_Dir(Nero::Dir_Front, 3.f);
+	SoundSystem::GetInstance()->Play("Jump", 0.3f, true);
+	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
 	return S_OK;
 }
 
@@ -10244,6 +10296,8 @@ HRESULT Skill_Caliber_End::StateEnter()
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"Streak_End", false);
 	}
 	NeroState::ActiveTrail(true);
+	Play_Sound(TAG_RedQueen, "Streak");
+
 	return S_OK;
 }
 
@@ -10497,6 +10551,8 @@ HRESULT Hr_Ex_Air_Roll_Start::StateEnter()
 	m_pNero.lock()->Use_ExGauge(1);
 	//m_pNero.lock()->PlayEffect(Eff_FireCircle, { -0.1f,0.f,0.f }, 0, 5, 0.7f);
 	//나중에 생길 불꽃이펙트 여기서
+	SoundSystem::GetInstance()->Play("Hr_Air_ex", 0.2f, true);
+	SoundSystem::GetInstance()->Play("RedQueen9", 0.15f, true);
 	return S_OK;
 }
 
@@ -10563,11 +10619,14 @@ HRESULT Hr_Ex_Air_Roll_Loop::StateUpdate(const float _fDeltaTime)
 	{
 		m_bPlayOnce = false;
 		m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,-0.4f,-0.4f }, 0, 5, 1.3f, { 0.003f,0.003f,0.003f });
+
 	}
 	if (2.f <= fCurrAccTime && m_bPlayOnce2)
 	{
 		m_bPlayOnce2 = false;
 		m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,-0.4f,-0.55f }, 0, 3, 1.1f, { 0.003f,0.003f,0.003f });
+		SoundSystem::GetInstance()->Play("Hr_Air_ex", 0.2f, true);
+		SoundSystem::GetInstance()->Play("RedQueen9", 0.15f, true);
 	}
 
 	if (2.96f <= fCurrAccTime)
@@ -10603,7 +10662,7 @@ HRESULT Hr_Ex_Air_Roll_End::StateEnter()
 	m_bActiveColl_RedQueen = false;
 	ActiveColl_RedQueen(true);
 	m_pNero.lock()->PlayEffect(Eff_FireCircle, {0.f ,-0.4f,-0.75f }, 0, 1, 0.7f);
-
+	SoundSystem::GetInstance()->Play("Hr_Air_ex", 0.2f, true);
 	return S_OK;
 }
 
@@ -10665,7 +10724,7 @@ HRESULT Skill_Split_Ex::StateEnter()
 	NeroState::StateEnter();
 	m_pNero.lock()->ChangeAnimation("SplitEx_Start", false, Nero::ANI_SPLITEX_START);
 	
-	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Split);
+	m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_RedQueen, ATTACKTYPE::Attack_Down);
 	if (m_pNero.lock()->Get_IsMajinMode())
 	{
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WIngArm_Left,"Split_Start", false);

@@ -14,6 +14,11 @@ private:
 	std::weak_ptr<class SecretVision> _SecretVision{};
 	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
 	bool _LateInit = false;
+
+	float _Hotel02_Volume = 0.12f;
+	float _Battle1_Volume = 0.1f;
+	bool _DecreaseHotel02_Volume = false;
+	bool _DecreaseBattle1_Volume = false;
 private:
 	explicit Hotel_S02();
 	virtual ~Hotel_S02() = default;

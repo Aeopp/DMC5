@@ -61,6 +61,7 @@
 #include "LensFlare.h"
 #include "Reverberation.h"
 #include "ParticleSystem.h"
+#include "SoundSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -86,6 +87,8 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
+
 
 	m_fLoadingProgress = 0.01f;
 
@@ -99,11 +102,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
-
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
-
+	//_Camera = AddGameObject<Camera>();
+	
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -122,9 +124,8 @@ HRESULT TestScene::LoadScene()
 #pragma region Map
 
 	//LoadMap();
-
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(1);
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);
 
 #pragma endregion
 
@@ -172,10 +173,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region UI
 
-	//AddGameObject<BtlPanel>();
+	AddGameObject<BtlPanel>();
 
-	AddGameObject<BtlPanel>().lock()->SetActive(false);
-	AddGameObject<ShopPanel>();
+	//AddGameObject<BtlPanel>().lock()->SetActive(false);
+	//AddGameObject<ShopPanel>();
 
 #pragma endregion
 
@@ -232,7 +233,9 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
+	static float TestVolume = 0.15f;
+	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
+	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
 	//if (auto SpPlayer = _Player.lock();
 	//	SpPlayer)
 	//{

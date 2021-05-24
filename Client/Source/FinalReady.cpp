@@ -102,12 +102,14 @@
 //	_InitInfo.bLocalVertexLocationsStorage = false;
 //
 //	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
-//		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane01.fbx", _InitInfo);
+//		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane01.fbx", 
+//			_InitInfo);
 //
-//	_Albm = Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\LightShaft\\1.tga");
+//	_Alpg = Resources::Load<ENGINE::Texture>(
+//		L"..\\..\\Usable\\LightShaft\\1.tga");
 //
 //	PushEditEntity(_StaticMesh.get());
-//	PushEditEntity(_Albm.get());
+//	PushEditEntity(_Alpg.get());
 //};
 //
 //void FinalReady::PlayStart(const Vector3& Location)
@@ -121,6 +123,8 @@
 //	this->PlayTime = PlayTime;
 //	T = 0.0f;
 //	_RenderProperty.bRender = true;
+//
+//	PlayParticle();
 //}; 
 //
 //void FinalReady::PlayEnd()
@@ -137,12 +141,19 @@
 //	if (Numsubset > 0)
 //	{
 //		_Info.Fx->SetMatrix("matWorld", &World);
-//		_Info.Fx->SetTexture("AlbmMap", _Albm->GetTexture());
+//		_Info.Fx->SetTexture("AlpgMap", 
+//						_Alpg->GetTexture());
 //
-//		const float ColorIntencity = ? ? ;
-//		const float AlphaFactor = ? ? ;
+//		const float LerpT = 
+//			FMath::Clamp ( T / LerpEndT ,0.f,1.f );
 //
-//		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+//		const float CurColorIntencity = 
+//			FMath::Lerp(0.f, ColorIntencity, LerpT);
+//
+//		const float AlphaFactor  = 
+//			FMath::Lerp(0.f,1.f,LerpT);
+//
+//		_Info.Fx->SetFloat("ColorIntencity", CurColorIntencity);
 //		_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
 //	};
 //
@@ -151,18 +162,13 @@
 //		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
 //			SpSubset)
 //		{
-//			if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-//			{
-//				continue;
-//			}
-//
 //			SpSubset->Render(_Info.Fx);
 //		};
 //	};
 //}
 //
 //
-//void AirHike::RenderDebug(const DrawInfo& _Info)
+//void FinalReady::RenderDebug(const DrawInfo& _Info)
 //{
 //	const Matrix World = _RenderUpdateInfo.World;
 //	_Info.Fx->SetMatrix("World", &World);
@@ -173,11 +179,6 @@
 //		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
 //			SpSubset)
 //		{
-//			if (false ==
-//				_Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-//			{
-//				continue;
-//			}
 //
 //			SpSubset->Render(_Info.Fx);
 //		};
@@ -186,7 +187,7 @@
 //};
 //
 //
-//HRESULT AirHike::Ready()
+//HRESULT FinalReady::Ready()
 //{
 //	// 트랜스폼 초기화 .. 
 //	auto InitTransform = GetComponent<ENGINE::Transform>();
@@ -196,66 +197,36 @@
 //	return S_OK;
 //};
 //
-//HRESULT AirHike::Awake()
+//HRESULT FinalReady::Awake()
 //{
 //	GameObject::Awake();
 //
-//	m_pTransform.lock()->SetPosition(Vector3{/* -12.f,-0.9f,-638.f*/0.f,0.5f,0.5f });
-//	m_pTransform.lock()->SetScale({ 0.0027f,0.0027f,0.0027f });
-//	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.11544f,0.f });
-//	m_pTransform.lock()->SetRotation(Vector3{ 90.f ,0.f ,0.0f });
+//	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.12f,0.5f });
+//	m_pTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
+//	m_pTransform.lock()->SetRotation({ 0.f,0.f,0.f });
 //
 //	return S_OK;
-//}
+//};
 //
-//HRESULT AirHike::Start()
+//
+//HRESULT FinalReady::Start()
 //{
 //	GameObject::Start();
 //
 //	return S_OK;
-//}
+//};
 //
-//UINT AirHike::Update(const float _fDeltaTime)
+//
+//UINT FinalReady::Update(const float _fDeltaTime)
 //{
 //	GameObject::Update(_fDeltaTime);
-//	if (_RenderProperty.bRender == false) return 0;
 //
-//	T += _fDeltaTime * Speed;
-//	Sin = std::sinf(T);
+//	if (_RenderProperty.bRender == false) 
+//		return 0;
 //
-//	if (bPlayedEndParticle == false && T >= (FMath::PI / 4.f))
-//	{
-//		bPlayedEndParticle = true;
+//	T += _fDeltaTime;
 //
-//		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-//			SpTransform)
-//		{
-//			if (auto _Particle =
-//				ParticleSystem::GetInstance()->PlayParticle(
-//					"AirHikeEndParticle", 2000ul, true);
-//				_Particle.empty() == false)
-//			{
-//
-//				for (int32 i = 0; i < _Particle.size(); ++i)
-//				{
-//					auto& _PlayInstance = _Particle[i];
-//					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-//				}
-//			}
-//		};
-//	}
-//
-//	CurParticleTime -= _fDeltaTime;
-//	if (CurParticleTime < 0.0f)
-//	{
-//		CurParticleTime += ParticleTime;
-//		PlayParticle();
-//	}
-//
-//
-//
-//	// 끝날 쯔음 .
-//	if (T >= PlayTime)
+//	if (T > PlayTime)
 //	{
 //		PlayEnd();
 //	};
@@ -263,34 +234,15 @@
 //	return 0;
 //}
 //
-//void AirHike::PlayParticle()
-//{
-//	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-//		SpTransform)
-//	{
-//		if (auto _Particle =
-//			ParticleSystem::GetInstance()->PlayParticle(
-//				"AirHikeParticle", 333ul, true);
-//			_Particle.empty() == false)
-//		{
 //
-//			for (int32 i = 0; i < _Particle.size(); ++i)
-//			{
-//				auto& _PlayInstance = _Particle[i];
-//				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-//			}
-//		}
-//	};
-//};
-//
-//UINT AirHike::LateUpdate(const float _fDeltaTime)
+//UINT FinalReady::LateUpdate(const float _fDeltaTime)
 //{
 //	GameObject::LateUpdate(_fDeltaTime);
 //
 //	return 0;
 //}
 //
-//void AirHike::Editor()
+//void FinalReady::Editor()
 //{
 //	GameObject::Editor();
 //
@@ -302,17 +254,8 @@
 //		{
 //			PlayStart();
 //		}
-//
-//		ImGui::Text("T : %2.6f", T);
-//		ImGui::SliderFloat("Speed", &Speed, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-//
-//		ImGui::SliderFloat("StartIntencity", &StartIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-//		ImGui::SliderFloat("StartScale", &StartScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-//		ImGui::ColorEdit4("StartColor", StartColor);
-//
-//		ImGui::SliderFloat("FinalIntencity", &FinalIntencity, 0.f, 10.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-//		ImGui::SliderFloat("FinalScale", &FinalScale, 0.f, 1.f, "%2.6f", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic);
-//		ImGui::ColorEdit4("FinalColor", FinalColor);
+//		float LerpEndT = 2.f;
+//		float PlayTime = 5.f;
 //		ImGui::EndChild();
 //	}
 //}

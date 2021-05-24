@@ -11,6 +11,13 @@ private:
 	std::weak_ptr<class MainCamera> _MainCamera{};
 	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
 	bool _LateInit = false;
+	float _Hotel01_Volume = 0.12f;
+	float _Battle1_Volume = 0.1f;
+	float _Battle2_Volume = 0.15f;
+	float _Rain_Volume = 0.15f;
+	bool _DecreaseHotel01_Volume = false;
+	bool _DecreaseBattle1_Volume = false;
+	bool _DecreaseBattle2_Volume = false;
 private:
 	explicit Hotel_S01();
 	virtual ~Hotel_S01() = default;

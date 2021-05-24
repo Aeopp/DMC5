@@ -12,6 +12,8 @@
 #include "Monster.h"
 #include "SoundSystem.h"
 #include "Em5000.h"
+#include "FadeOut.h"
+#include "Trigger.h"
 
 #include <iostream>
 #include <fstream>
@@ -48,16 +50,16 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-	//		-4.327f,
-	//		1.449f,
-	//		36.596f, 
-	//		});
-	//	
-	//}
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+			-4.327f,
+			1.449f,
+			36.596f, 
+			});
+		
+	}*/
 
 	_Camera = AddGameObject<MainCamera>();
 	_Camera.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
@@ -265,14 +267,42 @@ void Hotel_S04::TriggerSetUp()
 void Hotel_S04::TriggerMeetingWithGoliath()
 {
 	// 여기서 왜곡 계수 조절해야함 !! 
-
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
 	{
-		constexpr float NoiseWrap = 2.020390f;
-		constexpr float TimeCorr = 0.009006f;
-		Renderer::GetInstance()->SkyDistortionStart(
-			NoiseWrap,
-			TimeCorr);
+		const std::function<void()> _CallBack =
+			[this ]()
+		{
+			// 골리앗과 처음 조우함 !!
+			constexpr float NoiseWrap = 2.020390f;
+			constexpr float TimeCorr = 0.009006f;
+			Renderer::GetInstance()->SkyDistortionStart(NoiseWrap,TimeCorr);
+			// 다른 후처리가 묻히니 스카이 왜곡을 약하게 .... 
+
+			// 로직 작성 .... 
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{
+			-6.031250f, -1.825800f, 43.758301f};
+		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
+
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 2.f,10.f,5.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			TriggerRotation);
 	}
+
+
 }
 
 void Hotel_S04::LateInit()
