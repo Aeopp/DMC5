@@ -129,7 +129,7 @@ void NuclearLensFlare::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			"ColorIntencity", CurColorIntencity);
 		const float AlphaFactor = 1.f;
 		_Info.Fx->SetFloat(
-			"AlphaFactor", CurColorIntencity *(1.0f/ColorIntencity) );
+			"AlphaFactor", CurColorIntencity *(1.0f/ColorIntencity)  * _AlphaFactor);
 
 		_Info.Fx->SetTexture("AlpgMap", _Alpg->GetTexture());
 	}
@@ -231,7 +231,8 @@ void NuclearLensFlare::Editor()
 		}
 
 		ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.0f, 1.f);
-
+		ImGui::SliderFloat("_AlphaFactor", &_AlphaFactor, 0.0f, 1.f);
+		; 
 		ImGui::SliderFloat("ScaleEnd", &ScaleEnd, 0.0f, 1.f);
 	
 		ImGui::EndChild();

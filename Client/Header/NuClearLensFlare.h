@@ -42,9 +42,9 @@ private:
 	float CurColorIntencity = 0.0025f;
 	float T = 0.0f;
 	float PlayTime = 24.f;
+	float _AlphaFactor = 0.5f;
 
-
-	float ScaleEnd = 0.1f;
+	float ScaleEnd = 0.022f;
 	float ColorIntencity = 0.0025f;
 };
 #endif //

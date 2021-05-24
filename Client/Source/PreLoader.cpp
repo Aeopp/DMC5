@@ -973,9 +973,9 @@ void PreLoader::KaboomParticlePoolLoad()
 		for (auto& _ParticleInstance : *ParticlePool)
 		{
 			const Vector3 StartLocation = {0.f,0.f,0.f};
-			const Vector3 Cp0 = StartLocation + FMath::RandomVector(1000.f);
-			const Vector3 Cp1 = Cp0 + FMath::RandomVector(1000.f);
-			const Vector3 End = Cp1 + FMath::RandomVector(1000.f);
+			const Vector3 Cp0 = StartLocation + FMath::RandomVector(2000.f);
+			const Vector3 Cp1 = Cp0 + FMath::RandomVector(500.f);
+			const Vector3 End = Cp1 + FMath::RandomVector(250.f);
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
