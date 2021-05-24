@@ -495,6 +495,59 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 		}
+
+		//
+		CurID = POPUP;
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[POPUP].Using)
+		{
+			//
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _NullBlackTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.3f);
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			//
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _PopupBaseTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+			Create_ScreenMat(CurID, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+			Create_ScreenMat(CurID, ScreenMat, 2);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			Create_ScreenMat(CurID, ScreenMat, 3);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
 	}
 
 	// 노출도 고정 해제
@@ -569,6 +622,8 @@ HRESULT ShopPanel::Ready()
 	_WeaponBgTex1 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_02_iam.tga");
 	_WeaponBgTex2 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_15_iam.tga");
 	_WeaponBgTex3 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_10_iam.tga");
+
+	_PopupBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui3006_iam.tga");
 
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(0.5f), (float)g_nWndCX / g_nWndCY, 0.001f, 1.f);
@@ -827,6 +882,9 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 			if (4u <= _ButtonBlinkCnt)
 			{
 				// + 새 팝업창
+				_UIDescs[POPUP].Using = true;
+				_CurPopupDepth = POPUP_DEPTH_NOREDORB;	// 임시
+				_CurPopupCmd = POPUP_CMD_OK;
 
 				_ButtonBlinkStart = false;
 				_ButtonBlinkBrightOffset = 1.f;
@@ -848,6 +906,60 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 
 	default:
 		break;
+	}
+
+	//
+	if ((_PrePopupDepth != _CurPopupDepth) || (_PrePopupCmd != _CurPopupCmd))
+	{
+		switch (_CurPopupDepth)
+		{
+		case POPUP_DEPTH_NONE:
+			switch (_PreCmd)
+			{
+			case ShopPanel::WP_REDQUEEN:
+				_FontVec[FT_WP_RQ_EXGAUGEUP].lock()->SetRenderFlag(true);
+				_FontVec[FT_WP_RQ_EXGAUGEUP_COST].lock()->SetRenderFlag(true);
+				break;
+			case ShopPanel::WP_OVERTURE:
+				_FontVec[FT_WP_OT_BATTERY].lock()->SetRenderFlag(true);
+				_FontVec[FT_WP_OT_BATTERY_COST].lock()->SetRenderFlag(true);
+				break;
+			case ShopPanel::WP_CBS:
+				_FontVec[FT_WP_CBS_TRANSFORM].lock()->SetRenderFlag(true);
+				_FontVec[FT_WP_CBS_TRANSFORM_COST].lock()->SetRenderFlag(true);
+				break;
+			case ShopPanel::WP_REBELLION:
+				_FontVec[FT_WP_RB_REBELLION].lock()->SetRenderFlag(true);
+				_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(true);
+				break;
+			}
+			break;
+
+		case POPUP_DEPTH_NOREDORB:
+			switch (_PreCmd)
+			{
+			case ShopPanel::WP_REDQUEEN:
+				_FontVec[FT_WP_RQ_EXGAUGEUP].lock()->SetRenderFlag(false);
+				_FontVec[FT_WP_RQ_EXGAUGEUP_COST].lock()->SetRenderFlag(false);
+				break;
+			case ShopPanel::WP_OVERTURE:
+				_FontVec[FT_WP_OT_BATTERY].lock()->SetRenderFlag(false);
+				_FontVec[FT_WP_OT_BATTERY_COST].lock()->SetRenderFlag(false);
+				break;
+			case ShopPanel::WP_CBS:
+				_FontVec[FT_WP_CBS_TRANSFORM].lock()->SetRenderFlag(false);
+				_FontVec[FT_WP_CBS_TRANSFORM_COST].lock()->SetRenderFlag(false);
+				break;
+			case ShopPanel::WP_REBELLION:
+				_FontVec[FT_WP_RB_REBELLION].lock()->SetRenderFlag(false);
+				_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(false);
+				break;
+			}
+			break;
+		}
+
+		_PrePopupDepth = _CurPopupDepth;
+		_PrePopupCmd = _CurPopupCmd;
 	}
 
 	//
@@ -900,6 +1012,7 @@ void ShopPanel::Init_UIDescs()
 	_UIDescs[SELECT_GUIDE] = { true, Vector3(285.f, 655.f, 0.5f), Vector3(5.12f, 0.32f, 1.f) };
 	_UIDescs[SELECT_WEAPON] = { true, Vector3(0.f, 0.f, 0.5f), Vector3(1.f, 1.f, 1.f) };
 	_UIDescs[SELECT_CATEGORY] = { true, Vector3(552.f, 100.f, 0.5f), Vector3(10.24f, 0.32f, 1.f) };
+	_UIDescs[POPUP] = { false, Vector3(0.f, 0.f, 0.3f), Vector3(1.f, 1.f, 1.f) };
 }
 
 void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -1298,14 +1411,6 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			break;
 		default:
 			goto DEFAULT;
-			//_Out._11 = _UIDescs[_ID].Scale.x * _DebugScale.x;
-			//_Out._22 = _UIDescs[_ID].Scale.y * _DebugScale.y;
-			//_Out._33 = _UIDescs[_ID].Scale.z;
-			//_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + _DebugPos.x) - (g_nWndCX >> 1);
-			//_Out._42 = -(_UIDescs[_ID].Pos.y + _DebugPos.y - (g_nWndCY >> 1));
-			//_Out._43 = _UIDescs[_ID].Pos.z;
-			//_MinTexUV = _DebugMinUV;
-			//_MaxTexUV = _DebugMaxUV;
 		}
 		break;
 
@@ -1325,6 +1430,66 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		{
 			goto DEFAULT;
 		}
+		break;
+
+	case POPUP:
+		switch (_Opt)
+		{
+		case 0:		
+			_Out._11 = 12.8f;
+			_Out._22 = 72.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 0.f;
+			_Out._42 = 0.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+		case 1:
+			_Out._11 = 7.6f;
+			_Out._22 = 4.2f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 0.f;
+			_Out._42 = 0.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.493f, 0.146f);
+			_MaxTexUV = Vector2(0.906f, 0.566f);
+			break;
+		// Button
+		case 2:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 35.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.619f);
+			_MaxTexUV = Vector2(0.616f, 0.675f);
+			break;
+		case 3:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 35.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.736f);
+			_MaxTexUV = Vector2(0.616f, 0.795f);
+		default:
+			goto DEFAULT;
+
+			//_Out._11 = _UIDescs[_ID].Scale.x * _DebugScale.x;
+			//_Out._22 = _UIDescs[_ID].Scale.y * _DebugScale.y;
+			//_Out._33 = _UIDescs[_ID].Scale.z;
+			//_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryWeaponInfoXPos + _DebugPos.x) - (g_nWndCX >> 1);
+			//_Out._42 = -(_UIDescs[_ID].Pos.y + _DebugPos.y - (g_nWndCY >> 1));
+			//_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = _DebugMinUV;
+			//_MaxTexUV = _DebugMaxUV;
+
+			break;
+		}
+
 		break;
 
 	default: DEFAULT:
@@ -1381,7 +1546,7 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 	Vector3 CurCostColor = BaseColor;
 	uint32 CurRedOrbCount = _BtlPanel.lock()->GetRedOrbCount();
 
-	if (WP_REDQUEEN == _PreCmd)
+	if (WP_REDQUEEN == _PreCmd && !_UIDescs[POPUP].Using)
 	{
 		_FontVec[FT_WP_REDQUEEN].lock()->SetText(
 			"RED QUEEN",
@@ -1422,7 +1587,7 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 		);
 	}
 
-	if (WP_OVERTURE == _PreCmd)
+	if (WP_OVERTURE == _PreCmd && !_UIDescs[POPUP].Using)
 	{
 		_FontVec[FT_WP_OVERTURE].lock()->SetText(
 			"OVERTURE",
@@ -1463,7 +1628,7 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 		);
 	}
 
-	if (WP_CBS == _PreCmd)
+	if (WP_CBS == _PreCmd && !_UIDescs[POPUP].Using)
 	{
 		_FontVec[FT_WP_CBS].lock()->SetText(
 			"CERBERUS",
@@ -1504,7 +1669,7 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 		);
 	}
 
-	if (WP_REBELLION == _PreCmd)
+	if (WP_REBELLION == _PreCmd && !_UIDescs[POPUP].Using)
 	{
 		_FontVec[FT_WP_REBELLION].lock()->SetText(
 			"REBELLION",
@@ -1569,81 +1734,93 @@ Vector2 ShopPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 
 void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 {
-	switch (_PreDepth)
+	if (!_UIDescs[POPUP].Using)
 	{
-	case CATEGORY:
-		if (Input::GetKeyDown(DIK_TAB))
+		switch (_PreDepth)
 		{
-			switch (_PreCmd)
+		case CATEGORY:
+			if (Input::GetKeyDown(DIK_TAB))
 			{
-			case CATEGORY_WEAPON:
-				_CurCmd = CATEGORY_ITEM;
-				break;
-			case CATEGORY_ITEM:
-				_CurCmd = CATEGORY_WEAPON;
-				break;
+				switch (_PreCmd)
+				{
+				case CATEGORY_WEAPON:
+					_CurCmd = CATEGORY_ITEM;
+					break;
+				case CATEGORY_ITEM:
+					_CurCmd = CATEGORY_WEAPON;
+					break;
+				}
 			}
-		}
-		else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
-		{
-			_CurDepth = WEAPON_SELECT;
-			_CurCmd = WP_REDQUEEN;
-		}
-		else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
-		{
-			_CurDepth = WEAPON_SELECT;
-			_CurCmd = WP_REBELLION;
-		}
-		break;
+			else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
+			{
+				_CurDepth = WEAPON_SELECT;
+				_CurCmd = WP_REDQUEEN;
+			}
+			else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
+			{
+				_CurDepth = WEAPON_SELECT;
+				_CurCmd = WP_REBELLION;
+			}
+			break;
 
-	case WEAPON_SELECT:
-		if (Input::GetKeyDown(DIK_TAB))
-		{
-			_CurDepth = CATEGORY;
-			_CurCmd = CATEGORY_ITEM;
-		}
-		else if (Input::GetKeyDown(DIK_RETURN))
-		{
-			if (!_ButtonBlinkStart)
-				_ButtonBlinkStart = true;
-		}
-		else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
-		{
-			switch (_PreCmd)
+		case WEAPON_SELECT:
+			if (Input::GetKeyDown(DIK_TAB))
 			{
-			case WP_REDQUEEN:
-				_CurCmd = WP_OVERTURE;
-				break;
-			case WP_OVERTURE:
-				_CurCmd = WP_CBS;
-				break;
-			case WP_CBS:
-				_CurCmd = WP_REBELLION;
-				break;
-			case WP_REBELLION:
-				_CurCmd = WP_REDQUEEN;
-				break;
+				_CurDepth = CATEGORY;
+				_CurCmd = CATEGORY_ITEM;
 			}
-		}
-		else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
-		{
-			switch (_PreCmd)
+			else if (Input::GetKeyDown(DIK_RETURN))
 			{
-			case WP_REDQUEEN:
-				_CurCmd = WP_REBELLION;
-				break;
-			case WP_OVERTURE:
-				_CurCmd = WP_REDQUEEN;
-				break;
-			case WP_CBS:
-				_CurCmd = WP_OVERTURE;
-				break;
-			case WP_REBELLION:
-				_CurCmd = WP_CBS;
-				break;
+				if (!_ButtonBlinkStart)
+					_ButtonBlinkStart = true;
 			}
+			else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
+			{
+				switch (_PreCmd)
+				{
+				case WP_REDQUEEN:
+					_CurCmd = WP_OVERTURE;
+					break;
+				case WP_OVERTURE:
+					_CurCmd = WP_CBS;
+					break;
+				case WP_CBS:
+					_CurCmd = WP_REBELLION;
+					break;
+				case WP_REBELLION:
+					_CurCmd = WP_REDQUEEN;
+					break;
+				}
+			}
+			else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
+			{
+				switch (_PreCmd)
+				{
+				case WP_REDQUEEN:
+					_CurCmd = WP_REBELLION;
+					break;
+				case WP_OVERTURE:
+					_CurCmd = WP_REDQUEEN;
+					break;
+				case WP_CBS:
+					_CurCmd = WP_OVERTURE;
+					break;
+				case WP_REBELLION:
+					_CurCmd = WP_CBS;
+					break;
+				}
+			}
+			break;
 		}
-		break;
+	}
+	else
+	{
+		if (Input::GetKeyDown(DIK_RETURN))
+		{
+			_CurPopupDepth = POPUP_DEPTH_NONE;
+			_CurPopupCmd = POPUP_CMD_NONE;
+			_UIDescs[POPUP].Using = false;
+		}
 	}
 }
 

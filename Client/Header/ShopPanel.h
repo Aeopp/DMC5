@@ -16,6 +16,8 @@ private:
 		SELECT_WEAPON,
 		SELECT_GUIDE,
 
+		POPUP,
+
 		DESC_END
 	};
 	struct UI_DESC
@@ -62,6 +64,8 @@ private:
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex1{};
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex2{};
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex3{};
+
+	std::shared_ptr<ENGINE::Texture> _PopupBaseTex{};
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
@@ -112,7 +116,7 @@ private:
 
 	enum CMD
 	{
-		NO_CMD = 0,
+		CMD_NONE,
 
 		CATEGORY_WEAPON = 1,
 		CATEGORY_ITEM = 2,
@@ -125,6 +129,7 @@ private:
 	};
 	CMD _CurCmd = CATEGORY_WEAPON;
 	CMD _PreCmd = CATEGORY_WEAPON;
+	CMD _SavedCmd = CMD_NONE;	// 팝업창때 폰트 날려야 해서 시발...
 
 	CMD _CategoryPreCmd = CATEGORY_WEAPON;
 	float _CategoryCursorXPos = 194.f;
@@ -134,9 +139,9 @@ private:
 	float _CategoryWeaponInfoXPos = 410.f;
 	float _CategoryWeaponInfoSliceAmount = 0.f;
 
-	uint32 _ExgaugeUpCost = 1u;
-	uint32 _BatteryCost = 2u;
-	uint32 _TransformCost = 3u;
+	uint32 _ExgaugeUpCost = 9999999u;
+	uint32 _BatteryCost = 9999999u;
+	uint32 _TransformCost = 9999999u;
 	uint32 _RebellionCost = 9999999u;
 
 	uint32 _ExgaugeUpUpgradeCount = 1u;
@@ -152,6 +157,24 @@ private:
 	float _ButtonBlinkBrightOffset = 1.f;
 	float _ButtonBlinkAccTime = 0.f;
 	int _ButtonBlinkCnt = 0;
+
+	//
+	enum POPUP_DEPTH
+	{
+		POPUP_DEPTH_NONE = -1,
+		POPUP_DEPTH_NOREDORB
+	};
+	POPUP_DEPTH _CurPopupDepth = POPUP_DEPTH_NONE;
+	POPUP_DEPTH _PrePopupDepth = POPUP_DEPTH_NONE;
+
+	enum POPUP_CMD
+	{
+		POPUP_CMD_NONE,
+		POPUP_CMD_OK,
+		POPUP_CMD_CANCLE
+	};
+	POPUP_CMD _CurPopupCmd = POPUP_CMD_NONE;
+	POPUP_CMD _PrePopupCmd = POPUP_CMD_NONE;
 
 private:
 	explicit ShopPanel() = default;
