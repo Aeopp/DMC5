@@ -144,7 +144,7 @@ void Change::PlayStart(
 		if (auto SpShockWave = _ShockWave.lock();
 			SpShockWave)
 		{
-			SpShockWave->PlayStart(SpTransform->GetPosition(), ShockWave::Option::Change);
+			// SpShockWave->PlayStart(SpTransform->GetPosition(), ShockWave::Option::Change);
 		}
 
 		if (auto _PtLight = PtLight.lock();

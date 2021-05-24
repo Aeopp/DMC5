@@ -70,7 +70,7 @@ out float4 Color : COLOR0)
         Color /= (float)VelocityBlurSamples;
     }
 
-    Color.rgb *= exposure_corr;
+    // Color.rgb *= exposure_corr;
     Color.a *= VelocitySample.a;
 };
 
