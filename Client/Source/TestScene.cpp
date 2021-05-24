@@ -61,6 +61,7 @@
 #include "LensFlare.h"
 #include "Reverberation.h"
 #include "ParticleSystem.h"
+#include "SoundSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -86,33 +87,10 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
+
 
 	m_fLoadingProgress = 0.01f;
-
-	AddGameObject<Change>();
-	AddGameObject<ShockWave>();
-
-	for (int32 i = 0; i < 16; ++i)
-	{
-		AddGameObject<ArtemisMissile>();
-	}
-
-	for (int32 i = 0; i < 16; ++i)
-	{
-		AddGameObject<Reverberation>();
-	}
-
-	AddGameObject<LensFlare>();
-
-	for (int i = 0; i < 6; ++i)
-	{
-		if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
-			_SpriteEffect)
-		{
-			_SpriteEffect->InitializeFromOption(i);
-		}
-	}
-
 
 #pragma region PreLoad
 
@@ -124,10 +102,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
+	//_Camera = AddGameObject<Camera>();
 	
-	/*_MainCamera = AddGameObject<MainCamera>();
-	_Player     = AddGameObject<Nero>();*/
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -145,7 +123,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 
@@ -154,6 +132,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
+
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -164,14 +143,29 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
-	//if (auto Sp = AddGameObject<StoneDebris>().lock();
-	//	Sp)
+	//AddGameObject<Change>();
+	//AddGameObject<ShockWave>();
+
+	//for (int32 i = 0; i < 16; ++i)
 	//{
-	//	Sp->SetLoop(true);
-	//	Sp->PlayStart();
+	//	AddGameObject<ArtemisMissile>();
 	//}
 
-	//AddGameObject<MakaiButterfly>();
+	//for (int32 i = 0; i < 16; ++i)
+	//{
+	//	AddGameObject<Reverberation>();
+	//}
+
+	//AddGameObject<LensFlare>();
+
+	//for (int i = 0; i < 6; ++i)
+	//{
+	//	if (auto _SpriteEffect = AddGameObject<SpriteEffect>().lock();
+	//		_SpriteEffect)
+	//	{
+	//		_SpriteEffect->InitializeFromOption(i);
+	//	}
+	//}
 
 #pragma endregion
 
@@ -194,7 +188,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 4, Until Dooms Day",
+		pFont->SetText("D 3, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
@@ -239,7 +233,9 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
+	static float TestVolume = 0.15f;
+	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
+	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
 	//if (auto SpPlayer = _Player.lock();
 	//	SpPlayer)
 	//{

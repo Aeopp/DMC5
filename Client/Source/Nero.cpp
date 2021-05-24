@@ -271,7 +271,7 @@ HRESULT Nero::Ready()
 	m_pJudgementShadow1 = AddGameObject<JudgementShadow1>();
 	m_pJudgementShadow2 = AddGameObject<JudgementShadow2>();
 	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
-
+	m_pShockWave = AddGameObject<ShockWave>();
 	m_pChange = AddGameObject<Change>();
 
 	m_pCbsTrail = AddGameObject<CbsTrail>();
@@ -448,16 +448,20 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	case Attack_Front:
 		m_pFSM->ChangeState(NeroFSM::STATERESET);
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("DanteHit", { 2,12 }, 1.f, true);
 		break;
 	case Attack_Hard:
 		break;
 	case Attack_KnocBack:
+		SoundSystem::GetInstance()->Play("DanteHit_1", 1.f, true);
 		m_pFSM->ChangeState(NeroFSM::HIT_GROUND_AWAY);
 		break;
 	case Attack_Stun:
+		SoundSystem::GetInstance()->RandSoundKeyPlay("DanteHit", { 2,12 }, 1.f, true);
 		m_pFSM->ChangeState(NeroFSM::STUN_START);
 		break;
 	default:
+		SoundSystem::GetInstance()->RandSoundKeyPlay("DanteHit", { 2,12 }, 1.f, true);
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	}
@@ -793,7 +797,7 @@ void Nero::Update_Majin(float _fDeltaTime)
 	if (m_IsMajin)
 	{
 		if (!m_pBtlPanel.expired())
-			m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
+			m_pBtlPanel.lock()->ConsumeTDTGauge();
 	}
 
 	if (!m_pBtlPanel.expired() && m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
@@ -1763,6 +1767,11 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		break;
 	case Eff_Change:
 		m_pChange.lock()->PlayStart(vMyPos);
+		break;
+	case Eff_SnatchRush:
+		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::SnatchRush);
+		break;
+	case Eff_Streak:
 		break;
 	default:
 		break;

@@ -231,7 +231,7 @@ void SoundSystem::RandSoundKeyPlay(
 	const float Volume,
 	const bool bBeginIfPlaying,
 	const std::optional<float>& Distance,
-	const bool bLoop)&
+	const std::optional<int32>& LoopEnd )&
 {
 	static std::random_device Device;
 	static std::mt19937 Mt19937(Device());
@@ -239,7 +239,7 @@ void SoundSystem::RandSoundKeyPlay(
 
 	Play(SoundKey + "_" + std::to_string(Distribution(Mt19937)),
 		Volume, bBeginIfPlaying,
-		Distance, bLoop);
+		Distance, LoopEnd);
 }
 
 

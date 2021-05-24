@@ -1384,8 +1384,9 @@ HRESULT Em5000::Start()
 	m_pBtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 	
 	// 나중에 트리거를 밟으면 true로 바꾸도록 할것
-	if(!m_pBtlPanel.expired())
-		m_pBtlPanel.lock()->SetBossGaugeActive(true);
+	// -> TriggerMeetingWithGoliath()
+	//if(!m_pBtlPanel.expired())
+	//	m_pBtlPanel.lock()->SetBossGaugeActive(true);
 	///////////////////////////////////////////
 
 	return S_OK;

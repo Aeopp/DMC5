@@ -43,6 +43,7 @@ class Satellite;
 class WhirlWind;
 class NewWingSword;
 class Change;
+class ShockWave;
 
 /*Coat Test*/
 class NeroCoat;
@@ -538,6 +539,7 @@ private:
 	std::weak_ptr<LongBarrel>		m_pLongBarrel;
 	std::weak_ptr<Satellite>		m_pSatellite;
 	std::weak_ptr<WhirlWind>		m_pWhirlWind;
+	std::weak_ptr<ShockWave>		m_pShockWave;
 	enum { SP_RED = 0, SP_GREEN, SP_WHITE, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 	std::weak_ptr<Change>			m_pChange;

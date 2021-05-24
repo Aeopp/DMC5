@@ -324,6 +324,22 @@ void Trigger::Editor()
 			TriggerLocation  =(TriggerLocation + Position * PositionSensitivy);
 		}
 
+		ImGui::Text("Rotation : %2.6f %2.6f %2.6f", TriggerRotation.x, TriggerRotation.y, TriggerRotation.z);
+
+		Vector3 InputRotation = TriggerRotation;
+		if (ImGui::InputFloat3("In Rotation", InputRotation))
+		{
+			TriggerRotation = InputRotation;
+		}
+		static float RotationSensitivy = 0.05f;
+		ImGui::InputFloat("RotationSensitivy", &RotationSensitivy);
+		Vector3 Rotation{ 0,0,0 };
+		if (ImGui::SliderFloat3("Rotation", Rotation, -1.f, +1.f))
+		{
+			TriggerRotation = (TriggerRotation + Rotation * RotationSensitivy);
+		}
+
+
 		if (ImGui::Button("Event Call"))
 		{
 			if (_Event)
