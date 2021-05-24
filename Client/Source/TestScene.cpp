@@ -139,7 +139,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
-
+	AddGameObject<Em0000>();
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
