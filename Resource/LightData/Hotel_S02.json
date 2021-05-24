@@ -726,7 +726,7 @@
                 1.0,
                 1.0
             ],
-            "Near": 0.10000000149011612,
+            "Near": 1.0,
             "Far": 1.4500000476837159,
             "Projparams": [
                 0.0,
@@ -752,7 +752,7 @@
                 1.0
             ],
             "shadowmin": 0.0,
-            "shadowdepthbias": 0.000009999999747378752,
+            "shadowdepthbias": 0.001,
             "ShadowMapSize": 1024.0,
             "Type": "Point"
         },
