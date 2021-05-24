@@ -4,6 +4,8 @@
 #include "RenderInterface.h"
 #include <optional>
 #include "DynamicLight.h"
+#include "ShockWave.h"
+
 class NuclearLensFlare;
 
 class NuClear : public ENGINE::GameObject,
@@ -14,7 +16,7 @@ private:
 	std::shared_ptr<ENGINE::Texture> _LightMsk{};
 	std::shared_ptr<ENGINE::Texture> _AlbmMap{};
 	std::shared_ptr<ENGINE::Texture> _Noise{};
-	
+	std::weak_ptr<ShockWave> _ShockWave{};
 	float T = 0.0f;
 private:
 	explicit NuClear() = default;
@@ -83,7 +85,8 @@ private:
 	float FreeFallTime = 2.5f;
 	float ExplosionTime = 4.f;
 
-	float ColorIntencity = 0.32f;
+	float StartColorIntencity = 1.0f;
+	float EndColorIntencity = 3.5f;
 	float GrowEndScale = 0.0010f;
 };
 #endif //

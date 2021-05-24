@@ -83,7 +83,7 @@ void NuClear::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
 	_Mesh = Resources::Load<ENGINE::StaticMesh>
-		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _InitInfo);
+		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere02.fbx", _InitInfo);
 
 	_LightMsk = Resources::Load<ENGINE::Texture>(
 		L"..\\..\\Usable\\Artemis\\LightSphere2.tga"
@@ -96,6 +96,8 @@ void NuClear::RenderInit()
 	_AlbmMap = Resources::Load<ENGINE::Texture>(
 		"..\\..\\Resource\\Texture\\Effect\\lightning_alb.png"
 		);
+
+	_ShockWave = AddGameObject<ShockWave>();
 
 	PushEditEntity(_Mesh.get());
 	
@@ -127,6 +129,7 @@ void NuClear::PlayStart(const Vector3& Location, const bool bEditPlay)
 		if (Location)
 		{
 			SpTransform->SetPosition(Location);
+			SpTransform->SetScale(Vector3{ 0.f,0.f,0.f });
 			_NuclearLensFlare.lock()->PlayStart(Location);
 			_DynamicLight.PlayStart(Location, ExplosionReadyTime + FreeFallTime + ExplosionTime);
 		}
@@ -147,6 +150,9 @@ void NuClear::Kaboom()
 	KaboomParticle();
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+	_ShockWave.lock()->PlayStart(
+		Vector3{ KaboomMatrix._41,KaboomMatrix._42,KaboomMatrix._43 } ,
+		ShockWave::Option::Kaboom);
 };
 
 void NuClear::PlayEnd()
@@ -230,6 +236,9 @@ void NuClear::PlayParticle()
 
 void NuClear::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
+	if (T >= (ExplosionReadyTime + FreeFallTime))
+		return;
+
 	const Matrix World = _RenderUpdateInfo.World;
 	const uint32 Numsubset = _Mesh->GetNumSubset();
 
@@ -245,7 +254,7 @@ void NuClear::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			FMath::Clamp(T / GrowEndT, 0.0f, 1.f);
 
 		const float CurColor =
-			FMath::Lerp(0.0f, ColorIntencity, LerpT);
+			FMath::Lerp(StartColorIntencity, EndColorIntencity, LerpT);
 
 		_Info.Fx->SetFloat("Time", T * NoiseTimeCorr);
 		_Info.Fx->SetFloat("ColorIntencity", CurColor);
@@ -398,7 +407,7 @@ void NuClear::Editor()
 		}
 
 		ImGui::Text("T : %2.6f", T);
-		ImGui::SliderFloat("NoiseTimeCorr", &NoiseTimeCorr, 0.0f, 1.f);
+		ImGui::SliderFloat("NoiseTimeCorr", &NoiseTimeCorr, 0.0f, 100.f);
 
 		ImGui::SliderFloat("EditYVelocity", &EditYVelocity, 0.0f, 1.f);
 		
@@ -422,7 +431,9 @@ void NuClear::Editor()
 		ImGui::SliderFloat("FreeFallTime", &FreeFallTime, 0.0f, 10.f);
 		ImGui::SliderFloat("ExplosionTime", &ExplosionTime, 0.0f, 10.f);
 
-		ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.0f, 10.f);
+		ImGui::SliderFloat("StartColorIntencity", &StartColorIntencity, 0.0f, 10.f);
+		ImGui::SliderFloat("EndColorIntencity", &EndColorIntencity, 0.0f, 10.f);
+		
 		ImGui::SliderFloat("GrowEndScale", &GrowEndScale, 0.0f, 1.f);
 
 		ImGui::EndChild();

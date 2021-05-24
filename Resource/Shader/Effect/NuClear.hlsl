@@ -62,7 +62,6 @@ void VsMain(in out float4 Position : POSITION0,
             in out float2 UV       : TEXCOORD0 ,
             out float4 ClipPosition: TEXCOORD1 )
 {
-    
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
 };
@@ -73,15 +72,16 @@ void PsMain(out float4 Color : COLOR0,
             in float Factor : TEXCOORD2)
 {
     Color.rgb = tex2D(Albm, UV).rgb;
+    float4 AlbmTimeSample = tex2D(Albm, Time);
+    Color.rgb *= AlbmTimeSample.rgb;
     float4 LightMskSample = tex2D(LightMsk, UV);
     Color.rgb *= LightMskSample.a;
     float4 NoiseSample =     tex2D(Noise, UV + Time);
-    // Color.rgb *= NoiseSample.a;
+    Color.rgb *= NoiseSample.a;
     
     Color.a = LightMskSample.a;
-    // Color.a *= NoiseSample.a;
-    
-    Color.a *= AlphaFactor;
+    Color.a *= NoiseSample.a;
+     // Color.a *= AlphaFactor;
     
     Color.rgb *= ColorIntencity;
     Color.rgb *= exposure_corr;

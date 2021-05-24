@@ -27,6 +27,7 @@ public:
 		SplitEnd,
 		Split,
 		Buster,
+		Kaboom,
 		None,
 	};
 private:
