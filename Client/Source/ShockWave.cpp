@@ -521,13 +521,13 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		this->bDirectionReverse = true;
 		break;
 	case Kaboom:
-		PlayTime = 1.3f;
-		EndT = 1.3f;
+		PlayTime = 1.5f;
+		EndT = 1.5f;
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.0f;
 		ScaleLerp.second = 0.1f;
 		BlurIntencity.first = 0.0f;
-		BlurIntencity.second = 5.f;
+		BlurIntencity.second = 8.f;
 		BlurAlpha.first = 0.38f;
 		BlurAlpha.second = 0.38f;
 		BlurMaxLength = 70.f;
