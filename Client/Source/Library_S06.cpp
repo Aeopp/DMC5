@@ -59,10 +59,10 @@ HRESULT Library_S06::LoadScene()
 			});
 	}
 
-// 	AddGameObject<FinalReady>();
+	AddGameObject<FinalReady>();
 
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 

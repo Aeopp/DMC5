@@ -9,18 +9,30 @@ uniform float exposure_corr;
 uniform float ColorIntencity;
 uniform float AlphaFactor;
 
-texture AlpgMap;
-sampler Alpg = sampler_state
+
+texture LightMskMap;
+sampler LightMsk = sampler_state
 {
-    texture = AlpgMap;
+    texture = LightMskMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
+};
+
+texture AlbmMap;
+sampler Albm = sampler_state
+{
+    texture = AlbmMap;
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
     AddressU = wrap;
     AddressV = wrap;
     sRGBTexture = true;
-}; 
-
+};
 
 texture DepthMap;
 sampler Depth = sampler_state
@@ -35,10 +47,8 @@ sampler Depth = sampler_state
 
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV       : TEXCOORD0 ,
-            out float4 ClipPosition: TEXCOORD1  ,
-            out float Factor : TEXCOORD2)
+            out float4 ClipPosition: TEXCOORD1 )
 {
-    Factor = length(Position.xz) / 1000.f;
     
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
@@ -49,7 +59,9 @@ void PsMain(out float4 Color : COLOR0,
             in float4 ClipPosition : TEXCOORD1 ,
             in float Factor : TEXCOORD2)
 {
-    Color = tex2D(Alpg, UV);
+    Color.rgb = tex2D(Albm, UV).rgb;
+    float4 LightMskSample = tex2D(LightMsk, UV);
+    Color.a = LightMskSample.a;
     Color.a *= AlphaFactor;
     
     Color.rgb *= ColorIntencity;
@@ -75,8 +87,6 @@ void PsMain(out float4 Color : COLOR0,
     float scenedistance = length(scenepos.xyz);
     Color.a = Color.a * saturate((scenedistance - particledistance) * SoftParticleDepthScale);
     // 소프트 파티클 끝
-    
-    Color = float4(0.001, 0.001, 0.001, 1) * (1.0f - Factor);
 };
 
 technique Default

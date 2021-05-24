@@ -220,6 +220,7 @@
     <ClInclude Include="..\Header\NeroCoat.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
+    <ClInclude Include="..\Header\NuClear.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\Reverberation.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
@@ -350,6 +351,7 @@
     <ClCompile Include="..\Source\NeroCoat.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
+    <ClCompile Include="..\Source\NuClear.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
     <ClCompile Include="..\Source\Reverberation.cpp" />
     <ClCompile Include="..\Source\Satellite.cpp" />
@@ -641,6 +643,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\FinalReady.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\NuClear.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
