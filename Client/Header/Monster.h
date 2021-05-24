@@ -5,7 +5,7 @@
 #include "RenderInterface.h"
 #include "SkeletonMesh.h"
 #include "DissolveInfo.h"
-
+#include "SoundSystem.h"
 class Nero;
 class RedQueen;
 class Monster : public Unit,

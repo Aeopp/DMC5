@@ -59,8 +59,9 @@ Hotel_S02* Hotel_S02::Create()
 HRESULT Hotel_S02::LoadScene()
 {
 	// Load Start
+	SoundSystem::GetInstance()->ClearSound();
 	SoundSystem::GetInstance()->Stop("Hotel01");
-	SoundSystem::GetInstance()->Play("Hotel02", _Hotel02_Volume, false, {},0);
+	SoundSystem::GetInstance()->Play("Hotel02", _Hotel02_Volume, false);
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -94,9 +95,9 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage2_Map.json");
-	LoadCollObjects("../../Data/Stage2_Object.json");
-	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
+	//LoadObjects("../../Data/Stage2_Map.json");
+	//LoadCollObjects("../../Data/Stage2_Object.json");
+	//LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
 	AddGameObject<HotelBrokenFloor>();
 
@@ -848,7 +849,7 @@ void Hotel_S02::BgmPlay()
 
 void Hotel_S02::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	
 
 	// + 플레이어 초기 위치 잡기 등
 	if (auto SpPlayer = _Player.lock();

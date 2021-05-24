@@ -5,6 +5,7 @@
 #include "TextureType.h"
 #include "Renderer.h"
 #include "StoneDebris.h"
+#include "SoundSystem.h"
 
 void BreakableObject::Free()
 {
@@ -376,6 +377,7 @@ void BreakableObject::OnDisable()
 
 void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	SoundSystem::GetInstance()->Play("HitRedOrb", 0.6f, true);
 	switch (_pOther.lock()->m_nTag)
 	{
 	case GAMEOBJECTTAG::TAG_RedQueen:
@@ -384,6 +386,7 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			_RenderProperty.bRender = false;
 			StoneDebrisPlayStart();
 			m_bDestroyObject = true;
+			
 		}
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
@@ -419,4 +422,5 @@ void BreakableObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		}
 		break;
 	}
+	
 }

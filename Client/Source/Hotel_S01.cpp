@@ -54,6 +54,8 @@ Hotel_S01* Hotel_S01::Create()
 HRESULT Hotel_S01::LoadScene()
 {
 	// Load Start
+	SoundSystem::GetInstance()->ClearSound();
+
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 	SoundSystem::GetInstance()->Play("Rain2", 0.15f, false);
 	SoundSystem::GetInstance()->Play("Hotel01", _Hotel01_Volume, false);
@@ -86,8 +88,8 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage1_Map.json");
-	LoadObjects("../../Data/Stage1_AniObject.json", true);
+	//LoadObjects("../../Data/Stage1_Map.json");
+	//LoadObjects("../../Data/Stage1_AniObject.json", true);
 	LoadCollObjects("../../Data/Stage1_Object.json");
 	LoadBreakablebjects("../../Data/Stage1_BreakableObject.json");
 
@@ -1071,7 +1073,7 @@ void Hotel_S01::Trigger4st()
 
 void Hotel_S01::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	
 
 	if (!_Player.expired())
 	{

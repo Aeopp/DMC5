@@ -390,15 +390,33 @@ UINT Nero::Update(const float _fDeltaTime)
 	//if (Input::GetKeyDown(DIK_9))
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	//}
+	//}w
 
-	if (Input::GetKeyDown(DIK_1))
+
+	if (80 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb1"))
 	{
-		BuyUpgradedOverture();
-		BuyCbsMiddle();
-		BuyCbsLong();
+		SoundSystem::GetInstance()->Play("GetOrb2", 0.6f, false);
 	}
-
+	if (90 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb2"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb3", 0.6f, false);
+	}
+	if (70 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb3"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb4", 0.6f, false);
+	}
+	if (90 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb4"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb5", 0.6f, false);
+	}
+	if (80 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb5"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb6", 0.6f, false);
+	}
+	if (90 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb6"))
+	{
+		SoundSystem::GetInstance()->Play("GetOrb7", 0.6f, false);
+	}
 	
 
 	return 0;
@@ -1718,7 +1736,10 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		if (1.f < CurRoll)
 		{
 			if (!m_pShapeParticle[SP_RED].lock()->IsPlaying())
+			{
+				SoundSystem::GetInstance()->Play("GetOrb1", 0.6f, false);
 				m_pShapeParticle[SP_RED].lock()->PlayStart(5.f);
+			}
 		}
 		else if (0.f < CurRoll)
 		{

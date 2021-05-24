@@ -283,8 +283,12 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 
 			// 로직 작성 .... 
 
-			// 보스게이지 켜기
-			_BtlPanel.lock()->SetBossGaugeActive(true);
+			//
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+				Sp->SetBossGaugeActive(true);
+			}
 		};
 
 		// 트리거 위치

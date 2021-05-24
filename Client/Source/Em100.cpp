@@ -12,7 +12,6 @@
 #include "NeroFSM.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-
 void Em100::Free()
 {
 	Destroy(m_pBlood);
@@ -632,6 +631,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_BUSTER_STRIKE_COMMON
 				&& m_pPlayer.lock()->Get_PlayingTime() >= 0.4f)
 			{
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				m_eState = Hit_Buster_End;
 				Vector3 vRot(0.f, 0.f, 0.f);
 				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
@@ -642,12 +642,14 @@ void Em100::State_Change(const float _fDeltaTime)
 
 				m_pCollider.lock()->SetRigid(true);
 				m_pCollider.lock()->SetTrigger(false);
+				
 			}
 		}
 		break;
 	case Em100::Hit_Buster_End:
 		if (m_bHit)
 		{
+			
 			if (fDot < 0)
 				m_pMesh->PlayAnimation("Hit_End", false, {}, 1.f, 20.f, true);
 			else
@@ -672,6 +674,7 @@ void Em100::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_BUSTER_STRIKE_COMMON_AIR &&
 				m_pPlayer.lock()->Get_PlayingTime() >= 0.5f)
 			{
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				m_eState = Hit_Air_Buster_End;
 
 				Vector3 vRot(0.f, 0.f, 0.f);

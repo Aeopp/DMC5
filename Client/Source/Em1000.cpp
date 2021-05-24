@@ -12,7 +12,7 @@
 #include "Em1000Hand.h"
 #include "Liquid.h"
 #include "AppearEm1000.h"
-
+#include "SoundSystem.h"
 void Em1000::Free()
 {
 	Destroy(m_pBlood);
