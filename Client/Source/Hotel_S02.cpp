@@ -95,9 +95,9 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage2_Map.json");
-	//LoadCollObjects("../../Data/Stage2_Object.json");
-	//LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
+	LoadObjects("../../Data/Stage2_Map.json");
+	LoadCollObjects("../../Data/Stage2_Object.json");
+	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
 	AddGameObject<HotelBrokenFloor>();
 

@@ -4,7 +4,7 @@
 GT_Overture::GT_Overture()
 {
 	m_BattleInfo.eAttackType = ATTACKTYPE::Attack_Front;
-	m_BattleInfo.iAttack = 20;
+	m_BattleInfo.iAttack = 30;
 	m_nTag = GAMEOBJECTTAG::Overture;
 }
 

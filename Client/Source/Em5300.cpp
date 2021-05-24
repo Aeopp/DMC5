@@ -866,8 +866,8 @@ HRESULT Em5300::Ready()
 
 	RenderInit();
 
-	m_BattleInfo.iMaxHp = 3000;
-	m_BattleInfo.iHp = 1000;
+	m_BattleInfo.iMaxHp = 3500;
+	m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 

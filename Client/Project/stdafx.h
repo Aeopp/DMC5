@@ -103,6 +103,10 @@ enum GAMEOBJECTTAG
 	TAG_NhDoor,
 	Eff_SnatchRush,
 	Eff_Streak,
+	Eff_Streak_End,
+	Eff_SplitEnd,
+	Eff_Split,
+	Eff_Buster,
 	Tag_END
 };
 

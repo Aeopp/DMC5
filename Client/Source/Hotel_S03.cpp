@@ -86,10 +86,10 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage3_Map.json");
-	//LoadObjects("../../Data/Stage3_AniObject.json", true);
-	//LoadCollObjects("../../Data/Stage3_Object.json");
-	//LoadBreakablebjects("../../Data/Stage3_BreakableObject.json");
+	LoadObjects("../../Data/Stage3_Map.json");
+	LoadObjects("../../Data/Stage3_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage3_Object.json");
+	LoadBreakablebjects("../../Data/Stage3_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(3);

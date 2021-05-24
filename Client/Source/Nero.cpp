@@ -815,7 +815,7 @@ void Nero::Update_Majin(float _fDeltaTime)
 	if (m_IsMajin)
 	{
 		if (!m_pBtlPanel.expired())
-			m_pBtlPanel.lock()->ConsumeTDTGauge();
+			m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
 	}
 
 	if (!m_pBtlPanel.expired() && m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
@@ -1400,6 +1400,35 @@ void Nero::WireFly()
 		break;
 	case GAMEOBJECTTAG::MonsterSnatchPoint:
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+		{
+			Vector3 vMonsterPos = m_pLetMeFlyMonster.lock()->GetComponent<Transform>().lock()->GetPosition();
+			Vector3 vMyPos = m_pTransform.lock()->GetPosition();
+
+			Vector3 vDir = vMonsterPos - vMyPos;
+			vDir.y = 0;
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			Vector3 vLook = -m_pTransform.lock()->GetLook();
+
+			float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+			if (fDot > 1.f)
+				fDot = 1.f - FLT_EPSILON;
+			else if (fDot < -1.f)
+				fDot = -1.f + FLT_EPSILON;
+
+			float fRadian = acosf(fDot);
+
+			Vector3	vCross;
+			D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+			if (vCross.y > 0)
+				fRadian *= -1;
+			m_fAngle += -D3DXToDegree(fRadian) + vRotationDegree.y;
+			vDegree.y = m_fAngle;
+			vRotationDegree.y = m_fRotationAngle = 0;
+			Reset_RootRotation();
+		}
 		break;
 	default:
 		vMonsterPos = m_pLetMeFlyMonster.lock()->GetMonsterBoneWorldPos("Hip");
@@ -1784,6 +1813,7 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		m_pSatellite.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
 		break;
 	case Eff_WhirlWind:
+		vMyPos.y += 0.2f;
 		m_pWhirlWind.lock()->PlayStart(vMyPos, -m_pTransform.lock()->GetLook());
 		break;
 	case Eff_Change:
@@ -1793,7 +1823,21 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::SnatchRush);
 		break;
 	case Eff_Streak:
+		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::Streak);
 		break;
+	case Eff_Streak_End:
+		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::StreakEnd);
+		break;
+	case Eff_SplitEnd:
+		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::SplitEnd);
+		break;
+	case Eff_Split:
+		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::Split);
+		break;
+	case Eff_Buster:
+		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::Buster);
+		break;
+
 	default:
 		break;
 	}

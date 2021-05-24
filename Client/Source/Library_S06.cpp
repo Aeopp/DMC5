@@ -235,7 +235,7 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06_Pt.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission03;
