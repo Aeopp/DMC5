@@ -4,6 +4,7 @@
 #include "RenderInterface.h"
 #include <optional>
 #include "DynamicLight.h"
+class NuclearLensFlare;
 
 class NuClear : public ENGINE::GameObject,
 				public ENGINE::RenderInterface
@@ -43,19 +44,28 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	std::weak_ptr<class NuclearLensFlare> _NuclearLensFlare{};
 	DynamicLight _DynamicLight{};
 	float CurParticleDelta = 0.0f;
 
 	// 에디터 변수
-	float FluxLow = 0.5f;
-	float FluxHigh = 1.f;
-	float RadiusLow = 1.f;
-	float RadiusHigh = 3.f;
-	float ParticleEndT = 3.f;
-	float ParticleDelta = 0.1f;
-	float PlayTime = 5.f;
-	float ColorIntencity = 0.001f;
-	float GrowEndT = 1.f;
-	float GrowEndScale = 0.01f;
+	float ExplosionReadyFluxLow = 0.f;
+	float ExplosionReadyFluxHigh = 1.f;
+	float ExplosionReadyRadiusLow = 0.f;
+	float ExplosionReadyRadiusHigh = 1.f;
+
+	float ExplosionFluxLow = 0.f;
+	float ExplosionFluxHigh = 1000.f;
+	float ExplosionRadiusLow = 0.f;
+	float ExplosionRadiusHigh = 10.f;
+
+	float ParticleDelta = 0.016f;
+
+	float GrowEndT = 8.f;
+	float ExplosionReadyTime = 24.f;
+	float ExplosionTime = 4.f;
+
+	float ColorIntencity = 0.32f;
+	float GrowEndScale = 0.0015f;
 };
 #endif //

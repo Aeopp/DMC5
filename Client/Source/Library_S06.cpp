@@ -14,6 +14,7 @@
 #include "SoundSystem.h"
 #include "Em5300.h"
 #include "FinalReady.h"
+#include "NuClear.h"
 
 #include <iostream>
 #include <fstream>
@@ -59,7 +60,8 @@ HRESULT Library_S06::LoadScene()
 			});
 	}
 
-	AddGameObject<FinalReady>();
+	// AddGameObject<FinalReady>();
+	AddGameObject<NuClear>();
 
 	/*AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();*/

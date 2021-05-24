@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include <iostream>
 #include "ParticleSystem.h"
+#include "NuclearLensFlare.h"
 
 void NuClear::Free()
 {
@@ -29,7 +30,7 @@ void NuClear::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const float LerpT = FMath::Clamp(T / GrowEndScale, 0.0f, 1.f);
+		const float LerpT = FMath::Clamp(T / GrowEndT, 0.0f, 1.f);
 		const float CurScale = FMath::Lerp(0.0f, GrowEndScale, LerpT);
 
 		_SpTransform->SetScale(
@@ -94,6 +95,7 @@ void NuClear::RenderInit()
 
 	PushEditEntity(_Mesh.get());
 	
+	_NuclearLensFlare = AddGameObject<NuclearLensFlare>();
 		
 
 	_DynamicLight.Color = 
@@ -106,12 +108,12 @@ void NuClear::RenderInit()
 
 	_DynamicLight.Flux = 
 	{
-		FluxLow,FluxHigh
+		ExplosionReadyFluxLow,ExplosionReadyFluxHigh
 	};
 
 	_DynamicLight.PointRadius=
 	{
-		RadiusLow,RadiusHigh
+		ExplosionReadyRadiusLow,ExplosionReadyRadiusHigh
 	};
 };
 
@@ -123,7 +125,8 @@ void NuClear::PlayStart(const Vector3& Location)
 		if (Location)
 		{
 			SpTransform->SetPosition(Location);
-			_DynamicLight.PlayStart(Location, this->PlayTime);
+			_DynamicLight.PlayStart(Location, GrowEndT + ExplosionReadyTime + ExplosionTime);
+			_NuclearLensFlare.lock()->UpdatePlayVariable(SpTransform->GetScale().x, SpTransform->GetPosition());
 		}
 	}
 
@@ -131,7 +134,7 @@ void NuClear::PlayStart(const Vector3& Location)
 	_RenderProperty.bRender = true;
 	CurParticleDelta = 0.0f;
 
-	
+	PlayParticle();
 };
 
 void NuClear::PlayEnd()
@@ -142,7 +145,7 @@ void NuClear::PlayEnd()
 };
 void NuClear::ParticleUpdate(const float DeltaTime)
 {
-	if (T > ParticleEndT)
+	if (T > ExplosionReadyTime)
 		return;
 
 	CurParticleDelta -= DeltaTime;
@@ -159,7 +162,7 @@ void NuClear::PlayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"NuClearParticle", 1000ul, true);
+				"NuClearParticle", 22u, true);
 			_Particle.empty() == false)
 		{
 
@@ -303,16 +306,16 @@ void NuClear::Editor()
 
 		ImGui::SliderFloat("ParticleDelta", &ParticleDelta, 0.0f, 1.f);
 		ImGui::SliderFloat("PlayTime", &PlayTime, 0.0f, 10.f);
-		ImGui::SliderFloat("GrowEndT", &GrowEndT, 0.0f, 2.f);
+		ImGui::SliderFloat("GrowEndT", &GrowEndT, 0.0f, PlayTime);
 
 		ImGui::SliderFloat("ColorIntencity", 
 			&ColorIntencity, 0.0f, 10.f);
 		ImGui::SliderFloat("GrowEndScale", &GrowEndScale, 0.0f, 1.f);
 
 		ImGui::SliderFloat("FluxLow",
-			&FluxLow, 0.0f, 10.f );
+			&FluxLow, 0.0f, 50.f );
 		ImGui::SliderFloat("FluxHigh", 
-			&FluxHigh, 0.0f, 10.f);
+			&FluxHigh, 0.0f, 50.f);
 
 		ImGui::SliderFloat("RadiusLow",
 			&RadiusLow, 0.0f, 10.f);

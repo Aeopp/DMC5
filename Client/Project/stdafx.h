@@ -57,6 +57,7 @@ enum GAMEOBJECTTAG
 	Eff_AirHike,
 	Eff_NuClear,
 	Eff_FinalReady,
+	Eff_NuclearLensFlare,
 	Eff_LensFlare,
 	Eff_Trail,
 	Eff_CbsTrail,

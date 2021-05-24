@@ -7,6 +7,7 @@
 
 void PreLoader::PreLoadResources()
 {
+	NuClearParticlePoolLoad();
 	ReverberationParticlePoolLoad();
 	ArtemisMissileParticlePoolLoad();
 	ArtemisRushParticlePoolLoad();
@@ -876,21 +877,20 @@ void PreLoader::NuClearParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 10000u;
+	const uint64 PoolSize = 2222u;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("NuClearParticle",
 			std::move(_PushParticle), PoolSize, true);
-
 	
 	{
 		for (auto& _ParticleInstance : *ParticlePool)
 		{
 			const Vector3 StartLocation =
-					FMath::RandomVector(1000.f);
+					FMath::RandomVector(2000.f);
 
-			const Vector3 Cp0 = StartLocation + FMath::RandomVector(333.f);
-			const Vector3 Cp1 = Cp0 + FMath::RandomVector(333.f);
+			const Vector3 Cp0 = StartLocation + FMath::RandomVector(1000.f);
+			const Vector3 Cp1 = Cp0 + FMath::RandomVector(1000.f);
 
 			const Vector3 End = { 0.f,0.f,0.f };
 
@@ -900,7 +900,7 @@ void PreLoader::NuClearParticlePoolLoad()
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 3.3f;
+			constexpr float ScaleFactor = 17.f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -915,7 +915,7 @@ void PreLoader::NuClearParticlePoolLoad()
 				Vector3{ 1.f,1.f,1.f },
 				FMath::Random(0.f, 1.f));
 
-			const float LifeTime = FMath::Random(2.f, 2.1f);
+			const float LifeTime = FMath::Random(10.f, 10.f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },

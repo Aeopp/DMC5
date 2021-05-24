@@ -572,6 +572,7 @@
       <Filter>02.GameObject\01.Unit\01.Player\08.NeroCoat</Filter>
     </ClInclude>
     <ClInclude Include="..\Header\NuClear.h" />
+    <ClInclude Include="..\Header\NuClearLensFlare.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -926,6 +927,7 @@
       <Filter>02.GameObject\01.Unit\01.Player\08.NeroCoat</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\NuClear.cpp" />
+    <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
