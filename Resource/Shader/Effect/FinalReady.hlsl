@@ -49,7 +49,7 @@ void PsMain(out float4 Color : COLOR0,
     Color.a *= AlphaFactor;
     
     Color.rgb *= ColorIntencity;
-    Color.rgb *=  exposure_corr;
+    Color.rgb *= exposure_corr;
     
       // 소프트 파티클 계산 .... 
     // NDC 투영 좌표를 Depth UV 좌표로 변환 ( 같은 XY 선상에서 투영된 깊이 찾자 ) 
@@ -71,6 +71,9 @@ void PsMain(out float4 Color : COLOR0,
     float scenedistance = length(scenepos.xyz);
     Color.a = Color.a * saturate((scenedistance - particledistance) * SoftParticleDepthScale);
     // 소프트 파티클 끝
+    
+    // Color = float4(1, 1, 1, 1);
+  
 };
 
 technique Default
@@ -81,6 +84,7 @@ technique Default
 		srcblend = srcalpha;
 		destblend = invsrcalpha;
         //zenable = false;
+        cullmode = none;
         zwriteenable = false;
         sRGBWRITEENABLE = false;
         vertexshader = compile vs_3_0 VsMain();
