@@ -59,6 +59,8 @@ Hotel_S02* Hotel_S02::Create()
 HRESULT Hotel_S02::LoadScene()
 {
 	// Load Start
+	SoundSystem::GetInstance()->Stop("Hotel01");
+	SoundSystem::GetInstance()->Play("Hotel02", _Hotel02_Volume, false, {},0);
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -213,6 +215,18 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
 	/* -------------------------- */
+	if (_DecreaseHotel02_Volume)
+		_Hotel02_Volume = FMath::Lerp(_Hotel02_Volume, 0.f, _fDeltaTime);
+	else
+		_Hotel02_Volume = FMath::Lerp(_Hotel02_Volume, 0.12f, _fDeltaTime * 0.5f);
+
+	if (_DecreaseBattle1_Volume)
+	{
+		_Battle1_Volume = FMath::Lerp(_Battle1_Volume, 0.f, _fDeltaTime);
+		SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume, false);
+	}
+
+	SoundSystem::GetInstance()->Play("Hotel02", _Hotel02_Volume, false);
 
 	return S_OK;
 }
@@ -453,7 +467,8 @@ void Hotel_S02::TriggerWallSmash()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
 			_AnimationWall.lock()->ContinueAnimation();
-
+			SoundSystem::GetInstance()->Play("Explosion1", 0.7f, false);
+			SoundSystem::GetInstance()->Play("Stone2", 0.7f, false);
 			//
 			if (auto Sp = _Player.lock(); Sp)
 				Sp->GetFsm().lock()->ChangeState(NeroFSM::CUTSCENE_WINDPRESSURE);
@@ -699,6 +714,13 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 			[this]()
 		{
 			//
+			_DecreaseHotel02_Volume = true;
+			SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume, false);
+			SoundSystem::GetInstance()->Play("BattleStart1", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
+			SoundSystem::GetInstance()->Play("Em100Spawn", 1.f, true);
+
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetGlobalActive(true, true);
@@ -736,7 +758,8 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 			//{
 			//	_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
 			//}
-
+			_DecreaseHotel02_Volume = false;
+			_DecreaseBattle1_Volume = true;
 			//
 			for (uint32 i = 1u; i < 3u; ++i)
 			{

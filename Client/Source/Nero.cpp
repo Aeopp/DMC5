@@ -444,16 +444,20 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 	case Attack_Front:
 		m_pFSM->ChangeState(NeroFSM::STATERESET);
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("DanteHit", { 2,12 }, 1.f, true);
 		break;
 	case Attack_Hard:
 		break;
 	case Attack_KnocBack:
+		SoundSystem::GetInstance()->Play("DanteHit_1", 1.f, true);
 		m_pFSM->ChangeState(NeroFSM::HIT_GROUND_AWAY);
 		break;
 	case Attack_Stun:
+		SoundSystem::GetInstance()->RandSoundKeyPlay("DanteHit", { 2,12 }, 1.f, true);
 		m_pFSM->ChangeState(NeroFSM::STUN_START);
 		break;
 	default:
+		SoundSystem::GetInstance()->RandSoundKeyPlay("DanteHit", { 2,12 }, 1.f, true);
 		m_pFSM->ChangeState(NeroFSM::HIT_FRONT);
 		break;
 	}

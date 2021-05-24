@@ -61,6 +61,7 @@
 #include "LensFlare.h"
 #include "Reverberation.h"
 #include "ParticleSystem.h"
+#include "SoundSystem.h"
 
 #include <iostream>
 #include <fstream>
@@ -86,7 +87,7 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
-
+	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 	//m_fLoadingProgress = 0.01f;
 
 	//AddGameObject<Change>();
@@ -135,7 +136,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Monster
 
 	//AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
 
@@ -239,7 +240,9 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
-
+	static float TestVolume = 0.15f;
+	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
+	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
 	//if (auto SpPlayer = _Player.lock();
 	//	SpPlayer)
 	//{

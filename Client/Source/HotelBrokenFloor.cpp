@@ -3,7 +3,7 @@
 #include "Subset.h"
 #include "Renderer.h"
 #include "Smoke.h"
-
+#include "SoundSystem.h"
 HotelBrokenFloor::HotelBrokenFloor()
 {
 }
@@ -132,6 +132,8 @@ void HotelBrokenFloor::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			Sp->SetActive(true);
 			Sp->PlayStart(33.f);
 		}
+		SoundSystem::GetInstance()->Play("BrokenFloor", 0.7f, false);
+		SoundSystem::GetInstance()->Play("Stone2", 0.7f, false);
 	}
 	else
 	{
