@@ -47,8 +47,12 @@ private:
 	float CurParticleDelta = 0.0f;
 
 	// 에디터 변수
+	float FluxLow = 0.5f;
+	float FluxHigh = 1.f;
+	float RadiusLow = 1.f;
+	float RadiusHigh = 3.f;
 	float ParticleEndT = 3.f;
-	float ParticleDelta = 0.03f;
+	float ParticleDelta = 0.1f;
 	float PlayTime = 5.f;
 	float ColorIntencity = 0.001f;
 	float GrowEndT = 1.f;

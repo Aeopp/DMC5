@@ -93,10 +93,25 @@ void NuClear::RenderInit()
 		);
 
 	PushEditEntity(_Mesh.get());
+	
+		
 
 	_DynamicLight.Color = 
 	{
-		
+		Vector4 
+		{108.f/255.f, 82.f/255.f, 158.f/255.f ,1.f},
+		Vector4 
+		{194.f/255.f, 181.f/255.f, 247.f/255.f ,1.f}
+	};
+
+	_DynamicLight.Flux = 
+	{
+		FluxLow,FluxHigh
+	};
+
+	_DynamicLight.PointRadius=
+	{
+		RadiusLow,RadiusHigh
 	};
 };
 
@@ -144,7 +159,7 @@ void NuClear::PlayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"NuClearParticle", 2000ul, true);
+				"NuClearParticle", 1000ul, true);
 			_Particle.empty() == false)
 		{
 
@@ -250,6 +265,15 @@ UINT NuClear::Update(const float _fDeltaTime)
 		PlayEnd();
 	};
 
+	ParticleUpdate(_fDeltaTime);
+
+	_DynamicLight.Flux = {FluxLow,FluxHigh};
+	_DynamicLight.PointRadius = { RadiusLow,RadiusHigh };
+
+	_DynamicLight.Update(
+		_fDeltaTime, 
+		GetComponent<Transform>().lock()->GetPosition());
+
 	return 0;
 }
 
@@ -285,6 +309,18 @@ void NuClear::Editor()
 			&ColorIntencity, 0.0f, 10.f);
 		ImGui::SliderFloat("GrowEndScale", &GrowEndScale, 0.0f, 1.f);
 
+		ImGui::SliderFloat("FluxLow",
+			&FluxLow, 0.0f, 10.f );
+		ImGui::SliderFloat("FluxHigh", 
+			&FluxHigh, 0.0f, 10.f);
+
+		ImGui::SliderFloat("RadiusLow",
+			&RadiusLow, 0.0f, 10.f);
+
+		ImGui::SliderFloat("RadiusHigh",
+			&RadiusHigh, 0.0f, 10.f);
+
+		 
 		ImGui::SliderFloat("ParticleEndT", 
 			&ParticleEndT, 0.0f, PlayTime);
 
