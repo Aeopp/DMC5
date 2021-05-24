@@ -59,18 +59,18 @@ HRESULT Library_S06::LoadScene()
 			});
 	}
 
-	AddGameObject<FinalReady>();
+// 	AddGameObject<FinalReady>();
 
-	//AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
 
 #pragma region Monster
-	//m_pBoss = AddGameObject<Em5300>();
-	//m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -38.744f, -0.388f, 30.861f });
+	/*m_pBoss = AddGameObject<Em5300>();
+	m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -38.744f, -0.388f, 30.861f });*/
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -235,12 +235,12 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06_PtDir.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission03;
-	_Renderer->ao = 0.5f;
-	_Renderer->SkyIntencity = 0.035f;
+	_Renderer->ao = 0.00025f;
+	_Renderer->SkyIntencity = 0.0005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
@@ -248,11 +248,8 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+	Renderer::GetInstance()->SkyOriginColor = Vector4{ 1.f,1.f,1.f,1.f };
 
-	_Renderer->SkyDistortionStart(20.f, 0.110972f);
-	_Renderer->SkyDistortionIntencity = 100.f;
-	_Renderer->DistortionColor =
-		Vector4{0.f,187.f/255.f,1.f,1.f};
 }
 
 void Library_S06::TriggerSetUp()
@@ -308,6 +305,12 @@ void Library_S06::LateInit()
 	}
 
 	Renderer::GetInstance()->LateSceneInit();
+
+	Renderer::GetInstance()->SkyDistortionStart(20.f, 0.110972f);
+	Renderer::GetInstance()->SkyDistortionIntencity = 100.f;
+	Renderer::GetInstance()->DistortionColor =
+		Vector4{ 0.f,187.f / 255.f,1.f,1.f };
+
 
 	BgmPlay();
 

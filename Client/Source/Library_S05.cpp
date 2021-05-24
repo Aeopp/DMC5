@@ -414,6 +414,7 @@ void Library_S05::RenderDataSetUp(const bool bTest)
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+	Renderer::GetInstance()->SkyOriginColor = Vector4{ 1.f,1.f,1.f,1.f };
 }
 
 void Library_S05::TriggerSetUp()

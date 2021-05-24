@@ -276,9 +276,12 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 			[this ]()
 		{
 			// 골리앗과 처음 조우함 !!
-			constexpr float NoiseWrap = 2.020390f;
-			constexpr float TimeCorr = 0.009006f;
-			Renderer::GetInstance()->SkyDistortionStart(NoiseWrap,TimeCorr);
+			// constexpr float NoiseWrap = 2.020390f;
+			// constexpr float TimeCorr = 0.009006f;
+		    // Renderer::GetInstance()->SkyDistortionStart(NoiseWrap,TimeCorr);
+
+			Renderer::GetInstance()->SkyOriginColor = Vector4{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
+
 			// 다른 후처리가 묻히니 스카이 왜곡을 약하게 .... 
 
 			// 로직 작성 .... 

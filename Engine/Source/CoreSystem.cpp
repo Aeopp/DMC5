@@ -104,7 +104,7 @@ static void GlobalVariableSetup()
 	g_bOptRender = true;
 	g_bFrameLimit = true;
 	g_bParticleEditor = false;
-	g_bFixedDeltaTime = false;
+	g_bFixedDeltaTime = true;
 	g_bSoundEdit = false;
 
 	ID3DXBuffer* SphereMeshAdjacency{ nullptr };
