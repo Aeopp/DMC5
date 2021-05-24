@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S03::Hotel_S03()
@@ -47,6 +48,8 @@ Hotel_S03* Hotel_S03::Create()
 HRESULT Hotel_S03::LoadScene()
 {
 	// Load Start
+	SoundSystem::GetInstance()->Stop("Hotel02");
+	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false, {}, 0);
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -196,7 +199,18 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	/* -------------------------- */
+	if (_DecreaseHotel03_Volume)
+		_Hotel03_Volume = FMath::Lerp(_Hotel03_Volume, 0.f, _fDeltaTime);
+	else
+		_Hotel03_Volume = FMath::Lerp(_Hotel03_Volume, 0.12f, _fDeltaTime * 0.5f);
 
+	if (_DecreaseBattle1_Volume)
+	{
+		_Battle1_Volume = FMath::Lerp(_Battle1_Volume, 0.f, _fDeltaTime);
+		SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume, false);
+	}
+
+	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false);
 	return S_OK;
 }
 
@@ -543,10 +557,11 @@ void Hotel_S03::TriggerUpGround()
 
 		auto _AnimationUpground = AddGameObject<AnimationUpGround>();
 		const std::function<void()> _CallBack =
-			[_AnimationUpground, _Smoke0, _Smoke1, _BattleTrigger]()
+			[_AnimationUpground, _Smoke0, _Smoke1, _BattleTrigger,this]()
 		{
 			// 여기서 UpGround 로직 처리하세요 ... 
 			_AnimationUpground.lock()->ContinueAnimation();
+			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			// 땅이 솟아오름 !! .. 
 
 			//

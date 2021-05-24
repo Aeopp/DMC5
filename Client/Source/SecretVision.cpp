@@ -12,7 +12,7 @@
 #include "PreLoader.h"
 #include "NhDoor.h"
 #include "BtlPanel.h"
-
+#include "SoundSystem.h"
 SecretVision::SecretVision()
 {
 
@@ -218,6 +218,7 @@ void SecretVision::Interaction(const uint32 Idx)
 			SpPanel->UseExGauge(3u, true);
 		}
 		Disappear(Idx);
+		SoundSystem::GetInstance()->Play("MassUpGlass", 0.7f, true);
 	}
 };
 
@@ -524,8 +525,10 @@ void SecretVision::OnTriggerEnter(std::weak_ptr<GameObject> _Target)
 	if (auto SpTarget = _Target.lock();
 		SpTarget)
 	{
+
 		if (HitEnableTargetSet.contains(SpTarget->m_nTag))
-		{			
+		{
+			SoundSystem::GetInstance()->RandSoundKeyPlay("HitGlass", {1,3}, 0.7f, true);
 			Interaction(InteractionIdx);
 			if (InteractionIdx >=3u)
 			{

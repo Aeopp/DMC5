@@ -54,6 +54,9 @@ Hotel_S01* Hotel_S01::Create()
 HRESULT Hotel_S01::LoadScene()
 {
 	// Load Start
+	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
+	SoundSystem::GetInstance()->Play("Rain2", 0.15f, false);
+	SoundSystem::GetInstance()->Play("Hotel01", _Hotel01_Volume, false);
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -243,6 +246,20 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	}
 	/* -------------------------- */
 
+	if(_DecreaseHotel01_Volume)
+		_Hotel01_Volume = FMath::Lerp(_Hotel01_Volume, 0.f, _fDeltaTime);
+	else
+		_Hotel01_Volume = FMath::Lerp(_Hotel01_Volume, 0.12f, _fDeltaTime * 0.5f);
+
+	if (_DecreaseBattle1_Volume)
+	{
+		_Battle1_Volume = FMath::Lerp(_Battle1_Volume, 0.f, _fDeltaTime);
+		SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume,false);
+	}
+
+	_Rain_Volume = FMath::Lerp(_Rain_Volume, 0.f, _fDeltaTime * 0.5f);
+	SoundSystem::GetInstance()->Play("Hotel01", _Hotel01_Volume, false);
+	SoundSystem::GetInstance()->Play("Rain", _Rain_Volume, false, {}, 11000);
 	return S_OK;
 }
 
@@ -597,7 +614,7 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */this]()
 		{
 			//... 여기서 로직 처리하세요 . 
 		};
@@ -609,7 +626,8 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 			//... 여기서 로직 처리하세요 . 
 			// 여기서 카메라 연출 하세요 .
 			_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
-
+			_DecreaseHotel01_Volume = false;
+			_DecreaseBattle1_Volume = true;
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetRedOrbActive(false);
@@ -669,7 +687,12 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerElectricBoardBattle()
 			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
-
+			_DecreaseHotel01_Volume = true;
+			SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume, false);
+			SoundSystem::GetInstance()->Play("BattleStart1", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
+			SoundSystem::GetInstance()->Play("Em100Spawn", 1.f, true);
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetGlobalActive(true, true);
@@ -755,8 +778,9 @@ void Hotel_S01::Trigger2nd()
 			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			//... 여기서 로직 처리하세요 . 
 
+			SoundSystem::GetInstance()->Play("Em1000Spawn", 1.f, true);
+			SoundSystem::GetInstance()->Play("Stone1", 1.f, true);
 			Renderer::GetInstance()->SkyDistortionStart();
-		
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetGlobalActive(true, true);
@@ -878,9 +902,10 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 
 		// 스폰 직후 이벤트 . 
 		const std::function<void()> SpawnWaveAfterEvent =
-			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+			[/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */this]()
 		{
 			//... 여기서 로직 처리하세요 . 
+
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
@@ -892,7 +917,8 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 			// 웨이브가 끝났어요 필요한 로직 작성해주세요 ....
 			// ... 연출 !! 
 			//
-
+			_DecreaseHotel01_Volume = false;
+			_DecreaseBattle2_Volume = true;
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetRedOrbActive(false);
@@ -947,6 +973,13 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
 		{
 			//... 여기서 로직 처리하세요 . 
+			_DecreaseHotel01_Volume = true;
+			SoundSystem::GetInstance()->Play("Battle2", _Battle2_Volume, false);
+			SoundSystem::GetInstance()->Play("BattleStart1", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
+			SoundSystem::GetInstance()->Play("Em100Spawn", 1.f, true);
+
 
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
