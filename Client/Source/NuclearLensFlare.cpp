@@ -108,12 +108,13 @@ void NuclearLensFlare::PlayEnd()
 	T = 0.0f;
 };
 
-void NuclearLensFlare::UpdatePlayVariable(const float Scale ,const Vector3 Position)
+void NuclearLensFlare::UpdatePlayVariable(const float Lerp )
 {
-	const float _Scale = Scale + ScaleOffset;
-	GetComponent<Transform>().lock()->SetScale(Vector3{ _Scale ,_Scale ,_Scale });
-	GetComponent<Transform>().lock()->SetPosition(Position);
-};
+	const float ClampLerp = FMath::Clamp(Lerp, 0.0f, 1.f);
+	const float CurScale = FMath::Lerp(0.0f, ScaleEnd, ClampLerp);
+	GetComponent<Transform>().lock()->SetScale(Vector3{ CurScale ,CurScale ,CurScale });
+	CurColorIntencity = FMath::Lerp(0.0f, ColorIntencity, ClampLerp);
+}; 
 
 void NuclearLensFlare::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
@@ -125,10 +126,10 @@ void NuclearLensFlare::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetMatrix("matWorld", &World);
 
 		_Info.Fx->SetFloat(
-			"ColorIntencity", ColorIntencity);
+			"ColorIntencity", CurColorIntencity);
 		const float AlphaFactor = 1.f;
 		_Info.Fx->SetFloat(
-			"AlphaFactor", AlphaFactor);
+			"AlphaFactor", CurColorIntencity *(1.0f/ColorIntencity) );
 
 		_Info.Fx->SetTexture("AlpgMap", _Alpg->GetTexture());
 	}
@@ -230,10 +231,9 @@ void NuclearLensFlare::Editor()
 		}
 
 		ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.0f, 1.f);
-		
-		ImGui::SliderFloat("PlayTime", &PlayTime, 0.0f, 10.f);
-		ImGui::SliderFloat("ScaleOffset", &ScaleOffset, 0.0f, 0.01f);
 
+		ImGui::SliderFloat("ScaleEnd", &ScaleEnd, 0.0f, 1.f);
+	
 		ImGui::EndChild();
 	}
 };

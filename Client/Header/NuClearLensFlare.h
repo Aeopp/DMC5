@@ -34,14 +34,17 @@ public:
 public:
 	void PlayStart(const Vector3& Location);
 	void PlayEnd();
-	void UpdatePlayVariable(const float Scale , const Vector3 Position);
+	void UpdatePlayVariable(const float Lerp);
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	float CurColorIntencity = 0.0025f;
 	float T = 0.0f;
 	float PlayTime = 24.f;
-	float ScaleOffset = 0.005f;
-	float ColorIntencity = 0.2f;
+
+
+	float ScaleEnd = 0.1f;
+	float ColorIntencity = 0.0025f;
 };
 #endif //
