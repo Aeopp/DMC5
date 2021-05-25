@@ -131,6 +131,9 @@ void EnergismReady::PlayStart(
 			SpTransform->SetScale(Vector3{ 0.f,0.f,0.f });
 			_NuclearLensFlare.lock()->
 				PlayStart(Location, PlayTime);
+			_NuclearLensFlare.lock()->ScaleEnd = 0.008f;
+			_NuclearLensFlare.lock()->ColorIntencity = 0.0018f;
+
 			_DynamicLight.PlayStart(Location, 
 				PlayTime);
 		}
@@ -344,6 +347,8 @@ void EnergismReady::Editor()
 		ImGui::SliderFloat("FluxHigh", &FluxHigh, 0.0f, 10.f);
 		ImGui::SliderFloat("RadiusLow", &RadiusLow, 0.0f, 10.f);
 		ImGui::SliderFloat("RadiusHigh", &RadiusHigh, 0.0f, 10.f);
+
+		ImGui::SliderFloat("ShockWaveDelta", &ShockWaveDelta, 0.0f, 1.f);
 
 		ImGui::SliderFloat("ParticleDelta", &ParticleDelta, 0.0f, 1.f);
 		ImGui::SliderFloat("ParticleWorldScale", &ParticleWorldScale, 0.0f, 1.f);

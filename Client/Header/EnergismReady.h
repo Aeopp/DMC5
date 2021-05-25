@@ -71,11 +71,11 @@ private:
 	float RadiusLow = 0.f;
 	float RadiusHigh = 1.f;
 
-	float ParticleWorldScale = 0.0001f;
+	float ParticleWorldScale = 0.000135f;
 	float ParticleDelta = 0.016f;
 
-	float StartColorIntencity = 1.0f;
-	float EndColorIntencity = 3.5f;
+	float StartColorIntencity = 0.020f;
+	float EndColorIntencity = 0.020f;
 	float GrowEndScale = 0.0005f;
 };
 #endif //
