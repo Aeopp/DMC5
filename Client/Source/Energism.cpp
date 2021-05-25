@@ -8,6 +8,7 @@
 #include "ParticleSystem.h"
 #include "NuclearLensFlare.h"
 #include "ShockWave.h"
+#include "LensFlare.h"
 
 void Energism::Free()
 {
@@ -98,6 +99,7 @@ void Energism::RenderInit()
 	}
 
 	_ShockWave = AddGameObject<ShockWave>();
+	_LensFlare = AddGameObject<LensFlare>();
 };
 
 void Energism::PlayStart(const Vector3& Location, const float Yaw)
@@ -111,6 +113,8 @@ void Energism::PlayStart(const Vector3& Location, const float Yaw)
 			SpTransform->SetRotation(Vector3{ 0.f,Yaw,0.f });
 			_ShockWave.lock()->PlayStart(Location,
 				ShockWave::Option::ArtemisEnergism);
+			_LensFlare.lock()->Option = 1;
+			_LensFlare.lock()->PlayStart(Location);
 		}
 	}
 

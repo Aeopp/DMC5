@@ -49,6 +49,7 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
 	std::weak_ptr<class ShockWave> _ShockWave{};
+	std::weak_ptr<class LensFlare> _LensFlare{};
 	static constexpr uint32 ReverberationCount= 16u;
 	std::array<std::weak_ptr< class Reverberation>, ReverberationCount> ReverberationArr{};
 	uint32 CurReverberationIdx{ 0u };
