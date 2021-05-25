@@ -22,6 +22,11 @@ public:
 		ArtemisRush,
 		ArtemisLaunch,
 		ArtemisEnd,
+		StreakEnd,
+		Streak,
+		SplitEnd,
+		Split,
+		Buster,
 		None,
 	};
 private:

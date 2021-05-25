@@ -1048,6 +1048,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Hit_Buster_Swing_End", false, {}, 1.f, 1.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_End" && m_pMesh->IsAnimationEnd())
 			{
+				m_BattleInfo.iHp -= 700;
 				m_eState = Hit_Buster_Standup;
 				m_bBuster = false;
 			}
@@ -1315,8 +1316,8 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_BattleInfo.iMaxHp = 5000.f;
-	m_BattleInfo.iHp = 5000.f;
+	m_BattleInfo.iMaxHp = 3500;
+	m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 
 	m_pMesh->EnableToRootMatricies();

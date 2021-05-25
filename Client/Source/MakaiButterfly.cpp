@@ -222,8 +222,8 @@ HRESULT MakaiButterfly::Ready()
 
 	_Collider = AddComponent<CapsuleCollider>();
 	_Collider.lock()->ReadyCollider();
-	_Collider.lock()->SetRadius(0.06f);
-	_Collider.lock()->SetHeight(0.03f);
+	_Collider.lock()->SetRadius(0.075f);
+	_Collider.lock()->SetHeight(0.04f);
 	_Collider.lock()->SetCenter({ 0.f, 0.f, 0.f });
 	_Collider.lock()->SetActive(false);
 	PushEditEntity(_Collider.lock().get());

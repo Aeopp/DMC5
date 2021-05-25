@@ -6,6 +6,23 @@
 class ShopPanel : public ENGINE::GameObject,
 				  public ENGINE::RenderInterface
 {
+public:
+	struct UpgradeDesc
+	{
+		uint32 _ExgaugeUpCost;
+		uint32 _BatteryCost;
+		uint32 _TransformCost;
+		uint32 _RebellionCost;
+		uint32 _ExgaugeUpUpgradeCount;
+		uint32 _BatteryUpgradeCount;
+		uint32 _TransformUpgradeCount;
+		uint32 _RebellionUpgradeCount;
+	};
+
+	static const ShopPanel::UpgradeDesc& GetUpgradeDesc() { return _UpgradeDesc; }
+
+	void ResetCmd();	// SetActive(false) 전에 초기상태로 돌리자
+
 private:
 	enum UI_DESC_ID
 	{
@@ -107,8 +124,6 @@ private:
 	};
 	std::vector<std::weak_ptr<class Font>> _FontVec;
 
-	std::weak_ptr<class BtlPanel> _BtlPanel;
-	
 	enum DEPTH
 	{
 		NONE = -1,
@@ -143,16 +158,6 @@ private:
 	float _CategoryWeaponInfoXPos = 410.f;
 	float _CategoryWeaponInfoSliceAmount = 0.f;
 
-	uint32 _ExgaugeUpCost = 9999999u;
-	uint32 _BatteryCost = 9999999u;
-	uint32 _TransformCost = 9999999u;
-	uint32 _RebellionCost = 9999999u;
-
-	uint32 _ExgaugeUpUpgradeCount = 1u;
-	uint32 _BatteryUpgradeCount = 1u;
-	uint32 _TransformUpgradeCount = 1u;
-	uint32 _RebellionUpgradeCount = 0u;
-
 	float _BrightAccTime = 0.f;
 	float _ButtonBright = 1.f;
 	float _UpgradeProgressBright = 1.f;
@@ -166,7 +171,8 @@ private:
 	enum POPUP_DEPTH
 	{
 		POPUP_DEPTH_NONE = -1,
-		POPUP_DEPTH_NOREDORB
+		POPUP_DEPTH_NOREDORB,
+		POPUP_DEPTH_ISUPGRADE,
 	};
 	POPUP_DEPTH _CurPopupDepth = POPUP_DEPTH_NONE;
 	POPUP_DEPTH _PrePopupDepth = POPUP_DEPTH_NONE;
@@ -179,6 +185,8 @@ private:
 	};
 	POPUP_CMD _CurPopupCmd = POPUP_CMD_NONE;
 	POPUP_CMD _PrePopupCmd = POPUP_CMD_NONE;
+
+	static UpgradeDesc _UpgradeDesc;
 
 private:
 	explicit ShopPanel() = default;
@@ -212,7 +220,5 @@ public:
 	virtual void    OnDisable() override;
 private:
 	void ResetOffset();
-public:
-	void ResetCmd();	// SetActive(false) 전에 초기상태로 돌리자
 };
 #endif // !__UI_SHOP_PANEL__
