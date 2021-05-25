@@ -56,6 +56,7 @@ enum GAMEOBJECTTAG
 	Eff_ShapeParticle,
 	Eff_AirHike,
 	Eff_NuClear,
+	Eff_Energism,
 	Eff_FinalReady,
 	Eff_NuclearLensFlare,
 	Eff_LensFlare,
