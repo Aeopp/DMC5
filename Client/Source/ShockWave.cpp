@@ -331,7 +331,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 1.104f;
 		BlurIntencity.second = 1.186f;
 		BlurAlpha.first = 0.675f;
-		BlurAlpha.second = 1.f;
+		BlurAlpha.second = 0.8f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -343,9 +343,9 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		ScaleLerp.first = 0.002f;
 		ScaleLerp.second = 0.076f;
 		BlurIntencity.first = 0.700f;
-		BlurIntencity.second = 1.002f;
+		BlurIntencity.second = 1.00f;
 		BlurAlpha.first = 0.757f;
-		BlurAlpha.second = 0.900f;
+		BlurAlpha.second = 0.8f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
