@@ -604,19 +604,6 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 50.f, true);
 			
-			for (int i = 0; i < 12; ++i)
-			{
-				if (!m_pStone[i].expired() && m_bStone == false)
-				{
-					float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
-					Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
-					m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
-					m_pStone[i].lock()->SetScale(fRandom);
-					m_pStone[i].lock()->PlayStart(40.f);
-					m_pStone[i].lock()->SetRotation(vRot);
-				}
-			}
-
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && fDir <= 2.5f)
 				m_eState = Attack_Rush_End;
@@ -633,22 +620,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", false, {}, 1.f, 10.f, true);
-
-			for (int i = 0; i < 12; ++i)
-			{
-				if (!m_pStone[i].expired() && m_bStone == false)
-				{
-					float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
-					Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
-					m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
-					m_pStone[i].lock()->SetScale(fRandom);
-					m_pStone[i].lock()->PlayStart(40.f);
-					m_pStone[i].lock()->SetRotation(vRot);
-				}
-			}
-
-
-
+			
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir <= 2.5f)
 				m_eState = Attack_Rush_End;
 		}
@@ -656,20 +628,6 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Attack_Rush_End:
 		if (m_bIng == true)
 		{
-			for (int i = 0; i < 12; ++i)
-			{
-				if (!m_pStone[i].expired() && m_bStone == false)
-				{
-					float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
-					Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
-					m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
-					m_pStone[i].lock()->SetScale(fRandom);
-					m_pStone[i].lock()->PlayStart(40.f);
-					m_pStone[i].lock()->SetRotation(vRot);
-				}
-			}
-
-
 			m_pMesh->PlayAnimation("Attack_Rush_End", false, {}, 1.f, 10.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->IsAnimationEnd())
 			{
@@ -692,8 +650,24 @@ void Em5000::State_Change(const float _fDeltaTime)
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
 			}
-			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime() >= 0.15f)
-				m_bStone = true;
+			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime() >= 0.13f)
+			{
+				for (int i = 0; i < 12; ++i)
+				{
+					if (!m_pStone[i].expired() && m_bStone == false)
+					{
+						float fRandom = FMath::Random<float>(0.0011f, 0.0033f);
+						Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+						m_pStone[i].lock()->SetPosition(GetMonsterBoneWorldPos("R_Hand"));
+						m_pStone[i].lock()->SetScale(fRandom);
+						m_pStone[i].lock()->PlayStart(40.f);
+						m_pStone[i].lock()->SetRotation(vRot);
+					}
+					if (i == 11)
+						m_bStone = true;
+				}
+			}
+
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_End" && m_pMesh->PlayingTime() >= 0.1f)
 			{
 				for (int i = 0; i < 2; ++i)
@@ -1448,8 +1422,8 @@ UINT Em5000::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_Y))
 	{
-		m_bGroggy = true;
-		m_eState = Groggy_Start;
+		m_bIng = true;
+		m_eState = Attack_Rush_Start;
 	}
 
 
