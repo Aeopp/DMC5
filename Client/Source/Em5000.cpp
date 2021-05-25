@@ -508,7 +508,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 			if (m_BattleInfo.iHp <= 2500.f)
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.9f)
+				{
 					m_eState = Attack_Finish;
+					m_bStone = false;
+				}
 			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->IsAnimationEnd())
 			{
@@ -1043,6 +1046,9 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Hit_Buster_Swing_End;
 				m_BattleInfo.iHp -= 700;
 				m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+
+				for(int i = 0 ; i < 2 ; ++i)
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 			}
 				
 		}
