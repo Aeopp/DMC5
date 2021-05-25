@@ -30,11 +30,12 @@ void EnergismReady::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-		const float LerpT = FMath::Clamp(T / GrowEndT, 0.0f, 1.f);
+		const float LerpT = FMath::Clamp(T / GrowTime, 0.0f, 1.f);
 		const float CurScale = FMath::Lerp(0.0f, GrowEndScale, LerpT);
 
 		_SpTransform->SetScale(
 			Vector3{ CurScale ,CurScale ,CurScale });
+
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
 	}
 };
@@ -86,7 +87,7 @@ void EnergismReady::RenderInit()
 		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere02.fbx", _InitInfo);
 
 	_LightMsk = Resources::Load<ENGINE::Texture>(
-		L"..\\..\\Usable\\Artemis\\LightSphere2.tga"
+		L"..\\..\\Usable\\Artemis\\Water.tga"
 		);
 
 	_Noise = Resources::Load<ENGINE::Texture>(
@@ -100,7 +101,6 @@ void EnergismReady::RenderInit()
 	_ShockWave = AddGameObject<ShockWave>();
 	PushEditEntity(_Mesh.get());
 	_NuclearLensFlare = AddGameObject<NuclearLensFlare>();
-		
 
 	_DynamicLight.Color = 
 	{
@@ -110,16 +110,17 @@ void EnergismReady::RenderInit()
 
 	_DynamicLight.Flux = 
 	{
-		ExplosionReadyFluxLow,ExplosionReadyFluxHigh
+		FluxLow,FluxHigh
 	};
 
 	_DynamicLight.PointRadius=
 	{
-		ExplosionReadyRadiusLow,ExplosionReadyRadiusHigh
+		RadiusLow,RadiusHigh
 	};
 };
 
-void EnergismReady::PlayStart(const Vector3& Location,  const float GroundY, const bool bEditPlay)
+void EnergismReady::PlayStart(
+	const Vector3& Location,  const float GroundY, const bool bEditPlay)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -128,79 +129,36 @@ void EnergismReady::PlayStart(const Vector3& Location,  const float GroundY, con
 		{
 			SpTransform->SetPosition(Location);
 			SpTransform->SetScale(Vector3{ 0.f,0.f,0.f });
-			_NuclearLensFlare.lock()->PlayStart(Location, ExplosionReadyTime);
-			_DynamicLight.PlayStart(Location, ExplosionReadyTime + FreeFallTime + ExplosionTime);
+			_NuclearLensFlare.lock()->
+				PlayStart(Location, PlayTime);
+			_DynamicLight.PlayStart(Location, 
+				PlayTime);
 		}
 	}
-
-	EditYVelocity =   std::fabsf ( (Location.y - GroundY) /FreeFallTime);
 
 	T = 0.0f;
 	_RenderProperty.bRender = true;
 	CurParticleDelta = 0.0f;
 
 	PlayParticle();
-
-	this->bEditPlay = bEditPlay;
-	bExplosion = false;
 };
 
-void EnergismReady::Kaboom()
-{
-	KaboomParticle();
-	_RenderProperty.bRender = false;
-	T = 0.0f;
-	_ShockWave.lock()->PlayStart(
-		Vector3{ KaboomMatrix._41,KaboomMatrix._42,KaboomMatrix._43 } ,
-		ShockWave::Option::Kaboom);
-};
 
 void EnergismReady::PlayEnd()
 {
 	_DynamicLight.PlayEnd();
-	bExplosion = false;
-	auto SpTransform = GetComponent<Transform>().lock();
-
-	Vector3 _KaboomLocation = SpTransform->GetPosition();
-	_KaboomLocation.y = -1.035f;
-
-	KaboomMatrix = 
-		FMath::Scale(Vector3{ ParticleWorldScale ,ParticleWorldScale ,ParticleWorldScale })
-		*
-		SpTransform->GetRotationMatrix()
-		*
-		FMath::Translation(_KaboomLocation);
-
-	if (bEditPlay)
-	{
-		SpTransform->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
-	}
+	_RenderProperty.bRender = false;
+	T = 0.0f;
 };
 
-void EnergismReady::KaboomParticle()
+void EnergismReady::UpdatePosition(const Vector3& Location)
 {
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
-	{
-		if (auto _Particle =
-			ParticleSystem::GetInstance()->PlayParticle(
-				"Kaboom", 3333u, true);
-			_Particle.empty() == false)
-		{
-			for (int32 i = 0; i < _Particle.size(); ++i)
-			{
-				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(KaboomMatrix);
-			}
-		}
-	};
-}
+	GetComponent<Transform>().lock()->SetPosition(Location);
+};
 
-void NuClear::ParticleUpdate(const float DeltaTime)
+
+void EnergismReady::ParticleUpdate(const float DeltaTime)
 {
-	if (T > ExplosionReadyTime)
-		return;
-
 	CurParticleDelta -= DeltaTime;
 	if (CurParticleDelta < 0.0f)
 	{
@@ -209,14 +167,14 @@ void NuClear::ParticleUpdate(const float DeltaTime)
 	}
 };
 
-void NuClear::PlayParticle()
+void EnergismReady::PlayParticle()
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"NuClearParticle", 22u, true);
+				"EnergismReadyParticle", 16u, true);
 			_Particle.empty() == false)
 		{
 			const Matrix ParticleWorld = FMath::Scale(Vector3{ ParticleWorldScale ,ParticleWorldScale ,ParticleWorldScale })
@@ -234,11 +192,8 @@ void NuClear::PlayParticle()
 	};
 };
 
-void NuClear::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void EnergismReady::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	if (T >= (ExplosionReadyTime + FreeFallTime))
-		return;
-
 	const Matrix World = _RenderUpdateInfo.World;
 	const uint32 Numsubset = _Mesh->GetNumSubset();
 
@@ -248,10 +203,9 @@ void NuClear::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("LightMskMap", _LightMsk->GetTexture());
 		_Info.Fx->SetTexture("AlbmMap", _AlbmMap->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _Noise->GetTexture());
-
 		
 		const float LerpT = 
-			FMath::Clamp(T / GrowEndT, 0.0f, 1.f);
+			FMath::Clamp(T / GrowTime, 0.0f, 1.f);
 
 		const float CurColor =
 			FMath::Lerp(StartColorIntencity, EndColorIntencity, LerpT);
@@ -267,14 +221,13 @@ void NuClear::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			_Mesh->GetSubset(i).lock();
 			SpSubset)
 		{
-
 			SpSubset->Render(_Info.Fx);
 		};
 	};
 }
 
 
-void NuClear::RenderDebug(const DrawInfo& _Info)
+void EnergismReady::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
@@ -292,7 +245,7 @@ void NuClear::RenderDebug(const DrawInfo& _Info)
 };
 
 
-HRESULT NuClear::Ready()
+HRESULT EnergismReady::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
@@ -302,7 +255,7 @@ HRESULT NuClear::Ready()
 	return S_OK;
 };
 
-HRESULT NuClear::Awake()
+HRESULT EnergismReady::Awake()
 {
 	GameObject::Awake();
 
@@ -313,86 +266,58 @@ HRESULT NuClear::Awake()
 	return S_OK;
 }
 
-HRESULT NuClear::Start()
+HRESULT EnergismReady::Start()
 {
 	GameObject::Start();
 
 	return S_OK;
 }
 
-UINT NuClear::Update(const float _fDeltaTime)
+UINT EnergismReady::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	if (_RenderProperty.bRender == false) return 0;
 
 	T += _fDeltaTime;
 
-	// 끝날 쯔음 .
-	const float BeyondPlay = ExplosionReadyTime + FreeFallTime + ExplosionTime;
-	const float BeyondKaboom = ExplosionReadyTime + FreeFallTime + ExplosionTime + 0.6f;
-
-	if (T > BeyondKaboom)
-	{
-		Kaboom();
-		return 0;
-	}
-	else if (T > BeyondPlay)
+	if (T > PlayTime)
 	{
 		PlayEnd();
 	}
-	
+
+	const float LerpT = FMath::Clamp(T / GrowTime, 0.f, 1.f);
 
 	ParticleUpdate(_fDeltaTime);
-
-	const float BeyondReady = ExplosionReadyTime + FreeFallTime;
-
-	if (T <= ExplosionReadyTime)
+	_NuclearLensFlare.lock()->
+		UpdatePlayVariable(LerpT);
+	
+	if (T <= GrowTime)
 	{
-		_NuclearLensFlare.lock()->UpdatePlayVariable(T / ExplosionReadyTime);
-	}
-
-	if (T <= GrowEndT)
-	{
-		const float LerpT = T / GrowEndT;
-		const float Radius = FMath::Lerp(ExplosionReadyRadiusLow, ExplosionReadyRadiusHigh, LerpT);
-		const float Flux=FMath::Lerp(ExplosionReadyFluxLow, ExplosionReadyFluxHigh, LerpT);
+		const float LerpT = T / GrowTime;
+		const float Radius = FMath::Lerp(RadiusLow, RadiusHigh, LerpT);
+		const float Flux=FMath::Lerp(FluxLow, FluxHigh, LerpT);
 		const D3DXCOLOR _Color = FMath::ToColor(FMath::Lerp(ColorLow,ColorHigh ,LerpT));
-		_DynamicLight.Update(_Color, Radius, Flux, GetComponent<Transform>().lock()->GetPosition());
+		_DynamicLight.Update(_Color, Radius, Flux, 
+			GetComponent<Transform>().lock()->GetPosition());
 	}
-	else if (FMath::IsRange(ExplosionReadyTime, ExplosionReadyTime + FreeFallTime, T))
+	else if (T > GrowTime)
 	{
-		Vector3 CurPosition = GetComponent<Transform>().lock()->GetPosition();
-		CurPosition.y -= EditYVelocity * _fDeltaTime;
-		GetComponent<Transform>().lock()->SetPosition(CurPosition);
-	}
-	else if (T > BeyondReady)
-	{
-		if (false == bExplosion)
-		{
-			bExplosion = true;
-			// KaboomParticle();
-		}
-
-		const float ExplosionT =  ( T - BeyondReady ) / ExplosionTime;
-		const float Radius = FMath::Lerp(ExplosionRadiusLow, ExplosionRadiusHigh, ExplosionT);
-		const float Flux = FMath::Lerp(ExplosionFluxLow, ExplosionFluxHigh, ExplosionT);
-		const D3DXCOLOR _Color = FMath::ToColor(FMath::Lerp(ColorLow, ColorHigh, ExplosionT));
-		 Vector3 CurPosition = GetComponent<Transform>().lock()->GetPosition(); 
-		_DynamicLight.Update(_Color, Radius, Flux, CurPosition);
+		_DynamicLight.Update(LaunchColor, LaunchRadius, LaunchFlux,
+			GetComponent<Transform>().lock()->GetPosition());
 	}
 
 	return 0;
 }
 
 
-UINT NuClear::LateUpdate(const float _fDeltaTime)
+UINT EnergismReady::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
 
 	return 0;
 }
 
-void NuClear::Editor()
+void EnergismReady::Editor()
 {
 	GameObject::Editor();
 
@@ -403,53 +328,46 @@ void NuClear::Editor()
 		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart(
-				GetComponent<Transform>().lock()->GetPosition(),-1.45f, true);
+				GetComponent<Transform>().lock()->GetPosition(), -1.45f, true);
 		}
 
 		ImGui::Text("T : %2.6f", T);
 		ImGui::SliderFloat("NoiseTimeCorr", &NoiseTimeCorr, 0.0f, 100.f);
 
-		ImGui::SliderFloat("EditYVelocity", &EditYVelocity, 0.0f, 1.f);
-		
+		D3DXCOLOR LaunchColor{
+	194.f / 255.f, 181.f / 255.f, 247.f / 255.f ,1.f };
+		float LaunchRadius{ 5.f };
+		float LaunchFlux{ 2.2f };
 
-		ImGui::SliderFloat("ExplosionReadyFluxLow", &ExplosionReadyFluxLow, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionReadyFluxHigh", &ExplosionReadyFluxHigh, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionReadyRadiusLow", &ExplosionReadyRadiusLow, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionReadyRadiusHigh", &ExplosionReadyRadiusHigh, 0.0f, 10.f);
 
-		ImGui::SliderFloat("ExplosionFluxLow", &ExplosionFluxLow, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionFluxHigh", &ExplosionFluxHigh, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionRadiusLow", &ExplosionRadiusLow, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionRadiusHigh", &ExplosionRadiusHigh, 0.0f, 10.f);
+		ImGui::SliderFloat("FluxLow", &FluxLow, 0.0f, 10.f);
+		ImGui::SliderFloat("FluxHigh", &FluxHigh, 0.0f, 10.f);
+		ImGui::SliderFloat("RadiusLow", &RadiusLow, 0.0f, 10.f);
+		ImGui::SliderFloat("RadiusHigh", &RadiusHigh, 0.0f, 10.f);
 
 		ImGui::SliderFloat("ParticleDelta", &ParticleDelta, 0.0f, 1.f);
 		ImGui::SliderFloat("ParticleWorldScale", &ParticleWorldScale, 0.0f, 1.f);
-		
 
-		ImGui::SliderFloat("GrowEndT", &GrowEndT, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionReadyTime", &ExplosionReadyTime, 0.0f, 40.f);
-		ImGui::SliderFloat("FreeFallTime", &FreeFallTime, 0.0f, 10.f);
-		ImGui::SliderFloat("ExplosionTime", &ExplosionTime, 0.0f, 10.f);
+		ImGui::SliderFloat("PlayTime", &PlayTime, 0.0f, 10.f);
+		ImGui::SliderFloat("GrowTime", &GrowTime, 0.0f, 10.f);
 
 		ImGui::SliderFloat("StartColorIntencity", &StartColorIntencity, 0.0f, 10.f);
 		ImGui::SliderFloat("EndColorIntencity", &EndColorIntencity, 0.0f, 10.f);
-		
-		ImGui::SliderFloat("GrowEndScale", &GrowEndScale, 0.0f, 1.f);
+
+		ImGui::InputFloat("GrowEndScale", &GrowEndScale);
 
 		ImGui::EndChild();
 	}
-}
+};
 
-
-void NuClear::OnEnable()
+void EnergismReady::OnEnable()
 {
 	GameObject::OnEnable();
-}
+};
 
-void NuClear::OnDisable()
+void EnergismReady::OnDisable()
 {
 	GameObject::OnDisable();
-}
-
+};
 
 

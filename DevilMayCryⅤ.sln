@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00.Client", "00.Client", "{0BD1B67C-6B6D-4958-8055-3BF0BAD14EBF}"
+	ProjectSection(SolutionItems) = preProject
+		Client\Source\EnergismReady.cpp = Client\Source\EnergismReady.cpp
+		Client\Header\EnergismReady.h = Client\Header\EnergismReady.h
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01.Engine", "01.Engine", "{6DB11AD3-A215-4F50-B1B9-81E1215EEE6B}"
 EndProject

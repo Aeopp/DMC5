@@ -18,6 +18,7 @@
 #include "Energism.h"
 #include "ShopPanel.h"
 #include "Renderer.h"
+#include "EnergismReady.h"
 
 #include <iostream>
 #include <fstream>
@@ -66,7 +67,8 @@ HRESULT Library_S06::LoadScene()
 	 AddGameObject<FinalReady>();
 	 AddGameObject<Energism>();
 	 AddGameObject<NuClear>();
-
+	 AddGameObject<EnergismReady>();
+	 
 	 //AddGameObject<MainCamera>();
 	 //_Player = AddGameObject<Nero>();
 

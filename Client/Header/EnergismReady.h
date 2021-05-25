@@ -6,8 +6,6 @@
 #include "DynamicLight.h"
 #include "ShockWave.h"
 
-class NuclearLensFlare;
-
 class EnergismReady : public ENGINE::GameObject,
 				      public ENGINE::RenderInterface
 {
@@ -27,7 +25,7 @@ private:
 public:
 	static EnergismReady* Create();
 public:
-	virtual void    RenderReady()                          override;
+	virtual void    RenderReady() override;
 public:
 	void			RenderInit();
 	virtual HRESULT Ready() override;
@@ -44,6 +42,7 @@ public:
 private:
 	void ParticleUpdate(const float DeltaTime);
 	void PlayParticle();
+	void UpdatePosition(const Vector3& Location);
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
@@ -58,6 +57,13 @@ private:
 	{ 194.f / 255.f, 181.f / 255.f, 247.f / 255.f ,1.f };
 
 	// 에디터 변수
+	D3DXCOLOR LaunchColor{ 
+		194.f / 255.f, 181.f / 255.f, 247.f / 255.f ,1.f };
+	float LaunchRadius{5.f};
+	float LaunchFlux{2.2f};
+
+	float GrowTime = 3.f;
+	float PlayTime = 10.f;
 	float NoiseTimeCorr = 1.f;
 
 	float FluxLow = 0.f;
@@ -70,6 +76,6 @@ private:
 
 	float StartColorIntencity = 1.0f;
 	float EndColorIntencity = 3.5f;
-	float GrowEndScale = 0.001f;
+	float GrowEndScale = 0.0005f;
 };
 #endif //
