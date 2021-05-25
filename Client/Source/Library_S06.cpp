@@ -17,6 +17,7 @@
 #include "NuClear.h"
 #include "Energism.h"
 #include "ShopPanel.h"
+#include "Renderer.h"
 
 #include <iostream>
 #include <fstream>
@@ -54,20 +55,20 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-38.744f, -0.388f, 30.861f
-			});
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+	//		-38.744f, -0.388f, 30.861f
+	//		});
+	//}
 
-	// AddGameObject<FinalReady>();
-	/*AddGameObject<Energism>();
-	AddGameObject<NuClear>();*/
+	 AddGameObject<FinalReady>();
+	 AddGameObject<Energism>();
+	 AddGameObject<NuClear>();
 
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	 AddGameObject<MainCamera>();
+	 _Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -294,7 +295,6 @@ void Library_S06::TriggerSetUp()
 
 std::weak_ptr<Trigger> Library_S06::TriggerUlte()
 {
-	// 이건 일반 트리거 
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
@@ -304,13 +304,9 @@ std::weak_ptr<Trigger> Library_S06::TriggerUlte()
 			this->m_pBoss.lock()->Set_Ulte();
 		};
 		
-		// 트리거 위치
 		const Vector3 TriggerLocation{ -37.148f, -0.5f, 30.902f };
-		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 0.5f, 0.5f, 0.5f };
-		// 트리거 정보 등록하자마자 활성화 ?? 
 		const bool ImmediatelyEnable = false;
-		// 트리거가 검사할 오브젝트 태그 
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Monster5300;
 		_Trigger->EventRegist(_CallBack,
 			TriggerLocation,
@@ -327,7 +323,7 @@ void Library_S06::LateInit()
 {
 	SoundSystem::GetInstance()->ClearSound();
 
-	// + 플레이어 초기 위치 잡기 등
+	
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
@@ -347,4 +343,4 @@ void Library_S06::LateInit()
 	BgmPlay();
 
 	_LateInit = true;
-}
+};

@@ -34,7 +34,6 @@ Library_S05* Library_S05::Create()
 {
 	Library_S05* pInstance = new Library_S05;
 	return pInstance;
-};
 }
 
 HRESULT Library_S05::LoadScene()
