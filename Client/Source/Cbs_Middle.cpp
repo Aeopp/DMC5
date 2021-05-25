@@ -9,7 +9,7 @@ Cbs_Middle::Cbs_Middle()
 {
 	m_nTag = Tag_Cbs_Middle;
 	m_BattleInfo.eAttackType = Attack_Front;
-	m_BattleInfo.iAttack = 10;
+	m_BattleInfo.iAttack = 15;
 	D3DXMatrixIdentity(&m_MyRenderMat);
 }
 

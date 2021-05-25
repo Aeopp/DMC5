@@ -689,6 +689,7 @@ HRESULT Em5300Missile::Ready()
 	GameObject::Ready();
 	m_nTag = MonsterWeapon;
 
+	m_BattleInfo.iAttack = 15;
 	RenderInit();
 	// 트랜스폼 초기화 .. 
 	m_pTransform = GetComponent<ENGINE::Transform>();

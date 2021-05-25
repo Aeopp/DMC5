@@ -258,8 +258,9 @@ void CbsLongTrail::ParticleUpdate(const float DeltaTime)
 			SpTransform)
 		{
 			const std::string CurrentSpriteIdx = std::to_string(FMath::Random(1u, 15u));
+			const uint32 ParticleCnt = 13ul;
 			auto _PlayableParticle =
-				ParticleSystem::GetInstance()->PlayParticle("FireSprite" + CurrentSpriteIdx, 22ul , true);
+				ParticleSystem::GetInstance()->PlayParticle("FireSprite" + CurrentSpriteIdx, ParticleCnt, true);
 			// 파이어 파티클 뿌리기 ....
 
 			for (int32 i = 0; i < _PlayableParticle.size(); ++i)

@@ -52,18 +52,18 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+	if (auto SpCamera = AddGameObject<Camera>().lock();
 		SpCamera)
 	{
 		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
 			-38.744f, -0.388f, 30.861f
 			});
-	}*/
+	}
 
 	AddGameObject<FinalReady>();
 
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -71,8 +71,8 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Monster
 	
-	m_pBoss = AddGameObject<Em5300>();
-	m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -38.744f, -0.388f, 30.861f });
+	//m_pBoss = AddGameObject<Em5300>();
+	//m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -38.744f, -0.388f, 30.861f });
 
 #pragma endregion
 
@@ -237,7 +237,7 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06_Pt.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission03;

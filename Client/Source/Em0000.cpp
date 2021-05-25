@@ -506,6 +506,8 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_START
 				&& m_pPlayer.lock()->IsAnimationEnd())
 			{
+				m_pPlayer.lock()->PlayEffect(Eff_Buster);
+				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				m_eState = Hit_Buster_End;
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				Vector3 vRot(0.f, 0.f, 0.f);
@@ -530,6 +532,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_AIR &&
 				m_pPlayer.lock()->Get_PlayingTime()>=0.5f)
 			{
+				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				m_eState = Hit_Air_Buster_End;
 
 				Vector3 vRot(0.f, 0.f, 0.f);

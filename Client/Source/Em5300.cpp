@@ -48,6 +48,14 @@ void Em5300::Fight(const float _fDeltaTime)
 	{
 		if (m_bUlte == false)
 		{
+			for (int i = 0; i < 32; ++i)
+				m_pBullet[i].lock()->m_pMissile.lock()->PlayEnd();
+			for (int i = 0; i < 8; ++i)
+				m_pHoming[i].lock()->m_pMissile.lock()->PlayEnd();
+			for (int i = 0; i < 12; ++i)
+				m_pRain[i].lock()->m_pMissile.lock()->PlayEnd();
+
+
 			m_pTrigger.lock()->TriggerEnable();
 			m_bIng = true;
 			m_eState = Attack_Ulte_Move;
@@ -579,6 +587,12 @@ void Em5300::State_Change(const float _fDeltaTime)
 		if (m_bIng)
 		{
 			m_pMesh->PlayAnimation("Attack_Ulte_Start", false, {}, 1.f, 20.f, true);
+
+			for (int i = 0; i < 16; ++i)
+				m_pBullet[i].lock()->m_pMissile.lock()->PlayStart(true);
+			for (int i = 0; i < 12; ++i)
+				m_pRain[i].lock()->m_pMissile.lock()->PlayStart(true);
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Ulte_Start" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = Attack_Ulte_Loop;
@@ -599,7 +613,14 @@ void Em5300::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Attack_Ulte_Loop2", false, {}, 1.f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Ulte_Loop2" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Attack_Ulte_End;
+
+				for (int i = 0; i < 16; ++i)
+					m_pBullet[i].lock()->m_pMissile.lock()->PlayEnd();
+				for (int i = 0; i < 12; ++i)
+					m_pRain[i].lock()->m_pMissile.lock()->PlayEnd();
+			}
 		}
 		break;
 	case Em5300::Attack_Ulte_End:
@@ -845,8 +866,8 @@ HRESULT Em5300::Ready()
 
 	RenderInit();
 
-	m_BattleInfo.iMaxHp = 3000;
-	m_BattleInfo.iHp = 1000;
+	m_BattleInfo.iMaxHp = 3500;
+	m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
