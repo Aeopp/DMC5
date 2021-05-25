@@ -221,6 +221,18 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 				}
 				else
 				{
+					if (auto SpPlayer = _Player.lock();
+						SpPlayer)
+					{
+						auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+						if (2u <= UpgradeDesc._BatteryUpgradeCount)
+							SpPlayer->BuyUpgradedOverture();
+						if (2u <= UpgradeDesc._TransformUpgradeCount)
+							SpPlayer->BuyCbsMiddle();
+						if (3u <= UpgradeDesc._TransformUpgradeCount)
+							SpPlayer->BuyCbsLong();
+					}
+
 					Sp->ResetCmd();
 					Sp->SetActive(false);
 					_BtlPanel.lock()->SetActive(true);
@@ -751,10 +763,10 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 		};
 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.464f, -0.275f, 32.011f });
+			lock()->SetPosition({ 0.464f, -0.33f, 32.011f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.071f, -0.3f, 33.407f });
+			lock()->SetPosition({ 0.071f, -0.36f, 33.407f });
 
 		const Vector3 TriggerLocation{ -0.23f, 0.0637f, 32.f };
 		const Vector3 TriggerBoxSize{ 100.f, 100.f, 100.f };
@@ -814,10 +826,10 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 		};
 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.464f, -0.275f, 32.011f });
+			lock()->SetPosition({ 0.464f, -0.33f, 32.011f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.028f, -0.339f, 31.884f });
+			lock()->SetPosition({ 0.028f, -0.36f, 31.884f });
 
 		const Vector3 TriggerLocation{ -0.23f, 0.0637f, 32.f };
 		const Vector3 TriggerBoxSize { 6.259999f, 1.f, 1.414996f };
