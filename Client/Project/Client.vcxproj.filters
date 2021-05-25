@@ -573,6 +573,7 @@
     </ClInclude>
     <ClInclude Include="..\Header\NuClear.h" />
     <ClInclude Include="..\Header\NuClearLensFlare.h" />
+    <ClInclude Include="..\Header\Energism.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -928,6 +929,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\NuClear.cpp" />
     <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
+    <ClCompile Include="..\Source\Energism.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -1012,6 +1014,7 @@
     <None Include="..\..\Resource\Shader\Effect\Reverberation.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\FinalReady.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\NuClear.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Energism.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

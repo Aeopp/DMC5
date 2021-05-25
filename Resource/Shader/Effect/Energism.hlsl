@@ -5,35 +5,10 @@ uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
 
 uniform float exposure_corr;
-
 uniform float ColorIntencity;
-uniform float AlphaFactor;
-float Time;
 
-
-texture LightMskMap;
-sampler LightMsk = sampler_state
-{
-    texture = LightMskMap;
-    minfilter = linear;
-    magfilter = linear;
-    mipfilter = linear;
-    AddressU = wrap;
-    AddressV = wrap;
-    sRGBTexture = false;
-};
-texture NoiseMap;
-sampler Noise = sampler_state
-{
-    texture = NoiseMap;
-    minfilter = linear;
-    magfilter = linear;
-    mipfilter = linear;
-    AddressU = wrap;
-    AddressV = wrap;
-    sRGBTexture = false;
-};
-
+uniform float CurveScale;
+uniform float Time;
 
 texture AlbmMap;
 sampler Albm = sampler_state
@@ -45,6 +20,18 @@ sampler Albm = sampler_state
     AddressU = wrap;
     AddressV = wrap;
     sRGBTexture = true;
+};
+
+texture NoiseMap;
+sampler Noise = sampler_state
+{
+    texture = NoiseMap;
+    minfilter = linear;
+    magfilter = linear;
+    mipfilter = linear;
+    AddressU = wrap;
+    AddressV = wrap;
+    sRGBTexture = false;
 };
 
 texture DepthMap;
@@ -64,6 +51,12 @@ void VsMain(in out float4 Position : POSITION0,
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
+    float temp = UV.x;
+    UV.x = UV.y;
+    UV.y = temp;
+    
+    //UV.x *= CurveScale;    
+    //UV.x += (Time);
 };
 
 void PsMain(out float4 Color : COLOR0,
@@ -71,19 +64,17 @@ void PsMain(out float4 Color : COLOR0,
             in float4 ClipPosition : TEXCOORD1 ,
             in float Factor : TEXCOORD2)
 {
-    Color.rgb = tex2D(Albm, UV).rgb;
-    float4 AlbmTimeSample = tex2D(Albm, Time);
-    Color.rgb *= AlbmTimeSample.rgb;
-    float4 LightMskSample = tex2D(LightMsk, UV);
-    Color.rgb *= LightMskSample.a;
-    float4 NoiseSample =     tex2D(Noise, UV + Time);
-    Color.rgb *= NoiseSample.a;
+    float2 NoiseUV = UV;
     
-    Color.a = LightMskSample.a;
-    Color.a *= NoiseSample.a;
-     // Color.a *= AlphaFactor;
+    NoiseUV.x *= CurveScale;
+    NoiseUV.x += (Time);
+    float4 NoiseSample = tex2D(Noise, NoiseUV);
     
+    UV.xy += NoiseSample.xy;
+    
+    Color.rgba = tex2D(Albm, UV).rgba;
     Color.rgb *= ColorIntencity;
+    
     Color.rgb *= exposure_corr;
     
       // 소프트 파티클 계산 .... 

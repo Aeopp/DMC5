@@ -11,6 +11,9 @@ class Energism : public ENGINE::GameObject,
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _Mesh{};
+	std::shared_ptr<ENGINE::Texture> _AlbmMap{};
+	std::shared_ptr<ENGINE::Texture> _NoiseMap{};
+
 	float T = 0.0f;
 private:
 	explicit Energism() = default;
@@ -33,16 +36,16 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& Location , const bool bEditPlay=false);
-	void Kaboom();
+	void PlayStart(const Vector3& Location);
 	void PlayEnd();
 private:
-	void ParticleUpdate(const float DeltaTime);
-	void PlayParticle();
-	void KaboomParticle();
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	float PlayTime = 6.f;
+	float TimeCorr = 4.f;
+	float ColorIntencity = 0.2f;
+	float CurveScale = 40.f;
 };
 #endif //

@@ -15,7 +15,7 @@
 #include "Em5300.h"
 #include "FinalReady.h"
 #include "NuClear.h"
-
+#include "Energism.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -61,6 +61,7 @@ HRESULT Library_S06::LoadScene()
 	}
 
 	// AddGameObject<FinalReady>();
+	AddGameObject<Energism>();
 	AddGameObject<NuClear>();
 
 	/*AddGameObject<MainCamera>();
