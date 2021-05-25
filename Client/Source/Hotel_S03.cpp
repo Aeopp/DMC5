@@ -45,12 +45,12 @@ Hotel_S03* Hotel_S03::Create()
 	return pInstance;
 }
 
-
 HRESULT Hotel_S03::LoadScene()
 {
 	// Load Start
 	SoundSystem::GetInstance()->ClearSound();
 	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false);
+	
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -156,6 +156,7 @@ HRESULT Hotel_S03::LoadScene()
 #pragma region UI
 
 	_BtlPanel = AddGameObject<BtlPanel>();
+
 	_ShopPanel = AddGameObject<ShopPanel>();
 	if (auto Sp = _ShopPanel.lock(); Sp)
 	{
@@ -196,6 +197,8 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
+	CheckShopAvailable();
+
 	/* ---------- 치트 ---------- */
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
@@ -206,27 +209,6 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	/* -------------------------- */
-
-	if (_IsShopAvailable)
-	{
-		if (Input::GetKeyDown(DIK_P))
-		{
-			if (auto Sp = _ShopPanel.lock(); Sp)
-			{
-				if (!Sp->IsActive())
-				{
-					Sp->SetActive(true);
-					_BtlPanel.lock()->SetActive(false);
-				}
-				else
-				{
-					Sp->ResetCmd();
-					Sp->SetActive(false);
-					_BtlPanel.lock()->SetActive(true);
-				}
-			}
-		}
-	}
 
 	if (_DecreaseHotel03_Volume)
 		_Hotel03_Volume = FMath::Lerp(_Hotel03_Volume, 0.f, _fDeltaTime);
@@ -504,7 +486,7 @@ void Hotel_S03::BgmPlay()
 void Hotel_S03::TriggerSetUp()
 {
 	TriggerUpGround();
-	TriggerBeforeShop(TriggerShop(TriggerHole())); // ㅋㅋ
+	TriggerBeforeShop(TriggerShop(TriggerHole()));
 	TriggerNextScene();
 };
 
@@ -711,12 +693,6 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerShop(const std::weak_ptr<class Trigger>
 		const std::function<void()> _CallBack =
 			[this, _NextTrigger]()
 		{
-			// 임시
-			_Player.lock()->BuyCbsLong();
-			_Player.lock()->BuyCbsMiddle();
-			_Player.lock()->BuyUpgradedOverture();
-			//
-
 			_IsShopAvailable = true;
 
 			_NextTrigger.lock()->TriggerEnable();
@@ -756,10 +732,10 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 		};
 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.464f, -0.275f, 32.011f });
+			lock()->SetPosition({ 0.464f, -0.33f, 32.011f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.071f, -0.3f, 33.407f });
+			lock()->SetPosition({ 0.071f, -0.36f, 33.407f });
 
 		const Vector3 TriggerLocation{ -0.23f, 0.0637f, 32.f };
 		const Vector3 TriggerBoxSize{ 100.f, 100.f, 100.f };
@@ -819,10 +795,10 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 		};
 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.464f, -0.275f, 32.011f });
+			lock()->SetPosition({ 0.464f, -0.33f, 32.011f });
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ 0.028f, -0.339f, 31.884f });
+			lock()->SetPosition({ 0.028f, -0.36f, 31.884f });
 
 		const Vector3 TriggerLocation{ -0.23f, 0.0637f, 32.f };
 		const Vector3 TriggerBoxSize { 6.259999f, 1.f, 1.414996f };
@@ -838,6 +814,7 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 			SoundSystem::GetInstance()->Play("BattleStart1", 1.f, true);
 			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
 			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
+			
 			// 스카이 왜곡 시작 ...
 			Renderer::GetInstance()->SkyDistortionStart();
 
@@ -872,7 +849,7 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 	}
 
 	return _StartTrigger;
-};
+}
 
 void Hotel_S03::TriggerNextScene()
 {
@@ -920,17 +897,62 @@ void Hotel_S03::TriggerNextScene()
 	}
 };
 
+void Hotel_S03::ApplyShopUpgradeDesc()
+{
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	}
+}
+
+void Hotel_S03::CheckShopAvailable()
+{
+	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
+	{
+		if (auto Sp = _ShopPanel.lock(); Sp)
+		{
+			if (!Sp->IsActive())
+			{
+				Sp->SetActive(true);
+				_BtlPanel.lock()->SetActive(false);
+			}
+			else
+			{
+				ApplyShopUpgradeDesc();
+				Sp->ResetCmd();
+				Sp->SetActive(false);
+				_BtlPanel.lock()->SetActive(true);
+			}
+		}
+	}
+}
+
 void Hotel_S03::LateInit()
 {
 	//SoundSystem::GetInstance()->ClearSound();
 
-	// + 플레이어 초기 위치 잡기 등
-	if (_Player.expired() == false)
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
 	{
-		_Player.lock()->GetComponent<Transform>().lock()->SetPosition
-		({ -1.77158f, 1.36541f, 23.86f });
-		_Player.lock()->SetAngle(180.f);
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -1.77158f, 1.36541f, 23.86f });
+		SpPlayer->SetAngle(180.f);
 	}
+
+	ApplyShopUpgradeDesc();
 
 	if (auto SpMainCamera = _MainCamera.lock();
 		SpMainCamera)

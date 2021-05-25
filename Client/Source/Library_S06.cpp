@@ -16,6 +16,8 @@
 #include "FinalReady.h"
 #include "NuClear.h"
 #include "Energism.h"
+#include "ShopPanel.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -36,10 +38,10 @@ Library_S06* Library_S06::Create()
 	return pInstance;
 }
 
-
 HRESULT Library_S06::LoadScene()
 {
 	// Load Start
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -162,7 +164,6 @@ HRESULT Library_S06::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
-
 void Library_S06::LoadObjects(const std::filesystem::path& path)
 {
 	std::ifstream inputStream{ path };
@@ -253,6 +254,33 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	_Renderer->StarFactor = 0.9f;
 	Renderer::GetInstance()->SkyOriginColor = Vector4{ 1.f,1.f,1.f,1.f };
 
+	_Renderer->SkyDistortionStart(20.f, 0.110972f);
+	_Renderer->SkyDistortionIntencity = 100.f;
+	_Renderer->DistortionColor = Vector4{0.f,187.f/255.f,1.f,1.f};
+}
+
+void Library_S06::ApplyShopUpgradeDesc()
+{
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+
+		// UpgradeDesc._RebellionUpgradeCount 1이면 리벨리온 산거임 ㅇㅇ
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	}
 }
 
 void Library_S06::TriggerSetUp()
@@ -300,12 +328,13 @@ void Library_S06::LateInit()
 	SoundSystem::GetInstance()->ClearSound();
 
 	// + 플레이어 초기 위치 잡기 등
-
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-33.711f,-0.994f,30.884f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -33.711f, -0.994f, 30.884f });
 	}
+
+	ApplyShopUpgradeDesc();
 
 	Renderer::GetInstance()->LateSceneInit();
 

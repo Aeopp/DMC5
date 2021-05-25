@@ -22,11 +22,11 @@
 #include "TimeSystem.h"
 #include "BrokenPeople.h"
 #include "ShockWave.h"
-
+#include "NeroFSM.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
-#include "NeroFSM.h"
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -50,15 +50,14 @@ Hotel_S01* Hotel_S01::Create()
 	return pInstance;
 }
 
-
 HRESULT Hotel_S01::LoadScene()
 {
 	// Load Start
 	SoundSystem::GetInstance()->ClearSound();
-
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 	SoundSystem::GetInstance()->Play("Rain2", 0.15f, false);
 	SoundSystem::GetInstance()->Play("Hotel01", _Hotel01_Volume, false);
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -71,7 +70,7 @@ HRESULT Hotel_S01::LoadScene()
 
 #pragma region Player & Camera
 
-	// AddGameObject<Camera>();
+	//AddGameObject<Camera>();
 	   
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -192,7 +191,7 @@ HRESULT Hotel_S01::LoadScene()
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 
-	//메인 카메라에 클리포트 블록 전달
+	// 메인 카메라에 클리포트 블록 전달
 	if(!_MainCamera.expired())
 		_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
 
@@ -248,7 +247,7 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	}
 	/* -------------------------- */
 
-	if(_DecreaseHotel01_Volume)
+	if (_DecreaseHotel01_Volume)
 		_Hotel01_Volume = FMath::Lerp(_Hotel01_Volume, 0.f, _fDeltaTime);
 	else
 		_Hotel01_Volume = FMath::Lerp(_Hotel01_Volume, 0.12f, _fDeltaTime * 0.5f);
@@ -256,12 +255,13 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	if (_DecreaseBattle1_Volume)
 	{
 		_Battle1_Volume = FMath::Lerp(_Battle1_Volume, 0.f, _fDeltaTime);
-		SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume,false);
+		SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume, false);
 	}
 
 	_Rain_Volume = FMath::Lerp(_Rain_Volume, 0.f, _fDeltaTime * 0.5f);
 	SoundSystem::GetInstance()->Play("Hotel01", _Hotel01_Volume, false);
 	SoundSystem::GetInstance()->Play("Rain", _Rain_Volume, false, {}, 11000);
+	
 	return S_OK;
 }
 
@@ -462,7 +462,6 @@ void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
 		sFullPath = sBasePath / sFullPath;
 		//
 	
-
 		Resources::Load<StaticMesh>(sFullPath);
 		//
 		auto objectArr = iter->FindMember("List")->value.GetArray();
@@ -491,6 +490,28 @@ void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
 
 			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
+	}
+}
+
+void Hotel_S01::ApplyShopUpgradeDesc()
+{
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
 	}
 }
 
@@ -536,9 +557,7 @@ void Hotel_S01::TriggerSetUp()
 	Trigger4st();
 };
 
-void Hotel_S01::TriggerElectricBoard(
-	const std::weak_ptr<Trigger>&
-	_BattleTrigger)
+void Hotel_S01::TriggerElectricBoard(const std::weak_ptr<Trigger>& _BattleTrigger)
 {
 	// 이건 일반 트리거 
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
@@ -982,7 +1001,6 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
 			SoundSystem::GetInstance()->Play("Em100Spawn", 1.f, true);
 
-
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetGlobalActive(true, true);
@@ -1073,17 +1091,20 @@ void Hotel_S01::Trigger4st()
 
 void Hotel_S01::LateInit()
 {
-	
-
-	if (!_Player.expired())
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
 	{
-		_Player.lock()->GetComponent<Transform>().lock()->SetPosition({ -9.5f, -0.23f, -5.13f });
-		_Player.lock()->SetAngle(-90.f);
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -9.5f, -0.23f, -5.13f });
+		SpPlayer->SetAngle(-90.f);
 	}
-	if (!_MainCamera.expired())
+
+	ApplyShopUpgradeDesc();
+
+	if (auto SpMainCamera = _MainCamera.lock();
+		SpMainCamera)
 	{
-		_MainCamera.lock()->SetAngle({-6.8f,-90.f,0.f});
-		_MainCamera.lock()->SetStartPos();
+		 SpMainCamera->SetAngle({-6.8f,-90.f,0.f});
+		 SpMainCamera->SetStartPos();
 	}
 
 	Renderer::GetInstance()->LateSceneInit();

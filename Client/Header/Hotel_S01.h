@@ -3,14 +3,16 @@
 #include "Scene.h"
 
 class Trigger;
+
 class Hotel_S01 : public Scene
 {
 private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class MainCamera> _MainCamera{};
-	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
+	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock{};
 	bool _LateInit = false;
+
 	float _Hotel01_Volume = 0.12f;
 	float _Battle1_Volume = 0.1f;
 	float _Battle2_Volume = 0.15f;
@@ -18,6 +20,7 @@ private:
 	bool _DecreaseHotel01_Volume = false;
 	bool _DecreaseBattle1_Volume = false;
 	bool _DecreaseBattle2_Volume = false;
+
 private:
 	explicit Hotel_S01();
 	virtual ~Hotel_S01() = default;
@@ -32,13 +35,16 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-private:	
+private:
+	void LateInit();
 	void RenderDataSetUp(const bool bTest);
 	void BgmPlay();
+	void ApplyShopUpgradeDesc();
+private:
 	void LoadObjects(const std::filesystem::path& path, const bool _bAni = false);
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
-
+private:
 	void TriggerSetUp();
 	//  플레이어가 광장 전광판을 처음 마주친 시점 .
 	void TriggerElectricBoard(const std::weak_ptr<Trigger>&_BattleTrigger);
@@ -53,6 +59,5 @@ private:
 
 	void Trigger4st();
 
-	void LateInit();
 };
 #endif // !__M01_HOTEL_S01_H__
