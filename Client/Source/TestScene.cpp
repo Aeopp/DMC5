@@ -101,10 +101,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//_Camera = AddGameObject<Camera>();
+	_Camera = AddGameObject<Camera>();
 	
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player     = AddGameObject<Nero>();
+	//_MainCamera = AddGameObject<MainCamera>();
+	//_Player     = AddGameObject<Nero>();
    
 #pragma endregion
 
@@ -125,8 +125,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(1);
 
 #pragma endregion
 
@@ -174,10 +174,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	//AddGameObject<BtlPanel>();
 
-	//AddGameObject<BtlPanel>().lock()->SetActive(false);
-	//AddGameObject<ShopPanel>();
+	AddGameObject<BtlPanel>().lock()->SetActive(false);
+	AddGameObject<ShopPanel>();
 
 #pragma endregion
 

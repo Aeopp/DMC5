@@ -52,6 +52,7 @@ private:
 	void TriggerFirstButterFlyMeetCamera(const std::weak_ptr<class Trigger>& _NextTrigger);
 	std::weak_ptr<Trigger> TriggerFirstButterFlyMeet();
 	void TriggerPuzzleStart();
+	void TriggerShop();
 	void TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger);
 	std::weak_ptr<Trigger> TriggerNextScene();
 };

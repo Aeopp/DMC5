@@ -174,6 +174,7 @@ public:
 	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
 	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };
 private:
+	float PreviousExposure = 1.f;
 	bool bStars = true;
 	FadeEffect _FadeEffect{};
 	bool bPtLightScrRtTest = false;

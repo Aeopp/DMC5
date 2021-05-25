@@ -118,9 +118,6 @@ void ShockWave::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	else
 		_Info.Fx->SetFloat("DirectionFactor", -1.f);
 
-
-	
-
 	if (bBlurMsk)
 	{
 		const uint32 SubsetCnt = _PlaneMesh->GetNumSubset();
@@ -334,7 +331,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 1.104f;
 		BlurIntencity.second = 1.186f;
 		BlurAlpha.first = 0.675f;
-		BlurAlpha.second = 1.f;
+		BlurAlpha.second = 0.8f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -346,28 +343,27 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		ScaleLerp.first = 0.002f;
 		ScaleLerp.second = 0.076f;
 		BlurIntencity.first = 0.700f;
-		BlurIntencity.second = 1.002f;
+		BlurIntencity.second = 1.00f;
 		BlurAlpha.first = 0.757f;
-		BlurAlpha.second = 0.900f;
+		BlurAlpha.second = 0.8f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
 		break;
 	case Option::Change:
-		PlayTime = 1.0f;
-		EndT = 1.0f;
+		PlayTime = 1.f;
+		EndT = 1.f;
 		DistortionIntencity = 0.000f;
-		ScaleLerp.first = 0.000f;
-		ScaleLerp.second = 0.103f;
+		ScaleLerp.first = 0.0f;
+		ScaleLerp.second = 0.307f;
 		BlurIntencity.first = 0.0f;
-		BlurIntencity.second = 1.f;
-		BlurAlpha.first = 0.0f;
-		BlurAlpha.second = 0.4f;
-		BlurMaxLength = 27.833f;
-		DistortionAlpha = 1.f;
-		Color = { 15.f / 255.f , 0.f / 255.f ,0.f / 255.f ,5.f / 255.f };
+		BlurIntencity.second = 2.049f;
+		BlurAlpha.first = 0.675f;
+		BlurAlpha.second = 1.0f;
+		BlurMaxLength = 40.9f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
 		this->bBlurMsk = true;
-		this->bDirectionReverse = true;
 		break;
 	case Option::Hit:
 		PlayTime = 0.55f;
@@ -445,15 +441,15 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		this->bDirectionReverse = true;
 		break;
 	case StreakEnd:
-		PlayTime = 0.5f;
-		EndT = 0.5f;
+		PlayTime = 0.6f;
+		EndT = 0.6f;
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.0f;
 		ScaleLerp.second = 0.0125f;
 		BlurIntencity.first = 0.0f;
 		BlurIntencity.second = 4.0f;
-		BlurAlpha.first = 0.0f;
-		BlurAlpha.second = 0.40f;
+		BlurAlpha.first = 0.35f;
+		BlurAlpha.second = 0.35f;
 		BlurMaxLength = 70.f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
@@ -461,30 +457,31 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		this->bDirectionReverse = true;
 		break;
 	case Streak:
-		PlayTime = 0.5f;
-		EndT = 0.5f;
-		DistortionIntencity = 0.000f;
-		ScaleLerp.first = 0.0f;
-		ScaleLerp.second = 0.307f;
-		BlurIntencity.first = 0.0f;
-		BlurIntencity.second = 2.049f;
-		BlurAlpha.first = 0.4f;
-		BlurAlpha.second = 0.4f;
-		BlurMaxLength = 40.9f;
-		DistortionAlpha = 0.0f;
-		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
-		this->bBlurMsk = true;
-		break;
-	case SplitEnd:
-		PlayTime = 0.5f;
-		EndT = 0.5f;
+		PlayTime = 0.6f;
+		EndT = 0.6f;
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.0f;
 		ScaleLerp.second = 0.0125f;
 		BlurIntencity.first = 0.0f;
 		BlurIntencity.second = 4.0f;
-		BlurAlpha.first = 0.0f;
-		BlurAlpha.second = 0.40f;
+		BlurAlpha.first = 0.35f;
+		BlurAlpha.second = 0.35f;
+		BlurMaxLength = 70.f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
+		this->bBlurMsk = true;
+		this->bDirectionReverse = true;
+		break;
+	case SplitEnd:
+		PlayTime = 0.6f;
+		EndT = 0.6f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.0f;
+		ScaleLerp.second = 0.0125f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 4.0f;
+		BlurAlpha.first = 0.35f;
+		BlurAlpha.second = 0.35f;
 		BlurMaxLength = 70.f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
@@ -492,33 +489,50 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		this->bDirectionReverse = true;
 		break;
 	case Split:
-		PlayTime = 0.5f;
-		EndT = 0.5f;
+		PlayTime = 0.6f;
+		EndT = 0.6f;
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.0f;
-		ScaleLerp.second = 0.307f;
-		BlurIntencity.first = 0.0f;
-		BlurIntencity.second = 2.049f;
-		BlurAlpha.first = 0.4f;
-		BlurAlpha.second = 0.4f;
-		BlurMaxLength = 40.9f;
-		DistortionAlpha = 0.0f;
-		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
-		this->bBlurMsk = true;
-		break;
-	case Buster:
-		PlayTime = 0.5f;
-		EndT = 0.5f;
-		DistortionIntencity = 0.000f;
-		ScaleLerp.first = 0.0f;
-		ScaleLerp.second = 0.0250f;
+		ScaleLerp.second = 0.0125f;
 		BlurIntencity.first = 0.0f;
 		BlurIntencity.second = 4.0f;
-		BlurAlpha.first = 0.0f;
-		BlurAlpha.second = 0.40f;
+		BlurAlpha.first = 0.35f;
+		BlurAlpha.second = 0.35f;
 		BlurMaxLength = 70.f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
+		this->bBlurMsk = true;
+		this->bDirectionReverse = true;
+		break;
+	case Buster:
+		PlayTime = 1.f;
+		EndT = 1.f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.0f;
+		ScaleLerp.second = 0.0125f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 4.0f;
+		BlurAlpha.first = 0.35f;
+		BlurAlpha.second = 0.35f;
+		BlurMaxLength = 70.f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
+		this->bBlurMsk = true;
+		this->bDirectionReverse = true;
+		break;
+	case Kaboom:
+		PlayTime = 1.5f;
+		EndT = 1.5f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.0f;
+		ScaleLerp.second = 0.1f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 8.f;
+		BlurAlpha.first = 0.38f;
+		BlurAlpha.second = 0.38f;
+		BlurMaxLength = 70.f;
+		DistortionAlpha = 0.0f;
+		Color = { 1.83f / 255.f , 0.91f / 255.f ,1.6f / 255.f ,0.0f / 255.f };
 		this->bBlurMsk = true;
 		this->bDirectionReverse = true;
 		break;

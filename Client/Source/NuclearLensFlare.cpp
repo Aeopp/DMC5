@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\Header\FinalReady.h"
+#include "..\Header\NuclearLensFlare.h"
 #include "Transform.h"
 #include "Subset.h"
 #include "TextureType.h"
@@ -7,22 +7,22 @@
 #include <iostream>
 #include "ParticleSystem.h"
 
-void FinalReady::Free()
+void NuclearLensFlare::Free()
 {
 	GameObject::Free();
 };
 
-std::string FinalReady::GetName()
+std::string NuclearLensFlare::GetName()
 {
-	return "FinalReady";
+	return "NuclearLensFlare";
 };
 
-FinalReady* FinalReady::Create()
+NuclearLensFlare* NuclearLensFlare::Create()
 {
-	return new FinalReady{};
+	return new NuclearLensFlare{};
 };
 
-void FinalReady::RenderReady()
+void NuclearLensFlare::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();
 
@@ -33,36 +33,12 @@ void FinalReady::RenderReady()
 			FMath::Scale(_SpTransform->GetScale()) *
 			Renderer::GetInstance()->_RenderInfo.Billboard *
 			FMath::Translation(_SpTransform->GetPosition());
-	};
+	}
 };
 
-void FinalReady::PlayParticle()
+void NuclearLensFlare::RenderInit()
 {
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
-		SpTransform)
-	{
-		const uint32 ParticleCnt = 5555u;
-		const Matrix Mat = FMath::WorldMatrix
-		(SpTransform->GetScale(),
-			Vector3{ 0.f,0.f,0.f },
-			SpTransform->GetPosition());
-
-		auto _PlayableParticle = ParticleSystem::GetInstance()->
-			PlayParticle("ArtemisCylinderParticle", ParticleCnt, true);
-
-		for (int32 i = 0; i < _PlayableParticle.size();
-			++i)
-		{
-			auto& _PlayInstance = _PlayableParticle[i];
-			_PlayInstance->PlayDescBind(Mat);
-		}
-
-	}
-}
-
-void FinalReady::RenderInit()
-{
-	m_nTag = Eff_FinalReady;
+	m_nTag = Eff_NuclearLensFlare;
 	// 렌더를 수행해야하는 오브젝트라고 (렌더러에 등록 가능 ) 알림.
 	// 렌더 인터페이스 상속받지 않았다면 키지마세요.
 	SetRenderEnable(true);
@@ -79,14 +55,16 @@ void FinalReady::RenderInit()
 	{
 		{"Debug" ,
 		[this](const DrawInfo& _Info)
-		{
+			{
 			RenderDebug(_Info);
+			}
 		}
-	} };
+	};
 
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"FinalReady",
+
+		{"LensFlare",
 		[this](const DrawInfo& _Info)
 			{
 				this->RenderAlphaBlendEffect(_Info);
@@ -101,18 +79,18 @@ void FinalReady::RenderInit()
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
-	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
-		(L"..\\..\\Usable\\LocationMesh\\Cylinder.fbx", 
-			_InitInfo);
+	_Mesh = Resources::Load<ENGINE::StaticMesh>
+		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _InitInfo);
 
-	_Alpg = Resources::Load<ENGINE::Texture>(
-		L"..\\..\\Usable\\LightShaft\\1.tga");
+	_Alpg = Resources::Load<ENGINE::Texture>
+		(L"..\\..\\Usable\\Artemis\\LightSphereLensFlare.tga");
 
-	PushEditEntity(_StaticMesh.get());
+	PushEditEntity(_Mesh.get());
 	PushEditEntity(_Alpg.get());
 };
 
-void FinalReady::PlayStart(const Vector3& Location)
+void NuclearLensFlare::PlayStart(
+	const Vector3& Location)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -120,46 +98,45 @@ void FinalReady::PlayStart(const Vector3& Location)
 		SpTransform->SetPosition(Location);
 	}
 
-	this->PlayTime = PlayTime;
 	T = 0.0f;
 	_RenderProperty.bRender = true;
+};
 
-	PlayParticle();
-}; 
-
-void FinalReady::PlayEnd()
+void NuclearLensFlare::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 };
 
-void FinalReady::RenderAlphaBlendEffect(const DrawInfo& _Info)
+void NuclearLensFlare::UpdatePlayVariable(const float Lerp )
+{
+	const float ClampLerp = FMath::Clamp(Lerp, 0.0f, 1.f);
+	const float CurScale = FMath::Lerp(0.0f, ScaleEnd, ClampLerp);
+	GetComponent<Transform>().lock()->SetScale(Vector3{ CurScale ,CurScale ,CurScale });
+	CurColorIntencity = FMath::Lerp(0.0f, ColorIntencity, ClampLerp);
+}; 
+
+void NuclearLensFlare::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	const uint32 Numsubset = _Mesh->GetNumSubset();
 
 	if (Numsubset > 0)
 	{
 		_Info.Fx->SetMatrix("matWorld", &World);
-		_Info.Fx->SetTexture("AlpgMap", 
-						_Alpg->GetTexture());
 
-		const float LerpT = 
-			FMath::Clamp ( T / LerpEndT ,0.f,1.f );
+		_Info.Fx->SetFloat(
+			"ColorIntencity", CurColorIntencity);
+		const float AlphaFactor = 1.f;
+		_Info.Fx->SetFloat(
+			"AlphaFactor", CurColorIntencity *(1.0f/ColorIntencity)  * _AlphaFactor);
 
-		const float CurColorIntencity = 
-			FMath::Lerp(0.f, ColorIntencity, LerpT);
-
-		const float AlphaFactor  = 
-			FMath::Lerp(0.f, AlphaIntencity,LerpT);
-
-		_Info.Fx->SetFloat("ColorIntencity", CurColorIntencity);
-		_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
-	};
+		_Info.Fx->SetTexture("AlpgMap", _Alpg->GetTexture());
+	}
 
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = _Mesh->GetSubset(i).lock();
 			SpSubset)
 		{
 			SpSubset->Render(_Info.Fx);
@@ -168,18 +145,17 @@ void FinalReady::RenderAlphaBlendEffect(const DrawInfo& _Info)
 }
 
 
-void FinalReady::RenderDebug(const DrawInfo& _Info)
+void NuclearLensFlare::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
 
-	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+	const uint32 Numsubset = _Mesh->GetNumSubset();
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
+		if (auto SpSubset = _Mesh->GetSubset(i).lock();
 			SpSubset)
 		{
-
 			SpSubset->Render(_Info.Fx);
 		};
 	};
@@ -187,7 +163,7 @@ void FinalReady::RenderDebug(const DrawInfo& _Info)
 };
 
 
-HRESULT FinalReady::Ready()
+HRESULT NuclearLensFlare::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
@@ -197,53 +173,50 @@ HRESULT FinalReady::Ready()
 	return S_OK;
 };
 
-HRESULT FinalReady::Awake()
+HRESULT NuclearLensFlare::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f  });
-	m_pTransform.lock()->SetScale({ 0.001f ,0.001f ,0.001f });
-	m_pTransform.lock()->SetRotation(
-		{ 0.f ,0.f ,0.f});
+	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.12f,0.f });
+	m_pTransform.lock()->SetScale({ 0.001f,0.001f ,0.001f });
+	m_pTransform.lock()->SetRotation(Vector3{ 0.0f ,0.f ,0.0f });
 
 	return S_OK;
-};
+}
 
-
-HRESULT FinalReady::Start()
+HRESULT NuclearLensFlare::Start()
 {
 	GameObject::Start();
 
 	return S_OK;
-};
+}
 
-
-UINT FinalReady::Update(const float _fDeltaTime)
+UINT NuclearLensFlare::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-
-	if (_RenderProperty.bRender == false) 
-		return 0;
+	if (_RenderProperty.bRender == false) return 0;
 
 	T += _fDeltaTime;
 
+	// 끝날 쯔음 .
 	if (T > PlayTime)
 	{
 		PlayEnd();
 	};
 
+
+
 	return 0;
 }
 
-
-UINT FinalReady::LateUpdate(const float _fDeltaTime)
+UINT NuclearLensFlare::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
 
 	return 0;
 }
 
-void FinalReady::Editor()
+void NuclearLensFlare::Editor()
 {
 	GameObject::Editor();
 
@@ -251,31 +224,27 @@ void FinalReady::Editor()
 	{
 		const std::string ChildName = GetName() + "_Play";
 		ImGui::BeginChild(ChildName.c_str());
-		if (ImGui::SmallButton("PlayStart"))
+
+		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart(GetComponent<Transform>().lock()->GetPosition());
 		}
-		ImGui::SliderFloat("AlphaIntencity", &AlphaIntencity, 0.0f, 1.f);
+
 		ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.0f, 1.f);
-
-		float LerpEndT = 2.f;
-		float PlayTime = 5.f;
-
-
-
+		ImGui::SliderFloat("_AlphaFactor", &_AlphaFactor, 0.0f, 1.f);
+		; 
+		ImGui::SliderFloat("ScaleEnd", &ScaleEnd, 0.0f, 1.f);
+	
 		ImGui::EndChild();
 	}
 };
 
-void FinalReady::OnEnable()
+void NuclearLensFlare::OnEnable()
 {
 	GameObject::OnEnable();
 };
 
-void FinalReady::OnDisable()
+void NuclearLensFlare::OnDisable()
 {
 	GameObject::OnDisable();
 };
-
-
-

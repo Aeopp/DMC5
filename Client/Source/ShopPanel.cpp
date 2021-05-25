@@ -12,10 +12,10 @@
 // static var
 ShopPanel::UpgradeDesc ShopPanel::_UpgradeDesc =
 { 
-	9999999u,	// _ExgaugeUpCost
-	39000u,		// _BatteryCost
+	765u,		// _ExgaugeUpCost
+	3900u,		// _BatteryCost
 	2830u,		// _TransformCost
-	9999999u,	// _RebellionCost
+	100000u,	// _RebellionCost
 
 	1u,			// _ExgaugeUpUpgradeCount
 	1u,			// _BatteryUpgradeCount
@@ -2191,8 +2191,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						if (3u == _UpgradeDesc._ExgaugeUpUpgradeCount)
 							_UpgradeDesc._ExgaugeUpCost = 9999999u;
 						else if (2u == _UpgradeDesc._ExgaugeUpUpgradeCount)
-							_UpgradeDesc._ExgaugeUpCost = 9999999u;
-						
+							_UpgradeDesc._ExgaugeUpCost = 3460u;
+
 						break;
 
 					case WP_OVERTURE:

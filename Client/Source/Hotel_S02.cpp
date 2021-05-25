@@ -76,14 +76,14 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	//}
+	if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	}
 	
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	//_MainCamera = AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -458,6 +458,7 @@ void Hotel_S02::TriggerSetUp()
 {
 	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
 	TriggerPuzzleStart();
+	TriggerShop();
 	TriggerWallSmash();
 	TriggerLastRoomBattle(TriggerNextScene());
 }
@@ -682,7 +683,35 @@ void Hotel_S02::TriggerPuzzleStart()
 			ImmediatelyEnable,
 			TargetTag);
 	}
-};
+}
+
+void Hotel_S02::TriggerShop()
+{
+	auto _Trigger = AddGameObject<Trigger>().lock();
+	if (_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this]()
+		{
+			_IsShopAvailable = true;
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -4.3f, 1.82f, 19.595f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 1.073f, 1.f, 1.2f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+}
 
 void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger)
 {
@@ -808,7 +837,6 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 	};
 };
 
-
 std::weak_ptr<Trigger> Hotel_S02::TriggerNextScene()
 {
 	auto _Trigger = AddGameObject<Trigger>().lock();
@@ -861,16 +889,23 @@ void Hotel_S02::BgmPlay()
 
 void Hotel_S02::ApplyShopUpgradeDesc()
 {
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
 		if (2u <= UpgradeDesc._BatteryUpgradeCount)
 			SpPlayer->BuyUpgradedOverture();
 		if (2u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsMiddle();
 		if (3u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
 	}
 }
 

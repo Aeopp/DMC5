@@ -34,6 +34,7 @@ Library_S05* Library_S05::Create()
 {
 	Library_S05* pInstance = new Library_S05;
 	return pInstance;
+};
 }
 
 HRESULT Library_S05::LoadScene()
@@ -52,7 +53,7 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+	if (auto SpCamera = AddGameObject<Camera>().lock();
 		SpCamera)
 	{
 		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
@@ -60,11 +61,10 @@ HRESULT Library_S05::LoadScene()
 			1.449f,
 			36.596f, 
 			});
-		
-	}*/
+	}
 
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	/*AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();*/
 
 #pragma endregion
 
@@ -402,16 +402,23 @@ void Library_S05::BgmPlay()
 
 void Library_S05::ApplyShopUpgradeDesc()
 {
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
 		if (2u <= UpgradeDesc._BatteryUpgradeCount)
 			SpPlayer->BuyUpgradedOverture();
 		if (2u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsMiddle();
 		if (3u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
 	}
 }
 
@@ -452,8 +459,8 @@ void Library_S05::RenderDataSetUp(const bool bTest)
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission03;
-	_Renderer->ao = 0.5f;
-	_Renderer->SkyIntencity = 0.035f;
+	_Renderer->ao = 0.01f;
+	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };

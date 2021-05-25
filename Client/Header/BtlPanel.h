@@ -189,6 +189,7 @@ private:
 	float _ExGauge_FireAccumulateTime = 999.f;
 	float _ExGauge_FullFireAccumulateTime = 0.f;
 	float _ExGauge_DissolveAmount = 0.f;
+	uint32 _ExGaugeLevel = 1u;	/* 1 ~ 3 */
 
 	enum KEY_INPUT_ID
 	{
@@ -295,6 +296,7 @@ public:
 	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count, bool Force = false);
+	void SetExGaugeLevel(const uint32 Level);
 
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
