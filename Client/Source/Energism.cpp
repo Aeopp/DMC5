@@ -125,7 +125,8 @@ void Energism::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetMatrix("matWorld", &World);
 		_Info.Fx->SetTexture("AlbmMap", _AlbmMap->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseMap->GetTexture());
-		
+		_Info.Fx->SetFloat("NoiseFactor", NoiseFactor);
+		;
 		_Info.Fx->SetFloat("Time",  T*TimeCorr);
 		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 		_Info.Fx->SetFloat("CurveScale", CurveScale);
@@ -178,7 +179,7 @@ HRESULT Energism::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetScale({ 0.0020f,0.0020f,0.0020f });
+	m_pTransform.lock()->SetScale({ 0.005f,0.005f,0.005f });
 	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f,0.f ,0.0f });
 
@@ -237,6 +238,9 @@ void Energism::Editor()
 		ImGui::SliderFloat("CurveScale", &CurveScale,
 			0.0f, 100.f);
 
+		ImGui::SliderFloat("NoiseFactor", &NoiseFactor,
+			0.0f, 100.f);
+		;
 		;
 		;
 

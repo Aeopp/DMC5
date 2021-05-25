@@ -9,6 +9,9 @@ uniform float ColorIntencity;
 
 uniform float CurveScale;
 uniform float Time;
+uniform float NoiseFactor;
+;
+
 
 texture AlbmMap;
 sampler Albm = sampler_state
@@ -66,11 +69,11 @@ void PsMain(out float4 Color : COLOR0,
 {
     float2 NoiseUV = UV;
     
-    NoiseUV.x *= CurveScale;
-    NoiseUV.x += (Time);
+    NoiseUV.x *= (NoiseFactor);
+    NoiseUV.x += sin(Time);
     float4 NoiseSample = tex2D(Noise, NoiseUV);
     
-    UV.xy += NoiseSample.xy;
+    UV.xy += NoiseSample.xy * CurveScale;
     
     Color.rgba = tex2D(Albm, UV).rgba;
     Color.rgb *= ColorIntencity;

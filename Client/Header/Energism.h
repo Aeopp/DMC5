@@ -44,8 +44,9 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
 	float PlayTime = 6.f;
-	float TimeCorr = 4.f;
-	float ColorIntencity = 0.2f;
-	float CurveScale = 40.f;
+	float TimeCorr = 0.117f;
+	float ColorIntencity = 0.201f;
+	float CurveScale = 5.017f;
+	float NoiseFactor = 0.167f;
 };
 #endif //
