@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "Nero.h"
 #include "TextureType.h"
+#include "NuClear.h"
 
 void Em5300Ulte::Free()
 {
@@ -49,6 +50,8 @@ HRESULT Em5300Ulte::Awake()
 
 	m_pTransform.lock()->SetScale({ 0.00015f, 0.00015f, 0.00015f });
 
+
+	m_pNuclear = AddGameObject<NuClear>();
 	return S_OK;
 }
 
@@ -69,8 +72,8 @@ UINT Em5300Ulte::Update(const float _fDeltaTime)
 		Vector3 vResult = { m_Result._41, m_Result._42, m_Result._43 };
 		Vector3 vLook = m_pEm5300Trans.lock()->GetLook();
 		
-		vResult.x += -vLook.x * 0.1f;
-		vResult.z += -vLook.z * 0.1f;
+		vResult.x += -vLook.x * 0.5f;
+		vResult.z += -vLook.z * 0.5f;
 		
 
 		m_pTransform.lock()->SetPosition(vResult);
@@ -86,6 +89,7 @@ UINT Em5300Ulte::Update(const float _fDeltaTime)
 UINT Em5300Ulte::LateUpdate(const float _fDeltaTime)
 {
 	Unit::LateUpdate(_fDeltaTime);
+
 	return 0;
 }
 
@@ -154,15 +158,15 @@ void Em5300Ulte::RenderInit()
 	// 렌더 속성 전체 초기화 
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = true;
-	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
-	{
-		{"gbuffer_ds",
-		[this](const DrawInfo& _Info)
-			{
-				RenderGBuffer(_Info);
-			}
-		},
-	};
+	//_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
+	//{
+	//	{"gbuffer_ds",
+	//	[this](const DrawInfo& _Info)
+	//		{
+	//			RenderGBuffer(_Info);
+	//		}
+	//	},
+	//};
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
 		=
 	{
@@ -272,7 +276,10 @@ void Em5300Ulte::RenderShadow(const DrawInfo& _Info)
 void Em5300Ulte::Ulte(const float _fDeltaTime)
 {
 	if (m_pEm5300.lock()->Get_State() == Em5300::Attack_Ulte_Loop)
+	{
 		m_fUlteSize += _fDeltaTime * 0.00008f;
+		m_pNuclear.lock()->PlayStart(m_pTransform.lock()->GetPosition(),-1.f);
+	}
 
 	m_pTransform.lock()->SetScale({ m_fUlteSize, m_fUlteSize, m_fUlteSize });
 
@@ -281,7 +288,7 @@ void Em5300Ulte::Ulte(const float _fDeltaTime)
 	if(m_bUlte)
 		m_pTransform.lock()->Translate({ 0.f, -0.01f, 0.f });
 
-	if (m_pTransform.lock()->GetPosition().y <= -1.45f)
+	if (m_pTransform.lock()->GetPosition().y <= -1.f)
 	{
 		m_bUlte = false;
 		m_bUlteEnd = true;

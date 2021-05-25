@@ -90,7 +90,7 @@ void NuclearLensFlare::RenderInit()
 };
 
 void NuclearLensFlare::PlayStart(
-	const Vector3& Location)
+	const Vector3& Location , const float PlayTime)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -100,6 +100,7 @@ void NuclearLensFlare::PlayStart(
 
 	T = 0.0f;
 	_RenderProperty.bRender = true;
+	this->PlayTime = PlayTime;
 };
 
 void NuclearLensFlare::PlayEnd()
@@ -227,7 +228,7 @@ void NuclearLensFlare::Editor()
 
 		if (ImGui::SmallButton("Play"))
 		{
-			PlayStart(GetComponent<Transform>().lock()->GetPosition());
+			PlayStart(GetComponent<Transform>().lock()->GetPosition() ,PlayTime);
 		}
 
 		ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 0.0f, 1.f);

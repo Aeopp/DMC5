@@ -22,6 +22,7 @@
 #include "ShockWave.h"
 #include "Reverberation.h"
 #include "ParticleSystem.h"
+#include "Renderer.h"
 
 void Em5300::Free()
 {
@@ -1076,15 +1077,16 @@ UINT Em5300::Update(const float _fDeltaTime)
 
 	if (Input::GetKeyDown(DIK_Y))
 	{
+		m_pTrigger.lock()->TriggerEnable();
 		m_bIng = true;
-		m_bRushDir = true;
-		m_eState = Attack_Rush_Start;
+		m_eState = Attack_Ulte_Move;
+		m_bUlte = true;
 	}
-	if (Input::GetKeyDown(DIK_U))
-	{
-		m_bGroggy = true;
-		m_eState = Hit_Falling_Start;
-	}
+
+
+
+	if (m_bUlte)
+		Renderer::GetInstance()->SkyDistortionEnd();
 
 	return 0;
 }

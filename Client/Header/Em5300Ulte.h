@@ -56,6 +56,7 @@ public:
 	Matrix								  m_Result;
 
 	weak_ptr<SphereCollider>			m_pCollider;
+	weak_ptr<class NuClear>					m_pNuclear;
 
 	bool	m_bUlteStart = false;
 	bool    m_bUlte = false;

@@ -32,7 +32,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& Location);
+	void PlayStart(const Vector3& Location,const float PlayTime);
 	void PlayEnd();
 	void UpdatePlayVariable(const float Lerp);
 public:

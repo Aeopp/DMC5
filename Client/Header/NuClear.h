@@ -39,7 +39,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& Location , const bool bEditPlay=false);
+	void PlayStart(const Vector3& Location , const float GroundY, const bool bEditPlay=false);
 	void Kaboom();
 	void PlayEnd();
 private:
@@ -80,13 +80,13 @@ private:
 	float ParticleWorldScale = 0.0015f;
 	float ParticleDelta = 0.016f;
 
-	float GrowEndT = 8.f;
-	float ExplosionReadyTime = 24.f;
+	float GrowEndT = 13.f;
+	float ExplosionReadyTime = 13.1;
 	float FreeFallTime = 2.5f;
 	float ExplosionTime = 4.f;
 
 	float StartColorIntencity = 1.0f;
 	float EndColorIntencity = 3.5f;
-	float GrowEndScale = 0.0010f;
+	float GrowEndScale = 0.003f;
 };
 #endif //

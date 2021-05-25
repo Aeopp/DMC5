@@ -121,7 +121,7 @@ void NuClear::RenderInit()
 	};
 };
 
-void NuClear::PlayStart(const Vector3& Location, const bool bEditPlay)
+void NuClear::PlayStart(const Vector3& Location,  const float GroundY, const bool bEditPlay)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -130,10 +130,12 @@ void NuClear::PlayStart(const Vector3& Location, const bool bEditPlay)
 		{
 			SpTransform->SetPosition(Location);
 			SpTransform->SetScale(Vector3{ 0.f,0.f,0.f });
-			_NuclearLensFlare.lock()->PlayStart(Location);
+			_NuclearLensFlare.lock()->PlayStart(Location, ExplosionReadyTime);
 			_DynamicLight.PlayStart(Location, ExplosionReadyTime + FreeFallTime + ExplosionTime);
 		}
 	}
+
+	EditYVelocity =   std::fabsf ( (Location.y - GroundY) /FreeFallTime);
 
 	T = 0.0f;
 	_RenderProperty.bRender = true;
@@ -403,7 +405,7 @@ void NuClear::Editor()
 		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart(
-				GetComponent<Transform>().lock()->GetPosition(),true);
+				GetComponent<Transform>().lock()->GetPosition(),-1.45f, true);
 		}
 
 		ImGui::Text("T : %2.6f", T);
