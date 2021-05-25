@@ -10,6 +10,7 @@ class Library_S06 : public Scene
 private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
+	std::weak_ptr<Em5300> m_pBoss{};
 	bool _LateInit = false;
 private:
 	explicit Library_S06();
@@ -25,14 +26,13 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-private:
+private:	
+	void LateInit();
 	void LoadObjects(const std::filesystem::path& path);
 	void BgmPlay();
 	void RenderDataSetUp(const bool bTest);
 	void TriggerSetUp();
-	std::weak_ptr<Trigger> TriggerUlte();
-	void LateInit();
 private:
-	std::weak_ptr<Em5300> m_pBoss{};
+	std::weak_ptr<Trigger> TriggerUlte();
 };
 #endif // !__M02_LIBRARY_S06_H__

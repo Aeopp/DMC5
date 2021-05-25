@@ -45,12 +45,12 @@ Hotel_S03* Hotel_S03::Create()
 	return pInstance;
 }
 
-
 HRESULT Hotel_S03::LoadScene()
 {
 	// Load Start
 	SoundSystem::GetInstance()->ClearSound();
 	SoundSystem::GetInstance()->Play("Hotel03", _Hotel03_Volume, false);
+	
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -86,10 +86,10 @@ HRESULT Hotel_S03::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage3_Map.json");
-	//LoadObjects("../../Data/Stage3_AniObject.json", true);
-	//LoadCollObjects("../../Data/Stage3_Object.json");
-	//LoadBreakablebjects("../../Data/Stage3_BreakableObject.json");
+	LoadObjects("../../Data/Stage3_Map.json");
+	LoadObjects("../../Data/Stage3_AniObject.json", true);
+	LoadCollObjects("../../Data/Stage3_Object.json");
+	LoadBreakablebjects("../../Data/Stage3_BreakableObject.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(3);
@@ -156,6 +156,7 @@ HRESULT Hotel_S03::LoadScene()
 #pragma region UI
 
 	_BtlPanel = AddGameObject<BtlPanel>();
+
 	_ShopPanel = AddGameObject<ShopPanel>();
 	if (auto Sp = _ShopPanel.lock(); Sp)
 	{
@@ -504,7 +505,7 @@ void Hotel_S03::BgmPlay()
 void Hotel_S03::TriggerSetUp()
 {
 	TriggerUpGround();
-	TriggerBeforeShop(TriggerShop(TriggerHole())); // ㅋㅋ
+	TriggerBeforeShop(TriggerShop(TriggerHole()));
 	TriggerNextScene();
 };
 
@@ -832,6 +833,7 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 			SoundSystem::GetInstance()->Play("BattleStart1", 1.f, true);
 			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
 			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
+			
 			// 스카이 왜곡 시작 ...
 			Renderer::GetInstance()->SkyDistortionStart();
 
@@ -918,12 +920,19 @@ void Hotel_S03::LateInit()
 {
 	//SoundSystem::GetInstance()->ClearSound();
 
-	// + 플레이어 초기 위치 잡기 등
-	if (_Player.expired() == false)
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
 	{
-		_Player.lock()->GetComponent<Transform>().lock()->SetPosition
-		({ -1.77158f, 1.36541f, 23.86f });
-		_Player.lock()->SetAngle(180.f);
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -1.77158f, 1.36541f, 23.86f });
+		SpPlayer->SetAngle(180.f);
+
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
 	}
 
 	if (auto SpMainCamera = _MainCamera.lock();

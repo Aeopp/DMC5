@@ -25,6 +25,7 @@
 #include "QliphothBlock.h"
 #include "TimeSystem.h"
 #include "Em0000.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
@@ -32,19 +33,20 @@ using namespace std;
 
 Hotel_S02::Hotel_S02()
 {
-	for (auto& Element : m_vecQliphothBlock)
-		Destroy(Element);
-	m_vecQliphothBlock.clear();
-	m_vecQliphothBlock.shrink_to_fit();
+
 }
 
 void Hotel_S02::Free()
 {
 	for (auto& Element : _MakaiButterflyVec)
 		Destroy(Element);
-
 	_MakaiButterflyVec.clear();
 	_MakaiButterflyVec.shrink_to_fit();
+
+	for (auto& Element : m_vecQliphothBlock)
+		Destroy(Element);
+	m_vecQliphothBlock.clear();
+	m_vecQliphothBlock.shrink_to_fit();
 
 	Scene::Free();
 }
@@ -55,13 +57,13 @@ Hotel_S02* Hotel_S02::Create()
 	return pInstance;
 }
 
-
 HRESULT Hotel_S02::LoadScene()
 {
 	// Load Start
 	SoundSystem::GetInstance()->ClearSound();
 	SoundSystem::GetInstance()->Stop("Hotel01");
 	SoundSystem::GetInstance()->Play("Hotel02", _Hotel02_Volume, false);
+	
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -95,9 +97,9 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage2_Map.json");
-	//LoadCollObjects("../../Data/Stage2_Object.json");
-	//LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
+	LoadObjects("../../Data/Stage2_Map.json");
+	LoadCollObjects("../../Data/Stage2_Object.json");
+	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
 	AddGameObject<HotelBrokenFloor>();
 
@@ -119,7 +121,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
-	// Stage3 길막
+	// Stage2 길막
 	m_vecQliphothBlock.reserve(3);
 
 	// 0: StartPoint 
@@ -216,6 +218,7 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
 	/* -------------------------- */
+	
 	if (_DecreaseHotel02_Volume)
 		_Hotel02_Volume = FMath::Lerp(_Hotel02_Volume, 0.f, _fDeltaTime);
 	else
@@ -849,14 +852,19 @@ void Hotel_S02::BgmPlay()
 
 void Hotel_S02::LateInit()
 {
-	
-
-	// + 플레이어 초기 위치 잡기 등
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.077f, 11.75365f });
 		SpPlayer->SetAngle(180.f);
+
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
 	}
 
 	if (auto SpMainCamera = _MainCamera.lock();

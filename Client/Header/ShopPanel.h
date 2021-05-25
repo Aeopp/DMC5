@@ -19,7 +19,7 @@ public:
 		uint32 _RebellionUpgradeCount;
 	};
 
-	const ShopPanel::UpgradeDesc& GetUpgradeDesc() const { return _UpgradeDesc; }
+	static const ShopPanel::UpgradeDesc& GetUpgradeDesc() { return _UpgradeDesc; }
 
 	void ResetCmd();	// SetActive(false) 전에 초기상태로 돌리자
 

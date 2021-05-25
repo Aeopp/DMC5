@@ -14,6 +14,7 @@
 #include "Em5000.h"
 #include "FadeOut.h"
 #include "Trigger.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
@@ -38,6 +39,7 @@ Hotel_S04* Hotel_S04::Create()
 HRESULT Hotel_S04::LoadScene()
 {
 	// Load Start
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -58,7 +60,6 @@ HRESULT Hotel_S04::LoadScene()
 			1.449f,
 			36.596f, 
 			});
-		
 	}*/
 
 	_Camera = AddGameObject<MainCamera>();
@@ -169,7 +170,6 @@ HRESULT Hotel_S04::LateUpdate(const float _fDeltaTime)
 	Scene::LateUpdate(_fDeltaTime);
 	return S_OK;
 }
-
 
 void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 {
@@ -319,8 +319,17 @@ void Hotel_S04::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-5.218f, -1.5f, 43.326f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
+	
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
 	}
+
 	/*_Camera.lock()->Set_At_Transform(
 		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,
 		MainCamera::AT_BOSS1);*/
