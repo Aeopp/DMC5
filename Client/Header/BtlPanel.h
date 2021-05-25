@@ -299,7 +299,8 @@ public:
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
 	void AccumulateRedOrb(const uint32 Amount);
-	uint32 GetRedOrbCount() const { return _RedOrbCount; }
+	static void ConsumeRedOrb(const uint32 Amount);
+	static const uint32 GetRedOrbCount() { return _RedOrbCount; }
 	void SetRedOrbActive(bool IsActive);
 
 	void SetGlobalActive(bool IsActive, bool Force = false);

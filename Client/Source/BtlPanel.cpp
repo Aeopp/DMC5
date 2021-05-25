@@ -1105,6 +1105,14 @@ void BtlPanel::ActivateSecretVision(const int Number)
 	_UIDescs[SECRET_VISIONS].Using = true;
 }
 
+void BtlPanel::ConsumeRedOrb(const uint32 Amount)
+{
+	_RedOrbCount -= Amount;
+
+	if (_RedOrbCount > 99999999u)
+		_RedOrbCount = 0u;
+}
+
 void BtlPanel::SetGlobalActive(bool IsActive, bool Force/*= false*/)
 {
 	_GlobalUsing = IsActive;

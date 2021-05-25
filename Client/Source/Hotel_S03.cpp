@@ -711,12 +711,6 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerShop(const std::weak_ptr<class Trigger>
 		const std::function<void()> _CallBack =
 			[this, _NextTrigger]()
 		{
-			// 임시
-			_Player.lock()->BuyCbsLong();
-			_Player.lock()->BuyCbsMiddle();
-			_Player.lock()->BuyUpgradedOverture();
-			//
-
 			_IsShopAvailable = true;
 
 			_NextTrigger.lock()->TriggerEnable();
