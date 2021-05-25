@@ -458,6 +458,7 @@ void Hotel_S02::TriggerSetUp()
 {
 	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
 	TriggerPuzzleStart();
+	TriggerShop();
 	TriggerWallSmash();
 	TriggerLastRoomBattle(TriggerNextScene());
 }
@@ -682,7 +683,35 @@ void Hotel_S02::TriggerPuzzleStart()
 			ImmediatelyEnable,
 			TargetTag);
 	}
-};
+}
+
+void Hotel_S02::TriggerShop()
+{
+	auto _Trigger = AddGameObject<Trigger>().lock();
+	if (_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this]()
+		{
+			_IsShopAvailable = true;
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -4.3f, 1.82f, 19.595f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 1.073f, 1.f, 1.2f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+}
 
 void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger)
 {
@@ -807,7 +836,6 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 			WaveEndEvent);
 	};
 };
-
 
 std::weak_ptr<Trigger> Hotel_S02::TriggerNextScene()
 {
