@@ -425,6 +425,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rain_Start", false, {}, 1.f, 20.f, true);
+
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rain_Start" && m_pMesh->IsAnimationEnd())
 				m_eState = Attack_Rain_Loop;
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rain_Start" && m_pMesh->PlayingTime() >= 0.85f)
@@ -465,10 +466,11 @@ void Em5300::State_Change(const float _fDeltaTime)
 			m_fRushTime += _fDeltaTime;
 			m_fOuterCricle += _fDeltaTime;
 			m_pTransform.lock()->Translate(m_vRushDir * 0.1f);
-			if (m_fHeight >= 0.1f)
+
+			if (m_fCenterY <= 0.2f)
 			{
-				m_fHeight -= 0.03f;
-				m_pCollider.lock()->SetSize({ 0.3f, m_fHeight, 0.3f });
+				m_fCenterY += 0.01f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
 			}
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", true, {}, 1.f, 20.f, true);
 			
@@ -480,7 +482,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 
 			float	fDir2 = D3DXVec3Length(&vResult);
 			
-			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir2 <= 0.5f )
+			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir2 <= 1.f )
 			{
 				int iRandom = FMath::Random<int>(1, 4);
 				if (iRandom == 1)
@@ -498,26 +500,10 @@ void Em5300::State_Change(const float _fDeltaTime)
 					m_bRushLens = false;
 				}	
 			}
-			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && m_bCollPlayer == true)
-			{
-				
-				if (fDir <= 1.5f)
-				{
-					m_eState = Move_Front_End;
-					m_fRushTime = 0.f;
-					m_pRush.lock()->Set_Coll(false);
-					m_pRush.lock()->SetActive(false);
-					m_bRushLens = false;
-					m_bCollPlayer = false;
-				}
-			}
-			else if (m_fRushTime >= 0.3f)
-			{
-				//m_pTransform.lock()->Translate({ 0.f, 0.01f, 0.f });
-				m_pRush.lock()->Set_Coll(true);
-				m_pRush.lock()->SetActive(true);
-				m_pRush.lock()->Set_AttackType(Attack_KnocBack);
-			}
+	
+			m_pRush.lock()->Set_Coll(true);
+			m_pRush.lock()->SetActive(true);
+			m_pRush.lock()->Set_AttackType(Attack_KnocBack);
 
 
 
@@ -547,6 +533,12 @@ void Em5300::State_Change(const float _fDeltaTime)
 			m_bInteraction = true;
 			m_pCollider.lock()->SetTrigger(true);
 			m_pCollider.lock()->SetRigid(false);
+
+			if (m_fCenterY <= 0.2f)
+			{
+				m_fCenterY += 0.01f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = Attack_Rush_Loop;
@@ -657,24 +649,77 @@ void Em5300::State_Change(const float _fDeltaTime)
 		break;
 	case Em5300::Dead:
 		break;
-	case Em5300::Down_Dead:
-		break;
 	case Em5300::Down_Loop:
+		if (m_bGroggy == true)
+		{
+			m_pMesh->PlayAnimation("Down_Loop", false, {}, 1.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Down_Loop" && m_pMesh->IsAnimationEnd())
+				m_eState = Down_Standup;
+		}
+		break;
+	case Em5300::Down_Standup:
+		if (m_bGroggy == true)
+		{
+			m_pMesh->PlayAnimation("Down_Standup", false, {}, 1.f, 20.f, true);
+
+	
+			if (m_fCenterY >= -0.2f)
+			{
+				m_fCenterY -= 0.01f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+			}
+			if (m_pMesh->CurPlayAnimInfo.Name == "Down_Standup" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bIng = false;
+				m_bGroggy = false;
+				m_fCenterY = -0.2f;
+			}
+		}
 		break;
 	case Em5300::Hit_Falling_End:
+		if (m_bGroggy)
+		{
+			m_pMesh->PlayAnimation("Hit_Falling_End", false, {}, 3.f, 20.f, true);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Falling_End" && m_pMesh->IsAnimationEnd())
+				m_eState = Down_Loop;
+		}
 		break;
 	case Em5300::Hit_Falling_Loop:
+		if (m_bGroggy)
+		{
+			m_pMesh->PlayAnimation("Hit_Falling_Loop", false, {}, 3.f, 20.f, true);
+
+			if (m_fCenterY <= 0.35f)
+			{
+				m_fCenterY += 0.01f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+			}
+
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Falling_Loop" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_Falling_End;
+		}
 		break;
 	case Em5300::Hit_Falling_Start:
+		if (m_bGroggy)
+		{
+			m_pMesh->PlayAnimation("Hit_Falling_Start", false, {}, 1.f, 20.f, true);
+			m_pRush.lock()->Set_Coll(false);
+			m_pRush.lock()->m_pCollider.lock()->SetActive(false);
+			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Falling_Start" && m_pMesh->IsAnimationEnd())
+				m_eState = Hit_Falling_Loop;
+		}
 		break;
 	case Em5300::Idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 20.f, true);
-		if (m_fHeight <= 0.7f)
+		if (m_fCenterY >= -0.2f)
 		{
-			m_fHeight += 0.01f;
-			m_pCollider.lock()->SetSize({ 0.3f, m_fHeight, 0.3f });
+			m_fCenterY -= 0.01f;
+			m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
 		}
-
 
 		m_bHit = false;
 		break;
@@ -719,10 +764,10 @@ void Em5300::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Move_Front_End", false, {}, 1.f, 20.f, true);
 
 
-			if (m_fHeight <= 0.7f)
+			if (m_fCenterY >= -0.2f)
 			{
-				m_fHeight += 0.02f;
-				m_pCollider.lock()->SetSize({ 0.3f, m_fHeight, 0.3f });
+				m_fCenterY -= 0.01f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
 			}
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Move_Front_End" && m_pMesh->IsAnimationEnd())
@@ -913,7 +958,7 @@ HRESULT Em5300::Awake()
 	m_pCollider.lock()->SetGravity(true);
 	 
 	m_pCollider.lock()->SetSize({ 0.3f, m_fHeight, 0.3f });
-	m_pCollider.lock()->SetCenter({ 0.f,-0.2f,0.f });
+	m_pCollider.lock()->SetCenter({ 0.f,m_fCenterY,0.f });
 	//m_pCollider.lock()->SetCenter({ 0.f,f,0.f });
 
 	m_pCollider.lock()->SetOffsetRadius(0.6f);
@@ -1005,6 +1050,8 @@ UINT Em5300::Update(const float _fDeltaTime)
 		 D3DXMatrixRotationQuaternion(&matRot, &tQuat);
 		 D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
 
+		 if (m_bGroggy)
+			 DeltaPos.y = 0.f;
 
 		 SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
@@ -1023,13 +1070,6 @@ UINT Em5300::Update(const float _fDeltaTime)
 			m_bFight = true;
 	}
 
-	if (Input::GetKeyDown(DIK_Y))
-	{
-		m_bMissile = true;
-		m_bIng = true;
-		m_eState = Attack_Missile2_Start;
-	}
-
 	if (m_bFight)
 		Fight(_fDeltaTime);
 	State_Change(_fDeltaTime);
@@ -1037,10 +1077,14 @@ UINT Em5300::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_Y))
 	{
 		m_bIng = true;
-		m_eState = Attack_Laser_Start;
+		m_bRushDir = true;
+		m_eState = Attack_Rush_Start;
 	}
-
-
+	if (Input::GetKeyDown(DIK_U))
+	{
+		m_bGroggy = true;
+		m_eState = Hit_Falling_Start;
+	}
 
 	return 0;
 }
@@ -1329,6 +1373,18 @@ void Em5300::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em5300::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (m_eState == Attack_Rush_Loop)
+	{
+		if (_pOther.lock()->m_nTag == Overture)
+		{
+			m_bHit = true;
+			m_bGroggy = true;
+			m_eState = Hit_Falling_Start;
+			return;
+		}
+	}
+
+
 	if (!m_bCollEnable)
 		return;
 	if (m_eState == Dead)
