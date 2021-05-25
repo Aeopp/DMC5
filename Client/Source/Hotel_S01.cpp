@@ -493,6 +493,21 @@ void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
 	}
 }
 
+void Hotel_S01::ApplyShopUpgradeDesc()
+{
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+}
+
 void Hotel_S01::RenderDataSetUp(const bool bTest)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
@@ -1075,15 +1090,9 @@ void Hotel_S01::LateInit()
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -9.5f, -0.23f, -5.13f });
 		SpPlayer->SetAngle(-90.f);
-
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
-		if (2u <= UpgradeDesc._BatteryUpgradeCount)
-			SpPlayer->BuyUpgradedOverture();
-		if (2u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsMiddle();
-		if (3u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsLong();
 	}
+
+	ApplyShopUpgradeDesc();
 
 	if (auto SpMainCamera = _MainCamera.lock();
 		SpMainCamera)

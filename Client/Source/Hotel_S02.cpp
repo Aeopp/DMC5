@@ -175,6 +175,13 @@ HRESULT Hotel_S02::LoadScene()
 
 	_BtlPanel = AddGameObject<BtlPanel>();
 
+	_ShopPanel = AddGameObject<ShopPanel>();
+	if (auto Sp = _ShopPanel.lock(); Sp)
+	{
+		Sp->ResetCmd();
+		Sp->SetActive(false);
+	}
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.9f;
@@ -207,6 +214,8 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 		LateInit();
 
 	Scene::Update(_fDeltaTime);
+
+	CheckShopAvailable();
 
 	/* ---------- 치트 ---------- */
 	if (Input::GetKeyDown(DIK_NUMPAD8))
@@ -850,14 +859,11 @@ void Hotel_S02::BgmPlay()
 	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 }
 
-void Hotel_S02::LateInit()
+void Hotel_S02::ApplyShopUpgradeDesc()
 {
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.077f, 11.75365f });
-		SpPlayer->SetAngle(180.f);
-
 		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
 		if (2u <= UpgradeDesc._BatteryUpgradeCount)
 			SpPlayer->BuyUpgradedOverture();
@@ -866,6 +872,40 @@ void Hotel_S02::LateInit()
 		if (3u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsLong();
 	}
+}
+
+void Hotel_S02::CheckShopAvailable()
+{
+	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
+	{
+		if (auto Sp = _ShopPanel.lock(); Sp)
+		{
+			if (!Sp->IsActive())
+			{
+				Sp->SetActive(true);
+				_BtlPanel.lock()->SetActive(false);
+			}
+			else
+			{
+				ApplyShopUpgradeDesc();
+				Sp->ResetCmd();
+				Sp->SetActive(false);
+				_BtlPanel.lock()->SetActive(true);
+			}
+		}
+	}
+}
+
+void Hotel_S02::LateInit()
+{
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.077f, 11.75365f });
+		SpPlayer->SetAngle(180.f);
+	}
+
+	ApplyShopUpgradeDesc();
 
 	if (auto SpMainCamera = _MainCamera.lock();
 		SpMainCamera)

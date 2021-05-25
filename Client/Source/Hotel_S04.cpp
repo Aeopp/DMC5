@@ -233,7 +233,22 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 void Hotel_S04::BgmPlay()
 {
 	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
-};
+}
+
+void Hotel_S04::ApplyShopUpgradeDesc()
+{
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+}
 
 void Hotel_S04::RenderDataSetUp(const bool bTest)
 {
@@ -273,7 +288,7 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[this ]()
+			[this]()
 		{
 			// 골리앗과 처음 조우함 !!
 			constexpr float NoiseWrap = 2.020390f;
@@ -320,15 +335,9 @@ void Hotel_S04::LateInit()
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
-	
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
-		if (2u <= UpgradeDesc._BatteryUpgradeCount)
-			SpPlayer->BuyUpgradedOverture();
-		if (2u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsMiddle();
-		if (3u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsLong();
 	}
+
+	ApplyShopUpgradeDesc();
 
 	/*_Camera.lock()->Set_At_Transform(
 		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,

@@ -360,7 +360,6 @@ void TestScene::RenderDataSetUp(const bool bTestLight)
 
 	}
 	
-
 	Renderer::GetInstance()->LateSceneInit();
 }
 
@@ -396,7 +395,6 @@ void TestScene::TriggerSetUp()
 			TargetTag);
 	}
 };
-
 
 void TestScene::MonsterWaveTriggerSetUp()
 {
@@ -461,4 +459,3 @@ void TestScene::MonsterWaveTriggerSetUp()
 			WaveEndEvent);
 	}
 };
-

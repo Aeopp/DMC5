@@ -256,6 +256,21 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	_Renderer->DistortionColor = Vector4{0.f,187.f/255.f,1.f,1.f};
 }
 
+void Library_S06::ApplyShopUpgradeDesc()
+{
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+}
+
 void Library_S06::TriggerSetUp()
 {
 	if (auto SpBoss = m_pBoss.lock();
@@ -304,16 +319,10 @@ void Library_S06::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -33.711f,-0.994f,30.884f });
-	
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
-		if (2u <= UpgradeDesc._BatteryUpgradeCount)
-			SpPlayer->BuyUpgradedOverture();
-		if (2u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsMiddle();
-		if (3u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsLong();
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -33.711f, -0.994f, 30.884f });
 	}
+
+	ApplyShopUpgradeDesc();
 
 	Renderer::GetInstance()->LateSceneInit();
 

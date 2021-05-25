@@ -197,6 +197,8 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
+	CheckShopAvailable();
+
 	/* ---------- 치트 ---------- */
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
@@ -207,39 +209,6 @@ HRESULT Hotel_S03::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S04));
 	}
 	/* -------------------------- */
-
-	if (_IsShopAvailable)
-	{
-		if (Input::GetKeyDown(DIK_P))
-		{
-			if (auto Sp = _ShopPanel.lock(); Sp)
-			{
-				if (!Sp->IsActive())
-				{
-					Sp->SetActive(true);
-					_BtlPanel.lock()->SetActive(false);
-				}
-				else
-				{
-					if (auto SpPlayer = _Player.lock();
-						SpPlayer)
-					{
-						auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
-						if (2u <= UpgradeDesc._BatteryUpgradeCount)
-							SpPlayer->BuyUpgradedOverture();
-						if (2u <= UpgradeDesc._TransformUpgradeCount)
-							SpPlayer->BuyCbsMiddle();
-						if (3u <= UpgradeDesc._TransformUpgradeCount)
-							SpPlayer->BuyCbsLong();
-					}
-
-					Sp->ResetCmd();
-					Sp->SetActive(false);
-					_BtlPanel.lock()->SetActive(true);
-				}
-			}
-		}
-	}
 
 	if (_DecreaseHotel03_Volume)
 		_Hotel03_Volume = FMath::Lerp(_Hotel03_Volume, 0.f, _fDeltaTime);
@@ -880,7 +849,7 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 	}
 
 	return _StartTrigger;
-};
+}
 
 void Hotel_S03::TriggerNextScene()
 {
@@ -928,6 +897,43 @@ void Hotel_S03::TriggerNextScene()
 	}
 };
 
+void Hotel_S03::ApplyShopUpgradeDesc()
+{
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+}
+
+void Hotel_S03::CheckShopAvailable()
+{
+	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
+	{
+		if (auto Sp = _ShopPanel.lock(); Sp)
+		{
+			if (!Sp->IsActive())
+			{
+				Sp->SetActive(true);
+				_BtlPanel.lock()->SetActive(false);
+			}
+			else
+			{
+				ApplyShopUpgradeDesc();
+				Sp->ResetCmd();
+				Sp->SetActive(false);
+				_BtlPanel.lock()->SetActive(true);
+			}
+		}
+	}
+}
+
 void Hotel_S03::LateInit()
 {
 	//SoundSystem::GetInstance()->ClearSound();
@@ -937,15 +943,9 @@ void Hotel_S03::LateInit()
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -1.77158f, 1.36541f, 23.86f });
 		SpPlayer->SetAngle(180.f);
-
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
-		if (2u <= UpgradeDesc._BatteryUpgradeCount)
-			SpPlayer->BuyUpgradedOverture();
-		if (2u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsMiddle();
-		if (3u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsLong();
 	}
+
+	ApplyShopUpgradeDesc();
 
 	if (auto SpMainCamera = _MainCamera.lock();
 		SpMainCamera)

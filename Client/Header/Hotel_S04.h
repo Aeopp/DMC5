@@ -24,11 +24,14 @@ public:
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
-	void LoadObjects(const std::filesystem::path& path);
-	void BgmPlay();
+	void LateInit();
 	void RenderDataSetUp(const bool bTest);
+	void BgmPlay();
+	void ApplyShopUpgradeDesc();
+private:
+	void LoadObjects(const std::filesystem::path& path);
+private:
 	void TriggerSetUp(); 
 	void TriggerMeetingWithGoliath();
-	void LateInit();
 };
 #endif // !__M01_HOTEL_S04_H__

@@ -110,6 +110,13 @@ HRESULT Library_S05::LoadScene()
 
 	_BtlPanel = AddGameObject<BtlPanel>();
 
+	_ShopPanel = AddGameObject<ShopPanel>();
+	if (auto Sp = _ShopPanel.lock(); Sp)
+	{
+		Sp->ResetCmd();
+		Sp->SetActive(false);
+	}
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.9f;
@@ -142,6 +149,8 @@ HRESULT Library_S05::Update(const float _fDeltaTime)
 		LateInit();
 
 	Scene::Update(_fDeltaTime);
+
+	CheckShopAvailable();
 
 	/* ---------- 치트 ---------- */
 	if (Input::GetKeyDown(DIK_NUMPAD8))
@@ -347,7 +356,44 @@ void Library_S05::LoadBreakablebjects(const std::filesystem::path& path)
 void Library_S05::BgmPlay()
 {
 	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
-};
+}
+
+void Library_S05::ApplyShopUpgradeDesc()
+{
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+}
+
+void Library_S05::CheckShopAvailable()
+{
+	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
+	{
+		if (auto Sp = _ShopPanel.lock(); Sp)
+		{
+			if (!Sp->IsActive())
+			{
+				Sp->SetActive(true);
+				_BtlPanel.lock()->SetActive(false);
+			}
+			else
+			{
+				ApplyShopUpgradeDesc();
+				Sp->ResetCmd();
+				Sp->SetActive(false);
+				_BtlPanel.lock()->SetActive(true);
+			}
+		}
+	}
+}
 
 void Library_S05::RenderDataSetUp(const bool bTest)
 {
@@ -384,20 +430,13 @@ void Library_S05::LateInit()
 {
 	SoundSystem::GetInstance()->ClearSound();
 
-	// + 플레이어 초기 위치 잡기 등
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -11.1f, -3.483f, 32.696f });
-	
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
-		if (2u <= UpgradeDesc._BatteryUpgradeCount)
-			SpPlayer->BuyUpgradedOverture();
-		if (2u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsMiddle();
-		if (3u <= UpgradeDesc._TransformUpgradeCount)
-			SpPlayer->BuyCbsLong();
 	}
+
+	ApplyShopUpgradeDesc();
 
 	Renderer::GetInstance()->LateSceneInit();
 

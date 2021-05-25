@@ -7,7 +7,9 @@ class Library_S05 : public Scene
 private:
 	std::weak_ptr<class Nero> _Player{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
+	std::weak_ptr<class ShopPanel> _ShopPanel{};
 	bool _LateInit = false;
+	bool _IsShopAvailable = false;
 private:
 	explicit Library_S05();
 	virtual ~Library_S05() = default;
@@ -23,12 +25,16 @@ public:
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
+	void LateInit();
+	void RenderDataSetUp(const bool bTest);
+	void BgmPlay();
+	void ApplyShopUpgradeDesc();
+	void CheckShopAvailable();
+private:
 	void LoadObjects(const std::filesystem::path& path, const bool _bAni = false);
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
-	void BgmPlay();
-	void RenderDataSetUp(const bool bTest);
+private:
 	void TriggerSetUp();
-	void LateInit();
 };
 #endif // !__M02_LIBRARY_S05_H__

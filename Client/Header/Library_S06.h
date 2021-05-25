@@ -28,11 +28,13 @@ public:
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:	
 	void LateInit();
-	void LoadObjects(const std::filesystem::path& path);
 	void BgmPlay();
 	void RenderDataSetUp(const bool bTest);
-	void TriggerSetUp();
+	void ApplyShopUpgradeDesc();
 private:
+	void LoadObjects(const std::filesystem::path& path);
+private:
+	void TriggerSetUp();
 	std::weak_ptr<Trigger> TriggerUlte();
 };
 #endif // !__M02_LIBRARY_S06_H__
