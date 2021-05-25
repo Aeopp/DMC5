@@ -116,7 +116,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
-	AddGameObject<Em0000>();
+	//AddGameObject<Em0000>();
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -203,10 +203,10 @@ HRESULT TestScene::LoadScene()
 	// Load Complete
 	m_fLoadingProgress = 1.f;
 
-	if (_Camera.expired() == false)
-	{
-		SoundSystem::GetInstance()->SetDisanceDecrease(0.1f, 3.f, _Camera.lock()->GetComponent<Transform>());
-	};
+	//if (_Camera.expired() == false)
+	//{
+	//	SoundSystem::GetInstance()->SetDisanceDecrease(0.1f, 3.f, _Camera.lock()->GetComponent<Transform>());
+	//};
 
 	return S_OK;
 }
