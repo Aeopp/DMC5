@@ -495,16 +495,23 @@ void Hotel_S01::LoadBreakablebjects(const std::filesystem::path& path)
 
 void Hotel_S01::ApplyShopUpgradeDesc()
 {
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
 		if (2u <= UpgradeDesc._BatteryUpgradeCount)
 			SpPlayer->BuyUpgradedOverture();
 		if (2u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsMiddle();
 		if (3u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
 	}
 }
 
@@ -993,7 +1000,6 @@ std::weak_ptr<Trigger> Hotel_S01::TriggerInFrontOfHotelBattle()
 			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
 			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
 			SoundSystem::GetInstance()->Play("Em100Spawn", 1.f, true);
-
 
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{

@@ -258,16 +258,25 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 
 void Library_S06::ApplyShopUpgradeDesc()
 {
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
 		if (2u <= UpgradeDesc._BatteryUpgradeCount)
 			SpPlayer->BuyUpgradedOverture();
 		if (2u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsMiddle();
 		if (3u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsLong();
+
+		// UpgradeDesc._RebellionUpgradeCount 1이면 리벨리온 산거임 ㅇㅇ
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
 	}
 }
 

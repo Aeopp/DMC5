@@ -11,7 +11,7 @@ int BtlPanel::_HPGaugeCount = 5;
 float BtlPanel::_TDTGauge = 0.f;
 uint32 BtlPanel::_StylishPoints = 0u;
 float BtlPanel::_ExGauge = 0.f;
-uint32 BtlPanel::_RedOrbCount = 999999u;
+uint32 BtlPanel::_RedOrbCount = 0u;
 
 
 void BtlPanel::Free()
@@ -1035,8 +1035,16 @@ void BtlPanel::AddExGauge(float ExGauge)
 		return;
 
 	int PreExGaugeCnt = static_cast<int>(_ExGauge);
+	
+	float Corr = 1.f;
+	if (2u == _ExGaugeLevel)
+		Corr = 1.5f;
+	else if (3u == _ExGaugeLevel)
+		Corr = 2.f;
+	else
+		Corr = 1.f;
 
-	_ExGauge += ExGauge;
+	_ExGauge += ExGauge * Corr;
 	if (3.f < _ExGauge)
 		_ExGauge = 3.f;
 
@@ -1083,14 +1091,22 @@ void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor/*= 0*/)
 	_CbsColor = CbsColor;
 }
 
+void BtlPanel::SetExGaugeLevel(const uint32 Level)
+{
+	if (Level == 0u || Level > 3u)
+		return;
+
+	_ExGaugeLevel = Level;
+}
+
 void BtlPanel::AccumulateRedOrb(const uint32 Amount)
 {
 	_RedOrbCount += Amount;
 	_RedOrbAlphaTime = REDORB_ALIVETIME;
 	_UIDescs[REDORB].Using = true;
 
-	if (_RedOrbCount > 99999999u)
-		_RedOrbCount = 99999999u;
+	if (_RedOrbCount > 999999u)
+		_RedOrbCount = 999999u;
 }
 
 void BtlPanel::ActivateSecretVision(const int Number)
@@ -1109,7 +1125,7 @@ void BtlPanel::ConsumeRedOrb(const uint32 Amount)
 {
 	_RedOrbCount -= Amount;
 
-	if (_RedOrbCount > 99999999u)
+	if (_RedOrbCount > 999999u)
 		_RedOrbCount = 0u;
 }
 
@@ -2106,6 +2122,13 @@ void BtlPanel::Update_ExGauge(const float _fDeltaTime)
 
 	// 감소 속도
 	float Speed = 0.333f;
+	if (2u == _ExGaugeLevel)
+		Speed = 0.222f;
+	else if (3u == _ExGaugeLevel)
+		Speed = 0.111f;
+	else
+		Speed = 0.333f;
+
 	if (fExGauge > static_cast<float>(iExGauge))
 	{
 		_ExGauge -= _fDeltaTime * Speed;

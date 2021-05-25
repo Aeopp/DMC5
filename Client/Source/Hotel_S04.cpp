@@ -237,16 +237,23 @@ void Hotel_S04::BgmPlay()
 
 void Hotel_S04::ApplyShopUpgradeDesc()
 {
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
 		if (2u <= UpgradeDesc._BatteryUpgradeCount)
 			SpPlayer->BuyUpgradedOverture();
 		if (2u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsMiddle();
 		if (3u <= UpgradeDesc._TransformUpgradeCount)
 			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
 	}
 }
 
