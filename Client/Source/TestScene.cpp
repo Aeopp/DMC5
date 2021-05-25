@@ -101,10 +101,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
+	//_Camera = AddGameObject<Camera>();
 	
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player     = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
 
@@ -115,7 +115,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	//AddGameObject<Em5000>();
+	AddGameObject<Em100>();
 
 #pragma endregion
 
@@ -177,7 +177,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<BtlPanel>();
 
 	AddGameObject<BtlPanel>().lock()->SetActive(false);
-	AddGameObject<ShopPanel>();
+	//AddGameObject<ShopPanel>();
 
 #pragma endregion
 
@@ -216,11 +216,11 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	//if (nullptr != pPlane)
-	//	return S_OK;
+	if (nullptr != pPlane)
+		return S_OK;
 
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	//Physics::AddActor(UniqueID, *pPlane);
+	pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
+	Physics::AddActor(UniqueID, *pPlane);
 
 	return S_OK;
 }

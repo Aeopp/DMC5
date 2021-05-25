@@ -1,7 +1,7 @@
 {
     "GameObject": [
         {
-            "Mesh": "Resource\\Map\\Object\\02_09_Makaizyu_01\\02_09_Makaizyu_01.fbx",
+            "Mesh": "Resource\\Map\\Object\\Chaire\\Chaire.fbx",
             "List": [
                 {
                     "Scale": [
@@ -11,80 +11,70 @@
                     ],
                     "Rotation": [
                         0.0,
-                        0.0,
+                        170.0,
                         0.0
                     ],
                     "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_16_makaizyu_05\\02_16_makaizyu_05.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Closet\\Closet.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        70.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -2949.135986328125,
-                        180.0,
-                        13431.318359375
+                        -2550.0,
+                        1356.0,
+                        22410.0
                     ]
                 },
                 {
                     "Scale": [
-                        2.0,
-                        2.0,
-                        2.0
+                        1.0,
+                        1.0,
+                        1.0
                     ],
                     "Rotation": [
-                        -90.0,
-                        60.0,
-                        90.0
+                        0.0,
+                        50.0,
+                        0.0
                     ],
                     "Position": [
-                        -4189.1357421875,
-                        160.0,
-                        15791.318359375
+                        -1880.0,
+                        1356.0,
+                        22390.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        90.0,
+                        -100.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -1530.0,
+                        1386.0,
+                        22460.0
+                    ]
+                },
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        220.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -2230.0,
+                        1356.0,
+                        22420.0
                     ]
                 }
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_09_Makaizyu_05\\02_09_Makaizyu_05.fbx",
+            "Mesh": "Resource\\Map\\Object\\Telephone\\Telephone.fbx",
             "List": [
                 {
                     "Scale": [
@@ -94,35 +84,30 @@
                     ],
                     "Rotation": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "Position": [
-                        0.0,
-                        0.0,
-                        0.0
+                        -3619.135986328125,
+                        1470.0,
+                        17940.0
                     ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Brokenwood_02\\Brokenwood_02.fbx",
-            "List": [
+                },
                 {
                     "Scale": [
-                        0.5,
-                        0.5,
-                        0.5
+                        1.0,
+                        1.0,
+                        1.0
                     ],
                     "Rotation": [
                         0.0,
-                        60.0,
+                        -20.0,
                         0.0
                     ],
                     "Position": [
-                        -4349.13623046875,
-                        140.0,
-                        16111.318359375
+                        -3899.135986328125,
+                        160.0,
+                        15771.318359375
                     ]
                 }
             ]
@@ -218,157 +203,62 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\Telephone\\Telephone.fbx",
+            "Mesh": "Resource\\Map\\Object\\Brokenwood_02\\Brokenwood_02.fbx",
             "List": [
                 {
                     "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
+                        0.5,
+                        0.5,
+                        0.5
                     ],
                     "Rotation": [
                         0.0,
-                        90.0,
+                        60.0,
                         0.0
                     ],
                     "Position": [
-                        -3619.135986328125,
-                        1470.0,
-                        17940.0
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        -20.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -3899.135986328125,
-                        160.0,
-                        15771.318359375
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Chaire\\Chaire.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        170.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -2550.0,
-                        1356.0,
-                        22410.0
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        50.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -1880.0,
-                        1356.0,
-                        22390.0
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        90.0,
-                        -100.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -1530.0,
-                        1386.0,
-                        22460.0
-                    ]
-                },
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        220.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -2230.0,
-                        1356.0,
-                        22420.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_09_Makaizyu_02\\02_09_Makaizyu_02.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Bed\\Bed.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -4119.1357421875,
+                        -4349.13623046875,
                         140.0,
-                        16591.318359375
+                        16111.318359375
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\Closet\\Closet.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        70.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -2949.135986328125,
+                        180.0,
+                        13431.318359375
+                    ]
+                },
+                {
+                    "Scale": [
+                        2.0,
+                        2.0,
+                        2.0
+                    ],
+                    "Rotation": [
+                        -90.0,
+                        60.0,
+                        90.0
+                    ],
+                    "Position": [
+                        -4189.1357421875,
+                        160.0,
+                        15791.318359375
                     ]
                 }
             ]
@@ -391,6 +281,28 @@
                         -4559.13623046875,
                         1360.0,
                         15540.0
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\Bed\\Bed.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -4119.1357421875,
+                        140.0,
+                        16591.318359375
                     ]
                 }
             ]
@@ -430,72 +342,6 @@
                         -5419.13623046875,
                         1410.0,
                         14870.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua_03\\02_Makaijyua_03.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua_04\\02_Makaijyua_04.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_09_Makaizyu_03\\02_09_Makaizyu_03.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
                     ]
                 }
             ]
@@ -557,50 +403,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua_05\\02_Makaijyua_05.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua_06\\02_Makaijyua_06.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Object\\Beda\\Beda.fbx",
             "List": [
                 {
@@ -640,94 +442,6 @@
                         -4089.135986328125,
                         180.0,
                         12901.318359375
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua_01\\02_Makaijyua_01.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua_02\\02_Makaijyua_02.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Deadpeople27\\Deadpeople27.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -4209.1357421875,
-                        170.0,
-                        12301.318359375
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\02_09_Makaizyu\\02_09_Makaizyu.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
                     ]
                 }
             ]
@@ -789,7 +503,7 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua\\02_Makaijyua.fbx",
+            "Mesh": "Resource\\Map\\Object\\Deadpeople27\\Deadpeople27.fbx",
             "List": [
                 {
                     "Scale": [
@@ -803,9 +517,9 @@
                         0.0
                     ],
                     "Position": [
-                        0.0,
-                        0.0,
-                        0.0
+                        -4209.1357421875,
+                        170.0,
+                        12301.318359375
                     ]
                 }
             ]
@@ -1229,28 +943,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_Makaijyua_07\\02_Makaijyua_07.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Object\\desk_steelleg\\desk_steelleg.fbx",
             "List": [
                 {
@@ -1334,28 +1026,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_09_Makaizyu_04\\02_09_Makaizyu_04.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Object\\Picture\\Picture.fbx",
             "List": [
                 {
@@ -1378,7 +1048,7 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Object\\02_09_Makaizyu_06\\02_09_Makaizyu_06.fbx",
+            "Mesh": "Resource\\Map\\Object\\Deadpeople34\\Deadpeople34.fbx",
             "List": [
                 {
                     "Scale": [
@@ -1387,14 +1057,14 @@
                         1.0
                     ],
                     "Rotation": [
-                        0.0,
-                        0.0,
+                        90.0,
+                        80.0,
                         0.0
                     ],
                     "Position": [
-                        0.0,
-                        0.0,
-                        0.0
+                        -4049.135986328125,
+                        160.0,
+                        16041.318359375
                     ]
                 }
             ]
@@ -1417,28 +1087,6 @@
                         -2081.0,
                         1360.0,
                         22121.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Object\\Deadpeople34\\Deadpeople34.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        90.0,
-                        80.0,
-                        0.0
-                    ],
-                    "Position": [
-                        -4049.135986328125,
-                        160.0,
-                        16041.318359375
                     ]
                 }
             ]
@@ -1500,6 +1148,28 @@
                         -4029.135986328125,
                         150.0,
                         16271.318359375
+                    ]
+                }
+            ]
+        },
+        {
+            "Mesh": "Resource\\Map\\Object\\Jikuushinzou\\Jikuushinzou.fbx",
+            "List": [
+                {
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        -90.0,
+                        0.0
+                    ],
+                    "Position": [
+                        -4446.0,
+                        1365.0,
+                        19934.0
                     ]
                 }
             ]

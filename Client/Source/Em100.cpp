@@ -38,6 +38,7 @@ void Em100::Fight(const float _fDeltaTime)
 
 	if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
 	{
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Dead", { 1,5 }, 0.3f, false);
 		m_eState = Dead;
 		m_bIng = true;
 	}
@@ -79,6 +80,7 @@ void Em100::Fight(const float _fDeltaTime)
 		{
 			m_bIng = true;
 			m_eState = Attack_Hard;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Attack", { 1,5 }, 0.3f, false);
 			for (int i = 0; i < 2; ++i)
 				m_pHand[i].lock()->Set_Coll(true);
 			return;
@@ -92,6 +94,7 @@ void Em100::Fight(const float _fDeltaTime)
 			if (iRandom == 1)
 			{
 				m_eState = Attack_A;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Attack", { 1,5 }, 0.3f, false);
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->Set_Coll(true);
 				return;
@@ -99,6 +102,7 @@ void Em100::Fight(const float _fDeltaTime)
 			else if (iRandom == 2)
 			{
 				m_eState = Attack_D;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Attack", { 1,5 }, 0.3f, false);
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->Set_Coll(true);
 				return;
@@ -603,21 +607,25 @@ void Em100::State_Change(const float _fDeltaTime)
 		break;
 	case Em100::Idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
 		m_BattleInfo.eAttackType = Attack_END;
 		m_bHit = false;
 		break;
 	case Em100::Idle2:
 		m_pMesh->PlayAnimation("Idle2", true, {}, 1.f, 50.f, true);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
 		m_BattleInfo.eAttackType = Attack_END;
 		m_bHit = false;
 		break;
 	case Em100::Idle3:
 		m_pMesh->PlayAnimation("Idle3", true, {}, 1.f, 50.f, true);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
 		m_BattleInfo.eAttackType = Attack_END;
 		m_bHit = false;
 		break;
 	case Em100::Idle4:
 		m_pMesh->PlayAnimation("Idle4", true, {}, 1.f, 50.f, true);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
 		m_BattleInfo.eAttackType = Attack_END;
 		m_bHit = false;
 		break;
@@ -1041,6 +1049,8 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 	}
 	/*----------------*/
 
+	
+
 	if (m_bDown == false)
 	{
 		switch (_BattleInfo.eAttackType)
@@ -1213,6 +1223,11 @@ void Em100::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 		pBlood->PlayStart(40.f);
 	}
 	/*----------------*/
+	//////////////////////////////////////
+
+
+	///////////////////////////////
+
 
 	switch (_BattleInfo.eAttackType)
 	{
@@ -1407,6 +1422,10 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+
+	int iRandomSound = FMath::Random<int>(1, 5);
+
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Hit", { 1,5 }, 0.3f, false);
 
 	HitEffectPlay(_pOther);
 }
