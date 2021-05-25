@@ -328,10 +328,10 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		DistortionIntencity = 0.000f;
 		ScaleLerp.first = 0.178f;
 		ScaleLerp.second = 0.219f;
-		BlurIntencity.first = 1.104f;
-		BlurIntencity.second = 1.186f;
-		BlurAlpha.first = 0.675f;
-		BlurAlpha.second = 0.8f;
+		BlurIntencity.first = 1.0f;
+		BlurIntencity.second = 1.0f;
+		BlurAlpha.first = 0.6f;
+		BlurAlpha.second = 0.7f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -344,8 +344,8 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		ScaleLerp.second = 0.076f;
 		BlurIntencity.first = 0.700f;
 		BlurIntencity.second = 1.00f;
-		BlurAlpha.first = 0.757f;
-		BlurAlpha.second = 0.8f;
+		BlurAlpha.first = 0.6f;
+		BlurAlpha.second = 0.7f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -534,6 +534,21 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		DistortionAlpha = 0.0f;
 		Color = { 1.83f / 255.f , 0.91f / 255.f ,1.6f / 255.f ,0.0f / 255.f };
 		this->bBlurMsk = true;
+		this->bDirectionReverse = true;
+		break;
+	case ArtemisEnergism:
+		PlayTime = 1.5f;
+		EndT = 1.5f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.000f;
+		ScaleLerp.second = 0.08f;
+		BlurIntencity.first = 0.5f;
+		BlurIntencity.second = 1.0f;
+		BlurAlpha.first = 0.300f;
+		BlurAlpha.second = 0.5f;
+		BlurMaxLength = 40.900f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
 		this->bDirectionReverse = true;
 		break;
 	default:

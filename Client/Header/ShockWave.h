@@ -21,6 +21,7 @@ public:
 		SnatchRush,
 		ArtemisRush,
 		ArtemisLaunch,
+		ArtemisEnergism,
 		ArtemisEnd,
 		StreakEnd,
 		Streak,
