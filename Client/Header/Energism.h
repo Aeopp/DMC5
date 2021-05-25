@@ -50,7 +50,7 @@ public:
 private:
 	std::weak_ptr<class ShockWave> _ShockWave{};
 	std::weak_ptr<class LensFlare> _LensFlare{};
-	static constexpr uint32 ReverberationCount= 16u;
+	static constexpr uint32 ReverberationCount= 22u;
 	std::array<std::weak_ptr< class Reverberation>, ReverberationCount> ReverberationArr{};
 	uint32 CurReverberationIdx{ 0u };
 

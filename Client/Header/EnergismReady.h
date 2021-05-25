@@ -57,10 +57,13 @@ private:
 	{ 194.f / 255.f, 181.f / 255.f, 247.f / 255.f ,1.f };
 
 	// 에디터 변수
+	float CurShockWaveDelta = 0.0f;
+	float ShockWaveDelta = 0.3f;
+
 	D3DXCOLOR LaunchColor{ 
 		194.f / 255.f, 181.f / 255.f, 247.f / 255.f ,1.f };
-	float LaunchRadius{5.f};
-	float LaunchFlux{2.2f};
+	float LaunchRadius{10.f};
+	float LaunchFlux{5.f};
 
 	float GrowTime = 3.f;
 	float PlayTime = 10.f;

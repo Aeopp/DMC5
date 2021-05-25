@@ -159,8 +159,8 @@ void Energism::PlayReverberation()
 
 	const float ReverationStartScale = FMath::Random(ReverationStartRange.first, ReverationStartRange.second); 
 	const float ReverationEndScale = FMath::Random(ReverationEndRange.first, ReverationEndRange.second);
-
-	ReverberationArr[CurReverberationIdx].lock()->PlayStart(CurLocation,Look,ReverationStartScale,ReverationEndScale);
+	auto SpReverberation = ReverberationArr[CurReverberationIdx].lock();
+	SpReverberation->PlayStart(CurLocation,Look,ReverationStartScale,ReverationEndScale);
 	CurReverberationIdx = (CurReverberationIdx + 1) % ReverberationCount;
 };
 

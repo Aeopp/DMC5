@@ -29,6 +29,7 @@ public:
 		Split,
 		Buster,
 		Kaboom,
+		EnergismReady,
 		None,
 	};
 private:

@@ -44,6 +44,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void ParticleUpdate(const float DeltaTime);
+	float Velocity = 0.3f;
 private:
 	float ParticleDelta = 0.01f;
 	float CurParticleDelta = 0.0f;
@@ -59,7 +60,7 @@ private:
 		218.f / 255.f,
 		237.f / 255.f  ,
 		1.f };
-	float Velocity = 0.3f;
+
 	float ColorIntencityHigh = 0.02f;
 	float ColorIntencityLow = 0.01;
 	float TimeAcc = 1.0f;

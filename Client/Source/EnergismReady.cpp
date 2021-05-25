@@ -288,6 +288,7 @@ UINT EnergismReady::Update(const float _fDeltaTime)
 		PlayEnd();
 	}
 
+
 	const float LerpT = FMath::Clamp(T / GrowTime, 0.f, 1.f);
 
 	ParticleUpdate(_fDeltaTime);
@@ -302,6 +303,15 @@ UINT EnergismReady::Update(const float _fDeltaTime)
 		const D3DXCOLOR _Color = FMath::ToColor(FMath::Lerp(ColorLow,ColorHigh ,LerpT));
 		_DynamicLight.Update(_Color, Radius, Flux, 
 			GetComponent<Transform>().lock()->GetPosition());
+
+
+
+		CurShockWaveDelta -= _fDeltaTime;
+		if (CurShockWaveDelta < 0.0f)
+		{
+			CurShockWaveDelta += ShockWaveDelta;
+			_ShockWave.lock()->PlayStart(GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::EnergismReady);
+		}
 	}
 	else if (T > GrowTime)
 	{
