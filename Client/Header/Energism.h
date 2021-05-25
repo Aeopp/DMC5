@@ -48,20 +48,20 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
-	static constexpr uint32 ReverberationCount= 10u;
+	static constexpr uint32 ReverberationCount= 16u;
 	std::array<std::weak_ptr< class Reverberation>, ReverberationCount> ReverberationArr{};
 	uint32 CurReverberationIdx{ 0u };
 
-	std::pair<float, float>  ReverationStartRange{0.001f,0.0015f};
-	std::pair<float, float>  ReverationEndRange{0.002f,0.0025f};
+	std::pair<float, float>  ReverationStartRange{0.001f,0.002f};
+	std::pair<float, float>  ReverationEndRange{ 0.002f,0.003f};
 
-	float ReverberationOffsetScale = 10.f;
+	float ReverberationOffsetScale = 66.890f;
 	float ReverberationDelta = 0.1f;
 	float CurReverberationDelta = 0.0f;
 	float PlayTime = 6.f;
 	float TimeCorr = 0.117f;
 	float ColorIntencity = 0.201f;
-	float CurveScale = 5.017f;
-	float NoiseFactor = 0.167f;
+	float CurveScale = 10.f;
+	float NoiseFactor = 1.338f;
 };
 #endif //

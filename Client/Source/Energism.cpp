@@ -149,7 +149,7 @@ void Energism::PlayReverberation()
 	const float ReverationStartScale = FMath::Random(ReverationStartRange.first, ReverationStartRange.second); 
 	const float ReverationEndScale = FMath::Random(ReverationEndRange.first, ReverationEndRange.second);
 
-	ReverberationArr[CurReverberationIdx].lock()->PlayStart(SpTransform->GetPosition(),Look,ReverationStartScale,ReverationEndScale);
+	ReverberationArr[CurReverberationIdx].lock()->PlayStart(CurLocation,Look,ReverationStartScale,ReverationEndScale);
 	CurReverberationIdx = (CurReverberationIdx + 1) % ReverberationCount;
 };
 
@@ -263,8 +263,7 @@ void Energism::Editor()
 		ImGui::BeginChild(ChildName.c_str());
 
 		static float EditPlayYaw = 0.0f;
-		ImGui::SliderFloat("EditPlayYaw", &EditPlayYaw, 0.0f, 1.f);
-
+		ImGui::SliderFloat("EditPlayYaw", &EditPlayYaw, -360.f, 360.f);
 
 		if (ImGui::SmallButton("Play"))
 		{
@@ -273,10 +272,14 @@ void Energism::Editor()
 
 		ImGui::Text("T : %2.6f", T);
 
-		ImGui::SliderFloat("ReverberationOffsetScale", &ReverberationOffsetScale, 0.0f, 10.f);
+		ImGui::SliderFloat("ReverberationOffsetScale", &ReverberationOffsetScale, 0.0f, 10000.f);
 
 		ImGui::SliderFloat("ReverationStartRange First", &ReverationStartRange.first, 0.0f, 1.f);
 		ImGui::SliderFloat("ReverationStartRange Second", &ReverationStartRange.second, 0.0f, 1.f);
+
+		
+
+		;
 
 		ImGui::SliderFloat("ReverationEndScale First", &ReverationEndRange.first, 0.0f, 1.f);
 		ImGui::SliderFloat("ReverationEndScale Second", &ReverationEndRange.second, 0.0f, 1.f);
