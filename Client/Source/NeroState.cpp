@@ -9874,6 +9874,8 @@ HRESULT Pole_ComboA1::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboA1, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA1-1", 0.2f, true);
+	SoundSystem::GetInstance()->Play("LongComboA1-2", 1.f, true);
 	return S_OK;
 }
 
@@ -9930,6 +9932,11 @@ HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA1_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.59f <= fCurrAnimationTime)
@@ -9964,6 +9971,7 @@ HRESULT Pole_ComboA2::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboA2, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA2", 1.f, true);
 	return S_OK;
 }
 
@@ -10009,6 +10017,11 @@ HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA2_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.46f <= fCurrAnimationTime)
@@ -10043,6 +10056,8 @@ HRESULT Pole_ComboA3::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_HT, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA3-2", 0.4f, true);
+	
 	return S_OK;
 }
 
@@ -10059,7 +10074,14 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.27f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayRedQueenSound)
+		{
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play("LongComboA3-1", 0.6f, false);
+		}
+	}
 	else if (0.21f <= fCurrAnimationTime)
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
 
@@ -10078,6 +10100,11 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA3_End", false, {}, true);
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.53f <= fCurrAnimationTime)
@@ -10113,6 +10140,9 @@ HRESULT Pole_ComboB1::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB2_Loop, true);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("Long_1", 0.4f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("Buster1", 0.1f, true);
 	return S_OK;
 }
 
@@ -10172,11 +10202,30 @@ HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB1_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.53f <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Cbs_Idle();
+	}
+
+	string temp("Long_" + std::to_string(m_iLoopCount));
+	string temp2("Long_" + std::to_string(m_iLoopCount + 1));
+	if (0.34f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition(temp))
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 9)
+				m_iLoopCount = 1;
+			SoundSystem::GetInstance()->Play(temp2, FMath::Random(0.2f,0.4f), false);
+			SoundSystem::GetInstance()->Play("Long_17", 0.2f, false);
+		}
 	}
 	return S_OK;
 }
@@ -10202,6 +10251,9 @@ HRESULT Pole_ComboB2::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Pole_ComboB2", false, Nero::ANI_POLE_COMBOB2);
 	m_pNero.lock()->CheckAutoRotate();
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("Long_1", 0.6f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("Buster2", 0.1f, true);
 	return S_OK;
 }
 
@@ -10261,13 +10313,30 @@ HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB2_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.62f <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Cbs_Idle();
 	}
-
+	string temp("Long_" + std::to_string(m_iLoopCount));
+	string temp2("Long_" + std::to_string(m_iLoopCount + 1));
+	if (0.34f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition(temp))
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 9)
+				m_iLoopCount = 1;
+			SoundSystem::GetInstance()->Play(temp2, FMath::Random(0.2f, 0.4f), false);
+			SoundSystem::GetInstance()->Play("Long_17", 0.2f, false);
+		}
+	}
 	return S_OK;
 }
 
@@ -10291,6 +10360,9 @@ HRESULT Pole_ComboB3::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Pole_ComboB3", false, Nero::ANI_POLE_COMBOB3);
 	m_pNero.lock()->CheckAutoRotate();
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("Long_1", 0.6f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("Buster1", 0.1f, true);
 	return S_OK;
 }
 
@@ -10309,7 +10381,10 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	if (0.42f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.38f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboA3-2", 0.3f, false);
+	}
 	else if (0.34f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.31f <= fCurrAnimationTime)
@@ -10317,7 +10392,10 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	else if (0.26f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.23f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboA3-2", 0.3f, false);
+	}
 	else if (0.2f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.16f <= fCurrAnimationTime)
@@ -10351,6 +10429,11 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB3_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.53f <= fCurrAnimationTime)
@@ -10358,6 +10441,19 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 		NeroState::KeyInput_Cbs_Idle();
 	}
 
+	string temp("Long_" + std::to_string(m_iLoopCount));
+	string temp2("Long_" + std::to_string(m_iLoopCount + 1));
+	if (0.34f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition(temp))
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 9)
+				m_iLoopCount = 1;
+			SoundSystem::GetInstance()->Play(temp2, FMath::Random(0.2f, 0.4f), false);
+			SoundSystem::GetInstance()->Play("Long_17", 0.2f, false);
+		}
+	}
 	return S_OK;
 }
 
@@ -10385,6 +10481,7 @@ HRESULT Pole_ComboB4::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB2_End, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA3-2", 0.4f, true);
 	return S_OK;
 }
 
@@ -10406,15 +10503,22 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Long, ATTACKTYPE::Attack_KnocBack);
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboB_3", 0.4f, false);
 	}
 	else if (0.17f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.15f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboB_2", 0.4f, false);
+	}
 	else if (0.12f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.08f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboB_1", 0.4f, false);
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -10431,6 +10535,11 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB4_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.48f <= fCurrAnimationTime)
@@ -10470,6 +10579,8 @@ HRESULT Pole_WhirlWind_Start::StateEnter()
 		}
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("WhirlWind_1", 0.4f, true);
+	m_iLoopCount = 1;
 	return S_OK;
 }
 
@@ -10487,14 +10598,22 @@ HRESULT Pole_WhirlWind_Start::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-
-	if (0.74f <= fCurrAnimationTime)
+	if (0.84f <= fCurrAnimationTime)
+	{
+		if (m_bPlayRedQueenSound)
+		{
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_2", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
+	else if (0.74f <= fCurrAnimationTime)
 	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 		if (m_pPlayOnce[2])
 		{
 			m_pPlayOnce[2] = false;
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false);
+			SoundSystem::GetInstance()->Play("WhirlWind_1", FMath::Random(0.3f, 0.4f), false);
 		}
 	}
 	else if (0.56f <= fCurrAnimationTime)
@@ -10504,10 +10623,18 @@ HRESULT Pole_WhirlWind_Start::StateUpdate(const float _fDeltaTime)
 		{
 			m_pPlayOnce[1] = false;
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar3, false);
+			SoundSystem::GetInstance()->Play("WhirlWind_4", FMath::Random(0.3f, 0.4f), false);
 		}
 	}
 	else if (0.41f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_3", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
 	else if (0.32f <= fCurrAnimationTime)
 	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
@@ -10515,6 +10642,15 @@ HRESULT Pole_WhirlWind_Start::StateUpdate(const float _fDeltaTime)
 		{
 			m_pPlayOnce[0] = false;
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false);
+		}
+		//SoundSystem::GetInstance()->Play("WhirlWind_3", FMath::Random(0.3f, 0.4f), false);
+	}
+	else if (0.22f <= fCurrAnimationTime)
+	{
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_2", FMath::Random(0.3f, 0.4f), false);
 		}
 	}
 
@@ -10552,6 +10688,8 @@ HRESULT Pole_WhirlWind_Loop::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false, false);
 	}
+	SoundSystem::GetInstance()->Play("WhirlWind_3", FMath::Random(0.3f, 0.4f), false);
+	m_iLoopCount = 3;
 	return S_OK;
 }
 
@@ -10566,7 +10704,7 @@ HRESULT Pole_WhirlWind_Loop::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	m_fLoopTime -= _fDeltaTime;
-
+	string temp("WhirlWind_" + std::to_string(m_iLoopCount));
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.67f <= fCurrAnimationTime)
@@ -10576,6 +10714,16 @@ HRESULT Pole_WhirlWind_Loop::StateUpdate(const float _fDeltaTime)
 		{
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false, true);
 		}
+		if (m_bPlayRedQueenSound)
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 4)
+				m_iLoopCount = 1;
+			m_bPlayOvertureSound = true;
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play(temp, FMath::Random(0.3f, 0.4f), false);
+		}
+		
 	}
 	else if (0.26f <= fCurrAnimationTime)
 	{
@@ -10584,10 +10732,20 @@ HRESULT Pole_WhirlWind_Loop::StateUpdate(const float _fDeltaTime)
 		{
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar3, false, true);
 		}
+		if (m_bPlayOvertureSound)
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 4)
+				m_iLoopCount = 1;
+			m_bPlayOvertureSound = false;
+			m_bPlayRedQueenSound = true;
+			SoundSystem::GetInstance()->Play(temp, FMath::Random(0.3f, 0.4f), false);
+		}
 	}
 
 	if (m_fLoopTime < 0.f)
 	{
+		SoundSystem::GetInstance()->Play("LongComboA3-2", 0.4f, false);
 		m_pFSM->ChangeState(NeroFSM::POLE_WHIRLWIND_END);
 		return S_OK;
 	}
@@ -10617,6 +10775,7 @@ HRESULT Pole_WhirlWind_End::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_HT, false);
 	}
 	m_bPlayOnce = true;
+	SoundSystem::GetInstance()->Play("WhirlWind_5", FMath::Random(0.3f, 0.4f), true);
 	return S_OK;
 }
 
@@ -10645,11 +10804,30 @@ HRESULT Pole_WhirlWind_End::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Long, ATTACKTYPE::Attack_KnocBack);
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			SoundSystem::GetInstance()->Play("LongComboB_3", 0.4f, false);
+		}
 	}
 	else if (0.12f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayRedQueenSound)
+		{
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_1", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
 	else if (0.08f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_6", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{

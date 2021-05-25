@@ -390,7 +390,14 @@ UINT Nero::Update(const float _fDeltaTime)
 	//if (Input::GetKeyDown(DIK_9))
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	//}w
+	//}
+
+	if (Input::GetKeyDown(DIK_1))
+	{
+		BuyUpgradedOverture();
+		BuyCbsMiddle();
+		BuyCbsLong();
+	}
 
 
 	if (80 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb1"))
