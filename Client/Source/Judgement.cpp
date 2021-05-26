@@ -89,10 +89,11 @@ void Judgement::RenderInit()
 	// 
 	// 스태틱 메쉬 로딩
 	Mesh::InitializeInfo _InitInfo{};
-	_InitInfo.bLocalVertexLocationsStorage = false;
+	_InitInfo.bLocalVertexLocationsStorage = true;
 
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
-		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _InitInfo);
+		(L"..\\..\\Resource\\Mesh\\Static\\Effect\\AirHike\\AirHike.fbx", _InitInfo);
+
 	_MagicTexture =
 		Resources::Load<ENGINE::Texture>(L"..\\..\\Usable\\Judgement\\Magic.tga");
 	_MagicAlb =
@@ -247,7 +248,7 @@ HRESULT Judgement::Awake()
 
 	m_pTransform.lock()->SetScale({ 0.0015f,0.0015f,0.0015f });
 	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.12f,0.f });
-	m_pTransform.lock()->SetRotation(Vector3{ 90.f ,0.f ,0.0f });
+	m_pTransform.lock()->SetRotation(Vector3{ 0.f ,0.f ,0.0f });
 
 	return S_OK;
 }
@@ -314,7 +315,7 @@ void Judgement::PlayCircleGrowParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"CircleGrowParticle", 555ul, true);
+				"CircleGrowParticle", 777ul, true);
 			_Particle.empty() == false)
 		{
 

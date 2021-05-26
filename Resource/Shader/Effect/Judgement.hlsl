@@ -96,6 +96,8 @@ void PsMain(out float4 Color : COLOR0,
     }
     
     Color.a = AlpSample.a;
+    Color.a = 1.f;
+    Color.rgb = CurColor;
     Color.rgb *= Intencity * exposure_corr;
 };
 
