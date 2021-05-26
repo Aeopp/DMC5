@@ -61,11 +61,11 @@ public:
 	// 에디터 변수 ......
 	float CircleGrowParticleTime= 0.0016f;
 	float ShockDelta = 1.3f;
-	float ShockScaleFactor = 10.f;
+	float ShockScaleFactor = 1000.f;
 	
 	float PlayTime = 10.f;
 	float CircleGrowTime = 1.3f;
-	float JudgementReadyTime = 2.f;
+	float JudgementReadyTime = 3.f;
 
 	float GrowEndScale = 0.006f;
 	float GrowEndIntencity= 0.2f;

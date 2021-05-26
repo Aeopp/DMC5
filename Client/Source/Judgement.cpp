@@ -270,7 +270,7 @@ UINT Judgement::Update(const float _fDeltaTime)
 	UpdateParticle(_fDeltaTime);
 	UpdateShockWave(_fDeltaTime);
 
-	if (T > CircleGrowTime)
+	if (T > JudgementReadyTime)
 	{
 		PlayCircleGrowEndParticle();
 	}
@@ -294,10 +294,9 @@ void Judgement::PlayCircleGrowEndParticle()
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"JudgementReady ", 3333ul, true);
+					"JudgementReady", 5555ul, true);
 				_Particle.empty() == false)
 			{
-
 				for (int32 i = 0; i < _Particle.size(); ++i)
 				{
 					auto& _PlayInstance = _Particle[i];

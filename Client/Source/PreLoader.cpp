@@ -1049,7 +1049,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 3333ul;
+	const uint64 PoolSize = 5555ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1063,20 +1063,23 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 	{
 		for (auto& _ParticleInstance : *ParticlePool)
 		{
-			auto SpVtxLocations =_TargetMesh->m_spVertexLocations;
-			const uint32 VtxCnt =SpVtxLocations->size();
+			auto SpVtxLocations = _TargetMesh->m_spVertexLocations;
+			const uint32 VtxCnt = SpVtxLocations->size();
 
-			 Vector3 StartLocation = (*SpVtxLocations)[FMath::Random(0u, VtxCnt - 1u)];
-			 Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
-			 Vector3 Cp1 = StartLocation + FMath::RandomVector(0.f);
-			 Vector3 End = StartLocation + FMath::RandomVector(0.f);
+			Vector3 StartLocation = (*SpVtxLocations)[FMath::Random(0u, VtxCnt - 1u)];
+			Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
+			Cp0.y += FMath::Random(0.f, 50.f);
+			Vector3 Cp1 = Cp0 + FMath::RandomVector(0.f);
+			Cp1.y += FMath::Random(0.f, 50.f);
+			Vector3 End = Cp1 + FMath::RandomVector(0.f);
+			End.y += FMath::Random(0.f, 50.f);
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 5.f;
+			constexpr float ScaleFactor = 10.f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -1084,15 +1087,11 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(1.0f, 1.5f);
+			_Value.ColorIntencity = FMath::Random(0.025f, 0.05f);
 
-			_Value.Color = FMath::Lerp(
-				Judgement::GrowEndColor , 
-				Judgement::JudgementReadyColor,
-				FMath::Random(0.8f, 1.f));
+			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
 
-			const float LifeTime = FMath::Random(0.1f, 0.2f);
-
+			const float LifeTime = FMath::Random(0.1f, 2.f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },
@@ -1160,7 +1159,7 @@ void PreLoader::JudgementCircleGrowParticlePoolLoad()
 			Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
 			Vector3 Cp1 = StartLocation + FMath::RandomVector(0.f);
 			Vector3 End = StartLocation + FMath::RandomVector(0.f);
-			End.y += FMath::Random(0.f,111.f);
+			// End.y += FMath::Random(0.f,111.f);
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
