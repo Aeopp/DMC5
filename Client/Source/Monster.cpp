@@ -99,6 +99,11 @@ void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
 		}
 		break;
 	case Tag_Cbs_Long:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[0].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
@@ -106,24 +111,40 @@ void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
 		m_iWaveIndex %= 3;
 		break;
 	case Tag_Cbs_Middle:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[4].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
 		break;
 	case Tag_Cbs_Short:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[5].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
 		break;
 	case Overture:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[1].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
 		break;
 	default:
+
 		break;
 	}
 }

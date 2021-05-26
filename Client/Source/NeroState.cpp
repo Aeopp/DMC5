@@ -4711,7 +4711,8 @@ HRESULT Wire_Fly_Start::StateEnter()
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->SetFly(true);
 	m_pNero.lock()->PlayEffect(Eff_SnatchRush);
-	SoundSystem::GetInstance()->Play("Snatch", 0.4f, true);
+	SoundSystem::GetInstance()->Play("Snatch", 0.6f, true);
+	
 	return S_OK;
 }
 
@@ -4754,7 +4755,7 @@ HRESULT Wire_Fly_Loop::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Wire_HellHound_Loop", true, Nero::ANI_WIRE_HELLHOUND_LOOP);
-	
+	SoundSystem::GetInstance()->Play("DanteEff_3", 0.2f, true);
 	return S_OK;
 }
 
@@ -10402,7 +10403,7 @@ HRESULT Pole_WhirlWind_Start::StateEnter()
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
 	SoundSystem::GetInstance()->Play("WhirlWind_1", 0.4f, true);
 	m_iLoopCount = 1;
-	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, true);
+	SoundSystem::GetInstance()->Play("DanteCharging_2", 0.8f, true);
 	return S_OK;
 }
 
