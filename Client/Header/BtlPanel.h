@@ -144,6 +144,7 @@ private:
 	bool _TDTGauge_ConsumeStart = false;
 	float _TDTGauge_ConsumeSpeed = 1.f;
 	float _TDTGauge_EmissivePower = 0.f;
+	static uint32 _TDTGaugeLevel;	/* 1 ~ 3 */
 
 	Vector2 _InputUIOffset = Vector2(0.f, 0.f);
 
@@ -177,7 +178,6 @@ private:
 	*/
 	static uint32 _StylishPoints;
 	bool _StylishPtsAccumulateStart = false;
-	// + 결과창에 보여줄 누적 StylishPoints
 	bool _StylishPtsAlive = false;
 	float _StylishPtsAliveTime = 0.f;
 	bool _StylishPtsAlive2ndCheck = false;
@@ -189,7 +189,7 @@ private:
 	float _ExGauge_FireAccumulateTime = 999.f;
 	float _ExGauge_FullFireAccumulateTime = 0.f;
 	float _ExGauge_DissolveAmount = 0.f;
-	uint32 _ExGaugeLevel = 1u;	/* 1 ~ 3 */
+	static uint32 _ExGaugeLevel;	/* 1 ~ 3 */
 
 	enum KEY_INPUT_ID
 	{
@@ -285,6 +285,7 @@ public:
 	float GetTDTGauge() const { return _TDTGauge; } /* 0 ~ 1 */
 	void AccumulateTDTGauge(const float Amount);
 	void ConsumeTDTGauge(const float Speed = 1.f);	/* 0이 될때까지 Speed * DeltaTime 만큼 TDTGauge 감소 */
+	void SetTDTGaugeLevel(const uint32 Level);
 
 	void SetKeyInputActive(bool IsActive);
 

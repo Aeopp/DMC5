@@ -76,14 +76,14 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	}
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	//}
 	
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -918,6 +918,7 @@ void Hotel_S02::CheckShopAvailable()
 			if (!Sp->IsActive())
 			{
 				Sp->SetActive(true);
+				_BtlPanel.lock()->SetRedOrbActive(false);
 				_BtlPanel.lock()->SetActive(false);
 			}
 			else
@@ -926,6 +927,7 @@ void Hotel_S02::CheckShopAvailable()
 				Sp->ResetCmd();
 				Sp->SetActive(false);
 				_BtlPanel.lock()->SetActive(true);
+				_BtlPanel.lock()->SetRedOrbActive(true);
 			}
 		}
 	}

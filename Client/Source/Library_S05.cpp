@@ -430,6 +430,7 @@ void Library_S05::CheckShopAvailable()
 			if (!Sp->IsActive())
 			{
 				Sp->SetActive(true);
+				_BtlPanel.lock()->SetRedOrbActive(false);
 				_BtlPanel.lock()->SetActive(false);
 			}
 			else
@@ -438,6 +439,7 @@ void Library_S05::CheckShopAvailable()
 				Sp->ResetCmd();
 				Sp->SetActive(false);
 				_BtlPanel.lock()->SetActive(true);
+				_BtlPanel.lock()->SetRedOrbActive(true);
 			}
 		}
 	}

@@ -9,10 +9,11 @@
 // static var
 int BtlPanel::_HPGaugeCount = 5;
 float BtlPanel::_TDTGauge = 0.f;
+uint32 BtlPanel::_TDTGaugeLevel = 1u;
 uint32 BtlPanel::_StylishPoints = 0u;
 float BtlPanel::_ExGauge = 0.f;
+uint32 BtlPanel::_ExGaugeLevel = 1u;
 uint32 BtlPanel::_RedOrbCount = 0u;
-
 
 void BtlPanel::Free()
 {
@@ -982,6 +983,14 @@ void BtlPanel::ConsumeTDTGauge(const float Speed/*= 1.f*/)
 
 	_TDTGauge_ConsumeStart = true;
 	_TDTGauge_ConsumeSpeed = Speed;
+}
+
+void BtlPanel::SetTDTGaugeLevel(const uint32 Level)
+{
+	if (Level == 0u || Level > 3u)
+		return;
+
+	_TDTGaugeLevel = Level;
 }
 
 void BtlPanel::SetKeyInputActive(bool IsActive)
@@ -2222,7 +2231,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 {
 	// Boss HP
 	if (_BossGaugeHPRatioDelay > _BossGaugeHPRatio)
-		_BossGaugeHPRatioDelay -= _fDeltaTime * 1.5f;
+		_BossGaugeHPRatioDelay -= _fDeltaTime * 1.25f;
 	else
 		_BossGaugeHPRatioDelay = 0.f;
 
