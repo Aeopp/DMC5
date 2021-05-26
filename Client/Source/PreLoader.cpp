@@ -964,7 +964,7 @@ void PreLoader::SandGlassEffectParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 444u;
+	const uint64 PoolSize = 888u;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("SandGlassEffectParticle",
