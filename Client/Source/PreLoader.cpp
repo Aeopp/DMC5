@@ -1325,7 +1325,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 	{
 		for (auto& _ParticleInstance : *ParticlePool)
 		{
-			Vector3 StartLocation = FMath::RandomVector(1000.f);
+			Vector3 StartLocation = FMath::RandomVector(100.f);
 			Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
 			Vector3 Cp1 = StartLocation + FMath::RandomVector(10.f);
 			Vector3 End = StartLocation + FMath::RandomVector(20.f);
