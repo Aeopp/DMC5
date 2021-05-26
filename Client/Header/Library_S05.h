@@ -36,11 +36,25 @@ private:
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:
+	std::optional<float>  OBookCaseSunkenSmash = std::nullopt;
+	float BookCaseDelta = 0.5f;
+	std::vector<std::weak_ptr<Trigger>> BookCaseTrigger{};
 	void TriggerSetUp();
-	void TriggerBloodPrevious(const std::weak_ptr<Trigger> _BloodTrigger);
-	std::weak_ptr<Trigger> TriggerBlood();
+	void TriggerBloodPrevious(const std::weak_ptr<Trigger> _WaveStart);
+
+	std::weak_ptr<Trigger> TriggerBloodFirstWave(const std::weak_ptr<Trigger>_WaveTrigger);
+	std::weak_ptr<Trigger> TriggerBloodSecondWave(const std::weak_ptr<Trigger>_WaveTrigger);
+	std::weak_ptr<Trigger> TriggerBloodThirdWave();
+
 	//   책장 박살내며 성큰이 등장 !!
+	//   6개의 책장이 전부 박살내며 나오는 버전 !!
 	void TriggerBookCaseSunkenSmash();
+
+	// 책장 & 성큰 순차로 나오는 이벤트 !! 트리거는 전부 Disable 상태이니 시간차로 재생해주세요 ...
+	void                   TriggerBookCaseSunkenFirstSmash();
+	std::weak_ptr<Trigger> TriggerBookCaseSunkenSecondSmash();
+	std::weak_ptr<Trigger> TriggerBookCaseSunkenThirdSmash();
+
 	void TriggerSewerSunken();
 	void TriggerNextScene();
 };
