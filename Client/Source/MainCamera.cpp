@@ -6,6 +6,11 @@
 #include "Trigger.h"
 #include "Renderer.h"
 #include "QliphothBlock.h"
+
+UINT MainCamera::m_eAtType = AT_PLAYER;
+UINT MainCamera::m_ePlayerCamMode = CAM_MODE_BASIC;
+UINT MainCamera::m_eTriggerCamMode = STAGE1_WAVE1;
+
 MainCamera::MainCamera()
 	:m_fFovY(0.f), m_fAspect(0.f), m_fNear(0.f), m_fFar(0.f), 
 	m_fDistanceToTarget(0.f),m_bFix(true)
@@ -110,6 +115,8 @@ UINT MainCamera::LateUpdate(const float _fDeltaTime)
 	switch (m_eAtType)
 	{
 	case AT_PLAYER:
+		if (CAM_MODE_RETURN_TO_PLAYER == m_ePlayerCamMode)
+			return 0;
 		if (Physics::RayCast(PlayerPos, vLook, vCollEye))
 		{
 			Vector3 vLength1 = PlayerPos - vCollEye;
@@ -182,12 +189,14 @@ void MainCamera::Set_PlayerCamMode(UINT _ePlayerCamMode)
 	{
 		m_fDistanceToTarget = 0.15f;
 		vector<Vector3> _LostTimes;
-		_LostTimes.emplace_back(Vector3(2.5f, 1.f, 0.3f));
+		_LostTimes.emplace_back(Vector3(1.5f, 1.f, 0.3f));
 		TimeSystem::GetInstance()->LostTime(_LostTimes);
 		
-		m_fTriggerTime = 3.5f;
+		m_fTriggerTime = 2.5f;
 		m_fLerpSpeed = 1.3f;
-		Renderer::GetInstance()->FadeOutStart(3.3f);
+		
+		m_fFadeOutDelayTime = 0.5f;
+		m_bPlayOnce = true;
 	}
 }
 
@@ -425,6 +434,13 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 
 void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
 {
+	m_fFadeOutDelayTime -= TimeSystem::GetInstance()->OriginDeltaTime();
+
+	if (m_fFadeOutDelayTime <= 0.f && m_bPlayOnce)
+	{
+		m_bPlayOnce = false;
+		Renderer::GetInstance()->FadeOutStart(1.f);
+	}
 	//몬스터 다 죽었을때 슬로우 되는 카메라 처리
 	m_vAt = m_pAtTranform.lock()->GetPosition();
 	m_vAt.y += m_fFloatingAmount;
@@ -497,6 +513,22 @@ void MainCamera::Player_Cam_WaveEnd(float _fDeltaTime)
 				}
 			}
 			break;
+		case STAGE3_WAVE_HOLE:
+			Renderer::GetInstance()->FadeInStart(0.4f);
+			Set_TriggerCam(STAGE3_WAVE_HOLE, Vector3{ 0.351f,0.497f,30.876f }, 2.3f);
+			m_vAt = { 0.048f,0.482f,31.346f };
+			m_vEye = { 0.176f,0.3f,33.161f };
+			m_fDistanceToTarget = OGDistance;
+			for (uint32 i = 0; i < 3u; ++i)
+			{
+				if (i < m_vecQliphothBlock.size() && !m_vecQliphothBlock[i].expired())
+				{
+					m_vecQliphothBlock[i].lock()->Reset();
+				}
+			}
+
+
+			break;
 		}
 	}
 }
@@ -515,7 +547,7 @@ void MainCamera::Player_Cam_ReturnToPlayer(float _fDeltaTime)
 
 	Vector3 vLength = vPlayerPos - m_vEye;
 
-	if (0.05f >= D3DXVec3Length(&vLength))
+	if (0.06f >= D3DXVec3Length(&vLength))
 	{
 		m_ePlayerCamMode = CAM_MODE_BASIC;
 		return;
@@ -553,6 +585,13 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 		break;
 	case STAGE2_BUTTERFLY2_END:
 		Trigger_Cam_Stage2_ButterFly2_End(_fDeltaTime);
+		break;
+	case STAGE3_WAVE_HOLE:
+		Trigger_Cam_Stage3_Hole(_fDeltaTime);
+		break;
+	case STAGE3_WAVE_HOLE_END:
+		Trigger_Cam_Stage3_HoleEnd(_fDeltaTime);
+		break;
 	}
 	m_fTriggerTime -= TimeSystem::GetInstance()->OriginDeltaTime();
 	//설정한 시간이 다됐다
@@ -601,6 +640,14 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 			m_eTriggerCamMode = STAGE2_BUTTERFLY2_END;
 			Renderer::GetInstance()->FadeOutStart(0.4f);
 			break;
+		case STAGE3_WAVE_HOLE:
+			m_eAtType = AT_PLAYER;
+			m_fDistanceToTarget = OGDistance;
+			m_ePlayerCamMode = CAM_MODE_RETURN_TO_PLAYER;
+			m_fAngle = -5.f;
+			m_fRotX = -20.f;
+			break;
+
 		}
 
 	}
@@ -800,6 +847,65 @@ void MainCamera::Trigger_Cam_Stage2_ButterFly2_End(float _fDeltaTime)
 	}
 }
 
+void MainCamera::Trigger_Cam_Stage3_Hole(float _fDeltaTime)
+{
+	static bool Playonce = true;
+	if (m_fTriggerTime <= 1.5f)
+	{
+		if (Playonce)
+		{
+			Playonce = false;
+			vector<Vector3> _LostTimes;
+			_LostTimes.emplace_back(Vector3(1.48f, 1.f, 0.3f));
+			TimeSystem::GetInstance()->LostTime(_LostTimes);
+		}
+		Vector3 vDir = Vector3{ -0.787f,0.482f,30.880f } - m_vAt;
+		
+		vDir.y = 0.f;
+		D3DXVec3Normalize(&vDir,&vDir);
+
+		m_vAt += vDir * 0.2f  * _fDeltaTime;
+		
+	}
+	m_vEye = FMath::Lerp(m_vEye, Vector3{ 0.351f,0.497f,30.876f }, 0.007f);
+}
+
+void MainCamera::Trigger_Cam_Stage3_HoleEnd(float _fDeltaTime)
+{
+	static float RequireTime = 0.f;
+	RequireTime += TimeSystem::GetInstance()->OriginDeltaTime();
+	if (RequireTime >= 0.2f)
+	{
+		Vector3 vPlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+		Vector3 vLook = -m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
+		vLook.y = 0.f;
+		Vector3 LastPos = vPlayerPos - vLook * 0.8f;
+		LastPos.y += m_fFloatingAmount;
+
+		m_vEye = FMath::Lerp(m_vEye, LastPos, _fDeltaTime * 2.5f);
+		
+		Vector3 vTestLook = { 0.f, 0.f ,1.f };
+		Vector3 vTestLook2 = vPlayerPos - m_vTriggerPos;
+		vTestLook2.y = 0;
+		float fDot = D3DXVec3Dot(&vTestLook, &vTestLook2);
+
+		if (fDot > 1.f)
+			fDot = 1.f - FLT_EPSILON;
+		else if (fDot < -1.f)
+			fDot = -1.f + FLT_EPSILON;
+
+		float fRadian = acosf(fDot);
+		Vector3	vCross;
+		D3DXVec3Cross(&vCross, &vTestLook2, &vTestLook);
+
+		if (vCross.y > 0)
+			fRadian *= -1;
+
+		m_fAngle = -D3DXToDegree(fRadian);
+
+	}
+}
+
 void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 {
 	if (m_pAtTranform.expired())
@@ -869,4 +975,5 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 
 void MainCamera::Boss_Cam_Em5300(float _fDeltaTime)
 {
+
 }

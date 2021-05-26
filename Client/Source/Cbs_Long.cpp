@@ -130,6 +130,11 @@ Matrix* Cbs_Long::Get_BoneMatrixPtr(std::string _BoneName)
 	return m_pMesh->GetToRootMatrixPtr(_BoneName);
 }
 
+void Cbs_Long::ChangeColliderSize(float _fSize)
+{
+	m_pCollider.lock()->SetRadius(_fSize);
+}
+
 void Cbs_Long::RenderReady()
 {
 	auto _WeakTransform = GetComponent<ENGINE::Transform>();

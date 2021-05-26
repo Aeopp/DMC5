@@ -125,6 +125,11 @@ void Cbs_Middle::ChangeAnimation(const std::string& InitAnimName, const bool bLo
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify,1.f,1.f,bOverlap);
 }
 
+void Cbs_Middle::ChangeColliderSize(float _fSize)
+{
+	m_pCollider.lock()->SetRadius(_fSize);
+}
+
 std::string Cbs_Middle::GetName()
 {
 	return "Cbs_Middle";

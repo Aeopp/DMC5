@@ -39,7 +39,6 @@ Hotel_S04* Hotel_S04::Create()
 HRESULT Hotel_S04::LoadScene()
 {
 	// Load Start
-
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -303,7 +302,8 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 		    // Renderer::GetInstance()->SkyDistortionStart(NoiseWrap,TimeCorr);
 
 			Renderer::GetInstance()->SkyOriginColor = Vector4{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
-
+			SoundSystem::GetInstance()->ClearSound();
+			SoundSystem::GetInstance()->Play("Stage1_Boss", 0.12f, true);
 			// 다른 후처리가 묻히니 스카이 왜곡을 약하게 .... 
 
 			// 로직 작성 .... 
@@ -340,14 +340,22 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 void Hotel_S04::LateInit()
 {
 	SoundSystem::GetInstance()->ClearSound();
-
+	SoundSystem::GetInstance()->Play("Wind1", 0.5f, false, {}, 35000);
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.205f, 0.79473f, 36.998f });
+		SpPlayer->SetAngle(180.f);
 	}
 
 	ApplyShopUpgradeDesc();
+
+	if (auto SpMainCamera = _Camera.lock();
+		SpMainCamera)
+	{
+		SpMainCamera->SetAngle({ -5.f,170.f,0.f });
+		SpMainCamera->SetStartPos();
+	}
 
 	/*_Camera.lock()->Set_At_Transform(
 		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,

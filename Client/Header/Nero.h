@@ -415,6 +415,7 @@ public:
 	void SetFly(bool _ActiveOrNot) { m_IsFly = _ActiveOrNot; }
 	void SetPosFireCircle();
 	void SetAngle(float _fAngle);
+	void SetNoHit(bool _Nohit) { m_Nohit = _Nohit; }
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
@@ -570,6 +571,7 @@ private:
 
 	bool	m_IsMajin = false;
 	bool	m_IsFly = false;
+	bool	m_Nohit = false;
 	int		m_iDashLoopDir = 1;
 
 	//

@@ -30,6 +30,7 @@ public:
 public:
 	void	SetAttType(ATTACKTYPE _eAttDir) { m_BattleInfo.eAttackType = _eAttDir; }
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
+	void ChangeColliderSize(float _fSize = 0.11f);
 public:
 	// RenderInterface을(를) 통해 상속됨
 	virtual void RenderReady() override;

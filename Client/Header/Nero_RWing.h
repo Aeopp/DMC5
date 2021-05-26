@@ -54,6 +54,8 @@ public:
 	virtual std::string GetName() override;
 public:
 	bool	Set_RenderState(bool _DrawOrNot) { m_bIsRender = _DrawOrNot; }
+	void	SetDissolve();
+	DissolveInfo m_DissolveInfo{};
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh>	m_pMesh;
 	std::weak_ptr<Nero>						m_pNero;
@@ -73,7 +75,9 @@ private:
 	Matrix	m_AuraWorldMatrix = Matrix();
 
 	//Vector3 m_AuraRot = Vector3(0.f, 0.f, 0.f);
-	DissolveInfo m_DissolveInfo{};
+	
+
+	bool	m_IsTimeOut = false;
 };
 
 

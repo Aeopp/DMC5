@@ -62,9 +62,9 @@ HRESULT Hotel_S03::LoadScene()
 	m_fLoadingProgress = 0.1f;
 
 #pragma region Player & Camera
-
+	
 	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//		SpCamera)
+	//	SpCamera)
 	//{
 	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(
 	//		Vector3{ -1.77158f, 1.36541f, 23.73719f }
@@ -573,10 +573,11 @@ void Hotel_S03::TriggerUpGround()
 		{
 			// 여기서 UpGround 로직 처리하세요 ... 
 			_AnimationUpground.lock()->ContinueAnimation();
+			_MainCamera.lock()->SetShakeInfo(0.5f, 7.f);
 			_Player.lock()->GetFsm().lock()->ChangeState(NeroFSM::WINDPRESSURE);
 			// 땅이 솟아오름 !! .. 
 			SoundSystem::GetInstance()->Play("UpGround1", 0.6f, false);
-			SoundSystem::GetInstance()->Play("UpGround2", 0.6f, false);
+			
 			//
 			if (auto Sp = _Smoke0.lock(); Sp)
 			{
@@ -756,12 +757,13 @@ std::weak_ptr<Trigger> Hotel_S03::TriggerHole()
 			_DecreaseBattle1_Volume = true;
 
 			// 여기서 카메라 거미줄 비치기.
-			//_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
-
+			_MainCamera.lock()->Set_TriggerCamIndex(MainCamera::STAGE3_WAVE_HOLE);
+			_MainCamera.lock()->Set_PlayerCamMode(MainCamera::CAM_MODE_WAVE_END);
+			_MainCamera.lock()->SetQliphothBlock(m_vecQliphothBlock);
 			// 여기서 거미줄 없애기. << 알아서 밖에서 지워주길 바람 - hscho
-			m_vecQliphothBlock[0].lock()->Reset();
-			m_vecQliphothBlock[1].lock()->Reset();
-			m_vecQliphothBlock[2].lock()->Reset();
+			//m_vecQliphothBlock[0].lock()->Reset();
+			//m_vecQliphothBlock[1].lock()->Reset();
+			//m_vecQliphothBlock[2].lock()->Reset();
 
 			// 여기서 하늘 왜곡 풀어주기 .
 			Renderer::GetInstance()->SkyDistortionEnd();
