@@ -437,6 +437,20 @@ void SpriteEffect::InitializeFromOption(const uint32 Option)
 		_LightDesc.PointRadius = { 0.161f,0.161f };
 		RegistDynamicLight(_LightDesc);
 	}
+	else if (Option == 6)
+	{
+		RegistSpriteInfo(8, 8);
+		RegistMesh(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex("..\\..\\Resource\\Texture\\Effect\\ImpactDirection.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		DynamicLight _LightDesc{};
+		ConstantPlayTime = 0.25f;
+		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
+		_LightDesc.Flux = { 0.0f,0.000421f };
+		_LightDesc.PointRadius = { 0.161f,0.161f };
+		RegistDynamicLight(_LightDesc);
+	}
 };
 
 void SpriteEffect::RegistInfo(

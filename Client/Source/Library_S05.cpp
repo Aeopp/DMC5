@@ -15,7 +15,12 @@
 #include "Monster.h"
 #include "SoundSystem.h"
 #include "ShopPanel.h"
-
+#include "Em0000.h"
+#include "Em100.h"
+#include "Em200.h"
+#include "Em1000.h"
+#include "FadeOut.h"
+#include "Trigger.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -52,15 +57,15 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-4.327f,
-			1.449f,
-			36.596f, 
-			});
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+	//		-4.327f,
+	//		1.449f,
+	//		36.596f, 
+	//		});
+	//}
 
 	AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -91,8 +96,8 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(false);
-	//TriggerSetUp();
+	RenderDataSetUp(true);
+	TriggerSetUp();
 
 #pragma endregion
 
@@ -161,6 +166,20 @@ HRESULT Library_S05::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
 	}
 	/* -------------------------- */
+
+	if (OBookCaseSunkenSmash)
+	{
+		*OBookCaseSunkenSmash += _fDeltaTime;
+		if (*OBookCaseSunkenSmash >= BookCaseDelta)
+		{
+			*OBookCaseSunkenSmash = 0.0f;
+			if (BookCaseTrigger.empty() == false)
+			{
+				BookCaseTrigger.back().lock()->TriggerEnable();
+				BookCaseTrigger.pop_back();
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -467,12 +486,776 @@ void Library_S05::RenderDataSetUp(const bool bTest)
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
-}
+};
 
 void Library_S05::TriggerSetUp()
 {
+	TriggerSewerSunken();
+	TriggerBloodPrevious(TriggerBloodFirstWave(TriggerBloodSecondWave(TriggerBloodThirdWave())));
 
+
+	// 버전 1: 성큰이 전부다 책상 부수며 나오는 이벤트.
+	// TriggerBookCaseSunkenSmash();
+
+	// 버전 2 : 성큰이 순차적으로 책장 부수며 나오는 이벤트 .  
+	TriggerBookCaseSunkenFirstSmash();
+	BookCaseTrigger.push_back(TriggerBookCaseSunkenThirdSmash());
+	BookCaseTrigger.push_back(TriggerBookCaseSunkenSecondSmash());
+
+	TriggerNextScene();
+};
+
+void Library_S05::TriggerBloodPrevious(const std::weak_ptr<Trigger> _BloodTrigger)
+{
+
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack = [this, _BloodTrigger]()
+		{
+			// 여기서 연출 하고 TriggerBlood 호출해주세요 !!
+			_BloodTrigger.lock()->TriggerEnable();
+		};
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 0.5f,0.5f,3.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			TriggerRotation);
+	}
+};
+
+std::weak_ptr<Trigger> Library_S05::TriggerBloodFirstWave
+									   (const std::weak_ptr<Trigger> _WaveTrigger)
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>(),
+
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -19.f, -3.014,35.556 });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -17.929  ,-3.014,  35.528 });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -18.979  ,-3.014, 37.077 });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -17.980  ,-3.014, 36.903 });
+
+
+		MonsterWave[4].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.626f , -3.168f , 35.443f });
+
+		MonsterWave[5].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.134f  ,-3.339f , 36.172f });
+
+		MonsterWave[6].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.291  ,  -3.222  , 36.921f });
+
+		MonsterWave[7].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -14.930f , -3.274f , 35.774f });
+
+		MonsterWave[8].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -14.604f , -3.256f , 35.654f });
+
+		MonsterWave[9].lock()->GetComponent<Transform>().
+			lock()->SetPosition({
+			-14.308f , -3.266f , 36.834f });
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 10.f,10.f,10.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */,
+			_WaveTrigger]()
+		{
+			
+			// 다음 트리거 발동 !!
+			_WaveTrigger.lock()->TriggerEnable();
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+
+		return SpTrigger;
+	};
+
+	return {};
 }
+std::weak_ptr<Trigger> Library_S05::TriggerBloodSecondWave(const std::weak_ptr<Trigger> _WaveTrigger)
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>(),
+
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -19.f, -3.014,35.556 });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -17.929  ,-3.014,  35.528 });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -18.979  ,-3.014, 37.077 });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -17.980  ,-3.014, 36.903 });
+
+
+		MonsterWave[4].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.626f , -3.168f , 35.443f });
+
+		MonsterWave[5].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.134f  ,-3.339f , 36.172f });
+
+		MonsterWave[6].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.291  ,  -3.222  , 36.921f });
+
+		MonsterWave[7].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -14.930f , -3.274f , 35.774f });
+
+		MonsterWave[8].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -14.604f , -3.256f , 35.654f });
+
+		MonsterWave[9].lock()->GetComponent<Transform>().
+			lock()->SetPosition({
+			-14.308f , -3.266f , 36.834f });
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 10.f,10.f,10.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+			
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */
+			, _WaveTrigger]()
+		{
+			
+			// 다음 웨이브를 작동 !!
+			_WaveTrigger.lock()->TriggerEnable();
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+
+		return SpTrigger;
+	};
+
+	return {};
+};
+
+std::weak_ptr<Trigger> Library_S05::TriggerBloodThirdWave()
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+			AddGameObject<Em200>(),
+
+			AddGameObject<Em100>(),
+			AddGameObject<Em100>(),
+
+			AddGameObject<Em0000>(),
+			AddGameObject<Em0000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -19.f, -3.014,35.556 });
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -17.929  ,-3.014,  35.528 });
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -18.979  ,-3.014, 37.077 });
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -17.980  ,-3.014, 36.903 });
+
+
+		MonsterWave[4].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.626f , -3.168f , 35.443f });
+
+		MonsterWave[5].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.134f  ,-3.339f , 36.172f });
+
+		MonsterWave[6].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -16.291  ,  -3.222  , 36.921f });
+
+		MonsterWave[7].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -14.930f , -3.274f , 35.774f });
+
+		MonsterWave[8].lock()->GetComponent<Transform>().
+			lock()->SetPosition({ -14.604f , -3.256f , 35.654f });
+
+		MonsterWave[9].lock()->GetComponent<Transform>().
+			lock()->SetPosition({
+			-14.308f , -3.266f , 36.834f });
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 10.f,10.f,10.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 로직 처리하세요 . 
+			
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			};
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+
+		return SpTrigger;
+	};
+
+	return {};
+};
+
+void Library_S05::TriggerBookCaseSunkenSmash()
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -21167.0,
+						-1968.0,
+						31454.0 } *GScale);
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -20507.0,
+						-1968.0,
+						31454.0 } *GScale);
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -19817.0,
+						-1968.0,
+						31454.0 } *GScale);
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -19817.0,
+						-1968.0,
+						30394.0 }*GScale);
+
+		MonsterWave[4].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -20527.0,
+						-1968.0,
+						30394.0 } *GScale);
+
+		MonsterWave[5].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -21177.0,
+						-1968.0,
+						30394.0 } *GScale);
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 0.5f,0.5f,1.9f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 책장 박살나는 애니메이션 재생 하면 될듯 ... ?
+
+
+			//... 여기서 로직 처리하세요 . 
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			};
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	};
+};
+
+void   Library_S05::TriggerBookCaseSunkenFirstSmash()
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -19817.0,
+						-1968.0,
+						31454.0 } *GScale);
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -19817.0,
+						-1968.0,
+						30394.0 } *GScale);
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 0.5f,0.5f,1.9f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 책장 박살나는 애니메이션 재생 하면 될듯 ... ?
+			OBookCaseSunkenSmash = 0.0f;
+			//... 여기서 로직 처리하세요 . 
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	};
+};
+
+std::weak_ptr<Trigger>  Library_S05::TriggerBookCaseSunkenSecondSmash()
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -20527.0,
+						-1968.0,
+						30394.0 } *GScale);
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -20527.0,
+						-1968.0,
+						30394.0 } *GScale);
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 10.f,10.f,10.f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+
+		return SpTrigger;
+	};
+
+	return {};
+};
+std::weak_ptr<Trigger>  Library_S05::TriggerBookCaseSunkenThirdSmash()
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기  . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -21167.0,
+						-1968.0,
+						31454.0 } *GScale);
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -21177.0,
+						-1968.0,
+						30394.0 } *GScale);
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 10.f,10.f,10.f };
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = false;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			//... 여기서 책장 박살나는 애니메이션 재생 하면 될듯 ... ?
+			//... 여기서 로직 처리하세요 . 
+
+
+
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			};
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+
+		return SpTrigger;
+	};
+
+	return {};
+};
+
+void Library_S05::TriggerSewerSunken()
+{
+	if (auto SpTrigger = AddGameObject<Trigger>().lock();
+		SpTrigger)
+	{
+		// 몬스터 웨이브 배열로 등록. 
+		std::vector<std::weak_ptr<Monster>> MonsterWave
+		{
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>(),
+			AddGameObject<Em1000>()
+		};
+
+		// 몬스터 위치는 미리 잡아주기 . 
+		MonsterWave[0].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -23979.177f,-1378.879f,  33560.666f } * GScale);
+
+		MonsterWave[1].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -25179.414, -1378.879f, 33560.666f } * GScale);
+
+		MonsterWave[2].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -26379.939f, -1378.879f , 33560.666f } * GScale);
+
+		MonsterWave[3].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -27578.267f,-1378.879f  , 33560.666f } * GScale);
+
+		MonsterWave[4].lock()->GetComponent<Transform>().
+			lock()->SetPosition(
+				Vector3{ -28779.519f, -1378.879f , 33560.666f } * GScale);
+
+		// 트리거 위치 .. . 
+		const Vector3 TriggerLocation{ -23.681999f,-1.231250f,33.628098f};
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 0.5f,0.5f,0.5f};
+		// 트리거 정보 등록 하자마자 트리거는 활성화 
+		const bool ImmediatelyEnable = true;
+		// 트리거 검사할 오브젝트는 플레이어 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		// 스폰 직후 이벤트 . 
+		const std::function<void()> SpawnWaveAfterEvent =
+			[this/*필요한 변수 캡쳐하세요 ( 되도록 포인터로 하세요 ) */]()
+		{
+			
+			//... 여기서 로직 처리하세요 . 
+
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+			}
+		};
+
+		// 몬스터 전부 사망 하였을때 이벤트 . 
+		const std::function<void()> WaveEndEvent =
+			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
+		{
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetRedOrbActive(false);
+				Sp->SetGlobalActive(false);
+				Sp->ResetRankScore();
+			};
+		};
+
+		SpTrigger->EventRegist(
+			MonsterWave,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			SpawnWaveAfterEvent,
+			WaveEndEvent);
+	};
+};
+
+void Library_S05::TriggerNextScene()
+{
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this, _FadeOut = AddGameObject<FadeOut>().lock()]()
+		{
+			auto SpPanel = _BtlPanel.lock();
+			if (SpPanel)
+			{
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
+			}
+
+			if (_FadeOut)
+			{
+				_FadeOut->PlayStart(4u,
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
+					});
+			}
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation
+		{ -33.122341f, -0.641000f, 30.992397f};
+		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
+
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 1.f,1.f,1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			TriggerRotation);
+	}
+};
 
 void Library_S05::LateInit()
 {
