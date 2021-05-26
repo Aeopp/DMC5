@@ -1,6 +1,7 @@
 #ifndef __M02_LIBRARY_S05_H__
 #define __M02_LIBRARY_S05_H__
 #include "Scene.h"
+#include "Trigger.h"
 
 class Library_S05 : public Scene
 {
@@ -36,5 +37,11 @@ private:
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:
 	void TriggerSetUp();
+	void TriggerBloodPrevious(const std::weak_ptr<Trigger> _BloodTrigger);
+	std::weak_ptr<Trigger> TriggerBlood();
+	//   책장 박살내며 성큰이 등장 !!
+	void TriggerBookCaseSunkenSmash();
+	void TriggerSewerSunken();
+	void TriggerNextScene();
 };
 #endif // !__M02_LIBRARY_S05_H__

@@ -272,8 +272,8 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.5f;
-	_Renderer->SkyIntencity = 0.005f;
+	_Renderer->ao = 0.03f;
+	_Renderer->SkyIntencity = 0.025f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };

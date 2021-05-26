@@ -868,7 +868,7 @@ void Hotel_S03::TriggerNextScene()
 
 			if (_FadeOut)
 			{
-				_FadeOut->PlayStart(2u,
+				_FadeOut->PlayStart(3u,
 					[SpPanel]()
 					{
 						SpPanel->SetNullBlackActive(true);

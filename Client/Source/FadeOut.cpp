@@ -66,7 +66,8 @@ void FadeOut::RenderInit()
 	_RenderProperty.bRender = false;
 };
 
-void FadeOut::PlayStart(const uint32 AlbIdx , const std::function<void()>& PlayEndCallBack)
+void FadeOut::PlayStart(const uint32 AlbIdx,
+	const std::function<void()>& PlayEndCallBack)
 {
 	T = 0.0f;
 	_RenderProperty.bRender = true;
