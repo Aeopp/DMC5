@@ -135,7 +135,7 @@ HRESULT Hotel_S02::LoadScene()
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 
-	// 1 ~ 2: 마지막 방
+	// 1 ~ 2 last room - DDO HANGUL DANG HAM SSIBAL
 	if (weak_ptr<Effect> ptr = AddGameObject<QliphothBlock>().lock();
 		!ptr.expired())
 	{
