@@ -104,6 +104,7 @@ void Judgement::RenderInit()
 		L"..\\..\\Usable\\Judgement\\Nrmr.tga");
 
 	_ShockWave = AddGameObject<ShockWave>();
+	_JudgementCut = AddGameObject<Change>();
 	_CircleWave = AddGameObject<CircleWave>();
 	_CircleWave.lock()->bWaveDistortion = true;
 
@@ -144,6 +145,7 @@ void Judgement::PlayEnd()
 
 	auto SpTransform = GetComponent<Transform>().lock();
 	_CircleWave.lock()->PlayStart(SpTransform->GetScale().x *3.5f, SpTransform->GetPosition());
+	_JudgementCut.lock()->PlayStart(SpTransform->GetPosition());
 };
 
 void Judgement::RenderAlphaBlendEffect(const DrawInfo& _Info)

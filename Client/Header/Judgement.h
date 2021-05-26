@@ -5,9 +5,10 @@
 #include <optional>
 #include "ShockWave.h"
 #include "CircleWave.h"
+#include "Change.h"
 
 class Judgement : public ENGINE::GameObject,
-				public ENGINE::RenderInterface
+				  public ENGINE::RenderInterface
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
@@ -60,6 +61,7 @@ public:
 	float CurShockDelta = 0.0f;
 	std::weak_ptr<ShockWave> _ShockWave{};
 	std::weak_ptr<CircleWave> _CircleWave{};
+	std::weak_ptr<Change> _JudgementCut{};
 
 	// 에디터 변수 ......
 	float CircleGrowParticleTime= 0.0016f;
