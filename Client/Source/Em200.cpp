@@ -656,11 +656,8 @@ void Em200::State_Change(const float _fDeltaTime)
 			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
 			{
-<<<<<<< HEAD
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
-=======
 				m_pPlayer.lock()->PlayEffect(Eff_Buster);
->>>>>>> origin/main
 				m_eState = Hit_Buster_End;
 				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 			}
