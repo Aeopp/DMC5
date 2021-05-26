@@ -123,7 +123,7 @@ void SandGlassEffect::UpdateParticle(const float DeltaTime)
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"SandGlassEffect", 16ul, true);
+					"SandGlassEffectParticle", 11ul, true);
 
 				_Particle.empty() == false)
 			{

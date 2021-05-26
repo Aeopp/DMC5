@@ -24,6 +24,7 @@ private:
 	static void ArtemisRushParticlePoolLoad();
 	static void ArtemisCylinderParticlePoolLoad();
 	static void EnergismReadyParticlePoolLoad();
+	static void SandGlassEffectParticlePoolLoad();
 
 	static void NuClearParticlePoolLoad();
 	static void KaboomParticlePoolLoad();

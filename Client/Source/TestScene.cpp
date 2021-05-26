@@ -62,6 +62,7 @@
 #include "Reverberation.h"
 #include "ParticleSystem.h"
 #include "SoundSystem.h"
+#include "SandGlassEffect.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,7 +88,9 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
+	AddGameObject<SandGlassEffect>();
 	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	
 
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 

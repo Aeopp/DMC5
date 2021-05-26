@@ -575,6 +575,7 @@
     <ClInclude Include="..\Header\NuClearLensFlare.h" />
     <ClInclude Include="..\Header\Energism.h" />
     <ClInclude Include="..\Header\EnergismReady.h" />
+    <ClInclude Include="..\Header\SandGlassEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -932,6 +933,7 @@
     <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
     <ClCompile Include="..\Source\Energism.cpp" />
     <ClCompile Include="..\Source\EnergismReady.cpp" />
+    <ClCompile Include="..\Source\SandGlassEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -1021,5 +1023,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\SandGlassEffect.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\Effect\SandGlassEffectParticle.hlsl" />
   </ItemGroup>
 </Project>
