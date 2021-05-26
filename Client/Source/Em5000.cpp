@@ -106,6 +106,7 @@ void Em5000::Fight(const float _fDeltaTime)
 			if (m_eState == Move_Start || m_eState == Move_Loop)
 			{
 				m_eState = Attack_Jump_Attack;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 				return;
 			}
 		}
@@ -122,12 +123,14 @@ void Em5000::Fight(const float _fDeltaTime)
 				if (vCross.y > 0)
 				{
 					m_eState = Attack_Side_L;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 					m_fMoveTime = 0.f;
 					return;
 				}
 				else
 				{
 					m_eState = Attack_Side_R;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 					m_fMoveTime = 0.f;
 					return;
 				}
@@ -138,12 +141,14 @@ void Em5000::Fight(const float _fDeltaTime)
 				if (vCross.y > 0)
 				{
 					m_eState = Attack_Back_L;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 					m_fMoveTime = 0.f;
 					return;
 				}
 				else
 				{
 					m_eState = Attack_Back_R;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 					m_fMoveTime = 0.f;
 					return;
 				}
@@ -151,11 +156,13 @@ void Em5000::Fight(const float _fDeltaTime)
 			if (iRandom == 1)
 			{
 				m_eState = Attack_Punch_Twice;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 				return;
 			}
 			else
 			{
 				m_eState = Attack_Hack;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 				return;
 			}
 		}
@@ -229,8 +236,13 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->PlayStart(40.f);
 						m_pStone[i].lock()->SetRotation(vRot);
 
+						
+
 						if (i == 5)
+						{
 							m_bStone = true;
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone", { 1,1 }, 0.3f, false);
+						}
 					}
 				}
 			}
@@ -243,6 +255,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_Coll(true);
 					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
+		
 			}
 		}
 		break;
@@ -282,7 +295,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->SetRotation(vRot);
 
 						if (i == 5)
+						{
 							m_bStone = true;
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone2", { 1,1 }, 0.3f, false);
+						}
 					}
 				}
 			}
@@ -344,6 +360,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->SetRotation(vRot);
 					}
 					m_bStone = true;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone3", { 1,1 }, 0.5f, false);
 				}
 			}
 			else if(m_pMesh->CurPlayAnimInfo.Name == "Attack_Finish" && m_pMesh->PlayingTime() >= 0.2f)
@@ -414,8 +431,11 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->SetScale(fRandom);
 						m_pStone[i].lock()->PlayStart(40.f);
 						m_pStone[i].lock()->SetRotation(vRot);
-						if(i == 5)
+						if (i == 5)
+						{
 							m_bStone = true;
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone4", { 1,1 }, 0.3f, false);
+						}
 					}
 				}
 			}
@@ -485,6 +505,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					}
 					m_pCollider.lock()->SetGravity(true);
 					m_bStone = true;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone5", { 1,1 }, 0.8f, false);
 				}
 
 			}
@@ -540,6 +561,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_vStonePos = GetMonsterBoneWorldPos("L_Hand");
 					m_bJustOne[1] = true;
 					m_bStone = false;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone6", { 1,1 }, 0.3f, false);
 				}
 				for (int i = 6; i < 12; ++i)
 				{
@@ -563,6 +585,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_bStone = false;
 					m_vStonePos = GetMonsterBoneWorldPos("R_Hand");
 					m_bJustOne[0] = true;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone7", { 1,1 }, 0.3f, false);
 				}
 				for (int i = 0; i < 6; ++i)
 				{
@@ -664,7 +687,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->SetRotation(vRot);
 					}
 					if (i == 11)
+					{
 						m_bStone = true;
+						SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone8", { 1,1 }, 0.3f, false);
+					}
 				}
 			}
 
@@ -717,7 +743,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->SetRotation(vRot);
 
 						if (i == 5)
+						{
 							m_bStone = true;
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone2", { 1,1 }, 0.3f, false);
+						}
 					}
 				}
 			}
@@ -770,7 +799,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->SetRotation(vRot);
 
 						if (i == 5)
+						{
 							m_bStone = true;
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone3", { 1,1 }, 0.3f, false);
+						}
 					}
 				}
 			}
@@ -811,6 +843,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				if (m_bRushAttack)
 				{
 					m_eState = Attack_Rush_Start;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 					m_bMove = false;
 					return;
 				}
@@ -818,6 +851,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				if (m_bJumpAttack && fDir >= 2.f && fDir <= 2.5f)
 				{
 					m_eState = Attack_Jump_Attack;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Attack", { 1,5 }, 0.3f, false);
 					m_bMove = false;
 					return;
 				}
@@ -846,6 +880,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 		if (m_bGroggy)
 		{
 			m_pMesh->PlayAnimation("Groggy_Start", false, {}, 1.f, 10.f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Groggy", { 1,1 }, 0.3f, false);
 
 			for (int i = 0; i < 2; ++i)
 			{
@@ -859,6 +894,11 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Groggy_Loop:
 		if (m_bGroggy)
 		{
+			if(!SoundSystem::GetInstance()->IsPlay("Em5000Groggy"))
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Groggy", { 2,2 }, 0.3f, false);
+			if (!SoundSystem::GetInstance()->IsPlay("Em5000Groggy"))
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Groggy", { 3,3 }, 0.3f, false);
+
 			m_pMesh->PlayAnimation("Groggy_Loop", false, {}, 1.f, 10.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_Loop" && m_pMesh->IsAnimationEnd())
 				m_eState = Groggy_End;
@@ -867,7 +907,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Groggy_End:
 		if (m_bGroggy)
 		{
+			if (!SoundSystem::GetInstance()->IsPlay("Em5000Groggy"))
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Groggy", { 3,3 }, 0.3f, false);
 			m_pMesh->PlayAnimation("Groggy_End", false, {}, 1.f, 10.f, true);
+			
 			if (m_pMesh->CurPlayAnimInfo.Name == "Groggy_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = Idle;
@@ -1018,6 +1061,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_Throw" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = Hit_Buster_Swing_End;
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.8f, false);
 				m_BattleInfo.iHp -= 700;
 				m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 
@@ -1063,6 +1107,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 	case Em5000::Move_Loop:
 		if (m_bIng == true)
 		{
+			if (!SoundSystem::GetInstance()->IsPlay("Em5000Move") )
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Move", { 1,1 }, 0.3f, false);
 			m_pMesh->PlayAnimation("Move_Loop", true, {}, 1.3f, 50.f, true);
 			m_bInteraction = true;
 			Update_Angle();
@@ -1084,6 +1130,8 @@ void Em5000::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Move_Start", false, {}, 1.3f, 30.f, true);
+			if(!SoundSystem::GetInstance()->IsPlay("Em5000Move"))
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Move", { 1,1 }, 0.3f, false);
 			if(m_pMesh->CurPlayAnimInfo.Name == "Move_Start" && m_pMesh->PlayingTime()>= 0.2f)
 			{
 				Update_Angle();
@@ -1350,7 +1398,7 @@ HRESULT Em5000::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 	
-	m_pCollider.lock()->SetSize({ 0.4f,0.8f,0.4f });
+	m_pCollider.lock()->SetSize({ 0.6f,0.8f,0.6f });
 	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
 
 	for(int i = 0; i < 12; ++i)
@@ -1423,7 +1471,8 @@ UINT Em5000::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_Y))
 	{
 		m_bIng = true;
-		m_eState = Attack_Rush_Start;
+		m_bGroggy = true;
+		m_eState = Groggy_Start;
 	}
 
 
@@ -1441,16 +1490,33 @@ UINT Em5000::Update(const float _fDeltaTime)
 	if (m_eState == Dead
 		&& m_pMesh->IsAnimationEnd())
 	{
-		for (int i = 0; i < 2; ++i)
-			Destroy(m_pHand[i]);
-		Destroy(m_pGameObject);
+
+		if (m_bDissolve == false)
+		{
+			m_pDissolve.DissolveStart();
+			m_bDissolve = true;
+		}
+		if (m_pDissolve.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World))
+		{
+			for (int i = 0; i < 2; ++i)
+				Destroy(m_pHand[i]);
+			Destroy(m_pGameObject);
+		}
 	}
 	if (m_eState == Groggy_Dead
 		&& m_pMesh->IsAnimationEnd())
 	{
-		for (int i = 0; i < 2; ++i)
-			Destroy(m_pHand[i]);
-		Destroy(m_pGameObject);
+		if (m_bDissolve == false)
+		{
+			m_pDissolve.DissolveStart();
+			m_bDissolve = true;
+		}
+		if (m_pDissolve.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World))
+		{
+			for (int i = 0; i < 2; ++i)
+				Destroy(m_pHand[i]);
+			Destroy(m_pGameObject);
+		}
 	}
 
 
@@ -1466,9 +1532,10 @@ UINT Em5000::LateUpdate(const float _fDeltaTime)
 void Em5000::Editor()
 {
 	Unit::Editor();
-	if (false == bEdit)
-		return;
+	if (bEdit)
+		m_pDissolve.DissolveEditor();
 }
+
 
 void Em5000::OnEnable()
 {
@@ -1523,6 +1590,7 @@ void Em5000::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		m_pDissolve.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -1597,7 +1665,7 @@ void Em5000::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -1642,6 +1710,13 @@ void Em5000::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
+
+
+	m_pDissolve.Initialize("..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em5000\\Em5000.X",
+		Vector3{
+			1.f,0.f,0.f
+		});
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// ½ºÄÌ·¹Åæ ¸Þ½¬ ·Îµù ... 

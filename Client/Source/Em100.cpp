@@ -38,7 +38,7 @@ void Em100::Fight(const float _fDeltaTime)
 
 	if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
 	{
-		SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Dead", { 1,5 }, 0.3f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Groggy", { 1,1 }, 0.3f, false);
 		m_eState = Dead;
 		m_bIng = true;
 	}

@@ -633,23 +633,30 @@ void Em200::State_Change(const float _fDeltaTime)
 
 				Update_Angle();
 				Set_Rotate();
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 				m_bBuster = true;
 			}
 
 			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 1.f, true);
 			m_pCollider.lock()->SetTrigger(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Start" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Buster_Loop;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
+			}
 		}
 		break;
 	case Em200::Hit_Buster_Loop:
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Buster_Loop", true, {}, 1.f, 1.f, true);
+			
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
 			{
 				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				m_eState = Hit_Buster_End;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 			}
 			
 		}
@@ -659,7 +666,7 @@ void Em200::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Buster_Finish", false, {}, 1.f, 1.f, true);
 			Vector3 vRot(0.f, 0.f, 0.f);
-
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Finish" && m_pMesh->PlayingTime() >= 0.6f)
 			{
 				m_pCollider.lock()->SetRigid(true);
@@ -672,6 +679,7 @@ void Em200::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			}
 
 		}
@@ -694,6 +702,7 @@ void Em200::State_Change(const float _fDeltaTime)
 
 				Update_Angle();
 				Set_Rotate();
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 				m_bBuster = true;
 			}
 
@@ -701,13 +710,17 @@ void Em200::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Air_Buster_Start", false, {}, 1.f, 1.f, true);
 			m_pCollider.lock()->SetTrigger(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Start" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Air_Buster_Loop;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
+			}
 		}
 		break;
 	case Em200::Hit_Air_Buster_Loop:
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Air_Buster_Loop", true, {}, 1.f, 1.f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_AIR_FINISH)
 			{
 				m_pPlayer.lock()->PlayEffect(Eff_Buster);
@@ -721,7 +734,7 @@ void Em200::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Air_Buster_Finish", false, {}, 1.f, 1.f, true);
 			Vector3 vRot(0.f, 0.f, 0.f);
-
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Finish" && m_pMesh->PlayingTime() >= 0.95f)
 			{
 				m_pCollider.lock()->SetRigid(true);
@@ -746,6 +759,7 @@ void Em200::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_eState = Hit_KnocBack;
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			}
 		}
 		break;
@@ -873,8 +887,8 @@ HRESULT Em200::Ready()
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster200;
 
-	m_BattleInfo.iMaxHp = 200;
-	m_BattleInfo.iHp = 200;
+	m_BattleInfo.iMaxHp = 20000;
+	m_BattleInfo.iHp = 20000;
 	m_BattleInfo.iAttack = 20;
 
 	m_pTransform.lock()->SetPosition({ -4.8f, 1.2f, -4.82f });

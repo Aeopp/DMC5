@@ -171,7 +171,7 @@ void ArtemisMissile::ParticleUpdate(const float DeltaTime)
 
 			const Matrix Mat = SpTransform->GetRenderMatrix();
 			{
-				const uint32 ParticleCnt = 2u;
+				const uint32 ParticleCnt = 1u;
 
 				auto _PlayableParticle = ParticleSystem::GetInstance()->
 					PlayParticle("ArtemisMissileParticle", ParticleCnt, true);

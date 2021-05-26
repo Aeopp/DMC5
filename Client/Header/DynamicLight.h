@@ -15,6 +15,7 @@ public:
 	void PlayStart(const Vector3& Location,const float PlayTime);
 	void Update(const float Dt, const Vector3& Location);
 	void Update(const D3DXCOLOR& _Color, const float Radius, const float Flux, const Vector3& Location);
+	void UpdatePosition(const Vector3& Location);
 	void PlayEnd();
 	void Editor();
 private:
