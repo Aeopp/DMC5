@@ -276,7 +276,8 @@ void ShockWave::OnDisable()
 
 void ShockWave::PlayStart(const Vector3& PlayLocation ,
 						  const int32& _Option ,
-					       const bool bBlurMsk)
+					       const bool bBlurMsk ,
+						const float ScaleFactor)
 {
 	_RenderProperty.bRender = true;
 	T = 0.0f;
@@ -561,6 +562,21 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.second = 0.5f;
 		BlurAlpha.first = 0.300f;
 		BlurAlpha.second = 0.5f;
+		BlurMaxLength = 40.900f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,0.0f / 255.f };
+		this->bDirectionReverse = true;
+		break;
+	case Judgement:
+		PlayTime = 0.9f;
+		EndT = 0.9f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.000f;
+		ScaleLerp.second = 0.0025f * ScaleFactor;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 0.5f;
+		BlurAlpha.first = 0.00f;
+		BlurAlpha.second = 0.40f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,0.0f / 255.f };

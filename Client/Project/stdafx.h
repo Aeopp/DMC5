@@ -55,6 +55,7 @@ enum GAMEOBJECTTAG
 	Eff_AppearEm1000,
 	Eff_ShapeParticle,
 	Eff_AirHike,
+	Eff_Judgement,
 	Eff_SandGlassEffect,
 	Eff_NuClear,
 	Eff_EnergismReady,

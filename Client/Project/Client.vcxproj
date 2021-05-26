@@ -205,6 +205,7 @@
     <ClInclude Include="..\Header\Hotel_S04.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
+    <ClInclude Include="..\Header\Judgement.h" />
     <ClInclude Include="..\Header\JudgementShadow1.h" />
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
@@ -340,6 +341,7 @@
     <ClCompile Include="..\Source\Hotel_S04.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
+    <ClCompile Include="..\Source\Judgement.cpp" />
     <ClCompile Include="..\Source\JudgementShadow1.cpp" />
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
@@ -676,6 +678,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\SandGlassEffectParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\Judgement.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\JudgementParticle.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

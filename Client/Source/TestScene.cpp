@@ -63,6 +63,7 @@
 #include "ParticleSystem.h"
 #include "SoundSystem.h"
 #include "SandGlassEffect.h"
+#include "Judgement.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,6 +88,8 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+
+	AddGameObject<Judgement>();
 
 	AddGameObject<SandGlassEffect>();
 	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
