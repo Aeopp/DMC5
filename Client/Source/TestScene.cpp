@@ -90,7 +90,7 @@ HRESULT TestScene::LoadScene()
 	// Load Start
 
 	AddGameObject<Judgement>();
-
+	AddGameObject<Change>();
 	AddGameObject<SandGlassEffect>();
 	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
 	

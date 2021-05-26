@@ -175,8 +175,6 @@ void Change::PlayStart(
 	this->PlayTime = PlayTime;
 	_RenderProperty.bRender = true;
 	T = 0.0f;
-
-	
 };
 
 
@@ -321,17 +319,16 @@ UINT Change::Update(const float _fDeltaTime)
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
 
 			{
-				auto _PlayableParticle = ParticleSystem::GetInstance()->
+				/*auto _PlayableParticle = ParticleSystem::GetInstance()->
 					PlayParticle("ChangeParticle",333u, true);
 				for (int32 i = 0; i < _PlayableParticle.size(); 
 					++i)
 				{
 					auto& _PlayInstance = _PlayableParticle[i];
 					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-				}
+				}*/
 			}
 		}
-
 
 		if (PtLight.expired() == false)
 		{
@@ -350,11 +347,7 @@ UINT Change::Update(const float _fDeltaTime)
 			SpPtLight->lightFlux =
 				 ( std::sinf( (T / PlayTime) * FMath::PI)  ) * PtLightFlux;
 		}
-
 	}
-
-	
-
 
 	return 0;
 }
@@ -397,10 +390,7 @@ void Change::Editor()
 			ImGui::SliderFloat("EndScale", &EndScale, 0.0f, 0.1f);
 			
 			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, 0.0f, 100.f);
-			;
-
-			;
-
+		
 			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
 
@@ -409,7 +399,7 @@ void Change::Editor()
 
 			ImGui::SliderFloat("VelocityBlurIntencity", &VelocityBlurIntencity, 0.f, 1.f);
 			ImGui::SliderFloat("VelocityBlurAlpha", &VelocityBlurAlpha, 0.f, 1.f);
-			;
+			
 
 			ImGui::SliderFloat("EditPlayTime", &EditPlayTime, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayTime", &EditPlayTime, 0.f, 0.f, "%9.6f");
