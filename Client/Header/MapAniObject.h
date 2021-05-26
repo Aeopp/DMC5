@@ -47,5 +47,6 @@ private:
 	bool  m_bFlag6 = false;
 
 	bool  m_bColl = false;
+	UINT  m_iTag = Tag_END;
 };
 #endif // !__MAP_ANI_OBJECT_H__
