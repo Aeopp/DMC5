@@ -5,6 +5,7 @@
 #include <optional>
 #include "DynamicLight.h"
 #include "ShockWave.h"
+#include "Reverberation.h"
 
 class Energism : public ENGINE::GameObject,
 				 public ENGINE::RenderInterface
@@ -36,17 +37,33 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& Location);
+	// 호출해주세요 . 
+	void PlayStart(const Vector3& Location, const float Yaw);
+	// 업데이트 시마다 호출해주세요  . 
+	void UpdateYaw(const float Yaw);
 	void PlayEnd();
-private:
+	void UpdateReverberation(const float DeltaTime);
+	void PlayReverberation();
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	std::weak_ptr<class ShockWave> _ShockWave{};
+	std::weak_ptr<class LensFlare> _LensFlare{};
+	static constexpr uint32 ReverberationCount= 22u;
+	std::array<std::weak_ptr< class Reverberation>, ReverberationCount> ReverberationArr{};
+	uint32 CurReverberationIdx{ 0u };
+
+	std::pair<float, float>  ReverationStartRange{0.001f,0.002f};
+	std::pair<float, float>  ReverationEndRange{ 0.002f,0.003f};
+
+	float ReverberationOffsetScale = 66.890f;
+	float ReverberationDelta = 0.1f;
+	float CurReverberationDelta = 0.0f;
 	float PlayTime = 6.f;
 	float TimeCorr = 0.117f;
 	float ColorIntencity = 0.201f;
-	float CurveScale = 5.017f;
-	float NoiseFactor = 0.167f;
+	float CurveScale = 10.f;
+	float NoiseFactor = 1.338f;
 };
 #endif //

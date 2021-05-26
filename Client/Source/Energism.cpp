@@ -7,6 +7,8 @@
 #include <iostream>
 #include "ParticleSystem.h"
 #include "NuclearLensFlare.h"
+#include "ShockWave.h"
+#include "LensFlare.h"
 
 void Energism::Free()
 {
@@ -89,12 +91,18 @@ void Energism::RenderInit()
 		"..\\..\\Usable\\Artemis\\1.tga"
 		);
 
-	;
 	PushEditEntity(_Mesh.get());
 
+	for (auto& _Reverberation : ReverberationArr)
+	{
+		_Reverberation = AddGameObject<Reverberation>();
+	}
+
+	_ShockWave = AddGameObject<ShockWave>();
+	_LensFlare = AddGameObject<LensFlare>();
 };
 
-void Energism::PlayStart(const Vector3& Location)
+void Energism::PlayStart(const Vector3& Location, const float Yaw)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -102,17 +110,58 @@ void Energism::PlayStart(const Vector3& Location)
 		if (Location)
 		{
 			SpTransform->SetPosition(Location);
+			SpTransform->SetRotation(Vector3{ 0.f,Yaw,0.f });
+			_ShockWave.lock()->PlayStart(Location,
+				ShockWave::Option::ArtemisEnergism);
+			_LensFlare.lock()->Option = 1;
+			_LensFlare.lock()->PlayStart(Location);
 		}
 	}
 
 	T = 0.0f;
 	_RenderProperty.bRender = true;
+
+	
 };
+
+void Energism::UpdateYaw(const float Yaw)
+{
+	if (auto SpTransform = GetComponent<Transform>().lock();
+		SpTransform)
+	{
+		SpTransform->SetRotation(Vector3{ 0.f,Yaw,0.f } );
+	};
+} 
 
 void Energism::PlayEnd()
 {
 	T = 0.0f;
 	_RenderProperty.bRender = false;
+};
+
+void Energism::UpdateReverberation(const float DeltaTime)
+{
+	CurReverberationDelta -= DeltaTime;
+	if (CurReverberationDelta < 0.0f)
+	{
+		CurReverberationDelta += ReverberationDelta;
+		PlayReverberation();
+	}
+}; 
+
+void Energism::PlayReverberation()
+{
+	auto SpTransform = GetComponent<Transform>().lock();
+	const Vector3 Look = -FMath::Normalize(SpTransform->GetLook());
+	const float OffsetScale = SpTransform->GetScale().x * ReverberationOffsetScale; 
+
+	const Vector3 CurLocation = SpTransform->GetPosition() + FMath::Random(0.0f, OffsetScale) * Look;
+
+	const float ReverationStartScale = FMath::Random(ReverationStartRange.first, ReverationStartRange.second); 
+	const float ReverationEndScale = FMath::Random(ReverationEndRange.first, ReverationEndRange.second);
+	auto SpReverberation = ReverberationArr[CurReverberationIdx].lock();
+	SpReverberation->PlayStart(CurLocation,Look,ReverationStartScale,ReverationEndScale);
+	CurReverberationIdx = (CurReverberationIdx + 1) % ReverberationCount;
 };
 
 void Energism::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -126,12 +175,10 @@ void Energism::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		_Info.Fx->SetTexture("AlbmMap", _AlbmMap->GetTexture());
 		_Info.Fx->SetTexture("NoiseMap", _NoiseMap->GetTexture());
 		_Info.Fx->SetFloat("NoiseFactor", NoiseFactor);
-		;
+		
 		_Info.Fx->SetFloat("Time",  T*TimeCorr);
 		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
 		_Info.Fx->SetFloat("CurveScale", CurveScale);
-		;
-		;
 	}
 
 	for (uint32 i = 0; i < Numsubset; ++i)
@@ -140,7 +187,6 @@ void Energism::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			_Mesh->GetSubset(i).lock();
 			SpSubset)
 		{
-
 			SpSubset->Render(_Info.Fx);
 		};
 	};
@@ -179,7 +225,7 @@ HRESULT Energism::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetScale({ 0.005f,0.005f,0.005f });
+	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
 	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f,0.f ,0.0f });
 
@@ -205,6 +251,8 @@ UINT Energism::Update(const float _fDeltaTime)
 		PlayEnd();
 	};
 
+	UpdateReverberation(_fDeltaTime);
+
 	return 0;
 }
 
@@ -224,13 +272,28 @@ void Energism::Editor()
 	{
 		const std::string ChildName = GetName() + "_Play";
 		ImGui::BeginChild(ChildName.c_str());
+
+		static float EditPlayYaw = 0.0f;
+		ImGui::SliderFloat("EditPlayYaw", &EditPlayYaw, -360.f, 360.f);
+
 		if (ImGui::SmallButton("Play"))
 		{
-			PlayStart(
-				GetComponent<Transform>().lock()->GetPosition());
+			PlayStart(GetComponent<Transform>().lock()->GetPosition() ,EditPlayYaw);
 		}
 
 		ImGui::Text("T : %2.6f", T);
+
+		ImGui::SliderFloat("ReverberationOffsetScale", &ReverberationOffsetScale, 0.0f, 10000.f);
+
+		ImGui::SliderFloat("ReverationStartRange First", &ReverationStartRange.first, 0.0f, 1.f);
+		ImGui::SliderFloat("ReverationStartRange Second", &ReverationStartRange.second, 0.0f, 1.f);
+
+		
+
+		;
+
+		ImGui::SliderFloat("ReverationEndScale First", &ReverationEndRange.first, 0.0f, 1.f);
+		ImGui::SliderFloat("ReverationEndScale Second", &ReverationEndRange.second, 0.0f, 1.f);
 
 		ImGui::SliderFloat("TimeCorr", &TimeCorr, 0.0f, 10.f);
 		ImGui::SliderFloat("ColorIntencity", &ColorIntencity, 
@@ -240,9 +303,6 @@ void Energism::Editor()
 
 		ImGui::SliderFloat("NoiseFactor", &NoiseFactor,
 			0.0f, 100.f);
-		;
-		;
-		;
 
 		ImGui::EndChild();
 	}

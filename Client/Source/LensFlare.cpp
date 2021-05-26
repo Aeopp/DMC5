@@ -85,6 +85,9 @@ void LensFlare::RenderInit()
 	_Alpg = Resources::Load<ENGINE::Texture>
 		(L"..\\..\\Usable\\LensFlare\\1.tga");
 
+	_Alpg2 = Resources::Load<ENGINE::Texture>
+		(L"..\\..\\Usable\\LensFlare\\2.tga");
+
 	PushEditEntity(_Mesh.get());
 	PushEditEntity(_Alpg.get());
 
@@ -148,7 +151,15 @@ RenderAlphaBlendEffect(const DrawInfo& _Info)
 		const float AlphaFactor = SinFactor;
 		_Info.Fx->SetFloat(
 			"AlphaFactor", AlphaFactor);
-		_Info.Fx->SetTexture("AlpgMap", _Alpg->GetTexture());
+
+		if (Option==0)
+		{
+			_Info.Fx->SetTexture("AlpgMap", _Alpg->GetTexture());
+		}
+		else
+		{
+			_Info.Fx->SetTexture("AlpgMap", _Alpg2->GetTexture());
+		}
 	}
 
 	for (uint32 i = 0; i < Numsubset; ++i)
