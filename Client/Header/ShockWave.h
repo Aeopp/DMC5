@@ -31,6 +31,7 @@ public:
 		Kaboom,
 		EnergismReady,
 		Judgement,
+		JudgementCut,
 		None,
 	};
 private:

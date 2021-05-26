@@ -27,6 +27,7 @@ private:
 	static void SandGlassEffectParticlePoolLoad();
 	static void JudgementReadyParticlePoolLoad();
 	static void JudgementCircleGrowParticlePoolLoad();
+	static void JudgementCutparticlePoolLoad();
 
 
 	static void NuClearParticlePoolLoad();

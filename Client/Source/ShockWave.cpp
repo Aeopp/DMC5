@@ -390,8 +390,8 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		ScaleLerp.second = 0.307f;
 		BlurIntencity.first = 0.0f;
 		BlurIntencity.second = 2.049f;
-		BlurAlpha.first = 0.675f;
-		BlurAlpha.second = 1.0f;
+		BlurAlpha.first = 0.375f;
+		BlurAlpha.second = 0.675f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
@@ -406,7 +406,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.7f;
 		BlurIntencity.second = 1.f;
 		BlurAlpha.first = 0.5f;
-		BlurAlpha.second = 0.7f;
+		BlurAlpha.second = 0.5f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -420,7 +420,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.700f;
 		BlurIntencity.second = 1.002f;
 		BlurAlpha.first = 0.300f;
-		BlurAlpha.second = 0.650f;
+		BlurAlpha.second = 0.500f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -546,7 +546,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.5f;
 		BlurIntencity.second = 1.0f;
 		BlurAlpha.first = 0.300f;
-		BlurAlpha.second = 0.5f;
+		BlurAlpha.second = 0.4f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -561,7 +561,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.0f;
 		BlurIntencity.second = 0.5f;
 		BlurAlpha.first = 0.300f;
-		BlurAlpha.second = 0.5f;
+		BlurAlpha.second = 0.4f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,0.0f / 255.f };
@@ -581,6 +581,22 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		DistortionAlpha = 0.0f;
 		Color = { 0.f  / 255.f , 0.f / 255.f ,0.f / 255.f ,0.f / 255.f };
 		this->bDirectionReverse = true;
+		break;
+	case JudgementCut:
+		PlayTime = 1.f;
+		EndT = 1.f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.0f;
+		ScaleLerp.second = 0.307f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 2.049f;
+		BlurAlpha.first = 0.3f;
+		BlurAlpha.second = 0.40f;
+		BlurMaxLength = 40.9f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
+		this->bBlurMsk = true;
+		break;
 		break;
 	default:
 		break;

@@ -104,7 +104,7 @@ void Judgement::RenderInit()
 		L"..\\..\\Usable\\Judgement\\Nrmr.tga");
 
 	_ShockWave = AddGameObject<ShockWave>();
-	_JudgementCut = AddGameObject<Change>();
+	_JudgementCut = AddGameObject<JudgementCut>();
 	_CircleWave = AddGameObject<CircleWave>();
 	_CircleWave.lock()->bWaveDistortion = true;
 

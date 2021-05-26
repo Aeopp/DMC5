@@ -82,6 +82,7 @@ enum GAMEOBJECTTAG
 	Eff_ArteMisMissile,
 	Eff_Reverberation,
 	Eff_Change,
+	Eff_JudgementCut,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
 	Eff_DashTrail,
