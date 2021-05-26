@@ -10,7 +10,8 @@
 #include "RedQueen.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-
+#include "SpriteEffect.h"
+#include "StoneDebrisMulti.h"
 void Em0000::Free()
 {
 	Destroy(m_pBlood);
@@ -506,16 +507,18 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_START
 				&& m_pPlayer.lock()->IsAnimationEnd())
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				m_eState = Hit_Buster_End;
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+		
 				Vector3 vRot(0.f, 0.f, 0.f);
 				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
 				Vector3 vPos = m_pTransform.lock()->GetPosition();
 
 				m_pTransform.lock()->SetRotation(vRot);
 				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
+				//BusterEffect
+				PlayBusterEffect();
 			}
 		}
 		break;
@@ -532,7 +535,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_AIR &&
 				m_pPlayer.lock()->Get_PlayingTime()>=0.5f)
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
+				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				m_eState = Hit_Air_Buster_End;
 
 				Vector3 vRot(0.f, 0.f, 0.f);
@@ -988,6 +991,7 @@ void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 
 	m_bHit = true;
 	m_bDown = true;
+	m_bBusterStoneStart = true;
 	m_pCollider.lock()->SetRigid(false);
 
 	if (m_bAir)
@@ -1396,7 +1400,7 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
+		SoundSystem::GetInstance()->RandSoundKeyPlay("CbsHit8", { 1,4 }, 0.2f, false);
 		m_pWeapon.lock()->Set_Coll(false);
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;

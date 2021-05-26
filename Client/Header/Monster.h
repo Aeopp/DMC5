@@ -62,6 +62,7 @@ protected:
 	void StoneDebrisInit();
 	void StoneDebrisPlayStart();
 	void CalcEffectPos();
+	void PlayBusterEffect();
 protected:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh = nullptr;
 
@@ -96,11 +97,13 @@ protected:
 	int	 m_iWaveIndex = 0;
 
 	weak_ptr<class SpriteEffect>		  m_pEffect[6];
+	weak_ptr<class SpriteEffect>		  m_pBusterDust;
 	weak_ptr<class ShockWave>			  m_pHitWave[3];
-
+	std::weak_ptr<class StoneDebrisMulti> m_pBusterStone[6];
 
 	Vector3								m_vEffectPos;
 	bool								m_bTargetEnable = true;
+	bool								m_bBusterStoneStart = false;
 };
 
 

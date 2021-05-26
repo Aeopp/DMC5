@@ -12,7 +12,9 @@
 #include "NeroFSM.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-
+#include "Monster.h"
+#include "SpriteEffect.h"
+#include "StoneDebrisMulti.h"
 void Em200::Free()
 {
 	Destroy(m_pBlood);
@@ -550,8 +552,6 @@ void Em200::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Buster_Loop", true, {}, 1.f, 1.f, true);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
-				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				m_eState = Hit_Buster_End;
 			}
@@ -573,6 +573,9 @@ void Em200::State_Change(const float _fDeltaTime)
 			{
 				m_eState = Hit_End_Front;
 				m_bBuster = false;
+				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
+				//BusterEffect
+				PlayBusterEffect();
 			}
 
 		}
@@ -611,7 +614,6 @@ void Em200::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Air_Buster_Loop", true, {}, 1.f, 1.f, true);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_AIR_FINISH)
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
 				m_eState = Hit_Air_Buster_End;
 			}
@@ -1240,6 +1242,7 @@ void Em200::Buster(BT_INFO _BattleInfo, void* pArg)
 
 	m_bHit = true;
 	m_bDown = true;
+	m_bBusterStoneStart = true;
 	m_pCollider.lock()->SetRigid(false);
 
 	if (m_bAir)
@@ -1315,7 +1318,7 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
+		SoundSystem::GetInstance()->RandSoundKeyPlay("CbsHit8", { 1,4 }, 0.2f, false);
 		for (int i = 0; i < 2; ++i)
 		{
 			m_pHand[i].lock()->Set_Coll(false);

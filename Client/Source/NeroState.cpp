@@ -5323,6 +5323,7 @@ HRESULT BT_Att_ComboC_R_to_L::StateEnter()
 	m_pNero.lock()->CheckAutoRotate();
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
 	return S_OK;
 }
 
@@ -5386,6 +5387,7 @@ HRESULT BT_Att_ComboC_L_to_R::StateEnter()
 	m_pNero.lock()->CheckAutoRotate();
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
 	return S_OK;
 }
 
@@ -5478,8 +5480,15 @@ HRESULT BT_Att_ComboC_1::StateUpdate(const float _fDeltaTime)
 	{
 		ActiveColl_RedQueen(true);
 	}
-	if(0.16f <= fCurrAnimationTime)
+	if (0.16f <= fCurrAnimationTime)
+	{
 		Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			m_pNero.lock()->PlayStone(TAG_RedQueen);
+		}
+	}
 
 	if (0.4f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
 	{
@@ -5527,6 +5536,7 @@ HRESULT BT_Att_ComboC_2::StateEnter()
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,11 }, 0.7f, true);
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
 	return S_OK;
 }
 
@@ -5596,6 +5606,9 @@ HRESULT BT_Att_ComboC_3::StateEnter()
 	m_pNero.lock()->CheckAutoRotate();
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+	if (m_bPlayCbsShortSound)
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
+	
 	return S_OK;
 }
 
@@ -5690,6 +5703,11 @@ HRESULT BT_Att_ComboC_4::StateUpdate(const float _fDeltaTime)
 			m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboC4", false);
 		m_bPlayRedQueenSound = true;
 		Play_Sound(TAG_RedQueen, "ComboC4-2",false);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			m_pNero.lock()->PlayStone(TAG_RedQueen);
+		}
 	}
 	else if (0.135f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
@@ -5697,6 +5715,11 @@ HRESULT BT_Att_ComboC_4::StateUpdate(const float _fDeltaTime)
 	{
 		ActiveColl_RedQueen(true);
 		Play_Sound(TAG_RedQueen, "ComboC4-1");
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			m_pNero.lock()->PlayStone(TAG_RedQueen);
+		}
 	}
 
 
@@ -11783,6 +11806,7 @@ HRESULT Buster_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm,"Buster_Catch", false);
 	if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 		NeroState::SetCbsIdle();
+	m_pNero.lock()->PlayEffect(Eff_Buster);
 	return S_OK;
 }
 

@@ -44,7 +44,7 @@ class WhirlWind;
 class NewWingSword;
 class Change;
 class ShockWave;
-
+class StoneDebrisMulti;
 /*Coat Test*/
 class NeroCoat;
 class Nero : public Unit,
@@ -473,6 +473,7 @@ public:
 		const float PlayTime = 1.f
 	, const Vector3& Scale = { 0.004f, 0.004f,0.004f });
 	void StopEffect(GAMEOBJECTTAG _eTag);
+	void PlayStone(GAMEOBJECTTAG _eTag);
 public:
 
 public:
@@ -540,6 +541,7 @@ private:
 	std::weak_ptr<Satellite>		m_pSatellite;
 	std::weak_ptr<WhirlWind>		m_pWhirlWind;
 	std::weak_ptr<ShockWave>		m_pShockWave;
+	std::weak_ptr<StoneDebrisMulti> m_pStone[8];
 	enum { SP_RED = 0, SP_GREEN, SP_WHITE, SP_END };	// ShapeParticle
 	std::weak_ptr<ShapeParticle>	m_pShapeParticle[SP_END];
 	std::weak_ptr<Change>			m_pChange;

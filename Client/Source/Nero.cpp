@@ -42,7 +42,7 @@
 #include "WhirlWind.h"
 #include "Change.h"
 #include "SoundSystem.h"
-
+#include "StoneDebrisMulti.h"
 #include "NeroCoat.h"
 
 Nero::Nero()
@@ -304,6 +304,9 @@ HRESULT Nero::Ready()
 		m_pShapeParticle[SP_WHITE].lock()->SetCtrlIdx(ShapeParticle::ZERO);
 		m_pShapeParticle[SP_WHITE].lock()->SetScale(0.0009f);
 	}
+
+	for (int i = 0; i < 8; ++i)
+		m_pStone[i] = AddGameObject<StoneDebrisMulti>();
 
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
@@ -1902,6 +1905,39 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		m_pCbsLongTrail.lock()->PlayEnd();
 		break;
 	default:
+		break;
+	}
+}
+
+void Nero::PlayStone(GAMEOBJECTTAG _eTag)
+{
+	float fRandom = FMath::Random<float>(0.0005f, 0.0008f);
+	Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+	Vector3 vPos = m_pTransform.lock()->GetPosition();
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+	vPos.y -= 0.05f;
+	vLook.y = 0.f;
+	switch (_eTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		
+		vPos += vLook * 0.3f;
+		for (int i = 0; i < 8; ++i)
+		{
+			m_pStone[i].lock()->SetPosition(vPos);
+			m_pStone[i].lock()->SetScale(fRandom);
+			m_pStone[i].lock()->PlayStart(40.f);
+			m_pStone[i].lock()->SetRotation(vRot);
+		}
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		for (int i = 0; i < 8; ++i)
+		{
+			m_pStone[i].lock()->SetPosition(vPos);
+			m_pStone[i].lock()->SetScale(fRandom);
+			m_pStone[i].lock()->PlayStart(40.f);
+			m_pStone[i].lock()->SetRotation(vRot);
+		}
 		break;
 	}
 }
