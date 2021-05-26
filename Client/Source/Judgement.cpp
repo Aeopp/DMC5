@@ -349,7 +349,7 @@ void Judgement::PlayJudgementDayParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"JudgementDay", 111ul, true);
+				"JudgementDay", 11ul, true);
 			_Particle.empty() == false)
 		{
 
