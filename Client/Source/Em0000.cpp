@@ -44,6 +44,7 @@ void Em0000::Fight(const float _fDeltaTime)
 	{
 		m_eState = Dead;
 		m_bIng = true;
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Dead", { 1,5 }, 0.3f, false);
 	}
 
 
@@ -74,10 +75,12 @@ void Em0000::Fight(const float _fDeltaTime)
 			{
 				m_eState = Attack_1;
 				m_pWeapon.lock()->Set_Coll(true);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Attack", { 1,5 }, 0.3f, false);
 			}
 			else if (iRandom == 2)
 			{
 				m_eState = Attack_2;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Attack", { 1,5 }, 0.3f, false);
 				m_pWeapon.lock()->Set_Coll(true);
 			}
 			else
@@ -117,6 +120,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bAttack = false;
 				m_pWeapon.lock()->Set_Coll(false);
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.5f)
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
@@ -141,6 +145,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bAttack = false;
 				m_pWeapon.lock()->Set_Coll(false);
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.5f)
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
@@ -168,6 +173,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bAttack = false;
 				m_pWeapon.lock()->Set_Coll(false);
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.35f)
 			{
@@ -176,6 +182,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.2f)
 			{
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Attack", { 1,5 }, 0.3f, false);
 				m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			}
 		}
@@ -210,6 +217,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bHit = false;
 				m_bIng = false;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -221,6 +229,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_L" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 				m_bHit = false;
 				m_bIng = false;
 			}
@@ -236,6 +245,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bHit = false;
 				m_bIng = false;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -299,6 +309,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_bDown = false;
 				m_eState = idle;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -417,6 +428,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bIng = false;
 				m_bMove = false;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -462,6 +474,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 		break;
 	case Em0000::idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
+
 		break;
 	case Em0000::Hit_Snatch_Start:
 		if (m_bHit)
@@ -492,7 +505,10 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Snatch_End" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = idle;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
+			}
 		}
 		break;
 	case Em0000::Hit_Buster_Start:
@@ -594,7 +610,10 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_bEnterGround = true;
 		}
 		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+		{
 			m_eState = idle;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
+		}
 		break;
 
 	}
@@ -1418,6 +1437,8 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Hit", { 1,5 }, 0.3f, false);
 
 	HitEffectPlay(_pOther);
 }
