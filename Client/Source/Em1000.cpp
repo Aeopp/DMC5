@@ -43,10 +43,12 @@ void Em1000::Fight(const float _fDeltaTime)
 		{
 			m_eState = Dead_Wall;
 			m_bIng = true;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em1000Dead", { 1,3 }, 0.3f, false);
 		}
 		else
 		{
 			m_eState = Dead_Floor;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em1000Dead", { 1,3 }, 0.3f, false);
 			m_bIng = true;
 		}
 	}
@@ -148,6 +150,7 @@ void Em1000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand.lock()->Set_AttackType(Attack_Front);
 					m_pHand.lock()->m_pCollider.lock()->SetActive(true);
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em1000Attack", { 1,5 }, 0.3f, false);
 				}
 			}
 			break;
@@ -228,6 +231,7 @@ void Em1000::State_Change(const float _fDeltaTime)
 				{
 					m_pHand.lock()->Set_AttackType(Attack_Front);
 					m_pHand.lock()->m_pCollider.lock()->SetActive(true);
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em1000Attack", { 1,5 }, 0.3f, false);
 				}
 			}
 			break;
@@ -515,31 +519,12 @@ void Em1000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	}
 
 	HitEffectPlay(_pOther);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em1000Hit", { 1,2 }, 0.3f, false);
 }
 
 void Em1000::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
-	if (!m_bCollEnable)
-		return;
-	if (m_eState == Dead_Floor || m_eState == Dead_Wall)
-		return;
-
-	m_bCollEnable = false;
-	switch (_pOther.lock()->m_nTag)
-	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		m_pHand.lock()->m_pCollider.lock()->SetActive(false);
-		break;
-	case GAMEOBJECTTAG::Overture:
-		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
-		m_bHit = true;
-		m_bDown = true;
-		m_eState = Hit_Floor;
-		break;
-	default:
-		break;
-	}
+	
 }
 
 void Em1000::RenderGBufferSK(const DrawInfo& _Info)

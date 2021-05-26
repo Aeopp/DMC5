@@ -2,6 +2,7 @@
 #define __MAP_ANI_OBJECT_H__
 #include "GameObject.h"
 #include "RenderInterface.h"
+
 class MapAniObject final : public GameObject, public RenderInterface
 {
 private:
@@ -9,8 +10,6 @@ private:
 	virtual ~MapAniObject() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
-
-
 private:
 	virtual std::string GetName() override;
 public:
@@ -47,5 +46,6 @@ private:
 	bool  m_bFlag6 = false;
 
 	bool  m_bColl = false;
+	UINT  m_iTag = Tag_END;
 };
 #endif // !__MAP_ANI_OBJECT_H__

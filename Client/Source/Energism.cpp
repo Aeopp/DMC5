@@ -72,6 +72,16 @@ void Energism::RenderInit()
 		}
 	};
 
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Debug" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
+		}
+	} };
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// 
@@ -120,16 +130,18 @@ void Energism::PlayStart(const Vector3& Location, const float Yaw)
 
 	T = 0.0f;
 	_RenderProperty.bRender = true;
-
-	
 };
 
-void Energism::UpdateYaw(const float Yaw)
+void Energism::UpdateVariable(const Vector3& Location , const float Yaw)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
 	{
-		SpTransform->SetRotation(Vector3{ 0.f,Yaw,0.f } );
+		SpTransform->SetPosition(Location);
+		SpTransform->Rotate(Vector3{ 0.f,Yaw,0.f } );
+
+		_ShockWave.lock()->GetComponent<Transform>().lock()->SetPosition(Location);
+		_LensFlare.lock()->GetComponent<Transform>().lock()->SetPosition(Location);
 	};
 } 
 
@@ -147,8 +159,10 @@ void Energism::UpdateReverberation(const float DeltaTime)
 		CurReverberationDelta += ReverberationDelta;
 		PlayReverberation();
 	}
-}; 
-
+}
+void Energism::Hit(BT_INFO _BattleInfo, void* pArg)
+{
+}
 void Energism::PlayReverberation()
 {
 	auto SpTransform = GetComponent<Transform>().lock();
@@ -217,15 +231,26 @@ HRESULT Energism::Ready()
 	auto InitTransform = GetComponent<ENGINE::Transform>();
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
+
+	m_nTag = MonsterWeapon;
+	m_BattleInfo.iAttack = 50;
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 	return S_OK;
 };
 
 HRESULT Energism::Awake()
 {
+	
 	GameObject::Awake();
+	m_pCollider = AddComponent<BoxCollider>();
+	m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->SetGravity(false);;
+	PushEditEntity(m_pCollider.lock().get());
+	m_pCollider.lock()->SetCenter({ 0.f, -0.05f, -2.5f });
+	m_pCollider.lock()->SetSize({ 0.15f, 0.35f, 5.f });
 
-	m_pTransform.lock()->SetScale({ 0.03f,0.03f,0.03f });
+
+	m_pTransform.lock()->SetScale(Vector3{ 0.040f,0.040f,0.040f } *ScaleFactor);
 	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f,0.f ,0.0f });
 
@@ -271,7 +296,7 @@ void Energism::Editor()
 	if (bEdit)
 	{
 		const std::string ChildName = GetName() + "_Play";
-		ImGui::BeginChild(ChildName.c_str());
+		ImGui::Begin(ChildName.c_str());
 
 		static float EditPlayYaw = 0.0f;
 		ImGui::SliderFloat("EditPlayYaw", &EditPlayYaw, -360.f, 360.f);
@@ -287,11 +312,6 @@ void Energism::Editor()
 
 		ImGui::SliderFloat("ReverationStartRange First", &ReverationStartRange.first, 0.0f, 1.f);
 		ImGui::SliderFloat("ReverationStartRange Second", &ReverationStartRange.second, 0.0f, 1.f);
-
-		
-
-		;
-
 		ImGui::SliderFloat("ReverationEndScale First", &ReverationEndRange.first, 0.0f, 1.f);
 		ImGui::SliderFloat("ReverationEndScale Second", &ReverationEndRange.second, 0.0f, 1.f);
 
@@ -304,7 +324,7 @@ void Energism::Editor()
 		ImGui::SliderFloat("NoiseFactor", &NoiseFactor,
 			0.0f, 100.f);
 
-		ImGui::EndChild();
+		ImGui::End();
 	}
 }
 

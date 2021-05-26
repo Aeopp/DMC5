@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MapAniObject.h"
 #include "Subset.h"
-
+#include "SoundSystem.h"
 MapAniObject::MapAniObject()
 {
 }
@@ -92,6 +92,20 @@ void MapAniObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		return;
 	m_pCollider.lock()->SetActive(false);
 	m_pMesh->PlayAnimation(0, false);
+	switch (m_iTag)
+	{
+	case Tag_BrokenBookShelf:
+		SoundSystem::GetInstance()->RandSoundKeyPlay("HitTable", { 1,12 }, 0.4f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
+		break;
+	case Tag_BrokenPeople:
+		SoundSystem::GetInstance()->RandSoundKeyPlay("HitPeople", { 1,5 }, 0.4f, false);
+		break;
+	case Tag_BrokenTable:
+		SoundSystem::GetInstance()->RandSoundKeyPlay("HitTable", { 1,12 }, 0.4f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
+		break;
+	}
 }
 
 #pragma region RENDER
@@ -307,6 +321,7 @@ void MapAniObject::SetUp(
 		{
 			m_pTransform.lock()->SetScale({ 0.008f,0.008f,0.008f });
 			m_bFlag6 = true;
+			m_iTag = Tag_Flag;
 		}
 		if (sFileName == "BrokenBookShelf.fbx")
 		{
@@ -317,6 +332,7 @@ void MapAniObject::SetUp(
 			PushEditEntity(m_pCollider.lock().get());
 			m_bColl = true;
 			m_bFlag6 = true;
+			m_iTag = Tag_BrokenBookShelf;
 		}
 		if (sFileName == "BrokenPeople.fbx")
 		{
@@ -326,6 +342,7 @@ void MapAniObject::SetUp(
 			PushEditEntity(m_pCollider.lock().get());
 			m_bColl = true;
 			m_bFlag6 = true;
+			m_iTag = Tag_BrokenPeople;
 		}
 		if (sFileName == "BrokenTable.fbx")
 		{
@@ -336,6 +353,7 @@ void MapAniObject::SetUp(
 			PushEditEntity(m_pCollider.lock().get());
 			m_bColl = true;
 			m_bFlag6 = true;
+			m_iTag = Tag_BrokenTable;
 		}
 
 	}

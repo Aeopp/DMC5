@@ -910,7 +910,7 @@ void PreLoader::EnergismReadyParticlePoolLoad()
 
 			ParticleInstance::Artemis _Value{};
 
-			_Value.ColorIntencity = FMath::Random(1.2f, 2.f);
+			_Value.ColorIntencity = FMath::Random(0.9f, 1.2f);
 
 			_Value.Color = FMath::Lerp(
 				Vector3{ 148.f / 255.f,  148.f / 255.f,  231.f / 255.f },

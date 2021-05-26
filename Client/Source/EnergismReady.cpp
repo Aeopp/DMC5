@@ -120,7 +120,7 @@ void EnergismReady::RenderInit()
 };
 
 void EnergismReady::PlayStart(
-	const Vector3& Location,  const float GroundY, const bool bEditPlay)
+	const Vector3& Location,const bool bEditPlay)
 {
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -129,6 +129,7 @@ void EnergismReady::PlayStart(
 		{
 			SpTransform->SetPosition(Location);
 			SpTransform->SetScale(Vector3{ 0.f,0.f,0.f });
+
 			_NuclearLensFlare.lock()->
 				PlayStart(Location, PlayTime);
 			_NuclearLensFlare.lock()->ScaleEnd = 0.008f;
@@ -157,6 +158,7 @@ void EnergismReady::PlayEnd()
 void EnergismReady::UpdatePosition(const Vector3& Location)
 {
 	GetComponent<Transform>().lock()->SetPosition(Location);
+	_NuclearLensFlare.lock()->GetComponent<Transform>().lock()->SetPosition(Location);
 };
 
 
@@ -262,7 +264,7 @@ HRESULT EnergismReady::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetScale({ 0.0020f,0.0020f,0.0020f });
+	m_pTransform.lock()->SetScale({ 0.0015f,0.0015f,0.0015f });
 	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f,0.f ,0.0f });
 
@@ -294,7 +296,9 @@ UINT EnergismReady::Update(const float _fDeltaTime)
 	ParticleUpdate(_fDeltaTime);
 	_NuclearLensFlare.lock()->
 		UpdatePlayVariable(LerpT);
-	
+
+	_DynamicLight.UpdatePosition(GetComponent<Transform>().lock()->GetPosition());
+
 	if (T <= GrowTime)
 	{
 		const float LerpT = T / GrowTime;
@@ -303,8 +307,6 @@ UINT EnergismReady::Update(const float _fDeltaTime)
 		const D3DXCOLOR _Color = FMath::ToColor(FMath::Lerp(ColorLow,ColorHigh ,LerpT));
 		_DynamicLight.Update(_Color, Radius, Flux, 
 			GetComponent<Transform>().lock()->GetPosition());
-
-
 
 		CurShockWaveDelta -= _fDeltaTime;
 		if (CurShockWaveDelta < 0.0f)
@@ -341,7 +343,7 @@ void EnergismReady::Editor()
 		if (ImGui::SmallButton("Play"))
 		{
 			PlayStart(
-				GetComponent<Transform>().lock()->GetPosition(), -1.45f, true);
+				GetComponent<Transform>().lock()->GetPosition(),true);
 		}
 
 		ImGui::Text("T : %2.6f", T);

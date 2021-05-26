@@ -115,7 +115,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	//AddGameObject<Em5000>();
+	AddGameObject<Em200>();
 
 #pragma endregion
 
@@ -240,6 +240,18 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	static float TestVolume = 0.15f;
 	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
 	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
+	if (Input::GetKeyDown(DIK_2))
+	{
+		AddGameObject<Em100>();
+	}
+	if (Input::GetKeyDown(DIK_3))
+	{
+		AddGameObject<Em0000>();
+	}
+	if (Input::GetKeyDown(DIK_4))
+	{
+		AddGameObject<Em200>();
+	}
 	//if (auto SpPlayer = _Player.lock();
 	//	SpPlayer)
 	//{

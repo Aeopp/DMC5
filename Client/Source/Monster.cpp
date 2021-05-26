@@ -10,6 +10,7 @@
 #include "SpriteEffect.h"
 #include "ShockWave.h"
 #include "SoundSystem.h"
+#include "StoneDebrisMulti.h"
 void Monster::Free()
 {
 	//for (auto& Element : m_pStoneDebrisVec)
@@ -63,7 +64,21 @@ void Monster::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 		static_pointer_cast<Nero>(_pOther.lock())->Set_GrabEnd(true);
 	}
 
-	
+	if (GAMEOBJECTTAG::Player == _pOther.lock()->m_nTag)
+		return;
+	if (!m_bBusterStoneStart)
+		return;
+	m_bBusterStoneStart = false;
+	UINT _PlayerAnimationIndex = m_pPlayer.lock()->Get_CurAnimationIndex();
+
+	switch (_PlayerAnimationIndex)
+	{
+	case Nero::ANI_BUSTER_STRIKE_COMMON_AIR:
+	case Nero::ANI_EM0000_BUSTER_AIR:
+	case Nero::ANI_EM200_BUSTER_AIR_FINISH:
+		PlayBusterEffect();
+		break;
+	}
 }
 
 void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
@@ -99,6 +114,11 @@ void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
 		}
 		break;
 	case Tag_Cbs_Long:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[0].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
@@ -106,24 +126,46 @@ void Monster::HitEffectPlay(std::weak_ptr<GameObject> _pOther)
 		m_iWaveIndex %= 3;
 		break;
 	case Tag_Cbs_Middle:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[4].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
 		break;
 	case Tag_Cbs_Short:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[5].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
 		break;
 	case Overture:
+	{
+		int RandomPlaySound = rand() % 11 + 1;
+		string temp("CbsHit" + std::to_string(RandomPlaySound));
+		SoundSystem::GetInstance()->RandSoundKeyPlay(temp, { 1,4 }, 0.2f, false);
+	}
 		m_pEffect[1].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
 		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
 		++m_iWaveIndex;
 		m_iWaveIndex %= 3;
 		break;
+	case TAG_BusterArm_Right:
+		m_pEffect[3].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
+		m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+		++m_iWaveIndex;
+		m_iWaveIndex %= 3;
+		break;
 	default:
+
 		break;
 	}
 }
@@ -215,6 +257,25 @@ void Monster::CalcEffectPos()
 	m_vEffectPos = FMath::RandomVector(FMath::Random(0.008f, 0.016f));
 }
 
+void Monster::PlayBusterEffect()
+{
+	//BusterEffect
+	for (int i = 0; i < 6; ++i)
+	{
+		float fRandom = FMath::Random<float>(0.0005f, 0.001f);
+		Vector3 vRot2 = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+		m_pBusterStone[i].lock()->SetPosition(m_pTransform.lock()->GetPosition());
+		m_pBusterStone[i].lock()->SetScale(fRandom);
+		m_pBusterStone[i].lock()->PlayStart(40.f);
+		m_pBusterStone[i].lock()->SetRotation(vRot2);
+	}
+	m_pBusterDust.lock()->PlayStart(0.0f, m_pTransform.lock()->GetPosition());
+	m_pEffect[3].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
+	m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+	++m_iWaveIndex;
+	m_iWaveIndex %= 3;
+}
+
 Vector3 Monster::GetMonsterBoneWorldPos(std::string _BoneName)
 {
 	Vector3 WorldPos;
@@ -233,6 +294,11 @@ HRESULT Monster::Ready()
 	for (int i = 0; i < 3; ++i)
 		m_pHitWave[i] = AddGameObject<ShockWave>();
 
+	m_pBusterDust = AddGameObject<SpriteEffect>();
+	m_pBusterDust.lock()->InitializeFromOption(6);
+
+	for (int i = 0; i < 6; ++i)
+		m_pBusterStone[i] = AddGameObject<StoneDebrisMulti>();
 
 	return E_NOTIMPL;
 }
