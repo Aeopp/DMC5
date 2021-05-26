@@ -579,7 +579,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurAlpha.second = 0.325f;
 		BlurMaxLength = 40.000f * ScaleFactor;
 		DistortionAlpha = 0.0f;
-		Color = { 10.f / 255.f , 0.f / 255.f ,0.f / 255.f ,1.f / 255.f };
+		Color = { 0.f  / 255.f , 0.f / 255.f ,0.f / 255.f ,0.f / 255.f };
 		this->bDirectionReverse = true;
 		break;
 	default:
