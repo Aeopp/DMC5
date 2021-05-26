@@ -146,6 +146,7 @@ private:
 	weak_ptr<Em5300Homing>	m_pHoming[8];
 	weak_ptr<Em5300Ulte>	m_pUlte;
 	weak_ptr<SnatchPoint>   m_pSnatchPoint[4];
+	
 
 	//전투 시작 테스트 용
 	std::weak_ptr<Em5300Rush>	m_pRush;
@@ -166,10 +167,16 @@ private:
 	weak_ptr<class ShockWave> m_pShockWave;
 	weak_ptr<class LensFlare> m_pLens;
 	weak_ptr<class Reverberation> m_pRever[10];
-
+	weak_ptr<class EnergismReady> m_pEnerReady;
+	weak_ptr<class Energism>	  m_pEner;
 	bool	m_bUlte = false;
 	bool	m_bLens = false;
 	bool	m_bRushLens = false;
+	bool	m_bLaserReady = false;
+	bool	m_bLaserStart = false;
+	int		m_iLaserCnt = 0;
+
+	float  m_fEnergismLookOffset = 0.4f;
 
 
 	//러쉬 이펙트
@@ -184,11 +191,18 @@ private:
 	float m_fEndScale = 0.005f;
 	float m_fEndScaleAdder = 0.f;
 
+	float m_fEnergismRotate = 0.0f;
 	///////////
 	//호밍 이펙트
 	weak_ptr<class Reverberation> m_pHomingRever[12];
 
 	bool	m_bCollPlayer = false;
+
+
+	/////////////////
+
+	Matrix* m_pHeadBone;
+
 };
 
 #endif // Em5300_h__

@@ -41,6 +41,7 @@ void Em100::Fight(const float _fDeltaTime)
 
 	if (m_BattleInfo.iHp <= 0.f && m_bAir == false)
 	{
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Groggy", { 1,1 }, 0.3f, false);
 		m_eState = Dead;
 		m_bIng = true;
 	}
@@ -82,6 +83,7 @@ void Em100::Fight(const float _fDeltaTime)
 		{
 			m_bIng = true;
 			m_eState = Attack_Hard;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Attack", { 1,5 }, 0.3f, false);
 			for (int i = 0; i < 2; ++i)
 				m_pHand[i].lock()->Set_Coll(true);
 			return;
@@ -95,6 +97,7 @@ void Em100::Fight(const float _fDeltaTime)
 			if (iRandom == 1)
 			{
 				m_eState = Attack_A;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Attack", { 1,5 }, 0.3f, false);
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->Set_Coll(true);
 				return;
@@ -102,6 +105,7 @@ void Em100::Fight(const float _fDeltaTime)
 			else if (iRandom == 2)
 			{
 				m_eState = Attack_D;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Attack", { 1,5 }, 0.3f, false);
 				for (int i = 0; i < 2; ++i)
 					m_pHand[i].lock()->Set_Coll(true);
 				return;
@@ -140,13 +144,25 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bIng = false;
 				m_bAttack = false;
@@ -184,13 +200,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bIng = false;
 				m_bAttack = false;
@@ -228,13 +259,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bIng = false;
 				m_bHardAttack = false;
@@ -355,13 +401,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bHit = false;
 				m_bIng = false;
@@ -378,13 +439,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bHit = false;
 				m_bIng = false;
@@ -401,13 +477,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bHit = false;
 				m_bIng = false;
@@ -462,13 +553,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 			}
 		}
 		break;
@@ -490,13 +596,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bMove = false;
 				m_bIng = false;
@@ -533,13 +654,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bMove = false;
 				m_bIng = false;
@@ -574,13 +710,28 @@ void Em100::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 4);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+				}
 				else if (iRandom == 4)
+				{
 					m_eState = Idle4;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bMove = false;
 				m_bIng = false;
@@ -781,6 +932,8 @@ void Em100::State_Change(const float _fDeltaTime)
 			if (m_pMesh->CurPlayAnimInfo.Name == "Snatch_End" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = Idle;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
 				m_bHit = false;
 			}
 		}
@@ -798,7 +951,12 @@ void Em100::State_Change(const float _fDeltaTime)
 			m_bEnterGround = true;
 		}
 		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+		{
 			m_eState = Idle;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Idle", { 1,5 }, 0.3f, false);
+
+		}
+
 		break;
 	}
 
@@ -1058,6 +1216,8 @@ void Em100::Hit(BT_INFO _BattleInfo, void* pArg)
 	}
 	/*----------------*/
 
+	
+
 	if (m_bDown == false)
 	{
 		switch (_BattleInfo.eAttackType)
@@ -1230,6 +1390,11 @@ void Em100::Air_Hit(BT_INFO _BattleInfo, void* pArg)
 		pBlood->PlayStart(40.f);
 	}
 	/*----------------*/
+	//////////////////////////////////////
+
+
+	///////////////////////////////
+
 
 	switch (_BattleInfo.eAttackType)
 	{
@@ -1426,44 +1591,14 @@ void Em100::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	}
 
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em100Hit", { 1,5 }, 0.3f, false);
+
 	HitEffectPlay(_pOther);
 }
 
 void Em100::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
-	if (!m_bCollEnable)
-		return;
-	if (m_eState == Dead)
-		return;
-
-	m_bCollEnable = false;
-	switch (_pOther.lock()->m_nTag)
-	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-		if (m_bAir)
-			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		else
-			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
-		for (int i = 0; i < 2; ++i)
-			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-		break;
-	case GAMEOBJECTTAG::TAG_BusterArm_Right:
-		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	case GAMEOBJECTTAG::TAG_WireArm:
-		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	case GAMEOBJECTTAG::Overture:
-		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
-		m_bHit = true;
-		m_bDown = true;
-		m_eState = Hit_KnocBack;
-		break;
-	default:
-		break;
-	}
+	
 }
 
 void Em100::RenderGBufferSK(const DrawInfo& _Info)

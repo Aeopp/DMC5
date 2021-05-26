@@ -76,7 +76,7 @@ public:
 		/* 플레이 요청 사운드가 현재 재생중일 경우 처음부터 다시 시작할지 여부*/
 		const bool bBeginIfPlaying,
 		// 거리를 넘겨주지 않으면 요청한 볼륨 그대로 출력 ! 
-		// 거리를 넘겨주면 거리비례 감소 적용해서 내부적으로 볼륨 줄여서 재생 .
+		// 거리를 넘겨주면 거리비례 감소 적용해서 내부적으로 볼륨 줄여서 재생
 		const std::optional<float>& Distance=std::nullopt,
 		// 재생 끝나면 자동으로 다시 재생 할까요 ? (0 이면 무조건 끝까지 재생하고 리플레이 0 을 초과하면 해당 값보다 플레이시간이 추월했을경우 리플레이  ) 
 		const std::optional<int32>& LoopEnd = std::nullopt);

@@ -2483,7 +2483,7 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 	// 델타타임에 영향을 매우 많이 받음 . 
 	adaptedluminance = adaptedluminance +
 		(averageluminance - adaptedluminance) *
-		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime  *2.f)));
+		(1.0f - powf(adaptedluminance_var[0], adaptedluminance_var[1] *  ( DeltaTime  *4.f)));
 
 	float two_ad_EV = adaptedluminance *
 		(adaptedluminance_var[2] / adaptedluminance_var[3]);
@@ -2493,12 +2493,20 @@ HRESULT Renderer::AdaptLuminance(const float DeltaTime)&
 
 	if (std::isnan(exposure) || FMath::AlmostEqual(0.0f,exposure))
 	{
+		if (std::isnan(PreviousExposure) || FMath::AlmostEqual(0.0f, PreviousExposure))
+		{
+			PreviousExposure = 1.f;
+		}
+
 		exposure = PreviousExposure;
 	}
 	else
 	{
 		PreviousExposure = exposure;
 	}
+
+	exposure = (std::max)(exposure, 1.f);
+	PreviousExposure = (std::max)(PreviousExposure, 1.f);
 
 	if (FixedExposure)
 	{
