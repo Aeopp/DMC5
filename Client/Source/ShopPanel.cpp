@@ -13,9 +13,9 @@
 ShopPanel::UpgradeDesc ShopPanel::_UpgradeDesc =
 { 
 	765u,		// _ExgaugeUpCost
-	3900u,		// _BatteryCost
+	3460u,		// _BatteryCost
 	2830u,		// _TransformCost
-	100000u,	// _RebellionCost
+	10000u,		// _RebellionCost
 
 	1u,			// _ExgaugeUpUpgradeCount
 	1u,			// _BatteryUpgradeCount
@@ -24,8 +24,8 @@ ShopPanel::UpgradeDesc ShopPanel::_UpgradeDesc =
 
 	100u,		// _GreenOrbCost
 	100u,		// _WhiteOrbCost
-	1000u,		// _BlueOrbCost
-	1000u,		// _PurpleOrbCost
+	500u,		// _BlueOrbCost
+	500u,		// _PurpleOrbCost
 
 	0u,			// _GreenOrbUpgradeCount
 	0u,			// _WhiteOrbUpgradeCount
@@ -3222,7 +3222,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						if (3u == _UpgradeDesc._ExgaugeUpUpgradeCount)
 							_UpgradeDesc._ExgaugeUpCost = 9999999u;
 						else if (2u == _UpgradeDesc._ExgaugeUpUpgradeCount)
-							_UpgradeDesc._ExgaugeUpCost = 3460u;
+							_UpgradeDesc._ExgaugeUpCost = 961u;
 
 						break;
 
@@ -3317,7 +3317,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						if (10u <= _UpgradeDesc._BlueOrbUpgradeCount)
 							_UpgradeDesc._BlueOrbCost = 9999999u;
 						else
-							_UpgradeDesc._BlueOrbCost += 500u;
+							_UpgradeDesc._BlueOrbCost += 250u;
 
 						// + 최대체력 증가
 
@@ -3330,7 +3330,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						if (3u <= _UpgradeDesc._PurpleOrbUpgradeCount)
 							_UpgradeDesc._PurpleOrbCost = 9999999u;
 						else
-							_UpgradeDesc._PurpleOrbCost += 1000u;
+							_UpgradeDesc._PurpleOrbCost += 500u;
 
 						// + tdt 레벨 증가
 

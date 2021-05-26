@@ -2268,7 +2268,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 {
 	// Boss HP
 	if (_BossGaugeHPRatioDelay > _BossGaugeHPRatio)
-		_BossGaugeHPRatioDelay -= _fDeltaTime * 1.25f;
+		_BossGaugeHPRatioDelay -= _fDeltaTime * 0.8f;
 	else
 		_BossGaugeHPRatioDelay = 0.f;
 
