@@ -87,6 +87,8 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
+	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
 	m_fLoadingProgress = 0.01f;
@@ -123,7 +125,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 
 	//auto Map = AddGameObject<TempMap>().lock();
 	//Map->LoadMap(1);
@@ -173,11 +175,9 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.8f;
 
 #pragma region UI
-
-	//AddGameObject<BtlPanel>();
-
-	AddGameObject<BtlPanel>().lock()->SetActive(false);
-	AddGameObject<ShopPanel>();
+	AddGameObject<BtlPanel>();
+	// AddGameObject<BtlPanel>().lock()->SetActive(false);
+	// AddGameObject<ShopPanel>();
 
 #pragma endregion
 
