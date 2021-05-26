@@ -4,6 +4,7 @@
 #include "RenderInterface.h"
 #include <optional>
 #include "ShockWave.h"
+#include "CircleWave.h"
 
 class Judgement : public ENGINE::GameObject,
 				public ENGINE::RenderInterface
@@ -58,6 +59,8 @@ public:
 	float T = 0.0f;
 	float CurShockDelta = 0.0f;
 	std::weak_ptr<ShockWave> _ShockWave{};
+	std::weak_ptr<CircleWave> _CircleWave{};
+
 	// 에디터 변수 ......
 	float CircleGrowParticleTime= 0.0016f;
 	float ShockDelta = 1.3f;
@@ -79,12 +82,12 @@ public:
 
 	static inline Vector3 GrowEndColor
 	{
-		95.f / 255.f,20.f / 255.f, 20.f / 255.f
+		255.f / 255.f,33.f / 255.f, 33.f / 255.f
 	};
 
 	static inline Vector3 JudgementReadyColor
 	{
-		95.f/255.f,78.f/255.f, 57.f/255.f
+		189.f/255.f,68.f/255.f, 68.f /255.f
 	};
 
 	Vector3 DecalColor = { 1.f,1.f,1.f };

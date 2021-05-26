@@ -1049,7 +1049,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 5555ul;
+	const uint64 PoolSize = 2500ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1138,7 +1138,7 @@ void PreLoader::JudgementCircleGrowParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 13333ul;
+	const uint64 PoolSize = 9999ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1157,8 +1157,8 @@ void PreLoader::JudgementCircleGrowParticlePoolLoad()
 
 			Vector3 StartLocation = (*SpVtxLocations)[FMath::Random(0u, VtxCnt - 1u)];
 			Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
-			Vector3 Cp1 = StartLocation + FMath::RandomVector(0.f);
-			Vector3 End = StartLocation + FMath::RandomVector(0.f);
+			Vector3 Cp1 = StartLocation + FMath::RandomVector(3.f);
+			Vector3 End = StartLocation + FMath::RandomVector(6.f);
 			// End.y += FMath::Random(0.f,111.f);
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };

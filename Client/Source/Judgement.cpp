@@ -104,6 +104,9 @@ void Judgement::RenderInit()
 		L"..\\..\\Usable\\Judgement\\Nrmr.tga");
 
 	_ShockWave = AddGameObject<ShockWave>();
+	_CircleWave = AddGameObject<CircleWave>();
+	_CircleWave.lock()->bWaveDistortion = true;
+
 
 	PushEditEntity(_StaticMesh.get());
 	PushEditEntity(_MagicTexture.get());
@@ -129,12 +132,18 @@ void Judgement::PlayStart(
 	CurShockDelta = 0.0f;
 	T = 0.0f;
 	_RenderProperty.bRender = true;
+
+	auto SpTransform = GetComponent<Transform>().lock();
+	_CircleWave.lock()->PlayStart(SpTransform->GetScale().x * 3.5f, SpTransform->GetPosition());
 };
 
 void Judgement::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+
+	auto SpTransform = GetComponent<Transform>().lock();
+	_CircleWave.lock()->PlayStart(SpTransform->GetScale().x *3.5f, SpTransform->GetPosition());
 };
 
 void Judgement::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -294,7 +303,7 @@ void Judgement::PlayCircleGrowEndParticle()
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"JudgementReady", 5555ul, true);
+					"JudgementReady", 2500ul, true);
 				_Particle.empty() == false)
 			{
 				for (int32 i = 0; i < _Particle.size(); ++i)
@@ -305,6 +314,10 @@ void Judgement::PlayCircleGrowEndParticle()
 			}
 		};
 	}
+
+	auto SpTransform = GetComponent<Transform>().lock();
+	_CircleWave.lock()->PlayStart(SpTransform->GetScale().x *3.f, SpTransform->GetPosition());
+
 }
 
 void Judgement::PlayCircleGrowParticle()
@@ -314,7 +327,7 @@ void Judgement::PlayCircleGrowParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"CircleGrowParticle", 777ul, true);
+				"CircleGrowParticle", 455ul, true);
 			_Particle.empty() == false)
 		{
 
@@ -358,6 +371,8 @@ void Judgement::UpdateShockWave(const float DeltaTime)
 	{
 		CurShockDelta += ShockDelta;
 		PlayShockWave();
+		auto SpTransform = GetComponent<Transform>().lock();
+		
 	}
 };
 
@@ -409,8 +424,7 @@ void Judgement::Editor()
 		ImGui::SliderFloat("GrowEndScale", &GrowEndScale, 0.f, 1.f, "%2.6f");
 		ImGui::SliderFloat("FinalIntencity", &GrowEndIntencity, 0.f, 1.f, "%2.6f");
 		ImGui::SliderFloat("JudgementIntencity", &JudgementReadyIntencity, 0.f, 1.f, "%2.6f");
-		ImGui::SliderFloat("DecalIntencity", &DecalIntencity, 0.f, 1.f, "%2.6f");
-
+		ImGui::SliderFloat("DecalIntencity", &DecalIntencity, -1.f, 1.f, "%2.6f");
 
 		ImGui::ColorEdit3("GrowStartColor", GrowStartColor);
 		ImGui::ColorEdit3("GrowEndColor", GrowEndColor);
