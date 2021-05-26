@@ -101,10 +101,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
+	//_Camera = AddGameObject<Camera>();
 	
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player     = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
 
@@ -125,8 +125,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(1);
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);
 
 #pragma endregion
 
@@ -174,10 +174,14 @@ HRESULT TestScene::LoadScene()
 
 #pragma region UI
 
-	//AddGameObject<BtlPanel>();
+	_BtlPanel = AddGameObject<BtlPanel>();
 
-	AddGameObject<BtlPanel>().lock()->SetActive(false);
-	AddGameObject<ShopPanel>();
+	_ShopPanel = AddGameObject<ShopPanel>();
+	if (auto Sp = _ShopPanel.lock(); Sp)
+	{
+		Sp->ResetCmd();
+		Sp->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -189,7 +193,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 2, Until Dooms Day",
+		pFont->SetText("D 1, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
@@ -216,11 +220,7 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
-	//if (nullptr != pPlane)
-	//	return S_OK;
-
-	//pPlane = PxCreatePlane(*Physics::GetPxPhysics(), PxPlane(0.f, 1.f, 0.f, 0.f), *Physics::GetDefaultMaterial());
-	//Physics::AddActor(UniqueID, *pPlane);
+ 
 
 	return S_OK;
 }
@@ -234,6 +234,9 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+	
+	CheckShopAvailable();
+
 	static float TestVolume = 0.15f;
 	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
 	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
@@ -394,7 +397,7 @@ void TestScene::TriggerSetUp()
 			ImmediatelyEnable,
 			TargetTag);
 	}
-};
+}
 
 void TestScene::MonsterWaveTriggerSetUp()
 {
@@ -459,3 +462,50 @@ void TestScene::MonsterWaveTriggerSetUp()
 			WaveEndEvent);
 	}
 };
+
+void TestScene::ApplyShopUpgradeDesc()
+{
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
+	}
+}
+
+void TestScene::CheckShopAvailable()
+{
+	if (Input::GetKeyDown(DIK_P))
+	{
+		if (auto Sp = _ShopPanel.lock(); Sp)
+		{
+			if (!Sp->IsActive())
+			{
+				Sp->SetActive(true);
+				_BtlPanel.lock()->SetRedOrbActive(false);
+				_BtlPanel.lock()->SetActive(false);
+			}
+			else
+			{
+				ApplyShopUpgradeDesc();
+				Sp->ResetCmd();
+				Sp->SetActive(false);
+				_BtlPanel.lock()->SetActive(true);
+				_BtlPanel.lock()->SetRedOrbActive(true);
+			}
+		}
+	}
+}

@@ -31,7 +31,7 @@ private:
 
 	float _AccTime = 0.f;
 	uint32 _TextBlinkCnt = 0u;
-	bool _TextRender = true;
+	bool _TextRender = false;
 
 	bool _ShowLoadingProgress = false;
 
@@ -46,6 +46,12 @@ private:
 
 	std::weak_ptr<class Font> _LoadingText{};
 	float _TextBlickTick = 0.f;
+
+	std::shared_ptr<ENGINE::Texture> _LoadingTextTex{};
+	const uint32 _TextMaxCount = 3u;
+	uint32 _CurTextIdx = 0u;
+	Matrix _LoadingTextScreenMat = Matrix();
+	float _TextAlpha = 0.f;
 
 private:
 	explicit TitlePanel() = default;

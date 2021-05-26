@@ -6,22 +6,11 @@ class TestScene : public Scene
 {
 private:
 	physx::PxRigidStatic* pPlane;
-
-	// 임시 트리거 
-	std::weak_ptr<class Camera> _Camera{};
 	std::weak_ptr<class Nero> _Player{};
-	std::weak_ptr<class Em1000> _Em1000{};
+	std::weak_ptr<class Camera> _Camera{};
 	std::weak_ptr<class MainCamera> _MainCamera{};
-	std::vector<weak_ptr<GameObject>> Wavefirst{};
-	bool bfirst = false;
-	std::vector<weak_ptr<GameObject>> Wavesecond{};
-	Vector3 WavesecondTriggerPos { -1.80262f,0.01168f,1.4464f};
-	bool bsecond = false;
-
-	/*vector<weak_ptr<GameObject>> m_vecEm100;
-	vector<weak_ptr<GameObject>> m_vecEm0000;*/
-	vector<weak_ptr<class Effect>> m_vecQliphothBlock;
-
+	std::weak_ptr<class BtlPanel> _BtlPanel{};
+	std::weak_ptr<class ShopPanel> _ShopPanel{};
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;
@@ -36,12 +25,12 @@ public:
 	virtual HRESULT Start()								override;
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
-
 private:
 	void LoadMap();
 	void RenderDataSetUp(const bool bTestLight);
 	void MonsterWaveTriggerSetUp();
 	void TriggerSetUp();
-	
+	void ApplyShopUpgradeDesc();
+	void CheckShopAvailable();
 };
 #endif // !__TEST_SCENE_H__

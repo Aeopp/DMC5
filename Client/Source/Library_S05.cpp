@@ -418,6 +418,7 @@ void Library_S05::ApplyShopUpgradeDesc()
 		SpBtlPanel)
 	{
 		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 	}
 }
 

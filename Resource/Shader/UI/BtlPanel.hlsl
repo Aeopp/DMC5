@@ -7,7 +7,7 @@ float3 LightDirection = float3(0.f, 0.f, 1.f);
 float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
-bool _Apply_ExposureCorr = true; // PsMain_Plane() 에서 사용 시발
+bool _Apply_ExposureCorr = true; // PsMain_Plane() 에서 사용 ㅅㅂ
 
 float _TotalAccumulateTime;
 float _AccumulationTexU;
@@ -742,7 +742,7 @@ PsOut PsMain_TDTGauge1(PsIn_Clip In)
     if (0.01f > _EmissivePower)
     {
         // 변신 X
-        Out.Color.rgb = Shade * saturate((float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa)) * _BrightScale * exposure_corr;
+        Out.Color.rgb = Shade * saturate((_ExtraColor - 0.1f * tex2D(ATOS0, newUV).aaa)) * _BrightScale * exposure_corr;
     }
     else
     {

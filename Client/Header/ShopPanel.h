@@ -87,6 +87,7 @@ private:
 	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeInfoFontTex{};
 	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeProgressTex{};
 	std::shared_ptr<ENGINE::Texture> _ItemTex{};
+	std::shared_ptr<ENGINE::Texture> _ItemInfoFontTex{};
 
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex0{};
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex1{};
@@ -104,7 +105,7 @@ private:
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
-	Vector3 _LightDir = Vector3(-1.f, 1.f, 1.f);
+	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
@@ -133,6 +134,16 @@ private:
 		FT_WP_OT_BATTERY_COST,
 		FT_WP_CBS_TRANSFORM_COST,
 		FT_WP_RB_REBELLION_COST,
+
+		FT_ITEM_GREENORB,
+		FT_ITEM_WHITEORB,
+		FT_ITEM_BLUEORB,
+		FT_ITEM_PURPLEORB,
+
+		FT_ITEM_GREENORB_COST,
+		FT_ITEM_WHITEORB_COST,
+		FT_ITEM_BLUEORB_COST,
+		FT_ITEM_PURPLEORB_COST,
 
 		FT_ATTENTION,
 
@@ -201,6 +212,7 @@ private:
 		POPUP_DEPTH_NONE = -1,
 		POPUP_DEPTH_NOREDORB,
 		POPUP_DEPTH_ISUPGRADE,
+		PUPUP_DEPTH_BUYORB
 	};
 	POPUP_DEPTH _CurPopupDepth = POPUP_DEPTH_NONE;
 	POPUP_DEPTH _PrePopupDepth = POPUP_DEPTH_NONE;
@@ -215,6 +227,8 @@ private:
 	POPUP_CMD _PrePopupCmd = POPUP_CMD_NONE;
 
 	static UpgradeDesc _UpgradeDesc;
+
+	bool _Inputable = true;
 
 private:
 	explicit ShopPanel() = default;

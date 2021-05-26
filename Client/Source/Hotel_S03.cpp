@@ -916,6 +916,7 @@ void Hotel_S03::ApplyShopUpgradeDesc()
 		SpBtlPanel)
 	{
 		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 	}
 }
 
