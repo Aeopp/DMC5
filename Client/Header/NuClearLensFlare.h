@@ -38,13 +38,15 @@ public:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+	float ScaleEnd = 0.022f;
+	float ColorIntencity = 0.0025f;
 private:
+	float _AlphaFactor = 0.5f;
 	float CurColorIntencity = 0.0025f;
 	float T = 0.0f;
 	float PlayTime = 24.f;
-	float _AlphaFactor = 0.5f;
+	
 
-	float ScaleEnd = 0.022f;
-	float ColorIntencity = 0.0025f;
+	
 };
 #endif //

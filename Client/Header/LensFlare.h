@@ -11,6 +11,7 @@ class LensFlare : public ENGINE::GameObject,
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _Mesh{};
 	std::shared_ptr<ENGINE::Texture>    _Alpg{};
+	std::shared_ptr<ENGINE::Texture> _Alpg2{};
 private:
 	explicit LensFlare() = default;
 	virtual ~LensFlare() = default;
@@ -37,6 +38,8 @@ public:
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
+public:
+	uint32 Option = 0;
 private:
 	float T = 0.0f;
 	float PlayTime = 0.6f;

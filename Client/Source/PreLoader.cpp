@@ -7,6 +7,7 @@
 
 void PreLoader::PreLoadResources()
 {
+	EnergismReadyParticlePoolLoad();
 	KaboomParticlePoolLoad();
 	NuClearParticlePoolLoad();
 	ReverberationParticlePoolLoad();
@@ -832,6 +833,91 @@ void PreLoader::ArtemisCylinderParticlePoolLoad()
 				FMath::Random(0.f, 1.f));
 
 			const float LifeTime = FMath::Random(2.f, 2.1f);
+
+			_ParticleInstance.PreSetup(
+				{ StartLocation ,Cp0,Cp1,End },
+				{ StartRot,RotCp0,RotCp1,EndRot },
+				{ RScale,RScale,RScale },
+				LifeTime,
+				0.0f,
+				_Value,
+				std::nullopt);
+		}
+	}
+};
+
+void PreLoader::EnergismReadyParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+
+	auto _Tex = Resources::Load<Texture>(
+		"..\\..\\Usable\\Smoke\\11.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "ArtemisMissileParticle";
+	// 공유 정보 바인드
+	_PushParticle.SharedResourceBind = [_Tex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("MskMap", _Tex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](
+		const std::any& _InstanceVariable,
+		ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Artemis&>(_InstanceVariable);
+		Fx->SetFloatArray("_Color", _Value.Color, 3u);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 1111u;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("EnergismReadyParticle",
+			std::move(_PushParticle), PoolSize, true);
+
+	{
+		for (auto& _ParticleInstance : *ParticlePool)
+		{
+			const Vector3 StartLocation =
+				FMath::RandomVector(1677.f);
+			const float LerpScale = FMath::Random(0.0f, 1.f);
+			const Vector3 End = FMath::Lerp(StartLocation, Vector3{ 0.f,0.f,0.f },
+				LerpScale);
+
+			const Vector3 Cp0 = FMath::Lerp(StartLocation, End, 0.33f) + FMath::RandomVector(555.f * LerpScale);
+			const Vector3 Cp1 = FMath::Lerp(StartLocation, End, 0.66f) + FMath::RandomVector(555.f * LerpScale);
+
+			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+
+			constexpr float ScaleFactor = 17.f;
+			const float RScale = FMath::Random(
+				0.0055f * ScaleFactor,
+				0.0075f * ScaleFactor)
+				* GScale;
+
+			ParticleInstance::Artemis _Value{};
+
+			_Value.ColorIntencity = FMath::Random(1.2f, 2.f);
+
+			_Value.Color = FMath::Lerp(
+				Vector3{ 148.f / 255.f,  148.f / 255.f,  231.f / 255.f },
+				Vector3{ 1.f,1.f,1.f },
+				FMath::Random(0.f, 1.f));
+
+			const float LifeTime = FMath::Random(0.1f, 2.f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },

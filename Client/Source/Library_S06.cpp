@@ -18,6 +18,7 @@
 #include "Energism.h"
 #include "ShopPanel.h"
 #include "Renderer.h"
+#include "EnergismReady.h"
 
 #include <iostream>
 #include <fstream>
@@ -55,18 +56,19 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-	//		-38.744f, -0.388f, 30.861f
-	//		});
-	//}
+	/*if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+			-38.744f, -0.388f, 30.861f
+			});
+	}*/
 
-	 AddGameObject<FinalReady>();
+	/* AddGameObject<FinalReady>();
 	 AddGameObject<Energism>();
 	 AddGameObject<NuClear>();
-
+	 AddGameObject<EnergismReady>();*/
+	 
 	 AddGameObject<MainCamera>();
 	 _Player = AddGameObject<Nero>();
 
