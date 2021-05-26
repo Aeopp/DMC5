@@ -44,6 +44,7 @@ public:
 private:
 	void PlayCircleGrowEndParticle();
 	void PlayCircleGrowParticle();
+	void PlayJudgementDayParticle();
 	void PlayShockWave();
 
 	void UpdateParticle(const float DeltaTime);
@@ -57,6 +58,7 @@ public:
 public:
 	bool bCircleGrowEndParticle = false;
 	float CurCircleGrowParticleTime = 0.0f;
+	float CurJudgementDayParticleTime = 0.0f;
 	float T = 0.0f;
 	float CurShockDelta = 0.0f;
 	std::weak_ptr<ShockWave> _ShockWave{};
@@ -65,6 +67,7 @@ public:
 
 	// 에디터 변수 ......
 	float CircleGrowParticleTime= 0.0016f;
+	float JudgementDayParticleTime = 0.1f;
 	float ShockDelta = 1.3f;
 	float ShockScaleFactor = 1000.f;
 	

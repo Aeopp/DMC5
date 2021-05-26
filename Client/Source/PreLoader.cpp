@@ -8,6 +8,7 @@
 
 void PreLoader::PreLoadResources()
 {
+	JudgementDayParticlePoolLoad();
 	JudgementReadyParticlePoolLoad();
 	JudgementCircleGrowParticlePoolLoad();
 	JudgementCutparticlePoolLoad();
@@ -1278,6 +1279,86 @@ void PreLoader::JudgementCutparticlePoolLoad()
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },
 			PScale, LifeTime, 0.0f, _IceValue, std::nullopt);
+	}
+};
+
+void PreLoader::JudgementDayParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+
+	auto _Tex = Resources::Load<Texture>(
+		"..\\..\\Usable\\Smoke\\11.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "JudgementParticle";
+	// 공유 정보 바인드
+	_PushParticle.SharedResourceBind = [_Tex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("MskMap", _Tex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](
+		const std::any& _InstanceVariable,
+		ID3DXEffect* const Fx)
+	{
+		const auto& _Value = std::any_cast<const ParticleInstance::Judgement&>(_InstanceVariable);
+		Fx->SetFloatArray("_Color", _Value.Color, 3u);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 1111ul;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated(
+			"JudgementDay",
+			std::move(_PushParticle), PoolSize, true);
+
+	{
+		for (auto& _ParticleInstance : *ParticlePool)
+		{
+			Vector3 StartLocation = FMath::RandomVector(1000.f);
+			Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
+			Vector3 Cp1 = StartLocation + FMath::RandomVector(10.f);
+			Vector3 End = StartLocation + FMath::RandomVector(20.f);
+			// End.y += FMath::Random(0.f,111.f);
+
+			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+
+			constexpr float ScaleFactor = 10.f;
+			const float RScale = FMath::Random(
+				0.0055f * ScaleFactor,
+				0.0075f * ScaleFactor)
+				* GScale;
+
+			ParticleInstance::Judgement _Value{};
+
+			_Value.ColorIntencity = FMath::Random(0.025f, 0.05f);
+
+			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
+
+			const float LifeTime = FMath::Random(3.f, 7.f);
+
+			_ParticleInstance.PreSetup(
+				{ StartLocation ,Cp0,Cp1,End },
+				{ StartRot,RotCp0,RotCp1,EndRot },
+				{ RScale,RScale,RScale },
+				LifeTime,
+				0.0f,
+				_Value,
+				std::nullopt);
+		}
 	}
 };
 

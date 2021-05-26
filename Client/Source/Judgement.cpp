@@ -318,9 +318,9 @@ void Judgement::PlayCircleGrowEndParticle()
 	}
 
 	auto SpTransform = GetComponent<Transform>().lock();
-	_CircleWave.lock()->PlayStart(SpTransform->GetScale().x *3.f, SpTransform->GetPosition());
+	_CircleWave.lock()->PlayStart(SpTransform->GetScale().x * 3.f, SpTransform->GetPosition());
 
-}
+};
 
 void Judgement::PlayCircleGrowParticle()
 {
@@ -330,6 +330,26 @@ void Judgement::PlayCircleGrowParticle()
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
 				"CircleGrowParticle", 455ul, true);
+			_Particle.empty() == false)
+		{
+
+			for (int32 i = 0; i < _Particle.size(); ++i)
+			{
+				auto& _PlayInstance = _Particle[i];
+				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+			}
+		}
+	};
+};
+
+void Judgement::PlayJudgementDayParticle()
+{
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				"JudgementDay", 111ul, true);
 			_Particle.empty() == false)
 		{
 
@@ -362,6 +382,15 @@ void Judgement::UpdateParticle(const float DeltaTime)
 		{
 			CurCircleGrowParticleTime += CircleGrowParticleTime;
 			PlayCircleGrowParticle();
+		}
+	}
+	else if (T >= JudgementReadyTime)
+	{
+		CurJudgementDayParticleTime -= DeltaTime;
+		if (CurJudgementDayParticleTime < 0.0f)
+		{
+			CurJudgementDayParticleTime += JudgementDayParticleTime;
+			PlayJudgementDayParticle();
 		}
 	}
 };
@@ -415,6 +444,8 @@ void Judgement::Editor()
 
 		ImGui::SliderFloat("PlayTime", &PlayTime, 0.f, 10.f, "%2.6f");
 		ImGui::SliderFloat("CircleGrowParticleTime", &CircleGrowParticleTime, 0.f, 1.f, "%2.6f");
+		ImGui::SliderFloat("JudgementDayParticleTime", &JudgementDayParticleTime, 0.f, 1.f, "%2.6f");
+		;
 		ImGui::SliderFloat("CircleGrowTime", &CircleGrowTime, 0.f, 10.f, "%2.6f");
 		ImGui::SliderFloat("JudgementReadyTime", &JudgementReadyTime, CircleGrowTime, 10.f, "%2.6f");
 
