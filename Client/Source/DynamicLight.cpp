@@ -22,7 +22,7 @@ void DynamicLight::PlayStart(const Vector3& Location , const float PlayTime)
 	this->PlayTime = PlayTime;
 }
 
-void DynamicLight::Update(const float Dt,const Vector3& Location)
+void DynamicLight::Update(const float Dt, const Vector3& Location)
 {
 	T += Dt;
 	if (T > PlayTime)
@@ -37,9 +37,21 @@ void DynamicLight::Update(const float Dt,const Vector3& Location)
 		SpPtLight->Color = FMath::ToColor(FMath::Lerp(Color.first, Color.second, LerpTime));
 		SpPtLight->PointRadius = FMath::Lerp(PointRadius.first, PointRadius.second, LerpTime);
 		SpPtLight->lightFlux = FMath::Lerp(Flux.first, Flux.second, LerpTime);
-		SpPtLight->SetPosition(FMath::ConvertVector4(Location,1.f));
+		SpPtLight->SetPosition(FMath::ConvertVector4(Location, 1.f));
 	}
-}
+};
+
+void DynamicLight::Update(const D3DXCOLOR& _Color,const float Radius,const float Flux,const Vector3& Location)
+{
+	if (auto SpPtLight = _PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->Color = _Color; 
+		SpPtLight->PointRadius = Radius;
+		SpPtLight->lightFlux = Flux; 
+		SpPtLight->SetPosition(FMath::ConvertVector4(Location, 1.f));
+	}
+};
 
 void DynamicLight::PlayEnd()
 {

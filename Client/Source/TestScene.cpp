@@ -83,12 +83,11 @@ TestScene* TestScene::Create()
 	return pInstance;
 };
 
-
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
-	//SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
+	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
 	m_fLoadingProgress = 0.01f;
 
@@ -102,10 +101,11 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//_Camera = AddGameObject<Camera>();
+	_Camera = AddGameObject<Camera>();
 	
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player     = AddGameObject<Nero>();
+	//_MainCamera = AddGameObject<MainCamera>();
+	//_Player     = AddGameObject<Nero>();
+   
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -113,10 +113,10 @@ HRESULT TestScene::LoadScene()
 #pragma region Monster
 
 	//AddGameObject<Em0000>();
-	AddGameObject<Em1000>();
+	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
 	//AddGameObject<Em5000>();
-	//AddGameObject<Em0000>();
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -124,8 +124,9 @@ HRESULT TestScene::LoadScene()
 #pragma region Map
 
 	//LoadMap();
-	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);
+
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(1);
 
 #pragma endregion
 
@@ -173,10 +174,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region UI
 
-	AddGameObject<BtlPanel>();
+	//AddGameObject<BtlPanel>();
 
-	//AddGameObject<BtlPanel>().lock()->SetActive(false);
-	//AddGameObject<ShopPanel>();
+	AddGameObject<BtlPanel>().lock()->SetActive(false);
+	AddGameObject<ShopPanel>();
 
 #pragma endregion
 
@@ -203,10 +204,10 @@ HRESULT TestScene::LoadScene()
 	// Load Complete
 	m_fLoadingProgress = 1.f;
 
-	//if (_Camera.expired() == false)
-	//{
-	//	SoundSystem::GetInstance()->SetDisanceDecrease(0.1f, 3.f, _Camera.lock()->GetComponent<Transform>());
-	//};
+	if (_Camera.expired() == false)
+	{
+		SoundSystem::GetInstance()->SetDisanceDecrease(0.1f, 3.f, _Camera.lock()->GetComponent<Transform>());
+	};
 
 	return S_OK;
 }
@@ -235,7 +236,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 	static float TestVolume = 0.15f;
 	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
-	//SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
+	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
 	//if (auto SpPlayer = _Player.lock();
 	//	SpPlayer)
 	//{
@@ -359,7 +360,6 @@ void TestScene::RenderDataSetUp(const bool bTestLight)
 
 	}
 	
-
 	Renderer::GetInstance()->LateSceneInit();
 }
 
@@ -395,7 +395,6 @@ void TestScene::TriggerSetUp()
 			TargetTag);
 	}
 };
-
 
 void TestScene::MonsterWaveTriggerSetUp()
 {
@@ -460,4 +459,3 @@ void TestScene::MonsterWaveTriggerSetUp()
 			WaveEndEvent);
 	}
 };
-

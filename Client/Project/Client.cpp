@@ -29,7 +29,6 @@ static constexpr bool bMultiSample = false;
 static constexpr bool bBorderless = false;
 static const std::filesystem::path SoundDirectoryPath = "..\\..\\Resource\\Sound\\";
 
-
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdParam, int nCmdShow)
 {
 	srand((unsigned int)time(NULL));

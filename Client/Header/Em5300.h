@@ -52,6 +52,7 @@ public:
 		Dead,
 		Down_Dead,
 		Down_Loop,
+		Down_Standup,
 		Hit_Falling_End,
 		Hit_Falling_Loop,
 		Hit_Falling_Start,
@@ -153,6 +154,7 @@ private:
 
 	float	m_fTest = 0.01f;
 	float	m_fHeight = 0.7f;
+	float   m_fCenterY = -0.2f;
 	float	m_fPower = 0.f;
 	Vector3	m_vPower;
 	

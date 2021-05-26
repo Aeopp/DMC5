@@ -21,7 +21,15 @@ public:
 		SnatchRush,
 		ArtemisRush,
 		ArtemisLaunch,
+		ArtemisEnergism,
 		ArtemisEnd,
+		StreakEnd,
+		Streak,
+		SplitEnd,
+		Split,
+		Buster,
+		Kaboom,
+		EnergismReady,
 		None,
 	};
 private:

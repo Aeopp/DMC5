@@ -25,6 +25,7 @@
 #include "QliphothBlock.h"
 #include "TimeSystem.h"
 #include "Em0000.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
@@ -32,19 +33,20 @@ using namespace std;
 
 Hotel_S02::Hotel_S02()
 {
-	for (auto& Element : m_vecQliphothBlock)
-		Destroy(Element);
-	m_vecQliphothBlock.clear();
-	m_vecQliphothBlock.shrink_to_fit();
+
 }
 
 void Hotel_S02::Free()
 {
 	for (auto& Element : _MakaiButterflyVec)
 		Destroy(Element);
-
 	_MakaiButterflyVec.clear();
 	_MakaiButterflyVec.shrink_to_fit();
+
+	for (auto& Element : m_vecQliphothBlock)
+		Destroy(Element);
+	m_vecQliphothBlock.clear();
+	m_vecQliphothBlock.shrink_to_fit();
 
 	Scene::Free();
 }
@@ -55,13 +57,13 @@ Hotel_S02* Hotel_S02::Create()
 	return pInstance;
 }
 
-
 HRESULT Hotel_S02::LoadScene()
 {
 	// Load Start
 	SoundSystem::GetInstance()->ClearSound();
 	SoundSystem::GetInstance()->Stop("Hotel01");
 	SoundSystem::GetInstance()->Play("Hotel02", _Hotel02_Volume, false);
+	
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -74,14 +76,14 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Player & Camera
 
-	//if (auto SpCamera = AddGameObject<Camera>().lock();
-	//	SpCamera)
-	//{
-	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
-	//}
+	if (auto SpCamera = AddGameObject<Camera>().lock();
+		SpCamera)
+	{
+		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{ -3.808f, 0.296f, 11.846f });
+	}
 	
-	_MainCamera = AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	//_MainCamera = AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -95,9 +97,9 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Map & Objects
 
-	//LoadObjects("../../Data/Stage2_Map.json");
-	//LoadCollObjects("../../Data/Stage2_Object.json");
-	//LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
+	LoadObjects("../../Data/Stage2_Map.json");
+	LoadCollObjects("../../Data/Stage2_Object.json");
+	LoadBreakablebjects("../../Data/Stage2_BreakableObject.json");
 
 	AddGameObject<HotelBrokenFloor>();
 
@@ -119,7 +121,7 @@ HRESULT Hotel_S02::LoadScene()
 
 #pragma region Effect
 
-	// Stage3 길막
+	// Stage2 길막
 	m_vecQliphothBlock.reserve(3);
 
 	// 0: StartPoint 
@@ -173,6 +175,13 @@ HRESULT Hotel_S02::LoadScene()
 
 	_BtlPanel = AddGameObject<BtlPanel>();
 
+	_ShopPanel = AddGameObject<ShopPanel>();
+	if (auto Sp = _ShopPanel.lock(); Sp)
+	{
+		Sp->ResetCmd();
+		Sp->SetActive(false);
+	}
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.9f;
@@ -206,6 +215,8 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 
 	Scene::Update(_fDeltaTime);
 
+	CheckShopAvailable();
+
 	/* ---------- 치트 ---------- */
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
@@ -216,6 +227,7 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S03));
 	}
 	/* -------------------------- */
+	
 	if (_DecreaseHotel02_Volume)
 		_Hotel02_Volume = FMath::Lerp(_Hotel02_Volume, 0.f, _fDeltaTime);
 	else
@@ -446,6 +458,7 @@ void Hotel_S02::TriggerSetUp()
 {
 	TriggerFirstButterFlyMeetCamera(TriggerFirstButterFlyMeet());
 	TriggerPuzzleStart();
+	TriggerShop();
 	TriggerWallSmash();
 	TriggerLastRoomBattle(TriggerNextScene());
 }
@@ -670,7 +683,35 @@ void Hotel_S02::TriggerPuzzleStart()
 			ImmediatelyEnable,
 			TargetTag);
 	}
-};
+}
+
+void Hotel_S02::TriggerShop()
+{
+	auto _Trigger = AddGameObject<Trigger>().lock();
+	if (_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this]()
+		{
+			_IsShopAvailable = true;
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -4.3f, 1.82f, 19.595f };
+		// 트리거 박스 사이즈 
+		const Vector3 TriggerBoxSize = { 1.073f, 1.f, 1.2f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			TriggerBoxSize,
+			ImmediatelyEnable,
+			TargetTag);
+	}
+}
 
 void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTrigger)
 {
@@ -796,7 +837,6 @@ void Hotel_S02::TriggerLastRoomBattle(const std::weak_ptr<Trigger>& _NextSceneTr
 	};
 };
 
-
 std::weak_ptr<Trigger> Hotel_S02::TriggerNextScene()
 {
 	auto _Trigger = AddGameObject<Trigger>().lock();
@@ -847,17 +887,60 @@ void Hotel_S02::BgmPlay()
 	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
 }
 
+void Hotel_S02::ApplyShopUpgradeDesc()
+{
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	}
+}
+
+void Hotel_S02::CheckShopAvailable()
+{
+	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
+	{
+		if (auto Sp = _ShopPanel.lock(); Sp)
+		{
+			if (!Sp->IsActive())
+			{
+				Sp->SetActive(true);
+				_BtlPanel.lock()->SetActive(false);
+			}
+			else
+			{
+				ApplyShopUpgradeDesc();
+				Sp->ResetCmd();
+				Sp->SetActive(false);
+				_BtlPanel.lock()->SetActive(true);
+			}
+		}
+	}
+}
+
 void Hotel_S02::LateInit()
 {
-	
-
-	// + 플레이어 초기 위치 잡기 등
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -3.63097f, 0.077f, 11.75365f });
 		SpPlayer->SetAngle(180.f);
 	}
+
+	ApplyShopUpgradeDesc();
 
 	if (auto SpMainCamera = _MainCamera.lock();
 		SpMainCamera)

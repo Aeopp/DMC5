@@ -6,7 +6,22 @@
 #include "Renderer.h"
 #include "Font.h"
 #include "BtlPanel.h"
+#include "Nero.h"
 
+
+// static var
+ShopPanel::UpgradeDesc ShopPanel::_UpgradeDesc =
+{ 
+	765u,		// _ExgaugeUpCost
+	3900u,		// _BatteryCost
+	2830u,		// _TransformCost
+	100000u,	// _RebellionCost
+
+	1u,			// _ExgaugeUpUpgradeCount
+	1u,			// _BatteryUpgradeCount
+	1u,			// _TransformUpgradeCount
+	0u			// _RebellionUpgradeCount
+};
 
 void ShopPanel::Free()
 {
@@ -251,7 +266,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 
 			if (WP_REDQUEEN <= _PreCmd && WP_REBELLION >= _PreCmd)
 			{
-				uint32 CurRedOrbCount = _BtlPanel.lock()->GetRedOrbCount();
+				uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
 				bool Buyable = false;
 				int ScreenMatOpt = 0;
 				int ProgressMaxCnt = 0;
@@ -259,35 +274,35 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				switch (_PreCmd)
 				{
 				case ShopPanel::WP_REDQUEEN:
-					if (_ExgaugeUpCost <= CurRedOrbCount)
+					if (_UpgradeDesc._ExgaugeUpCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 20;
 					ProgressMaxCnt = 3;
-					ProgressCurCnt = _ExgaugeUpUpgradeCount;
+					ProgressCurCnt = _UpgradeDesc._ExgaugeUpUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex0->GetTexture());
 					break;
 				case ShopPanel::WP_OVERTURE:
-					if (_BatteryCost <= CurRedOrbCount)
+					if (_UpgradeDesc._BatteryCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 21;
 					ProgressMaxCnt = 2;
-					ProgressCurCnt = _BatteryUpgradeCount;
+					ProgressCurCnt = _UpgradeDesc._BatteryUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex1->GetTexture());
 					break;
 				case ShopPanel::WP_CBS:
-					if (_TransformCost <= CurRedOrbCount)
+					if (_UpgradeDesc._TransformCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 22;
 					ProgressMaxCnt = 3;
-					ProgressCurCnt = _TransformUpgradeCount;
+					ProgressCurCnt = _UpgradeDesc._TransformUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex2->GetTexture());
 					break;
 				case ShopPanel::WP_REBELLION:
-					if (_RebellionCost <= CurRedOrbCount)
+					if (_UpgradeDesc._RebellionCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 23;
 					ProgressMaxCnt = 1;
-					ProgressCurCnt = _RebellionUpgradeCount;
+					ProgressCurCnt = _UpgradeDesc._RebellionUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponBgTex3->GetTexture());
 					break;
 				}
@@ -528,6 +543,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			//
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _PopupLineTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
@@ -541,14 +557,34 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			SharedSubset->Render(_ImplInfo.Fx);
 			_ImplInfo.Fx->EndPass();
 
+			//
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _PopupTextTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
 			switch (_PrePopupDepth)
 			{
 			case ShopPanel::POPUP_DEPTH_NOREDORB:
-				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _PopupTextTex->GetTexture());
-				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				Create_ScreenMat(CurID, ScreenMat, 5);
+				break;
+			case ShopPanel::POPUP_DEPTH_ISUPGRADE:
+				Create_ScreenMat(CurID, ScreenMat, 7);
+				break;
+			}
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			switch (_PrePopupDepth)
+			{
+			case ShopPanel::POPUP_DEPTH_NOREDORB:
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
 				_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
 
-				Create_ScreenMat(CurID, ScreenMat, 5);
+				Create_ScreenMat(CurID, ScreenMat, 2);
 				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
 				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
@@ -556,40 +592,138 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 
+				Create_ScreenMat(CurID, ScreenMat, 3);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+				Create_ScreenMat(CurID, ScreenMat, 4);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+				break;
+
+			case ShopPanel::POPUP_DEPTH_ISUPGRADE:
+				if (POPUP_CMD_OK == _PrePopupCmd)
+				{
+					_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
+
+					Create_ScreenMat(CurID, ScreenMat, 8);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					Create_ScreenMat(CurID, ScreenMat, 9);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.9f);
+
+					Create_ScreenMat(CurID, ScreenMat, 11);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+
+					Create_ScreenMat(CurID, ScreenMat, 10);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.6f);
+
+					Create_ScreenMat(CurID, ScreenMat, 12);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
+				else
+				{
+					_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.9f);
+
+					Create_ScreenMat(CurID, ScreenMat, 13);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
+
+					Create_ScreenMat(CurID, ScreenMat, 14);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					Create_ScreenMat(CurID, ScreenMat, 15);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.6f);
+
+					Create_ScreenMat(CurID, ScreenMat, 10);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+
+					Create_ScreenMat(CurID, ScreenMat, 12);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
 				break;
 			}
-
-			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
-			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
-
-			Create_ScreenMat(CurID, ScreenMat, 2);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
-			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
-			_ImplInfo.Fx->BeginPass(1);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-
-			Create_ScreenMat(CurID, ScreenMat, 3);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
-			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
-			_ImplInfo.Fx->BeginPass(1);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
-
-			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
-			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
-
-			Create_ScreenMat(CurID, ScreenMat, 4);
-			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
-			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
-			_ImplInfo.Fx->BeginPass(1);
-			SharedSubset->Render(_ImplInfo.Fx);
-			_ImplInfo.Fx->EndPass();
 		}
 	}
 
@@ -657,7 +791,7 @@ HRESULT ShopPanel::Ready()
 	_SelectWeaponInfoBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2016_00_iam.tga");
 	_ItemAndInfoBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2010_iam.tga");
 	_ButtonBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2011_00_iam.tga");
-	_ButtonFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\Upgrade.png");
+	_ButtonFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\buttontext.png");
 	_WeaponUpgradeInfoFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\WeaponUpgradeInfo.png");
 	_WeaponUpgradeProgressTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui4000_iam.tga");
 
@@ -678,9 +812,6 @@ HRESULT ShopPanel::Ready()
 
 	//
 	Init_Font();
-
-	//
-	_BtlPanel = std::static_pointer_cast<BtlPanel>(FindGameObjectWithTag(UI_BtlPanel).lock());
 
 	return S_OK;
 }
@@ -964,6 +1095,31 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 				// + 새 팝업창
 				_UIDescs[POPUP].Using = true;
 				_CurPopupDepth = POPUP_DEPTH_NOREDORB;	// 임시
+
+				if (WP_REDQUEEN <= _PreCmd && WP_REBELLION >= _PreCmd)
+				{
+					uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
+					switch (_PreCmd)
+					{
+					case ShopPanel::WP_REDQUEEN:
+						if (_UpgradeDesc._ExgaugeUpCost <= CurRedOrbCount)
+							_CurPopupDepth = POPUP_DEPTH_ISUPGRADE;
+						break;
+					case ShopPanel::WP_OVERTURE:
+						if (_UpgradeDesc._BatteryCost <= CurRedOrbCount)
+							_CurPopupDepth = POPUP_DEPTH_ISUPGRADE;
+						break;
+					case ShopPanel::WP_CBS:
+						if (_UpgradeDesc._TransformCost <= CurRedOrbCount)
+							_CurPopupDepth = POPUP_DEPTH_ISUPGRADE;
+						break;
+					case ShopPanel::WP_REBELLION:
+						if (_UpgradeDesc._RebellionCost <= CurRedOrbCount)
+							_CurPopupDepth = POPUP_DEPTH_ISUPGRADE;
+						break;
+					}
+				}
+
 				_CurPopupCmd = POPUP_CMD_OK;
 
 				_ButtonBlinkStart = false;
@@ -1017,6 +1173,7 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 			break;
 
 		case POPUP_DEPTH_NOREDORB:
+		case POPUP_DEPTH_ISUPGRADE:
 			_FontVec[FT_ATTENTION].lock()->SetRenderFlag(true);
 			switch (_PreCmd)
 			{
@@ -1537,7 +1694,6 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MinTexUV = Vector2(0.493f, 0.146f);
 			_MaxTexUV = Vector2(0.906f, 0.566f);
 			break;
-		// Button
 		case 2:
 			_Out._11 = 2.5f;
 			_Out._22 = 0.35f;
@@ -1569,11 +1725,11 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MaxTexUV = Vector2(1.f, 0.75f);
 			break;
 		case 5:
-			_Out._11 = 4.2f;
+			_Out._11 = 4.4f;
 			_Out._22 = 0.8f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = 745.f - (g_nWndCX >> 1);
-			_Out._42 = -(340.f - (g_nWndCY >> 1));
+			_Out._41 = 750.f - (g_nWndCX >> 1);
+			_Out._42 = -(350.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.f);
 			_MaxTexUV = Vector2(1.f, 0.25f);
@@ -1587,6 +1743,96 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.f);
 			_MaxTexUV = Vector2(1.f, 0.0625f);
+			break;
+		case 7:
+			_Out._11 = 4.4f;
+			_Out._22 = 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 710.f - (g_nWndCX >> 1);
+			_Out._42 = -(350.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.5f);
+			break;
+		case 8:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = -60.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.619f);
+			_MaxTexUV = Vector2(0.616f, 0.675f);
+			break;
+		case 9:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = -60.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.736f);
+			_MaxTexUV = Vector2(0.616f, 0.795f);
+			break;
+		case 10:
+			_Out._11 = 1.6f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (-60.f + 637.f) - (g_nWndCX >> 1);
+			_Out._42 = -(502.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.0f);
+			_MaxTexUV = Vector2(1.f, 0.25f);
+			break;
+		case 11:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 130.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.677f);
+			_MaxTexUV = Vector2(0.616f, 0.734f);
+			break;
+		case 12:
+			_Out._11 = 1.6f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (130.f + 637.f) - (g_nWndCX >> 1);
+			_Out._42 = -(502.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.5f);
+			_MaxTexUV = Vector2(1.f, 0.75f);
+			break;
+		case 13:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = -60.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.677f);
+			_MaxTexUV = Vector2(0.616f, 0.734f);
+			break;
+		case 14:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 130.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.619f);
+			_MaxTexUV = Vector2(0.616f, 0.675f);
+			break;
+		case 15:
+			_Out._11 = 2.5f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 130.f;
+			_Out._42 = -135.f;
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.736f);
+			_MaxTexUV = Vector2(0.616f, 0.795f);
 			break;
 		default:
 			goto DEFAULT;
@@ -1627,7 +1873,7 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 		if (_UIDescs[REDORB].Using)
 		{
 			pFont->SetText(
-				std::to_string(_BtlPanel.lock()->GetRedOrbCount()),
+				std::to_string(BtlPanel::GetRedOrbCount()),
 				Font::TEX_ID::DMC5_BLACK_GRAD,
 				{ _UIDescs[REDORB].Pos.x + 35.f, _UIDescs[REDORB].Pos.y },
 				{ 0.8f, 0.8f },
@@ -1657,7 +1903,7 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 	const Vector3 DarkColor = { 0.3f, 0.3f, 0.3f };
 	const Vector3 RedColor = { 1.1f, 0.f, 0.f };
 	Vector3 CurCostColor = BaseColor;
-	uint32 CurRedOrbCount = _BtlPanel.lock()->GetRedOrbCount();
+	uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
 
 	if (WP_REDQUEEN == _PreCmd && !_UIDescs[POPUP].Using)
 	{
@@ -1676,13 +1922,13 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 			BaseColor
 		);
 
-		if (_ExgaugeUpCost <= CurRedOrbCount)
+		if (_UpgradeDesc._ExgaugeUpCost <= CurRedOrbCount)
 			CurCostColor = BaseColor;
 		else
 			CurCostColor = RedColor;
 
 		_FontVec[FT_WP_RQ_EXGAUGEUP_COST].lock()->SetText(
-			std::to_string(_ExgaugeUpCost),
+			std::to_string(_UpgradeDesc._ExgaugeUpCost),
 			Font::TEX_ID::DMC5_GREEN_GRAD,
 			{ _UIDescs[SELECT_WEAPON].Pos.x + _CategoryWeaponInfoXPos - 94.f, _UIDescs[SELECT_WEAPON].Pos.y + 252.f },
 			{ 0.55f, 0.55f },
@@ -1717,13 +1963,13 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 			BaseColor
 		);
 
-		if (_BatteryCost <= CurRedOrbCount)
+		if (_UpgradeDesc._BatteryCost <= CurRedOrbCount)
 			CurCostColor = BaseColor;
 		else
 			CurCostColor = RedColor;
 
 		_FontVec[FT_WP_OT_BATTERY_COST].lock()->SetText(
-			std::to_string(_BatteryCost),
+			std::to_string(_UpgradeDesc._BatteryCost),
 			Font::TEX_ID::DMC5_GREEN_GRAD,
 			{ _UIDescs[SELECT_WEAPON].Pos.x + _CategoryWeaponInfoXPos - 94.f, _UIDescs[SELECT_WEAPON].Pos.y + 252.f },
 			{ 0.55f, 0.55f },
@@ -1758,13 +2004,13 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 			BaseColor
 		);
 
-		if (_TransformCost <= CurRedOrbCount)
+		if (_UpgradeDesc._TransformCost <= CurRedOrbCount)
 			CurCostColor = BaseColor;
 		else
 			CurCostColor = RedColor;
 
 		_FontVec[FT_WP_CBS_TRANSFORM_COST].lock()->SetText(
-			std::to_string(_TransformCost),
+			std::to_string(_UpgradeDesc._TransformCost),
 			Font::TEX_ID::DMC5_GREEN_GRAD,
 			{ _UIDescs[SELECT_WEAPON].Pos.x + _CategoryWeaponInfoXPos - 94.f, _UIDescs[SELECT_WEAPON].Pos.y + 252.f },
 			{ 0.55f, 0.55f },
@@ -1799,13 +2045,13 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 			BaseColor
 		);
 
-		if (_RebellionCost <= CurRedOrbCount)
+		if (_UpgradeDesc._RebellionCost <= CurRedOrbCount)
 			CurCostColor = BaseColor;
 		else
 			CurCostColor = RedColor;
 
 		_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetText(
-			std::to_string(_RebellionCost),
+			std::to_string(_UpgradeDesc._RebellionCost),
 			Font::TEX_ID::DMC5_GREEN_GRAD,
 			{ _UIDescs[SELECT_WEAPON].Pos.x + _CategoryWeaponInfoXPos - 94.f, _UIDescs[SELECT_WEAPON].Pos.y + 252.f },
 			{ 0.55f, 0.55f },
@@ -1928,11 +2174,94 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 	}
 	else
 	{
-		if (Input::GetKeyDown(DIK_RETURN))
+		switch (_PrePopupDepth)
 		{
-			_CurPopupDepth = POPUP_DEPTH_NONE;
-			_CurPopupCmd = POPUP_CMD_NONE;
-			_UIDescs[POPUP].Using = false;
+		case POPUP_DEPTH_ISUPGRADE:
+			if (Input::GetKeyDown(DIK_RETURN))
+			{
+				switch (_PrePopupCmd)
+				{
+				case POPUP_CMD_OK:
+					switch (_PreCmd)
+					{
+					case WP_REDQUEEN:
+						++_UpgradeDesc._ExgaugeUpUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._ExgaugeUpCost);
+						
+						if (3u == _UpgradeDesc._ExgaugeUpUpgradeCount)
+							_UpgradeDesc._ExgaugeUpCost = 9999999u;
+						else if (2u == _UpgradeDesc._ExgaugeUpUpgradeCount)
+							_UpgradeDesc._ExgaugeUpCost = 3460u;
+
+						break;
+
+					case WP_OVERTURE:
+						++_UpgradeDesc._BatteryUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._BatteryCost);
+						
+						_UpgradeDesc._BatteryCost = 9999999u;
+
+						break;
+
+					case WP_CBS:
+						++_UpgradeDesc._TransformUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._TransformUpgradeCount);
+
+						if (3u == _UpgradeDesc._TransformUpgradeCount)
+							_UpgradeDesc._TransformCost = 9999999u;
+						else if (2u == _UpgradeDesc._TransformUpgradeCount)
+							_UpgradeDesc._TransformCost = 4120u;
+						
+						break;
+
+					case WP_REBELLION:
+						++_UpgradeDesc._RebellionUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._RebellionCost);
+
+						_UpgradeDesc._RebellionCost = 9999999u;
+						
+						break;
+					}
+
+					_CurPopupDepth = POPUP_DEPTH_NONE;
+					_CurPopupCmd = POPUP_CMD_NONE;
+					_UIDescs[POPUP].Using = false;
+					break;
+
+				case POPUP_CMD_CANCLE:
+				default:
+					_CurPopupDepth = POPUP_DEPTH_NONE;
+					_CurPopupCmd = POPUP_CMD_NONE;
+					_UIDescs[POPUP].Using = false;
+					break;
+				}
+			}
+			else if (Input::GetKeyDown(DIK_DOWNARROW)
+				|| Input::GetKeyDown(DIK_RIGHTARROW)
+				|| Input::GetKeyDown(DIK_UPARROW)
+				|| Input::GetKeyDown(DIK_LEFTARROW))
+			{
+				switch (_PrePopupCmd)
+				{
+				case POPUP_CMD_OK:
+					_CurPopupCmd = POPUP_CMD_CANCLE;
+					break;
+				case POPUP_CMD_CANCLE:
+					_CurPopupCmd = POPUP_CMD_OK;
+					break;
+				}
+			}
+			break;
+
+		case POPUP_DEPTH_NOREDORB:
+		default:
+			if (Input::GetKeyDown(DIK_RETURN))
+			{
+				_CurPopupDepth = POPUP_DEPTH_NONE;
+				_CurPopupCmd = POPUP_CMD_NONE;
+				_UIDescs[POPUP].Using = false;
+			}
+			break;
 		}
 	}
 }

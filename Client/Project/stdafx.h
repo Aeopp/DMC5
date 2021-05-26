@@ -59,7 +59,11 @@ enum GAMEOBJECTTAG
 	Eff_AppearEm1000,
 	Eff_ShapeParticle,
 	Eff_AirHike,
+	Eff_NuClear,
+	Eff_EnergismReady,
+	Eff_Energism,
 	Eff_FinalReady,
+	Eff_NuclearLensFlare,
 	Eff_LensFlare,
 	Eff_Trail,
 	Eff_CbsTrail,
@@ -107,6 +111,10 @@ enum GAMEOBJECTTAG
 	TAG_NhDoor,
 	Eff_SnatchRush,
 	Eff_Streak,
+	Eff_Streak_End,
+	Eff_SplitEnd,
+	Eff_Split,
+	Eff_Buster,
 	Tag_END
 };
 

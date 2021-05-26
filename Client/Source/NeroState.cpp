@@ -6304,6 +6304,7 @@ HRESULT BT_Air_ComboB::StateEnter()
 
 	SoundSystem::GetInstance()->Play("AirComboB2", 0.2f, true);
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,11 }, 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -6427,6 +6428,7 @@ HRESULT Skill_Split::StateEnter()
 	NeroState::ActiveGravity(false);
 	SoundSystem::GetInstance()->Play("Jump", 0.6f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -6533,6 +6535,7 @@ HRESULT Skill_Split_Landing::StateEnter()
 	m_pNero.lock()->SetLinearVelocity();
 	NeroState::ActiveGravity(true);
 	SoundSystem::GetInstance()->Play("ComboA4,ComboC", 0.3f, true);
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 
@@ -6883,6 +6886,7 @@ HRESULT Skill_Streak::StateEnter()
 	}
 	NeroState::ActiveTrail(true);
 	SoundSystem::GetInstance()->Play("Clothes", 0.7f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak);
 	return S_OK;
 }
 
@@ -6941,6 +6945,7 @@ HRESULT Skill_Streak_Ex3::StateEnter()
 	m_pNero.lock()->Use_ExGauge(1);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Battle);
 	SoundSystem::GetInstance()->Play("EX", 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak);
 	return S_OK;
 }
 
@@ -7044,6 +7049,7 @@ HRESULT Skill_Streak_End::StateEnter()
 	m_pNero.lock()->Reset_LerfAmount();
 	Play_Sound(TAG_RedQueen, "Streak");
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteSkill", { 1,10 }, 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak_End);
 	return S_OK;
 }
 
@@ -7213,6 +7219,7 @@ HRESULT Skill_Streak_Ex3_Roll_End::StateEnter()
 	m_pNero.lock()->Reset_LerfAmount();
 	m_pNero.lock()->PlayEffect(Eff_FireCircle, { 0.f,0.f,0.f }, 0, 1);
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteSkill", { 1,10 }, 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Streak_End);
 	return S_OK;
 }
 
@@ -10778,6 +10785,7 @@ HRESULT Skill_Caliber::StateEnter()
 	//m_pNero.lock()->SetAddForce_Dir(Nero::Dir_Front, 3.f);
 	SoundSystem::GetInstance()->Play("Jump", 0.3f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -10833,7 +10841,7 @@ HRESULT Skill_Caliber_End::StateEnter()
 	}
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "Streak");
-
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 
@@ -11272,6 +11280,7 @@ HRESULT Skill_Split_Ex::StateEnter()
 	m_pNero.lock()->Use_ExGauge(1);
 	SoundSystem::GetInstance()->Play("Jump", 0.6f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -11378,6 +11387,7 @@ HRESULT Skill_Split_Ex_Landing::StateEnter()
 
 	NeroState::ActiveGravity(true);
 	SoundSystem::GetInstance()->Play("ComboA4,ComboC", 0.3f, true);
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 
@@ -11451,6 +11461,7 @@ HRESULT Air_Dive_Slash_Start::StateEnter()
 	SoundSystem::GetInstance()->Play("Jump", 0.6f, true);
 	SoundSystem::GetInstance()->Play("PutIn", 0.4f, true);
 	SoundSystem::GetInstance()->Play("DanteSkill_5", 1.f, true);
+	m_pNero.lock()->PlayEffect(Eff_Split);
 	return S_OK;
 }
 
@@ -11563,6 +11574,7 @@ HRESULT Air_Dive_Slash_End::StateEnter()
 	m_pNero.lock()->SetLinearVelocity();
 	NeroState::ActiveGravity(true);
 	SoundSystem::GetInstance()->Play("ComboC4-1", 0.3f, true);
+	m_pNero.lock()->PlayEffect(Eff_SplitEnd);
 	return S_OK;
 }
 

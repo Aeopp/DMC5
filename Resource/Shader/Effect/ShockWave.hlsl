@@ -8,7 +8,6 @@ uniform float BlurAlpha;
 uniform float DistortionAlpha;
 uniform float DirectionFactor;
 
-
 uniform float exposure_corr;
 
 uniform matrix InverseProjection;

@@ -14,6 +14,7 @@
 #include "Em5000.h"
 #include "FadeOut.h"
 #include "Trigger.h"
+#include "ShopPanel.h"
 
 #include <iostream>
 #include <fstream>
@@ -38,6 +39,7 @@ Hotel_S04* Hotel_S04::Create()
 HRESULT Hotel_S04::LoadScene()
 {
 	// Load Start
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -58,7 +60,6 @@ HRESULT Hotel_S04::LoadScene()
 			1.449f,
 			36.596f, 
 			});
-		
 	}*/
 
 	_Camera = AddGameObject<MainCamera>();
@@ -170,7 +171,6 @@ HRESULT Hotel_S04::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
-
 void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 {
 	std::ifstream inputStream{ path };
@@ -233,7 +233,29 @@ void Hotel_S04::LoadObjects(const std::filesystem::path& path)
 void Hotel_S04::BgmPlay()
 {
 	// SoundSystem::GetInstance()->Play("Maple", 10.f, false, true);
-};
+}
+
+void Hotel_S04::ApplyShopUpgradeDesc()
+{
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	}
+}
 
 void Hotel_S04::RenderDataSetUp(const bool bTest)
 {
@@ -250,8 +272,8 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission02Sunset;
-	_Renderer->ao = 0.5f;
-	_Renderer->SkyIntencity = 0.005f;
+	_Renderer->ao = 0.03f;
+	_Renderer->SkyIntencity = 0.025f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
@@ -273,18 +295,25 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 		_Trigger)
 	{
 		const std::function<void()> _CallBack =
-			[this ]()
+			[this]()
 		{
 			// 골리앗과 처음 조우함 !!
-			constexpr float NoiseWrap = 2.020390f;
-			constexpr float TimeCorr = 0.009006f;
-			Renderer::GetInstance()->SkyDistortionStart(NoiseWrap,TimeCorr);
+			// constexpr float NoiseWrap = 2.020390f;
+			// constexpr float TimeCorr = 0.009006f;
+		    // Renderer::GetInstance()->SkyDistortionStart(NoiseWrap,TimeCorr);
+
+			Renderer::GetInstance()->SkyOriginColor = Vector4{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
+
 			// 다른 후처리가 묻히니 스카이 왜곡을 약하게 .... 
 
 			// 로직 작성 .... 
 
-			// 보스게이지 켜기
-			_BtlPanel.lock()->SetBossGaugeActive(true);
+			//
+			if (auto Sp = _BtlPanel.lock(); Sp)
+			{
+				Sp->SetGlobalActive(true, true);
+				Sp->SetBossGaugeActive(true);
+			}
 		};
 
 		// 트리거 위치
@@ -315,8 +344,11 @@ void Hotel_S04::LateInit()
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-5.218f, -1.5f, 43.326f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
 	}
+
+	ApplyShopUpgradeDesc();
+
 	/*_Camera.lock()->Set_At_Transform(
 		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,
 		MainCamera::AT_BOSS1);*/

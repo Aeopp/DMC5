@@ -35,15 +35,19 @@ sampler Depth = sampler_state
 
 void VsMain(in out float4 Position : POSITION0,
             in out float2 UV       : TEXCOORD0 ,
-            out float4 ClipPosition: TEXCOORD1 )
+            out float4 ClipPosition: TEXCOORD1  ,
+            out float Factor : TEXCOORD2)
 {
+    Factor = length(Position.xz) / 1000.f;
+    
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
 };
 
 void PsMain(out float4 Color : COLOR0,
             in float2 UV : TEXCOORD0 ,
-            in float4 ClipPosition : TEXCOORD1)
+            in float4 ClipPosition : TEXCOORD1 ,
+            in float Factor : TEXCOORD2)
 {
     Color = tex2D(Alpg, UV);
     Color.a *= AlphaFactor;
@@ -72,8 +76,7 @@ void PsMain(out float4 Color : COLOR0,
     Color.a = Color.a * saturate((scenedistance - particledistance) * SoftParticleDepthScale);
     // 소프트 파티클 끝
     
-    // Color = float4(1, 1, 1, 1);
-  
+    Color = float4(0.001, 0.001, 0.001, 1) * (1.0f - Factor);
 };
 
 technique Default

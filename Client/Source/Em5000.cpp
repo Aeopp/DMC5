@@ -508,7 +508,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 			if (m_BattleInfo.iHp <= 2500.f)
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.9f)
+				{
 					m_eState = Attack_Finish;
+					m_bStone = false;
+				}
 			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->IsAnimationEnd())
 			{
@@ -896,6 +899,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_eState = Idle;
 				m_bGroggy = false;
 				m_bStone = false;
+				m_bIng = false;
 				
 				for (int i = 0; i < 2; ++i)
 					m_bJustOne[i] = false;
@@ -1038,7 +1042,14 @@ void Em5000::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Hit_Buster_Swing_Throw", false, {}, 1.f, 1.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_Throw" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Buster_Swing_End;
+				m_BattleInfo.iHp -= 700;
+				m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+
+				for(int i = 0 ; i < 2 ; ++i)
+					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
+			}
 				
 		}
 		break;
@@ -1315,8 +1326,8 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_BattleInfo.iMaxHp = 5000.f;
-	m_BattleInfo.iHp = 5000.f;
+	m_BattleInfo.iMaxHp = 3500;
+	m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 
 	m_pMesh->EnableToRootMatricies();
@@ -1437,8 +1448,8 @@ UINT Em5000::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_Y))
 	{
-		m_bIng = true;
-		m_eState = Attack_Rush_Start;
+		m_bGroggy = true;
+		m_eState = Groggy_Start;
 	}
 
 
@@ -1742,6 +1753,19 @@ void Em5000::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (m_eState == Attack_Rush_Loop || m_eState == Attack_Rush_End)
+	{
+		if (_pOther.lock()->m_nTag == Overture)
+		{
+			m_bHit = true;
+			m_bGroggy = true;
+			m_eState = Groggy_Start;
+			return;
+		}
+	}
+
+
+
 	if (!m_bCollEnable)
 		return;
 	if (m_eState == Dead)

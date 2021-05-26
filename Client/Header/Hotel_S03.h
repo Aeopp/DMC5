@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 class Trigger;
+
 class Hotel_S03 : public Scene
 {
 private:
@@ -20,6 +21,7 @@ private:
 	bool _DecreaseHotel03_Volume = false;
 	bool _DecreaseBattle1_Volume = false;
 	bool _DecreaseBattle2_Volume = false;
+
 private:
 	explicit Hotel_S03();
 	virtual ~Hotel_S03() = default;
@@ -35,14 +37,16 @@ public:
 	virtual HRESULT Update(const float _fDeltaTime)		override;
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
+	void LateInit();
+	void RenderDataSetUp(const bool bTest);
+	void BgmPlay();
+	void ApplyShopUpgradeDesc();
+	void CheckShopAvailable();
+private:
 	void LoadObjects(const std::filesystem::path& path, const bool _bAni = false);
 	void LoadCollObjects(const std::filesystem::path& path);
 	void LoadBreakablebjects(const std::filesystem::path& path);
 private:
-	void LateInit();
-	void RenderDataSetUp(const bool bTest);
-	void BgmPlay();
-
 	void TriggerSetUp();
 	void TriggerUpGround();
 	void TriggerBeforeShop(const std::weak_ptr<class Trigger>& _NextTrigger);

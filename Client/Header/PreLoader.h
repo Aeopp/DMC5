@@ -23,7 +23,10 @@ private:
 	static void ReverberationParticlePoolLoad();
 	static void ArtemisRushParticlePoolLoad();
 	static void ArtemisCylinderParticlePoolLoad();
+	static void EnergismReadyParticlePoolLoad();
 
+	static void NuClearParticlePoolLoad();
+	static void KaboomParticlePoolLoad();
 
 	static void FireParticlePoolLoad();
 	static void FireVortexSpritePoolLoad(const uint32 SpriteIdx);

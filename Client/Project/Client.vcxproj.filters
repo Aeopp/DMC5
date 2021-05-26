@@ -571,6 +571,10 @@
     <ClInclude Include="..\Header\NeroCoat.h">
       <Filter>02.GameObject\01.Unit\01.Player\08.NeroCoat</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\NuClear.h" />
+    <ClInclude Include="..\Header\NuClearLensFlare.h" />
+    <ClInclude Include="..\Header\Energism.h" />
+    <ClInclude Include="..\Header\EnergismReady.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -924,6 +928,10 @@
     <ClCompile Include="..\Source\NeroCoat.cpp">
       <Filter>02.GameObject\01.Unit\01.Player\08.NeroCoat</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\NuClear.cpp" />
+    <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
+    <ClCompile Include="..\Source\Energism.cpp" />
+    <ClCompile Include="..\Source\EnergismReady.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -1007,6 +1015,9 @@
     <None Include="..\..\Resource\Shader\Effect\LensFlare.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\Reverberation.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\FinalReady.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\NuClear.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Energism.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\EnergismReady.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

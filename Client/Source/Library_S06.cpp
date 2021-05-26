@@ -14,6 +14,11 @@
 #include "SoundSystem.h"
 #include "Em5300.h"
 #include "FinalReady.h"
+#include "NuClear.h"
+#include "Energism.h"
+#include "ShopPanel.h"
+#include "Renderer.h"
+#include "EnergismReady.h"
 
 #include <iostream>
 #include <fstream>
@@ -35,10 +40,10 @@ Library_S06* Library_S06::Create()
 	return pInstance;
 }
 
-
 HRESULT Library_S06::LoadScene()
 {
 	// Load Start
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -59,10 +64,13 @@ HRESULT Library_S06::LoadScene()
 			});
 	}*/
 
-	AddGameObject<FinalReady>();
-
-	AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();
+	/* AddGameObject<FinalReady>();
+	 AddGameObject<Energism>();
+	 AddGameObject<NuClear>();
+	 AddGameObject<EnergismReady>();*/
+	 
+	 AddGameObject<MainCamera>();
+	 _Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -159,7 +167,6 @@ HRESULT Library_S06::LateUpdate(const float _fDeltaTime)
 	return S_OK;
 }
 
-
 void Library_S06::LoadObjects(const std::filesystem::path& path)
 {
 	std::ifstream inputStream{ path };
@@ -235,12 +242,12 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	}
 	else
 	{
-		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06_Pt.json");
+		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Library_S06_PtDir.json");
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission03;
-	_Renderer->ao = 0.5f;
-	_Renderer->SkyIntencity = 0.035f;
+	_Renderer->ao = 0.00025f;
+	_Renderer->SkyIntencity = 0.0005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };
 	_Renderer->SkysphereLoc = { 0.f,-2.3f,0.f };
@@ -248,11 +255,35 @@ void Library_S06::RenderDataSetUp(const bool bTest)
 	_Renderer->SkyRotationSpeed = 1.5f;
 	_Renderer->StarScale = 4.f;
 	_Renderer->StarFactor = 0.9f;
+	Renderer::GetInstance()->SkyOriginColor = Vector4{ 1.f,1.f,1.f,1.f };
 
 	_Renderer->SkyDistortionStart(20.f, 0.110972f);
 	_Renderer->SkyDistortionIntencity = 100.f;
-	_Renderer->DistortionColor =
-		Vector4{0.f,187.f/255.f,1.f,1.f};
+	_Renderer->DistortionColor = Vector4{0.f,187.f/255.f,1.f,1.f};
+}
+
+void Library_S06::ApplyShopUpgradeDesc()
+{
+	auto& UpgradeDesc = ShopPanel::GetUpgradeDesc();
+
+	if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		if (2u <= UpgradeDesc._BatteryUpgradeCount)
+			SpPlayer->BuyUpgradedOverture();
+		if (2u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsMiddle();
+		if (3u <= UpgradeDesc._TransformUpgradeCount)
+			SpPlayer->BuyCbsLong();
+
+		// UpgradeDesc._RebellionUpgradeCount 1이면 리벨리온 산거임 ㅇㅇ
+	}
+
+	if (auto SpBtlPanel = _BtlPanel.lock();
+		SpBtlPanel)
+	{
+		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	}
 }
 
 void Library_S06::TriggerSetUp()
@@ -266,7 +297,6 @@ void Library_S06::TriggerSetUp()
 
 std::weak_ptr<Trigger> Library_S06::TriggerUlte()
 {
-	// 이건 일반 트리거 
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
@@ -276,13 +306,9 @@ std::weak_ptr<Trigger> Library_S06::TriggerUlte()
 			this->m_pBoss.lock()->Set_Ulte();
 		};
 		
-		// 트리거 위치
 		const Vector3 TriggerLocation{ -37.148f, -0.5f, 30.902f };
-		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 0.5f, 0.5f, 0.5f };
-		// 트리거 정보 등록하자마자 활성화 ?? 
 		const bool ImmediatelyEnable = false;
-		// 트리거가 검사할 오브젝트 태그 
 		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Monster5300;
 		_Trigger->EventRegist(_CallBack,
 			TriggerLocation,
@@ -299,17 +325,24 @@ void Library_S06::LateInit()
 {
 	SoundSystem::GetInstance()->ClearSound();
 
-	// + 플레이어 초기 위치 잡기 등
-
+	
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({-33.711f,-0.994f,30.884f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -33.711f, -0.994f, 30.884f });
 	}
 
+	ApplyShopUpgradeDesc();
+
 	Renderer::GetInstance()->LateSceneInit();
+
+	Renderer::GetInstance()->SkyDistortionStart(20.f, 0.110972f);
+	Renderer::GetInstance()->SkyDistortionIntencity = 100.f;
+	Renderer::GetInstance()->DistortionColor =
+		Vector4{ 0.f,187.f / 255.f,1.f,1.f };
+
 
 	BgmPlay();
 
 	_LateInit = true;
-}
+};

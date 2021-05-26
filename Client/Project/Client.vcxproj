@@ -194,6 +194,8 @@
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\Em5300Ulte.h" />
+    <ClInclude Include="..\Header\Energism.h" />
+    <ClInclude Include="..\Header\EnergismReady.h" />
     <ClInclude Include="..\Header\FadeOut.h" />
     <ClInclude Include="..\Header\FinalReady.h" />
     <ClInclude Include="..\Header\FireCircle.h" />
@@ -220,6 +222,8 @@
     <ClInclude Include="..\Header\NeroCoat.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
+    <ClInclude Include="..\Header\NuClear.h" />
+    <ClInclude Include="..\Header\NuClearLensFlare.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\Reverberation.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
@@ -322,6 +326,8 @@
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\Em5300Ulte.cpp" />
+    <ClCompile Include="..\Source\Energism.cpp" />
+    <ClCompile Include="..\Source\EnergismReady.cpp" />
     <ClCompile Include="..\Source\FadeOut.cpp" />
     <ClCompile Include="..\Source\FinalReady.cpp" />
     <ClCompile Include="..\Source\FireCircle.cpp" />
@@ -350,6 +356,8 @@
     <ClCompile Include="..\Source\NeroCoat.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
+    <ClCompile Include="..\Source\NuClear.cpp" />
+    <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
     <ClCompile Include="..\Source\Reverberation.cpp" />
     <ClCompile Include="..\Source\Satellite.cpp" />
@@ -641,6 +649,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\FinalReady.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\NuClear.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\Energism.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\EnergismReady.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

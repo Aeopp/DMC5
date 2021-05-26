@@ -102,7 +102,7 @@ void FinalReady::RenderInit()
 	_InitInfo.bLocalVertexLocationsStorage = false;
 
 	_StaticMesh = Resources::Load<ENGINE::StaticMesh>
-		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane01.fbx", 
+		(L"..\\..\\Usable\\LocationMesh\\Cylinder.fbx", 
 			_InitInfo);
 
 	_Alpg = Resources::Load<ENGINE::Texture>(
@@ -201,7 +201,7 @@ HRESULT FinalReady::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
+	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f  });
 	m_pTransform.lock()->SetScale({ 0.001f ,0.001f ,0.001f });
 	m_pTransform.lock()->SetRotation(
 		{ 0.f ,0.f ,0.f});

@@ -106,10 +106,11 @@ void ArtemisMissile::RenderInit()
 	PushEditEntity(GradMap.get());
 };
 
-void ArtemisMissile::PlayStart()
+void ArtemisMissile::PlayStart(const bool bUlte)
 {
 	_RenderProperty.bRender = true;
 	T = 0.0f;
+	this->bUlte = bUlte;
 };
 
 void ArtemisMissile::PlayEnd()
@@ -127,8 +128,17 @@ void ArtemisMissile::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetFloat("GradSampleU", T);
 
 	const float LuminT = FMath::Clamp(T / LuminDecayTime, 0.f, 1.f);
-	const float CurColorIntencity = FMath::Lerp(StartColorIntencity,ColorIntencity, LuminT);
-	_Info.Fx->SetFloat("ColorIntencity", CurColorIntencity);
+
+	if (false ==  bUlte )
+	{
+		const float CurColorIntencity = FMath::Lerp(StartColorIntencity, ColorIntencity, LuminT);
+		_Info.Fx->SetFloat("ColorIntencity", CurColorIntencity);
+	}
+	else
+	{
+		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+	}
+
 
 	{
 		const uint32 Numsubset = _Mesh->GetNumSubset();

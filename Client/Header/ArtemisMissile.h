@@ -34,7 +34,7 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart();
+	void PlayStart(const bool bUlte = false);
 	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);
@@ -54,8 +54,9 @@ private:
 		1.f };
 
 	float LuminDecayTime = 2.f;
-	float StartColorIntencity = 11.f;
-	float ColorIntencity = 0.2f;
+	float StartColorIntencity = 6.8f;
+	float ColorIntencity = 0.1f;
+	bool  bUlte = false;
 };
 #endif //
 
