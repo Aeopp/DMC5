@@ -370,7 +370,7 @@ UINT Font::Update(const float _fDeltaTime)
 		{
 			if (0.f < _SliceAmount)
 			{
-				_SliceAmount -= 0.45f * _fDeltaTime;
+				_SliceAmount -= 0.4f * _fDeltaTime;
 				if (0.f > _SliceAmount)
 					_SliceAmount = 0.f;
 
@@ -380,7 +380,7 @@ UINT Font::Update(const float _fDeltaTime)
 
 				for (uint32 i = 0u; i < idx; ++i)
 				{
-					_CharSliceAmount[i] -= 0.75f * _fDeltaTime;
+					_CharSliceAmount[i] -= 0.77f * _fDeltaTime;
 					if (0.f > _CharSliceAmount[i])
 						_CharSliceAmount[i] = 0.f;
 				}
@@ -390,7 +390,7 @@ UINT Font::Update(const float _fDeltaTime)
 		{
 			if (1.f > _SliceAmount)
 			{
-				_SliceAmount += 0.45f * _fDeltaTime;
+				_SliceAmount += 0.4f * _fDeltaTime;
 				if (1.f < _SliceAmount)
 					_SliceAmount = 1.f;
 
@@ -400,7 +400,7 @@ UINT Font::Update(const float _fDeltaTime)
 
 				for (int i = idx - 1; i >= 0; --i)
 				{
-					_CharSliceAmount[i] += 0.75f * _fDeltaTime;
+					_CharSliceAmount[i] += 0.77f * _fDeltaTime;
 					if (1.f < _CharSliceAmount[i])
 						_CharSliceAmount[i] = 1.f;
 				}

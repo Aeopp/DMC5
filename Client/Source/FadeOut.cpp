@@ -62,6 +62,7 @@ void FadeOut::RenderInit()
 	AlbmMap[5] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\3.tga");
 	AlbmMap[6] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\7.tga");
 	AlbmMap[7] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\9.tga");
+	AlbmMap[8] = Resources::Load<Texture>(L"..\\..\\Resource\\Texture\\UI\\Loading\\NULLTEX.png");
 	//AlbmMap[6] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\serectvision00_mark_alba.tga");
 	//AlbmMap[7] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\sv00_alba.tga");
 

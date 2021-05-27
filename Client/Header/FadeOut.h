@@ -9,7 +9,7 @@ class FadeOut : public ENGINE::GameObject,
 {
 private:
 	std::shared_ptr<ENGINE::Texture> NoiseMap{};
-	std::array<std::shared_ptr<ENGINE::Texture>,8u>AlbmMap{};
+	std::array<std::shared_ptr<ENGINE::Texture>,9u>AlbmMap{};
 	float T = 0.0f;
 	float Intencity{ 1.f };
 	float Noisewrap{ 1.f };
