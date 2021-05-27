@@ -1016,4 +1016,5 @@ void Hotel_S02::LateInit()
 	BgmPlay();
 
 	_LateInit = true;
+	g_bOptRender = false;
 }

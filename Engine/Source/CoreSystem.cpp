@@ -101,7 +101,7 @@ static void GlobalVariableSetup()
 	g_bDebugRender = false;
 	g_bRenderEdit = false;
 	g_bTime = false;
-	g_bOptRender = true;
+	g_bOptRender = false;
 	g_bFrameLimit = true;
 	g_bParticleEditor = false;
 	g_bFixedDeltaTime = false;
