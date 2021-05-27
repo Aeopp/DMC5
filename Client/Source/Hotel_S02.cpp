@@ -490,6 +490,7 @@ void Hotel_S02::TriggerWallSmash()
 			_AnimationWall.lock()->ContinueAnimation();
 			SoundSystem::GetInstance()->Play("Explosion1", 0.7f, false);
 			SoundSystem::GetInstance()->Play("Stone2", 0.7f, false);
+			
 			//
 			if (auto Sp = _Player.lock(); Sp)
 				Sp->GetFsm().lock()->ChangeState(NeroFSM::CUTSCENE_WINDPRESSURE);
@@ -513,10 +514,6 @@ void Hotel_S02::TriggerWallSmash()
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
 				Sp->PlayStart(9.4f);
 			}
-
-			//
-			for (auto& Element : _MakaiButterflyVec)
-				Element.lock()->SetActive(false);
 		};
 
 		// 트리거 위치
