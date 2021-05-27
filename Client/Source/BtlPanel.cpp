@@ -2660,7 +2660,9 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 			{
 				if (1.f < _DMDTick)
 				{
-					// player 함수 호출
+					if (auto Sp = FindGameObjectWithTag(Player).lock(); Sp)
+						std::static_pointer_cast<Nero>(Sp)->UseRevelion();
+		
 					SetDanteMustDieActive(false);
 				}
 			}
