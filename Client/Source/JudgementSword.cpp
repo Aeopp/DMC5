@@ -20,6 +20,8 @@ JudgementSword* JudgementSword::Create()
 HRESULT JudgementSword::Ready()
 {
 	GameObject::Ready();
+
+	m_nTag = TAG_JudgementSword;
 	RenderInit();
 
 	m_NRMRTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\WingSword\\wp01_006_NRMR.tga");
@@ -284,4 +286,9 @@ void JudgementSword::RenderInit()
 	m_pMesh->EnableToRootMatricies();
 
 	PushEditEntity(m_pMesh.get());
+}
+
+Matrix* JudgementSword::Get_BoneMatrixPtr(std::string _BoneName)
+{
+	return m_pMesh->GetToRootMatrixPtr(_BoneName);
 }

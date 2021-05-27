@@ -64,6 +64,7 @@
 #include "SoundSystem.h"
 #include "SandGlassEffect.h"
 #include "Judgement.h"
+#include "JudgementSwordTrail.h"
 
 #include <iostream>
 #include <fstream>
@@ -93,7 +94,8 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Change>();
 	AddGameObject<SandGlassEffect>();
 	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
-	
+	AddGameObject<JudgementSwordTrail>();
+
 
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
@@ -110,9 +112,9 @@ HRESULT TestScene::LoadScene()
 #pragma region Player & Camera
 
 	_Camera = AddGameObject<Camera>();
-	
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player     = AddGameObject<Nero>();
+
+	// _MainCamera = AddGameObject<MainCamera>();
+	// _Player     = AddGameObject<Nero>();
    
 #pragma endregion
 
