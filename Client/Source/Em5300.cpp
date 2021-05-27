@@ -104,25 +104,24 @@ void Em5300::Fight(const float _fDeltaTime)
 
 	if (fDir <= 1.f)
 	{
-		int iRandom = FMath::Random<int>(1, 2);
-		if (iRandom == 1)
+		int iRandom = FMath::Random<int>(1, 5);
+		
+		if (m_bMove && m_bIng == false)
 		{
-			if (m_bMove && m_bIng == false)
-			{
-				m_eState = Move_Back_Start;
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Back", { 1,5 }, 5.f, false);
-				m_bIng = true;
-			}
+			m_eState = Move_Back_Start;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Back", { 1,5 }, 5.f, false);
+			m_bIng = true;
 		}
-		else
-		{
-			if (m_bRushAttack && m_bIng == false)
+		
+		/*	else
 			{
-				m_eState = Attack_Rush_Start;
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
-				m_bIng = true;
-			}
-		}
+				if (m_bIng == false)
+				{
+					m_eState = Attack_Rush_Start;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
+					m_bIng = true;
+				}
+			}*/
 	
 	}
 
@@ -275,7 +274,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 		
 			Update_Angle();
 			m_bInteraction = true;
-			//m_fAngleSpeed = D3DXToRadian(15.f);
+			m_fAngleSpeed = D3DXToRadian(15.f);
 			Matrix Head = *m_pMesh->GetToRootMatrixPtr("Head");
 			Matrix Result = *Head * m_pTransform.lock()->GetWorldMatrix();
 
@@ -322,7 +321,6 @@ void Em5300::State_Change(const float _fDeltaTime)
 				Update_Angle();
 				m_bInteraction = true;
 			}
-			m_fAngleSpeed = D3DXToRadian(100.f);
 			m_pMesh->PlayAnimation("Attack_Laser_Start", false, {}, 1.f, 20.f, true);
 
 			
@@ -781,6 +779,9 @@ void Em5300::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_bGroggy = false;
 				m_fCenterY = -0.2f;
+				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, false);
+				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, false);
+				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, false);
 			}
 		}
 		break;
@@ -806,7 +807,12 @@ void Em5300::State_Change(const float _fDeltaTime)
 
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Falling_Loop" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Falling_End;
+				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+			}
 		}
 		break;
 	case Em5300::Hit_Falling_Start:
@@ -890,24 +896,42 @@ void Em5300::State_Change(const float _fDeltaTime)
 		break;
 	case Em5300::Move_Front_Start:
 		break;
-	case Em5300::CutScene:
-		if(m_bCutScene == false)
+	case Em5300::CutScene_Start:
+		if(m_bCutStart == false)
 		{
+			m_bCutStart = true;
 			Skill_CoolTime(_fDeltaTime);
-			Update_Angle();
-			m_bInteraction = true;
-			m_pMesh->PlayAnimation("Idle", false, {}, 1.f, 20.f);
-			if (m_fCenterY < 0.1f)
-			{
-				m_fCenterY += 0.006f;
-				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
-			}
-			else
-			{
-				m_eState = Idle;
-				m_bCutScene = true;
-			}
-
+			
+			m_pMesh->PlayAnimation("Attack_Rush_Start", false, {}, 1.f, 20.f);
+		}
+		if (m_fCenterY <= 0.2f)
+		{
+			m_fCenterY += 0.01f;
+			m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+		}
+		if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Start" && m_pMesh->IsAnimationEnd())
+			m_eState = CutScene_End;
+		break;
+	case CutScene_End:
+		if (m_bCutStart == true)
+		{
+			m_bCutStart = false;
+			m_pMesh->PlayAnimation("Attack_Rush_Loop", true, {}, 1.f, 20.f);
+		}
+		if (m_fCenterY <= 0.2f)
+		{
+			m_fCenterY += 0.01f;
+			m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+		}
+		if (m_pTransform.lock()->GetPosition().x >= -38.7)
+			m_pTransform.lock()->Translate({ -0.05f, 0.f, 0.f });
+		else
+		{
+			m_pCollider.lock()->SetTrigger(false);
+			m_pCollider.lock()->SetRigid(true);
+			m_pCollider.lock()->SetGravity(true);
+			m_eState = Idle;
+			m_bCutScene = true;
 		}
 		break;
 	case Em5300::State_END:
@@ -1135,6 +1159,7 @@ HRESULT Em5300::Awake()
 	m_pEner = AddGameObject<Energism>();
 
 	m_eState = Idle;
+	m_pTransform.lock()->SetRotation({ 0.f,D3DXToDegree(45.5f) ,0.f });
 
 
 
@@ -1149,8 +1174,6 @@ HRESULT Em5300::Start()
 
 	if (!m_pPanel.expired())
 		m_pPanel.lock()->SetBossGaugeActive(true);
-
-
 
 	
 	return S_OK;
@@ -1206,8 +1229,7 @@ UINT Em5300::Update(const float _fDeltaTime)
 			m_bFight = true;
 	}
 	if (Input::GetKeyDown(DIK_Y))
-		Set_Cut();
-
+		m_eState = CutScene_Start;
 	if (m_bCutScene)
 		Fight(_fDeltaTime);
 	State_Change(_fDeltaTime);
@@ -1568,9 +1590,6 @@ void Em5300::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			m_bHit = true;
 			m_bGroggy = true;
 			m_eState = Hit_Falling_Start;
-			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
-			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
 			return;
 		}
 	}
@@ -1617,6 +1636,6 @@ void Em5300::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em5300::Set_Cut()
 {
-	m_eState = CutScene;
+	m_eState = CutScene_Start;
 }
 

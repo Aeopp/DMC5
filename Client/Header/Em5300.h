@@ -63,7 +63,8 @@ public:
 		Move_Front_End,
 		Move_Front_Loop,
 		Move_Front_Start,
-		CutScene,
+		CutScene_Start,
+		CutScene_End,
 		State_END		
 	};
 private:
@@ -104,7 +105,8 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
-	void		 Set_Rotate();
+	void		 Update_AngleBack();
+	void		 Set_Rotate(const bool _bBack = false);
 	void		 SetTrigger(weak_ptr<class Trigger> _Trigger);
 	void		 Set_Ulte();
 	void		 Particle();
@@ -144,6 +146,8 @@ private:
 
 	bool		m_bLaser = false;
 	float		m_fLaserTime = 0.f;
+
+	bool		m_bBack = false;
 	weak_ptr<Em5300Missile>	m_pBullet[32];
 	weak_ptr<Em5300Rain>	m_pRain[12];
 	weak_ptr<Em5300Homing>	m_pHoming[8];
@@ -207,6 +211,7 @@ private:
 	Matrix* m_pHeadBone;
 
 	bool	m_bCutScene = false;
+	bool	m_bCutStart = false;
 
 };
 

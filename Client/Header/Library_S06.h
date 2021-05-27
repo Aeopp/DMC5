@@ -33,7 +33,7 @@ private:
 	void RenderDataSetUp(const bool bTest);
 	void ApplyShopUpgradeDesc();
 private:
-	void LoadObjects(const std::filesystem::path& path);
+	void LoadObjects(const std::filesystem::path& path, const bool _bAni = false);
 private:
 	void TriggerSetUp();
 	std::weak_ptr<Trigger> TriggerUlte();

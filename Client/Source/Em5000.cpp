@@ -251,6 +251,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone", { 1,1 }, 0.3f, false);
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 1.f, false);
+							static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 						}
 					}
 				}
@@ -264,6 +265,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_Coll(true);
 					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
+				
 			
 			}
 		}
@@ -308,6 +310,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone2", { 1,1 }, 0.3f, false);
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 1.f, false);
+							static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 						}
 					}
 				}
@@ -321,6 +324,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_Coll(true);
 					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
+				static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 			}
 		}
 		break;
@@ -384,6 +388,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_Coll(true);
 					m_pHand[i].lock()->m_pWave.lock()->PlayStart(m_pHand[i].lock()->GetComponent<Transform>().lock()->GetPosition(), ShockWave::Option::GoliathPunch);
 				}
+				static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 			}
 		}
 		break;
@@ -516,6 +521,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_pCollider.lock()->SetGravity(true);
 					m_bStone = true;
 					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone5", { 1,1 }, 0.8f, false);
+					static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 4.f);
 				}
 
 			}
@@ -713,6 +719,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_bStone = true;
 						SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone8", { 1,1 }, 0.3f, false);
 						SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 1.f, false);
+						static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 3.f);
 					}
 				}
 			}
@@ -770,6 +777,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone2", { 1,1 }, 0.3f, false);
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 1.f, false);
+							static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 						}
 					}
 				}
@@ -828,6 +836,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone3", { 1,1 }, 0.3f, false);
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 1.f, false);
+							static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
 						}
 					}
 				}
@@ -979,7 +988,10 @@ void Em5000::State_Change(const float _fDeltaTime)
 						m_pStone[i].lock()->SetRotation(vRot);
 
 						if (i == 11)
+						{
 							m_bStone = true;
+							static_pointer_cast<MainCamera>(FindGameObjectWithTag(TAG_Camera).lock())->SetShakeInfo(0.6f, 2.f);
+						}
 					}
 				}
 			}
@@ -1524,8 +1536,8 @@ UINT Em5000::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_Y))
 	{
 		m_bIng = true;
-		m_bRushAttack = true;
-		m_eState = Attack_Rush_Start;
+		m_eState = Attack_Punch_Twice;
+
 	}
 
 
