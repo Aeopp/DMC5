@@ -23,6 +23,7 @@
 #include "Trigger.h"
 #include "QliphothBlock.h"
 #include "MakaiButterfly.h"
+#include "SandGlassEffect.h"
 
 #include <iostream>
 #include <fstream>
@@ -172,6 +173,12 @@ HRESULT Library_S05::LoadScene()
 	{
 		_ShopFadeOut.lock()->SetActive(false);
 	}
+
+	//
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -29.81275f, -0.86787f, 30.44878f });
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -29.81275f, -0.83773f, 30.38691f });
 
 #pragma endregion
 

@@ -24,6 +24,7 @@
 #include "QliphothBlock.h"
 #include "NeroFSM.h"
 #include "ShopPanel.h"
+#include "SandGlassEffect.h"
 
 #include <iostream>
 #include <fstream>
@@ -161,6 +162,12 @@ HRESULT Hotel_S03::LoadScene()
 	{
 		_ShopFadeOut.lock()->SetActive(false);
 	}
+
+	//
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -2.903f, 0.44025f, 34.45995f });
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -2.903f, 0.408f, 34.55802f });
 
 #pragma endregion
 

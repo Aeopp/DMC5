@@ -970,7 +970,7 @@ void PreLoader::SandGlassEffectParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 888u;
+	const uint64 PoolSize = 2222u;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("SandGlassEffectParticle",
@@ -989,7 +989,7 @@ void PreLoader::SandGlassEffectParticlePoolLoad()
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 3.f;
+			constexpr float ScaleFactor = 3.8f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -997,7 +997,7 @@ void PreLoader::SandGlassEffectParticlePoolLoad()
 
 			ParticleInstance::Artemis _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.2f, 0.2f);
+			_Value.ColorIntencity = FMath::Random(0.015f, 0.015f);
 
 			_Value.Color = FMath::Lerp(
 				Vector3{ 182.f / 255.f,  206.f / 255.f,  61.f / 255.f },
