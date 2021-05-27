@@ -167,6 +167,13 @@ HRESULT Hotel_S02::LoadScene()
 	for (size_t i = 0u ; i < ButterflyCnt; ++i)
 		_MakaiButterflyVec.push_back(AddGameObject<MakaiButterfly>());
 
+	//
+	if (_ShopFadeOut = AddGameObject<FadeOut>();
+		!_ShopFadeOut.expired())
+	{
+		_ShopFadeOut.lock()->SetActive(false);
+	}
+
 #pragma endregion
 
 	m_fLoadingProgress = 0.8f;
@@ -483,6 +490,7 @@ void Hotel_S02::TriggerWallSmash()
 			_AnimationWall.lock()->ContinueAnimation();
 			SoundSystem::GetInstance()->Play("Explosion1", 0.7f, false);
 			SoundSystem::GetInstance()->Play("Stone2", 0.7f, false);
+			
 			//
 			if (auto Sp = _Player.lock(); Sp)
 				Sp->GetFsm().lock()->ChangeState(NeroFSM::CUTSCENE_WINDPRESSURE);
@@ -506,10 +514,6 @@ void Hotel_S02::TriggerWallSmash()
 				Sp->SetVariationIdx(Smoke::VARIATION::SMOKE_1);
 				Sp->PlayStart(9.4f);
 			}
-
-			//
-			for (auto& Element : _MakaiButterflyVec)
-				Element.lock()->SetActive(false);
 		};
 
 		// 트리거 위치
@@ -902,33 +906,47 @@ void Hotel_S02::ApplyShopUpgradeDesc()
 			SpPlayer->BuyCbsLong();
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void Hotel_S02::CheckShopAvailable()
 {
 	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
 	{
-		if (auto Sp = _ShopPanel.lock(); Sp)
+		if (auto SpShopPanel = _ShopPanel.lock(); SpShopPanel)
 		{
-			if (!Sp->IsActive())
+			if (!SpShopPanel->IsActive())
 			{
-				Sp->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(false);
-				_BtlPanel.lock()->SetActive(false);
+				if (auto SpFadeOut = _ShopFadeOut.lock(); SpFadeOut)
+				{
+					if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+					{
+						SpBtlPanel->SetRedOrbActive(false);
+						SpBtlPanel->SetActive(false);
+					}
+
+					SpFadeOut->SetActive(true);
+					SpFadeOut->PlayStart(5u,
+						[SpShopPanel, SpFadeOut]()
+						{
+							SpShopPanel->SetActive(true);
+							SpFadeOut->SetActive(false);
+						}
+					);
+				}
 			}
 			else
 			{
+				if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+				{
+					SpBtlPanel->SetRedOrbActive(true);
+					SpBtlPanel->SetActive(true);
+				}
+
 				ApplyShopUpgradeDesc();
-				Sp->ResetCmd();
-				Sp->SetActive(false);
-				_BtlPanel.lock()->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(true);
+				SpShopPanel->ResetCmd();
+				SpShopPanel->SetActive(false);
 			}
 		}
 	}
@@ -998,4 +1016,5 @@ void Hotel_S02::LateInit()
 	BgmPlay();
 
 	_LateInit = true;
+	g_bOptRender = false;
 }

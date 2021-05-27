@@ -35,6 +35,9 @@ public:
 	void RenderDebugSK(const DrawInfo& _Info);
     void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderInit();
+public:
+    /* 2021 05 08 트레일 본 위치를 구하기 위해서 이호준 RedQueen 의 함수와 똑같이 만들었음 !! */
+    Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 private:
     std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
     std::weak_ptr<Nero>					  m_pNero;

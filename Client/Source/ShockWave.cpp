@@ -276,7 +276,8 @@ void ShockWave::OnDisable()
 
 void ShockWave::PlayStart(const Vector3& PlayLocation ,
 						  const int32& _Option ,
-					       const bool bBlurMsk)
+					       const bool bBlurMsk ,
+						const float ScaleFactor)
 {
 	_RenderProperty.bRender = true;
 	T = 0.0f;
@@ -330,8 +331,8 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		ScaleLerp.second = 0.219f;
 		BlurIntencity.first = 1.0f;
 		BlurIntencity.second = 1.0f;
-		BlurAlpha.first = 0.6f;
-		BlurAlpha.second = 0.7f;
+		BlurAlpha.first = 0.4f;
+		BlurAlpha.second = 0.5f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -344,8 +345,8 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		ScaleLerp.second = 0.076f;
 		BlurIntencity.first = 0.700f;
 		BlurIntencity.second = 1.00f;
-		BlurAlpha.first = 0.6f;
-		BlurAlpha.second = 0.7f;
+		BlurAlpha.first = 0.4f;
+		BlurAlpha.second = 0.5f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 5.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -389,8 +390,8 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		ScaleLerp.second = 0.307f;
 		BlurIntencity.first = 0.0f;
 		BlurIntencity.second = 2.049f;
-		BlurAlpha.first = 0.675f;
-		BlurAlpha.second = 0.8f;
+		BlurAlpha.first = 0.375f;
+		BlurAlpha.second = 0.675f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
@@ -405,7 +406,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.7f;
 		BlurIntencity.second = 1.f;
 		BlurAlpha.first = 0.5f;
-		BlurAlpha.second = 0.7f;
+		BlurAlpha.second = 0.5f;
 		BlurMaxLength = 40.9f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -419,7 +420,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.700f;
 		BlurIntencity.second = 1.002f;
 		BlurAlpha.first = 0.300f;
-		BlurAlpha.second = 0.650f;
+		BlurAlpha.second = 0.500f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -545,7 +546,7 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.5f;
 		BlurIntencity.second = 1.0f;
 		BlurAlpha.first = 0.300f;
-		BlurAlpha.second = 0.5f;
+		BlurAlpha.second = 0.4f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,9.f / 255.f };
@@ -560,11 +561,42 @@ void ShockWave::PlayStart(const Vector3& PlayLocation ,
 		BlurIntencity.first = 0.0f;
 		BlurIntencity.second = 0.5f;
 		BlurAlpha.first = 0.300f;
-		BlurAlpha.second = 0.5f;
+		BlurAlpha.second = 0.4f;
 		BlurMaxLength = 40.900f;
 		DistortionAlpha = 0.0f;
 		Color = { 0.f / 255.f , 0.f / 255.f ,0.f / 255.f ,0.0f / 255.f };
 		this->bDirectionReverse = true;
+		break;
+	case Judgement:
+		PlayTime = 0.9f;
+		EndT = 0.9f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.000f;
+		ScaleLerp.second = 0.0025f * ScaleFactor;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 1.f * ScaleFactor;
+		BlurAlpha.first = 0.00f;
+		BlurAlpha.second = 0.325f;
+		BlurMaxLength = 40.000f * ScaleFactor;
+		DistortionAlpha = 0.0f;
+		Color = { 0.f  / 255.f , 0.f / 255.f ,0.f / 255.f ,0.f / 255.f };
+		this->bDirectionReverse = true;
+		break;
+	case JudgementCut:
+		PlayTime = 1.2f;
+		EndT = 1.2f;
+		DistortionIntencity = 0.000f;
+		ScaleLerp.first = 0.0f;
+		ScaleLerp.second = 0.307f;
+		BlurIntencity.first = 0.0f;
+		BlurIntencity.second = 2.049f;
+		BlurAlpha.first = 0.3f;
+		BlurAlpha.second = 0.35f;
+		BlurMaxLength = 40.9f;
+		DistortionAlpha = 0.0f;
+		Color = { 0.0f / 255.f , 0.0f / 255.f ,0.0f / 255.f ,0.0f / 255.f };
+		this->bBlurMsk = true;
+		break;
 		break;
 	default:
 		break;

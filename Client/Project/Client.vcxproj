@@ -205,10 +205,13 @@
     <ClInclude Include="..\Header\Hotel_S04.h" />
     <ClInclude Include="..\Header\IceAge.h" />
     <ClInclude Include="..\Header\Font.h" />
+    <ClInclude Include="..\Header\Judgement.h" />
+    <ClInclude Include="..\Header\JudgementCut.h" />
     <ClInclude Include="..\Header\JudgementShadow1.h" />
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\JudgementSwordTrail.h" />
     <ClInclude Include="..\Header\LensFlare.h" />
     <ClInclude Include="..\Header\Library_S05.h" />
     <ClInclude Include="..\Header\Library_S06.h" />
@@ -226,6 +229,7 @@
     <ClInclude Include="..\Header\NuClearLensFlare.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
     <ClInclude Include="..\Header\Reverberation.h" />
+    <ClInclude Include="..\Header\SandGlassEffect.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
     <ClInclude Include="..\Header\SecretVisionMagicCircle.h" />
     <ClInclude Include="..\Header\ShockWave.h" />
@@ -339,10 +343,13 @@
     <ClCompile Include="..\Source\Hotel_S04.cpp" />
     <ClCompile Include="..\Source\IceAge.cpp" />
     <ClCompile Include="..\Source\Font.cpp" />
+    <ClCompile Include="..\Source\Judgement.cpp" />
+    <ClCompile Include="..\Source\JudgementCut.cpp" />
     <ClCompile Include="..\Source\JudgementShadow1.cpp" />
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\JudgementSwordTrail.cpp" />
     <ClCompile Include="..\Source\LensFlare.cpp" />
     <ClCompile Include="..\Source\Library_S05.cpp" />
     <ClCompile Include="..\Source\Library_S06.cpp" />
@@ -360,6 +367,7 @@
     <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
     <ClCompile Include="..\Source\Reverberation.cpp" />
+    <ClCompile Include="..\Source\SandGlassEffect.cpp" />
     <ClCompile Include="..\Source\Satellite.cpp" />
     <ClCompile Include="..\Source\SecretVision.cpp" />
     <ClCompile Include="..\Source\SecretVisionMagicCircle.cpp" />
@@ -664,6 +672,41 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Shader\Effect\EnergismReady.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\SandGlassEffect.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\SandGlassEffectParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\Judgement.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\JudgementParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\JudgementCut.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\JudgementCutParticle.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

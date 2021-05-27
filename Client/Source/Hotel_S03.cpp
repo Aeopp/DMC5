@@ -148,10 +148,18 @@ HRESULT Hotel_S03::LoadScene()
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr.lock()));
 	}
 
+	//
 	if (auto Sp = AddGameObject<MakaiButterfly>().lock(); Sp)
 	{
 		Sp->SetPosition({ -4.366f, 0.55f, 34.1f });
 		Sp->PlayStart();
+	}
+
+	//
+	if (_ShopFadeOut = AddGameObject<FadeOut>();
+		!_ShopFadeOut.expired())
+	{
+		_ShopFadeOut.lock()->SetActive(false);
 	}
 
 #pragma endregion
@@ -873,7 +881,7 @@ void Hotel_S03::TriggerNextScene()
 
 			if (_FadeOut)
 			{
-				_FadeOut->PlayStart(3u,
+				_FadeOut->PlayStart(2u,
 					[SpPanel]()
 					{
 						SpPanel->SetNullBlackActive(true);
@@ -917,33 +925,47 @@ void Hotel_S03::ApplyShopUpgradeDesc()
 			SpPlayer->BuyCbsLong();
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void Hotel_S03::CheckShopAvailable()
 {
 	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
 	{
-		if (auto Sp = _ShopPanel.lock(); Sp)
+		if (auto SpShopPanel = _ShopPanel.lock(); SpShopPanel)
 		{
-			if (!Sp->IsActive())
+			if (!SpShopPanel->IsActive())
 			{
-				Sp->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(false);
-				_BtlPanel.lock()->SetActive(false);
+				if (auto SpFadeOut = _ShopFadeOut.lock(); SpFadeOut)
+				{
+					if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+					{
+						SpBtlPanel->SetRedOrbActive(false);
+						SpBtlPanel->SetActive(false);
+					}
+
+					SpFadeOut->SetActive(true);
+					SpFadeOut->PlayStart(6u,
+						[SpShopPanel, SpFadeOut]()
+						{
+							SpShopPanel->SetActive(true);
+							SpFadeOut->SetActive(false);
+						}
+					);
+				}
 			}
 			else
 			{
+				if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+				{
+					SpBtlPanel->SetRedOrbActive(true);
+					SpBtlPanel->SetActive(true);
+				}
+
 				ApplyShopUpgradeDesc();
-				Sp->ResetCmd();
-				Sp->SetActive(false);
-				_BtlPanel.lock()->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(true);
+				SpShopPanel->ResetCmd();
+				SpShopPanel->SetActive(false);
 			}
 		}
 	}

@@ -41,7 +41,8 @@ private:
 	virtual ~Renderer() = default;
 	virtual void Free()	override;
 public:
-	HRESULT ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice);
+	HRESULT ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice ,
+		const bool bImguiInit);
 private:
 	void    ReadyRenderTargets();
 	void	ReadyShader(const std::filesystem::path & TargetPath);
@@ -174,6 +175,7 @@ public:
 	Vector3 SkysphereRot{ 0.f,0.f ,0.f};
 	Vector3 SkysphereLoc{ 0.f,-4.762f,0.f };
 private:
+	bool bImguiInit = false;
 	float PreviousExposure = 1.f;
 	bool bStars = true;
 	FadeEffect _FadeEffect{};

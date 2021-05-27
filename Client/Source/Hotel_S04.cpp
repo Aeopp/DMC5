@@ -172,7 +172,7 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 				//////////////////////////////////////////////////////
 
 				SpFadeOut->SetActive(true);
-				SpFadeOut->PlayStart(5u,
+				SpFadeOut->PlayStart(3u,
 					[SpPanel]()
 					{
 						SpPanel->SetNullBlackActive(true);
@@ -283,12 +283,8 @@ void Hotel_S04::ApplyShopUpgradeDesc()
 			SpPlayer->BuyCbsLong();
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void Hotel_S04::RenderDataSetUp(const bool bTest)

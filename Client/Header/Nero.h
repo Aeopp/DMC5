@@ -430,6 +430,7 @@ public:
 	void DecreaseDistance(float _GoalDis, float _fDeltaTime);
 	void IncreaseDistance(float _GoalDis, float _fDeltaTime);
 	void IncreaseHp(int _Hp);
+	void IncreaseMaxHp(const int _Amount);
 	//�׽�Ʈ
 
 public:

@@ -62,6 +62,10 @@
 #include "Reverberation.h"
 #include "ParticleSystem.h"
 #include "SoundSystem.h"
+#include "SandGlassEffect.h"
+#include "Judgement.h"
+#include "JudgementSwordTrail.h"
+#include "FadeOut.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,6 +91,13 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
+	AddGameObject<Judgement>();
+	AddGameObject<Change>();
+	AddGameObject<SandGlassEffect>();
+	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	AddGameObject<JudgementSwordTrail>();
+
+
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
 	m_fLoadingProgress = 0.01f;
@@ -101,9 +112,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//_Camera = AddGameObject<Camera>();
+	// _Camera = AddGameObject<Camera>();
 	
-	_MainCamera = AddGameObject<MainCamera>();
+	 _MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
@@ -115,7 +126,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	AddGameObject<Em200>();
+	//AddGameObject<Em200>();
 
 #pragma endregion
 
@@ -123,7 +134,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -133,7 +144,6 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
-
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -167,6 +177,12 @@ HRESULT TestScene::LoadScene()
 	//		_SpriteEffect->InitializeFromOption(i);
 	//	}
 	//}
+
+	if (_ShopFadeOut = AddGameObject<FadeOut>();
+		!_ShopFadeOut.expired())
+	{
+		_ShopFadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -234,6 +250,12 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+
+	/*if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
+	}*/
 	
 	CheckShopAvailable();
 
@@ -490,33 +512,47 @@ void TestScene::ApplyShopUpgradeDesc()
 			SpPlayer->BuyCbsLong();
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void TestScene::CheckShopAvailable()
 {
 	if (Input::GetKeyDown(DIK_P))
 	{
-		if (auto Sp = _ShopPanel.lock(); Sp)
+		if (auto SpShopPanel = _ShopPanel.lock(); SpShopPanel)
 		{
-			if (!Sp->IsActive())
+			if (!SpShopPanel->IsActive())
 			{
-				Sp->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(false);
-				_BtlPanel.lock()->SetActive(false);
+				if (auto SpFadeOut = _ShopFadeOut.lock(); SpFadeOut)
+				{
+					if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+					{
+						SpBtlPanel->SetRedOrbActive(false);
+						SpBtlPanel->SetActive(false);
+					}
+
+					SpFadeOut->SetActive(true);
+					SpFadeOut->PlayStart(5u,
+						[SpShopPanel, SpFadeOut]()
+						{
+							SpShopPanel->SetActive(true);
+							SpFadeOut->SetActive(false);
+						}
+					);
+				}
 			}
 			else
 			{
+				if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+				{
+					SpBtlPanel->SetRedOrbActive(true);
+					SpBtlPanel->SetActive(true);
+				}
+
 				ApplyShopUpgradeDesc();
-				Sp->ResetCmd();
-				Sp->SetActive(false);
-				_BtlPanel.lock()->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(true);
+				SpShopPanel->ResetCmd();
+				SpShopPanel->SetActive(false);
 			}
 		}
 	}

@@ -575,6 +575,10 @@
     <ClInclude Include="..\Header\NuClearLensFlare.h" />
     <ClInclude Include="..\Header\Energism.h" />
     <ClInclude Include="..\Header\EnergismReady.h" />
+    <ClInclude Include="..\Header\SandGlassEffect.h" />
+    <ClInclude Include="..\Header\Judgement.h" />
+    <ClInclude Include="..\Header\JudgementCut.h" />
+    <ClInclude Include="..\Header\JudgementSwordTrail.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -932,6 +936,10 @@
     <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
     <ClCompile Include="..\Source\Energism.cpp" />
     <ClCompile Include="..\Source\EnergismReady.cpp" />
+    <ClCompile Include="..\Source\SandGlassEffect.cpp" />
+    <ClCompile Include="..\Source\Judgement.cpp" />
+    <ClCompile Include="..\Source\JudgementCut.cpp" />
+    <ClCompile Include="..\Source\JudgementSwordTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -1018,8 +1026,17 @@
     <None Include="..\..\Resource\Shader\Effect\NuClear.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\Energism.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\EnergismReady.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\SandGlassEffect.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\SandGlassEffectParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\Judgement.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\JudgementParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\JudgementCut.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\JudgementCutParticle.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl" />
   </ItemGroup>
 </Project>

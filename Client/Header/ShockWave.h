@@ -30,6 +30,8 @@ public:
 		Buster,
 		Kaboom,
 		EnergismReady,
+		Judgement,
+		JudgementCut,
 		None,
 	};
 private:
@@ -58,7 +60,8 @@ public:
 public:
 	void PlayStart(const Vector3& PlayLocation,
 				   const int32& _Option ,
-					const bool bBlurMsk=false);
+					const bool bBlurMsk=false ,
+				const float ScaleFactor =1.f);
 	void PlayEnd();
 public:
 	void RenderDebug(const DrawInfo& _Info);

@@ -1485,6 +1485,24 @@ void Nero::IncreaseHp(int _Hp)
 		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 }
 
+void Nero::IncreaseMaxHp(const int _Amount)
+{
+	if (0 >= _Amount)
+		return;
+
+	/*
+	MaxHP 100 기준 5칸
+	한 칸 = 20
+	*/
+
+	m_BattleInfo.iMaxHp += _Amount;
+	m_BattleInfo.iHp += _Amount;
+
+	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+}
+
 float Nero::Get_ExGauge()
 {
 	if (!m_pBtlPanel.expired())

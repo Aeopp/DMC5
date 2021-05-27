@@ -8,9 +8,10 @@ class Hotel_S03 : public Scene
 {
 private:
 	std::weak_ptr<class Nero> _Player{};
+	std::weak_ptr<class MainCamera> _MainCamera{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class ShopPanel> _ShopPanel{};
-	std::weak_ptr<class MainCamera> _MainCamera{};
+	std::weak_ptr<class FadeOut> _ShopFadeOut{};
 	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock{};
 	bool _LateInit = false;
 	bool _IsShopAvailable = false;

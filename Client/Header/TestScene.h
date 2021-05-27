@@ -1,6 +1,8 @@
 #ifndef __TEST_SCENE_H__
 #define __TEST_SCENE_H__
+
 #include "Scene.h"
+
 
 class TestScene : public Scene
 {
@@ -11,6 +13,7 @@ private:
 	std::weak_ptr<class MainCamera> _MainCamera{};
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class ShopPanel> _ShopPanel{};
+	std::weak_ptr<class FadeOut> _ShopFadeOut{};
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;

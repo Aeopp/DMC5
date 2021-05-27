@@ -156,7 +156,8 @@ HRESULT Library_S05::LoadScene()
 		ptr->SetActive(false);
 		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr));
 	}
-
+	
+	//
 	if (auto Sp = AddGameObject<MakaiButterfly>().lock(); Sp)
 	{
 		Sp->SetPosition({ -23.619f, -1.29f, 33.56f });
@@ -166,6 +167,13 @@ HRESULT Library_S05::LoadScene()
 	{
 		Sp->SetPosition({ -26.967f, -1.29f, 33.56f });
 		Sp->PlayStart();
+	}
+
+	//
+	if (_ShopFadeOut = AddGameObject<FadeOut>();
+		!_ShopFadeOut.expired())
+	{
+		_ShopFadeOut.lock()->SetActive(false);
 	}
 
 #pragma endregion
@@ -495,33 +503,47 @@ void Library_S05::ApplyShopUpgradeDesc()
 			SpPlayer->BuyCbsLong();
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void Library_S05::CheckShopAvailable()
 {
 	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
 	{
-		if (auto Sp = _ShopPanel.lock(); Sp)
+		if (auto SpShopPanel = _ShopPanel.lock(); SpShopPanel)
 		{
-			if (!Sp->IsActive())
+			if (!SpShopPanel->IsActive())
 			{
-				Sp->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(false);
-				_BtlPanel.lock()->SetActive(false);
+				if (auto SpFadeOut = _ShopFadeOut.lock(); SpFadeOut)
+				{
+					if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+					{
+						SpBtlPanel->SetRedOrbActive(false);
+						SpBtlPanel->SetActive(false);
+					}
+
+					SpFadeOut->SetActive(true);
+					SpFadeOut->PlayStart(7u,
+						[SpShopPanel, SpFadeOut]()
+						{
+							SpShopPanel->SetActive(true);
+							SpFadeOut->SetActive(false);
+						}
+					);
+				}
 			}
 			else
 			{
+				if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+				{
+					SpBtlPanel->SetRedOrbActive(true);
+					SpBtlPanel->SetActive(true);
+				}
+
 				ApplyShopUpgradeDesc();
-				Sp->ResetCmd();
-				Sp->SetActive(false);
-				_BtlPanel.lock()->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(true);
+				SpShopPanel->ResetCmd();
+				SpShopPanel->SetActive(false);
 			}
 		}
 	}
@@ -1208,7 +1230,7 @@ void Library_S05::TriggerSewerSunken()
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -23.681999f, -1.231250f, 33.628098f};
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 0.5f,0.5f,0.5f};
+		const Vector3 TriggerBoxSize = { 0.5f,0.5f,0.5f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
 		const bool ImmediatelyEnable = true;
 		// 트리거 검사할 오브젝트는 플레이어 

@@ -33,12 +33,13 @@ private:
 	virtual void Free() override;
 public:
 	HRESULT ReadyEngine(
-		const bool bWindowed,const bool bMultiSample,
-		const std::filesystem::path& SoundDirectoryPath);
+		const bool bWindowed, const bool bMultiSample,
+		const std::filesystem::path& SoundDirectoryPath,
+		const bool bImguiInit);
 	HRESULT UpdateEngine(const float Delta);
 private:
 	void Editor();
-
+	bool bImguiInit = true;
 };
 END
 #endif // !__CORE_SYSTEM_H__
