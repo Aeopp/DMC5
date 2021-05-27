@@ -53,6 +53,9 @@ HRESULT Library_S05::LoadScene()
 {
 	// Load Start
 
+	SoundSystem::GetInstance()->ClearSound();
+	SoundSystem::GetInstance()->Play("Library_01", 0.1f, true);
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -1326,7 +1329,7 @@ void Library_S05::TriggerNextScene()
 
 void Library_S05::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	//SoundSystem::GetInstance()->ClearSound();
 
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)

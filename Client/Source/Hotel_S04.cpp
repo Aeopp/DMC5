@@ -40,6 +40,9 @@ HRESULT Hotel_S04::LoadScene()
 {
 	// Load Start
 
+	SoundSystem::GetInstance()->ClearSound();
+	SoundSystem::GetInstance()->Play("Stage1_Boss", 0.1f, true);
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -369,7 +372,7 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 
 void Hotel_S04::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	//SoundSystem::GetInstance()->ClearSound();
 
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)

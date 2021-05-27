@@ -190,6 +190,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 	}
 	else
 	{
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Missile", { 1,1 }, 0.3f, false);
 		m_fRainDownTime += _fDeltaTime;
 	
 		if (m_bJustOne)
@@ -480,6 +481,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 					m_pTransform.lock()->Translate({ 0.f, -0.04f, 0.f });
 			}
 			break;
+
 		}
 	}
 
@@ -606,6 +608,7 @@ UINT Em5300Rain::Update(const float _fDeltaTime)
 
 	if (m_bReadyRain)
 		Rain(_fDeltaTime);
+
 	return 0;
 }
 
