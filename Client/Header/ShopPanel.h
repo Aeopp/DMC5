@@ -109,6 +109,8 @@ private:
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
+	float _FadeNullBlackAlpha = 1.f;
+
 	Vector3 _DebugPos = Vector3(640.f, 320.f, 0.5f);
 	Vector3 _DebugScale = Vector3(1.f, 1.f, 1.f);
 	Vector3 _DebugRot = Vector3(0.f, 0.f, 0.f);

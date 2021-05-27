@@ -92,13 +92,6 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
-	AddGameObject<Judgement>();
-	AddGameObject<Change>();
-	AddGameObject<SandGlassEffect>();
-	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
-	AddGameObject<JudgementSwordTrail>();
-
-
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
 	m_fLoadingProgress = 0.01f;
@@ -145,6 +138,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
+
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -155,6 +149,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
+	//AddGameObject<Judgement>();
+	//AddGameObject<SandGlassEffect>();
+	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	//AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<Change>();
 	//AddGameObject<ShockWave>();
 
@@ -215,7 +213,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 1, Until Dooms Day",
+		pFont->SetText("D Day, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
