@@ -63,6 +63,8 @@ public:
 		Move_Front_End,
 		Move_Front_Loop,
 		Move_Front_Start,
+		CutScene_Start,
+		CutScene_End,
 		State_END		
 	};
 private:
@@ -113,6 +115,8 @@ public:
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 
 	Em5300_State Get_State() { return m_eState; }
+
+	void	Set_Cut();
 private:
 	//몬스터 상태
 	Em5300_State	m_eState =State_END;		
@@ -141,6 +145,8 @@ private:
 
 	bool		m_bLaser = false;
 	float		m_fLaserTime = 0.f;
+
+	bool		m_bBack = false;
 	weak_ptr<Em5300Missile>	m_pBullet[32];
 	weak_ptr<Em5300Rain>	m_pRain[12];
 	weak_ptr<Em5300Homing>	m_pHoming[8];
@@ -155,7 +161,7 @@ private:
 
 	float	m_fTest = 0.01f;
 	float	m_fHeight = 0.7f;
-	float   m_fCenterY = -0.2f;
+	float   m_fCenterY = -0.5f;
 	float	m_fPower = 0.f;
 	Vector3	m_vPower;
 	
@@ -202,6 +208,9 @@ private:
 	/////////////////
 
 	Matrix* m_pHeadBone;
+
+	bool	m_bCutScene = false;
+	bool	m_bCutStart = false;
 
 };
 
