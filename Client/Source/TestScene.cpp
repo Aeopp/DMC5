@@ -114,7 +114,7 @@ HRESULT TestScene::LoadScene()
 
 	_Camera = AddGameObject<Camera>();
 	
-	// _MainCamera = AddGameObject<MainCamera>();
+	 _MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
@@ -258,11 +258,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	 if (auto SpPlayer = _Player.lock();
+	/* if (auto SpPlayer = _Player.lock();
 	 	SpPlayer)
 	 {
 	 	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
-	 }
+	 }*/
 
 
 	if (Input::GetKeyDown(DIK_INSERT))
