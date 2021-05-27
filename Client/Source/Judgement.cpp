@@ -352,7 +352,6 @@ void Judgement::PlayJudgementDayParticle()
 				"JudgementDay", 11ul, true);
 			_Particle.empty() == false)
 		{
-
 			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];

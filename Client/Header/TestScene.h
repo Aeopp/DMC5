@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 
+class JudgementSwordTrail;
 
 class TestScene : public Scene
 {
@@ -35,5 +36,7 @@ private:
 	void TriggerSetUp();
 	void ApplyShopUpgradeDesc();
 	void CheckShopAvailable();
+private:
+	std::weak_ptr<class JudgementSwordTrail> _JudgementSwordTrail{};
 };
 #endif // !__TEST_SCENE_H__

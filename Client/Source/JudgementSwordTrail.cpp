@@ -10,8 +10,6 @@
 #include "ParticleSystem.h"
 #include "JudgementSword.h"
 
-
-
 JudgementSwordTrail::JudgementSwordTrail()
 {
 	VtxBuffers.fill(nullptr);
@@ -93,7 +91,7 @@ void JudgementSwordTrail::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 36;
+	const int32 TriCnt = 4;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt + 2;
@@ -125,20 +123,15 @@ void JudgementSwordTrail::RenderInit()
 	}
 
 	TrailMap = Resources::Load<Texture>(
-		"..\\..\\Usable\\tex_03_common_000_0002_alpg.tga");
-	IceMap = Resources::Load<Texture >(
-		  "..\\..\\Resource\\Texture\\Effect\\lightning_alb.png");
-	IceTrailMap = Resources::Load<Texture >(
-		"..\\..\\Usable\\tex_03_common_000_0000_alpg.tga");
-	EmissiveMskMap = Resources::Load<Texture>(
-		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
+		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
+
 	NoiseMap = Resources::Load<Texture>(
 		"..\\..\\Usable\\noisesample_msk.tga");
 };
 
 void JudgementSwordTrail::PlayStart(const Mode _Mode)
 {
-	if (auto _GameObject = FindGameObjectWithTag(TAG_JudgementSword).lock();
+	if (auto _GameObject = FindGameObjectWithType<JudgementSword>().lock();
 		_GameObject)
 	{
 		if (auto _JudgementSword = std::dynamic_pointer_cast<JudgementSword>(_GameObject);
@@ -185,16 +178,6 @@ void JudgementSwordTrail::PlayStart(const Mode _Mode)
 	_Desc.NewVtxCnt = 0;
 	_Desc.CurVtxUpdateCycle = 0.0f;
 
-	//if (PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
-	//	PtLight.expired()==false)
-	//{
-	//	auto SpPtLight = PtLight.lock();
-	//	SpPtLight->bEnable = true;
-	//	SpPtLight->PointRadius = PtLightRadius;
-	//	SpPtLight->Color = PtLightColor;
-	//	SpPtLight->lightFlux = PtLightFlux;
-	//	SpPtLight->SetPosition(FMath::ConvertVector4(GetTrailLocation(), 1.f));
-	//}
 };
 
 void JudgementSwordTrail::PlayEnd()
@@ -206,32 +189,19 @@ void JudgementSwordTrail::PlayEnd()
 
 void JudgementSwordTrail::RenderTrail(const DrawInfo& _Info)
 {
-	if (T <= 0.25f)
-		return;
-
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-
-	if (CurMode == Mode::Non)
-	{
-		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
-		_Info.Fx->SetTexture("TrailMap", IceTrailMap->GetTexture());
-		_Info.Fx->SetTexture("AlbmMap", IceMap->GetTexture());
-
-		_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
-		_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed, 3);
-		_Info.Fx->SetFloatArray("Scale", Scale, 3);
-
-		_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
-
-		_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
-	}
-
-	_Info.Fx->SetTexture("EmissiveMskMap", EmissiveMskMap->GetTexture());
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+	_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed,3u);
+	_Info.Fx->SetFloatArray("Scale", Scale, 3u);
+	_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
 
+	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
+	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
+	
 	for (int32 i = 0; i < BoneCnt; ++i)
 	{
 		Device->SetStreamSource(0, VtxBuffers[i], 0, _Desc.VtxSize);
@@ -338,7 +308,7 @@ void JudgementSwordTrail::VertexBufUpdate()
 		}
 
 		
-		if (auto _GameObject = FindGameObjectWithTag(TAG_JudgementSword).lock();
+		if (auto _GameObject = FindGameObjectWithType<JudgementSword>().lock();
 			_GameObject)
 		{
 			if (auto _JudgementSword = std::dynamic_pointer_cast<JudgementSword>(_GameObject);
@@ -545,17 +515,12 @@ void JudgementSwordTrail::Editor()
 
 			ImGui::SliderFloat3("JudgementLowOffset", JudgementLowOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("JudgementHighOffset", JudgementHighOffset, -300.f, 300.f, "%9.6f");
-			
-			
 
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
-
-			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
-			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
@@ -571,7 +536,6 @@ void JudgementSwordTrail::Editor()
 
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN, 1.f, "%9.6f");
-			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply, 0.f, 10.f, "%1.6f");
@@ -590,6 +554,7 @@ void JudgementSwordTrail::OnDisable()
 {
 	GameObject::OnDisable();
 };
+
 
 
 

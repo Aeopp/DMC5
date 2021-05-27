@@ -845,7 +845,7 @@
         "cosAngularRadius": 0.9999889731407166,
         "specularPower": 80.0,
         "lightIlluminance": 1.5,
-        "lightFlux": 0.05,
+        "lightFlux": 0.04,
         "Color": [
           0.9686274528503418,
           0.42352941632270815,
@@ -887,7 +887,7 @@
         "cosAngularRadius": 0.9999889731407166,
         "specularPower": 80.0,
         "lightIlluminance": 1.5,
-        "lightFlux": 0.05,
+        "lightFlux": 0.04,
         "Color": [
           0.9686274528503418,
           0.42352941632270815,
@@ -929,7 +929,7 @@
             "cosAngularRadius": 0.9999889731407166,
             "specularPower": 80.0,
             "lightIlluminance": 1.5,
-            "lightFlux": 0.05,
+            "lightFlux": 0.04,
             "Color": [
                 0.9686274528503418,
                 0.42352941632270815,
@@ -971,7 +971,7 @@
             "cosAngularRadius": 0.9999889731407166,
             "specularPower": 80.0,
             "lightIlluminance": 1.5,
-            "lightFlux": 0.05,
+            "lightFlux": 0.04,
             "Color": [
                 0.9686274528503418,
                 0.42352941632270815,

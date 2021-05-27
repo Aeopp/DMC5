@@ -66,7 +66,8 @@
 #include "Judgement.h"
 #include "JudgementSwordTrail.h"
 #include "FadeOut.h"
-
+#include "Change.h"
+#include "JudgementSword.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -95,15 +96,12 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Change>();
 	AddGameObject<SandGlassEffect>();
 	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
-	AddGameObject<JudgementSwordTrail>();
-
-
+	_JudgementSwordTrail =  AddGameObject<JudgementSwordTrail>();
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
-
 	PreLoader::PreLoadResources();
 
 #pragma endregion
@@ -112,9 +110,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	// _Camera = AddGameObject<Camera>();
-	
-	 _MainCamera = AddGameObject<MainCamera>();
+	_Camera = AddGameObject<Camera>();
+
+	// _MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
@@ -135,7 +133,6 @@ HRESULT TestScene::LoadScene()
 #pragma region Map
 
 	LoadMap();
-
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 
@@ -144,7 +141,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
-	RenderDataSetUp(false);
+	RenderDataSetUp(true);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
 
@@ -236,8 +233,6 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
- 
-
 	return S_OK;
 }
 
@@ -251,12 +246,18 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	/*if (auto SpPlayer = _Player.lock();
+	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
-	}*/
+	}
 	
+
+	if (Input::GetKeyDown(DIK_INSERT))
+	{
+		_JudgementSwordTrail.lock()->PlayStart(JudgementSwordTrail::Mode::Judgement);
+	};
+
 	CheckShopAvailable();
 
 	static float TestVolume = 0.15f;
