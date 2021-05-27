@@ -1315,7 +1315,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 555ul;
+	const uint64 PoolSize = 3333ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1325,10 +1325,18 @@ void PreLoader::JudgementDayParticlePoolLoad()
 	{
 		for (auto& _ParticleInstance : *ParticlePool)
 		{
-			Vector3 StartLocation = FMath::RandomVector(200.f);
-			Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
-			Vector3 Cp1 = StartLocation + FMath::RandomVector(3.f);
-			Vector3 End = StartLocation + FMath::RandomVector(6.6f);
+			Vector3 Direction = FMath::Normalize( FMath::RandomVector(1.f));
+			Vector3 StartLocation = FMath::RandomVector(150.f);
+
+			Vector3 Cp0 = StartLocation + Direction * FMath::Random(0.f,1.f) 
+				+  FMath::RandomVector(1.f);
+
+			Vector3 Cp1 = Cp0 + Direction * FMath::Random(0.f, 11.f)
+				+ FMath::RandomVector(11.f);
+
+			Vector3 End = Cp1 + Direction * FMath::Random(0.f, 100.f)
+				+ FMath::RandomVector(777.f);
+
 			// End.y += FMath::Random(0.f,111.f);
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
@@ -1336,7 +1344,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 6.f;
+			constexpr float ScaleFactor = 4.f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -1344,11 +1352,11 @@ void PreLoader::JudgementDayParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.005f, 0.010f);
+			_Value.ColorIntencity = FMath::Random(0.01f, 0.02f);
 
-			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
+			_Value.Color = FMath::Random(Vector3{ 255.0f,0.f,0.f }, Vector3{ 255.f,0.f ,0.f });
 
-			const float LifeTime = FMath::Random(3.f, 7.f);
+			const float LifeTime = FMath::Random(0.5f, 1.f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },

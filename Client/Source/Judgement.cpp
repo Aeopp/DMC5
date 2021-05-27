@@ -344,6 +344,8 @@ void Judgement::PlayCircleGrowParticle()
 
 void Judgement::PlayJudgementDayParticle()
 {
+	if (bJudgementDayParticlePlay == false)return;
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{

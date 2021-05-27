@@ -153,6 +153,9 @@ void JudgementSwordTrail::PlayStart(const Mode _Mode)
 				auto High = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
 				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *High * _World);
 
+				PrevBoneWorld = BoneWorld;
+				BoneWorld = *Low * _World;
+
 				for (int32 j = 0; j  < _Desc.VtxCnt; j+=2)
 				{
 					VtxPtr[j].Location = LatelyOffsets[BoneIdx].first;
@@ -186,6 +189,65 @@ void JudgementSwordTrail::PlayEnd()
 	T = 0.0f;
 };
 
+void JudgementSwordTrail::ParticleUpdate(const float DeltaTime)
+{
+	CurJudgementDayParticleDelta -= DeltaTime;
+	if (CurJudgementDayParticleDelta < 0.0f)
+	{
+		CurJudgementDayParticleDelta += JudgementDayParticleDelta;
+		PlayParticle();
+	};
+};
+
+void JudgementSwordTrail::PlayParticle()
+{
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		// ..... Look 
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				"JudgementDay", 111ul, true);
+			_Particle.empty() == false)
+		{
+			/*const Vector3 Prev{ PrevBoneWorld._41,PrevBoneWorld._42 ,PrevBoneWorld._43 };
+			const Vector3 Cur{ BoneWorld._41,BoneWorld._42 ,BoneWorld._43 };
+
+			static const Vector3 WorldUp{ 0.f,1.f,0.f };
+
+			const Vector3 Look = FMath::Normalize(Cur - Prev);
+			const Vector3 Right = FMath::Normalize(FMath::Cross(WorldUp, Look));
+			const Vector3 Up = FMath::Normalize(FMath::Cross(Look,Right));
+			const Vector3 CurLocation = FMath::Lerp(Prev, Cur, 0.5f);
+
+			Matrix CurWorld{ FMath::Identity() };
+
+			CurWorld._11 = Right.x;
+			CurWorld._12 = Right.y;
+			CurWorld._13 = Right.z;
+
+			CurWorld._21 = Up.x;
+			CurWorld._22 = Up.y;
+			CurWorld._23 = Up.z;
+
+			CurWorld._31 = Look.x;
+			CurWorld._32 = Look.y;
+			CurWorld._33 = Look.z;
+
+			CurWorld._41 = CurLocation.x;
+			CurWorld._42 = CurLocation.y;
+			CurWorld._43 = CurLocation.z;
+
+			CurWorld._44 = 1.f;*/
+
+			for (int32 i = 0; i < _Particle.size(); ++i)
+			{
+				auto& _PlayInstance = _Particle[i];
+				_PlayInstance->PlayDescBind(BoneWorld);
+			}
+		}
+	};
+};
 
 void JudgementSwordTrail::RenderTrail(const DrawInfo& _Info)
 {
@@ -319,11 +381,13 @@ void JudgementSwordTrail::VertexBufUpdate()
 				const Vector3 LowOffset = CurModeLowOffset();
 				auto Low = _JudgementSword->Get_BoneMatrixPtr(BoneLowNames[BoneIdx]);
 				LatelyOffsets[BoneIdx].first =   FMath::Mul(LowOffset, *Low * _World);
-
 				
 				const Vector3  HighOffset= CurModeHighOffset();
 				auto High = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
 				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *High * _World);
+
+				PrevBoneWorld = BoneWorld;
+				BoneWorld = *Low * _World;
 
 				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[BoneIdx].first;
 				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[BoneIdx].second;
@@ -467,6 +531,7 @@ UINT JudgementSwordTrail::Update(const float _fDeltaTime)
 	T += _fDeltaTime;
 
 	BufferUpdate(_fDeltaTime);
+	ParticleUpdate(_fDeltaTime);
 	
 	return 0;
 }

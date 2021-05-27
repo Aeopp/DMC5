@@ -18,6 +18,10 @@ public:
 private:
 	static constexpr uint32 BoneCnt = 8u;
 
+	Matrix BoneWorld{ FMath::Identity() };
+	Matrix PrevBoneWorld{ FMath::Identity() };
+
+
 	Vector3 CurModeLowOffset()
 	{
 		return CurMode == Mode::Non ? LowOffset : JudgementLowOffset;
@@ -76,6 +80,9 @@ private:
 	float CurveT = 0.5f;
 	float ColorIntencity = 0.1f;
 
+	float JudgementDayParticleDelta = 0.016f;
+	float CurJudgementDayParticleDelta = 0.0f;
+
 	Vector3 Scale{ 2.097902f ,1.398601f,1.398601f};
 	Vector3 ScrollSpeed{ 0.5f,0.699301f,1.398601f };
 
@@ -112,6 +119,8 @@ public:
 public:
 	void PlayStart(const Mode _Mode);
 	void PlayEnd();
+	void ParticleUpdate(const float DeltaTime);
+	void PlayParticle();
 private:
 	void BufferUpdate(const float DeltaTime);
 	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
