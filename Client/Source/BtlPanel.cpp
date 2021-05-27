@@ -13,7 +13,7 @@ uint32 BtlPanel::_TDTGaugeLevel = 1u;
 uint32 BtlPanel::_StylishPoints = 0u;
 float BtlPanel::_ExGauge = 0.f;
 uint32 BtlPanel::_ExGaugeLevel = 1u;
-uint32 BtlPanel::_RedOrbCount = 99999u;
+uint32 BtlPanel::_RedOrbCount = 0u;
 
 
 void BtlPanel::Free()

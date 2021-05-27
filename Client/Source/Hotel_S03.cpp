@@ -36,6 +36,11 @@ Hotel_S03::Hotel_S03()
 
 void Hotel_S03::Free()
 {
+	for (auto& Element : m_vecQliphothBlock)
+		Destroy(Element);
+	m_vecQliphothBlock.clear();
+	m_vecQliphothBlock.shrink_to_fit();
+
 	Scene::Free();
 }
 

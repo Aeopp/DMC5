@@ -11,7 +11,7 @@ private:
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class ShopPanel> _ShopPanel{};
 	std::weak_ptr<class MainCamera> _MainCamera{};
-	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock;
+	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock{};
 	bool _LateInit = false;
 	bool _IsShopAvailable = false;
 
