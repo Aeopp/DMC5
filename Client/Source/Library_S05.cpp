@@ -59,8 +59,8 @@ HRESULT Library_S05::LoadScene()
 			});
 	}
 
-	/*AddGameObject<MainCamera>();
-	_Player = AddGameObject<Nero>();*/
+	//AddGameObject<MainCamera>();
+	//_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -87,7 +87,7 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	//TriggerSetUp();
 
 #pragma endregion
@@ -402,7 +402,7 @@ void Library_S05::RenderDataSetUp(const bool bTest)
 	}
 
 	_Renderer->CurSkysphereTex = _Renderer->SkyTexMission03;
-	_Renderer->ao = 0.01f;
+	_Renderer->ao = 0.0005f;
 	_Renderer->SkyIntencity = 0.005f;
 	_Renderer->SkysphereScale = 0.078f;
 	_Renderer->SkysphereRot = { 0.f,0.f,0.f };

@@ -650,7 +650,7 @@ void FLight::InitRender()
 
 void FLight::Render(const DrawInfo& _Info)
 {
-	static const Vector3 AllScale = { 0.001f,0.001f,0.001f };
+	static const Vector3 AllScale = { 0.0001f,0.0001f,0.0001f };
 	const Matrix World = FMath::Scale(AllScale) * FMath::Translation((Vector3&)GetPosition());
 	_Info.Fx->SetMatrix("matWorld", &World);
 	const uint32 Numsubset = _Mesh->GetNumSubset();

@@ -50,16 +50,16 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-4.327f,
-			1.449f,
-			36.596f, 
-			});
-		
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+	//		-4.327f,
+	//		1.449f,
+	//		36.596f, 
+	//		});
+	//	
+	//}
 
 	_Camera = AddGameObject<MainCamera>();
 	_Camera.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
@@ -72,8 +72,8 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Monster
 
-	auto _pMonster = AddGameObject<Em5000>();
-	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
+	//auto _pMonster = AddGameObject<Em5000>();
+	//_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
 
 #pragma endregion
 
@@ -120,7 +120,7 @@ HRESULT Hotel_S04::LoadScene()
 
 	// Load Complete
 	m_fLoadingProgress = 1.f;
-
+	Renderer::GetInstance()->SkyOriginColor = Vector4{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
 	return S_OK;
 }
 
