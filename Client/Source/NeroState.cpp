@@ -655,7 +655,7 @@ HRESULT NeroState::KeyInput_Cbs_Idle(const int _nIndex)
 			//락온한 상태로 뒤로
 			if (Input::GetMouse(DIM_L))
 			{
-				m_pFSM->ChangeState(NeroFSM::CBS_CRYSTAL);
+				//m_pFSM->ChangeState(NeroFSM::CBS_CRYSTAL);
 				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
@@ -912,7 +912,7 @@ HRESULT NeroState::KeyInput_Cbs_Run(const int _nIndex)
 			//락온한 상태로 뒤로
 			if (Input::GetMouse(DIM_L))
 			{
-				m_pFSM->ChangeState(NeroFSM::CBS_CRYSTAL);
+				//m_pFSM->ChangeState(NeroFSM::CBS_CRYSTAL);
 				return S_OK;
 			}
 			else if (Input::GetMouse(DIM_R))
@@ -1383,6 +1383,7 @@ void NeroState::SetCbsIdle()
 {
 	if (m_bCbsIdle == true)
 		return;
+	SoundSystem::GetInstance()->Play("JJallang_6", 0.3f, false);
 	m_bCbsIdle = true;
 	m_pNero.lock()->SetCbsIdle();
 }
@@ -4710,7 +4711,8 @@ HRESULT Wire_Fly_Start::StateEnter()
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->SetFly(true);
 	m_pNero.lock()->PlayEffect(Eff_SnatchRush);
-	SoundSystem::GetInstance()->Play("Snatch", 0.4f, true);
+	SoundSystem::GetInstance()->Play("Snatch", 0.6f, true);
+	
 	return S_OK;
 }
 
@@ -4753,7 +4755,7 @@ HRESULT Wire_Fly_Loop::StateEnter()
 	NeroState::StateEnter();
 
 	m_pNero.lock()->ChangeAnimation("Wire_HellHound_Loop", true, Nero::ANI_WIRE_HELLHOUND_LOOP);
-	
+	SoundSystem::GetInstance()->Play("DanteEff_3", 0.2f, true);
 	return S_OK;
 }
 
@@ -5321,6 +5323,7 @@ HRESULT BT_Att_ComboC_R_to_L::StateEnter()
 	m_pNero.lock()->CheckAutoRotate();
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
 	return S_OK;
 }
 
@@ -5384,6 +5387,7 @@ HRESULT BT_Att_ComboC_L_to_R::StateEnter()
 	m_pNero.lock()->CheckAutoRotate();
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
 	return S_OK;
 }
 
@@ -5476,8 +5480,15 @@ HRESULT BT_Att_ComboC_1::StateUpdate(const float _fDeltaTime)
 	{
 		ActiveColl_RedQueen(true);
 	}
-	if(0.16f <= fCurrAnimationTime)
+	if (0.16f <= fCurrAnimationTime)
+	{
 		Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			m_pNero.lock()->PlayStone(TAG_RedQueen);
+		}
+	}
 
 	if (0.4f <= fCurrAnimationTime && fCurrAnimationTime <= 0.5f)
 	{
@@ -5525,6 +5536,7 @@ HRESULT BT_Att_ComboC_2::StateEnter()
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
 	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,11 }, 0.7f, true);
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
 	return S_OK;
 }
 
@@ -5594,6 +5606,9 @@ HRESULT BT_Att_ComboC_3::StateEnter()
 	m_pNero.lock()->CheckAutoRotate();
 	NeroState::ActiveTrail(true);
 	Play_Sound(TAG_RedQueen, "ComboA4,ComboC");
+	if (m_bPlayCbsShortSound)
+	m_pNero.lock()->PlayStone(TAG_RedQueen);
+	
 	return S_OK;
 }
 
@@ -5688,6 +5703,11 @@ HRESULT BT_Att_ComboC_4::StateUpdate(const float _fDeltaTime)
 			m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_WingArm_Right,"ComboC4", false);
 		m_bPlayRedQueenSound = true;
 		Play_Sound(TAG_RedQueen, "ComboC4-2",false);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			m_pNero.lock()->PlayStone(TAG_RedQueen);
+		}
 	}
 	else if (0.135f <= fCurrAnimationTime)
 		ActiveColl_RedQueen(false);
@@ -5695,6 +5715,11 @@ HRESULT BT_Att_ComboC_4::StateUpdate(const float _fDeltaTime)
 	{
 		ActiveColl_RedQueen(true);
 		Play_Sound(TAG_RedQueen, "ComboC4-1");
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			m_pNero.lock()->PlayStone(TAG_RedQueen);
+		}
 	}
 
 
@@ -7745,6 +7770,8 @@ HRESULT Cbs_ComboA1::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_Ar1, false);
 	}
 	NeroState::ActiveTrail(true);
+	SoundSystem::GetInstance()->Play("CbsShort1", 0.3f, true);
+	SoundSystem::GetInstance()->Play("DanteCbsAtt_1", 1.f, true);
 	return S_OK;
 }
 
@@ -7763,7 +7790,15 @@ HRESULT Cbs_ComboA1::StateUpdate(const float _fDeltaTime)
 	if(0.27f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 	else if (0.22f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("CbsShort2", 0.3f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,5 }, 0.2f, false);
+		}
+	}
 	else if (0.12f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 		
@@ -7783,7 +7818,9 @@ HRESULT Cbs_ComboA1::StateUpdate(const float _fDeltaTime)
 
 
 	if (Nero::ANI_CBS_COMBOA5 != PreAnimationIndex && 0.84f <= fCurrAnimationTime)
+	{
 		NeroState::SetCbsIdle();
+	}
 
 	else if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -7824,6 +7861,8 @@ HRESULT Cbs_ComboA2::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_Ar2, false);
 	}
 	NeroState::ActiveTrail(true);
+	SoundSystem::GetInstance()->Play("CbsShort1", 0.3f, true);
+	SoundSystem::GetInstance()->Play("DanteCbsAtt_2", 1.f, true);
 	return S_OK;
 }
 
@@ -7842,7 +7881,15 @@ HRESULT Cbs_ComboA2::StateUpdate(const float _fDeltaTime)
 	if (0.28f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 	else if (0.2f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("CbsShort2", 0.3f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,5 }, 0.2f, false);
+		}
+	}
 	else if (0.13f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 
@@ -7905,6 +7952,8 @@ HRESULT Cbs_ComboA3::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_Ar3, false);
 	}
 	NeroState::ActiveTrail(true);
+	SoundSystem::GetInstance()->Play("CbsShort1", 0.3f, true);
+	SoundSystem::GetInstance()->Play("DanteCbsAtt_3", 1.f, true);
 	return S_OK;
 }
 
@@ -7922,7 +7971,15 @@ HRESULT Cbs_ComboA3::StateUpdate(const float _fDeltaTime)
 	if (0.3f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 	else if (0.2f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("CbsShort2", 0.3f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,5 }, 0.2f, false);
+		}
+	}
 	else if (0.14f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 
@@ -7988,6 +8045,8 @@ HRESULT Cbs_ComboA4::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false);
 	}
 	NeroState::ActiveTrail(true);
+	SoundSystem::GetInstance()->Play("CbsShort1", 0.3f, true);
+	SoundSystem::GetInstance()->Play("DanteCbsAtt_4", 1.f, true);
 	return S_OK;
 }
 
@@ -8005,7 +8064,15 @@ HRESULT Cbs_ComboA4::StateUpdate(const float _fDeltaTime)
 	if (0.28f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 	else if (0.17f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("CbsShort2", 0.3f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,5 }, 0.2f, false);
+		}
+	}
 	else if (0.1f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
 
@@ -8072,6 +8139,8 @@ HRESULT Cbs_ComboA5::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_HT, false);
 	}
+	SoundSystem::GetInstance()->Play("CbsShort1", 0.3f, true);
+	SoundSystem::GetInstance()->Play("DanteCbsAtt_1", 1.f, true);
 	return S_OK;
 }
 
@@ -8098,6 +8167,13 @@ HRESULT Cbs_ComboA5::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Short, ATTACKTYPE::Attack_KnocBack);
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("CbsShort2", 0.3f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,5 }, 0.2f, false);
+			SoundSystem::GetInstance()->Play("DanteCbsAtt_5", 1.f, true);
+		}
 	}
 	else if (0.14f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
@@ -8212,6 +8288,9 @@ HRESULT Cbs_SKill_IceAge_Start::StateEnter()
 	NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Short);
 	m_pNero.lock()->PlayEffect(GAMEOBJECTTAG::Eff_IceAge);
 	m_pNero.lock()->ChangeWeaponCollSize(0.3f);
+	SoundSystem::GetInstance()->Play("IceAge", 0.3f, true);
+	SoundSystem::GetInstance()->Play("CbsShort3", 0.3f, true);
+	SoundSystem::GetInstance()->Play("DanteCbsSkill_1", 1.f, true);
 	return S_OK;
 }
 
@@ -8259,6 +8338,7 @@ HRESULT Cbs_SKill_IceAge_Loop::StateEnter()
 
 	m_fLoopTime = 1.5f;
 	NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
+
 	return S_OK;
 }
 
@@ -8323,6 +8403,7 @@ HRESULT Cbs_SKill_IceAge_End::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Cbs_SKill_IceAge_End", false, Nero::ANI_CBS_SKILL_ICEAGE_END);
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Short, "Cbs_IceAge_End", false);
 	NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Short);
+	SoundSystem::GetInstance()->Play("CbsEff_1", 0.3f, true);
 	return S_OK;
 }
 
@@ -8379,6 +8460,8 @@ HRESULT Cbs_SKill_Revolver_Start::StateEnter()
 
 	
 	m_pNero.lock()->SetFly(true);
+	SoundSystem::GetInstance()->Play("Jump", 0.6f, true);
+	SoundSystem::GetInstance()->Play("Buster2", 0.5f, true);
 	return S_OK;
 }
 
@@ -8429,6 +8512,9 @@ HRESULT Cbs_SKill_Revolver_Loop::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_Stinger_Loop, true);
 	}
+	SoundSystem::GetInstance()->Play("Revolver_1", 0.2f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("DanteCbsSkill_1", 1.f, true);
 	return S_OK;
 }
 
@@ -8452,6 +8538,18 @@ HRESULT Cbs_SKill_Revolver_Loop::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 	NeroState::ActiveTrail(true);
+ 
+	string temp("Revolver_"+ std::to_string(m_iLoopCount));
+	string temp2("Revolver_" + std::to_string(m_iLoopCount+1));
+
+	if (80 <= SoundSystem::GetInstance()->CurrentPosition(temp))
+	{
+		++m_iLoopCount;
+		if (m_iLoopCount > 20)
+			m_iLoopCount = 1;
+		SoundSystem::GetInstance()->Play(temp2, 0.2f, false);
+	}
+
 	return S_OK;
 }
 
@@ -8480,6 +8578,8 @@ HRESULT Cbs_SKill_Revolver_End::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_Stinger_End, false);
 	}
 	m_pNero.lock()->ChangeNeroDirection(Nero::Dir_Front);
+	SoundSystem::GetInstance()->Play("RevolverEnd", 0.2f, false);
+	SoundSystem::GetInstance()->Play("DanteCbsAtt_5", 1.f, true);
 	return S_OK;
 }
 
@@ -8547,6 +8647,7 @@ HRESULT Cbs_SKill_Swing::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_Helm, false);
 	}
+	SoundSystem::GetInstance()->Play("CbsShort2", 0.3f, true);
 	return S_OK;
 }
 
@@ -8622,6 +8723,10 @@ HRESULT Middle_Cbs_BiAttack::StateEnter()
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	
 	m_bPlayEff = true;
+	SoundSystem::GetInstance()->Play("CbsMiddle_1", 0.4f, true);
+	SoundSystem::GetInstance()->Play("Thunder_1", 0.22f, true);
+	SoundSystem::GetInstance()->Play("Thunder_2", 0.5f, false);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f,true);
 	return S_OK;
 }
 
@@ -8644,14 +8749,104 @@ HRESULT Middle_Cbs_BiAttack::StateUpdate(const float _fDeltaTime)
 			m_bPlayEff = false;
 			m_pNero.lock()->PlayEffect(Eff_BiAttack);
 		}
+		SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,6 }, 0.15f, false);
 	}
+	else if (0.54f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
+		if (m_bPlayRedQueenSound)
+		{
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,6 }, 0.2f, false);
+			SoundSystem::GetInstance()->Play("CbsMiddle_1", 0.4f, true);
+			SoundSystem::GetInstance()->Play("Thunder_5", 0.7f, true);
+			SoundSystem::GetInstance()->Play("CbsMiddleSwing_3", 0.4f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
+		}
+	}
+	else if (0.52f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->Play("CbsEff_1", 0.2f, false);
+	}
+
+	else if (0.5f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->Play("CbsMiddle_1", 0.4f, true);
+		SoundSystem::GetInstance()->Play("CbsClothes_2", 0.2f, false);
+	}
+
+	else if (0.48f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,6 }, 0.2f, false);
+	}
+
+	else if (0.46f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->Play("CbsMiddleSwing_4", 0.4f, false);
+		SoundSystem::GetInstance()->Play("CbsEff_1", 0.2f, false);
+		SoundSystem::GetInstance()->Play("CbsClothes_2", 0.2f, false);
+	}
+
+	else if (0.4f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,6 }, 0.2f, false);
+	}
+	else if (0.36f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->Play("CbsMiddleSwing_5", 0.4f, false);
+		SoundSystem::GetInstance()->Play("CbsClothes_3", 0.2f, false);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
+		}
+	}
+	else if (0.3f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,6 }, 0.2f, false);
+		
+	}
+	else if (0.27f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->Play("CbsMiddleSwing_1", 0.4f, false);
+	}
+	else if (0.23f <= fCurrAnimationTime)
+	{
+		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", { 1,6 }, 0.2f, false);
+		SoundSystem::GetInstance()->Play("CbsClothes_2", 0.2f, false);
+	}
+
+
 	else if (0.2f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
-
+		SoundSystem::GetInstance()->Play("CbsMiddleSwing_5", 0.4f, false);
+		//SoundSystem::GetInstance()->Play("CbsMiddle_2", 0.4f, false);
+		SoundSystem::GetInstance()->Play("CbsClothes_3", 0.2f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("JJallang", {1,6}, 0.2f, false);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
+		}
 	}
 	else if (0.15f <= fCurrAnimationTime)
+	{
 		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
+		SoundSystem::GetInstance()->Play("CbsMiddleSwing_2", 0.4f, false);
+		SoundSystem::GetInstance()->Play("CbsMiddle_2", 0.4f, false);
+		SoundSystem::GetInstance()->Play("CbsClothes_3", 0.2f, false);
+		
+	}
 
 	if (0.45f <= fCurrAnimationTime && m_bPlayOnce)
 	{
@@ -8676,6 +8871,30 @@ HRESULT Middle_Cbs_BiAttack::StateUpdate(const float _fDeltaTime)
 		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		NeroState::KeyInput_Cbs_Idle();
 	}
+	if (0.53f >= fCurrAnimationTime)
+	{
+		if (180 <= SoundSystem::GetInstance()->CurrentPosition("CbsMiddle_2"))
+		{
+			SoundSystem::GetInstance()->Play("CbsMiddle_3", 0.4f, false);
+			
+		}
+		if (190 <= SoundSystem::GetInstance()->CurrentPosition("CbsMiddle_3"))
+		{
+			SoundSystem::GetInstance()->Play("CbsMiddle_2", 0.4f, false);
+			
+		}
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_3"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_2", 0.5f, false);
+
+		}
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_2"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_3", 0.5f, false);
+
+		}
+	}
+
 
 	return S_OK;
 }
@@ -8706,6 +8925,10 @@ HRESULT Middle_Cbs_BlitzAttack::StateEnter()
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_bPlayOnce = true;
+	SoundSystem::GetInstance()->Play("CbsMiddle_1", 0.4f, true);
+	SoundSystem::GetInstance()->Play("Thunder_6", 0.4f, true);
+	SoundSystem::GetInstance()->Play("Thunder_2", 0.5f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, true);
 	return S_OK;
 }
 
@@ -8729,6 +8952,19 @@ HRESULT Middle_Cbs_BlitzAttack::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 
+	if (0.79f <= fCurrAnimationTime && m_bPlayOvertureSound)
+	{
+		m_bPlayOvertureSound = false;
+		SoundSystem::GetInstance()->Play("JJallang_4", 0.2f, true);
+	}
+	if (0.65f <= fCurrAnimationTime && m_bPlayRedQueenSound)
+	{
+		m_bPlayRedQueenSound = false;
+		SoundSystem::GetInstance()->Play("JJallang_4", 0.2f, true);
+	}
+
+
+
 	if (0.9f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 
@@ -8742,6 +8978,45 @@ HRESULT Middle_Cbs_BlitzAttack::StateUpdate(const float _fDeltaTime)
 	{
 		m_bPlayOnce = false;
 		m_pNero.lock()->PlayEffect(Eff_BlitzAttack);
+		SoundSystem::GetInstance()->Play("CbsMiddleSwing2", 0.3f, false);
+		SoundSystem::GetInstance()->Play("Thunder_1", 0.5f, false);
+		SoundSystem::GetInstance()->Play("Thunder_7", 0.3f, false);
+		SoundSystem::GetInstance()->Play("DanteSkill_12", 1.f, false);
+	}
+
+	if (0.54f >= fCurrAnimationTime)
+	{
+		if (390 <= SoundSystem::GetInstance()->CurrentPosition("JJallang_4"))
+		{
+			SoundSystem::GetInstance()->Play("JJallang_5", 0.3f, false);
+
+		}
+		if (390 <= SoundSystem::GetInstance()->CurrentPosition("JJallang_4"))
+		{
+			SoundSystem::GetInstance()->Play("JJallang_5", 0.3f, false);
+
+		}
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_3"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_2", 0.3f, false);
+
+		}
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_2"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_3", 0.3f, false);
+
+		}
+	}
+
+	if (0.15f <= fCurrAnimationTime)
+	{
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("CbsEff_1", 0.05f, false);
+			SoundSystem::GetInstance()->Play("CbsClothes_2", 0.2f, false);
+			SoundSystem::GetInstance()->Play("JJallang_4", 0.3f, false);
+		}
 	}
 
 	return S_OK;
@@ -8773,6 +9048,10 @@ HRESULT Middle_Cbs_Satellite::StateEnter()
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_Satellite);
+	SoundSystem::GetInstance()->Play("CbsMiddle_1", 0.4f, true);
+	SoundSystem::GetInstance()->Play("Thunder_8", 0.2f, true);
+	SoundSystem::GetInstance()->Play("Thunder_2", 0.5f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -8788,9 +9067,24 @@ HRESULT Middle_Cbs_Satellite::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.65f <= fCurrAnimationTime)
+	{
 		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
-	else if(0.19f <=fCurrAnimationTime)
+		if (m_bPlayRedQueenSound)
+		{
+			SoundSystem::GetInstance()->Play("JJallang_2", 0.2f, false);
+			m_bPlayRedQueenSound = false;
+		}
+	}
+	else if (0.19f <= fCurrAnimationTime)
+	{
 		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			SoundSystem::GetInstance()->Play("CbsEff_1", 0.07f, false);
+			SoundSystem::GetInstance()->Play("CbsClothes_2", 0.3f, false);
+		}
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -8801,13 +9095,34 @@ HRESULT Middle_Cbs_Satellite::StateUpdate(const float _fDeltaTime)
 		return S_OK;
 	}
 
-	if (0.82f <= fCurrAnimationTime)
+	if (0.77f <= fCurrAnimationTime)
 		NeroState::SetCbsIdle();
 	if (0.72f <= fCurrAnimationTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsMidTrail);
 		m_pNero.lock()->StopEffect(Eff_Satellite);
 		NeroState::KeyInput_Cbs_Idle();
+	}
+
+	if (0.59f <= fCurrAnimationTime && m_bPlayCbsShortSound)
+	{
+		m_bPlayCbsShortSound = false;
+		SoundSystem::GetInstance()->Play("CbsMiddle_3", 0.4f, false);
+
+	}
+
+	if (0.54f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_3"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_2", 0.4f, false);
+
+		}
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_2"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_3", 0.4f, false);
+
+		}
 	}
 	return S_OK;
 }
@@ -8839,6 +9154,10 @@ HRESULT Middle_Cbs_Satellite_Air::StateEnter()
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_Satellite);
+	SoundSystem::GetInstance()->Play("CbsMiddle_1", 0.4f, true);
+	SoundSystem::GetInstance()->Play("Thunder_8", 0.2f, true);
+	SoundSystem::GetInstance()->Play("Thunder_2", 0.5f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -8856,9 +9175,24 @@ HRESULT Middle_Cbs_Satellite_Air::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.59f <= fCurrAnimationTime)
+	{
 		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
+		if (m_bPlayRedQueenSound)
+		{
+			SoundSystem::GetInstance()->Play("JJallang_2", 0.2f, false);
+			m_bPlayRedQueenSound = false;
+		}
+	}
 	else if (0.18f <= fCurrAnimationTime)
+	{
 		NeroState::ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Middle);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			SoundSystem::GetInstance()->Play("CbsEff_1", 0.07f, false);
+			SoundSystem::GetInstance()->Play("CbsClothes_2", 0.3f, false);
+		}
+	}
 
 	if (0.77f <= fCurrAnimationTime)
 	{
@@ -8878,6 +9212,20 @@ HRESULT Middle_Cbs_Satellite_Air::StateUpdate(const float _fDeltaTime)
 	{
 		m_pFSM->ChangeState(NeroFSM::JUMP_LOOP);
 		return S_OK;
+	}
+
+	if (0.54f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_3"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_2", 0.4f, false);
+
+		}
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition("Thunder_2"))
+		{
+			SoundSystem::GetInstance()->Play("Thunder_3", 0.4f, false);
+
+		}
 	}
 
 	NeroState::IsGround();
@@ -8908,6 +9256,10 @@ HRESULT Middle_Cbs_Strike::StateEnter()
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel);
 	m_pNero.lock()->CheckAutoRotate();
+
+	SoundSystem::GetInstance()->Play("CbsStrike", 0.3f, true);
+	SoundSystem::GetInstance()->Play("Thunder_1", 0.3f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -8970,6 +9322,9 @@ HRESULT Middle_Cbs_Strike_Air::StateEnter()
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Cbs_Middle, 1);
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
+	SoundSystem::GetInstance()->Play("CbsStrike", 0.3f, true);
+	SoundSystem::GetInstance()->Play("Thunder_1", 0.3f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9034,6 +9389,9 @@ HRESULT Middle_Cbs_Strike_Air_Down::StateEnter()
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel, {-45.f,0.f,0.f});
+	SoundSystem::GetInstance()->Play("CbsStrike", 0.3f, true);
+	SoundSystem::GetInstance()->Play("Thunder_1", 0.3f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9101,6 +9459,9 @@ HRESULT Middle_Cbs_Strike_Air_Up::StateEnter()
 	NeroState::ActiveGravity(false);
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { 45.f,0.f,0.f });
+	SoundSystem::GetInstance()->Play("CbsStrike", 0.3f, true);
+	SoundSystem::GetInstance()->Play("Thunder_1", 0.3f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9169,6 +9530,9 @@ HRESULT Middle_Cbs_Strike_Down::StateEnter()
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { -45.f,0.f,0.f });
 	m_pNero.lock()->CheckAutoRotate();
+	SoundSystem::GetInstance()->Play("CbsStrike", 0.3f, true);
+	SoundSystem::GetInstance()->Play("Thunder_1", 0.3f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9234,6 +9598,7 @@ HRESULT Middle_Cbs_Strike_Up::StateEnter()
 	m_pNero.lock()->PlayEffect(Eff_CbsMidTrail);
 	m_pNero.lock()->PlayEffect(Eff_LongBarrel, { 45.f,0.f,0.f });
 	m_pNero.lock()->CheckAutoRotate();
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9354,6 +9719,9 @@ HRESULT Pole_ComboA1::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboA1, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA1-1", 0.2f, true);
+	SoundSystem::GetInstance()->Play("LongComboA1-2", 1.f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9410,6 +9778,11 @@ HRESULT Pole_ComboA1::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA1_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.59f <= fCurrAnimationTime)
@@ -9444,6 +9817,8 @@ HRESULT Pole_ComboA2::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboA2, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA2", 1.f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9489,6 +9864,11 @@ HRESULT Pole_ComboA2::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA2_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.46f <= fCurrAnimationTime)
@@ -9523,6 +9903,8 @@ HRESULT Pole_ComboA3::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_HT, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA3-2", 0.4f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9539,7 +9921,14 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.27f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayRedQueenSound)
+		{
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play("LongComboA3-1", 0.6f, false);
+		}
+	}
 	else if (0.21f <= fCurrAnimationTime)
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
 
@@ -9558,6 +9947,11 @@ HRESULT Pole_ComboA3::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboA3_End", false, {}, true);
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.53f <= fCurrAnimationTime)
@@ -9593,6 +9987,10 @@ HRESULT Pole_ComboB1::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB2_Loop, true);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("Long_1", 0.4f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("Buster1", 0.1f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9652,11 +10050,30 @@ HRESULT Pole_ComboB1::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB1_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.53f <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Cbs_Idle();
+	}
+
+	string temp("Long_" + std::to_string(m_iLoopCount));
+	string temp2("Long_" + std::to_string(m_iLoopCount + 1));
+	if (0.34f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition(temp))
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 9)
+				m_iLoopCount = 1;
+			SoundSystem::GetInstance()->Play(temp2, FMath::Random(0.2f,0.4f), false);
+			SoundSystem::GetInstance()->Play("Long_17", 0.2f, false);
+		}
 	}
 	return S_OK;
 }
@@ -9682,6 +10099,10 @@ HRESULT Pole_ComboB2::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Pole_ComboB2", false, Nero::ANI_POLE_COMBOB2);
 	m_pNero.lock()->CheckAutoRotate();
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("Long_1", 0.6f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("Buster2", 0.1f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9741,13 +10162,30 @@ HRESULT Pole_ComboB2::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB2_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.62f <= fCurrAnimationTime)
 	{
 		NeroState::KeyInput_Cbs_Idle();
 	}
-
+	string temp("Long_" + std::to_string(m_iLoopCount));
+	string temp2("Long_" + std::to_string(m_iLoopCount + 1));
+	if (0.34f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition(temp))
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 9)
+				m_iLoopCount = 1;
+			SoundSystem::GetInstance()->Play(temp2, FMath::Random(0.2f, 0.4f), false);
+			SoundSystem::GetInstance()->Play("Long_17", 0.2f, false);
+		}
+	}
 	return S_OK;
 }
 
@@ -9771,6 +10209,10 @@ HRESULT Pole_ComboB3::StateEnter()
 	m_pNero.lock()->ChangeAnimation("Pole_ComboB3", false, Nero::ANI_POLE_COMBOB3);
 	m_pNero.lock()->CheckAutoRotate();
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("Long_1", 0.6f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("Buster1", 0.1f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9789,7 +10231,10 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	if (0.42f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.38f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboA3-2", 0.3f, false);
+	}
 	else if (0.34f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.31f <= fCurrAnimationTime)
@@ -9797,7 +10242,10 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	else if (0.26f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.23f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboA3-2", 0.3f, false);
+	}
 	else if (0.2f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.16f <= fCurrAnimationTime)
@@ -9831,6 +10279,11 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB3_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.53f <= fCurrAnimationTime)
@@ -9838,6 +10291,19 @@ HRESULT Pole_ComboB3::StateUpdate(const float _fDeltaTime)
 		NeroState::KeyInput_Cbs_Idle();
 	}
 
+	string temp("Long_" + std::to_string(m_iLoopCount));
+	string temp2("Long_" + std::to_string(m_iLoopCount + 1));
+	if (0.34f >= fCurrAnimationTime)
+	{
+		if (90 <= SoundSystem::GetInstance()->CurrentPosition(temp))
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 9)
+				m_iLoopCount = 1;
+			SoundSystem::GetInstance()->Play(temp2, FMath::Random(0.2f, 0.4f), false);
+			SoundSystem::GetInstance()->Play("Long_17", 0.2f, false);
+		}
+	}
 	return S_OK;
 }
 
@@ -9865,6 +10331,8 @@ HRESULT Pole_ComboB4::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_ComboB2_End, false);
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("LongComboA3-2", 0.4f, true);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("DanteAtt", { 1,12 }, 1.f, false);
 	return S_OK;
 }
 
@@ -9886,15 +10354,23 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Long, ATTACKTYPE::Attack_KnocBack);
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboB_3", 0.4f, false);
+		SoundSystem::GetInstance()->Play("DanteSkill_5", 1.f, false);
 	}
 	else if (0.17f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.15f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboB_2", 0.4f, false);
+	}
 	else if (0.12f <= fCurrAnimationTime)
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 	else if (0.08f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		SoundSystem::GetInstance()->Play("LongComboB_1", 0.4f, false);
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -9911,6 +10387,11 @@ HRESULT Pole_ComboB4::StateUpdate(const float _fDeltaTime)
 	{
 		m_pNero.lock()->StopEffect(Eff_CbsLongTrail);
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_Cbs_Middle, "Middle_Cbs_PoleComboB4_End", false, {}, true);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("JJallang_6", 0.4f, false);
+		}
 	}
 
 	if (0.48f <= fCurrAnimationTime)
@@ -9950,6 +10431,9 @@ HRESULT Pole_WhirlWind_Start::StateEnter()
 		}
 	}
 	m_pNero.lock()->PlayEffect(Eff_CbsLongTrail);
+	SoundSystem::GetInstance()->Play("WhirlWind_1", 0.4f, true);
+	m_iLoopCount = 1;
+	SoundSystem::GetInstance()->Play("DanteCharging_2", 0.8f, true);
 	return S_OK;
 }
 
@@ -9967,14 +10451,22 @@ HRESULT Pole_WhirlWind_Start::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
-
-	if (0.74f <= fCurrAnimationTime)
+	if (0.84f <= fCurrAnimationTime)
+	{
+		if (m_bPlayRedQueenSound)
+		{
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_2", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
+	else if (0.74f <= fCurrAnimationTime)
 	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
 		if (m_pPlayOnce[2])
 		{
 			m_pPlayOnce[2] = false;
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false);
+			SoundSystem::GetInstance()->Play("WhirlWind_1", FMath::Random(0.3f, 0.4f), false);
 		}
 	}
 	else if (0.56f <= fCurrAnimationTime)
@@ -9984,10 +10476,18 @@ HRESULT Pole_WhirlWind_Start::StateUpdate(const float _fDeltaTime)
 		{
 			m_pPlayOnce[1] = false;
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar3, false);
+			SoundSystem::GetInstance()->Play("WhirlWind_4", FMath::Random(0.3f, 0.4f), false);
 		}
 	}
 	else if (0.41f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_3", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
 	else if (0.32f <= fCurrAnimationTime)
 	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
@@ -9995,6 +10495,15 @@ HRESULT Pole_WhirlWind_Start::StateUpdate(const float _fDeltaTime)
 		{
 			m_pPlayOnce[0] = false;
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false);
+		}
+		//SoundSystem::GetInstance()->Play("WhirlWind_3", FMath::Random(0.3f, 0.4f), false);
+	}
+	else if (0.22f <= fCurrAnimationTime)
+	{
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_2", FMath::Random(0.3f, 0.4f), false);
 		}
 	}
 
@@ -10032,6 +10541,8 @@ HRESULT Pole_WhirlWind_Loop::StateEnter()
 	{
 		m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false, false);
 	}
+	SoundSystem::GetInstance()->Play("WhirlWind_3", FMath::Random(0.3f, 0.4f), false);
+	m_iLoopCount = 3;
 	return S_OK;
 }
 
@@ -10046,7 +10557,7 @@ HRESULT Pole_WhirlWind_Loop::StateUpdate(const float _fDeltaTime)
 {
 	NeroState::StateUpdate(_fDeltaTime);
 	m_fLoopTime -= _fDeltaTime;
-
+	string temp("WhirlWind_" + std::to_string(m_iLoopCount));
 	float fCurrAnimationTime = m_pNero.lock()->Get_PlayingTime();
 
 	if (0.67f <= fCurrAnimationTime)
@@ -10056,6 +10567,16 @@ HRESULT Pole_WhirlWind_Loop::StateUpdate(const float _fDeltaTime)
 		{
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar4, false, true);
 		}
+		if (m_bPlayRedQueenSound)
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 4)
+				m_iLoopCount = 1;
+			m_bPlayOvertureSound = true;
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play(temp, FMath::Random(0.3f, 0.4f), false);
+		}
+		
 	}
 	else if (0.26f <= fCurrAnimationTime)
 	{
@@ -10064,10 +10585,20 @@ HRESULT Pole_WhirlWind_Loop::StateUpdate(const float _fDeltaTime)
 		{
 			m_pNero.lock()->ChangeNewSword(WingSword_Ar3, false, true);
 		}
+		if (m_bPlayOvertureSound)
+		{
+			++m_iLoopCount;
+			if (m_iLoopCount > 4)
+				m_iLoopCount = 1;
+			m_bPlayOvertureSound = false;
+			m_bPlayRedQueenSound = true;
+			SoundSystem::GetInstance()->Play(temp, FMath::Random(0.3f, 0.4f), false);
+		}
 	}
 
 	if (m_fLoopTime < 0.f)
 	{
+		SoundSystem::GetInstance()->Play("LongComboA3-2", 0.4f, false);
 		m_pFSM->ChangeState(NeroFSM::POLE_WHIRLWIND_END);
 		return S_OK;
 	}
@@ -10097,6 +10628,7 @@ HRESULT Pole_WhirlWind_End::StateEnter()
 		m_pNero.lock()->ChangeNewSword(WingSword_HT, false);
 	}
 	m_bPlayOnce = true;
+	SoundSystem::GetInstance()->Play("WhirlWind_5", FMath::Random(0.3f, 0.4f), true);
 	return S_OK;
 }
 
@@ -10119,17 +10651,37 @@ HRESULT Pole_WhirlWind_End::StateUpdate(const float _fDeltaTime)
 		{
 			m_bPlayOnce = false;
 			m_pNero.lock()->PlayEffect(Eff_WhirlWind);
+			SoundSystem::GetInstance()->Play("DanteSkill_5", 1.f, true);
 		}
 	}
 	else if (0.21f <= fCurrAnimationTime)
 	{
 		m_pNero.lock()->Set_Weapon_AttType(Nero::NeroCom_Cbs_Long, ATTACKTYPE::Attack_KnocBack);
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayOvertureSound)
+		{
+			m_bPlayOvertureSound = false;
+			SoundSystem::GetInstance()->Play("LongComboB_3", 0.4f, false);
+		}
 	}
 	else if (0.12f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayRedQueenSound)
+		{
+			m_bPlayRedQueenSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_1", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
 	else if (0.08f <= fCurrAnimationTime)
+	{
 		ActiveColl_Cbs(true, Nero::NeroCom_Cbs_Long);
+		if (m_bPlayCbsShortSound)
+		{
+			m_bPlayCbsShortSound = false;
+			SoundSystem::GetInstance()->Play("WhirlWind_6", FMath::Random(0.3f, 0.4f), false);
+		}
+	}
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
@@ -11254,6 +11806,7 @@ HRESULT Buster_Start::StateEnter()
 	m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_BusterArm,"Buster_Catch", false);
 	if (Nero::NeroCom_RedQueen != m_iNeroCurWeaponIndex)
 		NeroState::SetCbsIdle();
+	m_pNero.lock()->PlayEffect(Eff_Buster);
 	return S_OK;
 }
 

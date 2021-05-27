@@ -28,8 +28,14 @@ private:
 	float _LoadingbarCurXPosOrtho = 0.f;
 
 	std::weak_ptr<class Font> _LoadingText{};
-	bool _TextRender = true;
+	bool _TextRender = false;
 	float _TextBlickTick = 0.f;
+
+	std::shared_ptr<ENGINE::Texture> _LoadingTextTex{};
+	const uint32 _TextMaxCount = 3u;
+	uint32 _CurTextIdx = 0u;
+	Matrix _LoadingTextScreenMat = Matrix();
+	float _TextAlpha = 0.f;
 
 private:
 	explicit LoadingPanel() = default;

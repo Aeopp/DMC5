@@ -1955,6 +1955,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	int m_iLoopCount = 0;
 };
 
 class Pole_ComboB2 : public NeroState
@@ -1971,6 +1973,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	int m_iLoopCount = 0;
 };
 
 class Pole_ComboB3 : public NeroState
@@ -1987,6 +1991,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	int m_iLoopCount = 0;
 };
 
 class Pole_ComboB4 : public NeroState
@@ -2003,6 +2009,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+private:
+	int m_iLoopCount = 0;
 };
 
 class Pole_WhirlWind_Start : public NeroState
@@ -2021,6 +2029,7 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 private:
 	bool	m_pPlayOnce[3];
+	int m_iLoopCount = 0;
 };
 
 class Pole_WhirlWind_Loop : public NeroState

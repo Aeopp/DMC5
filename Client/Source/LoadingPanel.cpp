@@ -67,10 +67,23 @@ void LoadingPanel::RenderUI(const DrawInfo& _Info)
 			_Info.Fx->BeginPass(2);
 			SharedSubset->Render(_Info.Fx);
 			_Info.Fx->EndPass();
+
+			if (1.f > _LoadingProgress)
+			{
+				_Info.Fx->SetTexture("ALB0Map", _LoadingTextTex->GetTexture());
+				_Info.Fx->SetFloat("_SliceAmount", 1.f - _TextAlpha);
+				_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+				_Info.Fx->SetMatrix("ScreenMat", &_LoadingTextScreenMat);
+				_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.0625f * static_cast<float>(_CurTextIdx)), 2u);
+				_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.0625f * static_cast<float>(_CurTextIdx + 1u)), 2u);
+
+				_Info.Fx->BeginPass(0);
+				SharedSubset->Render(_Info.Fx);
+				_Info.Fx->EndPass();
+			}
 		}
 	}
 }
-
 
 Vector2 LoadingPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 {
@@ -149,6 +162,16 @@ HRESULT LoadingPanel::Ready()
 		_LoadingText.lock()->SetRenderFlag(false);
 	}
 
+	_LoadingTextTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Loading\\LoadingSceneText.png");
+	_CurTextIdx = FMath::Random<uint32>(0u, _TextMaxCount - 1u);
+	D3DXMatrixIdentity(&_LoadingTextScreenMat);
+	_LoadingTextScreenMat._11 = 10.24f;
+	_LoadingTextScreenMat._22 = 0.64f;
+	_LoadingTextScreenMat._33 = 1.f;
+	_LoadingTextScreenMat._41 = 0.f;
+	_LoadingTextScreenMat._42 = 280.f;
+	_LoadingTextScreenMat._43 = 0.02f;
+
 	return S_OK;
 }
 
@@ -201,6 +224,13 @@ UINT LoadingPanel::Update(const float _fDeltaTime)
 				_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
 				_TextBlickTick = 0.f;
 			}
+
+			if (1.f > _TextAlpha)
+			{
+				_TextAlpha += 2.05f * _fDeltaTime;
+				if (1.f < _TextAlpha)
+					_TextAlpha = 1.f;
+			}
 		}
 		else
 		{
@@ -209,6 +239,19 @@ UINT LoadingPanel::Update(const float _fDeltaTime)
 				_TextRender = true;
 				_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
 				_TextBlickTick = 0.f;
+			}
+
+			if (0.f < _TextAlpha)
+			{
+				_TextAlpha -= 2.05f * _fDeltaTime;
+				if (0.f >= _TextAlpha)
+				{
+					++_CurTextIdx;
+					if (_TextMaxCount <= _CurTextIdx)
+						_CurTextIdx = 0u;
+
+					_TextAlpha = 0.f;
+				}
 			}
 		}
 	}

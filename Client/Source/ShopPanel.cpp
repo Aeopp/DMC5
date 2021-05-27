@@ -13,14 +13,24 @@
 ShopPanel::UpgradeDesc ShopPanel::_UpgradeDesc =
 { 
 	765u,		// _ExgaugeUpCost
-	3900u,		// _BatteryCost
+	3460u,		// _BatteryCost
 	2830u,		// _TransformCost
-	100000u,	// _RebellionCost
+	10000u,		// _RebellionCost
 
 	1u,			// _ExgaugeUpUpgradeCount
 	1u,			// _BatteryUpgradeCount
 	1u,			// _TransformUpgradeCount
-	0u			// _RebellionUpgradeCount
+	0u,			// _RebellionUpgradeCount
+
+	100u,		// _GreenOrbCost
+	100u,		// _WhiteOrbCost
+	500u,		// _BlueOrbCost
+	500u,		// _PurpleOrbCost
+
+	0u,			// _GreenOrbUpgradeCount
+	0u,			// _WhiteOrbUpgradeCount
+	5u,			// _BlueOrbUpgradeCount
+	1u			// _PurpleOrbUpgradeCount
 };
 
 void ShopPanel::Free()
@@ -114,7 +124,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 		// divinity statue
 		_ImplInfo.Fx->SetFloatArray("_ExtraColor", Vector3(0.f, 0.f, 0.f), 3u);
 		_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
-		_ImplInfo.Fx->SetFloatArray("LightDirection", Vector3(0.f, -1.f, -50.f), 3u);
+		_ImplInfo.Fx->SetFloatArray("LightDirection", Vector3(0.f, -1.f, -15.f), 3u);
 
 		Create_ScreenMat(CurID, ScreenMat, 3);	// Perspective
 		_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -271,6 +281,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				int ScreenMatOpt = 0;
 				int ProgressMaxCnt = 0;
 				int ProgressCurCnt = 0;
+
 				switch (_PreCmd)
 				{
 				case ShopPanel::WP_REDQUEEN:
@@ -420,21 +431,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 
-				//
-				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
-
-				Create_ScreenMat(CurID, ScreenMat, 14);
-				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
-				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
-				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
-				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
-				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount + 0.2f);
-
-				_ImplInfo.Fx->BeginPass(1);
-				SharedSubset->Render(_ImplInfo.Fx);
-				_ImplInfo.Fx->EndPass();
-
-				//
+				// redorb
 				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
 				_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
 				_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
@@ -449,6 +446,19 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				_ImplInfo.Fx->EndPass();
 
 				// info
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
+
+				Create_ScreenMat(CurID, ScreenMat, 14);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount + 0.2f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
 				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponUpgradeInfoFontTex->GetTexture());
 				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
 				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryWeaponInfoSliceAmount);
@@ -494,6 +504,283 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 		}
 
 		//
+		CurID = SELECT_ITEM;
+		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
+		{
+			_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemSliceAmount);
+			
+			// GreenOrb
+			if (ITEM_GREENORB == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.3f);
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 0);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 4);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			// WhiteOrb
+			if (ITEM_WHITEORB == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.3f);
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 5);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			// BlueOrb
+			if (ITEM_BLUEORB == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.3f);
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 2);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 6);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			// PurpleOrb
+			if (ITEM_PURPLEORB == _PreCmd)
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			else
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.3f);
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 3);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemTex->GetTexture());
+			Create_ScreenMat(CurID, ScreenMat, 7);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			if (ITEM_GREENORB <= _PreCmd && ITEM_PURPLEORB >= _PreCmd)
+			{
+				uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
+				bool Buyable = false;
+				int ScreenMatOpt = 0;
+
+				switch (_PreCmd)
+				{
+				case ShopPanel::ITEM_GREENORB:
+					if (_UpgradeDesc._GreenOrbCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 17;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex0->GetTexture());
+					break;
+				case ShopPanel::ITEM_WHITEORB:
+					if (_UpgradeDesc._WhiteOrbCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 18;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex1->GetTexture());
+					break;
+				case ShopPanel::ITEM_BLUEORB:
+					if (_UpgradeDesc._BlueOrbCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 19;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex2->GetTexture());
+					break;
+				case ShopPanel::ITEM_PURPLEORB:
+					if (_UpgradeDesc._PurpleOrbCost <= CurRedOrbCount)
+						Buyable = true;
+					ScreenMatOpt = 20;
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex3->GetTexture());
+					break;
+				}
+
+				Create_ScreenMat(CurID, ScreenMat, 8);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				//
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _SelectWeaponInfoBaseTex->GetTexture());
+
+				Create_ScreenMat(CurID, ScreenMat, 9);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.3f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemInfoSliceAmount + 0.2f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				//
+				Create_ScreenMat(CurID, ScreenMat, 10);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 0.7f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemInfoSliceAmount + 0.2f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				// Button
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemInfoSliceAmount);
+
+				if (Buyable)
+				{
+					_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright * _ButtonBlinkBrightOffset);
+
+					Create_ScreenMat(CurID, ScreenMat, 11);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					Create_ScreenMat(CurID, ScreenMat, 12);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
+				else
+				{
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.9f * _ButtonBlinkBrightOffset);
+
+					Create_ScreenMat(CurID, ScreenMat, 13);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
+
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
+				if (Buyable)
+					_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				else
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.6f);
+
+				Create_ScreenMat(CurID, ScreenMat, 14);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				// redorb
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _RedOrbALBMTex->GetTexture());
+				_ImplInfo.Fx->SetTexture("ATOS0Map", _RedOrbATOSTex->GetTexture());
+				_ImplInfo.Fx->SetTexture("NRMR0Map", _RedOrbNRMRTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemInfoSliceAmount);
+
+				Create_ScreenMat(CurID, ScreenMat, 15);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+				_ImplInfo.Fx->BeginPass(0);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				// info
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemAndInfoBaseTex->GetTexture());
+
+				Create_ScreenMat(CurID, ScreenMat, 16);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemInfoSliceAmount + 0.2f);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemInfoFontTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemInfoSliceAmount);
+
+				Create_ScreenMat(CurID, ScreenMat, ScreenMatOpt);
+				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+				_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+				_ImplInfo.Fx->BeginPass(1);
+				SharedSubset->Render(_ImplInfo.Fx);
+				_ImplInfo.Fx->EndPass();
+
+				// + hp tdt 게이지
+
+			}
+		}
+
+		//
 		CurID = REDORB;
 		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
@@ -518,7 +805,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 			//
 			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _NullBlackTex->GetTexture());
 			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
-			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.3f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 0.25f);
 
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -568,6 +855,9 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				break;
 			case ShopPanel::POPUP_DEPTH_ISUPGRADE:
 				Create_ScreenMat(CurID, ScreenMat, 7);
+				break;
+			case ShopPanel::PUPUP_DEPTH_BUYORB:
+				Create_ScreenMat(CurID, ScreenMat, 16);
 				break;
 			}
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
@@ -723,6 +1013,117 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 					_ImplInfo.Fx->EndPass();
 				}
 				break;
+
+			case ShopPanel::PUPUP_DEPTH_BUYORB:
+				if (POPUP_CMD_OK == _PrePopupCmd)
+				{
+					_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
+
+					Create_ScreenMat(CurID, ScreenMat, 8);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					Create_ScreenMat(CurID, ScreenMat, 9);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.9f);
+
+					Create_ScreenMat(CurID, ScreenMat, 11);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+
+					Create_ScreenMat(CurID, ScreenMat, 17);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.6f);
+
+					Create_ScreenMat(CurID, ScreenMat, 12);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
+				else
+				{
+					_ImplInfo.Fx->SetFloat("_SliceAmount", 0.f);
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonBaseTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.9f);
+
+					Create_ScreenMat(CurID, ScreenMat, 13);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", _ButtonBright);
+
+					Create_ScreenMat(CurID, ScreenMat, 14);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					Create_ScreenMat(CurID, ScreenMat, 15);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ButtonFontTex->GetTexture());
+					_ImplInfo.Fx->SetFloat("_BrightScale", 0.6f);
+
+					Create_ScreenMat(CurID, ScreenMat, 17);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+
+					_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+
+					Create_ScreenMat(CurID, ScreenMat, 12);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
+				break;
 			}
 		}
 	}
@@ -794,11 +1195,18 @@ HRESULT ShopPanel::Ready()
 	_ButtonFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\buttontext.png");
 	_WeaponUpgradeInfoFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\WeaponUpgradeInfo.png");
 	_WeaponUpgradeProgressTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui4000_iam.tga");
+	_ItemTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui_2020_06_iam.tga");
+	_ItemInfoFontTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ItemInfo.png");
 
 	_WeaponBgTex0 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_00_iam.tga");
 	_WeaponBgTex1 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_02_iam.tga");
 	_WeaponBgTex2 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_15_iam.tga");
 	_WeaponBgTex3 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\wp_10_iam.tga");
+
+	_ItemBgTex0 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\item_01_iam.tga");
+	_ItemBgTex1 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\item_02_iam.tga");
+	_ItemBgTex2 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\item_03_iam.tga");
+	_ItemBgTex3 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\item_04_iam.tga");
 
 	_PopupBaseTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui3006_iam.tga");
 	_PopupLineTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui0002_00_iam.tga");
@@ -862,6 +1270,16 @@ void ShopPanel::Init_Font()
 	_FontVec[FT_WP_CBS_TRANSFORM_COST].lock()->SetRenderFlag(false);
 	_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(false);
 
+	_FontVec[FT_ITEM_GREENORB].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_WHITEORB].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_BLUEORB].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_PURPLEORB].lock()->SetRenderFlag(false);
+
+	_FontVec[FT_ITEM_GREENORB_COST].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_WHITEORB_COST].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_BLUEORB_COST].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_PURPLEORB_COST].lock()->SetRenderFlag(false);
+
 	//
 	_FontVec[FT_ATTENTION].lock()->SetText(
 		"A T T E N T I O N",
@@ -883,10 +1301,17 @@ void ShopPanel::ResetOffset()
 	{
 		_CategoryCursorXPos = 394.f;
 	}
-		
-	_CategoryCursorXScaleOffset = 1.f;
 
-	_CategoryWeaponBrightOffset = 1.f;
+	if (WP_REDQUEEN <= _PreCmd && WP_REBELLION >= _PreCmd)
+	{
+		_CategoryWeaponBrightOffset = 1.f;
+	}
+	else if (ITEM_GREENORB <= _PreCmd && ITEM_PURPLEORB >= _PreCmd)
+	{
+		_CategoryItemBrightOffset = 1.f;
+	}
+
+	_CategoryCursorXScaleOffset = 1.f;
 
 	_FontVec[FT_REDORBCOUNT].lock()->SetRenderFlag(true);
 	_FontVec[FT_CUSTOMIZE].lock()->SetRenderFlag(true);
@@ -906,6 +1331,16 @@ void ShopPanel::ResetOffset()
 	_FontVec[FT_WP_CBS_TRANSFORM_COST].lock()->SetRenderFlag(false);
 	_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(false);
 
+	_FontVec[FT_ITEM_GREENORB].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_WHITEORB].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_BLUEORB].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_PURPLEORB].lock()->SetRenderFlag(false);
+
+	_FontVec[FT_ITEM_GREENORB_COST].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_WHITEORB_COST].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_BLUEORB_COST].lock()->SetRenderFlag(false);
+	_FontVec[FT_ITEM_PURPLEORB_COST].lock()->SetRenderFlag(false);
+
 	_BrightAccTime = 0.f;
 	_ButtonBright = 1.f;
 	_UpgradeProgressBright = 1.f;
@@ -920,6 +1355,8 @@ void ShopPanel::ResetOffset()
 
 void ShopPanel::ResetCmd()
 {
+	Init_UIDescs();
+
 	_CurDepth = CATEGORY;
 	_PreDepth = NONE;
 	_CurCmd = CATEGORY_WEAPON;
@@ -932,6 +1369,14 @@ void ShopPanel::ResetCmd()
 	_PrePopupCmd = POPUP_CMD_NONE;
 
 	ResetOffset();
+
+	//
+	_CategoryWeaponSliceAmount = 0.f;
+	_CategoryWeaponInfoXPos = 410.f;
+	_CategoryWeaponInfoSliceAmount = 0.f;
+	_CategoryItemSliceAmount = 1.f;
+	_CategoryItemInfoXPos = 310.f;
+	_CategoryItemInfoSliceAmount = 1.f;
 
 	//
 	_FontVec[FT_REDORBCOUNT].lock()->SetRenderFlag(false);
@@ -1005,6 +1450,32 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 			}
 			break;
 
+		case ITEM_SELECT:
+			_CategoryItemBrightOffset = 2.5f;
+			_CategoryItemInfoXPos = 110.f;
+			_CategoryItemInfoSliceAmount = 1.f;
+
+			switch (_CurCmd)
+			{
+			case ShopPanel::ITEM_GREENORB:
+				_FontVec[FT_ITEM_GREENORB].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_ITEM_GREENORB_COST].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				break;
+			case ShopPanel::ITEM_WHITEORB:
+				_FontVec[FT_ITEM_WHITEORB].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_ITEM_WHITEORB_COST].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				break;
+			case ShopPanel::ITEM_BLUEORB:
+				_FontVec[FT_ITEM_BLUEORB].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_ITEM_BLUEORB_COST].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				break;
+			case ShopPanel::ITEM_PURPLEORB:
+				_FontVec[FT_ITEM_PURPLEORB].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				_FontVec[FT_ITEM_PURPLEORB_COST].lock()->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+				break;
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -1032,11 +1503,26 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 				if (0.f > _CategoryWeaponSliceAmount)
 					_CategoryWeaponSliceAmount = 0.f;
 			}
+			if (1.f > _CategoryItemSliceAmount)
+			{
+				_CategoryItemSliceAmount += 6.f * _fDeltaTime;
+				if (1.f < _CategoryItemSliceAmount)
+					_CategoryItemSliceAmount = 1.f;
+			}
 			if (0.f > _UIDescs[SELECT_WEAPON].Pos.x)
 			{
 				_UIDescs[SELECT_WEAPON].Pos.x += 800.f * _fDeltaTime;
-				if (0.f < _UIDescs[SELECT_WEAPON].Pos.x)
+				if (0.f <= _UIDescs[SELECT_WEAPON].Pos.x)
+				{
 					_UIDescs[SELECT_WEAPON].Pos.x = 0.f;
+					_Inputable = true;
+				}
+			}
+			if (210.f > _UIDescs[SELECT_ITEM].Pos.x)
+			{
+				_UIDescs[SELECT_ITEM].Pos.x += 900.f * _fDeltaTime;
+				if (200.f < _UIDescs[SELECT_ITEM].Pos.x)
+					_UIDescs[SELECT_ITEM].Pos.x = 210.f;
 			}
 			break;
 		case CATEGORY_ITEM:
@@ -1052,11 +1538,26 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 				if (1.f < _CategoryWeaponSliceAmount)
 					_CategoryWeaponSliceAmount = 1.f;
 			}
+			if (0.f < _CategoryItemSliceAmount)
+			{
+				_CategoryItemSliceAmount -= 6.f * _fDeltaTime;
+				if (0.f > _CategoryItemSliceAmount)
+					_CategoryItemSliceAmount = 0.f;
+			}
 			if (-180.f < _UIDescs[SELECT_WEAPON].Pos.x)
 			{
 				_UIDescs[SELECT_WEAPON].Pos.x -= 800.f * _fDeltaTime;
 				if (-180.f > _UIDescs[SELECT_WEAPON].Pos.x)
 					_UIDescs[SELECT_WEAPON].Pos.x = -180.f;
+			}
+			if (0.f < _UIDescs[SELECT_ITEM].Pos.x)
+			{
+				_UIDescs[SELECT_ITEM].Pos.x -= 900.f * _fDeltaTime;
+				if (0.f >= _UIDescs[SELECT_ITEM].Pos.x)
+				{
+					_UIDescs[SELECT_ITEM].Pos.x = 0.f;
+					_Inputable = true;
+				}
 			}
 			break;
 		}
@@ -1140,6 +1641,84 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 		}
 		break;
 
+	case ITEM_SELECT:
+		if (1.f < _CategoryItemBrightOffset)
+		{
+			_CategoryItemBrightOffset -= 7.5f * _fDeltaTime;
+			if (1.f > _CategoryItemBrightOffset)
+				_CategoryItemBrightOffset = 1.f;
+		}
+		if (310.f > _CategoryItemInfoXPos)
+		{
+			_CategoryItemInfoXPos += 1100.f * _fDeltaTime;
+			if (310.f < _CategoryItemInfoXPos)
+				_CategoryItemInfoXPos = 310.f;
+		}
+		if (0.f < _CategoryItemInfoSliceAmount)
+		{
+			_CategoryItemInfoSliceAmount -= 2.f * _fDeltaTime;
+			if (0.f > _CategoryItemInfoSliceAmount)
+				_CategoryItemInfoSliceAmount = 0.f;
+		}
+
+		_BrightAccTime += _fDeltaTime;
+		_ButtonBright = 1.f + 0.15f * sinf(_BrightAccTime * 2.5f);
+		//_UpgradeProgressBright = 1.f + 0.5f * sinf(_BrightAccTime * 2.5f);
+
+		if (_ButtonBlinkStart)
+		{
+			_ButtonBlinkAccTime += _fDeltaTime;
+
+			if (4u <= _ButtonBlinkCnt)
+			{
+				// + 새 팝업창
+				_UIDescs[POPUP].Using = true;
+				_CurPopupDepth = POPUP_DEPTH_NOREDORB;	// 임시
+
+				if (ITEM_GREENORB <= _PreCmd && ITEM_PURPLEORB >= _PreCmd)
+				{
+					uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
+					switch (_PreCmd)
+					{
+					case ShopPanel::ITEM_GREENORB:
+						if (_UpgradeDesc._GreenOrbCost <= CurRedOrbCount)
+							_CurPopupDepth = PUPUP_DEPTH_BUYORB;
+						break;
+					case ShopPanel::ITEM_WHITEORB:
+						if (_UpgradeDesc._WhiteOrbCost <= CurRedOrbCount)
+							_CurPopupDepth = PUPUP_DEPTH_BUYORB;
+						break;
+					case ShopPanel::ITEM_BLUEORB:
+						if (_UpgradeDesc._BlueOrbCost <= CurRedOrbCount)
+							_CurPopupDepth = PUPUP_DEPTH_BUYORB;
+						break;
+					case ShopPanel::ITEM_PURPLEORB:
+						if (_UpgradeDesc._PurpleOrbCost <= CurRedOrbCount)
+							_CurPopupDepth = PUPUP_DEPTH_BUYORB;
+						break;
+					}
+				}
+
+				_CurPopupCmd = POPUP_CMD_OK;
+
+				_ButtonBlinkStart = false;
+				_ButtonBlinkBrightOffset = 1.f;
+				_ButtonBlinkAccTime = 0.f;
+				_ButtonBlinkCnt = 0;
+			}
+			else if (0.08f < _ButtonBlinkAccTime && 4u > _ButtonBlinkCnt)
+			{
+				if (1 == _ButtonBlinkCnt % 2)
+					_ButtonBlinkBrightOffset = 1.f;
+				else
+					_ButtonBlinkBrightOffset = 0.4f;
+
+				++_ButtonBlinkCnt;
+				_ButtonBlinkAccTime = 0.f;
+			}
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -1169,11 +1748,28 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 				_FontVec[FT_WP_RB_REBELLION].lock()->SetRenderFlag(true);
 				_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(true);
 				break;
+			case ShopPanel::ITEM_GREENORB:
+				_FontVec[FT_ITEM_GREENORB].lock()->SetRenderFlag(true);
+				_FontVec[FT_ITEM_GREENORB_COST].lock()->SetRenderFlag(true);
+				break;
+			case ShopPanel::ITEM_WHITEORB:
+				_FontVec[FT_ITEM_WHITEORB].lock()->SetRenderFlag(true);
+				_FontVec[FT_ITEM_WHITEORB_COST].lock()->SetRenderFlag(true);
+				break;
+			case ShopPanel::ITEM_BLUEORB:
+				_FontVec[FT_ITEM_BLUEORB].lock()->SetRenderFlag(true);
+				_FontVec[FT_ITEM_BLUEORB_COST].lock()->SetRenderFlag(true);
+				break;
+			case ShopPanel::ITEM_PURPLEORB:
+				_FontVec[FT_ITEM_PURPLEORB].lock()->SetRenderFlag(true);
+				_FontVec[FT_ITEM_PURPLEORB_COST].lock()->SetRenderFlag(true);
+				break;
 			}
 			break;
 
 		case POPUP_DEPTH_NOREDORB:
 		case POPUP_DEPTH_ISUPGRADE:
+		case PUPUP_DEPTH_BUYORB:
 			_FontVec[FT_ATTENTION].lock()->SetRenderFlag(true);
 			switch (_PreCmd)
 			{
@@ -1192,6 +1788,22 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 			case ShopPanel::WP_REBELLION:
 				_FontVec[FT_WP_RB_REBELLION].lock()->SetRenderFlag(false);
 				_FontVec[FT_WP_RB_REBELLION_COST].lock()->SetRenderFlag(false);
+				break;
+			case ShopPanel::ITEM_GREENORB:
+				_FontVec[FT_ITEM_GREENORB].lock()->SetRenderFlag(false);
+				_FontVec[FT_ITEM_GREENORB_COST].lock()->SetRenderFlag(false);
+				break;
+			case ShopPanel::ITEM_WHITEORB:
+				_FontVec[FT_ITEM_WHITEORB].lock()->SetRenderFlag(false);
+				_FontVec[FT_ITEM_WHITEORB_COST].lock()->SetRenderFlag(false);
+				break;
+			case ShopPanel::ITEM_BLUEORB:
+				_FontVec[FT_ITEM_BLUEORB].lock()->SetRenderFlag(false);
+				_FontVec[FT_ITEM_BLUEORB_COST].lock()->SetRenderFlag(false);
+				break;
+			case ShopPanel::ITEM_PURPLEORB:
+				_FontVec[FT_ITEM_PURPLEORB].lock()->SetRenderFlag(false);
+				_FontVec[FT_ITEM_PURPLEORB_COST].lock()->SetRenderFlag(false);
 				break;
 			}
 			break;
@@ -1244,12 +1856,13 @@ void ShopPanel::Init_UIDescs()
 	if (!_UIDescs)
 		_UIDescs = new UI_DESC[DESC_END];
 
-	// Using, Pos, Scale, Rot
+	// Using, Pos, Scale
 	_UIDescs[STATUE_BG] = { true, Vector3(640.f, 360.f, 0.9f), Vector3(8.f, 8.f, 1.f) };
 	_UIDescs[REDORB] = { true, Vector3(1070.f, 50.f, 0.5f), Vector3(0.55f, 0.55f, 1.f) };
 	_UIDescs[CUSTOMIZE] = { true, Vector3(50.f, 40.f, 0.5f), Vector3(0.6f, 0.6f, 1.f) };
 	_UIDescs[SELECT_GUIDE] = { true, Vector3(285.f, 655.f, 0.5f), Vector3(5.12f, 0.32f, 1.f) };
 	_UIDescs[SELECT_WEAPON] = { true, Vector3(0.f, 0.f, 0.5f), Vector3(1.f, 1.f, 1.f) };
+	_UIDescs[SELECT_ITEM] = { true, Vector3(210.f, 0.f, 0.5f), Vector3(1.f, 1.f, 1.f) };
 	_UIDescs[SELECT_CATEGORY] = { true, Vector3(552.f, 100.f, 0.5f), Vector3(10.24f, 0.32f, 1.f) };
 	_UIDescs[POPUP] = { false, Vector3(0.f, 0.f, 0.3f), Vector3(1.f, 1.f, 1.f) };
 }
@@ -1653,6 +2266,232 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		}
 		break;
 
+	case SELECT_ITEM:
+		switch (_Opt)
+		{
+		// base
+		case 0:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 215.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.665f, 0.065f);
+			_MaxTexUV = Vector2(0.828f, 0.227f);
+			break;
+		case 1:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 325.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.665f, 0.065f);
+			_MaxTexUV = Vector2(0.828f, 0.227f);
+			break;
+		case 2:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 435.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.665f, 0.065f);
+			_MaxTexUV = Vector2(0.828f, 0.227f);
+			break;
+		case 3:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 545.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.665f, 0.065f);
+			_MaxTexUV = Vector2(0.828f, 0.227f);
+			break;
+		case 4:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 215.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.5f, 0.25f);
+			_MaxTexUV = Vector2(0.75f, 0.5f);
+			break;
+		case 5:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 325.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.75f, 0.f);
+			_MaxTexUV = Vector2(1.f, 0.25f);
+			break;
+		case 6:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 435.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(0.25f, 0.5f);
+			break;
+		case 7:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + 90.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 545.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.5f, 0.f);
+			_MaxTexUV = Vector2(0.75f, 0.25f);
+			break;
+		// bg
+		case 8:
+			_Out._11 = 6.47f;
+			_Out._22 = 7.2f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 956.f - (g_nWndCX >> 1);
+			_Out._42 = -(360.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.377f, 0.f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+		// info base
+		case 9:
+			_Out._11 = _UIDescs[_ID].Scale.x * 3.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.7f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 200.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.332f);
+			_MaxTexUV = Vector2(1.f, 0.707f);
+			break;
+		case 10:
+			_Out._11 = _UIDescs[_ID].Scale.x * 3.f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.4f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 3.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 248.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.43f, 0.879f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+		// button
+		case 11:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 66.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 258.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.619f);
+			_MaxTexUV = Vector2(0.616f, 0.675f);
+			break;
+		case 12:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 66.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 258.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.736f);
+			_MaxTexUV = Vector2(0.616f, 0.795f);
+			break;
+		case 13:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 66.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 258.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.279f, 0.677f);
+			_MaxTexUV = Vector2(0.616f, 0.734f);
+			break;
+		case 14:
+			_Out._11 = _UIDescs[_ID].Scale.x * 1.1f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.39f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 68.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 263.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.5f);
+			break;
+		// redorb
+		case 15:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.36f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.36f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos - 120.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 250.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+		// info
+		case 16:
+			_Out._11 = _UIDescs[_ID].Scale.x * 4.1f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 40.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 380.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.41f);
+			_MaxTexUV = Vector2(1.f, 0.72f);
+			break;
+		// item Info
+		case 17:
+			_Out._11 = _UIDescs[_ID].Scale.x * 4.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.314f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 110.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 376.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.f);
+			_MaxTexUV = Vector2(1.f, 0.25f);
+			break;
+		case 18:
+			_Out._11 = _UIDescs[_ID].Scale.x * 4.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.314f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 110.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 376.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.5f);
+			break;
+		case 19:
+			_Out._11 = _UIDescs[_ID].Scale.x * 4.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.314f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 110.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 376.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.5f);
+			_MaxTexUV = Vector2(1.f, 0.75f);
+			break;
+		case 20:
+			_Out._11 = _UIDescs[_ID].Scale.x * 4.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 1.314f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 110.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 376.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.75f);
+			_MaxTexUV = Vector2(1.f, 1.f);
+			break;
+
+		default:
+			goto DEFAULT;
+		}
+		break;
+
 	case SELECT_CATEGORY:
 		if ((int)CATEGORY_WEAPON == _Opt || (int)CATEGORY_ITEM == _Opt)
 		{
@@ -1685,7 +2524,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MaxTexUV = Vector2(1.f, 1.f);
 			break;
 		case 1:
-			_Out._11 = 7.6f;
+			_Out._11 = 9.6f;
 			_Out._22 = 4.2f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
 			_Out._41 = 0.f;
@@ -1725,17 +2564,17 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MaxTexUV = Vector2(1.f, 0.75f);
 			break;
 		case 5:
-			_Out._11 = 4.4f;
+			_Out._11 = 5.f;
 			_Out._22 = 0.8f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = 750.f - (g_nWndCX >> 1);
+			_Out._41 = 762.f - (g_nWndCX >> 1);
 			_Out._42 = -(350.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.f);
 			_MaxTexUV = Vector2(1.f, 0.25f);
 			break;
 		case 6:
-			_Out._11 = 7.f;
+			_Out._11 = 14.f;
 			_Out._22 = 0.2f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
 			_Out._41 = 660.f - (g_nWndCX >> 1);
@@ -1745,10 +2584,10 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MaxTexUV = Vector2(1.f, 0.0625f);
 			break;
 		case 7:
-			_Out._11 = 4.4f;
+			_Out._11 = 5.f;
 			_Out._22 = 0.8f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = 710.f - (g_nWndCX >> 1);
+			_Out._41 = 719.f - (g_nWndCX >> 1);
 			_Out._42 = -(350.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.25f);
@@ -1758,7 +2597,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 2.5f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = -60.f;
+			_Out._41 = -80.f;
 			_Out._42 = -135.f;
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.279f, 0.619f);
@@ -1768,7 +2607,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 2.5f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = -60.f;
+			_Out._41 = -80.f;
 			_Out._42 = -135.f;
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.279f, 0.736f);
@@ -1778,7 +2617,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 1.6f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = (-60.f + 637.f) - (g_nWndCX >> 1);
+			_Out._41 = (-80.f + 637.f) - (g_nWndCX >> 1);
 			_Out._42 = -(502.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.0f);
@@ -1788,7 +2627,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 2.5f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = 130.f;
+			_Out._41 = 150.f;	
 			_Out._42 = -135.f;
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.279f, 0.677f);
@@ -1798,7 +2637,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 1.6f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = (130.f + 637.f) - (g_nWndCX >> 1);
+			_Out._41 = (150.f + 637.f) - (g_nWndCX >> 1);
 			_Out._42 = -(502.f - (g_nWndCY >> 1));
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.f, 0.5f);
@@ -1808,7 +2647,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 2.5f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = -60.f;
+			_Out._41 = -80.f;
 			_Out._42 = -135.f;
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.279f, 0.677f);
@@ -1818,7 +2657,7 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 2.5f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = 130.f;
+			_Out._41 = 150.f;
 			_Out._42 = -135.f;
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.279f, 0.619f);
@@ -1828,11 +2667,31 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_Out._11 = 2.5f;
 			_Out._22 = 0.35f;
 			_Out._33 = _UIDescs[_ID].Scale.z;
-			_Out._41 = 130.f;
+			_Out._41 = 150.f;
 			_Out._42 = -135.f;
 			_Out._43 = _UIDescs[_ID].Pos.z;
 			_MinTexUV = Vector2(0.279f, 0.736f);
 			_MaxTexUV = Vector2(0.616f, 0.795f);
+			break;
+		case 16:
+			_Out._11 = 5.f;
+			_Out._22 = 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 741.f - (g_nWndCX >> 1);
+			_Out._42 = -(350.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.5f);
+			_MaxTexUV = Vector2(1.f, 0.75f);
+			break;
+		case 17:
+			_Out._11 = 1.6f;
+			_Out._22 = 0.35f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (-80.f + 637.f) - (g_nWndCX >> 1);
+			_Out._42 = -(500.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			_MinTexUV = Vector2(0.f, 0.25f);
+			_MaxTexUV = Vector2(1.f, 0.5f);
 			break;
 		default:
 			goto DEFAULT;
@@ -1898,13 +2757,13 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 			pFont->SetRenderFlag(false);
 	}
 
-	// SELECT_WEAPON
 	const Vector3 BaseColor = { 1.3f, 1.3f, 1.3f };
 	const Vector3 DarkColor = { 0.3f, 0.3f, 0.3f };
 	const Vector3 RedColor = { 1.1f, 0.f, 0.f };
 	Vector3 CurCostColor = BaseColor;
 	uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
 
+	// SELECT_WEAPON
 	if (WP_REDQUEEN == _PreCmd && !_UIDescs[POPUP].Using)
 	{
 		_FontVec[FT_WP_REDQUEEN].lock()->SetText(
@@ -2068,6 +2927,103 @@ void ShopPanel::Update_Font(const float _fDeltaTime)
 			DarkColor
 		);
 	}
+
+	// SELECT_ITEM
+	if (ITEM_GREENORB == _PreCmd && !_UIDescs[POPUP].Using)
+	{
+		_FontVec[FT_ITEM_GREENORB].lock()->SetText(
+			"GREEN ORB",
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 127.f, _UIDescs[SELECT_ITEM].Pos.y + 200.f },
+			{ 0.7f, 0.7f },
+			BaseColor
+		);
+
+		if (_UpgradeDesc._GreenOrbCost <= CurRedOrbCount)
+			CurCostColor = BaseColor;
+		else
+			CurCostColor = RedColor;
+
+		_FontVec[FT_ITEM_GREENORB_COST].lock()->SetText(
+			std::to_string(_UpgradeDesc._GreenOrbCost),
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 94.f, _UIDescs[SELECT_ITEM].Pos.y + 252.f },
+			{ 0.55f, 0.55f },
+			CurCostColor
+		);
+	}
+
+	if (ITEM_WHITEORB == _PreCmd && !_UIDescs[POPUP].Using)
+	{
+		_FontVec[FT_ITEM_WHITEORB].lock()->SetText(
+			"WHITE ORB",
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 127.f, _UIDescs[SELECT_ITEM].Pos.y + 200.f },
+			{ 0.7f, 0.7f },
+			BaseColor
+		);
+
+		if (_UpgradeDesc._WhiteOrbCost <= CurRedOrbCount)
+			CurCostColor = BaseColor;
+		else
+			CurCostColor = RedColor;
+
+		_FontVec[FT_ITEM_WHITEORB_COST].lock()->SetText(
+			std::to_string(_UpgradeDesc._WhiteOrbCost),
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 94.f, _UIDescs[SELECT_ITEM].Pos.y + 252.f },
+			{ 0.55f, 0.55f },
+			CurCostColor
+		);
+	}
+
+	if (ITEM_BLUEORB == _PreCmd && !_UIDescs[POPUP].Using)
+	{
+		_FontVec[FT_ITEM_BLUEORB].lock()->SetText(
+			"BLUE ORB",
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 127.f, _UIDescs[SELECT_ITEM].Pos.y + 200.f },
+			{ 0.7f, 0.7f },
+			BaseColor
+		);
+
+		if (_UpgradeDesc._BlueOrbCost <= CurRedOrbCount)
+			CurCostColor = BaseColor;
+		else
+			CurCostColor = RedColor;
+
+		_FontVec[FT_ITEM_BLUEORB_COST].lock()->SetText(
+			std::to_string(_UpgradeDesc._BlueOrbCost),
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 94.f, _UIDescs[SELECT_ITEM].Pos.y + 252.f },
+			{ 0.55f, 0.55f },
+			CurCostColor
+		);
+	}
+
+	if (ITEM_PURPLEORB == _PreCmd && !_UIDescs[POPUP].Using)
+	{
+		_FontVec[FT_ITEM_PURPLEORB].lock()->SetText(
+			"PURPLE ORB",
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 127.f, _UIDescs[SELECT_ITEM].Pos.y + 200.f },
+			{ 0.7f, 0.7f },
+			BaseColor
+		);
+
+		if (_UpgradeDesc._PurpleOrbCost <= CurRedOrbCount)
+			CurCostColor = BaseColor;
+		else
+			CurCostColor = RedColor;
+
+		_FontVec[FT_ITEM_PURPLEORB_COST].lock()->SetText(
+			std::to_string(_UpgradeDesc._PurpleOrbCost),
+			Font::TEX_ID::DMC5_GREEN_GRAD,
+			{ _UIDescs[SELECT_ITEM].Pos.x + _CategoryItemInfoXPos - 94.f, _UIDescs[SELECT_ITEM].Pos.y + 252.f },
+			{ 0.55f, 0.55f },
+			CurCostColor
+		);
+	}
 }
 
 Vector2 ShopPanel::WorldPosToScreenPos(const Vector3& WorldPos)
@@ -2093,6 +3049,9 @@ Vector2 ShopPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 
 void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 {
+	if (!_Inputable)
+		return;
+
 	if (!_UIDescs[POPUP].Using)
 	{
 		switch (_PreDepth)
@@ -2109,16 +3068,35 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 					_CurCmd = CATEGORY_WEAPON;
 					break;
 				}
+				_Inputable = false;
 			}
 			else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 			{
-				_CurDepth = WEAPON_SELECT;
-				_CurCmd = WP_REDQUEEN;
+				switch (_PreCmd)
+				{
+				case CATEGORY_WEAPON:
+					_CurDepth = WEAPON_SELECT;
+					_CurCmd = WP_REDQUEEN;
+					break;
+				case CATEGORY_ITEM:
+					_CurDepth = ITEM_SELECT;
+					_CurCmd = ITEM_GREENORB;
+					break;
+				}
 			}
 			else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 			{
-				_CurDepth = WEAPON_SELECT;
-				_CurCmd = WP_REBELLION;
+				switch (_PreCmd)
+				{
+				case CATEGORY_WEAPON:
+					_CurDepth = WEAPON_SELECT;
+					_CurCmd = WP_REBELLION;
+					break;
+				case CATEGORY_ITEM:
+					_CurDepth = ITEM_SELECT;
+					_CurCmd = ITEM_PURPLEORB;
+					break;
+				}
 			}
 			break;
 
@@ -2127,6 +3105,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 			{
 				_CurDepth = CATEGORY;
 				_CurCmd = CATEGORY_ITEM;
+				_Inputable = false;
 			}
 			else if (Input::GetKeyDown(DIK_RETURN))
 			{
@@ -2170,6 +3149,56 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 				}
 			}
 			break;
+
+		case ITEM_SELECT:
+			if (Input::GetKeyDown(DIK_TAB))
+			{
+				_CurDepth = CATEGORY;
+				_CurCmd = CATEGORY_WEAPON;
+				_Inputable = false;
+			}
+			else if (Input::GetKeyDown(DIK_RETURN))
+			{
+				if (!_ButtonBlinkStart)
+					_ButtonBlinkStart = true;
+			}
+			else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
+			{
+				switch (_PreCmd)
+				{
+				case ITEM_GREENORB:
+					_CurCmd = ITEM_WHITEORB;
+					break;
+				case ITEM_WHITEORB:
+					_CurCmd = ITEM_BLUEORB;
+					break;
+				case ITEM_BLUEORB:
+					_CurCmd = ITEM_PURPLEORB;
+					break;
+				case ITEM_PURPLEORB:
+					_CurCmd = ITEM_GREENORB;
+					break;
+				}
+			}
+			else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
+			{
+				switch (_PreCmd)
+				{
+				case ITEM_GREENORB:
+					_CurCmd = ITEM_PURPLEORB;
+					break;
+				case ITEM_WHITEORB:
+					_CurCmd = ITEM_GREENORB;
+					break;
+				case ITEM_BLUEORB:
+					_CurCmd = ITEM_WHITEORB;
+					break;
+				case ITEM_PURPLEORB:
+					_CurCmd = ITEM_BLUEORB;
+					break;
+				}
+			}
+			break;
 		}
 	}
 	else
@@ -2191,7 +3220,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						if (3u == _UpgradeDesc._ExgaugeUpUpgradeCount)
 							_UpgradeDesc._ExgaugeUpCost = 9999999u;
 						else if (2u == _UpgradeDesc._ExgaugeUpUpgradeCount)
-							_UpgradeDesc._ExgaugeUpCost = 3460u;
+							_UpgradeDesc._ExgaugeUpCost = 961u;
 
 						break;
 
@@ -2205,7 +3234,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 
 					case WP_CBS:
 						++_UpgradeDesc._TransformUpgradeCount;
-						BtlPanel::ConsumeRedOrb(_UpgradeDesc._TransformUpgradeCount);
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._TransformCost);
 
 						if (3u == _UpgradeDesc._TransformUpgradeCount)
 							_UpgradeDesc._TransformCost = 9999999u;
@@ -2220,6 +3249,93 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 
 						_UpgradeDesc._RebellionCost = 9999999u;
 						
+						break;
+					}
+
+					_CurPopupDepth = POPUP_DEPTH_NONE;
+					_CurPopupCmd = POPUP_CMD_NONE;
+					_UIDescs[POPUP].Using = false;
+					break;
+
+				case POPUP_CMD_CANCLE:
+				default:
+					_CurPopupDepth = POPUP_DEPTH_NONE;
+					_CurPopupCmd = POPUP_CMD_NONE;
+					_UIDescs[POPUP].Using = false;
+					break;
+				}
+			}
+			else if (Input::GetKeyDown(DIK_DOWNARROW)
+				|| Input::GetKeyDown(DIK_RIGHTARROW)
+				|| Input::GetKeyDown(DIK_UPARROW)
+				|| Input::GetKeyDown(DIK_LEFTARROW))
+			{
+				switch (_PrePopupCmd)
+				{
+				case POPUP_CMD_OK:
+					_CurPopupCmd = POPUP_CMD_CANCLE;
+					break;
+				case POPUP_CMD_CANCLE:
+					_CurPopupCmd = POPUP_CMD_OK;
+					break;
+				}
+			}
+			break;
+
+		case PUPUP_DEPTH_BUYORB:
+			if (Input::GetKeyDown(DIK_RETURN))
+			{
+				switch (_PrePopupCmd)
+				{
+				case POPUP_CMD_OK:
+					switch (_PreCmd)
+					{
+					case ITEM_GREENORB:
+						++_UpgradeDesc._GreenOrbUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._GreenOrbCost);
+						_UpgradeDesc._GreenOrbCost += 100u;
+
+						if (auto Sp = FindGameObjectWithTag(Player).lock(); Sp)
+							std::static_pointer_cast<Nero>(Sp)->IncreaseHp(999);
+	
+						break;
+
+					case ITEM_WHITEORB:
+						++_UpgradeDesc._WhiteOrbUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._WhiteOrbCost);
+						_UpgradeDesc._WhiteOrbCost += 100u;
+
+						BtlPanel::AccumulateTDTGauge(1.f);
+
+						break;
+
+					case ITEM_BLUEORB:
+						++_UpgradeDesc._BlueOrbUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._BlueOrbCost);
+
+						if (10u <= _UpgradeDesc._BlueOrbUpgradeCount)
+							_UpgradeDesc._BlueOrbCost = 9999999u;
+						else
+							_UpgradeDesc._BlueOrbCost += 250u;
+
+						if (auto Sp = FindGameObjectWithTag(Player).lock(); Sp)
+							std::static_pointer_cast<Nero>(Sp)->IncreaseMaxHp(20);
+
+						BtlPanel::AddHpGaugeCount(1u);
+
+						break;
+
+					case ITEM_PURPLEORB:
+						++_UpgradeDesc._PurpleOrbUpgradeCount;
+						BtlPanel::ConsumeRedOrb(_UpgradeDesc._PurpleOrbCost);
+						
+						if (3u <= _UpgradeDesc._PurpleOrbUpgradeCount)
+							_UpgradeDesc._PurpleOrbCost = 9999999u;
+						else
+							_UpgradeDesc._PurpleOrbCost += 500u;
+
+						BtlPanel::SetTDTGaugeLevel(_UpgradeDesc._PurpleOrbUpgradeCount);
+
 						break;
 					}
 

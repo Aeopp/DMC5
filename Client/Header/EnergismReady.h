@@ -37,12 +37,13 @@ public:
 	virtual void	OnEnable() override;
 	virtual void    OnDisable() override;
 public:
-	void PlayStart(const Vector3& Location , const float GroundY, const bool bEditPlay=false);
+	void PlayStart(const Vector3& Location ,const bool bEditPlay=false);
 	void PlayEnd();
+	void UpdatePosition(const Vector3& Location);
 private:
 	void ParticleUpdate(const float DeltaTime);
 	void PlayParticle();
-	void UpdatePosition(const Vector3& Location);
+	
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
@@ -66,19 +67,19 @@ private:
 	float LaunchFlux{5.f};
 
 	float GrowTime = 3.f;
-	float PlayTime = 10.f;
+	float PlayTime = 9.f;
 	float NoiseTimeCorr = 1.f;
 
 	float FluxLow = 0.f;
-	float FluxHigh = 1.f;
+	float FluxHigh = 0.5f;
 	float RadiusLow = 0.f;
-	float RadiusHigh = 1.f;
+	float RadiusHigh = 1.3f;
 
-	float ParticleWorldScale = 0.000135f;
+	float ParticleWorldScale = 0.000115f;
 	float ParticleDelta = 0.016f;
 
-	float StartColorIntencity = 0.020f;
-	float EndColorIntencity = 0.020f;
-	float GrowEndScale = 0.0005f;
+	float StartColorIntencity = 0.000f;
+	float EndColorIntencity = 0.0035f;
+	float GrowEndScale = 0.00030f;
 };
 #endif //

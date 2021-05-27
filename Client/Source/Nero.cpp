@@ -42,7 +42,7 @@
 #include "WhirlWind.h"
 #include "Change.h"
 #include "SoundSystem.h"
-
+#include "StoneDebrisMulti.h"
 #include "NeroCoat.h"
 
 Nero::Nero()
@@ -305,6 +305,9 @@ HRESULT Nero::Ready()
 		m_pShapeParticle[SP_WHITE].lock()->SetScale(0.0009f);
 	}
 
+	for (int i = 0; i < 8; ++i)
+		m_pStone[i] = AddGameObject<StoneDebrisMulti>();
+
 	m_pFSM.reset(NeroFSM::Create(static_pointer_cast<Nero>(m_pGameObject.lock())));
 
 	m_iCurAnimationIndex = ANI_END;
@@ -390,7 +393,14 @@ UINT Nero::Update(const float _fDeltaTime)
 	//if (Input::GetKeyDown(DIK_9))
 	//{
 	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	//}w
+	//}
+
+	if (Input::GetKeyDown(DIK_1))
+	{
+		BuyUpgradedOverture();
+		BuyCbsMiddle();
+		BuyCbsLong();
+	}
 
 
 	if (80 <= SoundSystem::GetInstance()->CurrentPosition("GetOrb1"))
@@ -815,7 +825,7 @@ void Nero::Update_Majin(float _fDeltaTime)
 	if (m_IsMajin)
 	{
 		if (!m_pBtlPanel.expired())
-			m_pBtlPanel.lock()->ConsumeTDTGauge(_fDeltaTime);
+			m_pBtlPanel.lock()->ConsumeTDTGauge(0.1f);
 	}
 
 	if (!m_pBtlPanel.expired() && m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
@@ -1475,6 +1485,24 @@ void Nero::IncreaseHp(int _Hp)
 		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 }
 
+void Nero::IncreaseMaxHp(const int _Amount)
+{
+	if (0 >= _Amount)
+		return;
+
+	/*
+	MaxHP 100 기준 5칸
+	한 칸 = 20
+	*/
+
+	m_BattleInfo.iMaxHp += _Amount;
+	m_BattleInfo.iHp += _Amount;
+
+	float fHpRatio = float(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
+}
+
 float Nero::Get_ExGauge()
 {
 	if (!m_pBtlPanel.expired())
@@ -1895,6 +1923,39 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		m_pCbsLongTrail.lock()->PlayEnd();
 		break;
 	default:
+		break;
+	}
+}
+
+void Nero::PlayStone(GAMEOBJECTTAG _eTag)
+{
+	float fRandom = FMath::Random<float>(0.0005f, 0.0008f);
+	Vector3 vRot = FMath::Random<Vector3>(Vector3{ 0.f,0.f,0.f }, Vector3{ 180.f,180.f,180.f });
+	Vector3 vPos = m_pTransform.lock()->GetPosition();
+	Vector3 vLook = -m_pTransform.lock()->GetLook();
+	vPos.y -= 0.05f;
+	vLook.y = 0.f;
+	switch (_eTag)
+	{
+	case GAMEOBJECTTAG::TAG_RedQueen:
+		
+		vPos += vLook * 0.3f;
+		for (int i = 0; i < 8; ++i)
+		{
+			m_pStone[i].lock()->SetPosition(vPos);
+			m_pStone[i].lock()->SetScale(fRandom);
+			m_pStone[i].lock()->PlayStart(40.f);
+			m_pStone[i].lock()->SetRotation(vRot);
+		}
+		break;
+	case GAMEOBJECTTAG::TAG_BusterArm_Right:
+		for (int i = 0; i < 8; ++i)
+		{
+			m_pStone[i].lock()->SetPosition(vPos);
+			m_pStone[i].lock()->SetScale(fRandom);
+			m_pStone[i].lock()->PlayStart(40.f);
+			m_pStone[i].lock()->SetRotation(vRot);
+		}
 		break;
 	}
 }

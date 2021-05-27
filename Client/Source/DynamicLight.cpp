@@ -51,6 +51,15 @@ void DynamicLight::Update(const D3DXCOLOR& _Color,const float Radius,const float
 		SpPtLight->lightFlux = Flux; 
 		SpPtLight->SetPosition(FMath::ConvertVector4(Location, 1.f));
 	}
+}
+void DynamicLight::UpdatePosition(const Vector3& Location)
+{
+
+	if (auto SpPtLight = _PtLight.lock();
+		SpPtLight)
+	{
+		SpPtLight->SetPosition(FMath::ConvertVector4(Location, 1.f));
+	}
 };
 
 void DynamicLight::PlayEnd()

@@ -23,7 +23,7 @@ HRESULT Em200Hand::Ready()
 	Unit::Ready();
 	RenderInit();
 
-	m_BattleInfo.iAttack = 5;
+	m_BattleInfo.iAttack = 15;
 
 	m_nTag = MonsterWeapon;
 	

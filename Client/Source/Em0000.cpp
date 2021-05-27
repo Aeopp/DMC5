@@ -10,7 +10,8 @@
 #include "RedQueen.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-
+#include "SpriteEffect.h"
+#include "StoneDebrisMulti.h"
 void Em0000::Free()
 {
 	Destroy(m_pBlood);
@@ -44,6 +45,7 @@ void Em0000::Fight(const float _fDeltaTime)
 	{
 		m_eState = Dead;
 		m_bIng = true;
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Dead", { 1,5 }, 0.3f, false);
 	}
 
 
@@ -74,10 +76,12 @@ void Em0000::Fight(const float _fDeltaTime)
 			{
 				m_eState = Attack_1;
 				m_pWeapon.lock()->Set_Coll(true);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Attack", { 1,5 }, 0.3f, false);
 			}
 			else if (iRandom == 2)
 			{
 				m_eState = Attack_2;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Attack", { 1,5 }, 0.3f, false);
 				m_pWeapon.lock()->Set_Coll(true);
 			}
 			else
@@ -117,6 +121,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bAttack = false;
 				m_pWeapon.lock()->Set_Coll(false);
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_1" && m_pMesh->PlayingTime() >= 0.5f)
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
@@ -141,6 +146,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bAttack = false;
 				m_pWeapon.lock()->Set_Coll(false);
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_2" && m_pMesh->PlayingTime() >= 0.5f)
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
@@ -168,6 +174,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bAttack = false;
 				m_pWeapon.lock()->Set_Coll(false);
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.35f)
 			{
@@ -176,6 +183,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			else if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Hard" && m_pMesh->PlayingTime() >= 0.2f)
 			{
 				m_pWeapon.lock()->m_pCollider.lock()->SetActive(true);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Attack", { 1,5 }, 0.3f, false);
 				m_pWeapon.lock()->Set_AttackType(Attack_KnocBack);
 			}
 		}
@@ -210,6 +218,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bHit = false;
 				m_bIng = false;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -221,6 +230,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_L" && m_pMesh->IsAnimationEnd())
 			{
 				m_eState = idle;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 				m_bHit = false;
 				m_bIng = false;
 			}
@@ -236,6 +246,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bHit = false;
 				m_bIng = false;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -299,6 +310,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_bIng = false;
 				m_bDown = false;
 				m_eState = idle;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -417,6 +429,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 				m_eState = idle;
 				m_bIng = false;
 				m_bMove = false;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
 			}
 		}
 		break;
@@ -462,6 +475,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 		break;
 	case Em0000::idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
+
 		break;
 	case Em0000::Hit_Snatch_Start:
 		if (m_bHit)
@@ -492,7 +506,10 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Snatch_End", false, {}, 1.f, 20.f, true);
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Snatch_End" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = idle;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
+			}
 		}
 		break;
 	case Em0000::Hit_Buster_Start:
@@ -506,16 +523,18 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_START
 				&& m_pPlayer.lock()->IsAnimationEnd())
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				m_eState = Hit_Buster_End;
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+		
 				Vector3 vRot(0.f, 0.f, 0.f);
 				Vector3	vPlayerPos = m_pPlayerTrans.lock()->GetPosition();
 				Vector3 vPos = m_pTransform.lock()->GetPosition();
 
 				m_pTransform.lock()->SetRotation(vRot);
 				m_pTransform.lock()->SetPosition({ vPos.x, vPlayerPos.y, vPos.z });
+				//BusterEffect
+				PlayBusterEffect();
 			}
 		}
 		break;
@@ -532,7 +551,7 @@ void Em0000::State_Change(const float _fDeltaTime)
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM0000_BUSTER_AIR &&
 				m_pPlayer.lock()->Get_PlayingTime()>=0.5f)
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
+				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				m_eState = Hit_Air_Buster_End;
 
 				Vector3 vRot(0.f, 0.f, 0.f);
@@ -594,7 +613,10 @@ void Em0000::State_Change(const float _fDeltaTime)
 			m_bEnterGround = true;
 		}
 		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+		{
 			m_eState = idle;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Idle", { 1,5 }, 0.3f, false);
+		}
 		break;
 
 	}
@@ -988,6 +1010,7 @@ void Em0000::Buster(BT_INFO _BattleInfo, void* pArg)
 
 	m_bHit = true;
 	m_bDown = true;
+	m_bBusterStoneStart = true;
 	m_pCollider.lock()->SetRigid(false);
 
 	if (m_bAir)
@@ -1396,7 +1419,7 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
+		SoundSystem::GetInstance()->RandSoundKeyPlay("CbsHit8", { 1,4 }, 0.2f, false);
 		m_pWeapon.lock()->Set_Coll(false);
 		m_pWeapon.lock()->m_pCollider.lock()->SetActive(false);
 		break;
@@ -1418,6 +1441,8 @@ void Em0000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	default:
 		break;
 	}
+
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em0000Hit", { 1,5 }, 0.3f, false);
 
 	HitEffectPlay(_pOther);
 }

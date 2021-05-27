@@ -12,7 +12,9 @@
 #include "NeroFSM.h"
 #include "Liquid.h"
 #include "AppearGroundMonster.h"
-
+#include "Monster.h"
+#include "SpriteEffect.h"
+#include "StoneDebrisMulti.h"
 void Em200::Free()
 {
 	Destroy(m_pBlood);
@@ -41,6 +43,7 @@ void Em200::Fight(const float _fDeltaTime)
 	{
 		m_eState = Dead;
 		m_bIng = true;
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Dead", { 1,5 }, 0.3f, false);
 	}
 
 	//몬스터 움직이는 방향 정해주는 놈
@@ -117,11 +120,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bIng = false;
 				m_bAttack = false;
@@ -144,6 +156,7 @@ void Em200::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->Set_AttackType(Attack_Front);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 				}
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Attack", { 1,2 }, 0.3f, false);
 			}
 		}
 		break;
@@ -159,11 +172,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bIng = false;
 				m_bAttack = false;
@@ -187,6 +209,8 @@ void Em200::State_Change(const float _fDeltaTime)
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
 				}
 			}
+			else if(m_pMesh->CurPlayAnimInfo.Name =="Attack_R" && m_pMesh->PlayingTime() >= 0.25f)
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Attack", { 1,2 }, 0.3f, false);
 		}
 		break;
 	case Em200::Attack_Hard_Start:
@@ -223,11 +247,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bIng = false;
 				m_bHardAttack = false;
@@ -249,6 +282,7 @@ void Em200::State_Change(const float _fDeltaTime)
 				{
 					m_pHand[i].lock()->Set_AttackType(Attack_KnocBack);
 					m_pHand[i].lock()->m_pCollider.lock()->SetActive(true);
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Attack", { 1,2 }, 0.3f, false);
 				}
 			}
 		}
@@ -348,11 +382,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bHit = false;
 				m_bIng = false;
@@ -369,11 +412,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bHit = false;
 				m_bIng = false;
@@ -390,12 +442,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
-
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				m_bHit = false;
 				m_bIng = false;
 			}
@@ -449,11 +509,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 			}
 		}
 		break;
@@ -475,11 +544,20 @@ void Em200::State_Change(const float _fDeltaTime)
 				int iRandom = FMath::Random<int>(1, 3);
 
 				if (iRandom == 1)
+				{
 					m_eState = Idle;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 2)
+				{
 					m_eState = Idle2;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 				else if (iRandom == 3)
+				{
 					m_eState = Idle3;
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+				}
 
 				m_bMove = false;
 				m_bIng = false;
@@ -509,17 +587,39 @@ void Em200::State_Change(const float _fDeltaTime)
 	case Em200::Idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
-		m_bHit = false;
+		if (m_bIng)
+			m_bIng = false;
+		if (m_bHit)
+			m_bHit = false;
+		if (m_bBuster)
+			m_bBuster = false;
+		if (m_bMove)
+			m_bMove = false;
+
 		break;
 	case Em200::Idle2:
 		m_pMesh->PlayAnimation("Idle2", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
-		m_bHit = false;
+		if (m_bIng)
+			m_bIng = false;
+		if (m_bHit)
+			m_bHit = false;
+		if (m_bBuster)
+			m_bBuster = false;
+		if (m_bMove)
+			m_bMove = false;
 		break;
 	case Em200::Idle3:
 		m_pMesh->PlayAnimation("Idle3", true, {}, 1.f, 50.f, true);
 		m_BattleInfo.eAttackType = Attack_END;
-		m_bHit = false;
+		if (m_bIng)
+			m_bIng = false;
+		if (m_bHit)
+			m_bHit = false;
+		if (m_bBuster)
+			m_bBuster = false;
+		if (m_bMove)
+			m_bMove = false;
 		break;
 	case Em200::Hit_Buster_Start:
 		if (m_bHit)
@@ -535,25 +635,31 @@ void Em200::State_Change(const float _fDeltaTime)
 
 				Update_Angle();
 				Set_Rotate();
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 				m_bBuster = true;
 			}
 
 			m_pMesh->PlayAnimation("Buster_Start", false, {}, 1.f, 1.f, true);
 			m_pCollider.lock()->SetTrigger(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Start" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Buster_Loop;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
+			}
 		}
 		break;
 	case Em200::Hit_Buster_Loop:
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Buster_Loop", true, {}, 1.f, 1.f, true);
+			
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_FINISH)
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
-				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				m_eState = Hit_Buster_End;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 			}
 			
 		}
@@ -563,7 +669,7 @@ void Em200::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Buster_Finish", false, {}, 1.f, 1.f, true);
 			Vector3 vRot(0.f, 0.f, 0.f);
-
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Buster_Finish" && m_pMesh->PlayingTime() >= 0.6f)
 			{
 				m_pCollider.lock()->SetRigid(true);
@@ -573,6 +679,12 @@ void Em200::State_Change(const float _fDeltaTime)
 			{
 				m_eState = Hit_End_Front;
 				m_bBuster = false;
+				m_BattleInfo.iHp -= int(m_BattleInfo.iMaxHp / 2);
+				//BusterEffect
+				PlayBusterEffect();
+				m_bIng = false;
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			}
 
 		}
@@ -595,6 +707,7 @@ void Em200::State_Change(const float _fDeltaTime)
 
 				Update_Angle();
 				Set_Rotate();
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 				m_bBuster = true;
 			}
 
@@ -602,17 +715,21 @@ void Em200::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Air_Buster_Start", false, {}, 1.f, 1.f, true);
 			m_pCollider.lock()->SetTrigger(true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Start" && m_pMesh->IsAnimationEnd())
+			{
 				m_eState = Hit_Air_Buster_Loop;
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
+			}
 		}
 		break;
 	case Em200::Hit_Air_Buster_Loop:
 		if (m_bHit == true)
 		{
 			m_pMesh->PlayAnimation("Air_Buster_Loop", true, {}, 1.f, 1.f, true);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM200_BUSTER_AIR_FINISH)
 			{
-				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+				m_pPlayer.lock()->PlayEffect(Eff_Buster);
 				m_eState = Hit_Air_Buster_End;
 			}
 
@@ -623,7 +740,7 @@ void Em200::State_Change(const float _fDeltaTime)
 		{
 			m_pMesh->PlayAnimation("Air_Buster_Finish", false, {}, 1.f, 1.f, true);
 			Vector3 vRot(0.f, 0.f, 0.f);
-
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Air_Buster_Finish" && m_pMesh->PlayingTime() >= 0.95f)
 			{
 				m_pCollider.lock()->SetRigid(true);
@@ -644,7 +761,11 @@ void Em200::State_Change(const float _fDeltaTime)
 				m_vPower.z = 0.f;
 				m_fPower = 100.f;
 
+				m_bBuster = false;
+				m_bIng = false;
 				m_eState = Hit_KnocBack;
+				SoundSystem::GetInstance()->Play("BusterEnd", 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.2f, false);
 			}
 		}
 		break;
@@ -706,6 +827,9 @@ void Em200::State_Change(const float _fDeltaTime)
 			{
 				m_eState = Idle;
 				m_bHit = false;
+			
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+
 			}
 		}
 		break;
@@ -722,7 +846,10 @@ void Em200::State_Change(const float _fDeltaTime)
 			m_bEnterGround = true;
 		}
 		if (m_pMesh->CurPlayAnimInfo.Name == "Enter_Ground" && m_pMesh->IsAnimationEnd())
+		{
 			m_eState = Idle;
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Idle", { 1,5 }, 0.3f, false);
+		}
 		break;
 	}
 
@@ -766,8 +893,8 @@ HRESULT Em200::Ready()
 	//GameObject를 받아오려면 각자 태그가 있어야함.
 	m_nTag = Monster200;
 
-	m_BattleInfo.iMaxHp = 150;
-	m_BattleInfo.iHp = 150;
+	m_BattleInfo.iMaxHp = 20000;
+	m_BattleInfo.iHp = 20000;
 	m_BattleInfo.iAttack = 20;
 
 	m_pTransform.lock()->SetPosition({ -4.8f, 1.2f, -4.82f });
@@ -1240,6 +1367,7 @@ void Em200::Buster(BT_INFO _BattleInfo, void* pArg)
 
 	m_bHit = true;
 	m_bDown = true;
+	m_bBusterStoneStart = true;
 	m_pCollider.lock()->SetRigid(false);
 
 	if (m_bAir)
@@ -1315,7 +1443,7 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::TAG_BusterArm_Right:
 		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
 		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
+		SoundSystem::GetInstance()->RandSoundKeyPlay("CbsHit8", { 1,4 }, 0.2f, false);
 		for (int i = 0; i < 2; ++i)
 		{
 			m_pHand[i].lock()->Set_Coll(false);
@@ -1347,43 +1475,12 @@ void Em200::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		break;
 	}
 	HitEffectPlay(_pOther);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em200Hit", { 1,5 }, 0.3f, false);
 }
 
 void Em200::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
-	if (!m_bCollEnable)
-		return;
-	if (m_eState == Dead)
-		return;
 
-	m_bCollEnable = false;
-	switch (_pOther.lock()->m_nTag)
-	{
-	case GAMEOBJECTTAG::TAG_RedQueen:
-		if (m_bAir)
-			Air_Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		else
-			Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-
-		for (int i = 0; i < 2; ++i)
-			m_pHand[i].lock()->m_pCollider.lock()->SetActive(false);
-		break;
-	case GAMEOBJECTTAG::TAG_BusterArm_Right:
-		_pOther.lock()->GetComponent<SphereCollider>().lock()->SetActive(false);
-		Buster(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	case GAMEOBJECTTAG::TAG_WireArm:
-		Snatch(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
-		break;
-	case GAMEOBJECTTAG::Overture:
-		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
-		m_bHit = true;
-		m_bDown = true;
-		m_eState = Hit_KnocBack;
-		break;
-	default:
-		break;
-	}
 }
 
 void Em200::RenderGBufferSK(const DrawInfo& _Info)

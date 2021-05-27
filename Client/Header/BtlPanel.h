@@ -144,6 +144,7 @@ private:
 	bool _TDTGauge_ConsumeStart = false;
 	float _TDTGauge_ConsumeSpeed = 1.f;
 	float _TDTGauge_EmissivePower = 0.f;
+	static uint32 _TDTGaugeLevel;	/* 1 ~ 3 */
 
 	Vector2 _InputUIOffset = Vector2(0.f, 0.f);
 
@@ -177,7 +178,6 @@ private:
 	*/
 	static uint32 _StylishPoints;
 	bool _StylishPtsAccumulateStart = false;
-	// + 결과창에 보여줄 누적 StylishPoints
 	bool _StylishPtsAlive = false;
 	float _StylishPtsAliveTime = 0.f;
 	bool _StylishPtsAlive2ndCheck = false;
@@ -189,7 +189,7 @@ private:
 	float _ExGauge_FireAccumulateTime = 999.f;
 	float _ExGauge_FullFireAccumulateTime = 0.f;
 	float _ExGauge_DissolveAmount = 0.f;
-	uint32 _ExGaugeLevel = 1u;	/* 1 ~ 3 */
+	static uint32 _ExGaugeLevel;	/* 1 ~ 3 */
 
 	enum KEY_INPUT_ID
 	{
@@ -278,13 +278,15 @@ public:
 	void SetTargetCursorActive(bool IsActive);
 	void SetTargetCursor(const Vector3& TargetPos, const float HPRatio = 1.f);	/* HPRatio = 현재 HP / 최대 HP */
 	void SetPlayerHPRatio(const float HPRatio, bool IsBloodedGlass = true);		/* HPRatio = 현재 HP / 최대 HP */
-	
+	static void AddHpGaugeCount(const uint32 Count);
+		
 	void SetBossGaugeActive(bool IsActive);
 	void SetBossGaugeHPRatio(const float HPRatio);	/* HPRatio = 현재 HP / 최대 HP */
 
 	float GetTDTGauge() const { return _TDTGauge; } /* 0 ~ 1 */
-	void AccumulateTDTGauge(const float Amount);
+	static void AccumulateTDTGauge(const float Amount);
 	void ConsumeTDTGauge(const float Speed = 1.f);	/* 0이 될때까지 Speed * DeltaTime 만큼 TDTGauge 감소 */
+	static void SetTDTGaugeLevel(const uint32 Level);
 
 	void SetKeyInputActive(bool IsActive);
 
@@ -296,7 +298,7 @@ public:
 	uint32 GetExGaugeCount() const { return static_cast<uint32>(_ExGauge); }
 	void AddExGauge(float ExGauge);
 	void UseExGauge(const uint32 Count, bool Force = false);
-	void SetExGaugeLevel(const uint32 Level);
+	static void SetExGaugeLevel(const uint32 Level);
 
 	void ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor = 0);	// 0: Ice, 1: Thunder, 2: Fire
 
