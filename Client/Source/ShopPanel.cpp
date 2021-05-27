@@ -25,7 +25,7 @@ ShopPanel::UpgradeDesc ShopPanel::_UpgradeDesc =
 	100u,		// _GreenOrbCost
 	100u,		// _WhiteOrbCost
 	500u,		// _BlueOrbCost
-	500u,		// _PurpleOrbCost
+	1000u,		// _PurpleOrbCost
 
 	0u,			// _GreenOrbUpgradeCount
 	0u,			// _WhiteOrbUpgradeCount
@@ -618,6 +618,8 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
 				bool Buyable = false;
 				int ScreenMatOpt = 0;
+				int ProgressMaxCnt = 0;
+				int ProgressCurCnt = 0;
 
 				switch (_PreCmd)
 				{
@@ -625,24 +627,32 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 					if (_UpgradeDesc._GreenOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 17;
+					ProgressMaxCnt = 0;
+					ProgressCurCnt = 0;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex0->GetTexture());
 					break;
 				case ShopPanel::ITEM_WHITEORB:
 					if (_UpgradeDesc._WhiteOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 18;
+					ProgressMaxCnt = 0;
+					ProgressCurCnt = 0;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex1->GetTexture());
 					break;
 				case ShopPanel::ITEM_BLUEORB:
 					if (_UpgradeDesc._BlueOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 19;
+					ProgressMaxCnt = 5u;
+					ProgressCurCnt = _UpgradeDesc._BlueOrbUpgradeCount - 5u;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex2->GetTexture());
 					break;
 				case ShopPanel::ITEM_PURPLEORB:
 					if (_UpgradeDesc._PurpleOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 20;
+					ProgressMaxCnt = 2u;
+					ProgressCurCnt = _UpgradeDesc._PurpleOrbUpgradeCount - 1u;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex3->GetTexture());
 					break;
 				}
@@ -775,8 +785,34 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 
-				// + hp tdt 게이지
+				// upgrade progress
+				_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _WeaponUpgradeProgressTex->GetTexture());
+				_ImplInfo.Fx->SetFloat("_BrightScale", _UpgradeProgressBright);
+				_ImplInfo.Fx->SetFloat("_SliceAmount", _CategoryItemInfoSliceAmount);
 
+				for (int i = 0; i < ProgressMaxCnt; ++i)
+				{
+					Create_ScreenMat(CurID, ScreenMat, 21 + i);
+					_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+					if (ProgressCurCnt > i)
+					{
+						_MinTexUV = Vector2(0.f, 0.688f);
+						_MaxTexUV = Vector2(0.129f, 0.875f);
+					}
+					else
+					{
+						_MinTexUV = Vector2(0.130f, 0.688f);
+						_MaxTexUV = Vector2(0.259f, 0.875f);
+					}
+
+					_ImplInfo.Fx->SetFloatArray("_MinTexUV", _MinTexUV, 2u);
+					_ImplInfo.Fx->SetFloatArray("_MaxTexUV", _MaxTexUV, 2u);
+
+					_ImplInfo.Fx->BeginPass(1);
+					SharedSubset->Render(_ImplInfo.Fx);
+					_ImplInfo.Fx->EndPass();
+				}
 			}
 		}
 
@@ -1126,6 +1162,21 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				break;
 			}
 		}
+
+		//
+		if (0.f < _FadeNullBlackAlpha)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _NullBlackTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.f);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 1.f - _FadeNullBlackAlpha);
+
+			Create_ScreenMat(STATUE_BG, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(1);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
 	}
 
 	// 노출도 고정 해제
@@ -1381,12 +1432,22 @@ void ShopPanel::ResetCmd()
 	//
 	_FontVec[FT_REDORBCOUNT].lock()->SetRenderFlag(false);
 	_FontVec[FT_CUSTOMIZE].lock()->SetRenderFlag(false);
+
+	//
+	_FadeNullBlackAlpha = 1.f;
 }
 
 UINT ShopPanel::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	_TotalAccumulateTime += _fDeltaTime;
+
+	if (0.f < _FadeNullBlackAlpha)
+	{
+		_FadeNullBlackAlpha -= 1.5f * _fDeltaTime;
+		if (0.f > _FadeNullBlackAlpha)
+			_FadeNullBlackAlpha = 0.f;
+	}
 
 	//
 	Check_KeyInput(_fDeltaTime);
@@ -1663,7 +1724,7 @@ UINT ShopPanel::Update(const float _fDeltaTime)
 
 		_BrightAccTime += _fDeltaTime;
 		_ButtonBright = 1.f + 0.15f * sinf(_BrightAccTime * 2.5f);
-		//_UpgradeProgressBright = 1.f + 0.5f * sinf(_BrightAccTime * 2.5f);
+		_UpgradeProgressBright = 1.f + 0.5f * sinf(_BrightAccTime * 2.5f);
 
 		if (_ButtonBlinkStart)
 		{
@@ -2486,7 +2547,57 @@ void ShopPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 			_MinTexUV = Vector2(0.f, 0.75f);
 			_MaxTexUV = Vector2(1.f, 1.f);
 			break;
-
+		// Upgrade Progress
+		case 21:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos - 85.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
+		case 22:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos - 20.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
+		case 23:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 45.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
+		case 24:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 110.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
+		case 25:
+			_Out._11 = _UIDescs[_ID].Scale.x * 0.6f;
+			_Out._22 = _UIDescs[_ID].Scale.y * 0.3f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = (_UIDescs[_ID].Pos.x + _CategoryItemInfoXPos + 175.f) - (g_nWndCX >> 1);
+			_Out._42 = -(_UIDescs[_ID].Pos.y + 420.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			//_MinTexUV = Vector2(0.f, 0.688f);
+			//_MaxTexUV = Vector2(0.129f, 0.875f);
+			break;
 		default:
 			goto DEFAULT;
 		}
@@ -3332,7 +3443,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						if (3u <= _UpgradeDesc._PurpleOrbUpgradeCount)
 							_UpgradeDesc._PurpleOrbCost = 9999999u;
 						else
-							_UpgradeDesc._PurpleOrbCost += 500u;
+							_UpgradeDesc._PurpleOrbCost += 1000u;
 
 						BtlPanel::SetTDTGaugeLevel(_UpgradeDesc._PurpleOrbUpgradeCount);
 

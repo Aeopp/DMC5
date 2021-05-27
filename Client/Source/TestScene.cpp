@@ -66,6 +66,8 @@
 #include "Judgement.h"
 #include "JudgementSwordTrail.h"
 #include "FadeOut.h"
+#include "Change.h"
+#include "JudgementSword.h"
 #include "LoadingScene.h"
 
 #include <iostream>
@@ -92,19 +94,16 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
-	//AddGameObject<Judgement>();
-	//AddGameObject<Change>();
-	//AddGameObject<SandGlassEffect>();
-	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
-	//AddGameObject<JudgementSwordTrail>();
-
-
+	AddGameObject<Judgement>();
+	AddGameObject<Change>();
+	AddGameObject<SandGlassEffect>();
+	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	_JudgementSwordTrail =  AddGameObject<JudgementSwordTrail>();
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
-
 	PreLoader::PreLoadResources();
 
 #pragma endregion
@@ -113,9 +112,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	// _Camera = AddGameObject<Camera>();
+	_Camera = AddGameObject<Camera>();
 	
-	_MainCamera = AddGameObject<MainCamera>();
+	 _MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
@@ -135,8 +134,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
-
+	LoadMap();
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 
@@ -145,6 +143,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
+
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -155,6 +154,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
+	//AddGameObject<Judgement>();
+	//AddGameObject<SandGlassEffect>();
+	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	//AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<Change>();
 	//AddGameObject<ShockWave>();
 
@@ -215,7 +218,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 1, Until Dooms Day",
+		pFont->SetText("D Day, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
@@ -242,8 +245,6 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
- 
-
 	return S_OK;
 }
 
@@ -251,18 +252,25 @@ HRESULT TestScene::Start()
 {
 	Scene::Start();
 	return S_OK;
-}
+};
 
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	/*if (auto SpPlayer = _Player.lock();
-		SpPlayer)
+	/* if (auto SpPlayer = _Player.lock();
+	 	SpPlayer)
+	 {
+	 	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
+	 }*/
+
+
+	if (Input::GetKeyDown(DIK_INSERT))
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
-	}*/
-	
+		_JudgementSwordTrail.lock()->PlayStart
+			(JudgementSwordTrail::Mode::Judgement);
+	};
+
 	CheckShopAvailable();
 
 	static float TestVolume = 0.15f;

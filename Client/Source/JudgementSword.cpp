@@ -69,6 +69,7 @@ UINT JudgementSword::Update(const float _fDeltaTime)
 UINT JudgementSword::LateUpdate(const float _fDeltaTime)
 {
 	GameObject::LateUpdate(_fDeltaTime);
+	
 	Matrix								ParentWorldMatrix, FinalWorld;
 
 	ParentWorldMatrix = m_pNero.lock()->Get_NeroWorldMatrix();

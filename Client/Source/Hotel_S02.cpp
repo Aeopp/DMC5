@@ -26,6 +26,7 @@
 #include "TimeSystem.h"
 #include "Em0000.h"
 #include "ShopPanel.h"
+#include "SandGlassEffect.h"
 
 #include <iostream>
 #include <fstream>
@@ -173,6 +174,12 @@ HRESULT Hotel_S02::LoadScene()
 	{
 		_ShopFadeOut.lock()->SetActive(false);
 	}
+
+	//
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -4.43646f, 1.5378f, 19.9047f });
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -4.43646f, 1.52023f, 19.96853f });
 
 #pragma endregion
 

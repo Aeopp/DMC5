@@ -125,7 +125,7 @@ HRESULT ParticleSystem::Render(class Renderer* const _Renderer)
 						{
 							if (_ParticleInstance.GetLifeTime().has_value())
 							{
-								if (auto _Subset = _TargetParticle._Mesh->GetSubset(0).lock();
+								if (auto _Subset = _TargetParticle._Mesh->GetSubset(_ParticleInstance.GetSubsetIdx()).lock();
 									_Subset)
 								{
 									const Matrix matWorld = _ParticleInstance.CalcWorld(BillboardMat);

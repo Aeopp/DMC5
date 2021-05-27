@@ -28,6 +28,7 @@ private:
 	static void JudgementReadyParticlePoolLoad();
 	static void JudgementCircleGrowParticlePoolLoad();
 	static void JudgementCutparticlePoolLoad();
+	static void JudgementCutStoneParitlcePoolLoad();
 	static void JudgementDayParticlePoolLoad();
 
 	static void NuClearParticlePoolLoad();

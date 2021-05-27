@@ -383,7 +383,6 @@ void SpriteEffect::InitializeFromOption(const uint32 Option)
 		ColorIntencity = 0.13f;
 		DynamicLight _LightDesc{};
 		ConstantPlayTime = 0.1f;
-		
 
 		_LightDesc.Color = { Vector4{1.f,1.f,1.f,1.f }, Vector4{1.f,1.f,1.f,1.f } };
 		_LightDesc.Flux = { 0.0f,0.00040f };
@@ -449,6 +448,8 @@ void SpriteEffect::InitializeFromOption(const uint32 Option)
 		_LightDesc.PointRadius = { 0.161f,0.161f };
 		ColorIntencity = 0.1f;
 		RegistDynamicLight(_LightDesc);
+
+		GetComponent<Transform>().lock()->SetScale(Vector3{0.003f,0.003f ,0.003f });
 	}
 };
 
