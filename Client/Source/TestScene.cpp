@@ -62,6 +62,7 @@
 #include "Reverberation.h"
 #include "ParticleSystem.h"
 #include "SoundSystem.h"
+#include "FadeOut.h"
 
 #include <iostream>
 #include <fstream>
@@ -167,6 +168,12 @@ HRESULT TestScene::LoadScene()
 	//		_SpriteEffect->InitializeFromOption(i);
 	//	}
 	//}
+
+	if (_ShopFadeOut = AddGameObject<FadeOut>();
+		!_ShopFadeOut.expired())
+	{
+		_ShopFadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -498,21 +505,39 @@ void TestScene::CheckShopAvailable()
 {
 	if (Input::GetKeyDown(DIK_P))
 	{
-		if (auto Sp = _ShopPanel.lock(); Sp)
+		if (auto SpShopPanel = _ShopPanel.lock(); SpShopPanel)
 		{
-			if (!Sp->IsActive())
+			if (!SpShopPanel->IsActive())
 			{
-				Sp->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(false);
-				_BtlPanel.lock()->SetActive(false);
+				if (auto SpFadeOut = _ShopFadeOut.lock(); SpFadeOut)
+				{
+					if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+					{
+						SpBtlPanel->SetRedOrbActive(false);
+						SpBtlPanel->SetActive(false);
+					}
+
+					SpFadeOut->SetActive(true);
+					SpFadeOut->PlayStart(5u,
+						[SpShopPanel, SpFadeOut]()
+						{
+							SpShopPanel->SetActive(true);
+							SpFadeOut->SetActive(false);
+						}
+					);
+				}
 			}
 			else
 			{
+				if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+				{
+					SpBtlPanel->SetRedOrbActive(true);
+					SpBtlPanel->SetActive(true);
+				}
+
 				ApplyShopUpgradeDesc();
-				Sp->ResetCmd();
-				Sp->SetActive(false);
-				_BtlPanel.lock()->SetActive(true);
-				_BtlPanel.lock()->SetRedOrbActive(true);
+				SpShopPanel->ResetCmd();
+				SpShopPanel->SetActive(false);
 			}
 		}
 	}

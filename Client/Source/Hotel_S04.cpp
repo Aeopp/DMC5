@@ -169,7 +169,7 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 				//////////////////////////////////////////////////////
 
 				SpFadeOut->SetActive(true);
-				SpFadeOut->PlayStart(5u,
+				SpFadeOut->PlayStart(3u,
 					[SpPanel]()
 					{
 						SpPanel->SetNullBlackActive(true);

@@ -124,7 +124,7 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 		// divinity statue
 		_ImplInfo.Fx->SetFloatArray("_ExtraColor", Vector3(0.f, 0.f, 0.f), 3u);
 		_ImplInfo.Fx->SetFloat("_BrightScale", 0.015f);
-		_ImplInfo.Fx->SetFloatArray("LightDirection", Vector3(0.f, -1.f, -50.f), 3u);
+		_ImplInfo.Fx->SetFloatArray("LightDirection", Vector3(0.f, -1.f, -15.f), 3u);
 
 		Create_ScreenMat(CurID, ScreenMat, 3);	// Perspective
 		_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
