@@ -316,7 +316,7 @@ void Judgement::PlayCircleGrowEndParticle()
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"JudgementReady", 5000ul, true);
+					"JudgementReady", 3333ul, true);
 				_Particle.empty() == false)
 			{
 				for (int32 i = 0; i < _Particle.size(); ++i)
@@ -368,7 +368,6 @@ void Judgement::PlayJudgementDayParticle()
 			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
-				
 
 				if (auto SpPlayer =
 					std::dynamic_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
@@ -476,7 +475,7 @@ void Judgement::Editor()
 		ImGui::SliderFloat("PlayTime", &PlayTime, 0.f, 10.f, "%2.6f");
 		ImGui::SliderFloat("CircleGrowParticleTime", &CircleGrowParticleTime, 0.f, 1.f, "%2.6f");
 		ImGui::SliderFloat("JudgementDayParticleTime", &JudgementDayParticleTime, 0.f, 1.f, "%2.6f");
-		;
+
 		ImGui::SliderFloat("CircleGrowTime", &CircleGrowTime, 0.f, 10.f, "%2.6f");
 		ImGui::SliderFloat("JudgementReadyTime", &JudgementReadyTime, CircleGrowTime, 10.f, "%2.6f");
 

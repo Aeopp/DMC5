@@ -76,7 +76,7 @@ public:
 	float CircleGrowTime = 1.3f;
 	float JudgementReadyTime = 2.0f;
 
-	float GrowEndScale = 0.012f;
+	float GrowEndScale = 0.008f;
 	float GrowEndIntencity= 0.2f;
 	float JudgementReadyIntencity = 0.01f;
 	float DecalIntencity = -0.0001f;

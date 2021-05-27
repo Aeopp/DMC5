@@ -1052,7 +1052,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 5000ul;
+	const uint64 PoolSize = 3333ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1094,7 +1094,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
 
-			const float LifeTime = FMath::Random(0.1f, 2.f);
+			const float LifeTime = FMath::Random(0.1f, 1.3f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },
