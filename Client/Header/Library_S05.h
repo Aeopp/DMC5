@@ -44,7 +44,7 @@ private:
 	std::weak_ptr<Trigger> TriggerBloodFirstWave(const std::weak_ptr<Trigger>_WaveTrigger);
 	std::weak_ptr<Trigger> TriggerBloodSecondWave(const std::weak_ptr<Trigger>_WaveTrigger);
 	std::weak_ptr<Trigger> TriggerBloodThirdWave();
-
+	
 	// 책장 박살내며 성큰이 등장 !!
 	// 6개의 책장이 전부 박살내며 나오는 버전 !!
 	void TriggerBookCaseSunkenSmash();

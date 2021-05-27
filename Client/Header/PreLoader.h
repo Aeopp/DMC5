@@ -24,6 +24,11 @@ private:
 	static void ArtemisRushParticlePoolLoad();
 	static void ArtemisCylinderParticlePoolLoad();
 	static void EnergismReadyParticlePoolLoad();
+	static void SandGlassEffectParticlePoolLoad();
+	static void JudgementReadyParticlePoolLoad();
+	static void JudgementCircleGrowParticlePoolLoad();
+	static void JudgementCutparticlePoolLoad();
+	static void JudgementDayParticlePoolLoad();
 
 	static void NuClearParticlePoolLoad();
 	static void KaboomParticlePoolLoad();

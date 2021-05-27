@@ -12,7 +12,7 @@ private:
 	std::shared_ptr<ENGINE::StaticMesh> _WaveCircle{};
 
 	float WaveIntencity = 0.0f;
-	float WaveScale = 0.00299f;
+
 	float WaveSpeed = 0.9f;
 
 	float MinAlpha = 0.5f;
@@ -23,6 +23,7 @@ private:
 
 	Vector4 _Color = { 1.f,1.f,1.f,1.f};
 
+	float  EditPlayScale{ 0.01f };
 private:
 	explicit CircleWave() = default;
 	virtual ~CircleWave() = default;
@@ -47,9 +48,12 @@ public:
 	void PlayStart(const float WaveScale,
 				   const std::optional<Vector3> & Location = std::nullopt);
 	void PlayEnd();
-private:
+
+	float WaveScale = 0.00299f;
 	bool bWaveDistortion{ false };
-	float  EditPlayScale{ 0.01f};
+
+private:
+
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderWaveCircle(const DrawInfo& _Info);

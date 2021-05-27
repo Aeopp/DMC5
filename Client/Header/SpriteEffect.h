@@ -9,7 +9,6 @@
 class SpriteEffect : public ENGINE::GameObject,
 					 public ENGINE::RenderInterface
 {
-
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _StaticMesh{};
 	std::shared_ptr<ENGINE::Texture>    _SpriteTex{};

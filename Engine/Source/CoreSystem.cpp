@@ -101,10 +101,10 @@ static void GlobalVariableSetup()
 	g_bDebugRender = false;
 	g_bRenderEdit = false;
 	g_bTime = false;
-	g_bOptRender = true;
+	g_bOptRender = false;
 	g_bFrameLimit = true;
 	g_bParticleEditor = false;
-	g_bFixedDeltaTime = true;
+	g_bFixedDeltaTime = false;
 	g_bSoundEdit = false;
 
 	ID3DXBuffer* SphereMeshAdjacency{ nullptr };
@@ -153,9 +153,12 @@ void CoreSystem::Free()
 	m_pSoundSystem.reset();
 	SoundSystem::DeleteInstance();
 
-	ImGui_ImplDX9_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	if (bImguiInit)
+	{
+		ImGui_ImplDX9_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+	}
 }
 
 
@@ -171,7 +174,6 @@ static void ImGuiSetUp()
 	ImGui_ImplWin32_Init(g_hWnd);
 	ImGui_ImplDX9_Init(GraphicSystem::GetInstance()->GetDevice());
 
-
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 18.0f);
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 10);
 	io.Fonts->AddFontFromFileTTF("..\\..\\Resource\\Font\\Roboto\\Roboto-Regular.ttf", 14);
@@ -180,7 +182,8 @@ static void ImGuiSetUp()
 
 HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 								const bool bMultiSample ,
-								const std::filesystem::path& SoundDirectoryPath)
+								const std::filesystem::path& SoundDirectoryPath ,
+								const bool bImguiInit)
 {
 	m_pSoundSystem = SoundSystem::GetInstance();
 	if (nullptr == m_pSoundSystem.lock() || FAILED(m_pSoundSystem.lock()->ReadySoundSystem(SoundDirectoryPath)))
@@ -227,7 +230,8 @@ HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 	}
 
 	m_pRenderer = Renderer::GetInstance();
-	if (nullptr == m_pRenderer.lock() || FAILED(m_pRenderer.lock()->ReadyRenderSystem(m_pGraphicSystem.lock()->GetDevice())))
+	if (nullptr == m_pRenderer.lock() || FAILED(m_pRenderer.lock()->
+		ReadyRenderSystem(m_pGraphicSystem.lock()->GetDevice(),bImguiInit)))
 	{
 		PRINT_LOG(TEXT("Error"), TEXT("Failed to ReadyEngine."));
 		return E_FAIL;
@@ -248,44 +252,56 @@ HRESULT CoreSystem::ReadyEngine(const bool bWindowed,
 	}
 
 	GlobalVariableSetup();
-	ImGuiSetUp();
+
+	this->bImguiInit = bImguiInit;
+	if (bImguiInit)
+	{
+		ImGuiSetUp();
+	}
 
 	return S_OK;
 }
 
 static void GlobalVariableEditor()
 {
-	ImGui::Begin("System");
+	
 	{
-		ImGui::Checkbox("Edit", &g_bEditMode);
-		ImGui::Checkbox("Debug", &g_bDebugMode);	
-		ImGui::Checkbox("Time", &g_bTime);
-		ImGui::Checkbox("OptmizeRender", &g_bOptRender);
-		D3DXVECTOR3 vGravity = PhysicsSystem::GetInstance()->GetGravity();
-		if (ImGui::InputFloat3("Gravity##Physics", vGravity))
-			PhysicsSystem::GetInstance()->SetGravity(PxVec3(vGravity.x, vGravity.y, vGravity.z));
-		if (g_bDebugMode)
-		{			
-			ImGui::Checkbox("CollisionVisible", &g_bCollisionVisible);
-			ImGui::Checkbox("ParticleEdit", &g_bParticleEditor);
-			ImGui::Checkbox("Render", &g_bDebugRender);
-			ImGui::Checkbox("RenderBoneToRoot", &g_bDebugBoneToRoot);
-			ImGui::Checkbox("RenderCollider", &g_bRenderCollider);
-			ImGui::Checkbox("RenderTargetVisible", &g_bRenderTargetVisible);
-			ImGui::Checkbox("RenderEdit",&g_bRenderEdit);
-			ImGui::Checkbox("RenderPointLightScissorTest",&g_bRenderPtLightScissorTest);
-			ImGui::Checkbox("SoundEditor", &g_bSoundEdit);
+		ImGui::Begin("System");
+		{
+			ImGui::Checkbox("Edit", &g_bEditMode);
+			ImGui::Checkbox("Debug", &g_bDebugMode);
+			ImGui::Checkbox("Time", &g_bTime);
+			ImGui::Checkbox("OptmizeRender", &g_bOptRender);
+			D3DXVECTOR3 vGravity = PhysicsSystem::GetInstance()->GetGravity();
+			if (ImGui::InputFloat3("Gravity##Physics", vGravity))
+				PhysicsSystem::GetInstance()->SetGravity(PxVec3(vGravity.x, vGravity.y, vGravity.z));
+			if (g_bDebugMode)
+			{
+				ImGui::Checkbox("CollisionVisible", &g_bCollisionVisible);
+				ImGui::Checkbox("ParticleEdit", &g_bParticleEditor);
+				ImGui::Checkbox("Render", &g_bDebugRender);
+				ImGui::Checkbox("RenderBoneToRoot", &g_bDebugBoneToRoot);
+				ImGui::Checkbox("RenderCollider", &g_bRenderCollider);
+				ImGui::Checkbox("RenderTargetVisible", &g_bRenderTargetVisible);
+				ImGui::Checkbox("RenderEdit", &g_bRenderEdit);
+				ImGui::Checkbox("RenderPointLightScissorTest", &g_bRenderPtLightScissorTest);
+				ImGui::Checkbox("SoundEditor", &g_bSoundEdit);
+			}
 		}
+		ImGui::End();
 	}
-	ImGui::End();
+	
 }
 
 HRESULT CoreSystem::UpdateEngine(const float Delta)
 {
-	ImGui_ImplDX9_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	GlobalVariableEditor();
+	if (bImguiInit)
+	{
+		ImGui_ImplDX9_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+		GlobalVariableEditor();
+	}
 
 	if (FAILED(m_pInputSystem.lock()->UpdateInputSystem()))
 	{

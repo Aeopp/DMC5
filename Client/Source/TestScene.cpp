@@ -62,6 +62,9 @@
 #include "Reverberation.h"
 #include "ParticleSystem.h"
 #include "SoundSystem.h"
+#include "SandGlassEffect.h"
+#include "Judgement.h"
+#include "JudgementSwordTrail.h"
 #include "FadeOut.h"
 #include "LoadingScene.h"
 
@@ -89,6 +92,13 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
+	AddGameObject<Judgement>();
+	AddGameObject<Change>();
+	AddGameObject<SandGlassEffect>();
+	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	AddGameObject<JudgementSwordTrail>();
+
+
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
 	m_fLoadingProgress = 0.01f;
@@ -103,9 +113,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//_Camera = AddGameObject<Camera>();
+	// _Camera = AddGameObject<Camera>();
 	
-	_MainCamera = AddGameObject<MainCamera>();
+	 _MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
@@ -125,7 +135,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
+	LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
@@ -135,7 +145,6 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
-
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -242,6 +251,12 @@ HRESULT TestScene::Start()
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
+
+	/*if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
+	}*/
 	
 	CheckShopAvailable();
 

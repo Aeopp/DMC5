@@ -340,6 +340,6 @@ void Library_S06::LateInit()
 
 
 	BgmPlay();
-
+	g_bOptRender = false;
 	_LateInit = true;
 };

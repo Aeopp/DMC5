@@ -142,19 +142,19 @@ void SpriteEffect::PlayEnd()
 
 void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-	const Matrix World =     _RenderUpdateInfo.World;
+	const Matrix World = _RenderUpdateInfo.World;
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
 
 	if (Numsubset > 0)
 	{
-		_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / static_cast<float >(SpriteCol));
+		_Info.Fx->SetFloat("SpriteXStart", SpriteColIdx / static_cast<float>(SpriteCol));
 		_Info.Fx->SetFloat("SpriteXEnd", (SpriteColIdx + 1.f) / static_cast<float>(SpriteCol));
 		_Info.Fx->SetFloat("SpriteYStart", SpriteRowIdx / static_cast<float>(SpriteRow));
 		_Info.Fx->SetFloat("SpriteYEnd", (SpriteRowIdx + 1.f) / static_cast<float>(SpriteRow));
 
 		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 		_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
-		const float AlphaFactor = std::sinf((FMath::Clamp(T / PlayTime,0.0f,1.f) * FMath::PI));
+		const float AlphaFactor = std::sinf((FMath::Clamp(T / PlayTime, 0.0f, 1.f) * FMath::PI));
 		_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
 		_Info.Fx->SetVector("_Color", &_Color);
 
@@ -167,7 +167,7 @@ void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 		}
 		else
 		{
-			_Info.Fx->SetTexture("SpriteMap",nullptr);
+			_Info.Fx->SetTexture("SpriteMap", nullptr);
 		}
 
 		if (_DistortionTex)
@@ -189,15 +189,14 @@ void SpriteEffect::RenderAlphaBlendEffect(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
-}
-
+};
 
 void SpriteEffect::RenderDebug(const DrawInfo& _Info)
 {
 	const Matrix World = _RenderUpdateInfo.World;
 	_Info.Fx->SetMatrix("World", &World);
-
 	const uint32 Numsubset = _StaticMesh->GetNumSubset();
+
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
 		if (auto SpSubset = _StaticMesh->GetSubset(i).lock();
@@ -219,7 +218,6 @@ HRESULT SpriteEffect::Ready()
 {
 	// 트랜스폼 초기화 .. 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
