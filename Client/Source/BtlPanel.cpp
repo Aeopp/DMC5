@@ -1205,6 +1205,8 @@ void BtlPanel::AddExGauge(float ExGauge)
 	if (3.f < _ExGauge)
 		_ExGauge = 3.f;
 
+	SoundSystem::GetInstance()->Play("ExGauge", 0.4f, true);
+
 	if (PreExGaugeCnt < static_cast<int>(_ExGauge))
 		return;
 
@@ -1234,6 +1236,7 @@ void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor/*= 0*/)
 	{
 		_UIDescs[EX_GAUGE].Using = true;
 		_ExGauge_DissolveAmount = 1.f;
+		SoundSystem::GetInstance()->Play("ChangeRQ", 0.4f, true);
 	}
 	else if (Nero::WeaponList::Cbs == NextWeapon)
 	{

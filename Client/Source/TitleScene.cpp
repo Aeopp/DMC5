@@ -71,6 +71,8 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 		{
 			if (SceneManager::IsLoaded())
 			{
+				SoundSystem::GetInstance()->Play("LoadingComplete", 1.f, false);
+
 				SpPanel->SetLoadingProgress(1.f);
 
 				if (SpPanel->IsReadyToNextScene())
