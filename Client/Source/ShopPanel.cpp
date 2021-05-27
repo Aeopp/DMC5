@@ -618,8 +618,6 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 				uint32 CurRedOrbCount = BtlPanel::GetRedOrbCount();
 				bool Buyable = false;
 				int ScreenMatOpt = 0;
-				//int ProgressMaxCnt = 0;
-				//int ProgressCurCnt = 0;
 
 				switch (_PreCmd)
 				{
@@ -627,32 +625,24 @@ void ShopPanel::RenderUI(const DrawInfo& _ImplInfo)
 					if (_UpgradeDesc._GreenOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 17;
-					//ProgressMaxCnt = 3;
-					//ProgressCurCnt = _UpgradeDesc._GreenOrbUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex0->GetTexture());
 					break;
 				case ShopPanel::ITEM_WHITEORB:
 					if (_UpgradeDesc._WhiteOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 18;
-					//ProgressMaxCnt = 2;
-					//ProgressCurCnt = _UpgradeDesc._BatteryUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex1->GetTexture());
 					break;
 				case ShopPanel::ITEM_BLUEORB:
 					if (_UpgradeDesc._BlueOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 19;
-					//ProgressMaxCnt = 3;
-					//ProgressCurCnt = _UpgradeDesc._TransformUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex2->GetTexture());
 					break;
 				case ShopPanel::ITEM_PURPLEORB:
 					if (_UpgradeDesc._PurpleOrbCost <= CurRedOrbCount)
 						Buyable = true;
 					ScreenMatOpt = 20;
-					//ProgressMaxCnt = 1;
-					//ProgressCurCnt = _UpgradeDesc._RebellionUpgradeCount;
 					_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _ItemBgTex3->GetTexture());
 					break;
 				}
@@ -1379,6 +1369,14 @@ void ShopPanel::ResetCmd()
 	_PrePopupCmd = POPUP_CMD_NONE;
 
 	ResetOffset();
+
+	//
+	_CategoryWeaponSliceAmount = 0.f;
+	_CategoryWeaponInfoXPos = 410.f;
+	_CategoryWeaponInfoSliceAmount = 0.f;
+	_CategoryItemSliceAmount = 1.f;
+	_CategoryItemInfoXPos = 310.f;
+	_CategoryItemInfoSliceAmount = 1.f;
 
 	//
 	_FontVec[FT_REDORBCOUNT].lock()->SetRenderFlag(false);
@@ -3297,8 +3295,9 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						BtlPanel::ConsumeRedOrb(_UpgradeDesc._GreenOrbCost);
 						_UpgradeDesc._GreenOrbCost += 100u;
 
-						// + 체력 풀
-
+						if (auto Sp = FindGameObjectWithTag(Player).lock(); Sp)
+							std::static_pointer_cast<Nero>(Sp)->IncreaseHp(999);
+	
 						break;
 
 					case ITEM_WHITEORB:
@@ -3306,7 +3305,7 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						BtlPanel::ConsumeRedOrb(_UpgradeDesc._WhiteOrbCost);
 						_UpgradeDesc._WhiteOrbCost += 100u;
 
-						// + 변신게이지 풀
+						BtlPanel::AccumulateTDTGauge(1.f);
 
 						break;
 
@@ -3319,20 +3318,23 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 						else
 							_UpgradeDesc._BlueOrbCost += 250u;
 
-						// + 최대체력 증가
+						if (auto Sp = FindGameObjectWithTag(Player).lock(); Sp)
+							std::static_pointer_cast<Nero>(Sp)->IncreaseMaxHp(20);
+
+						BtlPanel::AddHpGaugeCount(1u);
 
 						break;
 
 					case ITEM_PURPLEORB:
 						++_UpgradeDesc._PurpleOrbUpgradeCount;
 						BtlPanel::ConsumeRedOrb(_UpgradeDesc._PurpleOrbCost);
-
+						
 						if (3u <= _UpgradeDesc._PurpleOrbUpgradeCount)
 							_UpgradeDesc._PurpleOrbCost = 9999999u;
 						else
 							_UpgradeDesc._PurpleOrbCost += 500u;
 
-						// + tdt 레벨 증가
+						BtlPanel::SetTDTGaugeLevel(_UpgradeDesc._PurpleOrbUpgradeCount);
 
 						break;
 					}

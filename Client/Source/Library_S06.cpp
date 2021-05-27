@@ -279,12 +279,8 @@ void Library_S06::ApplyShopUpgradeDesc()
 		// UpgradeDesc._RebellionUpgradeCount 1이면 리벨리온 산거임 ㅇㅇ
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-		SpBtlPanel->SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void Library_S06::TriggerSetUp()

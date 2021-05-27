@@ -394,7 +394,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 				Create_ScreenMat(CurID, ScreenMat, i);
 				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
-				_ImplInfo.Fx->BeginPass(0);
+				_ImplInfo.Fx->BeginPass(20);
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 			}
@@ -1013,7 +1013,7 @@ void BtlPanel::ConsumeTDTGauge(const float Speed/*= 1.f*/)
 		Corr = 1.f;
 
 	_TDTGauge_ConsumeStart = true;
-	_TDTGauge_ConsumeSpeed = Speed;
+	_TDTGauge_ConsumeSpeed = Speed * Corr;
 }
 
 void BtlPanel::SetTDTGaugeLevel(const uint32 Level)
@@ -1063,6 +1063,14 @@ void BtlPanel::ResetRankScore()
 	// + Stylish pts ´©Àû
 
 	_StylishPtsAlive = true;
+}
+
+void BtlPanel::AddHpGaugeCount(const uint32 Count)
+{
+	_HPGaugeCount += static_cast<int>(Count);
+	
+	if (10 < _HPGaugeCount)
+		_HPGaugeCount = 10;
 }
 
 void BtlPanel::AddExGauge(float ExGauge)
@@ -2482,7 +2490,6 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 		AccumulateTDTGauge(1.f);
 
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
-		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
 		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
 		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
@@ -2497,6 +2504,8 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	}
 	//if (Input::GetKeyDown(DIK_F7))
 	//{
+	//	//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
+
 	//	//ConsumeTDTGauge(0.5f);
 	//	//static int temp = 0;
 	//	//if (2 < temp)
