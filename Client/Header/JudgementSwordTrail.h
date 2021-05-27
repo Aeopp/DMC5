@@ -5,9 +5,10 @@
 #include <optional>
 #include "Vertexs.h"
 #include "FLight.h"
+#include "DynamicLight.h"
 
 class JudgementSwordTrail : public ENGINE::GameObject,
-			                public ENGINE::RenderInterface
+	public ENGINE::RenderInterface
 {
 public:
 	enum  Mode : uint32
@@ -27,16 +28,16 @@ private:
 		return CurMode == Mode::Non ? LowOffset : JudgementLowOffset;
 	};
 
-	Vector3 CurModeHighOffset() 
+	Vector3 CurModeHighOffset()
 	{
 		return CurMode == Mode::Non ? HighOffset : JudgementHighOffset;
 	};
 
-	Vector3 LowOffset{ 0.f,0.f,100.f};
-	Vector3 HighOffset { 0.f,0.f,-100.f};
+	Vector3 LowOffset{ 0.f,0.f,100.f };
+	Vector3 HighOffset{ 0.f,0.f,-100.f };
 
-	Vector3 JudgementLowOffset{ 0.f,0.f,100.f};
-	Vector3 JudgementHighOffset { 0.f,0.f,-100.f};
+	Vector3 JudgementLowOffset{ 0.f,0.f,100.f };
+	Vector3 JudgementHighOffset{ 0.f,0.f,-100.f };
 
 	std::array<std::string, BoneCnt> BoneLowNames
 	{
@@ -73,7 +74,7 @@ private:
 	std::shared_ptr<Texture> NoiseMap{};
 
 	uint32  CurMode = static_cast<uint32>(Mode::Non);
-	Vector4 _Color{ 1.f,0.f,0.f,1.f};
+	Vector4 _Color{ 1.f,0.f,0.f,1.f };
 
 	float DistortionIntencity = 0.004301f;
 	float UV0Multiply = 1.f;
@@ -83,19 +84,31 @@ private:
 	float JudgementDayParticleDelta = 0.016f;
 	float CurJudgementDayParticleDelta = 0.0f;
 
-	Vector3 Scale{ 2.097902f ,1.398601f,1.398601f};
+	Vector3 Scale{ 2.097902f ,1.398601f,1.398601f };
 	Vector3 ScrollSpeed{ 0.5f,0.699301f,1.398601f };
 
-	Vector2 NoiseDistortion0{0.896861f,0.446429f};
-	Vector2 NoiseDistortion1{1.793722f,1.785714f};
-	Vector2 NoiseDistortion2{4.484305f,4.910714f};
+	Vector2 NoiseDistortion0{ 0.896861f,0.446429f };
+	Vector2 NoiseDistortion1{ 1.793722f,1.785714f };
+	Vector2 NoiseDistortion2{ 4.484305f,4.910714f };
 
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 
 	std::array<std::vector<Vertex::Index32>, BoneCnt>     _IdxLog{};
 	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _TrailVtxWorldLocations{};
-	std::array<std::pair<Vector3, Vector3>,BoneCnt>       LatelyOffsets{};
+	std::array<std::pair<Vector3, Vector3>, BoneCnt>       LatelyOffsets{};
+
+	DynamicLight _DynamicLight{};
+	Vector4 LightColorLow
+		{200.f/255.f, 43.f/255.f, 43.f/255.f,1.f };
+	Vector4 LightColorHigh
+		{182.f, 45.f/255.f, 45.f/255.f,1.f};
+
+	float FluxLow{ 0.5f };
+	float FluxHigh{ 0.25f };
+
+	float RadiusLow{ 20.f };
+	float RadiusHigh { 20.f };
 private:
 	explicit JudgementSwordTrail()  ;
 	virtual ~JudgementSwordTrail() = default;

@@ -103,7 +103,7 @@ void NuClear::RenderInit()
 	PushEditEntity(_Mesh.get());
 	
 	_NuclearLensFlare = AddGameObject<NuclearLensFlare>();
-		
+	
 
 	_DynamicLight.Color = 
 	{

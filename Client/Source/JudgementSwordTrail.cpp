@@ -127,6 +127,24 @@ void JudgementSwordTrail::RenderInit()
 
 	NoiseMap = Resources::Load<Texture>(
 		"..\\..\\Usable\\noisesample_msk.tga");
+
+	_DynamicLight.Color =
+	{
+		LightColorLow,
+		LightColorHigh
+	};
+
+	_DynamicLight.Flux =
+	{
+		FluxLow,
+		FluxHigh
+	};
+
+	_DynamicLight.PointRadius =
+	{
+		RadiusLow,
+		RadiusHigh
+	};
 };
 
 void JudgementSwordTrail::PlayStart(const Mode _Mode)
@@ -181,12 +199,15 @@ void JudgementSwordTrail::PlayStart(const Mode _Mode)
 	_Desc.NewVtxCnt = 0;
 	_Desc.CurVtxUpdateCycle = 0.0f;
 
+	_DynamicLight.PlayStart(Vector3{0.f,0.f,0.f},
+						(std::numeric_limits<float>::max)());
 };
 
 void JudgementSwordTrail::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
+	_DynamicLight.PlayEnd();
 };
 
 void JudgementSwordTrail::ParticleUpdate(const float DeltaTime)
@@ -533,6 +554,10 @@ UINT JudgementSwordTrail::Update(const float _fDeltaTime)
 	BufferUpdate(_fDeltaTime);
 	ParticleUpdate(_fDeltaTime);
 	
+	const Vector3 Location 
+		{ BoneWorld._41,BoneWorld._42 ,BoneWorld._43};
+	_DynamicLight.Update(_fDeltaTime, Location);
+
 	return 0;
 }
 
@@ -605,6 +630,36 @@ void JudgementSwordTrail::Editor()
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply, 0.f, 10.f, "%1.6f");
 			ImGui::SliderFloat("CurveT", &CurveT, 0.f, 1.f);
+
+			ImGui::ColorEdit4("LightColorLow", LightColorLow);
+			ImGui::ColorEdit4("LightColorHigh", LightColorHigh);
+
+			ImGui::SliderFloat("FluxLow", &FluxLow, FLT_MIN, 100.f, "%9.6f");
+			ImGui::SliderFloat("FluxHigh", &FluxHigh, FLT_MIN, 100.f, "%9.6f");
+
+			ImGui::SliderFloat("RadiusLow", &RadiusLow, FLT_MIN, 100.f, "%9.6f");
+			ImGui::SliderFloat("RadiusHigh", &RadiusHigh, FLT_MIN, 100.f, "%9.6f");
+
+			
+
+			_DynamicLight.Color =
+			{
+				LightColorLow,
+				LightColorHigh
+			};
+
+			_DynamicLight.Flux =
+			{
+				FluxLow,
+				FluxHigh
+			};
+
+			_DynamicLight.PointRadius =
+			{
+				RadiusLow,
+				RadiusHigh
+			};
+
 		}
 		ImGui::EndChild();
 	}
