@@ -635,6 +635,76 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		}
 
 		//
+		CurID = DANTE_MUST_DIE;
+		if (_ImplInfo.IsAfterPostProcessing && 0.f < _DMDAlpha)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _DMDBaseTex0->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 1.f - _DMDAlpha);
+
+			Create_ScreenMat(CurID, ScreenMat, 0);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(22);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _DMDBaseTex1->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", 1.f - _DMDAlpha);
+
+			Create_ScreenMat(CurID, ScreenMat, 1);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(23);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _DMDBaseTex2->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f * _DMDDialogBlinkOffset);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.34f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.7f), 2u);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", (1.f - _DMDAlpha) + 0.5f);
+
+			Create_ScreenMat(CurID, ScreenMat, 2);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(22);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _DMDBaseLineTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.0625f), 2u);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", (1.f - _DMDAlpha) + 0.1f);
+
+			Create_ScreenMat(CurID, ScreenMat, 3);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(22);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _DMDWeaponTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f * _DMDDialogBlinkOffset);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(0.25f, 0.25f), 2u);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", (1.f - _DMDAlpha));
+
+			Create_ScreenMat(CurID, ScreenMat, 4);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(22);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+
+		//
 		CurID = NULLBLACK;
 		if (_ImplInfo.IsAfterPostProcessing && _UIDescs[CurID].Using)
 		{
@@ -838,6 +908,12 @@ HRESULT BtlPanel::Ready()
 
 	_NullBlackTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\NullBlack.tga");
 
+	_DMDBaseTex0 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui0001_00_iam.tga");
+	_DMDBaseTex1 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\ui0001_01_iam.tga");
+	_DMDBaseTex2 = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui2016_00_iam.tga");
+	_DMDBaseLineTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui0002_00_iam.tga");
+	_DMDWeaponTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\shop\\ui_2020_01_iam.tga");
+
 	//
 	D3DXMatrixPerspectiveFovLH(&_PerspectiveProjMatrix, D3DXToRadian(2.5f), (float)g_nWndCX / g_nWndCY, 0.1f, 1.f);
 	
@@ -851,6 +927,9 @@ HRESULT BtlPanel::Ready()
 	_FontVec[REDORBCOUNT].lock()->SetRenderFlag(true);
 	_FontVec[STYLISH_PTS_TITLE].lock()->SetRenderFlag(false);
 	_FontVec[STYLISH_PTS_SCORE].lock()->SetRenderFlag(false);
+	_FontVec[FT_DANTE_MUST_DIE].lock()->SetRenderFlag(false);
+	_FontVec[FT_GIVE_UP].lock()->SetRenderFlag(false);
+	_FontVec[FT_USE_REBELLION].lock()->SetRenderFlag(false);
 
 	return S_OK;
 }
@@ -901,7 +980,7 @@ void BtlPanel::Editor()
 
 	if (bEdit)
 	{
-		Imgui_ModifyUI(STYLISH_POINTS);
+		Imgui_ModifyUI(DANTE_MUST_DIE);
 	}
 }
 
@@ -1208,6 +1287,14 @@ void BtlPanel::SetNullBlackActive(bool IsActive)
 	_UIDescs[NULLBLACK].Using = IsActive;
 }
 
+void BtlPanel::SetDanteMustDieActive(bool IsActive)
+{
+	SetRedOrbActive(false);
+	SetGlobalActive(false);
+
+	_UIDescs[DANTE_MUST_DIE].Using = IsActive;
+}
+
 void BtlPanel::SetRedOrbActive(bool IsActive)
 {
 	_UIDescs[REDORB].Using = IsActive;
@@ -1247,6 +1334,7 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[STYLISH_POINTS] = { false, Vector3(1060.f, 390.f, 0.02f), Vector3(0.5f, 0.5f, 1.f) };
 	_UIDescs[NULLBLACK] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(12.8f, 7.2f, 1.f) };
 	_UIDescs[SECRET_VISIONS] = { false, Vector3(640.f, 60.f, 0.5f), Vector3(0.7f, 0.7f, 1.f) };
+	_UIDescs[DANTE_MUST_DIE] = { false, Vector3(640.f, 360.f, 0.03f), Vector3(1.f, 1.f, 1.f) };
 }
 
 void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -1854,6 +1942,55 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		}
 		break;
 
+	case DANTE_MUST_DIE:
+		switch (_Opt)
+		{
+		case 0:
+			_Out._11 = 7.6f;
+			_Out._22 = 7.6f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 180.f - (g_nWndCX >> 1);
+			_Out._42 = -(380.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			break;
+		case 1:
+			_Out._11 = 8.f;
+			_Out._22 = 8.f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = 1100.f - (g_nWndCX >> 1);
+			_Out._42 = -(400.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			break;
+		case 2:
+			_Out._11 = 3.5f;
+			_Out._22 = 1.5f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = _DMDDialogXPos + 160.f - (g_nWndCX >> 1);
+			_Out._42 = -(560.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			break;
+		case 3:
+			_Out._11 = 6.5f;
+			_Out._22 = 0.1f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = _DMDDialogXPos + 180.f - (g_nWndCX >> 1);
+			_Out._42 = -(475.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			break;
+		case 4:
+			_Out._11 = 0.8f;
+			_Out._22 = 0.8f;
+			_Out._33 = _UIDescs[_ID].Scale.z;
+			_Out._41 = _DMDDialogXPos + 60.f - (g_nWndCX >> 1);
+			_Out._42 = -(560.f - (g_nWndCY >> 1));
+			_Out._43 = _UIDescs[_ID].Pos.z;
+			break;
+		default:
+			goto DEFAULT;
+			break;
+		}
+		break;
+
 	default: DEFAULT:
 		_Out._11 = _UIDescs[_ID].Scale.x;
 		_Out._22 = _UIDescs[_ID].Scale.y;
@@ -2270,6 +2407,55 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 			_StylishPtsAlive2ndCheck = false;
 		}
 	}
+	
+	//
+	if (_UIDescs[DANTE_MUST_DIE].Using)
+	{
+		if (auto pFont = _FontVec[FT_DANTE_MUST_DIE].lock(); pFont)
+		{
+			pFont->SetText(
+				"D ANTE  MUST DIE",
+				Font::TEX_ID::DMC5_BLACK_GRAD,
+				{ 70.f, 90.f },
+				{ 1.2f, 1.2f },
+				{ 1.f, 1.f, 1.f },
+				true
+			);
+			pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+		}
+
+		if (_DMDShowDialogFont)
+		{
+			if (auto pFont = _FontVec[FT_GIVE_UP].lock(); pFont)
+			{
+				pFont->SetText(
+					"GIVE UP ?",
+					Font::TEX_ID::DMC5_GREEN_GRAD,
+					{ _DMDDialogXPos + 85.f, 454.f },
+					{ 0.9f, 0.9f }
+				);
+				pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+			}
+
+			if (auto pFont = _FontVec[FT_USE_REBELLION].lock(); pFont)
+			{
+				pFont->SetText(
+					"Fuse the Rebellion",
+					Font::TEX_ID::DMC5_GREEN_GRAD,
+					{ _DMDDialogXPos + 109.f, 561.f },
+					{ 0.48f, 0.72f },
+					{ 1.5f, 1.5f, 1.5f } 
+				);
+				pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+			}
+		}
+	}
+	else
+	{
+		_FontVec[FT_DANTE_MUST_DIE].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+		_FontVec[FT_GIVE_UP].lock()->SetRenderFlag(false);
+		_FontVec[FT_USE_REBELLION].lock()->SetRenderFlag(false);
+	}
 }
 
 void BtlPanel::Update_Etc(const float _fDeltaTime)
@@ -2436,6 +2622,82 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 			_UIDescs[SECRET_VISIONS].Using = false;
 	}
 
+	// Dante Must Die
+	if (_UIDescs[DANTE_MUST_DIE].Using)
+	{
+		_DMDTick += _fDeltaTime;
+
+		if (!_DMDUseRebellion)
+		{
+			if (1.f > _DMDAlpha)
+			{
+				_DMDAlpha += 1.3f * _fDeltaTime;
+				if (1.f < _DMDAlpha)
+					_DMDAlpha = 1.f;
+			}
+
+			if (1.f < _DMDTick)
+			{
+				_DMDShowDialogFont = true;
+
+				if (0.f > _DMDDialogXPos)
+				{
+					_DMDDialogXPos += 1500.f * _fDeltaTime;
+					if (0.f < _DMDDialogXPos)
+						_DMDDialogXPos = 0.f;
+				}
+
+				if (0.f == _DMDDialogXPos && Input::GetKeyDown(DIK_RETURN))
+				{
+					_DMDTick = 0.f;
+					_DMDUseRebellion = true;
+				}
+			}
+		}
+		else
+		{
+			if (4u <= _DMDDialogBlinkCnt)
+			{
+				if (1.f < _DMDTick)
+				{
+					// player 함수 호출
+					SetDanteMustDieActive(false);
+				}
+			}
+			else if (0.08f < _DMDTick && 4u > _DMDDialogBlinkCnt)
+			{
+				if (0 == _DMDDialogBlinkCnt % 2u)
+					_DMDDialogBlinkOffset = 0.6f;
+				else
+					_DMDDialogBlinkOffset = 1.f;
+
+				++_DMDDialogBlinkCnt;
+				_DMDTick = 0.f;
+			}
+		}
+	}
+	else
+	{
+		_DMDTick = 0.f;
+
+		if (0.f < _DMDAlpha)
+		{
+			_DMDAlpha -= 1.3f * _fDeltaTime;
+			if (0.f > _DMDAlpha)
+				_DMDAlpha = 0.f;
+		}
+
+		if (-500.f < _DMDDialogXPos)
+		{
+			_DMDDialogXPos -= 1500.f * _fDeltaTime;
+			if (-500.f >= _DMDDialogXPos)
+			{
+				_DMDDialogXPos = -500.f;
+				_DMDShowDialogFont = false;
+			}
+		}
+	}
+
 	//POINT pt{};
 	//GetCursorPos(&pt);
 	//ScreenToClient(g_hWnd, &pt);_HPGlassRotY
@@ -2513,11 +2775,11 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	//	//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
 	//	//ResetRankScore();
 
-	//	static float Ratio = 1.f;
-	//	Ratio -= 0.1f;
-	//	if (0.f > Ratio)
-	//		Ratio = 1.f;
-	//	SetBossGaugeHPRatio(Ratio);
+	//	//static float Ratio = 1.f;
+	//	//Ratio -= 0.1f;
+	//	//if (0.f > Ratio)
+	//	//	Ratio = 1.f;
+	//	//SetBossGaugeHPRatio(Ratio);
 
 	//	//DissolveAllSecretVision();
 
@@ -2525,6 +2787,10 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	//	//if (3u < temp)
 	//	//	temp = 1u;
 	//	//SetTDTGaugeLevel(temp++);
+
+	//	static bool bActive = _UIDescs[DANTE_MUST_DIE].Using;
+	//	bActive = !bActive;
+	//	SetDanteMustDieActive(bActive);
 	//}
 	////////////////////////////
 
