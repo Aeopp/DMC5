@@ -52,7 +52,7 @@ HRESULT Cbs_Middle::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetRadius(0.14f);
+	m_pCollider.lock()->SetRadius(0.18f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.05f,0.f });
 
 	m_pCollider.lock()->SetActive(false);

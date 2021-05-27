@@ -834,6 +834,7 @@ void Nero::Update_Majin(float _fDeltaTime)
 		m_pRWing.lock()->SetDissolve();
 		SetActive_NeroComponent(NeroCom_WIngArm_Left, false);
 		SetActive_NeroComponent(NeroCom_WingArm_Right, false);
+		SoundSystem::GetInstance()->Play("TransformToDante", 0.3f, false);
 	}
 
 }

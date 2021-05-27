@@ -8982,7 +8982,7 @@ HRESULT Middle_Cbs_BlitzAttack::StateUpdate(const float _fDeltaTime)
 	if (0.45f <= fCurrAnimationTime)
 	{
 		NeroState::ActiveColl_Cbs(false, Nero::NeroCom_Cbs_Middle);
-		m_pNero.lock()->ChangeWeaponCollSize(0.14f);
+		m_pNero.lock()->ChangeWeaponCollSize(0.18f);
 	}
 
 	if (0.33f <= fCurrAnimationTime && m_bPlayOnce)
@@ -11874,7 +11874,7 @@ HRESULT To_Majin::StateEnter()
 		NeroState::SetCbsIdle();
 	m_pNero.lock()->Change_To_MajinMode();
 	m_pNero.lock()->PlayEffect(Eff_Change);
-
+	SoundSystem::GetInstance()->Play("TransformToMajin", 0.3f, false);
 	return S_OK;
 }
 
