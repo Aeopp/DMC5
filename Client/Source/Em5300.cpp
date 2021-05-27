@@ -1188,8 +1188,9 @@ UINT Em5300::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_Y))
 	{
 		m_bIng = true;
-		m_bRain = true;
-		m_eState = Attack_Rain_Start;
+		m_bUlte = true;
+		m_pTrigger.lock()->TriggerEnable();
+		m_eState = Attack_Ulte_Move;
 	}
 
 	if (m_bFight)

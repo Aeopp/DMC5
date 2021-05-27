@@ -225,6 +225,9 @@ void MainCamera::Set_TriggerCam(UINT _eTriggerCamMode, const Vector3& _vTriggerP
 	case STAGE2_BUTTERFLY1:
 		m_vEye = { -4.094f,0.79f,14.14f };
 		break;
+	case STAGE4_BOSS_CUTSCENE:
+		m_vAt = m_vTriggerPos;
+		break;
 	}
 }
 
@@ -592,6 +595,9 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 	case STAGE3_WAVE_HOLE_END:
 		Trigger_Cam_Stage3_HoleEnd(_fDeltaTime);
 		break;
+	case STAGE4_BOSS_CUTSCENE:
+		Trigger_Cam_Stage4_BossCutScene(_fDeltaTime);
+		break;
 	}
 	m_fTriggerTime -= TimeSystem::GetInstance()->OriginDeltaTime();
 	//설정한 시간이 다됐다
@@ -647,7 +653,12 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 			m_fAngle = -5.f;
 			m_fRotX = -20.f;
 			break;
-
+		case STAGE4_BOSS_CUTSCENE:
+			m_eAtType = AT_BOSS1;
+			Set_At_Transform(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>(),
+				MainCamera::AT_BOSS1);
+			SetDistance(1.1f);
+			break;
 		}
 
 	}
@@ -904,6 +915,15 @@ void MainCamera::Trigger_Cam_Stage3_HoleEnd(float _fDeltaTime)
 		m_fAngle = -D3DXToDegree(fRadian);
 
 	}
+}
+
+void MainCamera::Trigger_Cam_Stage4_BossCutScene(float _fDeltaTime)
+{
+
+}
+
+void MainCamera::Trigger_Cam_Stage4_BossCutScene_End(float _fDeltaTime)
+{
 }
 
 void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)

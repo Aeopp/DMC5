@@ -404,10 +404,26 @@ UINT NuClear::Update(const float _fDeltaTime)
 		_DynamicLight.Update(_Color, Radius, Flux, CurPosition);
 	}
 
-	if (IsFallTime())
+	//if (IsFallTime())
+	//{
+	//	if (m_pNero.expired())
+	//		return 0;
+	//	Vector3 MyPos = m_pTransform.lock()->GetPosition();
+	//	Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	//	MyPos.y = 0.f;
+	//	PlayerPos.y = 0.f;
+	//	Vector3 Length = MyPos - PlayerPos;
+	//	float Distance = D3DXVec3Length(&Length);
+
+	//	Vector3 Dir = *D3DXVec3Normalize(&Dir, &Length);
+	//	if (Distance >= 0.5f)
+	//	{
+	//		m_pNero.lock()->GetComponent<Transform>().lock()->Translate(Dir * _fDeltaTime);
+	//	}
+	//	
+	//}
+	if (!m_pNero.expired())
 	{
-		if (m_pNero.expired())
-			return 0;
 		Vector3 MyPos = m_pTransform.lock()->GetPosition();
 		Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
 		MyPos.y = 0.f;
@@ -415,13 +431,12 @@ UINT NuClear::Update(const float _fDeltaTime)
 		Vector3 Length = MyPos - PlayerPos;
 		float Distance = D3DXVec3Length(&Length);
 
-		if (Distance >= 0.5f)
+		Vector3 Dir = *D3DXVec3Normalize(&Dir, &Length);
+		if (Distance >= 0.3f)
 		{
-			//m_pNero.lock()->GetComponent<Transform>().lock()->Translate();
+			m_pNero.lock()->GetComponent<Transform>().lock()->Translate(Dir * 0.6f * _fDeltaTime);
 		}
-		
 	}
-
 
 	return 0;
 }

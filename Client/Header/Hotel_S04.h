@@ -34,6 +34,8 @@ private:
 	void LoadObjects(const std::filesystem::path& path);
 private:
 	void TriggerSetUp(); 
-	void TriggerMeetingWithGoliath();
+	void TriggerMeetingWithGoliath(const std::weak_ptr<class Trigger>& _CamTrigger);
+	std::weak_ptr<class Trigger> TriggerCutScene();
+
 };
 #endif // !__M01_HOTEL_S04_H__
