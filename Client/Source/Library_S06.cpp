@@ -19,6 +19,7 @@
 #include "ShopPanel.h"
 #include "Renderer.h"
 #include "EnergismReady.h"
+#include "FadeOut.h"
 
 #include <iostream>
 #include <fstream>
@@ -105,6 +106,11 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Effect
 
+	if (_FadeOut = AddGameObject<FadeOut>();
+		!_FadeOut.expired())
+	{
+		_FadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -154,7 +160,32 @@ HRESULT Library_S06::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+		if (auto SpFadeOut = _FadeOut.lock(); SpFadeOut)
+		{
+			if (auto SpPanel = _BtlPanel.lock(); SpPanel)
+			{
+				//////////////////////////////////////////////////////
+				// 보스 죽으면 바로 돌려야 할 것들인데 일단 여기 둠...
+				SpPanel->SetBossGaugeActive(false);
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
+				SpPanel->ResetRankScore();
+				//////////////////////////////////////////////////////
+
+				SpFadeOut->SetActive(true);
+				SpFadeOut->PlayStart(8u,
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+					}
+				);
+			}
+		}
+		else
+		{
+			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+		}
 	}
 	/* -------------------------- */
 

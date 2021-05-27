@@ -394,7 +394,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 				Create_ScreenMat(CurID, ScreenMat, i);
 				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
-				_ImplInfo.Fx->BeginPass(20);
+				_ImplInfo.Fx->BeginPass(21);
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 			}
@@ -2479,12 +2479,12 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		AddExGauge(0.333f);
 	}
-	if (Input::GetKeyDown(DIK_F5))
-	{
-		UseExGauge(1);
+	//if (Input::GetKeyDown(DIK_F5))
+	//{
+	//	UseExGauge(1);
 
-		//SetGlobalActive(false);
-	}
+	//	//SetGlobalActive(false);
+	//}
 	if (Input::GetKeyDown(DIK_F6))
 	{
 		AccumulateTDTGauge(1.f);
@@ -2513,11 +2513,11 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	//	//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
 	//	//ResetRankScore();
 
-	//	//static float Ratio = 1.f;
-	//	//Ratio -= 0.1f;
-	//	//if (0.f > Ratio)
-	//	//	Ratio = 1.f;
-	//	//SetBossGaugeHPRatio(Ratio);
+	//	static float Ratio = 1.f;
+	//	Ratio -= 0.1f;
+	//	if (0.f > Ratio)
+	//		Ratio = 1.f;
+	//	SetBossGaugeHPRatio(Ratio);
 
 	//	//DissolveAllSecretVision();
 

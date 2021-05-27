@@ -47,7 +47,7 @@ HRESULT EndingScene::LoadScene()
 		SpFont->SetRenderFlag(false);
 	}
 
-	Sleep(3000);
+	Sleep(1000);
 
 	m_fLoadingProgress = 1.f;
 

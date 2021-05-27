@@ -115,7 +115,7 @@ HRESULT TestScene::LoadScene()
 
 	// _Camera = AddGameObject<Camera>();
 	
-	 _MainCamera = AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
@@ -183,6 +183,11 @@ HRESULT TestScene::LoadScene()
 		!_ShopFadeOut.expired())
 	{
 		_ShopFadeOut.lock()->SetActive(false);
+	}
+	if (_SceneFadeOut = AddGameObject<FadeOut>();
+		!_SceneFadeOut.expired())
+	{
+		_SceneFadeOut.lock()->SetActive(false);
 	}
 
 #pragma endregion
@@ -277,7 +282,24 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+		if (auto SpFadeOut = _SceneFadeOut.lock(); SpFadeOut)
+		{
+			if (auto SpPanel = _BtlPanel.lock(); SpPanel)
+			{
+				SpFadeOut->SetActive(true);
+				SpFadeOut->PlayStart(8u,
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+					}
+				);
+			}
+		}
+		else
+		{
+			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+		}
 	}
 
 	//if (auto SpPlayer = _Player.lock();

@@ -891,7 +891,7 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodThirdWave()
 		const std::function<void()> WaveEndEvent =
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
-			for (uint32 i = 1u; i < 4u; ++i)
+			for (uint32 i = 1u; i < 3u; ++i)
 			{
 				m_vecQliphothBlock[i].lock()->Reset();
 			}
@@ -976,7 +976,7 @@ void Library_S05::TriggerBookCaseSunkenSmash()
 				Sp->SetGlobalActive(true, true);
 			}
 
-			for (uint32 i = 1u; i < 4u; ++i)
+			for (uint32 i = 1u; i < 3u; ++i)
 			{
 				m_vecQliphothBlock[i].lock()->SetActive(false);
 			}
@@ -1046,7 +1046,7 @@ void Library_S05::TriggerBookCaseSunkenFirstSmash()
 				Sp->SetGlobalActive(true, true);
 			}
 
-			for (uint32 i = 1u; i < 4u; ++i)
+			for (uint32 i = 1u; i < 3u; ++i)
 			{
 				m_vecQliphothBlock[i].lock()->SetActive(false);
 			}
