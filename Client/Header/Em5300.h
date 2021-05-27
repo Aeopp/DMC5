@@ -105,8 +105,7 @@ public:
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;
-	void		 Update_AngleBack();
-	void		 Set_Rotate(const bool _bBack = false);
+	void		 Set_Rotate();
 	void		 SetTrigger(weak_ptr<class Trigger> _Trigger);
 	void		 Set_Ulte();
 	void		 Particle();
