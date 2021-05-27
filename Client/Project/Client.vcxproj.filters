@@ -575,6 +575,9 @@
     <ClInclude Include="..\Header\NuClearLensFlare.h" />
     <ClInclude Include="..\Header\Energism.h" />
     <ClInclude Include="..\Header\EnergismReady.h" />
+    <ClInclude Include="..\Header\EndingScene.h">
+      <Filter>03.Scene\99.TestScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -932,6 +935,9 @@
     <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
     <ClCompile Include="..\Source\Energism.cpp" />
     <ClCompile Include="..\Source\EnergismReady.cpp" />
+    <ClCompile Include="..\Source\EndingScene.cpp">
+      <Filter>03.Scene\99.TestScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">

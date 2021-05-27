@@ -152,10 +152,10 @@ HRESULT Library_S06::Update(const float _fDeltaTime)
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
 	}
-	//if (Input::GetKeyDown(DIK_NUMPAD9))
-	//{
-	//	SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
-	//}
+	if (Input::GetKeyDown(DIK_NUMPAD9))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+	}
 	/* -------------------------- */
 
 	return S_OK;

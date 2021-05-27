@@ -63,6 +63,7 @@
 #include "ParticleSystem.h"
 #include "SoundSystem.h"
 #include "FadeOut.h"
+#include "LoadingScene.h"
 
 #include <iostream>
 #include <fstream>
@@ -259,6 +260,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	{
 		AddGameObject<Em200>();
 	}
+	if (Input::GetKeyDown(DIK_NUMPAD9))
+	{
+		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+	}
+
 	//if (auto SpPlayer = _Player.lock();
 	//	SpPlayer)
 	//{

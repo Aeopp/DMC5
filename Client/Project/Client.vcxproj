@@ -194,6 +194,7 @@
     <ClInclude Include="..\Header\Em5300Rain.h" />
     <ClInclude Include="..\Header\Em5300Rush.h" />
     <ClInclude Include="..\Header\Em5300Ulte.h" />
+    <ClInclude Include="..\Header\EndingScene.h" />
     <ClInclude Include="..\Header\Energism.h" />
     <ClInclude Include="..\Header\EnergismReady.h" />
     <ClInclude Include="..\Header\FadeOut.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="..\Source\Em5300Rain.cpp" />
     <ClCompile Include="..\Source\Em5300Rush.cpp" />
     <ClCompile Include="..\Source\Em5300Ulte.cpp" />
+    <ClCompile Include="..\Source\EndingScene.cpp" />
     <ClCompile Include="..\Source\Energism.cpp" />
     <ClCompile Include="..\Source\EnergismReady.cpp" />
     <ClCompile Include="..\Source\FadeOut.cpp" />
