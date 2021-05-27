@@ -41,7 +41,7 @@ HRESULT Nero_RWing::Ready()
 	PushEditEntity(m_pTransform.lock().get());
 
 	SetActive(false);
-
+	//m_DissolveInfo.SetDissolve(false);
 	return S_OK;
 }
 
@@ -292,6 +292,10 @@ UINT Nero_RWing::LateUpdate(const float _fDeltaTime)
 	m_DissolveInfo.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World);
 	//m_pTransform.lock()->UpdateTransform();
 
+	if (m_IsTimeOut && !m_DissolveInfo.IsDissolve())
+	{
+		SetActive(false);
+	}
 	return 0;
 }
 
@@ -301,6 +305,7 @@ void Nero_RWing::OnEnable()
 	m_bIsRender = true;
 	_RenderProperty.bRender = m_bIsRender;
 	m_DissolveInfo.DissolveStart(true, false, 1.f);
+	m_IsTimeOut = false;
 }
 
 void Nero_RWing::OnDisable()
@@ -320,7 +325,7 @@ void Nero_RWing::RenderInit()
 	_InitRenderProp.bRender = m_bIsRender;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::AlphaBlendEffect] =
 	{
-		{"NeroWingSK",
+		{"NeroWingSK2",
 		[this](const DrawInfo& _Info)
 			{
 				RenderAlphaBlendEffect(_Info);
@@ -543,10 +548,17 @@ void Nero_RWing::Editor()
 		//static Vector3 Rot{ 0.f, 0.f, 0.f };
 		//ImGui::SliderFloat3("Rot##RWing", Rot, 0.1f, 10.f);
 		//m_AuraRot = Rot;
+		m_DissolveInfo.DissolveEditor();
 	}
 }
 
 std::string Nero_RWing::GetName()
 {
 	return "Nero_RWing";
+}
+
+void Nero_RWing::SetDissolve()
+{
+	m_DissolveInfo.DissolveStart(false, false, 1.f);
+	m_IsTimeOut = true;
 }

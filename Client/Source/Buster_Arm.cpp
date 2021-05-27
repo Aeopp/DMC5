@@ -157,6 +157,7 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	switch (MonsterTag)
 	{
 	case Monster100:
+		m_pNero.lock()->SetNoHit(true);
 		switch (CurNeroAnimationIndex)
 		{
 		case Nero::ANI_BUSTER_START:
@@ -170,6 +171,7 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		}
 		break;
 	case Monster0000:
+		m_pNero.lock()->SetNoHit(true);
 		switch (CurNeroAnimationIndex)
 		{
 		case Nero::ANI_BUSTER_START:
@@ -183,6 +185,7 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		}
 		break;
 	case Monster200:
+		m_pNero.lock()->SetNoHit(true);
 		switch (CurNeroAnimationIndex)
 		{
 		case Nero::ANI_BUSTER_START:
@@ -200,6 +203,7 @@ void Buster_Arm::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		if (m_bHitOnce_Em5000 &&
 			static_pointer_cast<Monster>(_pOther.lock())->Get_Groggy())
 		{
+			m_pNero.lock()->SetNoHit(true);
 			m_pNero.lock()->GetFsm().lock()->ChangeState(NeroFSM::EM5000_BUSTER_START);
 			m_bHitOnce_Em5000 = false;
 		}

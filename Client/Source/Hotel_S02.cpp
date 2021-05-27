@@ -495,6 +495,7 @@ void Hotel_S02::TriggerWallSmash()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
 			_AnimationWall.lock()->ContinueAnimation();
+			_MainCamera.lock()->SetShakeInfo(0.5f, 7.f);
 			SoundSystem::GetInstance()->Play("Explosion1", 0.7f, false);
 			SoundSystem::GetInstance()->Play("Stone2", 0.7f, false);
 			

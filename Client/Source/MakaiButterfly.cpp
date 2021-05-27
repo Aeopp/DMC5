@@ -8,7 +8,7 @@
 #include "BtlPanel.h"
 #include "SecretVisionMagicCircle.h"
 #include "MainCamera.h"
-
+#include "SoundSystem.h"
 
 uint32 MakaiButterfly::_TotalCnt = 0u;
 
@@ -423,8 +423,10 @@ void MakaiButterfly::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 				//
 				Reset();
 			}
-
-			break;
+			SoundSystem::GetInstance()->Play("Em100Hit_2",0.2f,false);
+			int RandomPlaySound = rand() % 5 + 1;
+			string Temp("RedQueenHit" + to_string(RandomPlaySound));
+			SoundSystem::GetInstance()->RandSoundKeyPlay(Temp, { 1,4 }, 0.2f, false);
 		}
 	}
 }

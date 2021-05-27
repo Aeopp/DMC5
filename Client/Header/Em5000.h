@@ -105,6 +105,7 @@ public:
 	void		 Turn_To_Car();
 	void		 Update_Angle_ToCar();
 	Em5000_State Get_State() { return m_eState; }
+	void		 Set_Howling();
 	
 private:
 	//몬스터 상태
@@ -141,6 +142,9 @@ private:
 	bool		m_bTest2 = false;
 
 
+	bool		m_bHowling = false;
+
+
 	//전투 시작 테스트 용
 	bool		m_bTest = false;
 	std::weak_ptr<Em5000Hand>	m_pHand[2];
@@ -161,6 +165,9 @@ private:
 
 	bool								  m_bHitBuster = false;
 
+
+	float		m_fMoveSoundTime = 0.f;
+	bool		m_bFristStep = false;
 };
 
 #endif // Em5000_h__

@@ -258,6 +258,12 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 		SoundSystem::GetInstance()->Play("Battle1", _Battle1_Volume, false);
 	}
 
+	if (_DecreaseBattle2_Volume)
+	{
+		_Battle1_Volume = FMath::Lerp(_Battle2_Volume, 0.f, _fDeltaTime);
+		SoundSystem::GetInstance()->Play("Battle2", _Battle2_Volume, false);
+	}
+
 	_Rain_Volume = FMath::Lerp(_Rain_Volume, 0.f, _fDeltaTime * 0.5f);
 	SoundSystem::GetInstance()->Play("Hotel01", _Hotel01_Volume, false);
 	SoundSystem::GetInstance()->Play("Rain", _Rain_Volume, false, {}, 11000);

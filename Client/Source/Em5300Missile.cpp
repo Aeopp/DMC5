@@ -480,6 +480,8 @@ void Em5300Missile::Missile()
 
 
 		m_pTransform.lock()->Translate((Vector3( m_vMissileDir.x, 0., m_vMissileDir.z) * 0.04f));
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Missile2", { 1,1 }, 0.8f, false);
+
 	}
 
 	
@@ -648,7 +650,7 @@ void Em5300Missile::Missile2()
 		}
 
 
-		
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Missile2", { 1,1 }, 0.8f, false);
 	}
 }
 

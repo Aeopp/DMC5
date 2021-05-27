@@ -30,6 +30,7 @@ public:
 	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {},const bool bOverlap = false);
 	void StopAnimation() { m_pMesh->StopAnimation(); }
 	void ContinueAnimation() { m_pMesh->ContinueAnimation(); }
+	void ChangeColliderSize(float _fSize = 0.14f);
 public:
 	virtual std::string GetName() override;
 	float Get_PlayingTime();

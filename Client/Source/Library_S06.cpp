@@ -45,6 +45,9 @@ HRESULT Library_S06::LoadScene()
 {
 	// Load Start
 
+	SoundSystem::GetInstance()->ClearSound();
+	SoundSystem::GetInstance()->Play("Stage2_Boss", 0.07f, true);
+
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -351,7 +354,7 @@ std::weak_ptr<Trigger> Library_S06::TriggerUlte()
 
 void Library_S06::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	//SoundSystem::GetInstance()->ClearSound();
 
 	
 	if (auto SpPlayer = _Player.lock();

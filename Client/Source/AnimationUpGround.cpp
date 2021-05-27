@@ -2,7 +2,7 @@
 #include "AnimationUpGround.h"
 #include "Subset.h"
 #include "Renderer.h"
-
+#include "SoundSystem.h"
 AnimationUpGround::AnimationUpGround()
 {
 }
@@ -45,6 +45,16 @@ UINT AnimationUpGround::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
+
+	if (0.2f <= m_pMesh->PlayingTime())
+	{
+		if (m_bPlaySound)
+		{
+			m_bPlaySound = false;
+			SoundSystem::GetInstance()->Play("UpGround2", 0.6f, false);
+			SoundSystem::GetInstance()->Play("Stone2", 0.6f, false);
+		}
+	}
 	return 0;
 }
 

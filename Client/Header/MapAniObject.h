@@ -23,6 +23,7 @@ public:
 	virtual void	OnEnable()							override;
 	virtual void	OnDisable()							override;
 	virtual void    Editor()							override;
+	virtual void	OnCollisionEnter(std::weak_ptr<GameObject> _pOther);
 	virtual void	OnTriggerEnter(std::weak_ptr<GameObject> _pOther);
 
 public:
