@@ -5,6 +5,7 @@
 #include "SoundSystem.h"
 #include "TimeSystem.h"
 
+
 #pragma region PARENT // ºÎ¸ð
 
 bool NeroState::m_bActive_Gravity = true;
@@ -13282,7 +13283,7 @@ HRESULT ShinMajinJudgement::StateEnter()
 {
 	m_pNero.lock()->ChangeAnimation("Judgement", false, Nero::ANI_SHINMAJIN_JUDGEMENT);
 	
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
 		m_bPlayOnce[i] = true;
 	}
@@ -13343,6 +13344,12 @@ HRESULT ShinMajinJudgement::StateUpdate(const float _fDeltaTime)
 		_LostTimes.emplace_back(Vector3{ 2.f,1.f,0.7f });
 		TimeSystem::GetInstance()->LostTime(_LostTimes);
 	}
+	if (0.89f <= fCurAnimationTime && m_bPlayOnce[5])
+	{
+		m_bPlayOnce[5] = false;
+		m_pNero.lock()->KillEm5300();
+	}
+
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{

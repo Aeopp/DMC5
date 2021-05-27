@@ -56,6 +56,7 @@ public:
 private:
 	std::weak_ptr<class Nero> m_pNero;
 	std::weak_ptr<SphereCollider> m_pCollider;
+	std::weak_ptr<class MainCamera> m_pMainCamera;
 
 	bool bKaboom = false;
 	bool bBlackOut = false;

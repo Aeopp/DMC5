@@ -6,6 +6,8 @@
 #include "Trigger.h"
 #include "Renderer.h"
 #include "QliphothBlock.h"
+#include "Monster.h"
+#include "NuClear.h"
 
 UINT MainCamera::m_eAtType = AT_PLAYER;
 UINT MainCamera::m_ePlayerCamMode = CAM_MODE_BASIC;
@@ -100,6 +102,9 @@ UINT MainCamera::Update(const float _fDeltaTime)
 		break;
 	case AT_BOSS1:
 		Boss_Cam_Em5000(_fDeltaTime);
+		break;
+	case AT_BOSS2:
+		Boss_Cam_Em5300(_fDeltaTime);
 		break;
 	default:
 		break;
@@ -270,6 +275,34 @@ void MainCamera::SetStartPos()
 	m_vEye = m_vLerpEye;
 }
 
+void MainCamera::CalcEm5300NeroAngle()
+{
+	Vector3 vPlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+	Vector3 vMonsterPos = static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->GetMonsterBoneWorldPos("Hip");
+
+	Vector3 vLook = -m_pNero.lock()->GetComponent<Transform>().lock()->GetLook();
+	Vector3 vDir = vMonsterPos - vPlayerPos;
+	vDir.y = 0;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	float fDot = D3DXVec3Dot(&vDir, &vLook);
+
+	if (fDot > 1.f)
+		fDot = 1.f - FLT_EPSILON;
+	else if (fDot < -1.f)
+		fDot = -1.f + FLT_EPSILON;
+
+	float fRadian = acosf(fDot);
+
+	Vector3	vCross;
+	D3DXVec3Cross(&vCross, &vLook, &vDir);
+
+	if (vCross.y > 0)
+		fRadian *= -1;
+	m_fAngle = -D3DXToDegree(fRadian);
+	m_fAngle += 45.f;
+}
+
 void MainCamera::DecreaseDistance(float _GoalDis, float _fDeltaTime)
 {
 	//if (m_fDistanceToTarget <= _GoalDis)
@@ -293,6 +326,13 @@ void MainCamera::IncreaseDistance(float _GoalDis, float _fDeltaTime)
 	//m_fDecreaseFactor = 0.6f;
 	//m_fIncreaseFactor += 0.005f;
 	//m_fDistanceToTarget += m_fIncreaseFactor * _fDeltaTime;
+}
+
+void MainCamera::ControlDistance(float _Amount, float _Max)
+{
+	m_fDistanceToTarget += _Amount;
+	if (m_fDistanceToTarget >= _Max)
+		m_fDistanceToTarget = _Max;
 }
 
 std::string MainCamera::GetName()
@@ -672,10 +712,11 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 			SetDistance(1.1f);
 			break;
 		case STAGE6_BOSS_CUTSCENE:
-			m_eAtType = AT_BOSS1;
+			m_eAtType = AT_BOSS2;
 			Set_At_Transform(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock()->GetComponent<Transform>(),
-				MainCamera::AT_BOSS1);
-			SetDistance(1.1f);
+				MainCamera::AT_BOSS2);
+			SetDistance(0.9f);
+			
 			break;
 		}
 
@@ -948,6 +989,8 @@ void MainCamera::Trigger_Cam_Stage6_BossCutScene(float _fDeltaTime)
 {
 	m_vAt = m_pAtTranform.lock()->GetPosition();
 	m_vAt.y += m_fFloatingAmount;
+
+	m_vEye = m_vAt + m_pAtTranform.lock()->GetLook() * -1.5f;
 }
 
 void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
@@ -1019,5 +1062,75 @@ void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
 
 void MainCamera::Boss_Cam_Em5300(float _fDeltaTime)
 {
+	if (m_pAtTranform.expired())
+		return;
+	UINT _CurAnimationIndex = m_pNero.lock()->Get_CurAnimationIndex();
+	UINT _CurStateIndex = m_pNero.lock()->GetFsm().lock()->GetCurrentIndex();
 
+	if (_CurStateIndex == NeroFSM::WIRE_HELLHOUND_LOOP
+		|| _CurStateIndex == NeroFSM::WIRE_HELLHOUND_START)
+	{
+		if (m_fDistanceToTarget >= 0.65f)
+		{
+			m_fDistanceToTarget -= _fDeltaTime;
+		}
+	}
+	else if (_CurStateIndex == NeroFSM::RUNLOOP
+		|| _CurStateIndex == NeroFSM::DASHLOOP)
+	{
+		if (m_fDistanceToTarget <= 0.9f)
+		{
+			m_fDistanceToTarget += _fDeltaTime * 0.08f;
+		}
+	}
+
+	std::weak_ptr<Transform>	_PlayerTransform = m_pNero.lock()->GetComponent<Transform>();
+	std::weak_ptr<NuClear>	_Nuclear = static_pointer_cast<NuClear>(FindGameObjectWithTag(GAMEOBJECTTAG::Eff_NuClear).lock());
+	//if (!_Nuclear.expired() && !_Nuclear.lock()->IsActive())
+	//{
+	//	m_vAt = static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->GetMonsterBoneWorldPos("Hip");
+	//	m_vAt.y -= 0.15f;
+	//}
+	//else if(!_Nuclear.expired() && _Nuclear.lock()->IsFallTime())
+	//{
+	//	m_vAt = _Nuclear.lock()->GetComponent<Transform>().lock()->GetPosition();
+	//	m_vAt.y -= 0.1f;
+	//}
+
+	if (!_Nuclear.expired() && _Nuclear.lock()->IsFallTime())
+	{
+		m_vAt = _Nuclear.lock()->GetComponent<Transform>().lock()->GetPosition();
+		m_vAt.y -= 0.1f;
+		if (m_fFloatingAmount <= 0.17f)
+			m_fFloatingAmount += _fDeltaTime;
+		if (m_fDistanceToTarget >= 1.1f)
+			m_fDistanceToTarget -= _fDeltaTime * 0.1f;
+	}
+	else
+	{
+		m_vAt = static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->GetMonsterBoneWorldPos("Hip");
+		m_vAt.y -= 0.15f;
+	}
+
+
+	long    dwMouseMove = 0;
+
+	if (dwMouseMove = Input::GetMouseMove(DIM_X))
+	{
+		m_fAngle += dwMouseMove / m_fSensitive;
+	}
+
+	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
+	{
+	}
+
+
+	Vector3 vLook = _PlayerTransform.lock()->GetPosition() - m_vAt;
+	vLook.y = 0.f;
+	D3DXVec3Normalize(&vLook, &vLook);
+
+	m_vLerpEye = _PlayerTransform.lock()->GetPosition() + vLook * m_fDistanceToTarget;
+	m_vLerpEye.y += m_fFloatingAmount;
+
+	m_vEye = FMath::Lerp(m_vEye, m_vLerpEye, _fDeltaTime * 2.5f);
 }

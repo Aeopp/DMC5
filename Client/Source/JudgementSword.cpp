@@ -80,7 +80,6 @@ UINT JudgementSword::Update(const float _fDeltaTime)
 		// m_pNero.lock()->StopEffect(Eff_JudgementSwordTrail);
 		SetActive(false);
 	}
-
 	return 0;
 }
 

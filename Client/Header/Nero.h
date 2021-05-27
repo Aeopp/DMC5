@@ -446,7 +446,8 @@ public:
 	void IncreaseHp(int _Hp);
 	void IncreaseMaxHp(const int _Amount);
 	//�׽�Ʈ
-
+public:
+	void KillEm5300();
 public:
 	//UI����
 	//EX������

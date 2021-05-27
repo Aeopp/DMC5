@@ -408,8 +408,7 @@ void Library_S06::LateInit()
 	}
 	m_pBoss.lock()->StartCutScene();
 	_MainCamera.lock()->Set_At_Transform(m_pBoss.lock()->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
-	_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE6_BOSS_CUTSCENE, {}, 4.f);
-	_MainCamera.lock()->SetEye(Vector3{	-40.046f, -0.085f, 30.907f	});
+	_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE6_BOSS_CUTSCENE, {}, 3.3f);
 	_MainCamera.lock()->SetAngle({0.f, 90.f ,0.f });
 	_MainCamera.lock()->SetShakeInfo(4.f, 4.f);
 	

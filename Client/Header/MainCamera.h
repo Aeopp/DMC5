@@ -8,7 +8,8 @@ class MainCamera :
     public GameObject
 {
 public:
-    enum AT_TYPE { AT_PLAYER,AT_TRIGGER,AT_BOSS1,};
+	enum AT_TYPE {
+		AT_PLAYER, AT_TRIGGER, AT_BOSS1, AT_BOSS2};
     enum PLAYER_CAM_MODE { CAM_MODE_BASIC,CAM_MODE_WAVE_END,CAM_MODE_RETURN_TO_PLAYER };
 	enum TRIGGER_CAM_MODE {	STAGE1_WAVE1, STAGE1_WAVE1_END, STAGE1_WAVE2_ENTER, STAGE1_WAVE2_BATTLE, STAGE1_WAVE2_END,
         STAGE2_BUTTERFLY1, STAGE2_BUTTERFLY1_END, STAGE2_BUTTERFLY2, STAGE2_BUTTERFLY2_END,STAGE3_WAVE_HOLE,STAGE3_WAVE_HOLE_END
@@ -44,9 +45,13 @@ public:
     void SetFadeSceneInfo(float _fFadeInAmout);
     void SetStartPos();
     void SetEye(const Vector3& _Eye) { m_vEye = _Eye; }
+    void CalcEm5300NeroAngle();
+    void SetFloatingAmount(float _Amount) { m_fFloatingAmount = _Amount; }
 public:
     void DecreaseDistance(float _GoalDis,float _fDeltaTime);
     void IncreaseDistance(float _GoalDis, float _fDeltaTime);
+
+    void ControlDistance(float _Amount,float _Max);
 public:
     virtual std::string GetName() override;
     virtual void Editor()override;

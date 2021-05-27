@@ -3,6 +3,7 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+#include "Monster.h"
 JudgementSwordCollider::JudgementSwordCollider()
 	:m_pParentBoneMat(nullptr)
 {
@@ -45,8 +46,8 @@ HRESULT JudgementSwordCollider::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetTrigger(true);
 
-	m_pCollider.lock()->SetRadius(0.05f);
-	m_pCollider.lock()->SetHeight(0.11f);
+	m_pCollider.lock()->SetRadius(0.1f);
+	m_pCollider.lock()->SetHeight(0.25f);
 	m_pCollider.lock()->SetCenter({ 0.f, 0.0f, 0.f });
 
 	m_pCollider.lock()->SetContactOffset(2.f);
@@ -67,7 +68,7 @@ HRESULT JudgementSwordCollider::Start()
 UINT JudgementSwordCollider::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-
+	static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->Set_Coll(true);
 	return 0;
 }
 

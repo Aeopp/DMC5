@@ -1541,6 +1541,14 @@ void Nero::IncreaseMaxHp(const int _Amount)
 		m_pBtlPanel.lock()->SetPlayerHPRatio(fHpRatio);
 }
 
+void Nero::KillEm5300()
+{
+	BT_INFO _Info;
+	_Info.eAttackType = Attack_Front;
+	_Info.iAttack = 20000;
+	static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->Hit(_Info);
+}
+
 float Nero::Get_ExGauge()
 {
 	if (!m_pBtlPanel.expired())

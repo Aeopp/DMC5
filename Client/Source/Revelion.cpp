@@ -48,20 +48,6 @@ HRESULT Revelion::Awake()
 	m_vecParentMat.emplace_back(m_pNero.lock()->Get_BoneMatrixPtr("WeaponConst"));
 	m_vecParentMat.emplace_back(m_pNero.lock()->GetJudgementWeaponBone());
 
-	m_pCollider = AddComponent<CapsuleCollider>();
-	m_pCollider.lock()->ReadyCollider();
-	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetTrigger(true);
-
-	m_pCollider.lock()->SetRadius(0.05f);
-	m_pCollider.lock()->SetHeight(0.11f);
-	m_pCollider.lock()->SetCenter({ 0.f, 0.05f, 0.f });
-
-	m_pCollider.lock()->SetContactOffset(2.f);
-
-	m_pCollider.lock()->SetActive(false);
-
-	PushEditEntity(m_pCollider.lock().get());
 	m_pMyBoneMat = m_pMesh->GetToRootMatrixPtr("_001");
 	return S_OK;
 }
