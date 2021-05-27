@@ -10,7 +10,8 @@
 #include "ParticleSystem.h"
 #include "PreLoader.h"
 
-void DissolveInfo::Initialize(const std::filesystem::path& MeshPath,
+void DissolveInfo::Initialize(
+	const std::filesystem::path& MeshPath,
 	const Vector3& _Color ,
 	const Vector3 BurnColor ,
 	const float BurnSize )

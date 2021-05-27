@@ -19,7 +19,7 @@ public:
 	void DissolveVariableBind(ID3DXEffect*const Fx);
 	bool DissolveUpdate(const float DeltaTime,const Matrix& RenderMatrix);
 	void DissolveEditor();
-
+	float   SliceAmount = 0.0f;
 	bool IsDissolve()const;
 private:
 	void DissolveParticle();
@@ -32,7 +32,7 @@ private:
 	float   DissolveParticleDelta = 0.06f;
 	float   CurDissolveParticleDelta = 0.0f;
 	Vector3 BurnColor{ 14.f / 255.f,1.f,0.f };
-	float   SliceAmount = 0.0f;
+
 	bool	bReverse  = false;
 	bool	bParticle = true;
 	float   BurnSize = 0.25f;
