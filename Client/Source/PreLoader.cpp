@@ -1281,7 +1281,6 @@ void PreLoader::JudgementCutparticlePoolLoad()
 			PScale, LifeTime, 0.0f, _IceValue, std::nullopt);
 	}
 };
-
 void PreLoader::JudgementDayParticlePoolLoad()
 {
 	ENGINE::ParticleSystem::Particle _PushParticle{};
@@ -1314,7 +1313,6 @@ void PreLoader::JudgementDayParticlePoolLoad()
 		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
 		return;
 	};
-
 	const uint64 PoolSize = 3333ul;
 
 	auto* const ParticlePool =
@@ -1352,9 +1350,9 @@ void PreLoader::JudgementDayParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.01f, 0.02f);
+			_Value.ColorIntencity = FMath::Random(0.007f, 0.014f);
 
-			_Value.Color = FMath::Random(Vector3{ 255.0f,0.f,0.f }, Vector3{ 255.f,0.f ,0.f });
+			_Value.Color = FMath::Random(Vector3{ 255.0f,73.f,60.f}, Vector3{ 255.f,60.f ,73.f });
 
 			const float LifeTime = FMath::Random(0.5f, 1.f);
 
