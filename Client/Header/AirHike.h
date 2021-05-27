@@ -17,11 +17,11 @@ private:
 	// Sin Graph
 	Vector4 StartColor{ 1.f ,1.f,1.f,1.f };
 	float   StartIntencity{ 0.12916f };
-	float   StartScale{ 0.005170f };
+	float   StartScale{ 0.003446f };
 
 	Vector4 FinalColor{ 100.f /255.f,100.f/255.f,255.f/255.f,0.f};
 	float   FinalIntencity{ 0.082540f};
-	float   FinalScale{ 0.008031f };
+	float   FinalScale{ 0.005354f };
 	float Speed = 5.5f;
 
 	float T = 0.0f;

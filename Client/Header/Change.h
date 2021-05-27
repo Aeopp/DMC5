@@ -57,14 +57,14 @@ private:
 	float StoneParticleTime{ 0.016f };
 	float CurStoneParticleDelta{ 0.0f };
 	std::weak_ptr<class FLight> PtLight;
-	float PtLightRadius = 1.5f;
-	float PtLightFlux   = 1.0f;
+	float PtLightRadius = 1.0f;
+	float PtLightFlux   = 0.2f;
 
 	std::weak_ptr<class ShockWave> _ShockWave{};
 
 	float ParticleCycle = 0.01f;
 	float CurParticleTime = 0.0f;
-	float VelocityY = 0.01f;
+	float VelocityY = 0.0135f;
 
 	float ColorIntencity{ 0.293103f };
 
@@ -75,9 +75,9 @@ private:
 	Vector4 _Color{ 1.f,1.f,1.f,1.f };
 
 	float T{ 0.0f };
-	float PlayTime =1.f;
+	float PlayTime =1.35f;
 
-	float EndScale = 0.0045f;
+	float EndScale = 0.0055f;
 };
 #endif //
 

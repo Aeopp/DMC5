@@ -184,8 +184,6 @@ void Change::UpdateStoneParticle(const float DeltaTime)
 	CurStoneParticleDelta -= DeltaTime;
 	if (CurStoneParticleDelta < 0.0f)
 	{
-
-		
 		CurStoneParticleDelta += StoneParticleTime;
 		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 			SpTransform)

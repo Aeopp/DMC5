@@ -528,7 +528,7 @@ void PreLoader::ChangeStoneParticlePoolLoad()
 		const Vector3 RotCp1 = RotCp0 + FMath::RandomEuler(0.1f);
 		const Vector3 EndRot = RotCp1 + FMath::RandomEuler(0.1f);
 
-		const float LifeTime = FMath::Random(0.5f, 1.f);
+		const float LifeTime = FMath::Random(1.25f, 2.5f);
 		const uint32 SubsetIdx = FMath::Random(0u, 3u);
 		ParticleInstance::Stone _StoneDesc{};
 		_StoneDesc.ColorIntencity = FMath::Random(0.01f, 0.01f);
