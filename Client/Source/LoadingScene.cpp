@@ -6,6 +6,7 @@
 #include "Hotel_S04.h"
 #include "Library_S05.h"
 #include "Library_S06.h"
+#include "EndingScene.h"
 #include "TestScene.h"
 #include "LoadingPanel.h"
 
@@ -74,6 +75,10 @@ HRESULT LoadingScene::Update(const float _fDeltaTime)
 			break;
 		case LIBRARY_S06:
 			SceneManager::LoadScene(Library_S06::Create(), false);
+			break;
+		case ENDING:
+			SceneManager::LoadScene(EndingScene::Create(), false);
+			_LoadingPanel.lock()->SetShowLoadingProgress(false);
 			break;
 		default:
 			SceneManager::LoadScene(TestScene::Create(), false);

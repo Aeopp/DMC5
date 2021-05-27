@@ -82,13 +82,44 @@ void MapAniObject::Editor()
 	}
 }
 
+void MapAniObject::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
+{
+	UINT ObjectTag = _pOther.lock()->m_nTag;
+
+	switch (ObjectTag)
+	{
+	case Monster100:
+	case Monster200:
+	case Monster0000:
+	case Monster1000:
+	case Monster5300:
+		m_pCollider.lock()->SetActive(false);
+		m_pMesh->PlayAnimation(0, false);
+		switch (m_iTag)
+		{
+		case Tag_BrokenBookShelf:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("HitTable", { 1,12 }, 0.4f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
+			break;
+		case Tag_BrokenPeople:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("HitPeople", { 1,5 }, 0.8f, false);
+			break;
+		case Tag_BrokenTable:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("HitTable", { 1,12 }, 0.4f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
+			break;
+		}
+	}
+}
+
 void MapAniObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
 	if (!(GAMEOBJECTTAG::TAG_RedQueen == _pOther.lock()->m_nTag
 		|| GAMEOBJECTTAG::Tag_Cbs_Short == _pOther.lock()->m_nTag
 		|| GAMEOBJECTTAG::Tag_Cbs_Middle == _pOther.lock()->m_nTag
 		|| GAMEOBJECTTAG::Tag_Cbs_Long == _pOther.lock()->m_nTag
-		|| GAMEOBJECTTAG::Overture == _pOther.lock()->m_nTag))
+		|| GAMEOBJECTTAG::Overture == _pOther.lock()->m_nTag
+		|| GAMEOBJECTTAG::MonsterWeapon == _pOther.lock()->m_nTag))
 		return;
 	m_pCollider.lock()->SetActive(false);
 	m_pMesh->PlayAnimation(0, false);
@@ -99,7 +130,7 @@ void MapAniObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
 		break;
 	case Tag_BrokenPeople:
-		SoundSystem::GetInstance()->RandSoundKeyPlay("HitPeople", { 1,5 }, 0.4f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("HitPeople", { 1,5 }, 0.8f, false);
 		break;
 	case Tag_BrokenTable:
 		SoundSystem::GetInstance()->RandSoundKeyPlay("HitTable", { 1,12 }, 0.4f, false);
@@ -327,7 +358,7 @@ void MapAniObject::SetUp(
 		{
 			m_pCollider = AddComponent<BoxCollider>();
 			m_pCollider.lock()->ReadyCollider();
-			m_pCollider.lock()->SetSize({ 0.1f,0.1f,0.1f });
+			m_pCollider.lock()->SetSize({ 0.3f,0.4f,0.2f });
 			m_pCollider.lock()->SetCenter({ 0.f, 0.05f, 0.f });
 			PushEditEntity(m_pCollider.lock().get());
 			m_bColl = true;

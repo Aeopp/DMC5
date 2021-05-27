@@ -52,7 +52,7 @@ HRESULT Cbs_Middle::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetRadius(0.14f);
+	m_pCollider.lock()->SetRadius(0.18f);
 	m_pCollider.lock()->SetCenter({ 0.f,0.05f,0.f });
 
 	m_pCollider.lock()->SetActive(false);
@@ -123,6 +123,11 @@ void Cbs_Middle::Hit(BT_INFO _BattleInfo, void* pArg)
 void Cbs_Middle::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify,const bool bOverlap)
 {
 	m_pMesh->PlayAnimation(InitAnimName, bLoop, _Notify,1.f,1.f,bOverlap);
+}
+
+void Cbs_Middle::ChangeColliderSize(float _fSize)
+{
+	m_pCollider.lock()->SetRadius(_fSize);
 }
 
 std::string Cbs_Middle::GetName()

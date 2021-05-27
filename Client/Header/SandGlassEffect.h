@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "RenderInterface.h"
 #include <optional>
+//#include "DynamicLight.h"
 
 class SandGlassEffect :  public ENGINE::GameObject,
 				         public ENGINE::RenderInterface
@@ -20,7 +21,7 @@ private:
 public:
 	static SandGlassEffect* Create();
 public:
-	virtual void    RenderReady()                          override;
+	virtual void    RenderReady() override;
 public:
 	void			RenderInit();
 	virtual HRESULT Ready() override;
@@ -42,5 +43,21 @@ private:
 	bool bInnerFrustum = false;
 	float CurParticleTime = 0.00f;
 	float ParticleTime = 0.016f;
+	Vector3 PlayPos = Vector3(0.f, 0.f, 0.f);
+
+	//DynamicLight _DynamicLight{};
+	//// Nuclear °ª º¹ºÙ
+	//Vector4 ColorLow
+	//{ 108.f / 255.f, 82.f / 255.f, 158.f / 255.f, 1.f };
+	//Vector4 ColorHigh
+	//{ 194.f / 255.f, 181.f / 255.f, 247.f / 255.f, 1.f };
+	//float ExplosionReadyFluxLow = 0.f;
+	//float ExplosionReadyFluxHigh = 0.3f;
+	//float ExplosionReadyRadiusLow = 0.f;
+	//float ExplosionReadyRadiusHigh = 0.3f;
+	//float ExplosionFluxLow = 3.333f;
+	//float ExplosionFluxHigh = 333.333f;
+	//float ExplosionRadiusLow = 0.666f;
+	//float ExplosionRadiusHigh = 3.333f;
 };
 #endif //

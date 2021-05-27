@@ -15,6 +15,7 @@ private:
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class ShopPanel> _ShopPanel{};
 	std::weak_ptr<class FadeOut> _ShopFadeOut{};
+	std::weak_ptr<class FadeOut> _SceneFadeOut{};
 private:
 	explicit TestScene();
 	virtual ~TestScene() = default;

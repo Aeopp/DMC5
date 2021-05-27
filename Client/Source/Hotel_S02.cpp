@@ -26,6 +26,7 @@
 #include "TimeSystem.h"
 #include "Em0000.h"
 #include "ShopPanel.h"
+#include "SandGlassEffect.h"
 
 #include <iostream>
 #include <fstream>
@@ -173,6 +174,12 @@ HRESULT Hotel_S02::LoadScene()
 	{
 		_ShopFadeOut.lock()->SetActive(false);
 	}
+
+	//
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -4.43646f, 1.5378f, 19.9047f });
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -4.43646f, 1.52023f, 19.96853f });
 
 #pragma endregion
 
@@ -488,6 +495,7 @@ void Hotel_S02::TriggerWallSmash()
 		{
 			// 여기서 성큰이 벽을 박살내며 등장 !!
 			_AnimationWall.lock()->ContinueAnimation();
+			_MainCamera.lock()->SetShakeInfo(0.5f, 7.f);
 			SoundSystem::GetInstance()->Play("Explosion1", 0.7f, false);
 			SoundSystem::GetInstance()->Play("Stone2", 0.7f, false);
 			

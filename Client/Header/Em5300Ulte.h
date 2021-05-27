@@ -65,6 +65,8 @@ public:
 
 	//이거 가지고 터트리면 됨 다 떨어지면 True
 	bool	m_bUlteEnd = false;
+
+	bool	m_bOne[2] = { false, false };
 };
 
 #endif // Em5300Ulte_h__

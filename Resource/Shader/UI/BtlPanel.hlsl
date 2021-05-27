@@ -1165,6 +1165,18 @@ technique Default
         zwriteenable = false;
         sRGBWRITEENABLE = false;
 
+        vertexshader = compile vs_3_0 VsMain_ClipPos();
+        pixelshader = compile ps_3_0 PsMain_BossGauge5();
+    }
+    pass p21
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_HPGaugeBase();
     }

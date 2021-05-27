@@ -19,6 +19,7 @@
 #include "ShopPanel.h"
 #include "Renderer.h"
 #include "EnergismReady.h"
+#include "FadeOut.h"
 
 #include <iostream>
 #include <fstream>
@@ -43,6 +44,9 @@ Library_S06* Library_S06::Create()
 HRESULT Library_S06::LoadScene()
 {
 	// Load Start
+
+	SoundSystem::GetInstance()->ClearSound();
+	SoundSystem::GetInstance()->Play("Stage2_Boss", 0.07f, true);
 
 	m_fLoadingProgress = 0.01f;
 
@@ -105,6 +109,11 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Effect
 
+	if (_FadeOut = AddGameObject<FadeOut>();
+		!_FadeOut.expired())
+	{
+		_FadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -152,10 +161,35 @@ HRESULT Library_S06::Update(const float _fDeltaTime)
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
 	}
-	//if (Input::GetKeyDown(DIK_NUMPAD9))
-	//{
-	//	SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
-	//}
+	if (Input::GetKeyDown(DIK_NUMPAD9))
+	{
+		if (auto SpFadeOut = _FadeOut.lock(); SpFadeOut)
+		{
+			if (auto SpPanel = _BtlPanel.lock(); SpPanel)
+			{
+				//////////////////////////////////////////////////////
+				// 보스 죽으면 바로 돌려야 할 것들인데 일단 여기 둠...
+				SpPanel->SetBossGaugeActive(false);
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
+				SpPanel->ResetRankScore();
+				//////////////////////////////////////////////////////
+
+				SpFadeOut->SetActive(true);
+				SpFadeOut->PlayStart(8u,
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+					}
+				);
+			}
+		}
+		else
+		{
+			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+		}
+	}
 	/* -------------------------- */
 
 	return S_OK;
@@ -320,7 +354,7 @@ std::weak_ptr<Trigger> Library_S06::TriggerUlte()
 
 void Library_S06::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	//SoundSystem::GetInstance()->ClearSound();
 
 	
 	if (auto SpPlayer = _Player.lock();

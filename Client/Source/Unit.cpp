@@ -83,6 +83,7 @@ void Unit::Set_Coll(const bool _bColl)
 
 void Unit::Set_Hp(const int _Hp)
 {
+	m_BattleInfo.iMaxHp = _Hp;
 	m_BattleInfo.iHp = _Hp;
 }
 

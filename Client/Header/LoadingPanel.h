@@ -9,6 +9,7 @@ class LoadingPanel : public ENGINE::GameObject,
 public:
 	bool IsReadyToNextScene() const { return _ReadyToNextScene; }
 	void SetLoadingProgress(float Progress) { _LoadingProgress = Progress; }
+	void SetShowLoadingProgress(bool Flag) { _ShowLoadingProgress = Flag; }
 
 private:
 	std::shared_ptr<ENGINE::StaticMesh> _PlaneMesh{};
@@ -36,6 +37,8 @@ private:
 	uint32 _CurTextIdx = 0u;
 	Matrix _LoadingTextScreenMat = Matrix();
 	float _TextAlpha = 0.f;
+
+	bool _ShowLoadingProgress = true;
 
 private:
 	explicit LoadingPanel() = default;

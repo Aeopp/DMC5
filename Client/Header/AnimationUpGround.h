@@ -35,6 +35,8 @@ public:
 	void RenderInit();
 private:
 	std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
+
+	bool	m_bPlaySound = true;
 };
 
 

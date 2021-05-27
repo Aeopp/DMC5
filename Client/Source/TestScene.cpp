@@ -68,6 +68,8 @@
 #include "FadeOut.h"
 #include "Change.h"
 #include "JudgementSword.h"
+#include "LoadingScene.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -110,9 +112,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
-
 	// _MainCamera = AddGameObject<MainCamera>();
+	// _Camera = AddGameObject<Camera>();
+	
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
@@ -141,6 +144,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.6f;
 
 #pragma region RenderData & Trigger
+
 	RenderDataSetUp(false);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
@@ -151,6 +155,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Effect
 
+	//AddGameObject<Judgement>();
+	//AddGameObject<SandGlassEffect>();
+	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	//AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<Change>();
 	//AddGameObject<ShockWave>();
 
@@ -180,6 +188,11 @@ HRESULT TestScene::LoadScene()
 	{
 		_ShopFadeOut.lock()->SetActive(false);
 	}
+	if (_SceneFadeOut = AddGameObject<FadeOut>();
+		!_SceneFadeOut.expired())
+	{
+		_SceneFadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -206,7 +219,7 @@ HRESULT TestScene::LoadScene()
 	if (auto pFont = AddGameObject<Font>().lock();
 		pFont)
 	{
-		pFont->SetText("D 1, Until Dooms Day",
+		pFont->SetText("D Day, Until Dooms Day",
 			Font::TEX_ID::DMC5_BLACK_GRAD,
 			Vector2(505.f, 40.f),
 			Vector2(0.6f, 0.6f),
@@ -246,11 +259,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	if (auto SpPlayer = _Player.lock();
-		SpPlayer)
-	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
-	}
+	// if (auto SpPlayer = _Player.lock();
+	// 	SpPlayer)
+	// {
+	// 	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
+	// }
 	
 
 	if (Input::GetKeyDown(DIK_INSERT))
@@ -275,6 +288,28 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	{
 		AddGameObject<Em200>();
 	}
+	if (Input::GetKeyDown(DIK_NUMPAD9))
+	{
+		if (auto SpFadeOut = _SceneFadeOut.lock(); SpFadeOut)
+		{
+			if (auto SpPanel = _BtlPanel.lock(); SpPanel)
+			{
+				SpFadeOut->SetActive(true);
+				SpFadeOut->PlayStart(8u,
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+					}
+				);
+			}
+		}
+		else
+		{
+			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::ENDING));
+		}
+	}
+
 	//if (auto SpPlayer = _Player.lock();
 	//	SpPlayer)
 	//{
