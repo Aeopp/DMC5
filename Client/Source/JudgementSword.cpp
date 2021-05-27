@@ -63,6 +63,13 @@ UINT JudgementSword::Update(const float _fDeltaTime)
 	//
 	m_fAccTime += _fDeltaTime;
 
+	if (m_pMesh->IsAnimationEnd())
+	{
+		// 이호준 <- 내가 범했음 . 2021 05 28 D-Day
+		// m_pNero.lock()->StopEffect(Eff_JudgementSwordTrail);
+		SetActive(false);
+	}
+
 	return 0;
 }
 

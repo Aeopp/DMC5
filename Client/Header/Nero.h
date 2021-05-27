@@ -46,6 +46,8 @@ class Change;
 class ShockWave;
 class StoneDebrisMulti;
 class Revelion;
+class Judgement;
+class JudgementSwordTrail;
 /*Coat Test*/
 class NeroCoat;
 class Nero : public Unit,
@@ -565,6 +567,8 @@ private:
 	std::weak_ptr<JudgementShadow2> m_pJudgementShadow2;
 	std::weak_ptr<JudgementShadow3> m_pJudgementShadow3;
 	std::weak_ptr<Revelion>			m_pRevelion;
+	std::weak_ptr<Judgement>		m_pEffJudgement;
+	std::weak_ptr<JudgementSwordTrail> m_pJudgementTrail;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;

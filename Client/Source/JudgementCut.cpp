@@ -10,6 +10,7 @@
 #include "ParticleSystem.h"
 #include "ParticleInstanceDesc.hpp"
 #include "FLight.h"
+#include "Nero.h"
 
 JudgementCut::JudgementCut()
 {};
@@ -163,6 +164,13 @@ void JudgementCut::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
+	
+	if (auto SpNero = 
+		std::dynamic_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
+		SpNero)
+	{
+		SpNero->StopEffect(Eff_JudgementSwordTrail);
+	}
 };
 
 void JudgementCut::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -278,7 +286,7 @@ UINT JudgementCut::Update(const float _fDeltaTime)
 				SpTransform)
 			{
 				auto _PlayableParticle = ParticleSystem::GetInstance()->
-					PlayParticle("Stone", 777u, true);
+					PlayParticle("Stone", 1333u, true);
 				for (int32 i = 0; i < _PlayableParticle.size();
 					++i)
 				{

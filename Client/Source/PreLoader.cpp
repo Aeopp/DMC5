@@ -1090,7 +1090,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.025f, 0.05f);
+			_Value.ColorIntencity = FMath::Random(0.014f, 0.024f);
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
 
@@ -1141,7 +1141,7 @@ void PreLoader::JudgementCircleGrowParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 9999ul;
+	const uint64 PoolSize = 20000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1271,7 +1271,7 @@ void PreLoader::JudgementCutparticlePoolLoad()
 
 		ParticleInstance::Ice _IceValue{};
 
-		_IceValue.ColorIntencity = FMath::Random(1.5f, 3.f);
+		_IceValue.ColorIntencity = FMath::Random(0.75f, 1.5f);
 
 		const float LifeTime = FMath::Random(2.f, 4.f);
 
@@ -1315,7 +1315,7 @@ void PreLoader::JudgementCutStoneParitlcePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 777u;
+	const uint64 PoolSize = 1333u;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("Stone", 
@@ -1428,7 +1428,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.007f, 0.014f);
+			_Value.ColorIntencity = FMath::Random(0.005f, 0.010f);
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,73.f,60.f}, Vector3{ 255.f,60.f ,73.f });
 

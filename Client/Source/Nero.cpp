@@ -45,6 +45,8 @@
 #include "StoneDebrisMulti.h"
 #include "NeroCoat.h"
 #include "Revelion.h"
+#include "Judgement.h"
+#include "JudgementSwordTrail.h"
 
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
@@ -278,6 +280,8 @@ HRESULT Nero::Ready()
 	m_pShockWave = AddGameObject<ShockWave>();
 	m_pChange = AddGameObject<Change>();
 	m_pRevelion = AddGameObject<Revelion>();
+	m_pEffJudgement = AddGameObject<Judgement>();
+	m_pJudgementTrail = AddGameObject<JudgementSwordTrail>();
 
 	m_pCbsTrail = AddGameObject<CbsTrail>();
 	for (int i = 0; i < 3; ++i)
@@ -1907,7 +1911,13 @@ void Nero::PlayEffect(GAMEOBJECTTAG _eTag, const Vector3& Rotation, const float 
 	case Eff_Buster:
 		m_pShockWave.lock()->PlayStart(vMyPos, ShockWave::Option::Buster);
 		break;
-
+	case Eff_Judgement:
+		vMyPos.y += 0.005f;
+		m_pEffJudgement.lock()->PlayStart(vMyPos);
+		break;
+	case Eff_JudgementSwordTrail:
+		m_pJudgementTrail.lock()->PlayStart(JudgementSwordTrail::Non);
+		break;
 	default:
 		break;
 	}
@@ -1955,6 +1965,9 @@ void Nero::StopEffect(GAMEOBJECTTAG _eTag)
 		break;
 	case Eff_Change:
 		m_pChange.lock()->PlayEnd();
+		break;
+	case Eff_JudgementSwordTrail:
+		m_pJudgementTrail.lock()->PlayEnd();
 		break;
 	case Tag_END:
 		m_pTrail.lock()->PlayEnd();

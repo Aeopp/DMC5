@@ -104,8 +104,8 @@ private:
 	Vector4 LightColorHigh
 		{182.f, 45.f/255.f, 45.f/255.f,1.f};
 
-	float FluxLow{ 0.5f };
-	float FluxHigh{ 0.25f };
+	float FluxLow{ 0.15f };
+	float FluxHigh{ 0.3f };
 
 	float RadiusLow{ 20.f };
 	float RadiusHigh { 20.f };

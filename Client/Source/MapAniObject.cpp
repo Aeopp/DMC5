@@ -185,15 +185,15 @@ void MapAniObject::RenderInit()
 			}
 		},
 	};
-	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-	//	=
-	//{
-	//	{"ShadowSK" ,
-	//	[this](const DrawInfo& _Info)
-	//	{
-	//		RenderShadow(_Info);
-	//	}
-	//} };
+	/*_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+		=
+	{
+		{"ShadowSK" ,
+		[this](const DrawInfo& _Info)
+		{
+			RenderShadow(_Info);
+		}
+	} };*/
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
 	{

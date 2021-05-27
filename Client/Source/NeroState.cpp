@@ -13288,12 +13288,15 @@ HRESULT ShinMajinJudgement::StateEnter()
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, true);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Revelion, Nero::WS_Battle);
 	m_pNero.lock()->SetEm5300();
+	m_pNero.lock()->PlayEffect(Eff_Judgement);
+	m_pNero.lock()->PlayEffect(Eff_JudgementSwordTrail);
 	return S_OK;
 }
 
 HRESULT ShinMajinJudgement::StateExit()
 {
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, false);
+
 	return S_OK;
 }
 
