@@ -1036,4 +1036,7 @@
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl" />
+  </ItemGroup>
 </Project>
