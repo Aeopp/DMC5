@@ -97,9 +97,10 @@ HRESULT TestScene::LoadScene()
 	AddGameObject<Judgement>();
 	AddGameObject<Change>();
 	AddGameObject<SandGlassEffect>();
-	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(7);
 	_JudgementSwordTrail =  AddGameObject<JudgementSwordTrail>();
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
+	
 
 	m_fLoadingProgress = 0.01f;
 
@@ -276,7 +277,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	static float TestVolume = 0.15f;
 	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
 	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
-	if (Input::GetKeyDown(DIK_2))
+	/*if (Input::GetKeyDown(DIK_2))
 	{
 		AddGameObject<Em100>();
 	}
@@ -287,7 +288,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_4))
 	{
 		AddGameObject<Em200>();
-	}
+	}*/
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		if (auto SpFadeOut = _SceneFadeOut.lock(); SpFadeOut)
