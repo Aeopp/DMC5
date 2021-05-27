@@ -105,6 +105,7 @@ HRESULT TestScene::LoadScene()
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
+
 	PreLoader::PreLoadResources();
 
 #pragma endregion
@@ -113,10 +114,11 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	// _Camera = AddGameObject<Camera>();
+	//_Camera = AddGameObject<Camera>();
 	
-	  _MainCamera = AddGameObject<MainCamera>();
-	 _Player     = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();
+
    
 #pragma endregion
 
@@ -135,7 +137,8 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
+
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
 
@@ -156,10 +159,9 @@ HRESULT TestScene::LoadScene()
 #pragma region Effect
 
 	//AddGameObject<Judgement>();
-	//AddGameObject<SandGlassEffect>();
-	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
-	//AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<Change>();
+	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	//_JudgementSwordTrail = AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<ShockWave>();
 
 	//for (int32 i = 0; i < 16; ++i)
@@ -277,6 +279,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	static float TestVolume = 0.15f;
 	TestVolume = FMath::Lerp(TestVolume, 0.f, _fDeltaTime * 0.5f);
 	SoundSystem::GetInstance()->Play("Rain", TestVolume, false, {}, 11000);
+
 	/*if (Input::GetKeyDown(DIK_2))
 	{
 		AddGameObject<Em100>();
