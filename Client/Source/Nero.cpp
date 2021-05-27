@@ -44,6 +44,7 @@
 #include "SoundSystem.h"
 #include "StoneDebrisMulti.h"
 #include "NeroCoat.h"
+#include "Revelion.h"
 
 Nero::Nero()
 	:m_iCurAnimationIndex(ANI_END)
@@ -156,6 +157,9 @@ void Nero::Set_Weapon_State(NeroComponentID _eNeroComID, UINT _StateIndex)
 	case Nero::NeroCom_All_Weapon:
 		m_pRedQueen.lock()->SetWeaponState(_StateIndex);
 		m_pCbsShort.lock()->SetWeaponState(_StateIndex);
+		break;
+	case Nero::NeroCom_Revelion:
+		m_pRevelion.lock()->SetWeaponState(_StateIndex);
 		break;
 	case Nero::NeroCom_End:
 		break;
@@ -273,6 +277,7 @@ HRESULT Nero::Ready()
 	m_pJudgementShadow3 = AddGameObject<JudgementShadow3>();
 	m_pShockWave = AddGameObject<ShockWave>();
 	m_pChange = AddGameObject<Change>();
+	m_pRevelion = AddGameObject<Revelion>();
 
 	m_pCbsTrail = AddGameObject<CbsTrail>();
 	for (int i = 0; i < 3; ++i)
@@ -400,6 +405,11 @@ UINT Nero::Update(const float _fDeltaTime)
 		BuyUpgradedOverture();
 		BuyCbsMiddle();
 		BuyCbsLong();
+	}
+
+	if (Input::GetKeyDown(DIK_2))
+	{
+		UseRevelion();
 	}
 
 
@@ -654,6 +664,12 @@ void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			return;
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(), (void*)&_pOther);
 		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
+		break;
+	case Eff_NuClear:
+		m_BattleInfo.iHp = 0;
+		if (!m_pBtlPanel.expired())
+			m_pBtlPanel.lock()->SetPlayerHPRatio(0);
+		m_pFSM->ChangeState(NeroFSM::DIE);
 		break;
 	default:
 		break;
@@ -929,6 +945,11 @@ optional<Matrix> Nero::Get_BoneMatrix_ByName(std::string _BoneName)
 	return m_pMesh[m_iMeshIndex]->GetNodeToRoot(_BoneName);
 }
 
+Matrix* Nero::GetJudgementWeaponBone()
+{
+	return m_pMesh[SHINMAJIN_DANTE]->GetToRootMatrixPtr("R_WeaponHand");
+}
+
 Matrix* Nero::Get_BoneMatrixPtr(std::string _BoneName)
 {
 	return m_pMesh[m_iMeshIndex]->GetToRootMatrixPtr(_BoneName);;
@@ -980,10 +1001,7 @@ void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot
 		m_pOverture.lock()->SetActive(ActiveOrNot);
 		break;
 	case Nero::NeroCom_All_Weapon:
-		m_pLWing.lock()->SetActive(ActiveOrNot);
-		m_pRWing.lock()->SetActive(ActiveOrNot);
-		m_pLWing.lock()->SetActive(ActiveOrNot);
-		m_pRWing.lock()->SetActive(ActiveOrNot);
+
 		m_pBusterArm.lock()->SetActive(ActiveOrNot);
 		m_pBusterArmLeft.lock()->SetActive(ActiveOrNot);
 		m_pWireArm.lock()->SetActive(ActiveOrNot);
@@ -991,9 +1009,17 @@ void Nero::SetActive_NeroComponent(NeroComponentID _eNeroComID, bool ActiveOrNot
 		m_pWingArm_Right.lock()->SetActive(ActiveOrNot);
 		m_pOverture.lock()->SetActive(ActiveOrNot);
 		m_pRedQueen.lock()->SetActive(ActiveOrNot);
+		if (m_pLWing.lock()->IsActive())
+		{
+			m_pLWing.lock()->SetDissolve();
+			m_pRWing.lock()->SetDissolve();
+		}
 		break;
 	case Nero::NeroCom_NewWingSword:
 		m_pNewWingSword.lock()->SetActive(ActiveOrNot);
+		break;
+	case Nero::NeroCom_Revelion:
+		m_pRevelion.lock()->SetActive(ActiveOrNot);
 		break;
 	case Nero::NeroCom_End:
 		break;
@@ -1135,6 +1161,11 @@ void Nero::SetAngle(float _fAngle)
 	m_fAngle = _fAngle;
 }
 
+
+void Nero::SetEm5300()
+{
+	m_pTargetMonster = static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock());
+}
 
 void Nero::CheckAutoRotate()
 {

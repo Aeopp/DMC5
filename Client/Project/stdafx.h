@@ -98,6 +98,7 @@ enum GAMEOBJECTTAG
 	ThrowCar,
 	TAG_Camera,
 	TAG_RedQueen,
+	TAG_Revelion,
 	TAG_BusterArm_Right,
 	TAG_BusterArm_Left,
 	TAG_WireArm,

@@ -211,6 +211,7 @@ HRESULT NeroFSM::ReadyFSM()
 
 	m_vecState.emplace_back(ShinMajinEnter::Create(this, SHINMAJIN_ENTER, m_pNero));
 	m_vecState.emplace_back(ShinMajinJudgement::Create(this, SHINMAJIN_JUDGEMNET, m_pNero));
+	m_vecState.emplace_back(ShinMajinIdle::Create(this, SHINMAJIN_IDLE, m_pNero));
 
 	m_vecState.emplace_back(Wind_Pressure_Big::Create(this, WINDPRESSURE, m_pNero));
 	m_vecState.emplace_back(Wind_Pressure_Big_End::Create(this, WINDPRESSURE_END, m_pNero));
@@ -220,6 +221,11 @@ HRESULT NeroFSM::ReadyFSM()
 	m_vecState.emplace_back(Provoke3::Create(this, PROVOKE3, m_pNero));
 	m_vecState.emplace_back(Provoke9::Create(this, PROVOKE9, m_pNero));
 	m_vecState.emplace_back(Provoke10::Create(this, PROVOKE10, m_pNero));
+
+	m_vecState.emplace_back(Die::Create(this, DIE, m_pNero));
+	m_vecState.emplace_back(Resurrection::Create(this, DIE2, m_pNero));
+	m_vecState.emplace_back(Resurrection_Loop::Create(this, DIE2_LOOP, m_pNero));
+	m_vecState.emplace_back(Resurrection_GetUp::Create(this, DIE_END, m_pNero));
 	return S_OK;						
 }
 

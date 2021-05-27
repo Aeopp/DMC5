@@ -55,6 +55,8 @@ public:
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
 	std::weak_ptr<class Nero> m_pNero;
+	std::weak_ptr<SphereCollider> m_pCollider;
+
 	bool bKaboom = false;
 	bool bBlackOut = false;
 	Matrix KaboomMatrix{ FMath::Identity() };

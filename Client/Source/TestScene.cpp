@@ -92,11 +92,11 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
-	AddGameObject<Judgement>();
-	AddGameObject<Change>();
-	AddGameObject<SandGlassEffect>();
-	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
-	AddGameObject<JudgementSwordTrail>();
+	//AddGameObject<Judgement>();
+	//AddGameObject<Change>();
+	//AddGameObject<SandGlassEffect>();
+	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	//AddGameObject<JudgementSwordTrail>();
 
 
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
@@ -135,7 +135,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
+	//LoadMap();
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);

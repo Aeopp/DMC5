@@ -582,6 +582,7 @@
     <ClInclude Include="..\Header\EndingScene.h">
       <Filter>03.Scene\99.TestScene</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\Revelion.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -946,6 +947,7 @@
     <ClCompile Include="..\Source\EndingScene.cpp">
       <Filter>03.Scene\99.TestScene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Revelion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -1038,11 +1040,9 @@
     <None Include="..\..\Resource\Shader\Effect\JudgementParticle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\JudgementCut.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\JudgementCutParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl" />
   </ItemGroup>
 </Project>
