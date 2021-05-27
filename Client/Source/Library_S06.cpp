@@ -89,7 +89,7 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Map & Objects
 
-	LoadObjects("../../Data/Stage6_Map.json");
+	//LoadObjects("../../Data/Stage6_Map.json");
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(5);

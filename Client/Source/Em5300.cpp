@@ -890,6 +890,26 @@ void Em5300::State_Change(const float _fDeltaTime)
 		break;
 	case Em5300::Move_Front_Start:
 		break;
+	case Em5300::CutScene:
+		if(m_bCutScene == false)
+		{
+			Skill_CoolTime(_fDeltaTime);
+			Update_Angle();
+			m_bInteraction = true;
+			m_pMesh->PlayAnimation("Idle", false, {}, 1.f, 20.f);
+			if (m_fCenterY < 0.1f)
+			{
+				m_fCenterY += 0.006f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+			}
+			else
+			{
+				m_eState = Idle;
+				m_bCutScene = true;
+			}
+
+		}
+		break;
 	case Em5300::State_END:
 		break;
 	default:
@@ -1186,16 +1206,11 @@ UINT Em5300::Update(const float _fDeltaTime)
 			m_bFight = true;
 	}
 	if (Input::GetKeyDown(DIK_Y))
-	{
-		m_bIng = true;
-		m_bRain = true;
-		m_eState = Attack_Rain_Start;
-	}
+		Set_Cut();
 
-	if (m_bFight)
+	if (m_bCutScene)
 		Fight(_fDeltaTime);
 	State_Change(_fDeltaTime);
-	Skill_CoolTime(_fDeltaTime);
 
 
 	if (m_bUlte)
@@ -1598,5 +1613,10 @@ void Em5300::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	}
 
 	HitEffectPlay(_pOther);
+}
+
+void Em5300::Set_Cut()
+{
+	m_eState = CutScene;
 }
 

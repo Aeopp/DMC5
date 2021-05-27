@@ -536,7 +536,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 		if (m_bIng == true)
 		{
 			m_pMesh->PlayAnimation("Attack_Punch_Twice", false, {}, 1.5f, 50.f, true);
-			if (m_BattleInfo.iHp <= 2500.f)
+			if (m_BattleInfo.iHp <= 500.f)
 			{
 				if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Punch_Twice" && m_pMesh->PlayingTime() >= 0.9f)
 				{
