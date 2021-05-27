@@ -1052,7 +1052,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 2500ul;
+	const uint64 PoolSize = 5000ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1177,7 +1177,7 @@ void PreLoader::JudgementCircleGrowParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.025f, 0.05f);
+			_Value.ColorIntencity = FMath::Random(0.05f, 0.1f);
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
 
@@ -1271,7 +1271,7 @@ void PreLoader::JudgementCutparticlePoolLoad()
 
 		ParticleInstance::Ice _IceValue{};
 
-		_IceValue.ColorIntencity = FMath::Random(0.75f, 1.5f);
+		_IceValue.ColorIntencity = FMath::Random(1.0f, 2.0f);
 
 		const float LifeTime = FMath::Random(2.f, 4.f);
 
@@ -1420,7 +1420,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 4.f;
+			constexpr float ScaleFactor = 5.f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -1428,7 +1428,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.005f, 0.010f);
+			_Value.ColorIntencity = FMath::Random(0.01f, 0.02f);
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,73.f,60.f}, Vector3{ 255.f,60.f ,73.f });
 

@@ -316,7 +316,7 @@ void Judgement::PlayCircleGrowEndParticle()
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"JudgementReady", 2500ul, true);
+					"JudgementReady", 5000ul, true);
 				_Particle.empty() == false)
 			{
 				for (int32 i = 0; i < _Particle.size(); ++i)
