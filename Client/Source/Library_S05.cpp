@@ -54,7 +54,7 @@ HRESULT Library_S05::LoadScene()
 	// Load Start
 
 	SoundSystem::GetInstance()->ClearSound();
-	SoundSystem::GetInstance()->Play("Library_01", 0.1f, true);
+	SoundSystem::GetInstance()->Play("Library_01", 0.07f, true);
 
 	m_fLoadingProgress = 0.01f;
 
@@ -107,7 +107,7 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion

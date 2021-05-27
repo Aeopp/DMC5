@@ -271,7 +271,7 @@ void Monster::PlayBusterEffect()
 	}
 	m_pBusterDust.lock()->PlayStart(0.0f, m_pTransform.lock()->GetPosition());
 	m_pEffect[3].lock()->PlayStart(0, m_pTransform.lock()->GetPosition());
-	m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Hit, true);
+	m_pHitWave[m_iWaveIndex].lock()->PlayStart(m_pTransform.lock()->GetPosition(), ShockWave::Option::Buster, true);
 	++m_iWaveIndex;
 	m_iWaveIndex %= 3;
 }

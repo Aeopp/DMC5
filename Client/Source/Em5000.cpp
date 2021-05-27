@@ -250,7 +250,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 						{
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone", { 1,1 }, 0.3f, false);
-							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 0.5f, false);
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 1.f, false);
 						}
 					}
 				}
@@ -307,7 +307,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 						{
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone2", { 1,1 }, 0.3f, false);
-							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 0.5f, false);
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 1.f, false);
 						}
 					}
 				}
@@ -572,7 +572,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_bJustOne[1] = true;
 					m_bStone = false;
 					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone6", { 1,1 }, 0.3f, false);
-					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 0.5f, false);
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 1.f, false);
 				}
 				for (int i = 6; i < 12; ++i)
 				{
@@ -597,7 +597,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					m_vStonePos = GetMonsterBoneWorldPos("R_Hand");
 					m_bJustOne[0] = true;
 					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone7", { 1,1 }, 0.3f, false);
-					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 0.5f, false);
+					SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 1.f, false);
 				}
 				for (int i = 0; i < 6; ++i)
 				{
@@ -712,7 +712,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 					{
 						m_bStone = true;
 						SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone8", { 1,1 }, 0.3f, false);
-						SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 0.5f, false);
+						SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 1.f, false);
 					}
 				}
 			}
@@ -769,7 +769,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 						{
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone2", { 1,1 }, 0.3f, false);
-							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 0.5f, false);
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 1.f, false);
 						}
 					}
 				}
@@ -827,7 +827,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 						{
 							m_bStone = true;
 							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Stone3", { 1,1 }, 0.3f, false);
-							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 0.5f, false);
+							SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air2", { 1,1 }, 1.f, false);
 						}
 					}
 				}
@@ -1055,7 +1055,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			
 			if (m_pMesh->CurPlayAnimInfo.Name == "Hit_Buster_Swing_Start" && m_pMesh->IsAnimationEnd())
 			{
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 1.f, false);
 				m_eState = Hit_Buster_Swing_Loop;
 				m_bBuster = false;
 			}
@@ -1067,7 +1067,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			Update_Angle();
 			m_pMesh->PlayAnimation("Hit_Buster_Swing_Loop", true, {}, 1.3f, 1.f, true);
 
-			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 0.5f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Air", { 1,1 }, 1.f, false);
 			if (m_pPlayer.lock()->Get_CurAnimationIndex() == Nero::ANI_EM5000_BUSTER_FINISH
 				&&m_pPlayer.lock()->Get_PlayingTime() >= 0.12f)
 			{
@@ -1387,7 +1387,7 @@ HRESULT Em5000::Ready()
 	//몬스터 회전 기본 속도
 	m_fAngleSpeed = D3DXToRadian(100.f);
 
-	m_BattleInfo.iMaxHp = 3500;
+	m_BattleInfo.iMaxHp = 1000;
 	m_BattleInfo.iHp = m_BattleInfo.iMaxHp;
 
 
