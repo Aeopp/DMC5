@@ -45,6 +45,7 @@ public:
 	// 파티클이 폭발하는 타이밍 
 	bool IsKaboom();
 	bool IsBlackOut();
+	bool IsFallTime();
 private:
 	void ParticleUpdate(const float DeltaTime);
 	void PlayParticle();

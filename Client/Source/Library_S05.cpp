@@ -655,33 +655,43 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodFirstWave
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -19.f, -3.014f, 35.556f });
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -17.929f, -3.014f, 35.528f });
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -18.979f, -3.014f, 37.077f });
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -17.980f, -3.014f, 36.903f });
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.626f, -3.168f, 35.443f });
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		MonsterWave[5].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.134f, -3.339f, 36.172f });
+		MonsterWave[5].lock()->Set_Hp(60);
 
 		MonsterWave[6].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.291f, -3.222f, 36.921f });
+		MonsterWave[6].lock()->Set_Hp(60);
 
 		MonsterWave[7].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.930f, -3.274f, 35.774f });
+		MonsterWave[7].lock()->Set_Hp(60);
 
 		MonsterWave[8].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.604f, -3.256f, 35.654f });
+		MonsterWave[8].lock()->Set_Hp(60);
 
 		MonsterWave[9].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.308f, -3.266f, 36.834f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -14.065550f, -3.066150f, 36.398815f };
@@ -751,33 +761,43 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodSecondWave(const std::weak_ptr<T
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -19.f, -3.014f, 35.556f });
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -17.929f, -3.014f, 35.528f });
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -18.979f, -3.014f, 37.077f });
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -17.980f, -3.014f, 36.903f });
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.626f, -3.168f, 35.443f });
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		MonsterWave[5].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.134f, -3.339f, 36.172f });
+		MonsterWave[5].lock()->Set_Hp(60);
 
 		MonsterWave[6].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.291f, -3.222f, 36.921f });
+		MonsterWave[6].lock()->Set_Hp(60);
 
 		MonsterWave[7].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.930f, -3.274f, 35.774f });
+		MonsterWave[7].lock()->Set_Hp(60);
 
 		MonsterWave[8].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.604f, -3.256f, 35.654f });
+		MonsterWave[8].lock()->Set_Hp(60);
 
 		MonsterWave[9].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.308f, -3.266f, 36.834f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -14.065550f, -3.066150f, 36.398815f };
@@ -845,33 +865,43 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodThirdWave()
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -19.f, -3.014f, 35.556f });
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -17.929f, -3.014f, 35.528f });
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -18.979f, -3.014f, 37.077f });
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -17.980f, -3.014f, 36.903f });
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.626f, -3.168f, 35.443f });
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		MonsterWave[5].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.134f, -3.339f, 36.172f });
+		MonsterWave[5].lock()->Set_Hp(60);
 
 		MonsterWave[6].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -16.291f, -3.222f, 36.921f });
+		MonsterWave[6].lock()->Set_Hp(60);
 
 		MonsterWave[7].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.930f, -3.274f, 35.774f });
+		MonsterWave[8].lock()->Set_Hp(60);
 
 		MonsterWave[8].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.604f, -3.256f, 35.654f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		MonsterWave[9].lock()->GetComponent<Transform>().
 			lock()->SetPosition({ -14.308f, -3.266f, 36.834f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -14.065550f, -3.066150f, 36.398815f };
@@ -1023,9 +1053,11 @@ void Library_S05::TriggerBookCaseSunkenFirstSmash()
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -19817.0f, -1968.0f, 31454.0f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -19817.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -19.6f, -1.677550f, 30.850502f };
@@ -1088,9 +1120,11 @@ std::weak_ptr<Trigger> Library_S05::TriggerBookCaseSunkenSecondSmash()
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -19.6f, -1.677550f, 30.850502f };
@@ -1145,9 +1179,11 @@ std::weak_ptr<Trigger> Library_S05::TriggerBookCaseSunkenThirdSmash()
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -21167.0f, -1968.0f, 31454.0f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -21177.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -19.6f, -1.677550f, 30.850502f };
@@ -1214,18 +1250,23 @@ void Library_S05::TriggerSewerSunken()
 		// 몬스터 위치는 미리 잡아주기 . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -23979.177f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -25179.414f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -26379.939f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -27578.267f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -28779.519f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -23.681999f, -1.231250f, 33.628098f};

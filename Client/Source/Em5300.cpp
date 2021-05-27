@@ -119,7 +119,7 @@ void Em5300::Fight(const float _fDeltaTime)
 			if (m_bRushAttack && m_bIng == false)
 			{
 				m_eState = Attack_Rush_Start;
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 				m_bIng = true;
 			}
 		}
@@ -129,14 +129,14 @@ void Em5300::Fight(const float _fDeltaTime)
 	if (m_bLaser && m_bIng == false)
 	{
 		m_eState = Attack_Laser_Start;
-		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 		m_bIng = true;
 	}
 
 	if (m_bHoming && m_bIng == false)
 	{
 		m_eState = Attack_Homing_Start;
-		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 		m_bIng = true;
 	}
 
@@ -146,12 +146,12 @@ void Em5300::Fight(const float _fDeltaTime)
 		if (iRan == 1)
 		{
 			m_eState = Attack_Missile2_Start;
-			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 		}
 		else
 		{
 			m_eState = New_Missile_Start;
-			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 		}
 
 		m_bIng = true;
@@ -160,12 +160,12 @@ void Em5300::Fight(const float _fDeltaTime)
 	{
 		m_eState = Attack_Rain_Start;
 		m_bIng = true;
-		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 	}
 	if (m_bRushAttack && m_bIng == false)
 	{
 		m_eState = Attack_Rush_Start;
-		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 		m_bIng = true;
 	}
 
@@ -195,8 +195,8 @@ void Em5300::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Homing_End" && m_pMesh->IsAnimationEnd())
 			{
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.5f, false);
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Missile3", { 1,1 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.8f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Missile3", { 1,1 }, 0.8f, false);
 				m_eState = Idle;
 				m_bIng = false;
 				m_bHoming = false;
@@ -259,7 +259,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Laser_End" && m_pMesh->IsAnimationEnd())
 			{
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.8f, false);
 				m_eState = Idle;
 				m_bIng = false;
 				m_bLaser = false;
@@ -435,7 +435,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("New_Missile_End", false, {}, 0.6f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "New_Missile_End" && m_pMesh->IsAnimationEnd())
 			{
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.8f, false);
 				m_bIng = false;
 				m_bMissile = false;
 				m_bLens = false;
@@ -498,7 +498,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 			m_pMesh->PlayAnimation("Attack_Rain_End", false, {}, 1.f, 20.f, true);
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rain_End" && m_pMesh->IsAnimationEnd())
 			{
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.8f, false);
 				m_eState = Idle;
 				m_bRain = false;
 				m_bIng = false;
@@ -576,7 +576,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 			
 			if (m_pMesh->CurPlayAnimInfo.Name == "Attack_Rush_Loop" && fDir2 <= 1.f )
 			{
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.8f, false);
 				m_eState = Move_Front_End;
 				m_fRushTime = 0.f;
 				m_pRush.lock()->Set_Coll(false);
@@ -776,7 +776,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 			}
 			if (m_pMesh->CurPlayAnimInfo.Name == "Down_Standup" && m_pMesh->IsAnimationEnd())
 			{
-				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.5f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Attack", { 1,5 }, 0.8f, false);
 				m_eState = Idle;
 				m_bIng = false;
 				m_bGroggy = false;
@@ -1187,11 +1187,15 @@ UINT Em5300::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_Y))
 	{
+		m_bIng = true;
+		m_bRain = true;
+		m_eState = Attack_Rain_Start;
 	}
 
 	if (m_bFight)
 		Fight(_fDeltaTime);
 	State_Change(_fDeltaTime);
+	Skill_CoolTime(_fDeltaTime);
 
 
 	if (m_bUlte)

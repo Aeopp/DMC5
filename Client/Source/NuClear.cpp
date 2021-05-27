@@ -193,6 +193,12 @@ bool NuClear::IsBlackOut()
 	return bBlackOut;
 };
 
+bool NuClear::IsFallTime()
+{
+	return  T > (ExplosionReadyTime + FreeFallTime);
+}
+;
+
 void NuClear::KaboomParticle()
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();

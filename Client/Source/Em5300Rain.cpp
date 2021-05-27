@@ -190,7 +190,7 @@ void Em5300Rain::Rain(const float _fDeltaTime)
 	}
 	else
 	{
-		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Missile", { 1,1 }, 0.3f, false);
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Missile", { 1,1 }, 0.8f, false);
 		m_fRainDownTime += _fDeltaTime;
 	
 		if (m_bJustOne)
@@ -608,6 +608,30 @@ UINT Em5300Rain::Update(const float _fDeltaTime)
 
 	if (m_bReadyRain)
 		Rain(_fDeltaTime);
+
+
+	Vector3 vResult;
+	if (Physics::RayCast(m_pTransform.lock()->GetPosition(), Vector3{0.f, -1.f, 0.f},
+		vResult))
+		vResult -= m_pTransform.lock()->GetPosition() + m_pCollider.lock()->GetCenter();
+
+	float	fDir = D3DXVec3Length(&vResult);
+	if (fDir <= 0.05f)
+	{
+		m_bReadyRain = false;
+		if(m_iRainPos == 0 || m_iRainPos == 6)
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Rain", { 1,1 }, 0.4f, false);
+		else if(m_iRainPos == 1 || m_iRainPos == 7)
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Rain2", { 1,1 }, 0.4f, false);
+		else if (m_iRainPos == 2 || m_iRainPos == 8)
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Rain3", { 1,1 }, 0.4f, false);
+		else if (m_iRainPos == 3 || m_iRainPos == 9 )
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Rain4", { 1,1 }, 0.4f, false);
+		else if (m_iRainPos == 4 || m_iRainPos == 10)
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Rain5", { 1,1 }, 0.4f, false);
+		else if (m_iRainPos == 5 || m_iRainPos == 11)
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Rain6", { 1,1 }, 0.4f, false);
+	}
 
 	return 0;
 }
