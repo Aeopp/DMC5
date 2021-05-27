@@ -3,19 +3,21 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+
 JudgementShadow3::JudgementShadow3()
 {
 	m_nTag = TAG_JudgementShadow3;
-}
+};
+
 void JudgementShadow3::Free()
 {
 	GameObject::Free();
-}
+};
 
 JudgementShadow3* JudgementShadow3::Create()
 {
 	return new JudgementShadow3;
-}
+};
 
 HRESULT JudgementShadow3::Ready()
 {
@@ -235,7 +237,8 @@ void JudgementShadow3::RenderInit()
 
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
-	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\ShinMajin\\JudgementShadow.fbx", _InitInfo);
+	m_pMesh = Resources::Load<SkeletonMesh>(
+		L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\ShinMajin\\JudgementShadow.fbx", _InitInfo);
 
 	m_pMesh->EnableToRootMatricies();
 
