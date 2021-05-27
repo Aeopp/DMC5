@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "TitlePanel.h"
 #include "Hotel_S01.h"
+#include "SoundSystem.h"
+
 
 void TitleScene::Free()
 {
@@ -14,7 +16,6 @@ TitleScene* TitleScene::Create()
 	TitleScene* pInstance = new TitleScene;
 	return pInstance;
 }
-
 
 HRESULT TitleScene::LoadScene()
 {
@@ -58,6 +59,13 @@ HRESULT TitleScene::Update(const float _fDeltaTime)
 	
 	if (0.5f < _CheckLoadingTick)
 	{
+		if (_CallTitle)
+		{
+			SoundSystem::GetInstance()->Play("TitleCall", 0.7f, false);
+
+			_CallTitle = false;
+		}
+
 		if (auto SpPanel = _TitlePanel.lock();
 			SpPanel)
 		{

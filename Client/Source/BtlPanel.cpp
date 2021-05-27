@@ -4,6 +4,7 @@
 #include "Subset.h"
 #include "TextureType.h"
 #include "Renderer.h"
+#include "SoundSystem.h"
 
 
 // static var
@@ -1114,7 +1115,36 @@ void BtlPanel::AddRankScore(float Score)
 		return;
 
 	if (_PreRank < static_cast<int>((_RankScore + Score) / 100.f))
+	{
 		_RankScore = (_PreRank * 100.f + 150.f);
+
+		switch (_PreRank + 1)
+		{
+		case 0:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Rank_D", { 1,2 }, 0.4f, false);
+			break;
+		case 1:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Rank_C", { 1,2 }, 0.4f, false);
+			break;
+		case 2:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Rank_B", { 1,2 }, 0.4f, false);
+			break;
+		case 3:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Rank_A", { 1,2 }, 0.4f, false);
+			break;
+		case 4:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Rank_S", { 1,2 }, 0.4f, false);
+			break;
+		case 5:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Rank_SS", { 1,2 }, 0.4f, false);
+			break;
+		case 6:
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Rank_SSS", { 1,2 }, 0.4f, false);
+			break;
+		default:
+			break;
+		}
+	}
 	else
 		_RankScore += Score;
 
@@ -1210,6 +1240,7 @@ void BtlPanel::ChangeWeaponUI(Nero::WeaponList NextWeapon, int CbsColor/*= 0*/)
 		_UIDescs[EX_GAUGE].Using = false;
 		_UIDescs[STYLISH_LETTER].Pos.z = 14.f;
 		_ExGauge = 0.f;
+		SoundSystem::GetInstance()->Play("Glass", 0.4f, true);
 	}
 
 	_HPGlassRotY = -30.f;

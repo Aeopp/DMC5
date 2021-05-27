@@ -108,10 +108,10 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
+	//_Camera = AddGameObject<Camera>();
 	
-	//_MainCamera = AddGameObject<MainCamera>();
-	//_Player     = AddGameObject<Nero>();
+	_MainCamera = AddGameObject<MainCamera>();
+	_Player     = AddGameObject<Nero>();
    
 #pragma endregion
 
@@ -132,8 +132,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(1);
+	auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);
 
 #pragma endregion
 
@@ -178,16 +178,16 @@ HRESULT TestScene::LoadScene()
 	//	}
 	//}
 
-	//if (_ShopFadeOut = AddGameObject<FadeOut>();
-	//	!_ShopFadeOut.expired())
-	//{
-	//	_ShopFadeOut.lock()->SetActive(false);
-	//}
-	//if (_SceneFadeOut = AddGameObject<FadeOut>();
-	//	!_SceneFadeOut.expired())
-	//{
-	//	_SceneFadeOut.lock()->SetActive(false);
-	//}
+	if (_ShopFadeOut = AddGameObject<FadeOut>();
+		!_ShopFadeOut.expired())
+	{
+		_ShopFadeOut.lock()->SetActive(false);
+	}
+	if (_SceneFadeOut = AddGameObject<FadeOut>();
+		!_SceneFadeOut.expired())
+	{
+		_SceneFadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -284,6 +284,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	//{
 	//	AddGameObject<Em200>();
 	//}
+
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		if (auto SpFadeOut = _SceneFadeOut.lock(); SpFadeOut)
