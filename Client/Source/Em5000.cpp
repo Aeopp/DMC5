@@ -1883,7 +1883,21 @@ void Em5000::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	if (m_eState == Attack_Rush_Loop || m_eState == Attack_Rush_End)
+	if (m_eState == Attack_Rush_Loop)
+	{
+		if (_pOther.lock()->m_nTag == Overture)
+		{
+			m_bHit = true;
+			m_bGroggy = true;
+			m_eState = Groggy_Start;
+
+			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
+			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
+			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+			return;
+		}
+	}
+	if (m_eState == Attack_Rush_End && m_pMesh->PlayingTime() <= 0.6f)
 	{
 		if (_pOther.lock()->m_nTag == Overture)
 		{
@@ -1923,14 +1937,6 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::Overture:
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
 		AddRankScore(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack);
-		if (m_eState == Attack_Rush_End)
-		{
-			if (m_pMesh->PlayingTime() > 0.15f && m_pMesh->PlayingTime() < 0.5f)
-			{
-				m_bGroggy = true;
-				m_eState = Groggy_Start;
-			}
-		}
 		m_bHit = true;
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
