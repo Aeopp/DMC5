@@ -4300,6 +4300,9 @@ Die* Die::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero
 
 HRESULT Die::StateEnter()
 {
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_All_Weapon, false);
+
+	m_pNero.lock()->ChangeAnimation("Die1", false, Nero::ANI_DIE);
 	return S_OK;
 }
 
@@ -4310,6 +4313,10 @@ HRESULT Die::StateExit()
 
 HRESULT Die::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		m_pFSM->ChangeState(NeroFSM::DIE2);
+	}
 	return S_OK;
 }
 
@@ -4329,6 +4336,7 @@ Resurrection* Resurrection::Create(FSMBase* const _pFSM, const UINT _nIndex, wea
 
 HRESULT Resurrection::StateEnter()
 {
+	m_pNero.lock()->ChangeAnimation("Die2", false, Nero::ANI_DIE2);
 	return S_OK;
 }
 
@@ -4339,6 +4347,45 @@ HRESULT Resurrection::StateExit()
 
 HRESULT Resurrection::StateUpdate(const float _fDeltaTime)
 {
+	if (m_pNero.lock()->IsAnimationEnd())
+	{
+		m_pFSM->ChangeState(NeroFSM::DIE2_LOOP);
+	}
+	return S_OK;
+}
+
+Resurrection_Loop::Resurrection_Loop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+Resurrection_Loop::~Resurrection_Loop()
+{
+}
+
+Resurrection_Loop* Resurrection_Loop::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new Resurrection_Loop(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT Resurrection_Loop::StateEnter()
+{
+
+	m_pNero.lock()->ChangeAnimation("Die2_Loop", true, Nero::ANI_DIE2_LOOP);
+	return S_OK;
+}
+
+HRESULT Resurrection_Loop::StateExit()
+{
+	return S_OK;
+}
+
+HRESULT Resurrection_Loop::StateUpdate(const float _fDeltaTime)
+{
+	if (m_pNero.lock()->GetIsUseRevelion())
+	{
+		m_pFSM->ChangeState(NeroFSM::DIE_END);
+	}
 	return S_OK;
 }
 
@@ -4358,6 +4405,8 @@ Resurrection_GetUp* Resurrection_GetUp::Create(FSMBase* const _pFSM, const UINT 
 
 HRESULT Resurrection_GetUp::StateEnter()
 {
+
+	m_pNero.lock()->ChangeAnimation("DieEnd", false, Nero::ANI_DIE_END);
 	return S_OK;
 }
 
@@ -4368,6 +4417,10 @@ HRESULT Resurrection_GetUp::StateExit()
 
 HRESULT Resurrection_GetUp::StateUpdate(const float _fDeltaTime)
 {
+	if (0.5f <= m_pNero.lock()->Get_PlayingTime())
+	{
+		m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
+	}
 	return S_OK;
 }
 
@@ -13112,8 +13165,9 @@ TransformToShinMajin* TransformToShinMajin::Create(FSMBase* const _pFSM, const U
 HRESULT TransformToShinMajin::StateEnter()
 {
 	m_pNero.lock()->ChangeAnimation("TransformToMajin", false, Nero::ANI_TRANSFORM_TO_SHINMAJIN);
-	m_pNero.lock()->ChangeWeapon(Nero::NeroCom_RedQueen);
-	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_RedQueen, Nero::WS_Idle);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_All_Weapon, false);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, true);
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Revelion, Nero::WS_Idle);
 	return S_OK;
 }
 
@@ -13188,8 +13242,10 @@ ShinMajinEnter* ShinMajinEnter::Create(FSMBase* const _pFSM, const UINT _nIndex,
 HRESULT ShinMajinEnter::StateEnter()
 {
 	m_pNero.lock()->ChangeMeshIndex(Nero::SHINMAJIN_DANTE);
-	m_pNero.lock()->ChangeAnimation("ShinMajinEnter", false, Nero::ANI_SHINMAJIN_ENTER);
 
+	m_pNero.lock()->ChangeAnimation("ShinMajinEnter", false, Nero::ANI_SHINMAJIN_ENTER);
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, false);
+	m_pNero.lock()->PlayEffect(Eff_Change);
 	return S_OK;
 }
 
@@ -13229,17 +13285,26 @@ HRESULT ShinMajinJudgement::StateEnter()
 	{
 		m_bPlayOnce[i] = true;
 	}
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, true);
+	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Revelion, Nero::WS_Battle);
+	m_pNero.lock()->SetEm5300();
+	m_pNero.lock()->PlayEffect(Eff_Judgement);
+	m_pNero.lock()->PlayEffect(Eff_JudgementSwordTrail);
 	return S_OK;
 }
 
 HRESULT ShinMajinJudgement::StateExit()
 {
+	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, false);
+
 	return S_OK;
 }
 
 HRESULT ShinMajinJudgement::StateUpdate(const float _fDeltaTime)
 {
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	m_pNero.lock()->RotateToTargetMonster();
 
 	if (0.307f <= fCurAnimationTime && m_bPlayOnce[0])
 	{
@@ -13266,8 +13331,39 @@ HRESULT ShinMajinJudgement::StateUpdate(const float _fDeltaTime)
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
-
+		m_pFSM->ChangeState(NeroFSM::SHINMAJIN_IDLE);
 	}
+	return S_OK;
+}
+
+ShinMajinIdle::ShinMajinIdle(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+	:NeroState(_pFSM, _nIndex, _pNero)
+{
+}
+
+ShinMajinIdle::~ShinMajinIdle()
+{
+}
+
+ShinMajinIdle* ShinMajinIdle::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero)
+{
+	return new ShinMajinIdle(_pFSM, _nIndex, _pNero);
+}
+
+HRESULT ShinMajinIdle::StateEnter()
+{
+	m_pNero.lock()->ChangeMeshIndex(Nero::SHINMAJIN_DANTE);
+	m_pNero.lock()->ChangeAnimation("ShinIdle", true, Nero::ANI_SHINMAJIN_IDLE);
+	return S_OK;
+}
+
+HRESULT ShinMajinIdle::StateExit()
+{
+	return S_OK;
+}
+
+HRESULT ShinMajinIdle::StateUpdate(const float _fDeltaTime)
+{
 	return S_OK;
 }
 

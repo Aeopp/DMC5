@@ -36,25 +36,7 @@ void Change::RenderReady()
 	if (auto _SpTransform = _WeakTransform.lock();
 		_SpTransform)
 	{
-const float _Scale=		
-	FMath::Lerp(StartScale, EndScale, T / PlayTime);
-
-	const Vector3 Scale = Vector3{ _Scale,_Scale ,_Scale };
-			_SpTransform->SetScale(Scale);
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
-		if (Inner)
-		{
-			const uint32  Numsubset = Inner->GetNumSubset();
-			_RenderUpdateInfo.SubsetCullingSphere.resize(Numsubset);
-
-			for (uint32 i = 0; i < Numsubset; ++i)
-			{
-				const auto& _Subset = Inner->GetSubset(i);
-				const auto& _CurBS = _Subset.lock()->GetVertexBufferDesc().BoundingSphere;
-
-				_RenderUpdateInfo.SubsetCullingSphere[i] = _CurBS.Transform(_RenderUpdateInfo.World, Scale.x);
-			}
-		}
 	}
 };
 
@@ -72,7 +54,7 @@ void Change::RenderInit()
 	// 이값을 런타임에 바꾸면 렌더를 켜고 끌수 있음. 
 	_InitRenderProp.bRender = false;
 
-	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]=
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug] =
 	{
 		{"Debug" ,[this](const DrawInfo& _Info)
 			{
@@ -97,46 +79,41 @@ void Change::RenderInit()
 	{
 		Mesh::InitializeInfo _Info{};
 		_Info.bLocalVertexLocationsStorage = true;
-		Inner = Resources::Load<StaticMesh>(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
+
+		_Mesh = Resources::Load<StaticMesh>(
+			"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
 	}
 
-	// 텍스쳐 
+	// 텍스쳐
+	_AlbmMap = Resources::Load<Texture>(
+		"..\\..\\Usable\\Judgement\\alb.tga");
+	_AlpgMap = Resources::Load<Texture>(
+		"..\\..\\Usable\\Judgement\\Magic.tga");
+	_MskMap = Resources::Load<Texture>(
+		"..\\..\\Usable\\Judgement\\msk.tga");
 
-	TrailMap = Resources::Load<Texture>(
-		"..\\..\\Usable\\tex_03_common_000_0002_alpg.tga");
-	EmssiveMskMap = Resources::Load<Texture>(
-		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
-	NoiseMap = Resources::Load<Texture>(
-		"..\\..\\Usable\\mesh_03_cs_noise_00_01.tga");
 	_ShockWave = AddGameObject<ShockWave>();
-	PushEditEntity(Inner.get());
-	PushEditEntity(TrailMap.get());
-	PushEditEntity(EmssiveMskMap.get());
-	PushEditEntity(NoiseMap.get());
+
+	PushEditEntity(_Mesh.get());
+	PushEditEntity(_AlbmMap.get());
+	PushEditEntity(_MskMap.get());
+	PushEditEntity(_AlpgMap.get());
 };
 
 void Change::PlayStart(
-	const std::optional<Vector3>& Location,
-	const float PlayTime )
+	const Vector3& Location,
+	const float PlayTime)
 {
-	Vector3 MyLocation = { 0,0,0 };
-
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
-		MyLocation = SpTransform->GetPosition();
-
 		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 			SpTransform)
 		{
-			SpTransform->SetPosition(Location.value()); 
-			SpTransform->SetScale({ StartScale ,StartScale ,StartScale });
-
+			SpTransform->SetPosition(Location);
 			// 재생 ..
 		}
 	}
-
 
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
@@ -144,7 +121,7 @@ void Change::PlayStart(
 		if (auto SpShockWave = _ShockWave.lock();
 			SpShockWave)
 		{
-			// SpShockWave->PlayStart(SpTransform->GetPosition(), ShockWave::Option::Change);
+			SpShockWave->PlayStart(SpTransform->GetPosition(), ShockWave::Option::Change);
 		}
 
 		if (auto _PtLight = PtLight.lock();
@@ -196,78 +173,43 @@ void Change::RenderAlphaBlendEffect(const DrawInfo& _Info)
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
 
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
-	_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
-	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 
-	const float AlphaFactor = std::clamp(PlayTime - T, 0.0f, 1.f);
+	_Info.Fx->SetVector("CurColor", &_Color);
 
-	_Info.Fx->SetFloat("AlphaFactor", AlphaFactor);
-	_Info.Fx->SetFloatArray("NoiseScale", NoiseScale, 3u);
-	const Vector3 Speed = NoiseScrollSpeed * T;
-	_Info.Fx->SetFloatArray("NoiseScrollSpeed", Speed, 3u);
+	_Info.Fx->SetTexture("AlbmMap", _AlbmMap->GetTexture());
+	_Info.Fx->SetTexture("AlpgMap", _AlpgMap->GetTexture());
+	_Info.Fx->SetTexture("MskMap", _MskMap->GetTexture());
 
-	_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
-	_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
-	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
-
-	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
-	_Info.Fx->SetFloat("VelocityBlurIntencity", VelocityBlurIntencity);
-	_Info.Fx->SetFloat("VelocityBlurAlpha", VelocityBlurAlpha);
-
-	_Info.Fx->SetVector("_Color", &_Color);
-	
-	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
-	_Info.Fx->SetTexture("EmissiveMskMap", EmssiveMskMap->GetTexture());
-
+	const uint32 Numsubset = _Mesh->GetNumSubset();
+	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		const uint32 Numsubset = Inner->GetNumSubset();
-		for (uint32 i = 0; i < Numsubset; ++i)
+		if (auto SpSubset = _Mesh->GetSubset(i).lock();
+			SpSubset)
 		{
-			if (auto SpSubset = Inner->GetSubset(i).lock();
-				SpSubset)
-			{
-				if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-				{
-					continue;
-				}
-
-				SpSubset->Render(_Info.Fx);
-			};
+			SpSubset->Render(_Info.Fx);
 		};
-	}
+	};
 };
-
-
 
 void Change::RenderDebug(const DrawInfo& _Info)
 {
 	_Info.Fx->SetMatrix("World", &_RenderUpdateInfo.World);
 
+	const uint32 Numsubset = _Mesh->GetNumSubset();
+	for (uint32 i = 0; i < Numsubset; ++i)
 	{
-		const uint32 Numsubset = Inner->GetNumSubset();
-		for (uint32 i = 0; i < Numsubset; ++i)
+		if (auto SpSubset = _Mesh->GetSubset(i).lock();
+			SpSubset)
 		{
-			if (auto SpSubset = Inner->GetSubset(i).lock();
-				SpSubset)
-			{
-				if (false == _Info._Frustum->IsIn(_RenderUpdateInfo.SubsetCullingSphere[i]))
-				{
-					continue;
-				}
-
-				SpSubset->Render(_Info.Fx);
-			};
+			SpSubset->Render(_Info.Fx);
 		};
-	}
+	};
 };
 
 
 HRESULT Change::Ready()
 {
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetPosition(Vector3{ 0.f,0.f,0.f });
-	InitTransform.lock()->SetScale( Vector3{ 0.005f,0.005f,0.005f } );
-	InitTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
 	PushEditEntity(InitTransform.lock().get());
 	RenderInit();
 	return S_OK;
@@ -276,9 +218,9 @@ HRESULT Change::Ready()
 HRESULT Change::Awake()
 {
 	GameObject::Awake();
-	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.f,0.f });
+	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
 	m_pTransform.lock()->SetScale(Vector3{ 0.005f,0.005f,0.005f });
-	m_pTransform.lock()->SetRotation(Vector3{ 0.f,0.f,0.f });
+	m_pTransform.lock()->SetRotation(Vector3{ 90.f,0.f,0.f });
 	return S_OK;
 }
 
@@ -305,30 +247,14 @@ UINT Change::Update(const float _fDeltaTime)
 
 	CurParticleTime -= _fDeltaTime;
 
-	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+
+	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
 	{
-		const Vector3 CurRotation = Vector3{ 0.f,RollRotationSpeed * _fDeltaTime , 0.f };
-		SpTransform->Rotate(CurRotation);
+		float Lerp = T / PlayTime;
+		const float LerpScale  = FMath::Lerp(0.f, EndScale,Lerp);
 
-		if (CurParticleTime < 0.0f)
-		{
-			CurParticleTime += ParticleCycle;
-
-			const Matrix Mat = SpTransform->GetRenderMatrix();
-			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
-
-			{
-				/*auto _PlayableParticle = ParticleSystem::GetInstance()->
-					PlayParticle("ChangeParticle",333u, true);
-				for (int32 i = 0; i < _PlayableParticle.size(); 
-					++i)
-				{
-					auto& _PlayInstance = _PlayableParticle[i];
-					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-				}*/
-			}
-		}
+		SpTransform->SetScale(Vector3{ LerpScale ,LerpScale ,LerpScale });
 
 		if (PtLight.expired() == false)
 		{
@@ -341,14 +267,12 @@ UINT Change::Update(const float _fDeltaTime)
 			SpPtLight->Color = D3DXCOLOR(
 				1.f, 0.f, 0.f, 1.f);
 			SpPtLight->PointRadius = PtLightRadius;
-			
-			;
-
 			SpPtLight->lightFlux =
-				 ( std::sinf( (T / PlayTime) * FMath::PI)  ) * PtLightFlux;
+				(std::sinf((T / PlayTime) * FMath::PI)) * PtLightFlux;
 		}
 	}
 
+	
 	return 0;
 }
 
@@ -377,7 +301,7 @@ void Change::Editor()
 					Point = SpTransform->GetPosition();
 				};
 
-				PlayStart(Point,EditPlayTime);
+				PlayStart(Point, EditPlayTime);
 			}
 			if (ImGui::SmallButton("PlayEnd"))
 			{
@@ -386,34 +310,13 @@ void Change::Editor()
 
 			ImGui::ColorEdit4("Color", _Color);
 
-			ImGui::SliderFloat("StartScale", &StartScale, 0.0f, 0.1f);
 			ImGui::SliderFloat("EndScale", &EndScale, 0.0f, 0.1f);
-			
 			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, 0.0f, 100.f);
-		
-			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
-			ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");
-
-			ImGui::SliderFloat3("NoiseScale", NoiseScale, FLT_MIN, 10.f, "%9.6f");
-			ImGui::InputFloat3("In NoiseScale", NoiseScale, "%9.6f");
-
-			ImGui::SliderFloat("VelocityBlurIntencity", &VelocityBlurIntencity, 0.f, 1.f);
-			ImGui::SliderFloat("VelocityBlurAlpha", &VelocityBlurAlpha, 0.f, 1.f);
-			
 
 			ImGui::SliderFloat("EditPlayTime", &EditPlayTime, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat("In EditPlayTime", &EditPlayTime, 0.f, 0.f, "%9.6f");
 
-			ImGui::SliderFloat("EditPlayRollRotateSpeed", &EditRotationSpeed, FLT_MIN, 10000.f, "%9.6f");
-			ImGui::InputFloat("In EditPlayRollRotateSpeed", &EditRotationSpeed,0.f,0.f ,"%9.6f");
-
-			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 10000.f, "%9.6f");
-			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, 0.f, 0.f, "%9.6f");
-
-			ImGui::SliderFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 10000.f, "%9.6f");
-			ImGui::InputFloat("In EmissiveIntencity", &EmissiveIntencity, 0.f,0.f,"%9.6f");
-
-			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 10000.f, "%9.6f");
+			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");
 
 		}

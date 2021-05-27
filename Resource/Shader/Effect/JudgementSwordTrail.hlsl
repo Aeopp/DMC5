@@ -5,15 +5,9 @@ uniform float DistortionIntencity;
 uniform float exposure_corr;
 uniform vector _Color;
 uniform float ColorIntencity;
-uniform float EmissiveIntencity;
 
 uniform matrix InverseProjection;
 uniform float SoftParticleDepthScale;
-
-uniform float SpriteXStart;
-uniform float SpriteXEnd;
-uniform float SpriteYStart;
-uniform float SpriteYEnd;
 
 uniform float3 ScrollSpeed;
 uniform float3 Scale;
@@ -32,35 +26,10 @@ sampler Depth = sampler_state
     sRGBTexture = false;
 };
 
-
-texture AlbmMap;
-sampler Albm = sampler_state
-{
-    texture = AlbmMap;
-    minfilter = linear;
-    magfilter = linear;
-    mipfilter = linear;
-    AddressU = wrap;
-    AddressV = wrap;
-    sRGBTexture = true;
-};
-
 texture TrailMap;
 sampler Trail = sampler_state
 {
     texture = TrailMap;
-    minfilter = linear;
-    magfilter = linear;
-    mipfilter = linear;
-    AddressU = wrap;
-    AddressV = wrap;
-    sRGBTexture = false;
-};
-
-texture EmissiveMskMap;
-sampler Emissive = sampler_state
-{
-    texture = EmissiveMskMap;
     minfilter = linear;
     magfilter = linear;
     mipfilter = linear;
@@ -92,6 +61,9 @@ void VsMain(in out float4 Position : POSITION0,
 {
     Position = mul(Position, matWorld);
     ClipPosition = Position = mul(Position, ViewProjection);
+    
+    
+    UV0.x = 1.0F - UV0.x;
     
     UV2 = UV0 * Scale.x + ScrollSpeed.x;
     UV3 = UV0 * Scale.y + ScrollSpeed.y;
@@ -132,22 +104,16 @@ void PsMain(out float4 Color : COLOR0,
     // Color = float4(1.0f, 0.0f, 0.0f, 0.5f);
     // UV0.x = 1.0f - UV0.x;
     float2 OriginUV0 = UV0;
-    float4 EmissiveSample = tex2D(Emissive, OriginUV0);
-    EmissiveSample.rgb *= EmissiveIntencity;
-    
     // UV1.x = 1.0f - UV1.x;
     
-    Color = tex2D(Albm, UV0 + finalNoise);
-    
-    Color *= _Color;
+    Color = _Color;
+    float4 trailsample = tex2D(Trail,OriginUV0);
+    Color *= trailsample;
     Color.rgb *= ColorIntencity;
-    Color.rgb += EmissiveSample.rgb;
     Color.rgb *= exposure_corr;
     
-    float4 trailsample = tex2D(Trail, UV1);
-    Color.a *= trailsample.a;
-    
-    Color1 = trailsample;
+    float4 NoiseSample=tex2D(Noise, OriginUV0 + finalNoise);
+    Color1 = NoiseSample;
     Color1.rgb *= DistortionIntencity;
     
     // 소프트 파티클 계산 .... 

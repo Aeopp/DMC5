@@ -578,6 +578,22 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 };
 
+class Resurrection_Loop : public NeroState
+{
+private:
+	explicit Resurrection_Loop(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~Resurrection_Loop();
+
+public:
+	static Resurrection_Loop* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
 class Resurrection_GetUp : public NeroState
 {
 private:
@@ -2863,6 +2879,22 @@ private:
 	bool	m_bPlayOnce[4];
 };
 
+class ShinMajinIdle : public NeroState
+{
+private:
+	explicit ShinMajinIdle(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+public:
+	virtual ~ShinMajinIdle();
+
+public:
+	static ShinMajinIdle* Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero);
+
+public:
+	virtual HRESULT StateEnter()							override;
+	virtual HRESULT StateExit()								override;
+	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+};
+
 class Provoke1 : public NeroState
 {
 private:
@@ -2925,6 +2957,8 @@ public:
 	virtual HRESULT StateEnter()							override;
 	virtual HRESULT StateExit()								override;
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
+
+
 };
 
 

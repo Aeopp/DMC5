@@ -111,7 +111,8 @@ public:
 			const float PreLifeTime,
 			const float StartT,
 			const std::any& InstanceVariable,
-			const std::optional<SpriteDesc>& _SpriteDesc)
+			const std::optional<SpriteDesc>& _SpriteDesc,
+			const uint32 SubsetIdx = 0u)
 		{
 			this->CurveControlPoints         = CurveControlPoints;
 			this->CurveControlRotationPoints = CurveControlRotationPoints;
@@ -120,6 +121,7 @@ public:
 			this->StartLifeTime              = PreLifeTime;
 			this->InstanceVariable           = InstanceVariable;
 			this->_SpriteDesc                = _SpriteDesc;
+			this->SubsetIdx = SubsetIdx;
 		}
 
 		Matrix CalcWorld(
@@ -193,9 +195,10 @@ public:
 
 			return false;
 		}
+		uint32 GetSubsetIdx() const { return SubsetIdx; };
 	private:
 		Matrix CurWorld = FMath::Identity();
-
+		uint32 SubsetIdx = 0u;
 		std::optional<SpriteDesc> _SpriteDesc{};
 		std::any InstanceVariable{};
 

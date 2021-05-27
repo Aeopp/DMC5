@@ -70,7 +70,7 @@ private:
 	Vector3 NoiseScale      { 1.f,2.f,3.f };
 	Vector3 NoiseScrollSpeed{ 1.f,2.f,3.f };
 
-	Vector2 NoiseDistortion0{ 0.3f,1.f };
+	Vector2 NoiseDistortion0{ 0.3f,1.f  };
 	Vector2 NoiseDistortion1{ 0.5f,0.77f};
 	Vector2 NoiseDistortion2{ 0.77f,0.5f};
 

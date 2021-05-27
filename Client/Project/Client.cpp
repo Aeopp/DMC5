@@ -28,6 +28,7 @@ static constexpr bool bMultiSample = false;
 // 풀스크린 일때는 기본적으로 작동 true 일시 창모드 일때도 보더리스로 작동 !! 
 static constexpr bool bBorderless = false;
 static constexpr bool bImguiInit = true;
+static constexpr bool bShowCursor = true;
 
 static const std::filesystem::path SoundDirectoryPath = "..\\..\\Resource\\Sound\\";
 
@@ -71,6 +72,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 	static constexpr float TargetDelta = 1.0f / 60.f;
 	std::chrono::time_point<std::chrono::high_resolution_clock> PrevTime;
 	PrevTime = std::chrono::high_resolution_clock::now();
+
+	ShowCursor(bShowCursor);
 
 	while (true)
 	{

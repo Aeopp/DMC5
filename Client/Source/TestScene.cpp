@@ -66,6 +66,8 @@
 #include "Judgement.h"
 #include "JudgementSwordTrail.h"
 #include "FadeOut.h"
+#include "Change.h"
+#include "JudgementSword.h"
 #include "LoadingScene.h"
 
 #include <iostream>
@@ -150,10 +152,9 @@ HRESULT TestScene::LoadScene()
 #pragma region Effect
 
 	//AddGameObject<Judgement>();
-	//AddGameObject<SandGlassEffect>();
-	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
-	//AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<Change>();
+	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	//_JudgementSwordTrail = AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<ShockWave>();
 
 	//for (int32 i = 0; i < 16; ++i)
@@ -240,8 +241,6 @@ HRESULT TestScene::Awake()
 {
 	Scene::Awake();
 
- 
-
 	return S_OK;
 }
 
@@ -249,18 +248,25 @@ HRESULT TestScene::Start()
 {
 	Scene::Start();
 	return S_OK;
-}
+};
 
 HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	/*if (auto SpPlayer = _Player.lock();
-		SpPlayer)
+	/* if (auto SpPlayer = _Player.lock();
+	 	SpPlayer)
+	 {
+	 	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
+	 }*/
+
+
+	if (Input::GetKeyDown(DIK_INSERT))
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
-	}*/
-	
+		_JudgementSwordTrail.lock()->PlayStart
+			(JudgementSwordTrail::Mode::Judgement);
+	};
+
 	CheckShopAvailable();
 
 	static float TestVolume = 0.15f;

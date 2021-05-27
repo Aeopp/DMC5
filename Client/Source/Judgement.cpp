@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include <iostream>
 #include "ParticleSystem.h"
+#include "Nero.h"
 
 void Judgement::Free()
 {
@@ -143,9 +144,19 @@ void Judgement::PlayEnd()
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
+	Vector3 JudgementCutLocation = GetComponent<Transform>().lock()->GetPosition();
+
+	if (auto SpPlayer = FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock();
+		SpPlayer)
+	{
+		Vector3 PlayerLocation = SpPlayer->GetComponent<Transform>().lock()->GetPosition();
+		PlayerLocation.y += 0.005f;
+		JudgementCutLocation = PlayerLocation;
+	}
+
 	auto SpTransform = GetComponent<Transform>().lock();
 	_CircleWave.lock()->PlayStart(SpTransform->GetScale().x *3.5f, SpTransform->GetPosition());
-	_JudgementCut.lock()->PlayStart(SpTransform->GetPosition());
+	_JudgementCut.lock()->PlayStart(JudgementCutLocation);
 };
 
 void Judgement::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -239,7 +250,6 @@ void Judgement::RenderDebug(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
-
 };
 
 
@@ -257,7 +267,7 @@ HRESULT Judgement::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetScale({ 0.0015f,0.0015f,0.0015f });
+	m_pTransform.lock()->SetScale({ 0.0020f,0.0020f,0.0020f });
 	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.12f,0.f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.f ,0.f ,0.0f });
 
@@ -291,6 +301,7 @@ UINT Judgement::Update(const float _fDeltaTime)
 	{
 		PlayEnd();
 	};
+
 
 	return 0;
 };
@@ -329,7 +340,7 @@ void Judgement::PlayCircleGrowParticle()
 	{
 		if (auto _Particle =
 			ParticleSystem::GetInstance()->PlayParticle(
-				"CircleGrowParticle", 455ul, true);
+				"CircleGrowParticle", 922ul, true);
 			_Particle.empty() == false)
 		{
 
@@ -344,6 +355,8 @@ void Judgement::PlayCircleGrowParticle()
 
 void Judgement::PlayJudgementDayParticle()
 {
+	if (bJudgementDayParticlePlay == false)return;
+
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
@@ -352,11 +365,29 @@ void Judgement::PlayJudgementDayParticle()
 				"JudgementDay", 11ul, true);
 			_Particle.empty() == false)
 		{
-
 			for (int32 i = 0; i < _Particle.size(); ++i)
 			{
 				auto& _PlayInstance = _Particle[i];
-				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				
+
+				if (auto SpPlayer =
+					std::dynamic_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock());
+					SpPlayer)
+				{
+					const Matrix BindMatrix = FMath::Scale(SpTransform->GetScale())
+						*
+						SpTransform->GetRotationMatrix()
+						*
+						FMath::Translation(
+							SpPlayer->GetComponent<Transform>().lock()->GetPosition());
+
+					_PlayInstance->PlayDescBind(BindMatrix);
+				}
+				else
+				{
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
+
 			}
 		}
 	};

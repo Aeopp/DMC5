@@ -185,15 +185,15 @@ void MapAniObject::RenderInit()
 			}
 		},
 	};
-	//_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
-	//	=
-	//{
-	//	{"ShadowSK" ,
-	//	[this](const DrawInfo& _Info)
-	//	{
-	//		RenderShadow(_Info);
-	//	}
-	//} };
+	/*_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
+		=
+	{
+		{"ShadowSK" ,
+		[this](const DrawInfo& _Info)
+		{
+			RenderShadow(_Info);
+		}
+	} };*/
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Debug]
 		=
 	{
@@ -359,7 +359,7 @@ void MapAniObject::SetUp(
 			m_pCollider = AddComponent<BoxCollider>();
 			m_pCollider.lock()->ReadyCollider();
 			m_pCollider.lock()->SetSize({ 0.3f,0.4f,0.2f });
-			m_pCollider.lock()->SetCenter({ 0.f, 0.05f, 0.f });
+			m_pCollider.lock()->SetCenter({ 0.f, 0.2f, 0.f });
 			PushEditEntity(m_pCollider.lock().get());
 			m_bColl = true;
 			m_bFlag6 = true;

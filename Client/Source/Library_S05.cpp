@@ -1130,7 +1130,7 @@ std::weak_ptr<Trigger> Library_S05::TriggerBookCaseSunkenSecondSmash()
 		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 30394.0f } * GScale);
+			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 31454.0F } * GScale);
 		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
