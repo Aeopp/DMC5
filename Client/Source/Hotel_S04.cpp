@@ -72,8 +72,8 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Monster
 
-	auto _pMonster = AddGameObject<Em5000>();
-	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
+	m_pBoss = AddGameObject<Em5000>();
+	m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
 
 #pragma endregion
 
@@ -330,7 +330,9 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 
 			Renderer::GetInstance()->SkyOriginColor = Vector4{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
 			SoundSystem::GetInstance()->ClearSound();
-			SoundSystem::GetInstance()->Play("Stage1_Boss", 0.12f, true);
+			SoundSystem::GetInstance()->Play("Stage1_Boss", 0.12f, true, {},0);
+			m_pBoss.lock()->Set_Howling();
+			
 			// 다른 후처리가 묻히니 스카이 왜곡을 약하게 .... 
 
 			// 로직 작성 .... 

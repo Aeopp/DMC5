@@ -40,28 +40,6 @@
             ]
         },
         {
-            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance20\\Churchchapelentrance20.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
             "Mesh": "Resource\\Map\\Location2\\buildingnew10\\buildingnew10.fbx",
             "List": [
                 {
@@ -124,28 +102,6 @@
         },
         {
             "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior4\\Churchchapeleterior4.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance19\\Churchchapelentrance19.fbx",
             "List": [
                 {
                     "Scale": [
@@ -926,28 +882,6 @@
         },
         {
             "Mesh": "Resource\\Map\\Location2\\Churchchapeleterior1\\Churchchapeleterior1.fbx",
-            "List": [
-                {
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "Mesh": "Resource\\Map\\Location2\\Churchchapelentrance3\\Churchchapelentrance3.fbx",
             "List": [
                 {
                     "Scale": [

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "ParticleSystem.h"
 #include "NuclearLensFlare.h"
+#include "Nero.h"
 
 void NuClear::Free()
 {
@@ -195,9 +196,8 @@ bool NuClear::IsBlackOut()
 
 bool NuClear::IsFallTime()
 {
-	return  T > (ExplosionReadyTime + FreeFallTime);
-}
-;
+	return  T > (ExplosionReadyTime );
+};
 
 void NuClear::KaboomParticle()
 {
@@ -332,6 +332,7 @@ HRESULT NuClear::Awake()
 	m_pTransform.lock()->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f,0.f ,0.0f });
 
+	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
 	return S_OK;
 }
 
@@ -402,6 +403,25 @@ UINT NuClear::Update(const float _fDeltaTime)
 		 Vector3 CurPosition = GetComponent<Transform>().lock()->GetPosition(); 
 		_DynamicLight.Update(_Color, Radius, Flux, CurPosition);
 	}
+
+	if (IsFallTime())
+	{
+		if (m_pNero.expired())
+			return 0;
+		Vector3 MyPos = m_pTransform.lock()->GetPosition();
+		Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
+		MyPos.y = 0.f;
+		PlayerPos.y = 0.f;
+		Vector3 Length = MyPos - PlayerPos;
+		float Distance = D3DXVec3Length(&Length);
+
+		if (Distance >= 0.5f)
+		{
+			//m_pNero.lock()->GetComponent<Transform>().lock()->Translate();
+		}
+		
+	}
+
 
 	return 0;
 }

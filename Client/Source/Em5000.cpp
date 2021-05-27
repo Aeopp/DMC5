@@ -944,9 +944,6 @@ void Em5000::State_Change(const float _fDeltaTime)
 				m_bStone = false;
 				m_bIng = false;
 				
-				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
-				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-				m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
 				for (int i = 0; i < 2; ++i)
 					m_bJustOne[i] = false;
 				
@@ -1097,7 +1094,7 @@ void Em5000::State_Change(const float _fDeltaTime)
 			{
 				m_eState = Hit_Buster_Swing_End;
 				SoundSystem::GetInstance()->Play("BusterEnd", 0.8f, false);
-				m_BattleInfo.iHp -= 700;
+				m_BattleInfo.iHp -= int(float(m_BattleInfo.iMaxHp) / 4.f);
 				m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
 
 				for(int i = 0 ; i < 2 ; ++i)
@@ -1136,6 +1133,22 @@ void Em5000::State_Change(const float _fDeltaTime)
 		}
 		break;
 	case Em5000::Howling:
+		if (m_bHowling == false)
+		{
+			Skill_CoolTime(_fDeltaTime);
+
+			m_pMesh->PlayAnimation("Howling", false, {}, 1.f, 20.f, true);
+
+			Vector3 vNeck = GetMonsterBoneWorldPos("Neck");
+
+			m_pWave.lock()->PlayStart(vNeck, ShockWave::Option::GoliathPunch);
+
+			if (m_pMesh->CurPlayAnimInfo.Name == "Howling" && m_pMesh->IsAnimationEnd())
+			{
+				m_eState = Idle;
+				m_bHowling = true;
+			}
+		}
 		break;
 	case Em5000::Idle:
 		m_pMesh->PlayAnimation("Idle", true, {}, 1.f, 50.f, true);
@@ -1437,13 +1450,14 @@ HRESULT Em5000::Awake()
 	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetGravity(true);
 	
-	m_pCollider.lock()->SetSize({ 0.6f,0.8f,0.6f });
+	m_pCollider.lock()->SetSize({ 0.4f,0.8f,0.4f });
 	m_pCollider.lock()->SetCenter({ 0.f,0.4f,0.f });
 
 	for(int i = 0; i < 12; ++i)
 		m_pStone[i] = AddGameObject<StoneDebrisMulti>();
 
 	m_pStone2 = AddGameObject<StoneDebrisMulti>();
+	m_pWave = AddGameObject<ShockWave>();
 	
 
 	return S_OK;
@@ -1515,7 +1529,7 @@ UINT Em5000::Update(const float _fDeltaTime)
 	}
 
 
-	if (m_bTest == true)
+	if (m_bHowling == true)
 	{
 		Fight(_fDeltaTime);
 	}
@@ -1600,6 +1614,10 @@ UINT Em5000::Update(const float _fDeltaTime)
 		}
 	}
 
+
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+
 	return 0;
 }
 
@@ -1632,8 +1650,8 @@ void Em5000::Hit(BT_INFO _BattleInfo, void* pArg)
 	AddRankScore(_BattleInfo.iAttack);
 	m_BattleInfo.iHp -= _BattleInfo.iAttack;
 
-	if (!m_pBtlPanel.expired())
-		m_pBtlPanel.lock()->SetBossGaugeHPRatio(float(m_BattleInfo.iHp) / float(m_BattleInfo.iMaxHp));
+
+
 }
 
 void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
@@ -1883,7 +1901,7 @@ void Em5000::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 
 void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
-	if (m_eState == Attack_Rush_Loop || m_eState == Attack_Rush_End)
+	if (m_eState == Attack_Rush_Loop)
 	{
 		if (_pOther.lock()->m_nTag == Overture)
 		{
@@ -1891,9 +1909,17 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 			m_bGroggy = true;
 			m_eState = Groggy_Start;
 
-			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, true);
-			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, true);
-			m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, true);
+			return;
+		}
+	}
+
+	if (m_eState == Attack_Rush_End && m_pMesh->PlayingTime() <= 0.3f)
+	{
+		if (_pOther.lock()->m_nTag == Overture)
+		{
+			m_bHit = true;
+			m_bGroggy = true;
+			m_eState = Groggy_Start;
 			return;
 		}
 	}
@@ -1923,14 +1949,6 @@ void Em5000::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::Overture:
 		m_BattleInfo.iHp -= static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack;
 		AddRankScore(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo().iAttack);
-		if (m_eState == Attack_Rush_End)
-		{
-			if (m_pMesh->PlayingTime() > 0.15f && m_pMesh->PlayingTime() < 0.5f)
-			{
-				m_bGroggy = true;
-				m_eState = Groggy_Start;
-			}
-		}
 		m_bHit = true;
 		break;
 	case GAMEOBJECTTAG::Tag_Cbs_Middle:
@@ -2066,4 +2084,9 @@ void Em5000::Update_Angle_ToCar()
 	else
 		m_fAngleSpeed = -fabs(m_fAngleSpeed);
 
+}
+
+void Em5000::Set_Howling()
+{
+	m_eState = Howling;
 }

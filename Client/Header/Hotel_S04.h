@@ -9,6 +9,7 @@ private:
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class MainCamera> _Camera{};
 	std::weak_ptr<class FadeOut> _FadeOut{};
+	weak_ptr<class Em5000> m_pBoss;
 	bool _LateInit = false;
 private:
 	explicit Hotel_S04();

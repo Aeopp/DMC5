@@ -172,7 +172,7 @@ void Collider::ReadySimulate()
 
 	PxScene* pScene = m_pRigidActor->getScene();
 
-	if (pScene->raycast(vOrigin, vRayDir, 100.f, rayCastBuffer))
+	if (PxVec3(0) != vRayDir && pScene->raycast(vOrigin, vRayDir, 100.f, rayCastBuffer))
 	{
 		if (rayCastBuffer.block.distance < fDistance)
 		{
