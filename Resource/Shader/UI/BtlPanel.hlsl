@@ -850,6 +850,30 @@ PsOut PsMain_GUI_Dissolve(PsIn_GUI In)
     return Out;
 };
 
+PsOut PsMain_GUI_Alpha(PsIn_GUI In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    Out.Color = tex2D(ALB_NOsRGB, In.UV);
+    Out.Color.rgb *= _BrightScale;
+    Out.Color.a *= saturate(1.f - _SliceAmount);
+    
+    return Out;
+};
+
+PsOut PsMain_GUI_DMDCLIP(PsIn_GUI In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    clip(In.UV.x < 0.01f ? -1.f : 1.f);
+    
+    Out.Color = tex2D(ALB_NOsRGB, In.UV);
+    Out.Color.rgb *= _BrightScale;
+    Out.Color.a *= saturate(1.f - _SliceAmount);
+    
+    return Out;
+};
+
 PsOut PsMain_RankBack(PsIn In)
 {
     PsOut Out = (PsOut) 0;
@@ -1179,5 +1203,29 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain();
         pixelshader = compile ps_3_0 PsMain_HPGaugeBase();
+    }
+    pass p22
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain_GUI();
+        pixelshader = compile ps_3_0 PsMain_GUI_Alpha();
+    }
+    pass p23
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain_GUI();
+        pixelshader = compile ps_3_0 PsMain_GUI_DMDCLIP();
     }
 };

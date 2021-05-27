@@ -8,7 +8,7 @@
 #include "DynamicLight.h"
 
 class JudgementSwordTrail : public ENGINE::GameObject,
-	public ENGINE::RenderInterface
+							public ENGINE::RenderInterface
 {
 public:
 	enum  Mode : uint32
@@ -33,11 +33,11 @@ private:
 		return CurMode == Mode::Non ? HighOffset : JudgementHighOffset;
 	};
 
-	Vector3 LowOffset{ 0.f,0.f,100.f };
-	Vector3 HighOffset{ 0.f,0.f,-100.f };
+	Vector3 LowOffset{ 0.f,0.f,125.f };
+	Vector3 HighOffset{ 0.f,0.f,-125.f };
 
-	Vector3 JudgementLowOffset{ 0.f,0.f,100.f };
-	Vector3 JudgementHighOffset{ 0.f,0.f,-100.f };
+	Vector3 JudgementLowOffset{ 0.f,0.f,125.f };
+	Vector3 JudgementHighOffset{ 0.f,0.f,-125.f };
 
 	std::array<std::string, BoneCnt> BoneLowNames
 	{

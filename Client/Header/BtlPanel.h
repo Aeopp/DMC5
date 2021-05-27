@@ -28,6 +28,8 @@ private:
 		STYLISH_POINTS,
 		NULLBLACK,
 		SECRET_VISIONS,
+		DANTE_MUST_DIE,
+		
 		DESC_END
 	};
 	struct UI_DESC
@@ -111,6 +113,12 @@ private:
 	std::shared_ptr<ENGINE::Texture> _SecretVision2Tex{};
 
 	std::shared_ptr<ENGINE::Texture> _NullBlackTex{};
+
+	std::shared_ptr<ENGINE::Texture> _DMDBaseTex0{};
+	std::shared_ptr<ENGINE::Texture> _DMDBaseTex1{};
+	std::shared_ptr<ENGINE::Texture> _DMDBaseTex2{};
+	std::shared_ptr<ENGINE::Texture> _DMDBaseLineTex{};
+	std::shared_ptr<ENGINE::Texture> _DMDWeaponTex{};
 
 	float _TotalAccumulateTime = 0.f;
 
@@ -200,7 +208,7 @@ private:
 	bool _KeyboardInput[KEY_INPUT_END] = { false, };
 
 	Nero::WeaponList _CurWeaponIdx = Nero::WeaponList::RQ;
-	int _CbsColor = 0;	// 0: Fire, 1: Ice, 2: Thunder
+	int _CbsColor = 0;	// 0: Ice, 1: Thunder, 2: Fire
 
 	Matrix _PerspectiveProjMatrix = Matrix();
 
@@ -218,6 +226,10 @@ private:
 		REDORBCOUNT,
 		STYLISH_PTS_TITLE,
 		STYLISH_PTS_SCORE,
+
+		FT_DANTE_MUST_DIE,
+		FT_GIVE_UP,
+		FT_USE_REBELLION,
 
 		FONT_END
 	};
@@ -239,6 +251,14 @@ private:
 	float _GlobalAlpha = 0.f;
 	const float GLOBAL_ALIVETIME = 4.f;
 	float _GlobalAlphaTime = 0.f;
+
+	float _DMDAlpha = 0.f;
+	float _DMDDialogXPos = -500.f;
+	float _DMDTick = 0.f;
+	float _DMDDialogBlinkOffset = 1.5f;
+	bool _DMDUseRebellion = false;
+	uint32 _DMDDialogBlinkCnt = 0u;
+	bool _DMDShowDialogFont = false;
 
 private:
 	explicit BtlPanel() = default;
@@ -313,6 +333,8 @@ public:
 	void DissolveAllSecretVision();
 
 	void SetNullBlackActive(bool IsActive);
+
+	void SetDanteMustDieActive(bool IsActive);
 
 };
 #endif // !__UI_BTL_PANEL__ 

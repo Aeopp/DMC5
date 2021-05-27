@@ -19,6 +19,8 @@ private:
 	static void CbsMidParticlePoolLoad();
 	static void IceAgeParticlePoolLoad();
 	static void ChangeParticlePoolLoad();
+	static void ChangeStoneParticlePoolLoad();
+
 	static void ArtemisMissileParticlePoolLoad();
 	static void ReverberationParticlePoolLoad();
 	static void ArtemisRushParticlePoolLoad();

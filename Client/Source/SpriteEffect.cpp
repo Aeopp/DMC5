@@ -451,6 +451,19 @@ void SpriteEffect::InitializeFromOption(const uint32 Option)
 
 		GetComponent<Transform>().lock()->SetScale(Vector3{0.003f,0.003f ,0.003f });
 	}
+	else if (Option == 7)
+	{
+		// 검정 스모크
+		RegistSpriteInfo(8, 8);
+		RegistMesh(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx");
+		RegistAlbedoTex(
+			"..\\..\\Usable\\BlackSmoke.tga");
+		RegistInfo(0.1f, 1.f, Vector4{ 1.f,1.f,1.f,1.f });
+		ConstantPlayTime = 0.25f;
+		ColorIntencity = 0.1f;
+		GetComponent<Transform>().lock()->SetScale(Vector3{ 0.003f,0.003f ,0.003f });
+	}
 };
 
 void SpriteEffect::RegistInfo(

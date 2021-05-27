@@ -5,6 +5,8 @@
 #include "TextureType.h"
 #include "Renderer.h"
 #include "Font.h"
+#include "SoundSystem.h"
+
 
 void TitlePanel::Free()
 {
@@ -131,10 +133,14 @@ void TitlePanel::Update_TitleLogic(const float _fDeltaTime)
 
 		if (0u != _CurState && Input::GetKeyDown(DIK_RETURN))
 		{
+			SoundSystem::GetInstance()->Play("OK", 0.7f, false);
+
 			_PressReturn = true;
 		}
 		else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 		{
+			SoundSystem::GetInstance()->Play("CursorMove", 0.7f, false);
+
 			if (0u < _CurState)
 			{
 				--_CurState;
@@ -148,6 +154,8 @@ void TitlePanel::Update_TitleLogic(const float _fDeltaTime)
 		}
 		else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 		{
+			SoundSystem::GetInstance()->Play("CursorMove", 0.7f, false);
+
 			if (0u < _CurState)
 			{
 				++_CurState;

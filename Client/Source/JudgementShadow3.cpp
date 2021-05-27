@@ -3,19 +3,22 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+
 JudgementShadow3::JudgementShadow3()
 {
 	m_nTag = TAG_JudgementShadow3;
-}
+};
+
 void JudgementShadow3::Free()
 {
 	GameObject::Free();
-}
+};
 
 JudgementShadow3* JudgementShadow3::Create()
 {
 	return new JudgementShadow3;
-}
+};
+
 
 HRESULT JudgementShadow3::Ready()
 {
@@ -50,6 +53,9 @@ UINT JudgementShadow3::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
+
+	m_DissolveInfo.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World);
+	m_DissolveInfo.SliceAmount += _fDeltaTime;
 
 	if (m_pMesh->IsAnimationEnd())
 	{
@@ -117,6 +123,7 @@ void JudgementShadow3::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		m_DissolveInfo.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -164,6 +171,7 @@ void JudgementShadow3::RenderDebugSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -187,7 +195,7 @@ void JudgementShadow3::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -233,11 +241,20 @@ void JudgementShadow3::RenderInit()
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
 
+	const Vector3 BurnColor = Vector3{ 244.f / 255.f, 100.f / 255.f, 100.f / 255.f };
+
+	m_DissolveInfo.Initialize(
+		L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\ShinMajin\\JudgementShadow.fbx",
+		BurnColor, BurnColor, 0.5f);
+
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;
-	m_pMesh = Resources::Load<SkeletonMesh>(L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\ShinMajin\\JudgementShadow.fbx", _InitInfo);
+	m_pMesh = Resources::Load<SkeletonMesh>(
+		L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\ShinMajin\\JudgementShadow.fbx", _InitInfo);
 
 	m_pMesh->EnableToRootMatricies();
 
 	PushEditEntity(m_pMesh.get());
+
+	
 }

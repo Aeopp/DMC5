@@ -13,6 +13,7 @@ void PreLoader::PreLoadResources()
 	JudgementReadyParticlePoolLoad();
 	JudgementCircleGrowParticlePoolLoad();
 	JudgementCutparticlePoolLoad();
+	ChangeStoneParticlePoolLoad();
 
 	SandGlassEffectParticlePoolLoad();
 	EnergismReadyParticlePoolLoad();
@@ -367,84 +368,174 @@ void PreLoader::ChangeParticlePoolLoad()
 	Mesh::InitializeInfo _Info{};
 	_Info.bLocalVertexLocationsStorage = false;
 	_PushParticle._Mesh = Resources::Load<StaticMesh>(
-		"..\\..\\Usable\\Ice\\mesh_03_debris_ice00_01.fbx", _Info);
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _Info);
+
+	auto _Tex = Resources::Load<Texture>(
+		"..\\..\\Usable\\Smoke\\11.tga");
 
 	_PushParticle.bLerpTimeNormalized = false;
 	// Particle 정보 채워주기 
 	_PushParticle._ShaderKey = "ChangeParticle";
-	// 공유 정보 바인드 
-	_PushParticle.SharedResourceBind = [](
+	// 공유 정보 바인드
+	_PushParticle.SharedResourceBind = [_Tex](
 		ENGINE::ParticleSystem::Particle& TargetParticle,
 		ID3DXEffect* const Fx)
 	{
-		if (auto Subset = TargetParticle._Mesh->GetSubset(0).lock();
-			Subset)
-		{
-			Subset->BindProperty(TextureType::DIFFUSE, 0, "AlbmMap", Fx);
-			Subset->BindProperty(TextureType::NORMALS, 0, "NrmrMap", Fx);
-		}
+		Fx->SetTexture("MskMap", _Tex->GetTexture());
 	};
 
-	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	_PushParticle.InstanceBind = [](
+		const std::any& _InstanceVariable,
+		ID3DXEffect* const Fx)
 	{
-		const auto& _Value = std::any_cast<const ParticleInstance::Ice&>(_InstanceVariable);
+		const auto& _Value = std::any_cast<const ParticleInstance::Judgement&>(_InstanceVariable);
+		Fx->SetFloatArray("_Color", _Value.Color, 3u);
 		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
 		return;
 	};
 
-	const uint64 PoolSize = 10000u;
+	const uint64 PoolSize = 5555ul;
 
 	auto* const ParticlePool =
-		ParticleSystem::GetInstance()->PreGenerated("ChangeParticle", std::move(_PushParticle), PoolSize, false);
+		ParticleSystem::GetInstance()->PreGenerated(
+			"ChangeParticle",
+			std::move(_PushParticle), PoolSize, true);
 
-	Mesh::InitializeInfo _TargetInfo{};
-	_TargetInfo.bLocalVertexLocationsStorage = true;
-	// 메시
-	auto Inner = Resources::Load<StaticMesh>("..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _TargetInfo);
+	_Info.bLocalVertexLocationsStorage = true;
+	auto _TargetMesh = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Effect\\AirHike\\AirHike.fbx", _Info);
 
-	const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
+	const uint32 VtxCnt = _TargetMesh->m_spVertexLocations->size();
+
+	{
+		for (auto& _ParticleInstance : *ParticlePool)
+		{
+			Vector3 StartLocation = (*_TargetMesh->m_spVertexLocations)[FMath::Random(0u, VtxCnt - 1)];
+
+			Vector3 Cp0		      = StartLocation+ FMath::RandomVector(0.0f);
+			Cp0.y += FMath::Random(0.f, 22.f);
+
+			Vector3 Cp1           = Cp0+FMath::RandomVector(0.0f);
+			Cp1.y += FMath::Random(0.f, 55.f);
+
+			Vector3 End           = Cp1+FMath::RandomVector(0.0f);
+			End.y += FMath::Random(0.f, 122.f);
+
+			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp0 = StartRot + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
+
+			constexpr float ScaleFactor = 5.f;
+			const float RScale = FMath::Random(
+				0.0055f * ScaleFactor,
+				0.0075f * ScaleFactor) * GScale;
+
+			ParticleInstance::Judgement _Value{};
+
+			_Value.ColorIntencity = FMath::Random(0.01f, 0.02f);
+
+			_Value.Color = FMath::Random(Vector3{ 255.0f,73.f,60.f }, Vector3{ 255.f,60.f ,73.f });
+
+			const float LifeTime = FMath::Random(0.5f, 1.f);
+
+			StartLocation = FMath::RotationVecCoord(StartLocation, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+			Cp0 = FMath::RotationVecCoord(Cp0, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+			Cp1 = FMath::RotationVecCoord(Cp1, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+			End = FMath::RotationVecCoord(End, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+
+			_ParticleInstance.PreSetup(
+				{ StartLocation ,Cp0,Cp1,End },
+				{ StartRot,RotCp0,RotCp1,EndRot },
+				{ RScale,RScale,RScale },
+				LifeTime,
+				0.0f,
+				_Value,
+				std::nullopt);
+		}
+	}
+}
+
+void PreLoader::ChangeStoneParticlePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>
+		(
+			"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx",
+			_Info);
+
+	auto AlbTex =
+		Resources::Load<Texture>(
+			"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_debris_stone00_ALBM.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "StoneParticle";
+	// 공유 정보 바인드 
+	_PushParticle.SharedResourceBind = [AlbTex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("AlbmMap", AlbTex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value =
+			std::any_cast<const ParticleInstance::Stone&>(_InstanceVariable);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 222ul;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("ChangeStone",
+			std::move(_PushParticle), PoolSize, false);
 
 	for (auto& _ParticleInstance : *ParticlePool)
 	{
-		Vector2 Range{ -1.f,1.f };
+		const Vector3 TargetLocation = FMath::Random(Vector3{-88.f,0.f,-88.f },
+													 Vector3{ 88.f,0.f,88.f });
 
-		const Vector3 TargetLocation = (*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)];
 
-		Vector3 LocalVtxDir = FMath::Normalize(TargetLocation);
-		const Vector3 Right = FMath::Normalize(FMath::Cross(Vector3{ 0.f,1.f,0.f }, LocalVtxDir));
-		const Vector3 Up = FMath::Normalize(FMath::Cross(Up, LocalVtxDir));
+		Vector3 Direction = FMath::Normalize(FMath::RandomVector(1.f));
 
-		static constexpr std::pair<float, float> StartScaleRange = { 100.f,200.f };
+		if (Direction.y < 0.0f)
+		{
+			Direction.y *= -1.f;
+		}
 
-		static constexpr std::pair<float, float> SecondScaleRange = { StartScaleRange.second * 1.5f * 0.5f,
-																      StartScaleRange.second * 1.5f };
+		Vector3 Cp0 = TargetLocation + Direction * FMath::Random(0.f, 22.f);
+		Cp0.y += FMath::Random(0.f, 77.f);
 
-		static constexpr std::pair<float, float> ThirdScaleRange = { SecondScaleRange.second * 2.f * 0.5f,
-																   SecondScaleRange.second * 2.f };
+		Vector3 Cp1 = Cp0 + Direction * FMath::Random(0.f, 22.f);
+		Cp1.y += FMath::Random(0.f, 77.f);
 
-		const Vector3 Cp0=TargetLocation + FMath::RandomVector(FMath::Random(StartScaleRange));
-		const Vector3 Cp1= Cp0+FMath::RandomVector(FMath::Random(SecondScaleRange));
-		const Vector3 End = Cp1 + FMath::RandomVector(FMath::Random(ThirdScaleRange));
-		
+		Vector3 End = Cp1 + Direction * FMath::Random(0.f, 22.f);
+		End.y += FMath::Random(0.f, 77.f);
+
+		Vector2 ScaleRange{ 1.0f,2.0f };
 		const Vector3 PScale = FMath::Random(
-			Vector3(0.025f, 0.025f, 0.025f),
-			Vector3(0.05f, 0.05f, 0.05f)) * GScale;
+			Vector3(ScaleRange.x, ScaleRange.x, ScaleRange.x),
+			Vector3(ScaleRange.y, ScaleRange.y, ScaleRange.y)) * GScale;
 
-		const Vector3 StartRot = {
-			FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f),FMath::Random(-360.f,360.f) };
-		const Vector3 RotCp0 = StartRot + FMath::RandomEuler(1.f);
-		const Vector3 RotCp1 = RotCp0 + FMath::RandomEuler(1.f);
-		const Vector3 EndRot = RotCp1 + FMath::RandomEuler(1.f);
+		const Vector3 StartRot = FMath::RandomEuler(1.f);
+		const Vector3 RotCp0 = StartRot + FMath::RandomEuler(0.1f);
+		const Vector3 RotCp1 = RotCp0 + FMath::RandomEuler(0.1f);
+		const Vector3 EndRot = RotCp1 + FMath::RandomEuler(0.1f);
 
-		ParticleInstance::Ice _IceValue{};
-
-		_IceValue.ColorIntencity = FMath::Random(1.f, 2.f);
-
-		const float LifeTime = FMath::Random(0.8f, 1.3f);
+		const float LifeTime = FMath::Random(1.25f, 2.5f);
+		const uint32 SubsetIdx = FMath::Random(0u, 3u);
+		ParticleInstance::Stone _StoneDesc{};
+		_StoneDesc.ColorIntencity = FMath::Random(0.01f, 0.01f);
 
 		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
 			{ StartRot,RotCp0,RotCp1,EndRot },
-			PScale, LifeTime, 0.0f, _IceValue, std::nullopt);
+			PScale, LifeTime, 0.0f, _StoneDesc, std::nullopt, SubsetIdx);
 	}
 }
 
@@ -1052,7 +1143,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 2500ul;
+	const uint64 PoolSize = 3333ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1094,7 +1185,7 @@ void PreLoader::JudgementReadyParticlePoolLoad()
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
 
-			const float LifeTime = FMath::Random(0.1f, 2.f);
+			const float LifeTime = FMath::Random(0.1f, 1.3f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },
@@ -1177,7 +1268,7 @@ void PreLoader::JudgementCircleGrowParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.025f, 0.05f);
+			_Value.ColorIntencity = FMath::Random(0.05f, 0.1f);
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
 
@@ -1271,7 +1362,7 @@ void PreLoader::JudgementCutparticlePoolLoad()
 
 		ParticleInstance::Ice _IceValue{};
 
-		_IceValue.ColorIntencity = FMath::Random(0.75f, 1.5f);
+		_IceValue.ColorIntencity = FMath::Random(1.0f, 2.0f);
 
 		const float LifeTime = FMath::Random(2.f, 4.f);
 
@@ -1420,7 +1511,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 4.f;
+			constexpr float ScaleFactor = 5.f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -1428,7 +1519,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.005f, 0.010f);
+			_Value.ColorIntencity = FMath::Random(0.01f, 0.02f);
 
 			_Value.Color = FMath::Random(Vector3{ 255.0f,73.f,60.f}, Vector3{ 255.f,60.f ,73.f });
 
@@ -2932,17 +3023,17 @@ void PreLoader::AirHikeParticleEndPoolLoad()
 			const Vector3 RotCp1 = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			const float RScale = FMath::Random(0.077f *0.5f, 0.05f) * GScale;
+			const float RScale = FMath::Random(0.077f * 0.5f, 0.05f) * GScale;
 
 			ParticleInstance::Electric _ElectricValue{};
 
 			_ElectricValue.ColorIntencity = FMath::Random(0.44f, 1.f);
-			_ElectricValue.Color = FMath::Lerp(Vector3{ 71.f / 255.f,123.f / 255.f, 220.f/ 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
+			_ElectricValue.Color = FMath::Lerp(Vector3{ 71.f / 255.f,123.f / 255.f, 220.f / 255.f }, Vector3{ 1.f,1.f,1.f }, FMath::Random(0.f, 1.f));
 			const float LifeTime = FMath::Random(0.1f, 1.f);
-			
+
 			StartLocation = FMath::RotationVecCoord(StartLocation, { 1.f,0.f,0.f }, FMath::PI / 2.f);
-			Cp0 =FMath::RotationVecCoord(Cp0, { 1.f,0.f,0.f }, FMath::PI / 2.f);
-			Cp1  = FMath::RotationVecCoord(Cp1, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+			Cp0 = FMath::RotationVecCoord(Cp0, { 1.f,0.f,0.f }, FMath::PI / 2.f);
+			Cp1 = FMath::RotationVecCoord(Cp1, { 1.f,0.f,0.f }, FMath::PI / 2.f);
 			End = FMath::RotationVecCoord(End, { 1.f,0.f,0.f }, FMath::PI / 2.f);
 
 			_ParticleInstance.PreSetup(
@@ -2951,7 +3042,7 @@ void PreLoader::AirHikeParticleEndPoolLoad()
 				{ RScale,RScale,RScale }, LifeTime, 0.0f, _ElectricValue, std::nullopt);
 		}
 	}
-}
+};
 
 void PreLoader::AirHikeParticlePoolLoad()
 {
@@ -2992,6 +3083,7 @@ void PreLoader::AirHikeParticlePoolLoad()
 	_Info.bLocalVertexLocationsStorage = true;
 	auto _TargetMesh = Resources::Load<StaticMesh>(
 		"..\\..\\Resource\\Mesh\\Static\\Effect\\AirHike\\AirHike.fbx", _Info);
+
 	if (_TargetMesh->m_spVertexLocations)
 	{
 		for (auto& _ParticleInstance : *ParticlePool)
@@ -3384,4 +3476,5 @@ void PreLoader::DissolveParticlePoolLoad(
 		}
 	};
 };
+
 

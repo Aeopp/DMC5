@@ -39,35 +39,45 @@ public:
 	virtual void    OnDisable() override;
 public:
 	void PlayStart(
-		const Vector3& Location,
-		const float PlayTime = 0.4f);
+		const Vector3& Location);
 	void PlayEnd();
+	void UpdateParticle(const float DeltaTime);
+	void UpdateStoneParticle(const float DeltaTime);
+
+private:
+	void PlayParticle();
 public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	Vector3 StoneLocation{ 0.f,0.f,0.f };
+	float ParticleTime{ 0.016f};
+	float CurParticleDelta{ 0.0f };
+
+	float StoneParticleTime{ 0.016f };
+	float CurStoneParticleDelta{ 0.0f };
 	std::weak_ptr<class FLight> PtLight;
-	float PtLightRadius = 100.f;
-	float PtLightFlux = 1.f;
+	float PtLightRadius = 1.0f;
+	float PtLightFlux   = 0.2f;
 
 	std::weak_ptr<class ShockWave> _ShockWave{};
 
 	float ParticleCycle = 0.01f;
 	float CurParticleTime = 0.0f;
+	float VelocityY = 0.0135f;
 
-	float ColorIntencity{ 1.f };
+	float ColorIntencity{ 0.293103f };
 
 	float Radian = 0.0f;
 	float RadianSpeed = 1.f;
 	float VelocityBlurAlpha = 1.f;
 
-	Vector4 _Color{ 1.f,0.f,0.f,100.f/255.f };
+	Vector4 _Color{ 1.f,1.f,1.f,1.f };
 
 	float T{ 0.0f };
-	float PlayTime =0.4f;
-	float EditPlayTime = 0.4f;
+	float PlayTime =1.35f;
 
-	float EndScale = 0.4f;
+	float EndScale = 0.0055f;
 };
 #endif //
 

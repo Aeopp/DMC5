@@ -7,6 +7,7 @@
 #include "Font.h"
 #include "BtlPanel.h"
 #include "Nero.h"
+#include "SoundSystem.h"
 
 
 // static var
@@ -3170,6 +3171,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 		case CATEGORY:
 			if (Input::GetKeyDown(DIK_TAB))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PreCmd)
 				{
 				case CATEGORY_WEAPON:
@@ -3183,6 +3186,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 			}
 			else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PreCmd)
 				{
 				case CATEGORY_WEAPON:
@@ -3197,6 +3202,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 			}
 			else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PreCmd)
 				{
 				case CATEGORY_WEAPON:
@@ -3214,17 +3221,23 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 		case WEAPON_SELECT:
 			if (Input::GetKeyDown(DIK_TAB))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				_CurDepth = CATEGORY;
 				_CurCmd = CATEGORY_ITEM;
 				_Inputable = false;
 			}
 			else if (Input::GetKeyDown(DIK_RETURN))
 			{
+				SoundSystem::GetInstance()->Play("Failed", 0.7f, false);
+
 				if (!_ButtonBlinkStart)
 					_ButtonBlinkStart = true;
 			}
 			else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PreCmd)
 				{
 				case WP_REDQUEEN:
@@ -3243,6 +3256,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 			}
 			else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PreCmd)
 				{
 				case WP_REDQUEEN:
@@ -3264,17 +3279,23 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 		case ITEM_SELECT:
 			if (Input::GetKeyDown(DIK_TAB))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				_CurDepth = CATEGORY;
 				_CurCmd = CATEGORY_WEAPON;
 				_Inputable = false;
 			}
 			else if (Input::GetKeyDown(DIK_RETURN))
 			{
+				SoundSystem::GetInstance()->Play("Failed", 0.7f, false);
+
 				if (!_ButtonBlinkStart)
 					_ButtonBlinkStart = true;
 			}
 			else if (Input::GetKeyDown(DIK_DOWNARROW) || Input::GetKeyDown(DIK_RIGHTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PreCmd)
 				{
 				case ITEM_GREENORB:
@@ -3293,6 +3314,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 			}
 			else if (Input::GetKeyDown(DIK_UPARROW) || Input::GetKeyDown(DIK_LEFTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PreCmd)
 				{
 				case ITEM_GREENORB:
@@ -3366,10 +3389,14 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 					_CurPopupDepth = POPUP_DEPTH_NONE;
 					_CurPopupCmd = POPUP_CMD_NONE;
 					_UIDescs[POPUP].Using = false;
+
+					SoundSystem::GetInstance()->Play("Upgrade", 0.7f, false);
 					break;
 
 				case POPUP_CMD_CANCLE:
 				default:
+					SoundSystem::GetInstance()->Play("Cancle", 0.7f, false);
+
 					_CurPopupDepth = POPUP_DEPTH_NONE;
 					_CurPopupCmd = POPUP_CMD_NONE;
 					_UIDescs[POPUP].Using = false;
@@ -3381,6 +3408,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 				|| Input::GetKeyDown(DIK_UPARROW)
 				|| Input::GetKeyDown(DIK_LEFTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PrePopupCmd)
 				{
 				case POPUP_CMD_OK:
@@ -3453,10 +3482,13 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 					_CurPopupDepth = POPUP_DEPTH_NONE;
 					_CurPopupCmd = POPUP_CMD_NONE;
 					_UIDescs[POPUP].Using = false;
+
+					SoundSystem::GetInstance()->Play("Orb", 0.7f, false);
 					break;
 
 				case POPUP_CMD_CANCLE:
 				default:
+					SoundSystem::GetInstance()->Play("Cancle", 0.7f, false);
 					_CurPopupDepth = POPUP_DEPTH_NONE;
 					_CurPopupCmd = POPUP_CMD_NONE;
 					_UIDescs[POPUP].Using = false;
@@ -3468,6 +3500,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 				|| Input::GetKeyDown(DIK_UPARROW)
 				|| Input::GetKeyDown(DIK_LEFTARROW))
 			{
+				SoundSystem::GetInstance()->Play("CursorMove", 0.7f, true);
+
 				switch (_PrePopupCmd)
 				{
 				case POPUP_CMD_OK:
@@ -3484,6 +3518,8 @@ void ShopPanel::Check_KeyInput(const float _fDeltaTime)
 		default:
 			if (Input::GetKeyDown(DIK_RETURN))
 			{
+				SoundSystem::GetInstance()->Play("Cancle", 0.7f, false);
+
 				_CurPopupDepth = POPUP_DEPTH_NONE;
 				_CurPopupCmd = POPUP_CMD_NONE;
 				_UIDescs[POPUP].Using = false;

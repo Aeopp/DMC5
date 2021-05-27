@@ -11,8 +11,7 @@
 #include "ParticleInstanceDesc.hpp"
 #include "FLight.h"
 
-Change::Change()
-{};
+Change::Change() {};
 
 void Change::Free()
 {
@@ -95,14 +94,16 @@ void Change::RenderInit()
 	_ShockWave = AddGameObject<ShockWave>();
 
 	PushEditEntity(_Mesh.get());
+	// 알베도 (알파 무조건 1)
 	PushEditEntity(_AlbmMap.get());
+	// 마스크 (알파 무조건 1)
 	PushEditEntity(_MskMap.get());
+	// 알파맵 
 	PushEditEntity(_AlpgMap.get());
 };
 
 void Change::PlayStart(
-	const Vector3& Location,
-	const float PlayTime)
+	const Vector3& Location)
 {
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
@@ -110,7 +111,9 @@ void Change::PlayStart(
 		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 			SpTransform)
 		{
+			StoneLocation = Location;
 			SpTransform->SetPosition(Location);
+			SpTransform->SetScale(Vector3{ 0.f,0.f,0.f });
 			// 재생 ..
 		}
 	}
@@ -149,7 +152,6 @@ void Change::PlayStart(
 
 
 	CurParticleTime = ParticleCycle;
-	this->PlayTime = PlayTime;
 	_RenderProperty.bRender = true;
 	T = 0.0f;
 };
@@ -166,6 +168,62 @@ void Change::PlayEnd()
 	{
 		_PtLight->bEnable = false;
 	}
+};
+
+void Change::UpdateParticle(const float DeltaTime)
+{
+	CurParticleDelta -= DeltaTime;
+	if (CurParticleDelta < 0.0f)
+	{
+		CurParticleDelta += ParticleTime;
+		PlayParticle();
+	}
+}
+void Change::UpdateStoneParticle(const float DeltaTime)
+{
+	CurStoneParticleDelta -= DeltaTime;
+	if (CurStoneParticleDelta < 0.0f)
+	{
+		CurStoneParticleDelta += StoneParticleTime;
+		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+			SpTransform)
+		{
+			auto StoneWorld = FMath::Scale(EndScale)
+				* FMath::Identity()
+				* FMath::Translation(StoneLocation);
+
+			if (auto _Particle =
+				ParticleSystem::GetInstance()->PlayParticle(
+					"ChangeStone", 11ul, true);
+				_Particle.empty() == false)
+			{
+				for (int32 i = 0; i < _Particle.size(); ++i)
+				{
+					auto& _PlayInstance = _Particle[i];
+					_PlayInstance->PlayDescBind(StoneWorld);
+				}
+			}
+		};
+	}
+};
+
+void Change::PlayParticle()
+{
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				"ChangeParticle", 555ul, true);
+			_Particle.empty() == false)
+		{
+			for (int32 i = 0; i < _Particle.size(); ++i)
+			{
+				auto& _PlayInstance = _Particle[i];
+				_PlayInstance->PlayDescBind(_RenderUpdateInfo.World);
+			}
+		}
+	};
 };
 
 void Change::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -221,6 +279,7 @@ HRESULT Change::Awake()
 	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.5f,0.f });
 	m_pTransform.lock()->SetScale(Vector3{ 0.005f,0.005f,0.005f });
 	m_pTransform.lock()->SetRotation(Vector3{ 90.f,0.f,0.f });
+
 	return S_OK;
 }
 
@@ -245,14 +304,18 @@ UINT Change::Update(const float _fDeltaTime)
 		return 0;
 	}
 
-	CurParticleTime -= _fDeltaTime;
-
+	UpdateParticle(_fDeltaTime);
+	UpdateStoneParticle(_fDeltaTime);
 
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
 	{
-		float Lerp = T / PlayTime;
-		const float LerpScale  = FMath::Lerp(0.f, EndScale,Lerp);
+		Vector3 Location = SpTransform->GetPosition();
+		Location.y += VelocityY;
+		SpTransform->SetPosition(Location);
+
+		const float Lerp = std::sinf(T / PlayTime * FMath::PI);
+		const float LerpScale = FMath::Lerp(0.f, EndScale, Lerp);
 
 		SpTransform->SetScale(Vector3{ LerpScale ,LerpScale ,LerpScale });
 
@@ -272,7 +335,6 @@ UINT Change::Update(const float _fDeltaTime)
 		}
 	}
 
-	
 	return 0;
 }
 
@@ -294,14 +356,14 @@ void Change::Editor()
 		{
 			if (ImGui::SmallButton("Play"))
 			{
-				Vector3 Point{ 0.f,0.f ,0.f };
-				if (auto SpTransform = m_pTransform.lock();
+				Vector3 Point{ 0.f,0.2f ,0.f };
+				/*if (auto SpTransform = m_pTransform.lock();
 					SpTransform)
 				{
 					Point = SpTransform->GetPosition();
-				};
+				};*/
 
-				PlayStart(Point, EditPlayTime);
+				PlayStart(Point);
 			}
 			if (ImGui::SmallButton("PlayEnd"))
 			{
@@ -310,15 +372,20 @@ void Change::Editor()
 
 			ImGui::ColorEdit4("Color", _Color);
 
+			ImGui::SliderFloat("StoneParticleTime", &StoneParticleTime, 0.0f, 0.5f);
+			ImGui::SliderFloat("ParticleTime", &ParticleTime, 0.0f, 0.5f);
+
 			ImGui::SliderFloat("EndScale", &EndScale, 0.0f, 0.1f);
 			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, 0.0f, 100.f);
 
-			ImGui::SliderFloat("EditPlayTime", &EditPlayTime, FLT_MIN, 10.f, "%9.6f");
-			ImGui::InputFloat("In EditPlayTime", &EditPlayTime, 0.f, 0.f, "%9.6f");
+			ImGui::SliderFloat("EditPlayTime", &PlayTime, FLT_MIN, 10.f, "%9.6f");
+			ImGui::InputFloat("In EditPlayTime", &PlayTime, 0.f, 0.f, "%9.6f");
 
 			ImGui::SliderFloat("ColorIntencity", &ColorIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In ColorIntencity", &ColorIntencity, 0.f, 0.f, "%9.6f");
 
+			ImGui::SliderFloat("VelocityY", &VelocityY, FLT_MIN, 1.f, "%9.6f");
+			ImGui::InputFloat("In VelocityY", &VelocityY, 0.f, 0.f, "%9.6f");
 		}
 		ImGui::EndChild();
 	}

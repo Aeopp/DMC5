@@ -2,7 +2,6 @@ matrix matWorld;
 matrix ViewProjection;
 
 vector CurColor;
-uniform float Intencity;
 uniform float exposure_corr;
 uniform float ColorIntencity;
 
@@ -55,11 +54,22 @@ void VsMain(in out float4 Position : POSITION0,
 void PsMain(out float4 Color : COLOR0,
             in float2 UV : TEXCOORD0)
 {
-    // Color = tex2D(Magic, UV) * CurColor;
-    Color = lerp(tex2D(Alpg, UV), tex2D(Msk, UV) * tex2D(Albm, UV), 1.0f - CurColor.a);
+    float4 AlbmSample = tex2D(Albm , UV);
+    float4 AlpgSample = tex2D(Alpg , UV);
+    float4 MskSample = tex2D(Msk ,UV);
+    
+    float temp = MskSample.b;
+    MskSample.b = MskSample.r;
+    MskSample.r = temp;
+    
+    Color.rgb = AlbmSample.rgb * 
+                AlpgSample.rgb * MskSample.rgb
+                * CurColor.rgb;
+    
+    Color.a = AlpgSample.a;
     Color.rgb *= ColorIntencity;
     
-    Color.rgb *= Intencity * exposure_corr;
+    Color.rgb *=  exposure_corr;
 };
 
 technique Default
@@ -77,4 +87,5 @@ technique Default
         pixelshader = compile ps_3_0 PsMain();
     }
 };
+
 

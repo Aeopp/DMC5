@@ -9,6 +9,7 @@
 #include "EndingScene.h"
 #include "TestScene.h"
 #include "LoadingPanel.h"
+#include "SoundSystem.h"
 
 
 void LoadingScene::Free()
@@ -97,6 +98,8 @@ HRESULT LoadingScene::Update(const float _fDeltaTime)
 		{
 			if (SceneManager::IsLoaded())
 			{
+				SoundSystem::GetInstance()->Play("LoadingComplete", 1.f, false);
+
 				SpPanel->SetLoadingProgress(1.f);
 
 				if (SpPanel->IsReadyToNextScene())

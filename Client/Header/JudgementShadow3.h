@@ -3,6 +3,8 @@
 
 #include "GameObject.h"
 #include "RenderInterface.h"
+#include "DissolveInfo.h"
+
 class Nero;
 class JudgementShadow3 :
 	public GameObject,
@@ -38,7 +40,7 @@ public:
 private:
     std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
     std::weak_ptr<Nero>					  m_pNero;
-
+    DissolveInfo                          m_DissolveInfo;
 };
 
 
