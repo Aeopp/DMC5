@@ -113,6 +113,7 @@ enum GAMEOBJECTTAG
 	TAG_JudgementShadow2,
 	TAG_JudgementShadow3,
 	TAG_JudgementSword,
+	TAG_JudgementSwordCollider,
 	TAG_Trigger,
 	TAG_NhDoor,
 	Eff_SnatchRush,

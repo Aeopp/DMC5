@@ -101,7 +101,9 @@ public:
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
 	void RenderInit();
-
+public:
+	//BOOM ^^
+	void StartCutScene();
 public:
 	virtual void Rotate(const float _fDeltaTime) override;
 	virtual void Update_Angle() override;

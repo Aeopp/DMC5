@@ -12,7 +12,7 @@ public:
     enum PLAYER_CAM_MODE { CAM_MODE_BASIC,CAM_MODE_WAVE_END,CAM_MODE_RETURN_TO_PLAYER };
 	enum TRIGGER_CAM_MODE {	STAGE1_WAVE1, STAGE1_WAVE1_END, STAGE1_WAVE2_ENTER, STAGE1_WAVE2_BATTLE, STAGE1_WAVE2_END,
         STAGE2_BUTTERFLY1, STAGE2_BUTTERFLY1_END, STAGE2_BUTTERFLY2, STAGE2_BUTTERFLY2_END,STAGE3_WAVE_HOLE,STAGE3_WAVE_HOLE_END
-		, STAGE4_BOSS_CUTSCENE, STAGE4_BOSS_CUTSCENE_END};
+		, STAGE4_BOSS_CUTSCENE, STAGE4_BOSS_CUTSCENE_END, STAGE6_BOSS_CUTSCENE};
 private:
     explicit MainCamera();
     virtual ~MainCamera();
@@ -74,6 +74,7 @@ private:
     void Trigger_Cam_Stage3_HoleEnd(float _fDeltaTime);
     void Trigger_Cam_Stage4_BossCutScene(float _fDeltaTime);
     void Trigger_Cam_Stage4_BossCutScene_End(float _fDeltaTime);
+    void Trigger_Cam_Stage6_BossCutScene(float _fDeltaTime);
     //보스 카메라 함수
     void Boss_Cam_Em5000(float _fDeltaTime);
     void Boss_Cam_Em5300(float _fDeltaTime);

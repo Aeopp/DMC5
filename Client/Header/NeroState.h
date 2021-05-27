@@ -2876,7 +2876,7 @@ public:
 	virtual HRESULT StateUpdate(const float _fDeltaTime)	override;
 
 private:
-	bool	m_bPlayOnce[4];
+	bool	m_bPlayOnce[5];
 };
 
 class ShinMajinIdle : public NeroState

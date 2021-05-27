@@ -3,6 +3,7 @@
 #include "Nero.h"
 #include "NeroFSM.h"
 #include "SoundSystem.h"
+#include "TimeSystem.h"
 
 #pragma region PARENT // ºÎ¸ð
 
@@ -13281,7 +13282,7 @@ HRESULT ShinMajinJudgement::StateEnter()
 {
 	m_pNero.lock()->ChangeAnimation("Judgement", false, Nero::ANI_SHINMAJIN_JUDGEMENT);
 	
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		m_bPlayOnce[i] = true;
 	}
@@ -13290,6 +13291,12 @@ HRESULT ShinMajinJudgement::StateEnter()
 	m_pNero.lock()->SetEm5300();
 	m_pNero.lock()->PlayEffect(Eff_Judgement);
 	m_pNero.lock()->PlayEffect(Eff_JudgementSwordTrail);
+
+	//Slow
+
+	vector<Vector3> _LostTimes;
+	_LostTimes.emplace_back(Vector3{ 4.f,1.f,0.55f });
+	TimeSystem::GetInstance()->LostTime(_LostTimes);
 	return S_OK;
 }
 
@@ -13327,6 +13334,14 @@ HRESULT ShinMajinJudgement::StateUpdate(const float _fDeltaTime)
 	{
 		m_bPlayOnce[3] = false;
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_JudgementShadow3, "CINEMA_4D___", false);
+	}
+
+	if (0.73f <= fCurAnimationTime && m_bPlayOnce[4])
+	{
+		m_bPlayOnce[4] = false;
+		vector<Vector3> _LostTimes;
+		_LostTimes.emplace_back(Vector3{ 2.f,1.f,0.7f });
+		TimeSystem::GetInstance()->LostTime(_LostTimes);
 	}
 
 	if (m_pNero.lock()->IsAnimationEnd())

@@ -61,20 +61,20 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-38.744f, -0.388f, 30.861f
-			});
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+	//		-38.744f, -0.388f, 30.861f
+	//		});
+	//}
 
 	 /*AddGameObject<FinalReady>();
 	 AddGameObject<Energism>();
 	 AddGameObject<NuClear>();
 	 AddGameObject<EnergismReady>();*/
 	 
-	AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -404,8 +404,15 @@ void Library_S06::LateInit()
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -33.711f, -0.994f, 30.884f });
+		SpPlayer->SetAngle(90.f);
 	}
-
+	m_pBoss.lock()->StartCutScene();
+	_MainCamera.lock()->Set_At_Transform(m_pBoss.lock()->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
+	_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE6_BOSS_CUTSCENE, {}, 4.f);
+	_MainCamera.lock()->SetEye(Vector3{	-40.046f, -0.085f, 30.907f	});
+	_MainCamera.lock()->SetAngle({0.f, 90.f ,0.f });
+	_MainCamera.lock()->SetShakeInfo(4.f, 4.f);
+	
 	ApplyShopUpgradeDesc();
 
 	Renderer::GetInstance()->LateSceneInit();

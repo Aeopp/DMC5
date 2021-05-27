@@ -406,12 +406,21 @@ void MainCamera::Player_Cam_Baisc(float _fDeltaTime)
 
 	if (dwMouseMove = Input::GetMouseMove(DIM_Z))
 	{
+		
 		//m_fDistanceToTarget -= dwMouseMove / 100.f;
 	}
 	if (m_fRotX <= -50.f)
 		m_fRotX = -50.f;
-	if (m_fRotX >= 13.5f)
-		m_fRotX = 13.5f;
+	if (m_fDistanceToTarget <= 0.8f)
+	{
+		if (m_fRotX >= 13.5f)
+			m_fRotX = 13.5f;
+	}
+	else
+	{
+		if (m_fRotX >= 5.5f)
+			m_fRotX = 5.5f;
+	}
 
 
 	Vector3 vLook = { 0.f, 0.f ,1.f };
@@ -598,6 +607,9 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 	case STAGE4_BOSS_CUTSCENE:
 		Trigger_Cam_Stage4_BossCutScene(_fDeltaTime);
 		break;
+	case STAGE6_BOSS_CUTSCENE:
+		Trigger_Cam_Stage6_BossCutScene(_fDeltaTime);
+		break;
 	}
 	m_fTriggerTime -= TimeSystem::GetInstance()->OriginDeltaTime();
 	//설정한 시간이 다됐다
@@ -656,6 +668,12 @@ void MainCamera::MoveMent_Trigger(float _fDeltaTime)
 		case STAGE4_BOSS_CUTSCENE:
 			m_eAtType = AT_BOSS1;
 			Set_At_Transform(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>(),
+				MainCamera::AT_BOSS1);
+			SetDistance(1.1f);
+			break;
+		case STAGE6_BOSS_CUTSCENE:
+			m_eAtType = AT_BOSS1;
+			Set_At_Transform(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock()->GetComponent<Transform>(),
 				MainCamera::AT_BOSS1);
 			SetDistance(1.1f);
 			break;
@@ -924,6 +942,12 @@ void MainCamera::Trigger_Cam_Stage4_BossCutScene(float _fDeltaTime)
 
 void MainCamera::Trigger_Cam_Stage4_BossCutScene_End(float _fDeltaTime)
 {
+}
+
+void MainCamera::Trigger_Cam_Stage6_BossCutScene(float _fDeltaTime)
+{
+	m_vAt = m_pAtTranform.lock()->GetPosition();
+	m_vAt.y += m_fFloatingAmount;
 }
 
 void MainCamera::Boss_Cam_Em5000(float _fDeltaTime)
