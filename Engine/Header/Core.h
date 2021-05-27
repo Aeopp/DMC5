@@ -10,7 +10,8 @@ private:
 public:
 	static HRESULT ReadyEngine(
 		const bool bWindowed,const bool bMultiSample ,
-		const std::filesystem::path& SoundDirectoryPath);
+		const std::filesystem::path& SoundDirectoryPath ,
+		const bool bImguiInit);
 	static HRESULT UpdateEngine(const float Delta);
 	static HRESULT ReleaseEngine();
 };

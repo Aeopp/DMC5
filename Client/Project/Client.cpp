@@ -26,7 +26,9 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 static constexpr bool bWindowed = true;
 static constexpr bool bMultiSample = false;
 // 풀스크린 일때는 기본적으로 작동 true 일시 창모드 일때도 보더리스로 작동 !! 
-static constexpr bool bBorderless = false;
+static constexpr bool bBorderless = true;
+static constexpr bool bImguiInit = false;
+
 static const std::filesystem::path SoundDirectoryPath = "..\\..\\Resource\\Sound\\";
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmdParam, int nCmdShow)
@@ -64,7 +66,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 
 
 
-	pApplication->ReadyApplication(bWindowed,bMultiSample  , SoundDirectoryPath);
+	pApplication->ReadyApplication(bWindowed,bMultiSample  , SoundDirectoryPath ,bImguiInit);
 
 	static constexpr float TargetDelta = 1.0f / 60.f;
 	std::chrono::time_point<std::chrono::high_resolution_clock> PrevTime;
@@ -237,8 +239,12 @@ HRESULT InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT nMessage, WPARAM wParam, LPARAM lParam)
 {
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, nMessage, wParam, lParam))
-		return true;
+	if (bImguiInit)
+	{
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, nMessage, wParam, lParam))
+			return true;
+	}
+	
 
 	switch (nMessage)
 	{
