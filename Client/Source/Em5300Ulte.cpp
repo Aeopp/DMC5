@@ -293,6 +293,17 @@ void Em5300Ulte::Ulte(const float _fDeltaTime)
 		m_bUlte = false;
 		m_bUlteEnd = true;
 	}
+
+	if (m_pNuclear.lock()->IsBlackOut() && m_bOne[0] == false)
+	{
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Ulte3", { 1,1 }, 3.f, false);
+		m_bOne[0] = true;
+	}
+	if (m_pNuclear.lock()->IsKaboom() && m_bOne[1] == false)
+	{
+		SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Ulte4", { 1,1 }, 1.f, false);
+		m_bOne[1] = true;
+	}
 }
 
 

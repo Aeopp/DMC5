@@ -21,6 +21,9 @@
 #include "Em1000.h"
 #include "FadeOut.h"
 #include "Trigger.h"
+#include "QliphothBlock.h"
+#include "MakaiButterfly.h"
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -32,6 +35,11 @@ Library_S05::Library_S05()
 
 void Library_S05::Free()
 {
+	for (auto& Element : m_vecQliphothBlock)
+		Destroy(Element);
+	m_vecQliphothBlock.clear();
+	m_vecQliphothBlock.shrink_to_fit();
+
 	Scene::Free();
 }
 
@@ -44,6 +52,9 @@ Library_S05* Library_S05::Create()
 HRESULT Library_S05::LoadScene()
 {
 	// Load Start
+
+	SoundSystem::GetInstance()->ClearSound();
+	SoundSystem::GetInstance()->Play("Library_01", 0.07f, true);
 
 	m_fLoadingProgress = 0.01f;
 
@@ -96,7 +107,7 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(true);
+	RenderDataSetUp(false);
 	TriggerSetUp();
 
 #pragma endregion
@@ -105,6 +116,65 @@ HRESULT Library_S05::LoadScene()
 
 #pragma region Effect
 
+	// Stage5 길막
+	m_vecQliphothBlock.reserve(4);
+
+	// 0 ~ 3: 블러드. 3번이 정면에 있는 ㅈㄴ 큰 길막
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.003f);
+		ptr->SetRotation(Vector3(0.f, 0.f, 0.f));
+		ptr->SetPosition(Vector3(-17.98f, -2.655f, 37.57f));
+		ptr->PlayStart();
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr));
+	}
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.003f);
+		ptr->SetRotation(Vector3(0.f, 180.f, 0.f));
+		ptr->SetPosition(Vector3(-13.47f, -2.87f, 34.98f));
+		ptr->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr));
+	}
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.004f);
+		ptr->SetRotation(Vector3(0.f, 180.f, 0.f));
+		ptr->SetPosition(Vector3(-18.53f, -2.8f, 34.88f));
+		ptr->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr));
+	}
+	if (auto ptr = AddGameObject<QliphothBlock>().lock();
+		ptr)
+	{
+		ptr->SetScale(0.024f);
+		ptr->SetRotation(Vector3(0.f, 270.f, 0.f));
+		ptr->SetPosition(Vector3(-19.514f, -3.09f, 36.3f));
+		ptr->SetActive(false);
+		m_vecQliphothBlock.push_back(static_pointer_cast<Effect>(ptr));
+	}
+	
+	//
+	if (auto Sp = AddGameObject<MakaiButterfly>().lock(); Sp)
+	{
+		Sp->SetPosition({ -23.619f, -1.29f, 33.56f });
+		Sp->PlayStart();
+	}
+	if (auto Sp = AddGameObject<MakaiButterfly>().lock(); Sp)
+	{
+		Sp->SetPosition({ -26.967f, -1.29f, 33.56f });
+		Sp->PlayStart();
+	}
+
+	//
+	if (_ShopFadeOut = AddGameObject<FadeOut>();
+		!_ShopFadeOut.expired())
+	{
+		_ShopFadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -433,30 +503,47 @@ void Library_S05::ApplyShopUpgradeDesc()
 			SpPlayer->BuyCbsLong();
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void Library_S05::CheckShopAvailable()
 {
 	if (_IsShopAvailable && Input::GetKeyDown(DIK_P))
 	{
-		if (auto Sp = _ShopPanel.lock(); Sp)
+		if (auto SpShopPanel = _ShopPanel.lock(); SpShopPanel)
 		{
-			if (!Sp->IsActive())
+			if (!SpShopPanel->IsActive())
 			{
-				Sp->SetActive(true);
-				_BtlPanel.lock()->SetActive(false);
+				if (auto SpFadeOut = _ShopFadeOut.lock(); SpFadeOut)
+				{
+					if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+					{
+						SpBtlPanel->SetRedOrbActive(false);
+						SpBtlPanel->SetActive(false);
+					}
+
+					SpFadeOut->SetActive(true);
+					SpFadeOut->PlayStart(7u,
+						[SpShopPanel, SpFadeOut]()
+						{
+							SpShopPanel->SetActive(true);
+							SpFadeOut->SetActive(false);
+						}
+					);
+				}
 			}
 			else
 			{
+				if (auto SpBtlPanel = _BtlPanel.lock(); SpBtlPanel)
+				{
+					SpBtlPanel->SetRedOrbActive(true);
+					SpBtlPanel->SetActive(true);
+				}
+
 				ApplyShopUpgradeDesc();
-				Sp->ResetCmd();
-				Sp->SetActive(false);
-				_BtlPanel.lock()->SetActive(true);
+				SpShopPanel->ResetCmd();
+				SpShopPanel->SetActive(false);
 			}
 		}
 	}
@@ -502,12 +589,13 @@ void Library_S05::TriggerSetUp()
 	BookCaseTrigger.push_back(TriggerBookCaseSunkenThirdSmash());
 	BookCaseTrigger.push_back(TriggerBookCaseSunkenSecondSmash());
 
+
+	TriggerShop();
 	TriggerNextScene();
 };
 
 void Library_S05::TriggerBloodPrevious(const std::weak_ptr<Trigger> _BloodTrigger)
 {
-
 	if (auto _Trigger = AddGameObject<Trigger>().lock();
 		_Trigger)
 	{
@@ -515,9 +603,15 @@ void Library_S05::TriggerBloodPrevious(const std::weak_ptr<Trigger> _BloodTrigge
 		{
 			// 여기서 연출 하고 TriggerBlood 호출해주세요 !!
 			_BloodTrigger.lock()->TriggerEnable();
+
+			for (uint32 i = 1u; i < 4u; ++i)
+			{
+				m_vecQliphothBlock[i].lock()->SetActive(true);
+				m_vecQliphothBlock[i].lock()->PlayStart();
+			}
 		};
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		const Vector3 TriggerLocation{ -14.065550f, -3.066150f, 36.398815f };
 		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 0.5f,0.5f,3.f };
@@ -560,39 +654,47 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodFirstWave
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -19.f, -3.014,35.556 });
+			lock()->SetPosition({ -19.f, -3.014f, 35.556f });
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -17.929  ,-3.014,  35.528 });
+			lock()->SetPosition({ -17.929f, -3.014f, 35.528f });
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -18.979  ,-3.014, 37.077 });
+			lock()->SetPosition({ -18.979f, -3.014f, 37.077f });
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -17.980  ,-3.014, 36.903 });
-
+			lock()->SetPosition({ -17.980f, -3.014f, 36.903f });
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.626f , -3.168f , 35.443f });
+			lock()->SetPosition({ -16.626f, -3.168f, 35.443f });
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		MonsterWave[5].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.134f  ,-3.339f , 36.172f });
+			lock()->SetPosition({ -16.134f, -3.339f, 36.172f });
+		MonsterWave[5].lock()->Set_Hp(60);
 
 		MonsterWave[6].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.291  ,  -3.222  , 36.921f });
+			lock()->SetPosition({ -16.291f, -3.222f, 36.921f });
+		MonsterWave[6].lock()->Set_Hp(60);
 
 		MonsterWave[7].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -14.930f , -3.274f , 35.774f });
+			lock()->SetPosition({ -14.930f, -3.274f, 35.774f });
+		MonsterWave[7].lock()->Set_Hp(60);
 
 		MonsterWave[8].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -14.604f , -3.256f , 35.654f });
+			lock()->SetPosition({ -14.604f, -3.256f, 35.654f });
+		MonsterWave[8].lock()->Set_Hp(60);
 
 		MonsterWave[9].lock()->GetComponent<Transform>().
-			lock()->SetPosition({
-			-14.308f , -3.266f , 36.834f });
+			lock()->SetPosition({ -14.308f, -3.266f, 36.834f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		const Vector3 TriggerLocation{ -14.065550f, -3.066150f, 36.398815f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 10.f,10.f,10.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -615,8 +717,7 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodFirstWave
 		const std::function<void()> WaveEndEvent =
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */,
 			_WaveTrigger]()
-		{
-			
+		{	
 			// 다음 트리거 발동 !!
 			_WaveTrigger.lock()->TriggerEnable();
 		};
@@ -659,39 +760,47 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodSecondWave(const std::weak_ptr<T
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -19.f, -3.014,35.556 });
+			lock()->SetPosition({ -19.f, -3.014f, 35.556f });
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -17.929  ,-3.014,  35.528 });
+			lock()->SetPosition({ -17.929f, -3.014f, 35.528f });
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -18.979  ,-3.014, 37.077 });
+			lock()->SetPosition({ -18.979f, -3.014f, 37.077f });
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -17.980  ,-3.014, 36.903 });
-
+			lock()->SetPosition({ -17.980f, -3.014f, 36.903f });
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.626f , -3.168f , 35.443f });
+			lock()->SetPosition({ -16.626f, -3.168f, 35.443f });
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		MonsterWave[5].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.134f  ,-3.339f , 36.172f });
+			lock()->SetPosition({ -16.134f, -3.339f, 36.172f });
+		MonsterWave[5].lock()->Set_Hp(60);
 
 		MonsterWave[6].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.291  ,  -3.222  , 36.921f });
+			lock()->SetPosition({ -16.291f, -3.222f, 36.921f });
+		MonsterWave[6].lock()->Set_Hp(60);
 
 		MonsterWave[7].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -14.930f , -3.274f , 35.774f });
+			lock()->SetPosition({ -14.930f, -3.274f, 35.774f });
+		MonsterWave[7].lock()->Set_Hp(60);
 
 		MonsterWave[8].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -14.604f , -3.256f , 35.654f });
+			lock()->SetPosition({ -14.604f, -3.256f, 35.654f });
+		MonsterWave[8].lock()->Set_Hp(60);
 
 		MonsterWave[9].lock()->GetComponent<Transform>().
-			lock()->SetPosition({
-			-14.308f , -3.266f , 36.834f });
+			lock()->SetPosition({ -14.308f, -3.266f, 36.834f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		const Vector3 TriggerLocation{ -14.065550f, -3.066150f, 36.398815f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 10.f,10.f,10.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -712,7 +821,6 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodSecondWave(const std::weak_ptr<T
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */
 			, _WaveTrigger]()
 		{
-			
 			// 다음 웨이브를 작동 !!
 			_WaveTrigger.lock()->TriggerEnable();
 		};
@@ -756,39 +864,47 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodThirdWave()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -19.f, -3.014,35.556 });
+			lock()->SetPosition({ -19.f, -3.014f, 35.556f });
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -17.929  ,-3.014,  35.528 });
+			lock()->SetPosition({ -17.929f, -3.014f, 35.528f });
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -18.979  ,-3.014, 37.077 });
+			lock()->SetPosition({ -18.979f, -3.014f, 37.077f });
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -17.980  ,-3.014, 36.903 });
-
+			lock()->SetPosition({ -17.980f, -3.014f, 36.903f });
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.626f , -3.168f , 35.443f });
+			lock()->SetPosition({ -16.626f, -3.168f, 35.443f });
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		MonsterWave[5].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.134f  ,-3.339f , 36.172f });
+			lock()->SetPosition({ -16.134f, -3.339f, 36.172f });
+		MonsterWave[5].lock()->Set_Hp(60);
 
 		MonsterWave[6].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -16.291  ,  -3.222  , 36.921f });
+			lock()->SetPosition({ -16.291f, -3.222f, 36.921f });
+		MonsterWave[6].lock()->Set_Hp(60);
 
 		MonsterWave[7].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -14.930f , -3.274f , 35.774f });
+			lock()->SetPosition({ -14.930f, -3.274f, 35.774f });
+		MonsterWave[8].lock()->Set_Hp(60);
 
 		MonsterWave[8].lock()->GetComponent<Transform>().
-			lock()->SetPosition({ -14.604f , -3.256f , 35.654f });
+			lock()->SetPosition({ -14.604f, -3.256f, 35.654f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		MonsterWave[9].lock()->GetComponent<Transform>().
-			lock()->SetPosition({
-			-14.308f , -3.266f , 36.834f });
+			lock()->SetPosition({ -14.308f, -3.266f, 36.834f });
+		MonsterWave[9].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -14.065550f,-3.066150f,36.398815f };
+		const Vector3 TriggerLocation{ -14.065550f, -3.066150f, 36.398815f };
 		// 콜라이더 사이즈 
 		const Vector3 BoxSize{ 10.f,10.f,10.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
@@ -808,6 +924,11 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodThirdWave()
 		const std::function<void()> WaveEndEvent =
 			[this/*필요한 변수 캡쳐하세요 (되도록 포인터로 하세요) */]()
 		{
+			for (uint32 i = 1u; i < 3u; ++i)
+			{
+				m_vecQliphothBlock[i].lock()->Reset();
+			}
+
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetRedOrbActive(false);
@@ -849,43 +970,25 @@ void Library_S05::TriggerBookCaseSunkenSmash()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -21167.0,
-						-1968.0,
-						31454.0 } *GScale);
+			lock()->SetPosition(Vector3{ -21167.0f, -1968.0f, 31454.0f } * GScale);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -20507.0,
-						-1968.0,
-						31454.0 } *GScale);
+			lock()->SetPosition(Vector3{ -20507.0f, -1968.0f, 31454.0f } * GScale);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -19817.0,
-						-1968.0,
-						31454.0 } *GScale);
+			lock()->SetPosition(Vector3{ -19817.0f, -1968.0f, 31454.0f } * GScale);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -19817.0,
-						-1968.0,
-						30394.0 }*GScale);
+			lock()->SetPosition(Vector3{ -19817.0f, -1968.0f, 30394.0f } * GScale);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -20527.0,
-						-1968.0,
-						30394.0 } *GScale);
+			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 30394.0f } * GScale);
 
 		MonsterWave[5].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -21177.0,
-						-1968.0,
-						30394.0 } *GScale);
+			lock()->SetPosition(Vector3{ -21177.0f, -1968.0f, 30394.0f } * GScale);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		const Vector3 TriggerLocation{ -19.6f, -1.677550f, 30.850502f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 0.5f,0.5f,1.9f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
@@ -904,6 +1007,11 @@ void Library_S05::TriggerBookCaseSunkenSmash()
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetGlobalActive(true, true);
+			}
+
+			for (uint32 i = 1u; i < 3u; ++i)
+			{
+				m_vecQliphothBlock[i].lock()->SetActive(false);
 			}
 		};
 
@@ -930,7 +1038,7 @@ void Library_S05::TriggerBookCaseSunkenSmash()
 	};
 };
 
-void   Library_S05::TriggerBookCaseSunkenFirstSmash()
+void Library_S05::TriggerBookCaseSunkenFirstSmash()
 {
 	if (auto SpTrigger = AddGameObject<Trigger>().lock();
 		SpTrigger)
@@ -944,19 +1052,15 @@ void   Library_S05::TriggerBookCaseSunkenFirstSmash()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -19817.0,
-						-1968.0,
-						31454.0 } *GScale);
+			lock()->SetPosition(Vector3{ -19817.0f, -1968.0f, 31454.0f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -19817.0,
-						-1968.0,
-						30394.0 } *GScale);
+			lock()->SetPosition(Vector3{ -19817.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		const Vector3 TriggerLocation{ -19.6f, -1.677550f, 30.850502f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 0.5f,0.5f,1.9f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
@@ -970,10 +1074,16 @@ void   Library_S05::TriggerBookCaseSunkenFirstSmash()
 		{
 			//... 여기서 책장 박살나는 애니메이션 재생 하면 될듯 ... ?
 			OBookCaseSunkenSmash = 0.0f;
+
 			//... 여기서 로직 처리하세요 . 
 			if (auto Sp = _BtlPanel.lock(); Sp)
 			{
 				Sp->SetGlobalActive(true, true);
+			}
+
+			for (uint32 i = 1u; i < 3u; ++i)
+			{
+				m_vecQliphothBlock[i].lock()->SetActive(false);
 			}
 		};
 
@@ -995,7 +1105,7 @@ void   Library_S05::TriggerBookCaseSunkenFirstSmash()
 	};
 };
 
-std::weak_ptr<Trigger>  Library_S05::TriggerBookCaseSunkenSecondSmash()
+std::weak_ptr<Trigger> Library_S05::TriggerBookCaseSunkenSecondSmash()
 {
 	if (auto SpTrigger = AddGameObject<Trigger>().lock();
 		SpTrigger)
@@ -1009,19 +1119,15 @@ std::weak_ptr<Trigger>  Library_S05::TriggerBookCaseSunkenSecondSmash()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -20527.0,
-						-1968.0,
-						30394.0 } *GScale);
+			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -20527.0,
-						-1968.0,
-						30394.0 } *GScale);
+			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		const Vector3 TriggerLocation{ -19.6f, -1.677550f, 30.850502f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 10.f,10.f,10.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
@@ -1057,7 +1163,8 @@ std::weak_ptr<Trigger>  Library_S05::TriggerBookCaseSunkenSecondSmash()
 
 	return {};
 };
-std::weak_ptr<Trigger>  Library_S05::TriggerBookCaseSunkenThirdSmash()
+
+std::weak_ptr<Trigger> Library_S05::TriggerBookCaseSunkenThirdSmash()
 {
 	if (auto SpTrigger = AddGameObject<Trigger>().lock();
 		SpTrigger)
@@ -1071,19 +1178,15 @@ std::weak_ptr<Trigger>  Library_S05::TriggerBookCaseSunkenThirdSmash()
 
 		// 몬스터 위치는 미리 잡아주기  . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -21167.0,
-						-1968.0,
-						31454.0 } *GScale);
+			lock()->SetPosition(Vector3{ -21167.0f, -1968.0f, 31454.0f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -21177.0,
-						-1968.0,
-						30394.0 } *GScale);
+			lock()->SetPosition(Vector3{ -21177.0f, -1968.0f, 30394.0f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -19.6f,-1.677550f,30.850502f };
+		const Vector3 TriggerLocation{ -19.6f, -1.677550f, 30.850502f };
 		// 트리거 박스 사이즈 
 		const Vector3 TriggerBoxSize = { 10.f,10.f,10.f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
@@ -1146,29 +1249,29 @@ void Library_S05::TriggerSewerSunken()
 
 		// 몬스터 위치는 미리 잡아주기 . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -23979.177f,-1378.879f,  33560.666f } * GScale);
+			lock()->SetPosition(Vector3{ -23979.177f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -25179.414, -1378.879f, 33560.666f } * GScale);
+			lock()->SetPosition(Vector3{ -25179.414f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[1].lock()->Set_Hp(60);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -26379.939f, -1378.879f , 33560.666f } * GScale);
+			lock()->SetPosition(Vector3{ -26379.939f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[2].lock()->Set_Hp(60);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -27578.267f,-1378.879f  , 33560.666f } * GScale);
+			lock()->SetPosition(Vector3{ -27578.267f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[3].lock()->Set_Hp(60);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
-			lock()->SetPosition(
-				Vector3{ -28779.519f, -1378.879f , 33560.666f } * GScale);
+			lock()->SetPosition(Vector3{ -28779.519f, -1378.879f, 33560.666f } * GScale);
+		MonsterWave[4].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 
-		const Vector3 TriggerLocation{ -23.681999f,-1.231250f,33.628098f};
+		const Vector3 TriggerLocation{ -23.681999f, -1.231250f, 33.628098f};
 		// 트리거 박스 사이즈 
-		const Vector3 TriggerBoxSize = { 0.5f,0.5f,0.5f};
+		const Vector3 TriggerBoxSize = { 0.5f,0.5f,0.5f };
 		// 트리거 정보 등록 하자마자 트리거는 활성화 
 		const bool ImmediatelyEnable = true;
 		// 트리거 검사할 오브젝트는 플레이어 
@@ -1208,7 +1311,38 @@ void Library_S05::TriggerSewerSunken()
 			SpawnWaveAfterEvent,
 			WaveEndEvent);
 	};
-};
+}
+
+void Library_S05::TriggerShop()
+{
+	auto _Trigger = AddGameObject<Trigger>().lock();
+	if (_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[this]()
+		{
+			_IsShopAvailable = true;
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -29.511f, -0.613f, 30.34f };
+		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
+
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 1.f, 1.f, 1.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = true;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			TriggerRotation);
+	}
+}
 
 void Library_S05::TriggerNextScene()
 {
@@ -1237,8 +1371,7 @@ void Library_S05::TriggerNextScene()
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation
-		{ -33.122341f, -0.641000f, 30.992397f};
+		const Vector3 TriggerLocation{ -33.122341f, -0.641000f, 30.992397f };
 		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
 
 		// 콜라이더 사이즈 
@@ -1259,7 +1392,7 @@ void Library_S05::TriggerNextScene()
 
 void Library_S05::LateInit()
 {
-	SoundSystem::GetInstance()->ClearSound();
+	//SoundSystem::GetInstance()->ClearSound();
 
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)

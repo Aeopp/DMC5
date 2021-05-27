@@ -101,6 +101,11 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Effect
 
+	if (_FadeOut = AddGameObject<FadeOut>();
+		!_FadeOut.expired())
+	{
+		_FadeOut.lock()->SetActive(false);
+	}
 
 #pragma endregion
 
@@ -150,7 +155,32 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	}
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
-		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
+		if (auto SpFadeOut = _FadeOut.lock(); SpFadeOut)
+		{
+			if (auto SpPanel = _BtlPanel.lock(); SpPanel)
+			{
+				//////////////////////////////////////////////////////
+				// 보스 죽으면 바로 돌려야 할 것들인데 일단 여기 둠...
+				SpPanel->SetBossGaugeActive(false);
+				SpPanel->SetRedOrbActive(false);
+				SpPanel->SetGlobalActive(false);
+				SpPanel->ResetRankScore();
+				//////////////////////////////////////////////////////
+
+				SpFadeOut->SetActive(true);
+				SpFadeOut->PlayStart(3u,
+					[SpPanel]()
+					{
+						SpPanel->SetNullBlackActive(true);
+						SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
+					}
+				);
+			}
+		}
+		else
+		{
+			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
+		}
 	}
 	if (Input::GetKeyDown(DIK_NUMPAD1))
 	{
@@ -249,11 +279,8 @@ void Hotel_S04::ApplyShopUpgradeDesc()
 			SpPlayer->BuyCbsLong();
 	}
 
-	if (auto SpBtlPanel = _BtlPanel.lock();
-		SpBtlPanel)
-	{
-		SpBtlPanel->SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
-	}
+	BtlPanel::SetExGaugeLevel(UpgradeDesc._ExgaugeUpUpgradeCount);
+	BtlPanel::SetTDTGaugeLevel(UpgradeDesc._PurpleOrbUpgradeCount);
 }
 
 void Hotel_S04::RenderDataSetUp(const bool bTest)
@@ -317,8 +344,7 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{
-			-6.031250f, -1.825800f, 43.758301f};
+		const Vector3 TriggerLocation{ -6.031250f, -1.825800f, 43.758301f };
 		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
 
 		// 콜라이더 사이즈 

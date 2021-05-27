@@ -8,8 +8,10 @@
 #include "Hotel_S01.h"
 #include "Hotel_S03.h"
 #include "Hotel_S04.h"
-#include "Library_S06.h"
 #include "Library_S05.h"
+#include "Library_S06.h"
+#include "EndingScene.h"
+
 
 void LogoScene::Free()
 {
@@ -21,7 +23,6 @@ LogoScene* LogoScene::Create()
 	LogoScene* pInstance = new LogoScene;
 	return pInstance;
 }
-
 
 HRESULT LogoScene::LoadScene()
 {
@@ -56,12 +57,15 @@ HRESULT LogoScene::Update(const float _fDeltaTime)
 	if (!_LoadNextScene)
 	{
 		// 다음 씬 로드
-		//SceneManager::LoadScene(TitleScene::Create(), false);
-		//SceneManager::LoadScene(TitleScene::Create(), false);
-		SceneManager::LoadScene(Library_S05::Create(), false);
-		//SceneManager::LoadScene(Hotel_S03::Create(), false);
-		//SceneManager::LoadScene(Hotel_S02::Create(), false);
+		SceneManager::LoadScene(TitleScene::Create(), false);
 		//SceneManager::LoadScene(TestScene::Create(), false);
+		//SceneManager::LoadScene(Hotel_S01::Create(), false);
+		//SceneManager::LoadScene(Hotel_S02::Create(), false);
+		//SceneManager::LoadScene(Hotel_S03::Create(), false);
+		//SceneManager::LoadScene(Hotel_S04::Create(), false);
+		//SceneManager::LoadScene(Library_S05::Create(), false);
+		//SceneManager::LoadScene(Library_S06::Create(), false);
+		//SceneManager::LoadScene(EndingScene::Create(), false);
 
 		_LoadNextScene = true;
 	}

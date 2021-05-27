@@ -35,7 +35,7 @@ private:
 
 	bool _IsAlive = false;
 
-	weak_ptr<CapsuleCollider> _Collider;
+	
 	
 	static uint32 _TotalCnt;
 
@@ -69,5 +69,8 @@ public:
 public:
 	virtual void PlayStart(const float PlayingSpeed = 25.f) override;
 	virtual void Reset() override;
+
+public:
+	weak_ptr<CapsuleCollider> _Collider;
 };
 #endif // !__EFF_MAKAIBUTTERFLY_H__

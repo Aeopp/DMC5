@@ -7,7 +7,7 @@ float3 LightDirection = float3(0.f, 0.f, 1.f);
 float exposure_corr = 1.f;
 float _BrightScale = 1.f;
 
-bool _Apply_ExposureCorr = true; // PsMain_Plane() 에서 사용 시발
+bool _Apply_ExposureCorr = true; // PsMain_Plane() 에서 사용 ㅅㅂ
 
 float _TotalAccumulateTime;
 float _AccumulationTexU;
@@ -635,6 +635,37 @@ PsOut PsMain_Glass(PsIn In)
     return Out;
 };
 
+PsOut PsMain_HPGaugeBase(PsIn In)
+{
+    PsOut Out = (PsOut) 0;
+    
+    clip(In.UV.y - 0.363f > 0.f ? 1.f : -1.f);
+    clip(0.633f - In.UV.y > 0.f ? 1.f : -1.f);
+
+    float4 ALB0Sample = tex2D(ALB_NOsRGB, In.UV);
+    float4 ATOSSample = tex2D(ATOS0, In.UV);
+    float4 NRMRSample = tex2D(NRMR0, In.UV);
+    
+    float2 NormalXY = NRMRSample.xy * 2.f - 1.f;
+    float NormalZ = sqrt(1 - dot(NormalXY, NormalXY));
+   
+    float3x3 TBN = float3x3(normalize(In.Tangent),
+                            normalize(In.BiNormal),
+                            normalize(In.Normal));
+
+    float3 WorldNormal = normalize(mul(float3(NormalXY, NormalZ), TBN));
+    
+    float Diffuse = saturate(dot(WorldNormal, -normalize(LightDirection)));
+    float Ambient = ATOSSample.b * 0.2f;
+
+    Out.Color = (Diffuse + Ambient) * float4(ALB0Sample.rgb, 1.f) * _BrightScale;
+    if (_Apply_ExposureCorr)
+        Out.Color *= exposure_corr;
+    Out.Color.a = ATOSSample.r * _GlobalAlpha;
+ 
+    return Out;
+};
+
 PsOut PsMain_HPGauge0(PsIn_Clip In)
 {
     PsOut Out = (PsOut) 0;
@@ -742,7 +773,7 @@ PsOut PsMain_TDTGauge1(PsIn_Clip In)
     if (0.01f > _EmissivePower)
     {
         // 변신 X
-        Out.Color.rgb = Shade * saturate((float3(0.478f, 0.074f, 0.028f) - 0.15f * tex2D(ATOS0, newUV).aaa)) * _BrightScale * exposure_corr;
+        Out.Color.rgb = Shade * saturate((_ExtraColor - 0.1f * tex2D(ATOS0, newUV).aaa)) * _BrightScale * exposure_corr;
     }
     else
     {
@@ -1125,8 +1156,7 @@ technique Default
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge4();
     }
-
-    pass p19
+    pass p20
     {
         alphablendenable = true;
         srcblend = srcalpha;
@@ -1137,5 +1167,17 @@ technique Default
 
         vertexshader = compile vs_3_0 VsMain_ClipPos();
         pixelshader = compile ps_3_0 PsMain_BossGauge5();
+    }
+    pass p21
+    {
+        alphablendenable = true;
+        srcblend = srcalpha;
+        destblend = invsrcalpha;
+        zenable = false;
+        zwriteenable = false;
+        sRGBWRITEENABLE = false;
+
+        vertexshader = compile vs_3_0 VsMain();
+        pixelshader = compile ps_3_0 PsMain_HPGaugeBase();
     }
 };

@@ -316,7 +316,7 @@ void SnatchPoint::Fly()
 	D3DXVec3Normalize(&vDir, &vDir);
 	m_bTargetEnable = false;
 
-	if (fDir >= 0.3f)
+	if (fDir >= 0.2f)
 		m_pTransform.lock()->Translate(vDir * 0.035f);
 	else
 		m_bFly = false;

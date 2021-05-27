@@ -145,11 +145,14 @@ void NuClear::PlayStart(const Vector3& Location,  const float GroundY, const boo
 
 	this->bEditPlay = bEditPlay;
 	bExplosion = false;
+	bKaboom = false;
+	bBlackOut = false;
 };
 
 void NuClear::Kaboom()
 {
 	KaboomParticle();
+	bKaboom = true;
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 	_ShockWave.lock()->PlayStart(
@@ -160,13 +163,14 @@ void NuClear::Kaboom()
 void NuClear::PlayEnd()
 {
 	_DynamicLight.PlayEnd();
+	bBlackOut = true;
 	bExplosion = false;
 	auto SpTransform = GetComponent<Transform>().lock();
 
 	Vector3 _KaboomLocation = SpTransform->GetPosition();
 	_KaboomLocation.y = -1.035f;
 
-	KaboomMatrix = 
+	KaboomMatrix =
 		FMath::Scale(Vector3{ ParticleWorldScale ,ParticleWorldScale ,ParticleWorldScale })
 		*
 		SpTransform->GetRotationMatrix()
@@ -178,6 +182,22 @@ void NuClear::PlayEnd()
 		SpTransform->SetPosition(Vector3{ -37.411f,0.821f,30.663f });
 	}
 };
+
+bool NuClear::IsKaboom()
+{
+	return bKaboom;
+};
+
+bool NuClear::IsBlackOut()
+{
+	return bBlackOut;
+};
+
+bool NuClear::IsFallTime()
+{
+	return  T > (ExplosionReadyTime + FreeFallTime);
+}
+;
 
 void NuClear::KaboomParticle()
 {
@@ -331,7 +351,7 @@ UINT NuClear::Update(const float _fDeltaTime)
 
 	// ³¡³¯ ÂêÀ½ .
 	const float BeyondPlay = ExplosionReadyTime + FreeFallTime + ExplosionTime;
-	const float BeyondKaboom = ExplosionReadyTime + FreeFallTime + ExplosionTime + 0.6f;
+	const float BeyondKaboom =  ExplosionReadyTime + FreeFallTime + ExplosionTime + 0.6f;
 
 	if (T > BeyondKaboom)
 	{

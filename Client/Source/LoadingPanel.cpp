@@ -46,31 +46,47 @@ void LoadingPanel::RenderUI(const DrawInfo& _Info)
 			SharedSubset->Render(_Info.Fx);
 			_Info.Fx->EndPass();
 
-			_Info.Fx->SetTexture("ATOS0Map", _LoadingbarATOSTex->GetTexture());
-			//_Info.Fx->SetFloat("_SliceAmount", 0.f);
-			_Info.Fx->SetFloat("_BrightScale", 0.001f);
-			_Info.Fx->SetMatrix("ScreenMat", &_LoadingbarScreenMat);
-			_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
-			_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
+			if (_ShowLoadingProgress)
+			{
+				_Info.Fx->SetTexture("ATOS0Map", _LoadingbarATOSTex->GetTexture());
+				//_Info.Fx->SetFloat("_SliceAmount", 0.f);
+				_Info.Fx->SetFloat("_BrightScale", 0.001f);
+				_Info.Fx->SetMatrix("ScreenMat", &_LoadingbarScreenMat);
+				_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+				_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 1.f), 2u);
 
-			_Info.Fx->BeginPass(1);
-			SharedSubset->Render(_Info.Fx);
-			_Info.Fx->EndPass();
+				_Info.Fx->BeginPass(1);
+				SharedSubset->Render(_Info.Fx);
+				_Info.Fx->EndPass();
 
-			Matrix ScreenMat = _LoadingbarScreenMat;
-			ScreenMat._11 *= 0.8f;
-			_Info.Fx->SetMatrix("ScreenMat", &ScreenMat);
-			_Info.Fx->SetFloat("_BrightScale", 0.4f);
-			_Info.Fx->SetFloat("_AccumulationTexU", _NoiseAccTime * 0.1f);
-			_Info.Fx->SetFloat("_LoadingbarCurXPosOrtho", _LoadingbarCurXPosOrtho);
+				Matrix ScreenMat = _LoadingbarScreenMat;
+				ScreenMat._11 *= 0.8f;
+				_Info.Fx->SetMatrix("ScreenMat", &ScreenMat);
+				_Info.Fx->SetFloat("_BrightScale", 0.4f);
+				_Info.Fx->SetFloat("_AccumulationTexU", _NoiseAccTime * 0.1f);
+				_Info.Fx->SetFloat("_LoadingbarCurXPosOrtho", _LoadingbarCurXPosOrtho);
 
-			_Info.Fx->BeginPass(2);
-			SharedSubset->Render(_Info.Fx);
-			_Info.Fx->EndPass();
+				_Info.Fx->BeginPass(2);
+				SharedSubset->Render(_Info.Fx);
+				_Info.Fx->EndPass();
+
+				if (1.f > _LoadingProgress)
+				{
+					_Info.Fx->SetTexture("ALB0Map", _LoadingTextTex->GetTexture());
+					_Info.Fx->SetFloat("_SliceAmount", 1.f - _TextAlpha);
+					_Info.Fx->SetFloat("_BrightScale", _BrightScale);
+					_Info.Fx->SetMatrix("ScreenMat", &_LoadingTextScreenMat);
+					_Info.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.0625f * static_cast<float>(_CurTextIdx)), 2u);
+					_Info.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.0625f * static_cast<float>(_CurTextIdx + 1u)), 2u);
+
+					_Info.Fx->BeginPass(0);
+					SharedSubset->Render(_Info.Fx);
+					_Info.Fx->EndPass();
+				}
+			}
 		}
 	}
 }
-
 
 Vector2 LoadingPanel::ScreenPosToOrtho(float _ScreenPosX, float _ScreenPosY)
 {
@@ -149,6 +165,16 @@ HRESULT LoadingPanel::Ready()
 		_LoadingText.lock()->SetRenderFlag(false);
 	}
 
+	_LoadingTextTex = Resources::Load<ENGINE::Texture>(L"..\\..\\Resource\\Texture\\UI\\Loading\\LoadingSceneText.png");
+	_CurTextIdx = FMath::Random<uint32>(0u, _TextMaxCount - 1u);
+	D3DXMatrixIdentity(&_LoadingTextScreenMat);
+	_LoadingTextScreenMat._11 = 10.24f;
+	_LoadingTextScreenMat._22 = 0.64f;
+	_LoadingTextScreenMat._33 = 1.f;
+	_LoadingTextScreenMat._41 = 0.f;
+	_LoadingTextScreenMat._42 = 280.f;
+	_LoadingTextScreenMat._43 = 0.02f;
+
 	return S_OK;
 }
 
@@ -192,23 +218,46 @@ UINT LoadingPanel::Update(const float _fDeltaTime)
 				_BrightScale = 1.f;
 		}
 
-		_TextBlickTick += _fDeltaTime;
-		if (_TextRender)
+		if (_ShowLoadingProgress)
 		{
-			if (1.5f < _TextBlickTick)
+			_TextBlickTick += _fDeltaTime;
+			if (_TextRender)
 			{
-				_TextRender = false;
-				_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
-				_TextBlickTick = 0.f;
+				if (1.5f < _TextBlickTick)
+				{
+					_TextRender = false;
+					_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
+					_TextBlickTick = 0.f;
+				}
+
+				if (1.f > _TextAlpha)
+				{
+					_TextAlpha += 2.05f * _fDeltaTime;
+					if (1.f < _TextAlpha)
+						_TextAlpha = 1.f;
+				}
 			}
-		}
-		else
-		{
-			if (0.5f < _TextBlickTick)
+			else
 			{
-				_TextRender = true;
-				_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
-				_TextBlickTick = 0.f;
+				if (0.5f < _TextBlickTick)
+				{
+					_TextRender = true;
+					_LoadingText.lock()->SetRenderFlag(_TextRender, Font::FADE_ID::ALPHA_LINEAR);
+					_TextBlickTick = 0.f;
+				}
+
+				if (0.f < _TextAlpha)
+				{
+					_TextAlpha -= 2.05f * _fDeltaTime;
+					if (0.f >= _TextAlpha)
+					{
+						++_CurTextIdx;
+						if (_TextMaxCount <= _CurTextIdx)
+							_CurTextIdx = 0u;
+
+						_TextAlpha = 0.f;
+					}
+				}
 			}
 		}
 	}

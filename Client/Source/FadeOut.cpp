@@ -54,14 +54,17 @@ void FadeOut::RenderInit()
 	RenderInterface::Initialize(_InitRenderProp);
 	NoiseMap  = Resources::Load<ENGINE::Texture>("..\\..\\Usable\\cs_threshold_50_000_msk3.tga");
 
-	AlbmMap[0] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\3.tga");
-	AlbmMap[1] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\5.tga");
-	AlbmMap[2] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\7.tga");
-	AlbmMap[3] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\9.tga");
+	AlbmMap[0] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\5.tga");
+	AlbmMap[1] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\sv09.tga");
+	AlbmMap[2] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\sv08.tga");
+	AlbmMap[3] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\14.tga");
 	AlbmMap[4] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\10.tga");
-	AlbmMap[5] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\14.tga");
-	AlbmMap[6] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\serectvision00_mark_alba.tga");
-	AlbmMap[7] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\sv00_alba.tga");
+	AlbmMap[5] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\3.tga");
+	AlbmMap[6] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\7.tga");
+	AlbmMap[7] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\9.tga");
+	AlbmMap[8] = Resources::Load<Texture>(L"..\\..\\Resource\\Texture\\UI\\Loading\\NULLTEX.png");
+	//AlbmMap[6] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\serectvision00_mark_alba.tga");
+	//AlbmMap[7] = Resources::Load<Texture>("..\\..\\Usable\\SecretVision\\sv00_alba.tga");
 
 	_RenderProperty.bRender = false;
 };

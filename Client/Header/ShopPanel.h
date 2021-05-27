@@ -17,6 +17,15 @@ public:
 		uint32 _BatteryUpgradeCount;
 		uint32 _TransformUpgradeCount;
 		uint32 _RebellionUpgradeCount;
+
+		uint32 _GreenOrbCost;
+		uint32 _WhiteOrbCost;
+		uint32 _BlueOrbCost;
+		uint32 _PurpleOrbCost;
+		uint32 _GreenOrbUpgradeCount;
+		uint32 _WhiteOrbUpgradeCount;
+		uint32 _BlueOrbUpgradeCount;
+		uint32 _PurpleOrbUpgradeCount;
 	};
 
 	static const ShopPanel::UpgradeDesc& GetUpgradeDesc() { return _UpgradeDesc; }
@@ -31,6 +40,7 @@ private:
 		CUSTOMIZE,
 		SELECT_CATEGORY,
 		SELECT_WEAPON,
+		SELECT_ITEM,
 		SELECT_GUIDE,
 
 		POPUP,
@@ -76,11 +86,18 @@ private:
 	std::shared_ptr<ENGINE::Texture> _ButtonFontTex{};
 	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeInfoFontTex{};
 	std::shared_ptr<ENGINE::Texture> _WeaponUpgradeProgressTex{};
+	std::shared_ptr<ENGINE::Texture> _ItemTex{};
+	std::shared_ptr<ENGINE::Texture> _ItemInfoFontTex{};
 
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex0{};
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex1{};
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex2{};
 	std::shared_ptr<ENGINE::Texture> _WeaponBgTex3{};
+
+	std::shared_ptr<ENGINE::Texture> _ItemBgTex0{};
+	std::shared_ptr<ENGINE::Texture> _ItemBgTex1{};
+	std::shared_ptr<ENGINE::Texture> _ItemBgTex2{};
+	std::shared_ptr<ENGINE::Texture> _ItemBgTex3{};
 
 	std::shared_ptr<ENGINE::Texture> _PopupBaseTex{};
 	std::shared_ptr<ENGINE::Texture> _PopupLineTex{};
@@ -88,7 +105,7 @@ private:
 
 	float _TotalAccumulateTime = 0.f;
 	Matrix _PerspectiveProjMatrix = Matrix();
-	Vector3 _LightDir = Vector3(-1.f, 1.f, 1.f);
+	Vector3 _LightDir = Vector3(0.f, 1.f, 1.f);
 	Vector2 _MinTexUV = Vector2(0.f, 0.f);
 	Vector2 _MaxTexUV = Vector2(1.f, 1.f);
 
@@ -118,6 +135,16 @@ private:
 		FT_WP_CBS_TRANSFORM_COST,
 		FT_WP_RB_REBELLION_COST,
 
+		FT_ITEM_GREENORB,
+		FT_ITEM_WHITEORB,
+		FT_ITEM_BLUEORB,
+		FT_ITEM_PURPLEORB,
+
+		FT_ITEM_GREENORB_COST,
+		FT_ITEM_WHITEORB_COST,
+		FT_ITEM_BLUEORB_COST,
+		FT_ITEM_PURPLEORB_COST,
+
 		FT_ATTENTION,
 
 		FONT_END
@@ -129,6 +156,7 @@ private:
 		NONE = -1,
 		CATEGORY = 0,
 		WEAPON_SELECT = 2,
+		ITEM_SELECT = 3,
 	};
 	DEPTH _CurDepth = CATEGORY;
 	DEPTH _PreDepth = NONE;
@@ -143,20 +171,31 @@ private:
 		WP_REDQUEEN,
 		WP_OVERTURE,
 		WP_CBS,
-		WP_REBELLION
+		WP_REBELLION,
+
+		ITEM_GREENORB,
+		ITEM_WHITEORB,
+		ITEM_BLUEORB,
+		ITEM_PURPLEORB
 
 	};
 	CMD _CurCmd = CATEGORY_WEAPON;
 	CMD _PreCmd = CATEGORY_WEAPON;
 	CMD _SavedCmd = CMD_NONE;	// 팝업창때 폰트 날려야 해서 시발...
-
 	CMD _CategoryPreCmd = CATEGORY_WEAPON;
+
 	float _CategoryCursorXPos = 194.f;
 	float _CategoryCursorXScaleOffset = 1.f;
+	
 	float _CategoryWeaponSliceAmount = 0.f;
 	float _CategoryWeaponBrightOffset = 1.f;
 	float _CategoryWeaponInfoXPos = 410.f;
 	float _CategoryWeaponInfoSliceAmount = 0.f;
+	
+	float _CategoryItemSliceAmount = 1.f;
+	float _CategoryItemBrightOffset = 1.f;
+	float _CategoryItemInfoXPos = 310.f;
+	float _CategoryItemInfoSliceAmount = 1.f;
 
 	float _BrightAccTime = 0.f;
 	float _ButtonBright = 1.f;
@@ -173,6 +212,7 @@ private:
 		POPUP_DEPTH_NONE = -1,
 		POPUP_DEPTH_NOREDORB,
 		POPUP_DEPTH_ISUPGRADE,
+		PUPUP_DEPTH_BUYORB
 	};
 	POPUP_DEPTH _CurPopupDepth = POPUP_DEPTH_NONE;
 	POPUP_DEPTH _PrePopupDepth = POPUP_DEPTH_NONE;
@@ -187,6 +227,8 @@ private:
 	POPUP_CMD _PrePopupCmd = POPUP_CMD_NONE;
 
 	static UpgradeDesc _UpgradeDesc;
+
+	bool _Inputable = true;
 
 private:
 	explicit ShopPanel() = default;

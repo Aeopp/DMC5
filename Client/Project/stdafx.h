@@ -59,6 +59,8 @@ enum GAMEOBJECTTAG
 	Eff_AppearEm1000,
 	Eff_ShapeParticle,
 	Eff_AirHike,
+	Eff_Judgement,
+	Eff_SandGlassEffect,
 	Eff_NuClear,
 	Eff_EnergismReady,
 	Eff_Energism,
@@ -68,6 +70,7 @@ enum GAMEOBJECTTAG
 	Eff_Trail,
 	Eff_CbsTrail,
 	Eff_CbsMidTrail,
+	Eff_JudgementSwordTrail,
 	Eff_CbsLongTrail,
 	Eff_BlitzAttack,
 	Eff_LongBarrel,
@@ -84,6 +87,7 @@ enum GAMEOBJECTTAG
 	Eff_ArteMisMissile,
 	Eff_Reverberation,
 	Eff_Change,
+	Eff_JudgementCut,
 	Eff_CircleWave,
 	Eff_SpriteEffect,
 	Eff_DashTrail,
@@ -107,6 +111,7 @@ enum GAMEOBJECTTAG
 	TAG_JudgementShadow1,
 	TAG_JudgementShadow2,
 	TAG_JudgementShadow3,
+	TAG_JudgementSword,
 	TAG_Trigger,
 	TAG_NhDoor,
 	Eff_SnatchRush,
@@ -162,6 +167,7 @@ enum SCENE_ID
 	HOTEL_S04,
 	LIBRARY_S05,
 	LIBRARY_S06,
+	ENDING,
 
 	SCENE_ID_END
 };

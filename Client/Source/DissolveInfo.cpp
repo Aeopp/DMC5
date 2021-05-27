@@ -25,7 +25,8 @@ void DissolveInfo::Initialize(const std::filesystem::path& MeshPath,
 	this->BurnSize = BurnSize;
 };
 
-void DissolveInfo::DissolveStart(const bool bReverse,
+void DissolveInfo::DissolveStart(
+	const bool bReverse,
 	const bool bParticle,
 	const float DissolveTime)
 {
@@ -93,7 +94,8 @@ bool DissolveInfo::DissolveUpdate(const float DeltaTime,const Matrix& RenderMatr
 
 		SliceAmount += DeltaTime * DissolveAcc;
 
-		if (false == FMath::IsRange(0.0f, 1.f, SliceAmount))
+		if (false == 
+			FMath::IsRange(0.0f, 1.f, SliceAmount))
 		{
 			DissolveEnd();
 			return true;

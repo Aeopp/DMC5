@@ -2,7 +2,8 @@
 #define __AIRHIKE_H_
 #include "GameObject.h"
 #include "RenderInterface.h"
-#include <optional>i
+#include <optional>
+
 class AirHike : public ENGINE::GameObject,
 				public ENGINE::RenderInterface
 {

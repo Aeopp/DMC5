@@ -42,6 +42,10 @@ public:
 	void PlayStart(const Vector3& Location , const float GroundY, const bool bEditPlay=false);
 	void Kaboom();
 	void PlayEnd();
+	// 파티클이 폭발하는 타이밍 
+	bool IsKaboom();
+	bool IsBlackOut();
+	bool IsFallTime();
 private:
 	void ParticleUpdate(const float DeltaTime);
 	void PlayParticle();
@@ -50,6 +54,8 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	bool bKaboom = false;
+	bool bBlackOut = false;
 	Matrix KaboomMatrix{ FMath::Identity() };
 	bool bExplosion = false;
 	bool bEditPlay = false;

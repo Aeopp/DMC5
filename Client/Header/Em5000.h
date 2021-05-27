@@ -161,6 +161,9 @@ private:
 
 	bool								  m_bHitBuster = false;
 
+
+	float		m_fMoveSoundTime = 0.f;
+	bool		m_bFristStep = false;
 };
 
 #endif // Em5000_h__

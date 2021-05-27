@@ -9,8 +9,10 @@
 // static var
 int BtlPanel::_HPGaugeCount = 5;
 float BtlPanel::_TDTGauge = 0.f;
+uint32 BtlPanel::_TDTGaugeLevel = 1u;
 uint32 BtlPanel::_StylishPoints = 0u;
 float BtlPanel::_ExGauge = 0.f;
+uint32 BtlPanel::_ExGaugeLevel = 1u;
 uint32 BtlPanel::_RedOrbCount = 0u;
 
 
@@ -35,7 +37,6 @@ BtlPanel* BtlPanel::Create()
 {
 	return new BtlPanel{};
 }
-
 
 void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 {
@@ -393,7 +394,7 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 				Create_ScreenMat(CurID, ScreenMat, i);
 				_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
-				_ImplInfo.Fx->BeginPass(0);
+				_ImplInfo.Fx->BeginPass(21);
 				SharedSubset->Render(_ImplInfo.Fx);
 				_ImplInfo.Fx->EndPass();
 			}
@@ -427,12 +428,27 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		{
 			_ImplInfo.Fx->SetTexture("ATOS0Map", _TDTGaugeATOSTex->GetTexture());
 			_ImplInfo.Fx->SetTexture("NRMR0Map", _TDTGaugeNRMRTex->GetTexture());
-			_ImplInfo.Fx->SetFloat("_BrightScale", 0.025f);
+			_ImplInfo.Fx->SetFloat("_BrightScale", 0.03f);
 			_ImplInfo.Fx->SetFloat("_AccumulationTexU", _TotalAccumulateTime * -0.3f);
 			_ImplInfo.Fx->SetFloat("_AccumulationTexV", _TotalAccumulateTime * 0.1f);
 			_ImplInfo.Fx->SetFloat("_EmissivePower", _TDTGauge_EmissivePower);
 			_ImplInfo.Fx->SetFloat("_TDTGaugeCurXPosOrtho", _TDTGauge_CurXPosOrtho);
-			
+
+			switch (_TDTGaugeLevel)
+			{
+			case 2:
+				ExtraColor = Vector3(0.548f, 0.069f, 0.028f);
+				break;
+			case 3:
+				ExtraColor = Vector3(0.598f, 0.074f, 0.028f);
+				break;
+			case 1: default:
+				ExtraColor = Vector3(0.498f, 0.054f, 0.028f);
+				break;
+			}
+
+			_ImplInfo.Fx->SetFloatArray("_ExtraColor", ExtraColor, 3u);
+
 			Create_ScreenMat(CurID, ScreenMat);
 			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
 
@@ -968,7 +984,15 @@ void BtlPanel::SetBossGaugeHPRatio(const float HPRatio)
 
 void BtlPanel::AccumulateTDTGauge(const float Amount)
 {
-	_TDTGauge += Amount;
+	float Corr = 1.f;
+	if (2u == _TDTGaugeLevel)
+		Corr = 1.25f;
+	else if (3u == _TDTGaugeLevel)
+		Corr = 1.5f;
+	else
+		Corr = 1.f;
+
+	_TDTGauge += Amount * Corr;
 	if (_TDTGauge > 1.f)
 		_TDTGauge = 1.f;
 	else if (_TDTGauge < 0.f)
@@ -980,8 +1004,24 @@ void BtlPanel::ConsumeTDTGauge(const float Speed/*= 1.f*/)
 	if (0.f >= Speed)
 		return;
 
+	float Corr = 1.f;
+	if (2u == _TDTGaugeLevel)
+		Corr = 0.666f;
+	else if (3u == _TDTGaugeLevel)
+		Corr = 0.333f;
+	else
+		Corr = 1.f;
+
 	_TDTGauge_ConsumeStart = true;
-	_TDTGauge_ConsumeSpeed = Speed;
+	_TDTGauge_ConsumeSpeed = Speed * Corr;
+}
+
+void BtlPanel::SetTDTGaugeLevel(const uint32 Level)
+{
+	if (Level == 0u || Level > 3u)
+		return;
+
+	_TDTGaugeLevel = Level;
 }
 
 void BtlPanel::SetKeyInputActive(bool IsActive)
@@ -1023,6 +1063,14 @@ void BtlPanel::ResetRankScore()
 	// + Stylish pts ´©Àû
 
 	_StylishPtsAlive = true;
+}
+
+void BtlPanel::AddHpGaugeCount(const uint32 Count)
+{
+	_HPGaugeCount += static_cast<int>(Count);
+	
+	if (10 < _HPGaugeCount)
+		_HPGaugeCount = 10;
 }
 
 void BtlPanel::AddExGauge(float ExGauge)
@@ -1167,7 +1215,13 @@ void BtlPanel::SetRedOrbActive(bool IsActive)
 	if (IsActive)
 		_RedOrbAlphaTime = REDORB_ALIVETIME;
 	else
+	{
 		_RedOrbAlphaTime = 0.f;
+		_UIDescs[REDORB].Using = false;
+		if (auto pFont = _FontVec[REDORBCOUNT].lock();
+			pFont)
+			pFont->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+	}
 }
 
 void BtlPanel::Init_UIDescs()
@@ -2222,7 +2276,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 {
 	// Boss HP
 	if (_BossGaugeHPRatioDelay > _BossGaugeHPRatio)
-		_BossGaugeHPRatioDelay -= _fDeltaTime * 1.5f;
+		_BossGaugeHPRatioDelay -= _fDeltaTime * 0.3f;
 	else
 		_BossGaugeHPRatioDelay = 0.f;
 
@@ -2274,7 +2328,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 	if (_UIDescs[REDORB].Using)
 	{
 		_RedOrbAlphaTime -= _fDeltaTime;
-		if (0.f > _RedOrbAlphaTime)
+		if (0.f >= _RedOrbAlphaTime)
 		{
 			_UIDescs[REDORB].Using = false;
 			_RedOrbAlphaTime = 0.f;
@@ -2302,7 +2356,7 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 	{
 		if (!_GlobalUsingForce)
 			_GlobalAlphaTime -= _fDeltaTime;
-		if (0.f > _GlobalAlphaTime)
+		if (0.f >= _GlobalAlphaTime)
 		{
 			_GlobalUsing = false;
 			_GlobalAlphaTime = 0.f;
@@ -2425,18 +2479,17 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	{
 		AddExGauge(0.333f);
 	}
-	if (Input::GetKeyDown(DIK_F5))
-	{
-		UseExGauge(1);
+	//if (Input::GetKeyDown(DIK_F5))
+	//{
+	//	UseExGauge(1);
 
-		//SetGlobalActive(false);
-	}
+	//	//SetGlobalActive(false);
+	//}
 	if (Input::GetKeyDown(DIK_F6))
 	{
 		AccumulateTDTGauge(1.f);
 
 		//SetTargetCursor(Vector3(0.f, 0.f, 0.f), FMath::Random<float>(0.f, 1.f));
-		//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
 		//ChangeWeaponUI(Nero::WeaponList::RQ);
 
 		//static bool bActive = _UIDescs[BOSS_GUAGE].Using;
@@ -2449,23 +2502,30 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 
 		//SetGlobalActive(true, true);
 	}
-	if (Input::GetKeyDown(DIK_F7))
-	{
-		//ConsumeTDTGauge(0.5f);
-		//static int temp = 0;
-		//if (2 < temp)
-		//	temp = 0;
-		//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
-		//ResetRankScore();
+	//if (Input::GetKeyDown(DIK_F7))
+	//{
+	//	//SetPlayerHPRatio(FMath::Random<float>(0.f, 1.f));
 
-		//static float Ratio = 1.f;
-		//Ratio -= 0.1f;
-		//if (0.f > Ratio)
-		//	Ratio = 1.f;
-		//SetBossGaugeHPRatio(Ratio);
+	//	//ConsumeTDTGauge(0.5f);
+	//	//static int temp = 0;
+	//	//if (2 < temp)
+	//	//	temp = 0;
+	//	//ChangeWeaponUI(Nero::WeaponList::Cbs, temp++);
+	//	//ResetRankScore();
 
-		//DissolveAllSecretVision();
-	}
+	//	static float Ratio = 1.f;
+	//	Ratio -= 0.1f;
+	//	if (0.f > Ratio)
+	//		Ratio = 1.f;
+	//	SetBossGaugeHPRatio(Ratio);
+
+	//	//DissolveAllSecretVision();
+
+	//	//static uint32 temp = 1u;
+	//	//if (3u < temp)
+	//	//	temp = 1u;
+	//	//SetTDTGaugeLevel(temp++);
+	//}
 	////////////////////////////
 
 	if (Input::GetKeyDown(DIK_F1))

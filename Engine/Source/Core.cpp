@@ -46,11 +46,12 @@ std::weak_ptr<CoreSystem> Engine::m_pCoreSystem = CoreSystem::GetInstance();
 
 HRESULT Engine::ReadyEngine(const bool bWindowed,
 							const bool bMultiSample,
-							const std::filesystem::path& SoundDirectoryPath)
+							const std::filesystem::path& SoundDirectoryPath ,
+						    const bool bImguiInit)
 {
 	if (nullptr == m_pCoreSystem.lock() || m_pCoreSystem.expired())
 		return E_FAIL;
-	return m_pCoreSystem.lock()->ReadyEngine(bWindowed, bMultiSample ,SoundDirectoryPath);
+	return m_pCoreSystem.lock()->ReadyEngine(bWindowed, bMultiSample ,SoundDirectoryPath , bImguiInit);
 }
 
 HRESULT Engine::UpdateEngine(const float Delta)

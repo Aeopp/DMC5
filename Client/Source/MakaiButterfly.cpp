@@ -298,7 +298,11 @@ UINT MakaiButterfly::Update(const float _fDeltaTime)
 			_BezierStartOffsetPos = Vector3(0.f, 0.f, 0.f);
 			_BezierEndOffsetPos = Vector3(0.f, 0.f, 0.f);
 			_BezierDeltaOffsetPos = Vector3(0.f, 0.f, 0.f);
-			Effect::Reset();
+
+			if (MakaiButterfly::VARIATION::MOVE_FORWARD == _VariationIdx)
+				Destroy(m_pGameObject);
+			else
+				Effect::Reset();
 		}
 	}
 

@@ -33,8 +33,10 @@ void Renderer::Free()
 };
 
 
-HRESULT Renderer::ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice)
+HRESULT Renderer::ReadyRenderSystem(LPDIRECT3DDEVICE9 const _pDevice ,
+	const bool bImguiInit)
 {
+	this->bImguiInit = bImguiInit;
 	Device = _pDevice;
 	SafeAddRef(Device);
 	ReadyRenderTargets();
@@ -1731,13 +1733,20 @@ HRESULT Renderer::RenderDebugBone()&
 
 HRESULT Renderer::ImguiRender()&
 {
-	ImGui::EndFrame();
+	if (bImguiInit)
+	{
+		ImGui::EndFrame();
+	}
+
 	Device->SetRenderState(D3DRS_ZENABLE, FALSE);
 	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	Device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 
-	ImGui::Render();
-	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+	if (bImguiInit)
+	{
+		ImGui::Render();
+		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+	}
 
 	Device->SetRenderState(D3DRS_ZENABLE, TRUE);
 
