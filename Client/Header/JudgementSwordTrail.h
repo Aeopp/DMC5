@@ -18,6 +18,10 @@ public:
 private:
 	static constexpr uint32 BoneCnt = 8u;
 
+	Matrix BoneWorld{ FMath::Identity() };
+	Matrix PrevBoneWorld{ FMath::Identity() };
+
+
 	Vector3 CurModeLowOffset()
 	{
 		return CurMode == Mode::Non ? LowOffset : JudgementLowOffset;
@@ -28,12 +32,11 @@ private:
 		return CurMode == Mode::Non ? HighOffset : JudgementHighOffset;
 	};
 
-	
+	Vector3 LowOffset{ 0.f,0.f,100.f};
+	Vector3 HighOffset { 0.f,0.f,-100.f};
 
-	Vector3 LowOffset{ 0.f,0.f,0.f };
-	Vector3 JudgementLowOffset{ 0.f,0.f,0.f };
-	Vector3 HighOffset { 0.f,0.f,75.f };
-	Vector3 JudgementHighOffset { 0.f,0.f,150.f };
+	Vector3 JudgementLowOffset{ 0.f,0.f,100.f};
+	Vector3 JudgementHighOffset { 0.f,0.f,-100.f};
 
 	std::array<std::string, BoneCnt> BoneLowNames
 	{
@@ -59,7 +62,7 @@ private:
 		"_001_8"
 	};
 
-	Vector3 CurrentTrailLocation = { 0.f,0.f,0.f };
+	Vector3 CurrentTrailLocation{ 0.f,0.f,0.f };
 
 	std::array< IDirect3DVertexBuffer9*, BoneCnt> VtxBuffers{};
 	std::array< IDirect3DIndexBuffer9*, BoneCnt> IdxBuffers{};
@@ -67,36 +70,32 @@ private:
 	IDirect3DDevice9* Device{ nullptr };
 
 	std::shared_ptr<Texture> TrailMap{};
-	std::shared_ptr<Texture> IceTrailMap{};
-	std::shared_ptr<Texture> IceMap{};
-	std::shared_ptr<Texture> EmissiveMskMap{};
 	std::shared_ptr<Texture> NoiseMap{};
 
 	uint32  CurMode = static_cast<uint32>(Mode::Non);
-	Vector4 _Color{ 1.f,1.f,1.f,1.f/255.f};
+	Vector4 _Color{ 1.f,0.f,0.f,1.f};
 
-	float NonDistortionIntencity = 1.f;
-	float DistortionIntencity = 10000.f;
+	float DistortionIntencity = 0.004301f;
 	float UV0Multiply = 1.f;
 	float CurveT = 0.5f;
-	float ColorIntencity = 0.5f;
-	float EmissiveIntencity = 1.f;
+	float ColorIntencity = 0.1f;
 
-	Vector3 Scale{ 48.f,49.f,80.f};
-	Vector3 ScrollSpeed{ 15.f,28.f,20.f};
+	float JudgementDayParticleDelta = 0.016f;
+	float CurJudgementDayParticleDelta = 0.0f;
 
-	Vector2 NoiseDistortion0{ 78.f,50.f};
-	Vector2 NoiseDistortion1{ 22.5f,100.f};
-	Vector2 NoiseDistortion2{ 55.f,10.f};
+	Vector3 Scale{ 2.097902f ,1.398601f,1.398601f};
+	Vector3 ScrollSpeed{ 0.5f,0.699301f,1.398601f };
+
+	Vector2 NoiseDistortion0{0.896861f,0.446429f};
+	Vector2 NoiseDistortion1{1.793722f,1.785714f};
+	Vector2 NoiseDistortion2{4.484305f,4.910714f};
 
 	TrailDesc _Desc{};
 	float     T = 0.0f;
 
-	std::array<std::vector<Vertex::Index32>, BoneCnt> _IdxLog{};
+	std::array<std::vector<Vertex::Index32>, BoneCnt>     _IdxLog{};
 	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _TrailVtxWorldLocations{};
-
-	// Low High
-	std::array<std::pair<Vector3, Vector3>,BoneCnt>  LatelyOffsets{};
+	std::array<std::pair<Vector3, Vector3>,BoneCnt>       LatelyOffsets{};
 private:
 	explicit JudgementSwordTrail()  ;
 	virtual ~JudgementSwordTrail() = default;
@@ -120,9 +119,10 @@ public:
 public:
 	void PlayStart(const Mode _Mode);
 	void PlayEnd();
+	void ParticleUpdate(const float DeltaTime);
+	void PlayParticle();
 private:
 	void BufferUpdate(const float DeltaTime);
-	void ParticleUpdate(const float DeltaTime);
 	void VtxSplineInterpolation(Vertex::TrailVertex* const VtxPtr);
 	void VtxUVCalc(Vertex::TrailVertex* const VtxPtr);
 	void VertexBufUpdate();

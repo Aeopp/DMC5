@@ -31,6 +31,8 @@ void SandGlassEffect::RenderReady()
 	{
 		const float CurScale = _SpTransform->GetScale().x;
 		_RenderUpdateInfo.World = _SpTransform->GetRenderMatrix();
+		*reinterpret_cast<Vector3*>(&_RenderUpdateInfo.World.m[3][0]) = PlayPos;	// ¤Ð¤Ð
+
 		if (_Mesh)
 		{
 			const uint32  Numsubset = _Mesh->GetNumSubset();
@@ -94,6 +96,21 @@ void SandGlassEffect::RenderInit()
 		(L"..\\..\\Resource\\Mesh\\Static\\Primitive\\plane00.fbx", _InitInfo);
 
 	PushEditEntity(_Mesh.get());
+
+	//_DynamicLight.Color =
+	//{
+	//	ColorLow,ColorHigh
+	//};
+
+	//_DynamicLight.Flux =
+	//{
+	//	ExplosionReadyFluxLow,ExplosionReadyFluxHigh
+	//};
+
+	//_DynamicLight.PointRadius =
+	//{
+	//	ExplosionReadyRadiusLow,ExplosionReadyRadiusHigh
+	//};
 };
 
 void SandGlassEffect::PlayStart(const Vector3& Location)
@@ -101,10 +118,9 @@ void SandGlassEffect::PlayStart(const Vector3& Location)
 	if (auto SpTransform = GetComponent<Transform>().lock();
 		SpTransform)
 	{
-		if (Location)
-		{
-			SpTransform->SetPosition(Location);
-		}
+		SpTransform->SetPosition(Location);
+		PlayPos = Location;
+		//_DynamicLight.PlayStart(Location, (std::numeric_limits<float>::max)());
 	}
 
 	T = 0.0f;
@@ -123,7 +139,7 @@ void SandGlassEffect::UpdateParticle(const float DeltaTime)
 		{
 			if (auto _Particle =
 				ParticleSystem::GetInstance()->PlayParticle(
-					"SandGlassEffectParticle", 11ul, true);
+					"SandGlassEffectParticle", 44ul, true);
 
 				_Particle.empty() == false)
 			{
@@ -206,9 +222,9 @@ HRESULT SandGlassEffect::Awake()
 {
 	GameObject::Awake();
 
-	m_pTransform.lock()->SetScale({ 0.0010f,0.0010f,0.0010f });
-	m_pTransform.lock()->SetPosition(Vector3{ 0.f,0.12f,0.f });
-	m_pTransform.lock()->SetRotation(Vector3{ 0.0f ,0.f ,0.0f });
+	m_pTransform.lock()->SetScale({ 0.00007f,0.00007f,0.00007f });
+	m_pTransform.lock()->SetPosition(Vector3{ 0.f, 0.f, 0.f });
+	m_pTransform.lock()->SetRotation(Vector3{ 0.f, 0.f, 0.f });
 
 	return S_OK;
 }
@@ -227,7 +243,17 @@ UINT SandGlassEffect::Update(const float _fDeltaTime)
 	if (bInnerFrustum == false)return 0;
 
 	T += _fDeltaTime;
+	if (T > 13.f)
+		T -= 13.f;
+
 	UpdateParticle(_fDeltaTime);
+
+	// ºüÀÌ~
+	//const float LerpT = T / 13.f;
+	//const float Radius = FMath::Lerp(ExplosionReadyRadiusLow, ExplosionReadyRadiusHigh, LerpT);
+	//const float Flux = FMath::Lerp(ExplosionReadyFluxLow, ExplosionReadyFluxHigh, LerpT);
+	//const D3DXCOLOR _Color = FMath::ToColor(FMath::Lerp(ColorLow, ColorHigh, LerpT));
+	//_DynamicLight.Update(_Color, Radius, Flux, PlayPos);
 
 	return 0;
 }
@@ -251,10 +277,12 @@ void SandGlassEffect::Editor()
 		{
 			PlayStart(GetComponent<Transform>().lock()->GetPosition());
 		}
+		
+		//_DynamicLight.Editor();
 
 		ImGui::Text("T : %2.6f", T);
 
-		ImGui::SliderFloat("ParticleUdateTime", &ParticleTime,0.0f,1.f);
+		ImGui::SliderFloat("ParticleUdateTime", &ParticleTime, 0.0f, 1.f);
 
 		ImGui::EndChild();
 	}

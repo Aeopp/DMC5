@@ -23,6 +23,7 @@
 #include "Trigger.h"
 #include "QliphothBlock.h"
 #include "MakaiButterfly.h"
+#include "SandGlassEffect.h"
 
 #include <iostream>
 #include <fstream>
@@ -175,6 +176,12 @@ HRESULT Library_S05::LoadScene()
 	{
 		_ShopFadeOut.lock()->SetActive(false);
 	}
+
+	//
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -29.81275f, -0.86787f, 30.44878f });
+	if (auto Sp = AddGameObject<SandGlassEffect>().lock(); Sp)
+		Sp->PlayStart({ -29.81275f, -0.83773f, 30.38691f });
 
 #pragma endregion
 
@@ -1123,7 +1130,7 @@ std::weak_ptr<Trigger> Library_S05::TriggerBookCaseSunkenSecondSmash()
 		MonsterWave[0].lock()->Set_Hp(60);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
-			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 30394.0f } * GScale);
+			lock()->SetPosition(Vector3{ -20527.0f, -1968.0f, 31454.0F } * GScale);
 		MonsterWave[1].lock()->Set_Hp(60);
 
 		// 트리거 위치 .. . 

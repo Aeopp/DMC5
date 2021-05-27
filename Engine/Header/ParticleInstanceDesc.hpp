@@ -10,6 +10,11 @@ namespace ParticleInstance
 		float ColorIntencity = 0.33f;
 	};
 
+	struct Stone
+	{
+		float ColorIntencity = 0.33f;
+	};
+
 	struct Change
 	{
 		float ColorIntencity = 0.33f;

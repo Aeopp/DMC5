@@ -1038,11 +1038,12 @@
     <None Include="..\..\Resource\Shader\Effect\JudgementParticle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\JudgementCut.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\JudgementCutParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl" />
+    <FxCompile Include="..\..\Resource\Shader\Effect\StoneParticle.hlsl" />
   </ItemGroup>
 </Project>

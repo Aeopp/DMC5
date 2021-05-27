@@ -10,8 +10,6 @@
 #include "ParticleSystem.h"
 #include "JudgementSword.h"
 
-
-
 JudgementSwordTrail::JudgementSwordTrail()
 {
 	VtxBuffers.fill(nullptr);
@@ -93,7 +91,7 @@ void JudgementSwordTrail::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const int32 TriCnt = 36;
+	const int32 TriCnt = 4;
 
 	_Desc.VtxSize = sizeof(Vertex::TrailVertex);
 	_Desc.VtxCnt = TriCnt + 2;
@@ -125,20 +123,15 @@ void JudgementSwordTrail::RenderInit()
 	}
 
 	TrailMap = Resources::Load<Texture>(
-		"..\\..\\Usable\\tex_03_common_000_0002_alpg.tga");
-	IceMap = Resources::Load<Texture >(
-		  "..\\..\\Resource\\Texture\\Effect\\lightning_alb.png");
-	IceTrailMap = Resources::Load<Texture >(
-		"..\\..\\Usable\\tex_03_common_000_0000_alpg.tga");
-	EmissiveMskMap = Resources::Load<Texture>(
-		"..\\..\\Resource\\Texture\\Effect\\emissive_msk.tga");
+		"..\\..\\Resource\\Texture\\Effect\\mesh_03_cs_trailmap_53_002_msk1.tga");
+
 	NoiseMap = Resources::Load<Texture>(
 		"..\\..\\Usable\\noisesample_msk.tga");
 };
 
 void JudgementSwordTrail::PlayStart(const Mode _Mode)
 {
-	if (auto _GameObject = FindGameObjectWithTag(TAG_JudgementSword).lock();
+	if (auto _GameObject = FindGameObjectWithType<JudgementSword>().lock();
 		_GameObject)
 	{
 		if (auto _JudgementSword = std::dynamic_pointer_cast<JudgementSword>(_GameObject);
@@ -159,6 +152,9 @@ void JudgementSwordTrail::PlayStart(const Mode _Mode)
 				const Vector3  HighOffset = CurModeHighOffset();
 				auto High = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
 				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *High * _World);
+
+				PrevBoneWorld = BoneWorld;
+				BoneWorld = *Low * _World;
 
 				for (int32 j = 0; j  < _Desc.VtxCnt; j+=2)
 				{
@@ -185,16 +181,6 @@ void JudgementSwordTrail::PlayStart(const Mode _Mode)
 	_Desc.NewVtxCnt = 0;
 	_Desc.CurVtxUpdateCycle = 0.0f;
 
-	//if (PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
-	//	PtLight.expired()==false)
-	//{
-	//	auto SpPtLight = PtLight.lock();
-	//	SpPtLight->bEnable = true;
-	//	SpPtLight->PointRadius = PtLightRadius;
-	//	SpPtLight->Color = PtLightColor;
-	//	SpPtLight->lightFlux = PtLightFlux;
-	//	SpPtLight->SetPosition(FMath::ConvertVector4(GetTrailLocation(), 1.f));
-	//}
 };
 
 void JudgementSwordTrail::PlayEnd()
@@ -203,35 +189,81 @@ void JudgementSwordTrail::PlayEnd()
 	T = 0.0f;
 };
 
+void JudgementSwordTrail::ParticleUpdate(const float DeltaTime)
+{
+	CurJudgementDayParticleDelta -= DeltaTime;
+	if (CurJudgementDayParticleDelta < 0.0f)
+	{
+		CurJudgementDayParticleDelta += JudgementDayParticleDelta;
+		PlayParticle();
+	};
+};
+
+void JudgementSwordTrail::PlayParticle()
+{
+	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
+		SpTransform)
+	{
+		// ..... Look 
+		if (auto _Particle =
+			ParticleSystem::GetInstance()->PlayParticle(
+				"JudgementDay", 111ul, true);
+			_Particle.empty() == false)
+		{
+			/*const Vector3 Prev{ PrevBoneWorld._41,PrevBoneWorld._42 ,PrevBoneWorld._43 };
+			const Vector3 Cur{ BoneWorld._41,BoneWorld._42 ,BoneWorld._43 };
+
+			static const Vector3 WorldUp{ 0.f,1.f,0.f };
+
+			const Vector3 Look = FMath::Normalize(Cur - Prev);
+			const Vector3 Right = FMath::Normalize(FMath::Cross(WorldUp, Look));
+			const Vector3 Up = FMath::Normalize(FMath::Cross(Look,Right));
+			const Vector3 CurLocation = FMath::Lerp(Prev, Cur, 0.5f);
+
+			Matrix CurWorld{ FMath::Identity() };
+
+			CurWorld._11 = Right.x;
+			CurWorld._12 = Right.y;
+			CurWorld._13 = Right.z;
+
+			CurWorld._21 = Up.x;
+			CurWorld._22 = Up.y;
+			CurWorld._23 = Up.z;
+
+			CurWorld._31 = Look.x;
+			CurWorld._32 = Look.y;
+			CurWorld._33 = Look.z;
+
+			CurWorld._41 = CurLocation.x;
+			CurWorld._42 = CurLocation.y;
+			CurWorld._43 = CurLocation.z;
+
+			CurWorld._44 = 1.f;*/
+
+			for (int32 i = 0; i < _Particle.size(); ++i)
+			{
+				auto& _PlayInstance = _Particle[i];
+				_PlayInstance->PlayDescBind(BoneWorld);
+			}
+		}
+	};
+};
 
 void JudgementSwordTrail::RenderTrail(const DrawInfo& _Info)
 {
-	if (T <= 0.25f)
-		return;
-
 	_Info.Fx->SetMatrix("matWorld", &_RenderUpdateInfo.World);
-
-	if (CurMode == Mode::Non)
-	{
-		_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
-		_Info.Fx->SetTexture("TrailMap", IceTrailMap->GetTexture());
-		_Info.Fx->SetTexture("AlbmMap", IceMap->GetTexture());
-
-		_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
-		_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed, 3);
-		_Info.Fx->SetFloatArray("Scale", Scale, 3);
-
-		_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
-		_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
-
-		_Info.Fx->SetFloat("EmissiveIntencity", EmissiveIntencity);
-	}
-
-	_Info.Fx->SetTexture("EmissiveMskMap", EmissiveMskMap->GetTexture());
+	_Info.Fx->SetFloat("DistortionIntencity", DistortionIntencity);
 	_Info.Fx->SetVector("_Color", &_Color);
 	_Info.Fx->SetFloat("ColorIntencity", ColorIntencity);
+	_Info.Fx->SetFloatArray("ScrollSpeed", ScrollSpeed,3u);
+	_Info.Fx->SetFloatArray("Scale", Scale, 3u);
+	_Info.Fx->SetFloatArray("NoiseDistortion0", NoiseDistortion0, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion1", NoiseDistortion1, 2u);
+	_Info.Fx->SetFloatArray("NoiseDistortion2", NoiseDistortion2, 2u);
 
+	_Info.Fx->SetTexture("TrailMap", TrailMap->GetTexture());
+	_Info.Fx->SetTexture("NoiseMap", NoiseMap->GetTexture());
+	
 	for (int32 i = 0; i < BoneCnt; ++i)
 	{
 		Device->SetStreamSource(0, VtxBuffers[i], 0, _Desc.VtxSize);
@@ -338,7 +370,7 @@ void JudgementSwordTrail::VertexBufUpdate()
 		}
 
 		
-		if (auto _GameObject = FindGameObjectWithTag(TAG_JudgementSword).lock();
+		if (auto _GameObject = FindGameObjectWithType<JudgementSword>().lock();
 			_GameObject)
 		{
 			if (auto _JudgementSword = std::dynamic_pointer_cast<JudgementSword>(_GameObject);
@@ -349,11 +381,13 @@ void JudgementSwordTrail::VertexBufUpdate()
 				const Vector3 LowOffset = CurModeLowOffset();
 				auto Low = _JudgementSword->Get_BoneMatrixPtr(BoneLowNames[BoneIdx]);
 				LatelyOffsets[BoneIdx].first =   FMath::Mul(LowOffset, *Low * _World);
-
 				
 				const Vector3  HighOffset= CurModeHighOffset();
 				auto High = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
 				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *High * _World);
+
+				PrevBoneWorld = BoneWorld;
+				BoneWorld = *Low * _World;
 
 				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[BoneIdx].first;
 				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[BoneIdx].second;
@@ -497,6 +531,7 @@ UINT JudgementSwordTrail::Update(const float _fDeltaTime)
 	T += _fDeltaTime;
 
 	BufferUpdate(_fDeltaTime);
+	ParticleUpdate(_fDeltaTime);
 	
 	return 0;
 }
@@ -545,17 +580,12 @@ void JudgementSwordTrail::Editor()
 
 			ImGui::SliderFloat3("JudgementLowOffset", JudgementLowOffset, -300.f, 300.f, "%9.6f");
 			ImGui::SliderFloat3("JudgementHighOffset", JudgementHighOffset, -300.f, 300.f, "%9.6f");
-			
-			
 
 			ImGui::SliderFloat("UpdateCycle", &_Desc.UpdateCycle, FLT_MIN, 10.f, "%9.6f");
 			ImGui::SliderInt("DrawTriCnt", &_Desc.DrawTriCnt, 0, _Desc.TriCnt);
 
 			ImGui::SliderFloat("DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 			ImGui::InputFloat("In DistortionIntencity", &DistortionIntencity, FLT_MIN, 1.f, "%9.6f");
-
-			ImGui::SliderFloat("NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
-			ImGui::InputFloat("In NonDistortionIntencity", &NonDistortionIntencity, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::SliderFloat3("Noise Scale", Scale, FLT_MIN, 100.f, "%9.6f");
 			ImGui::SliderFloat3("Noise ScrollSpeed", ScrollSpeed, FLT_MIN, 100.f, "%9.6f");
@@ -571,7 +601,6 @@ void JudgementSwordTrail::Editor()
 
 
 			ImGui::InputFloat("ColoIntencity", &ColorIntencity, FLT_MIN, 1.f, "%9.6f");
-			ImGui::InputFloat("EmissiveIntencity", &EmissiveIntencity, FLT_MIN, 1.f, "%9.6f");
 
 			ImGui::ColorEdit4("Color", _Color);
 			ImGui::SliderFloat("UV0Multiply", &UV0Multiply, 0.f, 10.f, "%1.6f");
@@ -590,6 +619,7 @@ void JudgementSwordTrail::OnDisable()
 {
 	GameObject::OnDisable();
 };
+
 
 
 

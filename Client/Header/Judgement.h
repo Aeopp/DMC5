@@ -44,6 +44,7 @@ public:
 private:
 	void PlayCircleGrowEndParticle();
 	void PlayCircleGrowParticle();
+	bool bJudgementDayParticlePlay = false;
 	void PlayJudgementDayParticle();
 	void PlayShockWave();
 

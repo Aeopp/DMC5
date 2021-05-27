@@ -8,6 +8,7 @@
 
 void PreLoader::PreLoadResources()
 {
+	JudgementCutStoneParitlcePoolLoad();
 	JudgementDayParticlePoolLoad();
 	JudgementReadyParticlePoolLoad();
 	JudgementCircleGrowParticlePoolLoad();
@@ -970,7 +971,7 @@ void PreLoader::SandGlassEffectParticlePoolLoad()
 		return;
 	};
 
-	const uint64 PoolSize = 888u;
+	const uint64 PoolSize = 2222u;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated("SandGlassEffectParticle",
@@ -989,7 +990,7 @@ void PreLoader::SandGlassEffectParticlePoolLoad()
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 3.f;
+			constexpr float ScaleFactor = 3.8f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -997,7 +998,7 @@ void PreLoader::SandGlassEffectParticlePoolLoad()
 
 			ParticleInstance::Artemis _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.2f, 0.2f);
+			_Value.ColorIntencity = FMath::Random(0.015f, 0.015f);
 
 			_Value.Color = FMath::Lerp(
 				Vector3{ 182.f / 255.f,  206.f / 255.f,  61.f / 255.f },
@@ -1240,8 +1241,6 @@ void PreLoader::JudgementCutparticlePoolLoad()
 
 	for (auto& _ParticleInstance : *ParticlePool)
 	{
-		Vector2 Range{ -1.f,1.f };
-
 		const Vector3 TargetLocation = (*Inner->m_spVertexLocations)[FMath::Random(0u, RangeEnd)];
 
 		Vector3 LocalVtxDir = FMath::Normalize(TargetLocation);
@@ -1282,6 +1281,84 @@ void PreLoader::JudgementCutparticlePoolLoad()
 	}
 };
 
+void PreLoader::JudgementCutStoneParitlcePoolLoad()
+{
+	ENGINE::ParticleSystem::Particle _PushParticle{};
+
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = false;
+	_PushParticle._Mesh = Resources::Load<StaticMesh>
+		(
+		"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", 
+			_Info);
+
+	auto AlbTex =
+		Resources::Load<Texture>(
+			"..\\..\\Resource\\Texture\\Effect\\mesh_capcom_debris_stone00_ALBM.tga");
+
+	_PushParticle.bLerpTimeNormalized = false;
+	// Particle 정보 채워주기 
+	_PushParticle._ShaderKey = "StoneParticle";
+	// 공유 정보 바인드 
+	_PushParticle.SharedResourceBind = [AlbTex](
+		ENGINE::ParticleSystem::Particle& TargetParticle,
+		ID3DXEffect* const Fx)
+	{
+		Fx->SetTexture("AlbmMap", AlbTex->GetTexture());
+	};
+
+	_PushParticle.InstanceBind = [](const std::any& _InstanceVariable, ID3DXEffect* const Fx)
+	{
+		const auto& _Value = 
+			std::any_cast<const ParticleInstance::Stone&>(_InstanceVariable);
+		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
+		return;
+	};
+
+	const uint64 PoolSize = 777u;
+
+	auto* const ParticlePool =
+		ParticleSystem::GetInstance()->PreGenerated("Stone", 
+			std::move(_PushParticle), PoolSize, false);
+
+	for (auto& _ParticleInstance : *ParticlePool)
+	{
+		const Vector3 TargetLocation = FMath::RandomVector(33.f);
+		Vector3 LocalVtxDir = FMath::Normalize(TargetLocation);
+		
+		static constexpr std::pair<float, float> StartScaleRange = { 77.f,144.f};
+
+		static constexpr std::pair<float, float> SecondScaleRange = { StartScaleRange.second * 1.15f * 0.5f,
+																	  StartScaleRange.second * 1.15f };
+
+		static constexpr std::pair<float, float> ThirdScaleRange = { SecondScaleRange.second * 1.3f * 0.5f,
+																   SecondScaleRange.second * 1.3f };
+
+		const Vector3 Cp0 = TargetLocation + LocalVtxDir * (FMath::Random(StartScaleRange));
+		const Vector3 Cp1 = Cp0 + LocalVtxDir * (FMath::Random(SecondScaleRange));
+		const Vector3 End = Cp1 + LocalVtxDir * (FMath::Random(ThirdScaleRange));
+
+		Vector2 ScaleRange{ 1.5f,3.5f};
+		const Vector3 PScale = FMath::Random(
+			Vector3(ScaleRange.x, ScaleRange.x, ScaleRange.x),
+			Vector3(ScaleRange.y, ScaleRange.y, ScaleRange.y)) * GScale;
+
+		const Vector3 StartRot = FMath::RandomEuler(1.f);
+		const Vector3 RotCp0 = StartRot + FMath::RandomEuler(0.1f);
+		const Vector3 RotCp1 = RotCp0   + FMath::RandomEuler(0.1f);
+		const Vector3 EndRot = RotCp1   + FMath::RandomEuler(0.1f);
+
+		const float LifeTime = FMath::Random(0.5f, 3.f);
+		const uint32 SubsetIdx= FMath::Random(0u, 3u);
+		ParticleInstance::Stone _StoneDesc{};
+		_StoneDesc.ColorIntencity = FMath::Random(0.01f, 0.01f);
+
+		_ParticleInstance.PreSetup({ TargetLocation,Cp0,Cp1,End },
+			{ StartRot,RotCp0,RotCp1,EndRot },
+			PScale, LifeTime, 0.0f, _StoneDesc, std::nullopt, SubsetIdx);
+	}
+};
+
 void PreLoader::JudgementDayParticlePoolLoad()
 {
 	ENGINE::ParticleSystem::Particle _PushParticle{};
@@ -1314,8 +1391,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 		Fx->SetFloat("ColorIntencity", _Value.ColorIntencity);
 		return;
 	};
-
-	const uint64 PoolSize = 555ul;
+	const uint64 PoolSize = 3333ul;
 
 	auto* const ParticlePool =
 		ParticleSystem::GetInstance()->PreGenerated(
@@ -1325,10 +1401,18 @@ void PreLoader::JudgementDayParticlePoolLoad()
 	{
 		for (auto& _ParticleInstance : *ParticlePool)
 		{
-			Vector3 StartLocation = FMath::RandomVector(200.f);
-			Vector3 Cp0 = StartLocation + FMath::RandomVector(0.f);
-			Vector3 Cp1 = StartLocation + FMath::RandomVector(3.f);
-			Vector3 End = StartLocation + FMath::RandomVector(6.6f);
+			Vector3 Direction = FMath::Normalize( FMath::RandomVector(1.f));
+			Vector3 StartLocation = FMath::RandomVector(150.f);
+
+			Vector3 Cp0 = StartLocation + Direction * FMath::Random(0.f,1.f) 
+				+  FMath::RandomVector(1.f);
+
+			Vector3 Cp1 = Cp0 + Direction * FMath::Random(0.f, 11.f)
+				+ FMath::RandomVector(11.f);
+
+			Vector3 End = Cp1 + Direction * FMath::Random(0.f, 100.f)
+				+ FMath::RandomVector(777.f);
+
 			// End.y += FMath::Random(0.f,111.f);
 
 			const Vector3 StartRot = Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
@@ -1336,7 +1420,7 @@ void PreLoader::JudgementDayParticlePoolLoad()
 			const Vector3 RotCp1 = RotCp0 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 			const Vector3 EndRot = RotCp1 + Vector3{ 0.f,0.f,FMath::Random(0.0f,FMath::PI) };
 
-			constexpr float ScaleFactor = 6.f;
+			constexpr float ScaleFactor = 4.f;
 			const float RScale = FMath::Random(
 				0.0055f * ScaleFactor,
 				0.0075f * ScaleFactor)
@@ -1344,11 +1428,11 @@ void PreLoader::JudgementDayParticlePoolLoad()
 
 			ParticleInstance::Judgement _Value{};
 
-			_Value.ColorIntencity = FMath::Random(0.005f, 0.010f);
+			_Value.ColorIntencity = FMath::Random(0.007f, 0.014f);
 
-			_Value.Color = FMath::Random(Vector3{ 255.0f,35.f,72.f }, Vector3{ 255.f,46.f,28.f });
+			_Value.Color = FMath::Random(Vector3{ 255.0f,73.f,60.f}, Vector3{ 255.f,60.f ,73.f });
 
-			const float LifeTime = FMath::Random(3.f, 7.f);
+			const float LifeTime = FMath::Random(0.5f, 1.f);
 
 			_ParticleInstance.PreSetup(
 				{ StartLocation ,Cp0,Cp1,End },
