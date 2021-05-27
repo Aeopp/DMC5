@@ -159,6 +159,13 @@ void NuClear::Kaboom()
 	_ShockWave.lock()->PlayStart(
 		Vector3{ KaboomMatrix._41,KaboomMatrix._42,KaboomMatrix._43 } ,
 		ShockWave::Option::Kaboom);
+	m_pCollider.lock()->SetActive(true);
+
+	std::list<std::weak_ptr<GameObject>> _SnatchPoints = FindGameObjectsWithTag(MonsterSnatchPoint);
+	for (auto& pSnatchPoint : _SnatchPoints)
+	{
+		pSnatchPoint.lock()->SetActive(false);
+	}
 };
 
 void NuClear::PlayEnd()
@@ -333,6 +340,14 @@ HRESULT NuClear::Awake()
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f,0.f ,0.0f });
 
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
+
+	m_pCollider = AddComponent<SphereCollider>();
+	m_pCollider.lock()->ReadyCollider();
+	m_pCollider.lock()->SetTrigger(true);
+	m_pCollider.lock()->SetRigid(true);
+	m_pCollider.lock()->SetRadius(50.f);
+	m_pCollider.lock()->SetActive(false);
+	PushEditEntity(m_pCollider.lock().get());
 	return S_OK;
 }
 
@@ -404,24 +419,6 @@ UINT NuClear::Update(const float _fDeltaTime)
 		_DynamicLight.Update(_Color, Radius, Flux, CurPosition);
 	}
 
-	//if (IsFallTime())
-	//{
-	//	if (m_pNero.expired())
-	//		return 0;
-	//	Vector3 MyPos = m_pTransform.lock()->GetPosition();
-	//	Vector3 PlayerPos = m_pNero.lock()->GetComponent<Transform>().lock()->GetPosition();
-	//	MyPos.y = 0.f;
-	//	PlayerPos.y = 0.f;
-	//	Vector3 Length = MyPos - PlayerPos;
-	//	float Distance = D3DXVec3Length(&Length);
-
-	//	Vector3 Dir = *D3DXVec3Normalize(&Dir, &Length);
-	//	if (Distance >= 0.5f)
-	//	{
-	//		m_pNero.lock()->GetComponent<Transform>().lock()->Translate(Dir * _fDeltaTime);
-	//	}
-	//	
-	//}
 	if (!m_pNero.expired())
 	{
 		Vector3 MyPos = m_pTransform.lock()->GetPosition();

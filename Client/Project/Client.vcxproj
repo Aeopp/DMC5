@@ -229,6 +229,7 @@
     <ClInclude Include="..\Header\NuClear.h" />
     <ClInclude Include="..\Header\NuClearLensFlare.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
+    <ClInclude Include="..\Header\Revelion.h" />
     <ClInclude Include="..\Header\Reverberation.h" />
     <ClInclude Include="..\Header\SandGlassEffect.h" />
     <ClInclude Include="..\Header\SecretVision.h" />
@@ -368,6 +369,7 @@
     <ClCompile Include="..\Source\NuClear.cpp" />
     <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />
+    <ClCompile Include="..\Source\Revelion.cpp" />
     <ClCompile Include="..\Source\Reverberation.cpp" />
     <ClCompile Include="..\Source\SandGlassEffect.cpp" />
     <ClCompile Include="..\Source\Satellite.cpp" />

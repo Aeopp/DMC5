@@ -45,6 +45,9 @@ class NewWingSword;
 class Change;
 class ShockWave;
 class StoneDebrisMulti;
+class Revelion;
+class Judgement;
+class JudgementSwordTrail;
 /*Coat Test*/
 class NeroCoat;
 class Nero : public Unit,
@@ -268,12 +271,17 @@ public:
 		ANI_TRANSFORM_TO_ORIGIN_DANTE,
 		ANI_SHINMAJIN_ENTER,
 		ANI_SHINMAJIN_JUDGEMENT,
+		ANI_SHINMAJIN_IDLE,
 		ANI_WINDPRESSURE,
 		ANI_WINDPRESSURE_END,
 		ANI_PROVOKE1,
 		ANI_PROVOKE3,
 		ANI_PROVOKE9,
 		ANI_PROVOKE10,
+		ANI_DIE,
+		ANI_DIE2,
+		ANI_DIE2_LOOP,
+		ANI_DIE_END,
 		ANI_END
 	};
 
@@ -337,6 +345,7 @@ public:
 		NeroCom_JudgementShadow2,
 		NeroCom_JudgementShadow3,
 		NeroCom_NewWingSword,
+		NeroCom_Revelion,
 		NeroCom_End
 	};
 
@@ -383,6 +392,7 @@ public:
 	UINT Get_JumpCount() { return m_iJumpCount; }
 	UINT Get_JumpDir() { return m_iJumpDirIndex; }
 	std::optional<Matrix> Get_BoneMatrix_ByName(std::string _BoneName);
+	Matrix* GetJudgementWeaponBone();
 	Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 	Matrix Get_NeroWorldMatrix() { return m_pTransform.lock()->GetWorldMatrix(); }
 	Matrix Get_NeroBoneWorldMatrix(std::string _BoneName);
@@ -392,6 +402,7 @@ public:
 	std::string GetAniname() { return m_pMesh[m_iMeshIndex]->AnimName; }
 	bool Get_IsHaveCbsMiddle() { return m_bIsHaveCbsMiddle; }
 	bool Get_IsHaveCbsLong() { return m_bIsHaveCbsLong; }
+	bool GetIsUseRevelion() { return m_bUseRevelion; }
 public:
 	void Reset_JumpCount() { m_iJumpCount = 1; }
 	void Reset_RotationAngle() { m_fRotationAngle = 0.f; }
@@ -416,6 +427,8 @@ public:
 	void SetPosFireCircle();
 	void SetAngle(float _fAngle);
 	void SetNoHit(bool _Nohit) { m_Nohit = _Nohit; }
+
+	void SetEm5300();
 public:
 	void CheckAutoRotate();
 	bool CheckIsGround();
@@ -477,6 +490,7 @@ public:
 	void StopEffect(GAMEOBJECTTAG _eTag);
 	void PlayStone(GAMEOBJECTTAG _eTag);
 public:
+	void UseRevelion() { m_bUseRevelion = true; }
 
 public:
 	virtual HRESULT Ready() override;
@@ -552,6 +566,9 @@ private:
 	std::weak_ptr<JudgementShadow1> m_pJudgementShadow1;
 	std::weak_ptr<JudgementShadow2> m_pJudgementShadow2;
 	std::weak_ptr<JudgementShadow3> m_pJudgementShadow3;
+	std::weak_ptr<Revelion>			m_pRevelion;
+	std::weak_ptr<Judgement>		m_pEffJudgement;
+	std::weak_ptr<JudgementSwordTrail> m_pJudgementTrail;
 
 	UINT	m_iCurAnimationIndex;
 	UINT	m_iPreAnimationIndex;
@@ -582,6 +599,8 @@ private:
 
 	bool	m_bIsHaveCbsMiddle = false;
 	bool	m_bIsHaveCbsLong = false;
+
+	bool	m_bUseRevelion = false;
 
 	/*Coat Test*/
 	weak_ptr<NeroCoat> m_pNeroCoat;

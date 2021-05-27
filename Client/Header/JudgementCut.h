@@ -59,7 +59,7 @@ private:
 	float CurParticleTime = 0.0f;
 
 	float EmissiveIntencity{ 0.0f };
-	float ColorIntencity{ 1.f };
+	float ColorIntencity{ 0.5f };
 	float DistortionIntencity{ 1.f };
 
 	float Radian = 0.0f;
