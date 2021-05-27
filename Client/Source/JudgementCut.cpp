@@ -93,12 +93,12 @@ void JudgementCut::RenderInit()
 
 	RenderInterface::Initialize(_InitRenderProp);
 
-	// 메시
+// 메시
 	{
-		Mesh::InitializeInfo _Info{};
-		_Info.bLocalVertexLocationsStorage = true;
-		Inner = Resources::Load<StaticMesh>(
-			"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx" , _Info);
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = true;
+	Inner = Resources::Load<StaticMesh>(
+		"..\\..\\Resource\\Mesh\\Static\\Primitive\\nsg.fbx", _Info);
 	}
 
 	// 텍스쳐 
@@ -118,8 +118,10 @@ void JudgementCut::RenderInit()
 
 void JudgementCut::PlayStart(
 	const std::optional<Vector3>& Location,
-	const float PlayTime )
+	const float PlayTime)
 {
+	StoneParticleTime = std::nullopt;
+
 	Vector3 MyLocation = { 0,0,0 };
 
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
@@ -130,7 +132,7 @@ void JudgementCut::PlayStart(
 		if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 			SpTransform)
 		{
-			SpTransform->SetPosition(Location.value()); 
+			SpTransform->SetPosition(Location.value());
 			SpTransform->SetScale({ StartScale ,StartScale ,StartScale });
 
 			// 재생 ..
@@ -147,50 +149,20 @@ void JudgementCut::PlayStart(
 			SpShockWave->PlayStart(SpTransform->GetPosition(), ShockWave::Option::JudgementCut);
 		}
 
-		if (auto _PtLight = PtLight.lock();
-			_PtLight)
-		{
-			_PtLight->bEnable = false;
-		}
-
-		if (PtLight = Renderer::GetInstance()->RefRemainingDynamicLight();
-			PtLight.expired() == false)
-		{
-			auto SpPtLight = PtLight.lock();
-			SpPtLight->SetPosition
-			(FMath::ConvertVector4(
-				SpTransform->GetPosition(),
-				1.f
-			));
-			SpPtLight->bEnable = true;
-			SpPtLight->Color = D3DXCOLOR(
-				1.f, 0.f, 0.f, 1.f);
-			SpPtLight->PointRadius = PtLightRadius;
-			SpPtLight->lightFlux = 0.0f;
-		}
+		
 	}
-
 
 	CurParticleTime = ParticleCycle;
 	this->PlayTime = PlayTime;
 	_RenderProperty.bRender = true;
 	T = 0.0f;
-
-	
 };
-
-
 
 void JudgementCut::PlayEnd()
 {
 	_RenderProperty.bRender = false;
 	T = 0.0f;
 
-	if (auto _PtLight = PtLight.lock();
-		_PtLight)
-	{
-		_PtLight->bEnable = false;
-	}
 };
 
 void JudgementCut::RenderAlphaBlendEffect(const DrawInfo& _Info)
@@ -295,15 +267,40 @@ UINT JudgementCut::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
+	if (StoneParticleTime)
+	{
+		*StoneParticleTime += _fDeltaTime;
+		if (StoneParticleTime > 0.05f)
+		{
+			StoneParticleTime = std::nullopt;
+
+			if (auto SpTransform = GetComponent<Transform>().lock();
+				SpTransform)
+			{
+				auto _PlayableParticle = ParticleSystem::GetInstance()->
+					PlayParticle("Stone", 777u, true);
+				for (int32 i = 0; i < _PlayableParticle.size();
+					++i)
+				{
+					auto& _PlayInstance = _PlayableParticle[i];
+					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
+				}
+			}
+		}
+	}
+
 	if (_RenderProperty.bRender == false) return 0;
 
 	T += _fDeltaTime;
 
 	if (T > PlayTime)
 	{
+		StoneParticleTime = 0.0f;
 		PlayEnd();
 		return 0;
 	}
+
+
 
 	CurParticleTime -= _fDeltaTime;
 
@@ -320,35 +317,16 @@ UINT JudgementCut::Update(const float _fDeltaTime)
 			const Matrix Mat = SpTransform->GetRenderMatrix();
 			const uint32 RangeEnd = Inner->m_spVertexLocations->size() - 1u;
 
+
+			auto _PlayableParticle = ParticleSystem::GetInstance()->
+				PlayParticle("JudgementCut", 555u, true);
+			for (int32 i = 0; i < _PlayableParticle.size();
+				++i)
 			{
-				auto _PlayableParticle = ParticleSystem::GetInstance()->
-					PlayParticle("JudgementCut",555u, true);
-				for (int32 i = 0; i < _PlayableParticle.size(); 
-					++i)
-				{
-					auto& _PlayInstance = _PlayableParticle[i];
-					_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
-				}
+				auto& _PlayInstance = _PlayableParticle[i];
+				_PlayInstance->PlayDescBind(SpTransform->GetRenderMatrix());
 			}
-		}
 
-
-		if (PtLight.expired() == false)
-		{
-			auto SpPtLight = PtLight.lock();
-			SpPtLight->SetPosition
-			(FMath::ConvertVector4(
-				SpTransform->GetPosition(),
-				1.f
-			));
-			SpPtLight->Color = D3DXCOLOR(
-				1.f, 0.f, 0.f, 1.f);
-			SpPtLight->PointRadius = PtLightRadius;
-			
-			;
-
-			SpPtLight->lightFlux =
-				 ( std::sinf( (T / PlayTime) * FMath::PI)  ) * PtLightFlux;
 		}
 
 	}
@@ -395,11 +373,6 @@ void JudgementCut::Editor()
 
 			ImGui::SliderFloat("StartScale", &StartScale, 0.0f, 0.1f);
 			ImGui::SliderFloat("EndScale", &EndScale, 0.0f, 0.1f);
-			
-			ImGui::SliderFloat("PtLightFlux", &PtLightFlux, 0.0f, 100.f);
-			;
-
-			;
 
 			ImGui::SliderFloat3("NoiseScrollSpeed", NoiseScrollSpeed, FLT_MIN, 10.f, "%9.6f");
 			ImGui::InputFloat3("In NoiseScrollSpeed", NoiseScrollSpeed, "%9.6f");

@@ -8,9 +8,10 @@
 #include "ShapeParticle.h"
 #include "ShockWave.h"
 #include "FLight.h"
+#include <optional>
 
 class JudgementCut : public ENGINE::GameObject,
-			         public ENGINE::RenderInterface
+	public ENGINE::RenderInterface
 {
 private:
 	std::shared_ptr<ENGINE::StaticMesh> Inner{};
@@ -18,7 +19,7 @@ private:
 	std::shared_ptr<ENGINE::Texture>    EmssiveMskMap{};
 	std::shared_ptr<ENGINE::Texture>    NoiseMap{};
 private:
-	explicit JudgementCut()  ;
+	explicit JudgementCut();
 	virtual ~JudgementCut() = default;
 	// GameObject을(를) 통해 상속됨
 	virtual void Free() override;
@@ -46,6 +47,8 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	std::optional<float> StoneParticleTime{ std::nullopt };
+
 	std::weak_ptr<class FLight> PtLight;
 	float PtLightRadius = 100.f;
 	float PtLightFlux = 100.f;
@@ -54,7 +57,7 @@ private:
 
 	float ParticleCycle = 0.01f;
 	float CurParticleTime = 0.0f;
-	
+
 	float EmissiveIntencity{ 0.0f };
 	float ColorIntencity{ 1.f };
 	float DistortionIntencity{ 1.f };
@@ -63,24 +66,24 @@ private:
 	float RadianSpeed = 1.f;
 	float VelocityBlurAlpha = 1.f;
 
-	Vector3 NoiseScrollSpeed{ 0.229008f,0.534351f,0.381679f};
+	Vector3 NoiseScrollSpeed{ 0.229008f,0.534351f,0.381679f };
 	Vector3 NoiseScale{ 0.458015f,1.374046f,0.381679f };
 
 	Vector2 NoiseDistortion0{ 0.3f,1.f };
-	Vector2 NoiseDistortion1{ 0.5f,0.77f};
-	Vector2 NoiseDistortion2{ 0.77f,0.5f};
+	Vector2 NoiseDistortion1{ 0.5f,0.77f };
+	Vector2 NoiseDistortion2{ 0.77f,0.5f };
 
-	Vector4 _Color{ 1.f,0.f,0.f,100.f/255.f };
+	Vector4 _Color{ 1.f,0.f,0.f,100.f / 255.f };
 
 	float VelocityBlurIntencity = 0.012f;
 	float RollRotationSpeed = FMath::PI;
 
 	float T{ 0.0f };
-	float PlayTime =0.4f;
+	float PlayTime = 0.4f;
 	float EditPlayTime = 0.4f;
 
 	float StartScale = 0.0f;
-	float EndScale =0.007f;
+	float EndScale = 0.007f;
 
 	float EditRotationSpeed{ 0.f };
 };
