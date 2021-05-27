@@ -390,10 +390,10 @@ UINT Nero::Update(const float _fDeltaTime)
 	}
 	/* ----------------------------------- */
 
-	//if (Input::GetKeyDown(DIK_9))
-	//{
-	//	m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
-	//}
+	if (Input::GetKeyDown(DIK_9))
+	{
+		m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
+	}
 
 	if (Input::GetKeyDown(DIK_1))
 	{
@@ -639,6 +639,8 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 
 void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	if (m_Nohit)
+		return;
 	UINT iFsmTag = m_pFSM->GetCurrentIndex();
 
 	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
@@ -822,18 +824,17 @@ void Nero::RenderInit()
 
 void Nero::Update_Majin(float _fDeltaTime)
 {
-	if (m_IsMajin)
-	{
-		if (!m_pBtlPanel.expired())
-			m_pBtlPanel.lock()->ConsumeTDTGauge(0.1f);
-	}
-
+	if (!m_IsMajin)
+		return;
 	if (!m_pBtlPanel.expired() && m_pBtlPanel.lock()->GetTDTGauge() <= 0.f)
 	{
 		m_IsMajin = false;
-		SetActive_NeroComponent(NeroCom_Wings, false);
+		//SetActive_NeroComponent(NeroCom_Wings, false);
+		m_pLWing.lock()->SetDissolve();
+		m_pRWing.lock()->SetDissolve();
 		SetActive_NeroComponent(NeroCom_WIngArm_Left, false);
 		SetActive_NeroComponent(NeroCom_WingArm_Right, false);
+		SoundSystem::GetInstance()->Play("TransformToDante", 0.3f, false);
 	}
 
 }
@@ -869,6 +870,8 @@ void Nero::Editor()
 			BuyCbsMiddle();
 			BuyCbsLong();
 		}
+		m_pRWing.lock()->m_DissolveInfo.DissolveEditor();
+		m_pLWing.lock()->m_DissolveInfo.DissolveEditor();
 		//std::weak_ptr<GameObject> _Monster = FindGameObjectWithTag(Monster5000).lock();
 		//if (_Monster.expired())
 		//	return;
@@ -1591,6 +1594,8 @@ void Nero::Change_To_MajinMode()
 		_Info.eAttackType = Attack_KnocBack;
 		pMonster.lock()->Hit(_Info);
 	}
+	if (!m_pBtlPanel.expired())
+		m_pBtlPanel.lock()->ConsumeTDTGauge(0.1f);
 }
 
 void Nero::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const UINT AnimationIndex, const AnimNotify& _Notify, const bool bOverlap)
@@ -1736,6 +1741,12 @@ void Nero::ChangeWeaponCollSize(float _fSize)
 	{
 	case NeroCom_Cbs_Short:
 		m_pCbsShort.lock()->ChangeColliderSize(_fSize);
+		break;
+	case NeroCom_Cbs_Middle:
+		m_pCbsMiddle.lock()->ChangeColliderSize(_fSize);
+		break;
+	case NeroCom_Cbs_Long:
+		m_pCbsLong.lock()->ChangeColliderSize(_fSize);
 		break;
 	}
 }

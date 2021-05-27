@@ -9,6 +9,7 @@ private:
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<class MainCamera> _Camera{};
 	std::weak_ptr<class FadeOut> _FadeOut{};
+	weak_ptr<class Em5000> m_pBoss;
 	bool _LateInit = false;
 private:
 	explicit Hotel_S04();
@@ -33,6 +34,8 @@ private:
 	void LoadObjects(const std::filesystem::path& path);
 private:
 	void TriggerSetUp(); 
-	void TriggerMeetingWithGoliath();
+	void TriggerMeetingWithGoliath(const std::weak_ptr<class Trigger>& _CamTrigger);
+	std::weak_ptr<class Trigger> TriggerCutScene();
+
 };
 #endif // !__M01_HOTEL_S04_H__

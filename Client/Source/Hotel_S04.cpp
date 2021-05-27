@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "TimeSystem.h"
 using namespace std;
 
 Hotel_S04::Hotel_S04()
@@ -39,10 +40,6 @@ Hotel_S04* Hotel_S04::Create()
 HRESULT Hotel_S04::LoadScene()
 {
 	// Load Start
-
-	SoundSystem::GetInstance()->ClearSound();
-	SoundSystem::GetInstance()->Play("Stage1_Boss", 0.1f, true);
-
 	m_fLoadingProgress = 0.01f;
 
 #pragma region PreLoad
@@ -55,19 +52,18 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-4.327f,
-			1.449f,
-			36.596f, 
-			});
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+	//		-4.327f,
+	//		1.449f,
+	//		36.596f, 
+	//		});
+	//}
 
 	_Camera = AddGameObject<MainCamera>();
-	_Camera.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
-	
+
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -76,8 +72,8 @@ HRESULT Hotel_S04::LoadScene()
 
 #pragma region Monster
 
-	auto _pMonster = AddGameObject<Em5000>();
-	_pMonster.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
+	m_pBoss = AddGameObject<Em5000>();
+	m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -5.629f, -1.529f, 47.67f });
 
 #pragma endregion
 
@@ -315,24 +311,36 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 
 void Hotel_S04::TriggerSetUp()
 {
-	TriggerMeetingWithGoliath();
+	TriggerMeetingWithGoliath(TriggerCutScene());
 }
 
-void Hotel_S04::TriggerMeetingWithGoliath()
+std::weak_ptr<Trigger> Hotel_S04::TriggerCutScene()
 {
-	// 여기서 왜곡 계수 조절해야함 !! 
-	if (auto _Trigger = AddGameObject<Trigger>().lock();
-		_Trigger)
+	auto _Trigger = AddGameObject<Trigger>().lock();
+	if (_Trigger)
 	{
 		const std::function<void()> _CallBack =
 			[this]()
 		{
-			// 골리앗과 처음 조우함 !!
-			// constexpr float NoiseWrap = 2.020390f;
-			// constexpr float TimeCorr = 0.009006f;
-		    // Renderer::GetInstance()->SkyDistortionStart(NoiseWrap,TimeCorr);
+			// 골리앗연출씬
 
 			Renderer::GetInstance()->SkyOriginColor = Vector4{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
+			SoundSystem::GetInstance()->ClearSound();
+			SoundSystem::GetInstance()->Play("Stage1_Boss", 0.12f, true, {}, 0);
+			m_pBoss.lock()->Set_Howling();
+
+			Vector3 CamAt = m_pBoss.lock()->GetMonsterBoneWorldPos("Neck");
+			Vector3 CamEye = m_pBoss.lock()->GetComponent<Transform>().lock()->GetPosition() +
+				m_pBoss.lock()->GetComponent<Transform>().lock()->GetLook() * -1.4f;
+			CamEye.y += 0.3f;
+			_Camera.lock()->Set_TriggerCam(MainCamera::STAGE4_BOSS_CUTSCENE, CamAt, 4.5f);
+			_Camera.lock()->SetEye(CamEye);
+			_Camera.lock()->SetShakeInfo(3.5f, 10.f);
+
+			vector<Vector3> _LostTimes;
+			_LostTimes.emplace_back(Vector3{ 7.f,1.f,0.3f });
+			TimeSystem::GetInstance()->LostTime(_LostTimes);
+			//_Camera.lock()->Set_TriggerCam(MainCamera::STAGE4_BOSS_CUTSCENE,)
 
 			// 다른 후처리가 묻히니 스카이 왜곡을 약하게 .... 
 
@@ -347,11 +355,47 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -6.031250f, -1.825800f, 43.758301f };
+		const Vector3 TriggerLocation{ -4.379f, -6.142f, 40.870 };
 		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
 
 		// 콜라이더 사이즈 
-		const Vector3 BoxSize{ 2.f,10.f,5.f };
+		const Vector3 BoxSize{ 10.f,10.f,5.f };
+		// 트리거 정보 등록하자마자 활성화 ?? 
+		const bool ImmediatelyEnable = false;
+		// 트리거가 검사할 오브젝트 태그 
+		const GAMEOBJECTTAG TargetTag = GAMEOBJECTTAG::Player;
+
+		_Trigger->EventRegist(_CallBack,
+			TriggerLocation,
+			BoxSize,
+			ImmediatelyEnable,
+			TargetTag,
+			TriggerRotation);
+	}
+
+	return _Trigger;
+}
+
+void Hotel_S04::TriggerMeetingWithGoliath(const std::weak_ptr<Trigger>& _CamTrigger)
+{
+	// 여기서 왜곡 계수 조절해야함 !! 
+	if (auto _Trigger = AddGameObject<Trigger>().lock();
+		_Trigger)
+	{
+		const std::function<void()> _CallBack =
+			[_CamTrigger,this]()
+		{
+			Renderer::GetInstance()->FadeOutStart(1.f);
+			_Camera.lock()->SetFadeSceneInfo(0.8f);
+			_Camera.lock()->Set_Trigger(_CamTrigger);
+		};
+
+		// 트리거 위치
+		const Vector3 TriggerLocation{ -4.379f, -6.142f, 40.870 };
+		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
+
+		// 콜라이더 사이즈 
+		const Vector3 BoxSize{ 10.f,10.f,5.f };
 		// 트리거 정보 등록하자마자 활성화 ?? 
 		const bool ImmediatelyEnable = true;
 		// 트리거가 검사할 오브젝트 태그 
@@ -368,15 +412,23 @@ void Hotel_S04::TriggerMeetingWithGoliath()
 
 void Hotel_S04::LateInit()
 {
-	//SoundSystem::GetInstance()->ClearSound();
-
+	SoundSystem::GetInstance()->ClearSound();
+	SoundSystem::GetInstance()->Play("Wind1", 0.5f, false, {}, 35000);
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
-		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -5.218f, -1.5f, 43.326f });
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -4.205f, 0.79473f, 36.998f });
+		SpPlayer->SetAngle(180.f);
 	}
 
 	ApplyShopUpgradeDesc();
+
+	if (auto SpMainCamera = _Camera.lock();
+		SpMainCamera)
+	{
+		SpMainCamera->SetAngle({ -5.f,170.f,0.f });
+		SpMainCamera->SetStartPos();
+	}
 
 	/*_Camera.lock()->Set_At_Transform(
 		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,

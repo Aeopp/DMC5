@@ -54,6 +54,7 @@ public:
 	void RenderDebug(const DrawInfo& _Info);
 	void RenderAlphaBlendEffect(const DrawInfo& _Info);
 private:
+	std::weak_ptr<class Nero> m_pNero;
 	bool bKaboom = false;
 	bool bBlackOut = false;
 	Matrix KaboomMatrix{ FMath::Identity() };
