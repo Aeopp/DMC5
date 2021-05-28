@@ -291,6 +291,12 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	{
 		AddGameObject<Em200>();
 	}*/
+
+	if (Input::GetKeyDown(DIK_HOME))
+	{
+		g_bRenderTargetVisible = !g_bRenderTargetVisible;
+	}
+
 	if (Input::GetKeyDown(DIK_NUMPAD9))
 	{
 		if (auto SpFadeOut = _SceneFadeOut.lock(); SpFadeOut)

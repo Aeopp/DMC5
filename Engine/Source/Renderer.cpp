@@ -138,7 +138,6 @@ void Renderer::ReadyRenderTargets()
 	{
 		auto& NRMR = RenderTargets["NRMR"] = std::make_shared<RenderTarget>();
 
-
 		RenderTarget::Info InitInfo;
 		InitInfo.Width = g_nWndCX;
 		InitInfo.Height = g_nWndCY;
@@ -181,7 +180,8 @@ void Renderer::ReadyRenderTargets()
 
 		Distortion->Initialize(InitInfo);
 		Distortion->DebugBufferInitialize(
-			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
+			{ InitX + (XOffset * 1.f) + Interval,
+			  InitY },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -199,7 +199,8 @@ void Renderer::ReadyRenderTargets()
 
 		VelocityBlur->Initialize(InitInfo);
 		VelocityBlur->DebugBufferInitialize(
-			{ InitX,InitY + (YOffset * FLT_MAX) + Interval },
+			{   InitX + (XOffset * 1.f) + Interval,
+				InitY + (YOffset * 1.f) + Interval    },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -232,7 +233,8 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		avgluminance->Initialize(InitInfo);
 		avgluminance->DebugBufferInitialize(
-			{ InitX + (XOffset * 1.f) + Interval ,InitY + Interval },
+			{ InitX + (XOffset * 1.f) + Interval, 
+			  InitY + (YOffset * 2.f) + Interval   },
 			RenderTargetDebugRenderSize);
 
 		for (int32 i = 1; i < 4; ++i)
@@ -254,7 +256,8 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_SYSTEMMEM;
 		avglumsystemmem->Initialize(InitInfo);
 		avglumsystemmem->DebugBufferInitialize(
-			{ InitX + (XOffset * 1.f) + Interval,InitY + (YOffset * 1.f) + Interval },
+			{ InitX + (XOffset * 1.f) + Interval,
+			   InitY + (YOffset* 3.f) + Interval  },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -271,7 +274,8 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		bloomresult->Initialize(InitInfo);
 		bloomresult->DebugBufferInitialize(
-			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 2.f) + Interval },
+			{ InitX + (XOffset * 1.f) + Interval,
+			  InitY + (YOffset * 3.f) + Interval },
 			RenderTargetDebugRenderSize);
 	};
 
@@ -287,7 +291,8 @@ void Renderer::ReadyRenderTargets()
 		InitInfo._D3DPool = D3DPOOL_DEFAULT;
 		starresult->Initialize(InitInfo);
 		starresult->DebugBufferInitialize(
-			{ InitX + (XOffset * 1.f) + Interval , InitY + (YOffset * 3.f) + Interval },
+			{ InitX + (XOffset * 2.f) + Interval,
+			  InitY },
 			RenderTargetDebugRenderSize);
 	}
 
@@ -579,17 +584,13 @@ HRESULT Renderer::Render()&
 		}
 		Bloom();
 		LensFlare();
-		// 백버퍼로 백업 . 
+
 		Device->SetRenderTarget(0, BackBuffer);
 		Device->SetDepthStencilSurface(BackBufferZBuffer);
 		Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-		// 테스트 
 		ToneMap();
-		//  여기 까지 ..... 
 	}
 
-	// Tonemapping();
-	//AlphaBlendEffectRender();
 	UIRenderAfterPostProcessing();
 
 	ResetState();

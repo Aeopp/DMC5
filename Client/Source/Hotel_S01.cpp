@@ -245,6 +245,10 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
 	}
+	if (Input::GetKeyDown(DIK_HOME))
+	{
+		g_bRenderTargetVisible = !g_bRenderTargetVisible;
+	}
 	/* -------------------------- */
 
 	if (_DecreaseHotel01_Volume)
