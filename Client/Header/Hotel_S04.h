@@ -11,6 +11,7 @@ private:
 	std::weak_ptr<class FadeOut> _FadeOut{};
 	weak_ptr<class Em5000> m_pBoss;
 	bool _LateInit = false;
+	bool _IsBossDead = false;
 private:
 	explicit Hotel_S04();
 	virtual ~Hotel_S04() = default;
@@ -34,7 +35,6 @@ private:
 	void LoadObjects(const std::filesystem::path& path);
 private:
 	void TriggerSetUp(); 
-	void TriggerGoliathSpawn();
 	void TriggerMeetingWithGoliath(const std::weak_ptr<class Trigger>& _CamTrigger);
 	std::weak_ptr<class Trigger> TriggerCutScene();
 

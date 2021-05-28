@@ -168,14 +168,6 @@ HRESULT Library_S06::Update(const float _fDeltaTime)
 		{
 			if (auto SpPanel = _BtlPanel.lock(); SpPanel)
 			{
-				//////////////////////////////////////////////////////
-				// 보스 죽으면 바로 돌려야 할 것들인데 일단 여기 둠...
-				SpPanel->SetBossGaugeActive(false);
-				SpPanel->SetRedOrbActive(false);
-				SpPanel->SetGlobalActive(false);
-				SpPanel->ResetRankScore();
-				//////////////////////////////////////////////////////
-
 				SpFadeOut->SetActive(true);
 				SpFadeOut->PlayStart(8u,
 					[SpPanel]()
@@ -193,9 +185,17 @@ HRESULT Library_S06::Update(const float _fDeltaTime)
 	}
 	/* -------------------------- */
 
-	if (m_pBoss.lock()->Get_BattleInfo().iHp <= 0)
+	if (!_IsBossDead && m_pBoss.lock()->Get_BattleInfo().iHp <= 0)
 	{
-		// 보스 죽었음 !!
+		if (auto SpPanel = _BtlPanel.lock(); SpPanel)
+		{
+			SpPanel->SetBossGaugeActive(false);
+			SpPanel->SetRedOrbActive(false);
+			SpPanel->SetGlobalActive(false);
+			SpPanel->ResetRankScore();
+		}
+
+		_IsBossDead = true;
 	}
 
 	return S_OK;
@@ -404,7 +404,6 @@ void Library_S06::LateInit()
 {
 	//SoundSystem::GetInstance()->ClearSound();
 
-	
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
@@ -414,6 +413,7 @@ void Library_S06::LateInit()
 		SpPlayer->BuyCbsMiddle();
 		SpPlayer->BuyUpgradedOverture();
 	}
+
 	m_pBoss.lock()->StartCutScene();
 	_MainCamera.lock()->Set_At_Transform(m_pBoss.lock()->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
 	_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE6_BOSS_CUTSCENE, {}, 3.3f);
@@ -429,6 +429,13 @@ void Library_S06::LateInit()
 	Renderer::GetInstance()->DistortionColor =
 		Vector4{ 0.f,187.f / 255.f,1.f,1.f };
 
+	//
+	if (auto Sp = _BtlPanel.lock(); Sp)
+	{
+		Sp->SetGlobalActive(true, true);
+		Sp->SetBossGaugeActive(true);
+		Sp->SetAppearArtemis(true);
+	}
 
 	BgmPlay();
 	g_bOptRender = false;
