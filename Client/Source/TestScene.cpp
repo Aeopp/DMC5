@@ -114,7 +114,7 @@ HRESULT TestScene::LoadScene()
 
 	_Camera = AddGameObject<Camera>();
 	
-	// _MainCamera = AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
 
    

@@ -171,11 +171,8 @@ void JudgementShadow2::RenderDebugSK(const DrawInfo& _Info)
 			SpSubset->Render(_Info.Fx);
 		};
 	};
-}
+};
 
-void JudgementShadow2::RenderAlphaBlendEffect(const DrawInfo& _Info)
-{
-}
 
 void JudgementShadow2::RenderInit()
 {
@@ -229,6 +226,7 @@ void JudgementShadow2::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	Mesh::InitializeInfo _InitInfo{};
