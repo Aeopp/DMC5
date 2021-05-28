@@ -14,6 +14,7 @@ private:
 	std::weak_ptr<class FadeOut> _FadeOut{};
 	std::weak_ptr<class MainCamera> _MainCamera;
 	bool _LateInit = false;
+	bool _IsBossDead = false;
 private:
 	explicit Library_S06();
 	virtual ~Library_S06() = default;

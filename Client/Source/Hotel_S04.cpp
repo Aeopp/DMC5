@@ -15,10 +15,10 @@
 #include "FadeOut.h"
 #include "Trigger.h"
 #include "ShopPanel.h"
+#include "TimeSystem.h"
 
 #include <iostream>
 #include <fstream>
-#include "TimeSystem.h"
 using namespace std;
 
 Hotel_S04::Hotel_S04()
@@ -63,7 +63,6 @@ HRESULT Hotel_S04::LoadScene()
 	//}
 
 	_Camera = AddGameObject<MainCamera>();
-
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -159,15 +158,8 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 		{
 			if (auto SpPanel = _BtlPanel.lock(); SpPanel)
 			{
-				//////////////////////////////////////////////////////
-				// 보스 죽으면 바로 돌려야 할 것들인데 일단 여기 둠...
-				SpPanel->SetBossGaugeActive(false);
-				SpPanel->SetRedOrbActive(false);
-				SpPanel->SetGlobalActive(false);
-				SpPanel->ResetRankScore();
-				//////////////////////////////////////////////////////
-
 				SpFadeOut->SetActive(true);
+
 				SpFadeOut->PlayStart(3u,
 					[SpPanel]()
 					{
@@ -192,9 +184,17 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	}
 	/* -------------------------- */
 
-	if (m_pBoss.lock()->Get_BattleInfo().iHp <= 0)
+	if (!_IsBossDead && m_pBoss.lock()->Get_BattleInfo().iHp <= 0)
 	{
-		// 보스 죽었음 !!
+		if (auto SpPanel = _BtlPanel.lock(); SpPanel)
+		{
+			SpPanel->SetBossGaugeActive(false);
+			SpPanel->SetRedOrbActive(false);
+			SpPanel->SetGlobalActive(false);
+			SpPanel->ResetRankScore();
+		}
+
+		_IsBossDead = true;
 	}
 
 	return S_OK;
@@ -356,11 +356,12 @@ std::weak_ptr<Trigger> Hotel_S04::TriggerCutScene()
 			{
 				Sp->SetGlobalActive(true, true);
 				Sp->SetBossGaugeActive(true);
+				Sp->SetAppearGoliath(true);
 			}
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -4.379f, -6.142f, 40.870 };
+		const Vector3 TriggerLocation{ -4.379f, -6.142f, 40.870f };
 		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
 
 		// 콜라이더 사이즈 
@@ -396,7 +397,7 @@ void Hotel_S04::TriggerMeetingWithGoliath(const std::weak_ptr<Trigger>& _CamTrig
 		};
 
 		// 트리거 위치
-		const Vector3 TriggerLocation{ -4.379f, -6.142f, 40.870 };
+		const Vector3 TriggerLocation{ -4.379f, -6.142f, 40.870f };
 		const Vector3 TriggerRotation{ 0.f, 0.f, 0.f };
 
 		// 콜라이더 사이즈 
@@ -419,6 +420,7 @@ void Hotel_S04::LateInit()
 {
 	SoundSystem::GetInstance()->ClearSound();
 	SoundSystem::GetInstance()->Play("Wind1", 0.5f, false, {}, 35000);
+	
 	if (auto SpPlayer = _Player.lock();
 		SpPlayer)
 	{
