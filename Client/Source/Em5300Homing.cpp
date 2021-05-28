@@ -290,6 +290,7 @@ HRESULT Em5300Homing::Awake()
 
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetGravity(false);;
 	PushEditEntity(m_pCollider.lock().get());

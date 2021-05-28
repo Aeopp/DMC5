@@ -243,6 +243,7 @@ HRESULT Energism::Awake()
 	
 	GameObject::Awake();
 	m_pCollider = AddComponent<BoxCollider>();
+	m_pCollider.lock()->SetRigid(true);
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetGravity(false);;
 	PushEditEntity(m_pCollider.lock().get());
@@ -277,7 +278,7 @@ UINT Energism::Update(const float _fDeltaTime)
 	};
 
 	UpdateReverberation(_fDeltaTime);
-
+	
 	return 0;
 }
 

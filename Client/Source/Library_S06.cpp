@@ -47,7 +47,7 @@ HRESULT Library_S06::LoadScene()
 	// Load Start
 
 	SoundSystem::GetInstance()->ClearSound();
-	SoundSystem::GetInstance()->Play("Stage2_Boss", 0.07f, true);
+	SoundSystem::GetInstance()->Play("Stage2_Boss", 0.07f, true, {},0);
 
 	m_fLoadingProgress = 0.01f;
 

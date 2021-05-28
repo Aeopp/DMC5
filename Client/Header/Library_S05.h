@@ -13,6 +13,12 @@ private:
 	std::vector<weak_ptr<class Effect>> m_vecQliphothBlock{};
 	bool _LateInit = false;
 	bool _IsShopAvailable = false;
+
+	float _Library05_Volume = 0.07f;
+	float _Battle1_Volume = 0.1f;
+
+	bool _Decrease_Library05_Volume = false;
+	bool _DecreaseBattle1_Volume = false;
 private:
 	explicit Library_S05();
 	virtual ~Library_S05() = default;

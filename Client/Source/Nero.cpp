@@ -482,7 +482,7 @@ void Nero::Hit(BT_INFO _BattleInfo, void* pArg)
 			m_pRedQueen.lock()->SetWeaponState(WS_Idle);
 		else
 			SetCbsIdle();
-
+		SoundSystem::GetInstance()->RandSoundKeyPlay("DanteHit", { 2,12 }, 1.f, true);
 		return;
 	}
 	switch (_BattleInfo.eAttackType)
@@ -669,11 +669,17 @@ void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(), (void*)&_pOther);
 		static_pointer_cast<Unit>(_pOther.lock())->Set_Coll(false);
 		break;
+	case Eff_Energism:
+		if (NeroFSM::EVADE_L == iFsmTag || NeroFSM::EVADE_R == iFsmTag)
+			return;
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo(), (void*)&_pOther);
+		break;
 	case Eff_NuClear:
 		m_BattleInfo.iHp = 0;
 		if (!m_pBtlPanel.expired())
 			m_pBtlPanel.lock()->SetPlayerHPRatio(0);
 		m_pFSM->ChangeState(NeroFSM::DIE);
+		SoundSystem::GetInstance()->Play("DanteDie" , 1.f, true);
 		break;
 	default:
 		break;
