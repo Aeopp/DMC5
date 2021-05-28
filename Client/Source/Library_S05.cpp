@@ -1281,23 +1281,23 @@ void Library_S05::TriggerSewerSunken()
 		// 몬스터 위치는 미리 잡아주기 . 
 		MonsterWave[0].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -23979.177f, -1378.879f, 33560.666f } * GScale);
-		MonsterWave[0].lock()->Set_Hp(60);
+		MonsterWave[0].lock()->Set_Hp(1);
 
 		MonsterWave[1].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -25179.414f, -1378.879f, 33560.666f } * GScale);
-		MonsterWave[1].lock()->Set_Hp(60);
+		MonsterWave[1].lock()->Set_Hp(1);
 
 		MonsterWave[2].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -26379.939f, -1378.879f, 33560.666f } * GScale);
-		MonsterWave[2].lock()->Set_Hp(60);
+		MonsterWave[2].lock()->Set_Hp(1);
 
 		MonsterWave[3].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -27578.267f, -1378.879f, 33560.666f } * GScale);
-		MonsterWave[3].lock()->Set_Hp(60);
+		MonsterWave[3].lock()->Set_Hp(1);
 
 		MonsterWave[4].lock()->GetComponent<Transform>().
 			lock()->SetPosition(Vector3{ -28779.519f, -1378.879f, 33560.666f } * GScale);
-		MonsterWave[4].lock()->Set_Hp(60);
+		MonsterWave[4].lock()->Set_Hp(1);
 
 		// 트리거 위치 .. . 
 		const Vector3 TriggerLocation{ -23.681999f, -1.231250f, 33.628098f};

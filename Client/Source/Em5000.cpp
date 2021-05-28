@@ -1457,6 +1457,10 @@ HRESULT Em5000::Awake()
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
 	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
 
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_X, false);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, false);
+	m_pCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, false);
+
 	m_pCollider.lock()->SetOffsetRadius(0.56f);
 
 	m_pCollider.lock()->SetRigid(true);
@@ -2101,4 +2105,5 @@ void Em5000::Update_Angle_ToCar()
 void Em5000::Set_Howling()
 {
 	m_eState = Howling;
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Cut", {1,1}, 0.3f, false);
 }

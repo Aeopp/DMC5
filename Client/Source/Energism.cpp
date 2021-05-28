@@ -233,7 +233,7 @@ HRESULT Energism::Ready()
 	RenderInit();
 
 	m_nTag = MonsterWeapon;
-	m_BattleInfo.iAttack = 50;
+	m_BattleInfo.iAttack = 25;
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
 	return S_OK;
 };

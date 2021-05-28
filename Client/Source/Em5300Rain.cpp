@@ -525,7 +525,7 @@ HRESULT Em5300Rain::Ready()
 	GameObject::Ready();
 	m_nTag = MonsterWeapon;
 
-	m_BattleInfo.iAttack = 15;
+	m_BattleInfo.iAttack = 10;
 
 	RenderInit();
 	// 트랜스폼 초기화 .. 

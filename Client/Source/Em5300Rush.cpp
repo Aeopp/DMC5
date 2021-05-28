@@ -30,7 +30,7 @@ HRESULT Em5300Rush::Awake()
 {
 	Unit::Awake();
 	m_nTag = MonsterWeapon;
-	m_BattleInfo.iAttack = 20;
+	m_BattleInfo.iAttack = 15;
 
 
 	m_pEm5300Trans = m_pEm5300.lock()->GetComponent<ENGINE::Transform>();
