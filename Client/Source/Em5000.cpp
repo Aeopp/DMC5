@@ -46,7 +46,7 @@ void Em5000::Fight(const float _fDeltaTime)
 			m_bIng = true;
 			m_bHit = true;
 			m_bDead = true;
-			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 0.5f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 1.f, false);
 		}
 	}
 	else
@@ -57,7 +57,7 @@ void Em5000::Fight(const float _fDeltaTime)
 			m_bIng = true;
 			m_bHit = true;
 			m_bDead = true;
-			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 0.6f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 1.f, false);
 		}
 	}
 
@@ -1683,7 +1683,7 @@ void Em5000::Buster(BT_INFO _BattleInfo, void* pArg)
 	m_pCollider.lock()->SetRigid(false);
 
 	m_eState = Hit_Buster_Start;
-	SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Buster", { 1,1 }, 0.5f, false);
+	SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Buster", { 1,1 }, 1.f, false);
 	
 
 	for (int i = 0; i < 2; ++i)

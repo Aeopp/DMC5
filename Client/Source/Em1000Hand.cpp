@@ -24,7 +24,7 @@ HRESULT Em1000Hand::Ready()
 	RenderInit();
 
 	m_nTag = MonsterWeapon;
-
+	m_BattleInfo.iAttack = 5;
 	
 	m_nTag = GAMEOBJECTTAG::MonsterWeapon;
 	

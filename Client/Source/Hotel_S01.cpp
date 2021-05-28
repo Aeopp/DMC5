@@ -260,7 +260,7 @@ HRESULT Hotel_S01::Update(const float _fDeltaTime)
 
 	if (_DecreaseBattle2_Volume)
 	{
-		_Battle1_Volume = FMath::Lerp(_Battle2_Volume, 0.f, _fDeltaTime);
+		_Battle2_Volume = FMath::Lerp(_Battle2_Volume, 0.f, _fDeltaTime);
 		SoundSystem::GetInstance()->Play("Battle2", _Battle2_Volume, false);
 	}
 
