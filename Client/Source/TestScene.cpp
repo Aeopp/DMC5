@@ -94,13 +94,7 @@ HRESULT TestScene::LoadScene()
 {
 	// Load Start
 
-	AddGameObject<Judgement>();
-	AddGameObject<Change>();
-	AddGameObject<SandGlassEffect>();
-	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(7);
-	_JudgementSwordTrail =  AddGameObject<JudgementSwordTrail>();
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
-	
 
 	m_fLoadingProgress = 0.01f;
 
@@ -160,7 +154,7 @@ HRESULT TestScene::LoadScene()
 
 	//AddGameObject<Judgement>();
 	//AddGameObject<Change>();
-	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(6);
+	//AddGameObject<SpriteEffect>().lock()->InitializeFromOption(7);
 	//_JudgementSwordTrail = AddGameObject<JudgementSwordTrail>();
 	//AddGameObject<ShockWave>();
 

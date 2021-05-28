@@ -2683,6 +2683,8 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 
 				if (0.f == _DMDDialogXPos && Input::GetKeyDown(DIK_RETURN))
 				{
+					SoundSystem::GetInstance()->Play("OK", 0.7f, false);
+
 					_DMDTick = 0.f;
 					_DMDUseRebellion = true;
 				}
