@@ -29,6 +29,8 @@ private:
 		NULLBLACK,
 		SECRET_VISIONS,
 		DANTE_MUST_DIE,
+		APPEAR_GOLIATH,
+		APPEAR_ARTEMIS,
 		
 		DESC_END
 	};
@@ -231,6 +233,12 @@ private:
 		FT_GIVE_UP,
 		FT_USE_REBELLION,
 
+		FT_GOLIATH_0,
+		FT_GOLIATH_1,
+
+		FT_ARTEMIS_0,
+		FT_ARTEMIS_1,
+
 		FONT_END
 	};
 	std::vector<std::weak_ptr<Font>> _FontVec;
@@ -259,6 +267,10 @@ private:
 	bool _DMDUseRebellion = false;
 	uint32 _DMDDialogBlinkCnt = 0u;
 	bool _DMDShowDialogFont = false;
+
+	float _AppearGoliathAlpha = 0.f;
+	float _AppearArtemisAlpha = 0.f;
+	float _AppearAliveTime = 0.f;
 
 private:
 	explicit BtlPanel() = default;
@@ -335,6 +347,9 @@ public:
 	void SetNullBlackActive(bool IsActive);
 
 	void SetDanteMustDieActive(bool IsActive);
+
+	void SetAppearGoliath(bool IsActive);
+	void SetAppearArtemis(bool IsActive);
 
 };
 #endif // !__UI_BTL_PANEL__ 
