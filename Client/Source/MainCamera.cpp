@@ -197,10 +197,10 @@ void MainCamera::Set_PlayerCamMode(UINT _ePlayerCamMode)
 	{
 		m_fDistanceToTarget = 0.15f;
 		vector<Vector3> _LostTimes;
-		_LostTimes.emplace_back(Vector3(1.5f, 1.f, 0.3f));
+		_LostTimes.emplace_back(Vector3(2.5f, 1.f, 0.3f));
 		TimeSystem::GetInstance()->LostTime(_LostTimes);
 		
-		m_fTriggerTime = 2.5f;
+		m_fTriggerTime = 3.5f;
 		m_fLerpSpeed = 1.3f;
 		
 		m_fFadeOutDelayTime = 0.5f;

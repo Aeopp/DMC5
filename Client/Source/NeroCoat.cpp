@@ -46,9 +46,9 @@ UINT NeroCoat::Update(const float _fDeltaTime)
 	D3DXVECTOR3 vScale, vPos;
 	D3DXQUATERNION tQuat;
 	D3DXMatrixDecompose(&vScale, &tQuat, &vPos, &pNode->ToRoot);
-
+	//vPos = m_pNeroTransform.lock()->GetPosition();
 	PxVec3 targetPos;
-	memcpy_s(&targetPos, sizeof(PxVec3), m_pNeroTransform.lock()->GetPosition(), sizeof(PxVec3));
+	memcpy_s(&targetPos, sizeof(PxVec3), &vPos, sizeof(PxVec3));
 	PxQuat targetQuat;
 	memcpy_s(&targetQuat, sizeof(PxQuat), &tQuat, sizeof(PxQuat));
 

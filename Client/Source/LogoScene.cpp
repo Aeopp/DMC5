@@ -62,7 +62,6 @@ HRESULT LogoScene::Update(const float _fDeltaTime)
 		//SceneManager::LoadScene(Hotel_S02::Create(), false);
 		//SceneManager::LoadScene(Hotel_S03::Create(), false);
 		//SceneManager::LoadScene(Hotel_S04::Create(), false);
-		//SceneManager::LoadScene(Library_S05::Create(), false);
 		//SceneManager::LoadScene(Library_S06::Create(), false);
 		//SceneManager::LoadScene(EndingScene::Create(), false);
 

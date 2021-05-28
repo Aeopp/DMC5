@@ -33,7 +33,7 @@ private:
 	float _TextBlickTick = 0.f;
 
 	std::shared_ptr<ENGINE::Texture> _LoadingTextTex{};
-	const uint32 _TextMaxCount = 3u;
+	const uint32 _TextMaxCount = 6u;
 	uint32 _CurTextIdx = 0u;
 	Matrix _LoadingTextScreenMat = Matrix();
 	float _TextAlpha = 0.f;

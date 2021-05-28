@@ -80,7 +80,7 @@ HRESULT Nero_LWing::Awake()
 	pClothBone = new CLOTHBONE;
 	pNode = m_pMesh->GetNode("L_WingCloth00_01");
 	pClothBone->sName = pNode->Name;
-	pClothBone->pParent = nullptr;
+	pClothBone->pParent = m_vecClothBone.back();
 	pClothBone->matToRoot = pNode->ToRoot;
 	pClothBone->pNode = pNode;
 	m_vecClothBone.push_back(pClothBone);

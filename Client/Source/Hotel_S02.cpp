@@ -232,6 +232,14 @@ HRESULT Hotel_S02::Update(const float _fDeltaTime)
 	CheckShopAvailable();
 
 	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_HOME))
+	{
+		g_bRenderTargetVisible = !g_bRenderTargetVisible;
+	}
+	if (Input::GetKeyDown(DIK_END))
+	{
+		g_bCollisionVisible = !g_bCollisionVisible;
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::HOTEL_S02));
@@ -1025,4 +1033,5 @@ void Hotel_S02::LateInit()
 
 	_LateInit = true;
 	g_bOptRender = false;
+	g_bFixedDeltaTime = false;
 }

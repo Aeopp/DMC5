@@ -49,7 +49,7 @@ void Em5300::Fight(const float _fDeltaTime)
 
 	if (m_BattleInfo.iHp <= 450.f)
 	{
-		if (m_bUlte == false)
+		if (m_bUlte == false && m_bGroggy == false)
 		{
 			for (int i = 0; i < 32; ++i)
 				m_pBullet[i].lock()->m_pMissile.lock()->PlayEnd();
@@ -274,7 +274,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 		
 			Update_Angle();
 			m_bInteraction = true;
-			m_fAngleSpeed = D3DXToRadian(15.f);
+			//m_fAngleSpeed = D3DXToRadian(15.f);
 			Matrix Head = *m_pMesh->GetToRootMatrixPtr("Head");
 			Matrix Result = *Head * m_pTransform.lock()->GetWorldMatrix();
 
@@ -658,6 +658,13 @@ void Em5300::State_Change(const float _fDeltaTime)
 	case Em5300::Attack_Ulte_Move:
 		if (m_bIng == true)
 		{
+			if (m_fCenterY >= -0.2f)
+			{
+				m_fCenterY -= 0.01f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+			}
+
+
 			Update_Angle();
 			m_bInteraction = true;
 			Vector3 vCenter = { -37.148f, 0.f, 30.902f };
@@ -1155,45 +1162,45 @@ HRESULT Em5300::Awake()
 	}
 	for (int i = 0; i < 10; ++i)
 		m_pRever[i] = AddGameObject<Reverberation>();
-	for (int i = 0; i < 12; ++i)
-		m_pRushRever[i] = AddGameObject<Reverberation>();
+for (int i = 0; i < 12; ++i)
+	m_pRushRever[i] = AddGameObject<Reverberation>();
 
-	for (int i = 0; i < 12; ++i)
-	{
-		m_pRain[i] = AddGameObject<Em5300Rain>();
-		m_pRain[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
-		m_pRain[i].lock()->m_pEm5300Mesh = m_pMesh;
-		m_pRain[i].lock()->Set_RainPos(i);
-	}
-	for (int i = 0; i < 8; ++i)
-	{
-		m_pHoming[i] = AddGameObject<Em5300Homing>();
-		m_pHoming[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
-		m_pHoming[i].lock()->m_pEm5300Mesh = m_pMesh;
-		m_pHoming[i].lock()->Set_HomingPos(i);
-	}
-	m_pUlte = AddGameObject<Em5300Ulte>();
-	m_pUlte.lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
-	m_pUlte.lock()->m_pEm5300Mesh = m_pMesh;
+for (int i = 0; i < 12; ++i)
+{
+	m_pRain[i] = AddGameObject<Em5300Rain>();
+	m_pRain[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
+	m_pRain[i].lock()->m_pEm5300Mesh = m_pMesh;
+	m_pRain[i].lock()->Set_RainPos(i);
+}
+for (int i = 0; i < 8; ++i)
+{
+	m_pHoming[i] = AddGameObject<Em5300Homing>();
+	m_pHoming[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
+	m_pHoming[i].lock()->m_pEm5300Mesh = m_pMesh;
+	m_pHoming[i].lock()->Set_HomingPos(i);
+}
+m_pUlte = AddGameObject<Em5300Ulte>();
+m_pUlte.lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
+m_pUlte.lock()->m_pEm5300Mesh = m_pMesh;
 
-	for (int i = 0; i < 4; ++i)
-	{
-		m_pSnatchPoint[i] = AddGameObject<SnatchPoint>();
-		m_pSnatchPoint[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
-		m_pSnatchPoint[i].lock()->m_pEm5300Mesh = m_pMesh;
-		m_pSnatchPoint[i].lock()->Set_SnatchPos(i);
-	}
+for (int i = 0; i < 4; ++i)
+{
+	m_pSnatchPoint[i] = AddGameObject<SnatchPoint>();
+	m_pSnatchPoint[i].lock()->m_pEm5300 = static_pointer_cast<Em5300>(m_pGameObject.lock());
+	m_pSnatchPoint[i].lock()->m_pEm5300Mesh = m_pMesh;
+	m_pSnatchPoint[i].lock()->Set_SnatchPos(i);
+}
 
-	m_pEnerReady = AddGameObject<EnergismReady>();
-	m_pEner = AddGameObject<Energism>();
+m_pEnerReady = AddGameObject<EnergismReady>();
+m_pEner = AddGameObject<Energism>();
 
-	m_eState = Idle;
-	m_pTransform.lock()->SetRotation({ 0.f,D3DXToDegree(45.5f) ,0.f });
+m_eState = Idle;
+m_pTransform.lock()->SetRotation({ 0.f,D3DXToDegree(45.5f) ,0.f });
 
 
 
-	m_pHeadBone = m_pMesh->GetToRootMatrixPtr("Head");
-	return S_OK;
+m_pHeadBone = m_pMesh->GetToRootMatrixPtr("Head");
+return S_OK;
 }
 
 HRESULT Em5300::Start()
@@ -1204,7 +1211,7 @@ HRESULT Em5300::Start()
 	if (!m_pPanel.expired())
 		m_pPanel.lock()->SetBossGaugeActive(true);
 
-	
+
 	return S_OK;
 }
 
@@ -1229,19 +1236,19 @@ UINT Em5300::Update(const float _fDeltaTime)
 	//DeltaPos = FMath::RotationVecNormal(DeltaPos, Axis, FMath::ToRadian(90.f)) * Length;
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
-	{			 
-		 D3DXQUATERNION tResult = SpTransform->GetQuaternion() * DeltaQuat;
-		 SpTransform->SetQuaternion(tResult);
+	{
+		D3DXQUATERNION tResult = SpTransform->GetQuaternion() * DeltaQuat;
+		SpTransform->SetQuaternion(tResult);
 
-		 D3DXMATRIX matRot;
-		 D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
-		 D3DXMatrixRotationQuaternion(&matRot, &tQuat);
-		 D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
+		D3DXMATRIX matRot;
+		D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
+		D3DXMatrixRotationQuaternion(&matRot, &tQuat);
+		D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
 
-		 if (m_bGroggy)
-			 DeltaPos.y = 0.f;
+		if (m_bGroggy)
+			DeltaPos.y = 0.f;
 
-		 SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
+		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
 	//플레이어가 사라졌는지 판단
 	/*if (false == m_pPlayer.expired())
@@ -1254,10 +1261,8 @@ UINT Em5300::Update(const float _fDeltaTime)
 		Fight(_fDeltaTime);
 	State_Change(_fDeltaTime);
 
-
 	if (m_bUlte)
 		Renderer::GetInstance()->SkyDistortionEnd();
-
 
 	if (m_eState == Attack_Laser_Loop)
 	{

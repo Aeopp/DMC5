@@ -1512,6 +1512,7 @@ HRESULT Idle::StateEnter()
 	UINT PreAnimationIndex = m_pNero.lock()->Get_PreAnimationIndex();
 	m_pNero.lock()->Reset_JumpCount();
 	m_pNero.lock()->Set_JumpDir(Nero::Basic);
+	m_pNero.lock()->SetNoHit(false);
 	switch (CurAnimationIndex)
 	{
 	case Nero::ANI_IDLE_FROM_COMBOA1:
@@ -2377,11 +2378,11 @@ HRESULT RunStartLeft::StateUpdate(const float _fDeltaTime)
 	m_pNero.lock()->SetAngleFromCamera();
 	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
 	{
-		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk2", 1.f, false);
 	}
 	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
 	{
-		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk1", 1.f, false);
 	}
 	if (Input::GetKey(DIK_A))
 	{
@@ -2674,11 +2675,11 @@ HRESULT RunStartRight::StateUpdate(const float _fDeltaTime)
 	m_pNero.lock()->SetAngleFromCamera();
 	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
 	{
-		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk2", 1.f, false);
 	}
 	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
 	{
-		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk1", 1.f, false);
 	}
 	if (Input::GetKey(DIK_D))
 	{
@@ -2970,11 +2971,11 @@ HRESULT RunStart180::StateUpdate(const float _fDeltaTime)
 	m_pNero.lock()->SetAngleFromCamera();
 	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
 	{
-		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk2", 1.f, false);
 	}
 	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
 	{
-		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk1", 1.f, false);
 	}
 	if (Input::GetKey(DIK_S))
 	{
@@ -3060,11 +3061,11 @@ HRESULT RunLoop::StateUpdate(const float _fDeltaTime)
 {
 	if (260 <=SoundSystem::GetInstance()->CurrentPosition("Walk1"))
 	{
-		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk2", 1.f, false);
 	}
 	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
 	{
-		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk1", 1.f, false);
 	}
 	//NeroState::StateUpdate(_fDeltaTime);
 	if (Input::GetKey(DIK_LSHIFT))
@@ -3234,11 +3235,11 @@ HRESULT RunStartFront::StateUpdate(const float _fDeltaTime)
 	NeroState::StateUpdate(_fDeltaTime);
 	if (260 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
 	{
-		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk2", 1.f, false);
 	}
 	if (300 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
 	{
-		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk1", 1.f, false);
 	}
 	// 시작하는 애니메니메이션이 끝났으면 Loop로 변환
 	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
@@ -3461,11 +3462,11 @@ HRESULT DashLoop::StateUpdate(const float _fDeltaTime)
 {
 	if (200 <= SoundSystem::GetInstance()->CurrentPosition("Walk1"))
 	{
-		SoundSystem::GetInstance()->Play("Walk2", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk2", 1.f, false);
 	}
 	if (250 <= SoundSystem::GetInstance()->CurrentPosition("Walk2"))
 	{
-		SoundSystem::GetInstance()->Play("Walk1", 0.6f, false);
+		SoundSystem::GetInstance()->Play("Walk1", 1.f, false);
 	}
 	//NeroState::StateUpdate(_fDeltaTime);
 	UINT Ex_Gauge = m_pNero.lock()->Get_ExGaugeCount();
@@ -4303,7 +4304,6 @@ Die* Die::Create(FSMBase* const _pFSM, const UINT _nIndex, weak_ptr<Nero> _pNero
 HRESULT Die::StateEnter()
 {
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_All_Weapon, false);
-
 	m_pNero.lock()->ChangeAnimation("Die1", false, Nero::ANI_DIE);
 	return S_OK;
 }

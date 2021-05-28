@@ -351,7 +351,7 @@ HRESULT NuClear::Awake()
 	m_pCollider.lock()->ReadyCollider();
 	m_pCollider.lock()->SetTrigger(true);
 	m_pCollider.lock()->SetRigid(true);
-	m_pCollider.lock()->SetRadius(50.f);
+	m_pCollider.lock()->SetRadius(30.f);
 	m_pCollider.lock()->SetActive(false);
 	PushEditEntity(m_pCollider.lock().get());
 	return S_OK;

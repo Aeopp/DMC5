@@ -48,12 +48,12 @@ HRESULT Em5000Hand::Awake()
 	if (m_bLeft)
 	{
 		m_pCollider.lock()->SetCenter({ 0.f, 0.f, 0.f });
-		m_pCollider.lock()->SetRadius(0.2f);
+		m_pCollider.lock()->SetRadius(0.45f);
 	}
 	else
 	{
 		m_pCollider.lock()->SetCenter({ 0.f, 0.f, 0.f });
-		m_pCollider.lock()->SetRadius(0.2f);
+		m_pCollider.lock()->SetRadius(0.45f);
 	}
 
 	m_pWave = AddGameObject<ShockWave>();

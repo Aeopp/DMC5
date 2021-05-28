@@ -83,7 +83,7 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Monster
 	m_pBoss = AddGameObject<Em5300>();
-	m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -34.059f, -0.37f, 30.861f });
+	m_pBoss.lock()->GetComponent<Transform>().lock()->SetPosition({ -35.211f, -0.37f, 30.861f });
 #pragma endregion
 
 	m_fLoadingProgress = 0.4f;
@@ -158,6 +158,14 @@ HRESULT Library_S06::Update(const float _fDeltaTime)
 	Scene::Update(_fDeltaTime);
 
 	/* ---------- 치트 ---------- */
+	if (Input::GetKeyDown(DIK_HOME))
+	{
+		g_bRenderTargetVisible = !g_bRenderTargetVisible;
+	}
+	if (Input::GetKeyDown(DIK_END))
+	{
+		g_bCollisionVisible = !g_bCollisionVisible;
+	}
 	if (Input::GetKeyDown(DIK_NUMPAD8))
 	{
 		SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S06));
