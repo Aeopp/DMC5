@@ -247,7 +247,6 @@ UINT Trigger::Update(const float _fDeltaTime)
 	{
 		_Transform->SetPosition(TriggerLocation);
 		_Transform->SetRotation(TriggerRotation);
-
 	};
 
 	if (IsAfterEvent() 
@@ -272,21 +271,18 @@ UINT Trigger::Update(const float _fDeltaTime)
 		}
 	}
 
-	if (g_bEditMode)
+	if (Input::GetKeyDown(DIK_DELETE))
 	{
-		if (Input::GetKeyDown(DIK_DELETE))
+		if (_Option == Option::MonsterWave && bAfterEvent)
 		{
-			if (_Option == Option::MonsterWave && bAfterEvent)
+			if (CheckIfTheDead.has_value())
 			{
-				if (CheckIfTheDead.has_value())
+				for (auto& WpMonster : CheckIfTheDead.value())
 				{
-					for (auto& WpMonster : CheckIfTheDead.value())
+					if (auto SpMonter = WpMonster.lock();
+						SpMonter)
 					{
-						if (auto SpMonter = WpMonster.lock();
-							SpMonter)
-						{
-							SpMonter->Set_Hp(0);
-						}
+						SpMonter->Set_Hp(0);
 					}
 				}
 			}

@@ -185,11 +185,17 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_NUMPAD1))
 	{
 		_Camera.lock()->Set_At_Transform(
-			FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>(),
+			FindGameObjectWithTag(
+				GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>(),
 			MainCamera::AT_BOSS1);
 		_Camera.lock()->SetDistance(1.1f);
 	}
 	/* -------------------------- */
+
+	if (m_pBoss.lock()->Get_BattleInfo().iHp <= 0)
+	{
+		// 보스 죽었음 !!
+	}
 
 	return S_OK;
 }
@@ -312,7 +318,7 @@ void Hotel_S04::RenderDataSetUp(const bool bTest)
 void Hotel_S04::TriggerSetUp()
 {
 	TriggerMeetingWithGoliath(TriggerCutScene());
-}
+};
 
 std::weak_ptr<Trigger> Hotel_S04::TriggerCutScene()
 {
@@ -323,7 +329,6 @@ std::weak_ptr<Trigger> Hotel_S04::TriggerCutScene()
 			[this]()
 		{
 			// 골리앗연출씬
-
 			Renderer::GetInstance()->SkyOriginColor = Vector4{ 246.f / 255.f,10.f / 255.f,10.f / 255.f,1.f };
 			SoundSystem::GetInstance()->ClearSound();
 			SoundSystem::GetInstance()->Play("Stage1_Boss", 0.12f, true, {}, 0);

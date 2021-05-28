@@ -24,9 +24,9 @@
 #include "ShockWave.h"
 #include "NeroFSM.h"
 #include "ShopPanel.h"
-
 #include <iostream>
 #include <fstream>
+
 using namespace std;
 
 Hotel_S01::Hotel_S01()

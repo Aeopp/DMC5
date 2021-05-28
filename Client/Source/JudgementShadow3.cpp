@@ -106,7 +106,7 @@ void JudgementShadow3::Editor()
 
 	if (bEdit)
 	{
-
+		m_DissolveInfo.DissolveEditor();
 	}
 }
 
@@ -185,7 +185,8 @@ void JudgementShadow3::RenderDebugSK(const DrawInfo& _Info)
 
 void JudgementShadow3::RenderAlphaBlendEffect(const DrawInfo& _Info)
 {
-}
+
+};
 
 void JudgementShadow3::RenderInit()
 {
@@ -241,7 +242,7 @@ void JudgementShadow3::RenderInit()
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
 
-	const Vector3 BurnColor = Vector3{ 244.f / 255.f, 100.f / 255.f, 100.f / 255.f };
+	const Vector3 BurnColor = Vector3{ 255.f / 255.f, 213.f / 255.f, 48.f / 255.f } *0.01f;
 
 	m_DissolveInfo.Initialize(
 		L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\ShinMajin\\JudgementShadow.fbx",

@@ -193,6 +193,11 @@ HRESULT Library_S06::Update(const float _fDeltaTime)
 	}
 	/* -------------------------- */
 
+	if (m_pBoss.lock()->Get_BattleInfo().iHp <= 0)
+	{
+		// 보스 죽었음 !!
+	}
+
 	return S_OK;
 }
 
