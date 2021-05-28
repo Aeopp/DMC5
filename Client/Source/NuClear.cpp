@@ -8,6 +8,7 @@
 #include "ParticleSystem.h"
 #include "NuclearLensFlare.h"
 #include "Nero.h"
+#include "MainCamera.h"
 
 void NuClear::Free()
 {
@@ -166,6 +167,10 @@ void NuClear::Kaboom()
 	{
 		pSnatchPoint.lock()->SetActive(false);
 	}
+	m_pMainCamera.lock()->CalcEm5300NeroAngle();
+	m_pMainCamera.lock()->SetDistance(0.9f);
+	m_pMainCamera.lock()->Set_At_Transform(m_pNero.lock()->GetComponent<Transform>(), MainCamera::AT_PLAYER);
+	m_pMainCamera.lock()->SetFloatingAmount(0.17f);
 };
 
 void NuClear::PlayEnd()
@@ -340,6 +345,7 @@ HRESULT NuClear::Awake()
 	m_pTransform.lock()->SetRotation(Vector3{ 0.0f,0.f ,0.0f });
 
 	m_pNero = std::static_pointer_cast<Nero>(FindGameObjectWithTag(Player).lock());
+	m_pMainCamera = static_pointer_cast<MainCamera>(FindGameObjectWithTag(GAMEOBJECTTAG::TAG_Camera).lock());
 
 	m_pCollider = AddComponent<SphereCollider>();
 	m_pCollider.lock()->ReadyCollider();
@@ -432,6 +438,15 @@ UINT NuClear::Update(const float _fDeltaTime)
 		if (Distance >= 0.3f)
 		{
 			m_pNero.lock()->GetComponent<Transform>().lock()->Translate(Dir * 0.6f * _fDeltaTime);
+		}
+	}
+	if (!m_pMainCamera.expired())
+	{
+		//m_pMainCamera.lock()->ControlDistance(_fDeltaTime * 0.3f, 1.8f);
+		m_pMainCamera.lock()->ControlDistance(_fDeltaTime * 0.3f, 1.5f);
+		if (!IsFallTime())
+		{
+			m_pMainCamera.lock()->SetFloatingAmount(0.4f);
 		}
 	}
 

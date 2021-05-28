@@ -3,6 +3,8 @@
 #include "Nero.h"
 #include "NeroFSM.h"
 #include "SoundSystem.h"
+#include "TimeSystem.h"
+
 
 #pragma region PARENT // ºÎ¸ð
 
@@ -4372,6 +4374,7 @@ HRESULT Resurrection_Loop::StateEnter()
 {
 
 	m_pNero.lock()->ChangeAnimation("Die2_Loop", true, Nero::ANI_DIE2_LOOP);
+	m_pNero.lock()->DanteMustDieBlahBlah();
 	return S_OK;
 }
 
@@ -4382,6 +4385,7 @@ HRESULT Resurrection_Loop::StateExit()
 
 HRESULT Resurrection_Loop::StateUpdate(const float _fDeltaTime)
 {
+
 	if (m_pNero.lock()->GetIsUseRevelion())
 	{
 		m_pFSM->ChangeState(NeroFSM::DIE_END);
@@ -7370,6 +7374,8 @@ HRESULT Overture_Shoot::StateEnter()
 	SoundSystem::GetInstance()->Play("Overture_1", 0.5f, true);
 	SoundSystem::GetInstance()->Play("Overture_3", 0.4f, true);
 	SoundSystem::GetInstance()->Play("Overture_4", 0.6f, true);
+
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
@@ -7435,6 +7441,8 @@ HRESULT Overture_Shoot_Up::StateEnter()
 	SoundSystem::GetInstance()->Play("Overture_1", 0.5f, true);
 	SoundSystem::GetInstance()->Play("Overture_3", 0.4f, true);
 	SoundSystem::GetInstance()->Play("Overture_4", 0.6f, true);
+
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
@@ -7498,6 +7506,8 @@ HRESULT Overture_Shoot_Down::StateEnter()
 	SoundSystem::GetInstance()->Play("Overture_1", 0.5f, true);
 	SoundSystem::GetInstance()->Play("Overture_3", 0.4f, true);
 	SoundSystem::GetInstance()->Play("Overture_4", 0.6f, true);
+
+	m_pNero.lock()->CheckAutoRotate();
 	return S_OK;
 }
 
@@ -13168,6 +13178,7 @@ HRESULT TransformToShinMajin::StateEnter()
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_All_Weapon, false);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, true);
 	m_pNero.lock()->Set_Weapon_State(Nero::NeroCom_Revelion, Nero::WS_Idle);
+	SoundSystem::GetInstance()->Play("Wind1", 0.3f, false, {}, 35000);
 	return S_OK;
 }
 
@@ -13179,6 +13190,14 @@ HRESULT TransformToShinMajin::StateExit()
 
 HRESULT TransformToShinMajin::StateUpdate(const float _fDeltaTime)
 {
+	float fCurAnimationTime = m_pNero.lock()->Get_PlayingTime();
+
+	if (0.186 <= fCurAnimationTime && m_bPlayCbsLongSound)
+	{
+		m_bPlayCbsLongSound = false;
+		SoundSystem::GetInstance()->Play("Judgement_7", 0.2f, true);
+	}
+
 	if (m_pNero.lock()->IsAnimationEnd())
 	{
 		m_pFSM->ChangeState(NeroFSM::SHINMAJIN_ENTER);
@@ -13246,6 +13265,7 @@ HRESULT ShinMajinEnter::StateEnter()
 	m_pNero.lock()->ChangeAnimation("ShinMajinEnter", false, Nero::ANI_SHINMAJIN_ENTER);
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, false);
 	m_pNero.lock()->PlayEffect(Eff_Change);
+	SoundSystem::GetInstance()->Play("Judgement_8",  0.5f, true);
 	return S_OK;
 }
 
@@ -13279,9 +13299,10 @@ ShinMajinJudgement* ShinMajinJudgement::Create(FSMBase* const _pFSM, const UINT 
 
 HRESULT ShinMajinJudgement::StateEnter()
 {
+	SoundSystem::GetInstance()->ClearSound();
 	m_pNero.lock()->ChangeAnimation("Judgement", false, Nero::ANI_SHINMAJIN_JUDGEMENT);
 	
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
 		m_bPlayOnce[i] = true;
 	}
@@ -13290,6 +13311,14 @@ HRESULT ShinMajinJudgement::StateEnter()
 	m_pNero.lock()->SetEm5300();
 	m_pNero.lock()->PlayEffect(Eff_Judgement);
 	m_pNero.lock()->PlayEffect(Eff_JudgementSwordTrail);
+	SoundSystem::GetInstance()->Play("Judgement_5", 0.5f, false);
+	SoundSystem::GetInstance()->Play("Judgement_3", 0.4f, false);
+	//Slow
+
+	vector<Vector3> _LostTimes;
+	_LostTimes.emplace_back(Vector3{ 4.f,1.f,0.55f });
+	TimeSystem::GetInstance()->LostTime(_LostTimes);
+
 	return S_OK;
 }
 
@@ -13328,6 +13357,21 @@ HRESULT ShinMajinJudgement::StateUpdate(const float _fDeltaTime)
 		m_bPlayOnce[3] = false;
 		m_pNero.lock()->ChangeAnimation_Weapon(Nero::NeroCom_JudgementShadow3, "CINEMA_4D___", false);
 	}
+
+	if (0.73f <= fCurAnimationTime && m_bPlayOnce[4])
+	{
+		m_bPlayOnce[4] = false;
+		vector<Vector3> _LostTimes;
+		_LostTimes.emplace_back(Vector3{ 2.f,1.f,0.7f });
+		TimeSystem::GetInstance()->LostTime(_LostTimes);
+	}
+	if (0.89f <= fCurAnimationTime && m_bPlayOnce[5])
+	{
+		m_bPlayOnce[5] = false;
+		m_pNero.lock()->KillEm5300();
+		SoundSystem::GetInstance()->Play("Judgement_2", 0.6f, false);
+	}
+
 
 	if (m_pNero.lock()->IsAnimationEnd())
 	{

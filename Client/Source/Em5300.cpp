@@ -1228,8 +1228,8 @@ UINT Em5300::Update(const float _fDeltaTime)
 		else
 			m_bFight = true;
 	}
-	if (Input::GetKeyDown(DIK_Y))
-		m_eState = CutScene_Start;
+	//if (Input::GetKeyDown(DIK_Y))
+	//	m_eState = CutScene_Start;
 	if (m_bCutScene)
 		Fight(_fDeltaTime);
 	State_Change(_fDeltaTime);
@@ -1471,6 +1471,11 @@ void Em5300::RenderInit()
 	
 }
 
+void Em5300::StartCutScene()
+{
+	m_eState = CutScene_Start;
+}
+
 void Em5300::Rotate(const float _fDeltaTime)
 {
 	if (m_bInteraction == false)
@@ -1626,6 +1631,9 @@ void Em5300::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 	case GAMEOBJECTTAG::Tag_Cbs_Short:
 		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		m_pRush.lock()->m_pCollider.lock()->SetActive(false);
+		break;
+	case GAMEOBJECTTAG::TAG_JudgementSwordCollider:
+		Hit(static_pointer_cast<Unit>(_pOther.lock())->Get_BattleInfo());
 		break;
 	default:
 		break;

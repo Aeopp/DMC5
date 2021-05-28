@@ -47,7 +47,7 @@ HRESULT Library_S06::LoadScene()
 	// Load Start
 
 	SoundSystem::GetInstance()->ClearSound();
-	SoundSystem::GetInstance()->Play("Stage2_Boss", 0.07f, true);
+	SoundSystem::GetInstance()->Play("Stage2_Boss", 0.07f, true, {},0);
 
 	m_fLoadingProgress = 0.01f;
 
@@ -61,20 +61,20 @@ HRESULT Library_S06::LoadScene()
 
 #pragma region Player & Camera
 
-	/*if (auto SpCamera = AddGameObject<Camera>().lock();
-		SpCamera)
-	{
-		SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
-			-38.744f, -0.388f, 30.861f
-			});
-	}*/
+	//if (auto SpCamera = AddGameObject<Camera>().lock();
+	//	SpCamera)
+	//{
+	//	SpCamera->GetComponent<Transform>().lock()->SetPosition(Vector3{
+	//		-38.744f, -0.388f, 30.861f
+	//		});
+	//}
 
 	 /*AddGameObject<FinalReady>();
 	 AddGameObject<Energism>();
 	 AddGameObject<NuClear>();
 	 AddGameObject<EnergismReady>();*/
 	 
-	AddGameObject<MainCamera>();
+	_MainCamera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
 
 #pragma endregion
@@ -409,8 +409,17 @@ void Library_S06::LateInit()
 		SpPlayer)
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -33.711f, -0.994f, 30.884f });
+		SpPlayer->SetAngle(90.f);
+		SpPlayer->BuyCbsLong();
+		SpPlayer->BuyCbsMiddle();
+		SpPlayer->BuyUpgradedOverture();
 	}
-
+	m_pBoss.lock()->StartCutScene();
+	_MainCamera.lock()->Set_At_Transform(m_pBoss.lock()->GetComponent<Transform>(), MainCamera::AT_TRIGGER);
+	_MainCamera.lock()->Set_TriggerCam(MainCamera::STAGE6_BOSS_CUTSCENE, {}, 3.3f);
+	_MainCamera.lock()->SetAngle({0.f, 90.f ,0.f });
+	_MainCamera.lock()->SetShakeInfo(4.f, 4.f);
+	
 	ApplyShopUpgradeDesc();
 
 	Renderer::GetInstance()->LateSceneInit();

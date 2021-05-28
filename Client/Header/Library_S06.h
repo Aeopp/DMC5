@@ -12,6 +12,7 @@ private:
 	std::weak_ptr<class BtlPanel> _BtlPanel{};
 	std::weak_ptr<Em5300> m_pBoss{};
 	std::weak_ptr<class FadeOut> _FadeOut{};
+	std::weak_ptr<class MainCamera> _MainCamera;
 	bool _LateInit = false;
 private:
 	explicit Library_S06();

@@ -55,7 +55,7 @@ HRESULT Library_S05::LoadScene()
 	// Load Start
 
 	SoundSystem::GetInstance()->ClearSound();
-	SoundSystem::GetInstance()->Play("Library_01", 0.07f, true);
+	SoundSystem::GetInstance()->Play("Library_01", _Library05_Volume, true);
 
 	m_fLoadingProgress = 0.01f;
 
@@ -257,6 +257,20 @@ HRESULT Library_S05::Update(const float _fDeltaTime)
 			}
 		}
 	}
+
+
+	if (_Decrease_Library05_Volume)
+		_Library05_Volume = FMath::Lerp(_Library05_Volume, 0.f, _fDeltaTime);
+	else
+		_Library05_Volume = FMath::Lerp(_Library05_Volume, 0.07f, _fDeltaTime * 0.07f);
+
+	if (_DecreaseBattle1_Volume)
+	{
+		_Battle1_Volume = FMath::Lerp(_Battle1_Volume, 0.f, _fDeltaTime);
+		SoundSystem::GetInstance()->Play("Battle3", _Battle1_Volume, false);
+	}
+
+	SoundSystem::GetInstance()->Play("Library_01", _Library05_Volume, false);
 
 	return S_OK;
 }
@@ -718,6 +732,13 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodFirstWave
 			{
 				Sp->SetGlobalActive(true, true);
 			}
+
+			_Decrease_Library05_Volume = true;
+			SoundSystem::GetInstance()->Play("Battle3", _Battle1_Volume, false);
+			SoundSystem::GetInstance()->Play("BattleStart1", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart2", 1.f, true);
+			SoundSystem::GetInstance()->Play("BattleStart4", 1.f, true);
+			SoundSystem::GetInstance()->Play("Em100Spawn", 1.f, true);
 		};
 
 		// 몬스터 전부 사망 하였을때 이벤트 . 
@@ -942,6 +963,9 @@ std::weak_ptr<Trigger> Library_S05::TriggerBloodThirdWave()
 				Sp->SetGlobalActive(false);
 				Sp->ResetRankScore();
 			};
+
+			_Decrease_Library05_Volume = false;
+			_DecreaseBattle1_Volume = true;
 		};
 
 		SpTrigger->EventRegist(

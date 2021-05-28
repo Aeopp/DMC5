@@ -212,6 +212,7 @@
     <ClInclude Include="..\Header\JudgementShadow2.h" />
     <ClInclude Include="..\Header\JudgementShadow3.h" />
     <ClInclude Include="..\Header\JudgementSword.h" />
+    <ClInclude Include="..\Header\JudgementSwordCollider.h" />
     <ClInclude Include="..\Header\JudgementSwordTrail.h" />
     <ClInclude Include="..\Header\LensFlare.h" />
     <ClInclude Include="..\Header\Library_S05.h" />
@@ -352,6 +353,7 @@
     <ClCompile Include="..\Source\JudgementShadow2.cpp" />
     <ClCompile Include="..\Source\JudgementShadow3.cpp" />
     <ClCompile Include="..\Source\JudgementSword.cpp" />
+    <ClCompile Include="..\Source\JudgementSwordCollider.cpp" />
     <ClCompile Include="..\Source\JudgementSwordTrail.cpp" />
     <ClCompile Include="..\Source\LensFlare.cpp" />
     <ClCompile Include="..\Source\Library_S05.cpp" />

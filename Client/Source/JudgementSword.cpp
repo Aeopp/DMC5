@@ -3,6 +3,8 @@
 #include "Nero.h"
 #include "Renderer.h"
 #include "Subset.h"
+#include "JudgementSwordCollider.h"
+#include "SoundSystem.h"
 JudgementSword::JudgementSword()
 	:m_pParentBoneMat(nullptr)
 {
@@ -33,7 +35,17 @@ HRESULT JudgementSword::Ready()
 	PushEditEntity(m_pTransform.lock().get());
 
 	SetActive(false);
-
+	m_vecColliders.reserve(8);
+	auto _Collider = AddGameObject<JudgementSwordCollider>();
+	_Collider.lock()->SetParentBoneMat(m_pMesh->GetToRootMatrixPtr("_000"));
+	m_vecColliders.emplace_back(_Collider);
+	for (int i = 0; i < 7; ++i)
+	{
+		auto _Collider = AddGameObject<JudgementSwordCollider>();
+		string BoneName("_000_" + to_string(i + 2));
+		_Collider.lock()->SetParentBoneMat(m_pMesh->GetToRootMatrixPtr(BoneName));
+		m_vecColliders.emplace_back(_Collider);
+	}
 	return S_OK;
 }
 
@@ -69,7 +81,6 @@ UINT JudgementSword::Update(const float _fDeltaTime)
 		// m_pNero.lock()->StopEffect(Eff_JudgementSwordTrail);
 		SetActive(false);
 	}
-
 	return 0;
 }
 
@@ -94,12 +105,23 @@ void JudgementSword::OnEnable()
 {
 	GameObject::OnEnable();
 	_RenderProperty.bRender = true;
+
+	for (auto _pCollider : m_vecColliders)
+	{
+		_pCollider.lock()->SetActive(true);
+	}
+	SoundSystem::GetInstance()->Play("Judgement_1", 0.5f, false);
 }
 
 void JudgementSword::OnDisable()
 {
 	GameObject::OnDisable();
 	_RenderProperty.bRender = false;
+
+	for (auto _pCollider : m_vecColliders)
+	{
+		_pCollider.lock()->SetActive(false);
+	}
 }
 
 void JudgementSword::ChangeAnimation(const std::string& InitAnimName, const bool bLoop, const AnimNotify& _Notify)

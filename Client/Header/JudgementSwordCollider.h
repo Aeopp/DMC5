@@ -1,21 +1,20 @@
-#ifndef JudgementSword_h__
-#define JudgementSword_h__
+#ifndef JudgementSwordCollider_h__
+#define JudgementSwordCollider_h__
 
-#include "GameObject.h"
+#include "Unit.h"
 #include "RenderInterface.h"
 class Nero;
-class JudgementSwordCollider;
-class JudgementSword :
-	public GameObject,
+class JudgementSwordCollider :
+	public Unit,
 	public ENGINE::RenderInterface
 {
 private:
-    explicit JudgementSword();
-    virtual ~JudgementSword() = default;
+    explicit JudgementSwordCollider();
+    virtual ~JudgementSwordCollider() = default;
     // GameObject을(를) 통해 상속됨
     virtual void Free() override;
 public:
-    static JudgementSword* Create();
+    static JudgementSwordCollider* Create();
     virtual HRESULT Ready() override;
     virtual HRESULT Awake() override;
     virtual HRESULT Start() override;
@@ -24,11 +23,12 @@ public:
     virtual void OnEnable() override;
     virtual void OnDisable() override;
 public:
-	void ChangeAnimation(const std::string& InitAnimName, const bool  bLoop, const AnimNotify& _Notify = {});
+    void SetParentBoneMat(Matrix* _pBoneMat) { m_pParentBoneMat = _pBoneMat; }
 public:
 	virtual void RenderReady() override;
 	virtual void Editor()override;
     virtual std::string GetName() override;
+    virtual void Hit(BT_INFO _BattleInfo, void* pArg = nullptr) override;
 public:
 	void RenderGBufferSK(const DrawInfo& _Info);
 	void RenderShadowSK(const DrawInfo& _Info);
@@ -36,24 +36,12 @@ public:
 	void RenderDebugSK(const DrawInfo& _Info);
     void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderInit();
-public:
-    /* 2021 05 08 트레일 본 위치를 구하기 위해서 이호준 RedQueen 의 함수와 똑같이 만들었음 !! */
-    Matrix* Get_BoneMatrixPtr(std::string _BoneName);
 private:
-    std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
-    std::weak_ptr<Nero>					  m_pNero;
-    std::vector<std::weak_ptr<JudgementSwordCollider>> m_vecColliders;
-
+    std::weak_ptr<Nero> m_pNero;
     Matrix* m_pParentBoneMat;
-
-    std::shared_ptr<ENGINE::Texture>		m_NRMRTex{};
-    std::shared_ptr<ENGINE::Texture>		m_ATOSTex{};
-    std::shared_ptr<ENGINE::Texture>		m_GradationTex{};
-
-    float	m_fAccTime = 0.f;
-
+    std::weak_ptr<CapsuleCollider>	m_pCollider;
 };
 
 
 
-#endif // JudgementSword_h__
+#endif // JudgementSwordCollider_h__
