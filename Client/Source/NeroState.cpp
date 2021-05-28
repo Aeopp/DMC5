@@ -4374,6 +4374,7 @@ HRESULT Resurrection_Loop::StateEnter()
 {
 
 	m_pNero.lock()->ChangeAnimation("Die2_Loop", true, Nero::ANI_DIE2_LOOP);
+	m_pNero.lock()->DanteMustDieBlahBlah();
 	return S_OK;
 }
 
@@ -4384,6 +4385,7 @@ HRESULT Resurrection_Loop::StateExit()
 
 HRESULT Resurrection_Loop::StateUpdate(const float _fDeltaTime)
 {
+
 	if (m_pNero.lock()->GetIsUseRevelion())
 	{
 		m_pFSM->ChangeState(NeroFSM::DIE_END);

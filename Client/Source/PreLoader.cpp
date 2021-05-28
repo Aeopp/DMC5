@@ -8,6 +8,20 @@
 
 void PreLoader::PreLoadResources()
 {
+	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
+	Mesh::InitializeInfo _Info{};
+	_Info.bLocalVertexLocationsStorage = true;
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
+	Resources::Load<ENGINE::StaticMesh>(
+		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
+	/*--------------------------------------------------------- */
+
+
 	JudgementCutStoneParitlcePoolLoad();
 	JudgementDayParticlePoolLoad();
 	JudgementReadyParticlePoolLoad();
@@ -58,18 +72,6 @@ void PreLoader::PreLoadResources()
 	DissolveNhDoorParticlePoolLoad();
 	ChangeParticlePoolLoad();
 
-	/*--- bLocalVertexLocationsStorage true인 애들 먼저 로드 --- */
-	Mesh::InitializeInfo _Info{};
-	_Info.bLocalVertexLocationsStorage = true;
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\sphere00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe00.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Primitive\\pipe01.fbx", _Info);
-	Resources::Load<ENGINE::StaticMesh>(
-		L"..\\..\\Resource\\Mesh\\Static\\Effect\\Stone\\mesh_capcom_debris_stone00_small.fbx", _Info);
-	/*--------------------------------------------------------- */
 
 	SVMCParticleEndPoolLoad();
 	// 리소스 텍스쳐 이펙트 파이어 1 ~ 15;

@@ -1606,6 +1606,11 @@ void Nero::BuyUpgradedOverture()
 	m_pEffOverture.lock()->GetComponent<Transform>().lock()->SetScale({ 0.002f, 0.002f, 0.002f });
 }
 
+void Nero::DanteMustDieBlahBlah()
+{
+	m_pBtlPanel.lock()->SetDanteMustDieActive(true);
+}
+
 void Nero::StopAnimation()
 {
 	m_pMesh[m_iMeshIndex]->StopAnimation();

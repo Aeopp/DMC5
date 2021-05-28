@@ -405,6 +405,9 @@ void Library_S06::LateInit()
 	{
 		SpPlayer->GetComponent<Transform>().lock()->SetPosition({ -33.711f, -0.994f, 30.884f });
 		SpPlayer->SetAngle(90.f);
+		SpPlayer->BuyCbsLong();
+		SpPlayer->BuyCbsMiddle();
+		SpPlayer->BuyUpgradedOverture();
 	}
 	m_pBoss.lock()->StartCutScene();
 	_MainCamera.lock()->Set_At_Transform(m_pBoss.lock()->GetComponent<Transform>(), MainCamera::AT_TRIGGER);

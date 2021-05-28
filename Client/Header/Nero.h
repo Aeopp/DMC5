@@ -465,6 +465,7 @@ public:
 	void BuyUpgradedOverture();
 	void BuyCbsMiddle() { m_bIsHaveCbsMiddle = true; }
 	void BuyCbsLong() { m_bIsHaveCbsLong = true; }
+	void DanteMustDieBlahBlah();
 public:
 	//�ִϸ��̼� ����
 	void  StopAnimation();
