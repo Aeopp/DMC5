@@ -577,8 +577,7 @@ void Nero::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 	break;
 	case MonsterSnatchPoint:
 	{
-		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
-			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
+		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag)
 		{
 			m_pLetMeFlyMonster.reset();
 			m_pFSM->ChangeState(NeroFSM::WIRE_HELLHOUND_END);
@@ -633,8 +632,7 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 		}
 	break;
 	case MonsterSnatchPoint:
-		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag
-			|| NeroFSM::WIRE_HELLHOUND_START == iFsmTag)
+		if (NeroFSM::WIRE_HELLHOUND_LOOP == iFsmTag)
 		{
 			if (m_pLetMeFlyMonster.lock() == static_pointer_cast<Monster>(_pOther.lock()))
 			{

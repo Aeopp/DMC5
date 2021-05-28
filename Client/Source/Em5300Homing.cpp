@@ -245,6 +245,7 @@ HRESULT Em5300Homing::Ready()
 {
 	GameObject::Ready();
 	m_nTag = MonsterWeapon;
+	m_BattleInfo.iAttack = 10;
 
 	RenderInit();
 	// 트랜스폼 초기화 .. 

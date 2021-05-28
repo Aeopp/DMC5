@@ -71,7 +71,7 @@ void Em5300::Fight(const float _fDeltaTime)
 			}
 		}
 	}
-	if (m_BattleInfo.iMaxHp <= 0.f && m_bDead == false)
+	if (m_BattleInfo.iHp <= 0.f && m_bDead == false)
 	{
 		m_bIng = true;
 		m_bDead = true;
@@ -475,7 +475,7 @@ void Em5300::State_Change(const float _fDeltaTime)
 		break;
 	case Em5300::New_Missile_Start:
 		if (m_bIng)
-		{
+		{			
 			Update_Angle();
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("New_Missile_Start", false, {}, 1.f, 20.f, true);
@@ -516,6 +516,11 @@ void Em5300::State_Change(const float _fDeltaTime)
 	case Em5300::Attack_Rain_Start:
 		if (m_bIng)
 		{
+			if (m_fCenterY >= -0.2f)
+			{
+				m_fCenterY -= 0.01f;
+				m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+			}
 			Update_Angle();
 			m_bInteraction = true;
 			m_pMesh->PlayAnimation("Attack_Rain_Start", false, {}, 1.f, 20.f, true);
@@ -745,6 +750,26 @@ void Em5300::State_Change(const float _fDeltaTime)
 	case Em5300::Hit_Buster_Stab_End:
 		break;
 	case Em5300::Dead:
+		if (m_bHit)
+		{
+			if (m_pMesh->PlayingTime() <= 0.7f)
+			{
+				if (m_fCenterY <= 0.15f)
+				{
+					m_fCenterY += 0.008f;
+					m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+				}
+			}
+			else
+			{
+				if (m_fCenterY <= 0.35f)
+				{
+					m_fCenterY += 0.008f;
+					m_pCollider.lock()->SetCenter({ 0.f, m_fCenterY, 0.f });
+				}
+			}
+			m_pMesh->PlayAnimation("Dead", false, {}, 1.f, 20.f, true);
+		}
 		break;
 	case Em5300::Down_Loop:
 		if (m_bGroggy == true)
@@ -917,6 +942,9 @@ void Em5300::State_Change(const float _fDeltaTime)
 		{
 			m_bCutStart = false;
 			m_pMesh->PlayAnimation("Attack_Rush_Loop", true, {}, 1.f, 20.f);
+
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Rush", { 1,1 }, 5.f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5300Idle", { 1,5 }, 0.3f, false);
 		}
 		if (m_fCenterY <= 0.2f)
 		{
@@ -927,10 +955,11 @@ void Em5300::State_Change(const float _fDeltaTime)
 			m_pTransform.lock()->Translate({ -0.05f, 0.f, 0.f });
 		else
 		{
+			m_bRain = true;
 			m_pCollider.lock()->SetTrigger(false);
 			m_pCollider.lock()->SetRigid(true);
 			m_pCollider.lock()->SetGravity(true);
-			m_eState = Idle;
+			m_eState = Attack_Rain_Start;
 			m_bCutScene = true;
 		}
 		break;
@@ -1221,15 +1250,6 @@ UINT Em5300::Update(const float _fDeltaTime)
 	}*/
 	Rotate(_fDeltaTime);
 
-	if (Input::GetKeyDown(DIK_T))
-	{
-		if (m_bFight)
-			m_bFight = false;
-		else
-			m_bFight = true;
-	}
-	//if (Input::GetKeyDown(DIK_Y))
-	//	m_eState = CutScene_Start;
 	if (m_bCutScene)
 		Fight(_fDeltaTime);
 	State_Change(_fDeltaTime);
@@ -1335,6 +1355,7 @@ void Em5300::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
+		m_pDissolve.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -1408,7 +1429,7 @@ void Em5300::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{"gbuffer_dsSK",
+		{DissolveInfo::ShaderSkeletonName,
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
@@ -1453,6 +1474,12 @@ void Em5300::RenderInit()
 			DrawCollider(_Info);
 		}
 	} };
+
+	m_pDissolve.Initialize("..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em5300\\Em5300.X",
+		Vector3{
+			1.f,0.f,0.f
+		});
+
 	RenderInterface::Initialize(_InitRenderProp);
 
 	// ½ºÄÌ·¹Åæ ¸Þ½¬ ·Îµù ... 

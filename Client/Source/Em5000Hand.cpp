@@ -25,7 +25,7 @@ HRESULT Em5000Hand::Ready()
 	Unit::Ready();
 	RenderInit();
 
-	m_BattleInfo.iAttack = 25;
+	m_BattleInfo.iAttack = 15;
 
 	return S_OK;
 }
