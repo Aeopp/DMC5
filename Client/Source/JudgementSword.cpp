@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Subset.h"
 #include "JudgementSwordCollider.h"
+#include "SoundSystem.h"
 JudgementSword::JudgementSword()
 	:m_pParentBoneMat(nullptr)
 {
@@ -109,6 +110,7 @@ void JudgementSword::OnEnable()
 	{
 		_pCollider.lock()->SetActive(true);
 	}
+	SoundSystem::GetInstance()->Play("Judgement_1", 0.5f, false);
 }
 
 void JudgementSword::OnDisable()

@@ -2,6 +2,7 @@
 #include "MapAniObject.h"
 #include "Subset.h"
 #include "SoundSystem.h"
+#include "Nero.h"
 MapAniObject::MapAniObject()
 {
 }
@@ -109,6 +110,30 @@ void MapAniObject::OnCollisionEnter(std::weak_ptr<GameObject> _pOther)
 			SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
 			break;
 		}
+	case GAMEOBJECTTAG::Player:
+	{
+		UINT NeroCurAnimationIndex = static_pointer_cast<Nero>(FindGameObjectWithTag(GAMEOBJECTTAG::Player).lock())->Get_CurAnimationIndex();
+		switch (NeroCurAnimationIndex)
+		{
+		case Nero::ANI_HIT_AIR_AWAY:
+		case Nero::ANI_HIT_GROUND_AWAY:
+			switch (m_iTag)
+			{
+			case Tag_BrokenBookShelf:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("HitTable", { 1,12 }, 0.4f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
+				break;
+			case Tag_BrokenPeople:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("HitPeople", { 1,5 }, 0.8f, false);
+				break;
+			case Tag_BrokenTable:
+				SoundSystem::GetInstance()->RandSoundKeyPlay("HitTable", { 1,12 }, 0.4f, false);
+				SoundSystem::GetInstance()->RandSoundKeyPlay("HitTree", { 1,5 }, 0.4f, false);
+				break;
+			}
+		}
+	}
+		break;
 	}
 }
 
@@ -119,7 +144,8 @@ void MapAniObject::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 		|| GAMEOBJECTTAG::Tag_Cbs_Middle == _pOther.lock()->m_nTag
 		|| GAMEOBJECTTAG::Tag_Cbs_Long == _pOther.lock()->m_nTag
 		|| GAMEOBJECTTAG::Overture == _pOther.lock()->m_nTag
-		|| GAMEOBJECTTAG::MonsterWeapon == _pOther.lock()->m_nTag))
+		|| GAMEOBJECTTAG::MonsterWeapon == _pOther.lock()->m_nTag
+		|| GAMEOBJECTTAG::Eff_NuClear))
 		return;
 	m_pCollider.lock()->SetActive(false);
 	m_pMesh->PlayAnimation(0, false);
