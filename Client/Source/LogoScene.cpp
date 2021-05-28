@@ -12,7 +12,6 @@
 #include "Library_S06.h"
 #include "EndingScene.h"
 
-
 void LogoScene::Free()
 {
 	Scene::Free();

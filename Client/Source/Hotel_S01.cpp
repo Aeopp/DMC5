@@ -94,7 +94,7 @@ HRESULT Hotel_S01::LoadScene()
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
-
+	 
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
