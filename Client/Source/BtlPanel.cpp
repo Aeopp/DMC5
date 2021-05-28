@@ -636,6 +636,42 @@ void BtlPanel::RenderUI(const DrawInfo& _ImplInfo)
 		}
 
 		//
+		CurID = APPEAR_GOLIATH;
+		if (_ImplInfo.IsAfterPostProcessing && 0.f < _AppearGoliathAlpha)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _DMDBaseLineTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.0625f), 2u);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", (1.f - _AppearGoliathAlpha) + 0.1f);
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(22);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+
+		//
+		CurID = APPEAR_ARTEMIS;
+		if (_ImplInfo.IsAfterPostProcessing && 0.f < _AppearArtemisAlpha)
+		{
+			_ImplInfo.Fx->SetTexture("ALB_NOsRGBMap", _DMDBaseLineTex->GetTexture());
+			_ImplInfo.Fx->SetFloat("_BrightScale", 1.f);
+			_ImplInfo.Fx->SetFloatArray("_MinTexUV", Vector2(0.f, 0.f), 2u);
+			_ImplInfo.Fx->SetFloatArray("_MaxTexUV", Vector2(1.f, 0.0625f), 2u);
+			_ImplInfo.Fx->SetFloat("_SliceAmount", (1.f - _AppearArtemisAlpha) + 0.1f);
+
+			Create_ScreenMat(CurID, ScreenMat);
+			_ImplInfo.Fx->SetMatrix("ScreenMat", &ScreenMat);
+
+			_ImplInfo.Fx->BeginPass(22);
+			SharedSubset->Render(_ImplInfo.Fx);
+			_ImplInfo.Fx->EndPass();
+		}
+
+		//
 		CurID = DANTE_MUST_DIE;
 		if (_ImplInfo.IsAfterPostProcessing && 0.f < _DMDAlpha)
 		{
@@ -931,6 +967,10 @@ HRESULT BtlPanel::Ready()
 	_FontVec[FT_DANTE_MUST_DIE].lock()->SetRenderFlag(false);
 	_FontVec[FT_GIVE_UP].lock()->SetRenderFlag(false);
 	_FontVec[FT_USE_REBELLION].lock()->SetRenderFlag(false);
+	_FontVec[FT_GOLIATH_0].lock()->SetRenderFlag(false);
+	_FontVec[FT_GOLIATH_1].lock()->SetRenderFlag(false);
+	_FontVec[FT_ARTEMIS_0].lock()->SetRenderFlag(false);
+	_FontVec[FT_ARTEMIS_1].lock()->SetRenderFlag(false);
 
 	return S_OK;
 }
@@ -981,7 +1021,7 @@ void BtlPanel::Editor()
 
 	if (bEdit)
 	{
-		Imgui_ModifyUI(DANTE_MUST_DIE);
+		Imgui_ModifyUI(APPEAR_ARTEMIS);
 	}
 }
 
@@ -1329,6 +1369,18 @@ void BtlPanel::SetDanteMustDieActive(bool IsActive)
 	_UIDescs[DANTE_MUST_DIE].Using = IsActive;
 }
 
+void BtlPanel::SetAppearGoliath(bool IsActive)
+{
+	_UIDescs[APPEAR_GOLIATH].Using = IsActive;
+	_AppearAliveTime = 0.f;
+}
+
+void BtlPanel::SetAppearArtemis(bool IsActive)
+{
+	_UIDescs[APPEAR_ARTEMIS].Using = IsActive;
+	_AppearAliveTime = 0.f;
+}
+
 void BtlPanel::SetRedOrbActive(bool IsActive)
 {
 	_UIDescs[REDORB].Using = IsActive;
@@ -1369,6 +1421,8 @@ void BtlPanel::Init_UIDescs()
 	_UIDescs[NULLBLACK] = { false, Vector3(640.f, 360.f, 0.02f), Vector3(12.8f, 7.2f, 1.f) };
 	_UIDescs[SECRET_VISIONS] = { false, Vector3(640.f, 60.f, 0.5f), Vector3(0.7f, 0.7f, 1.f) };
 	_UIDescs[DANTE_MUST_DIE] = { false, Vector3(640.f, 360.f, 0.03f), Vector3(1.f, 1.f, 1.f) };
+	_UIDescs[APPEAR_GOLIATH] = { false, Vector3(640.f, 360.f, 0.03f), Vector3(1.f, 1.f, 1.f) };
+	_UIDescs[APPEAR_ARTEMIS] = { false, Vector3(640.f, 360.f, 0.03f), Vector3(1.f, 1.f, 1.f) };
 }
 
 void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
@@ -2025,6 +2079,16 @@ void BtlPanel::Create_ScreenMat(UI_DESC_ID _ID, Matrix& _Out, int _Opt/*= 0*/)
 		}
 		break;
 
+	case APPEAR_GOLIATH:
+	case APPEAR_ARTEMIS:
+		_Out._11 = 8.f;
+		_Out._22 = 0.15f;
+		_Out._33 = _UIDescs[_ID].Scale.z;
+		_Out._41 = 200.f - (g_nWndCX >> 1);
+		_Out._42 = -(360.f - (g_nWndCY >> 1));
+		_Out._43 = _UIDescs[_ID].Pos.z;
+		break;
+
 	default: DEFAULT:
 		_Out._11 = _UIDescs[_ID].Scale.x;
 		_Out._22 = _UIDescs[_ID].Scale.y;
@@ -2490,6 +2554,68 @@ void BtlPanel::Update_Font(const float _fDeltaTime)
 		_FontVec[FT_GIVE_UP].lock()->SetRenderFlag(false);
 		_FontVec[FT_USE_REBELLION].lock()->SetRenderFlag(false);
 	}
+
+	//
+	if (_UIDescs[APPEAR_GOLIATH].Using)
+	{
+		if (auto pFont = _FontVec[FT_GOLIATH_0].lock(); pFont)
+		{
+			pFont->SetText(
+				"Incandescent colossus",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ 70.f, 330.f },
+				{ 0.5f, 0.8f }
+			);
+			pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+		}
+
+		if (auto pFont = _FontVec[FT_GOLIATH_1].lock(); pFont)
+		{
+			pFont->SetText(
+				"Goliath",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ 78.f, 410.f },
+				{ 1.25f, 1.25f }
+			);
+			pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+		}
+	}
+	else
+	{
+		_FontVec[FT_GOLIATH_0].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+		_FontVec[FT_GOLIATH_1].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+	}
+
+	//
+	if (_UIDescs[APPEAR_ARTEMIS].Using)
+	{
+		if (auto pFont = _FontVec[FT_ARTEMIS_0].lock(); pFont)
+		{
+			pFont->SetText(
+				"Illuminating  corruption",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ 70.f, 330.f },
+				{ 0.45f, 0.8f }
+			);
+			pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+		}
+
+		if (auto pFont = _FontVec[FT_ARTEMIS_1].lock(); pFont)
+		{
+			pFont->SetText(
+				"Arte mis",
+				Font::TEX_ID::DMC5_GREEN_GRAD,
+				{ 84.f, 410.f },
+				{ 0.95f, 1.25f }
+			);
+			pFont->SetRenderFlag(true, Font::FADE_ID::ALPHA_LINEAR);
+		}
+	}
+	else
+	{
+		_FontVec[FT_ARTEMIS_0].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+		_FontVec[FT_ARTEMIS_1].lock()->SetRenderFlag(false, Font::FADE_ID::ALPHA_LINEAR);
+	}
 }
 
 void BtlPanel::Update_Etc(const float _fDeltaTime)
@@ -2736,6 +2862,60 @@ void BtlPanel::Update_Etc(const float _fDeltaTime)
 		}
 	}
 
+	// AppearGoliath
+	if (_UIDescs[APPEAR_GOLIATH].Using)
+	{
+		if (1.f > _AppearGoliathAlpha)
+		{
+			_AppearGoliathAlpha += 1.3f * _fDeltaTime;
+			if (1.f < _AppearGoliathAlpha)
+				_AppearGoliathAlpha = 1.f;
+		}
+
+		_AppearAliveTime += _fDeltaTime;
+		if (5.f < _AppearAliveTime)
+		{
+			_UIDescs[APPEAR_GOLIATH].Using = false;
+			_UIDescs[APPEAR_GOLIATH].Using = 0.f;
+		}
+	}
+	else
+	{
+		if (0.f < _AppearGoliathAlpha)
+		{
+			_AppearGoliathAlpha -= 1.3f * _fDeltaTime;
+			if (0.f > _AppearGoliathAlpha)
+				_AppearGoliathAlpha = 0.f;
+		}
+	}
+
+	// AppearArtemis
+	if (_UIDescs[APPEAR_ARTEMIS].Using)
+	{
+		if (1.f > _AppearArtemisAlpha)
+		{
+			_AppearArtemisAlpha += 1.3f * _fDeltaTime;
+			if (1.f < _AppearArtemisAlpha)
+				_AppearArtemisAlpha = 1.f;
+		}
+
+		_AppearAliveTime += _fDeltaTime;
+		if (5.f < _AppearAliveTime)
+		{
+			_UIDescs[APPEAR_ARTEMIS].Using = false;
+			_UIDescs[APPEAR_ARTEMIS].Using = 0.f;
+		}
+	}
+	else
+	{
+		if (0.f < _AppearArtemisAlpha)
+		{
+			_AppearArtemisAlpha -= 1.3f * _fDeltaTime;
+			if (0.f > _AppearArtemisAlpha)
+				_AppearArtemisAlpha = 0.f;
+		}
+	}
+
 	//POINT pt{};
 	//GetCursorPos(&pt);
 	//ScreenToClient(g_hWnd, &pt);_HPGlassRotY
@@ -2826,9 +3006,13 @@ void BtlPanel::Check_KeyInput(const float _fDeltaTime)
 	//	//	temp = 1u;
 	//	//SetTDTGaugeLevel(temp++);
 
-	//	static bool bActive = _UIDescs[DANTE_MUST_DIE].Using;
+	//	//static bool bActive = _UIDescs[DANTE_MUST_DIE].Using;
+	//	//bActive = !bActive;
+	//	//SetDanteMustDieActive(bActive);
+	//
+	//	static bool bActive = _UIDescs[APPEAR_ARTEMIS].Using;
 	//	bActive = !bActive;
-	//	SetDanteMustDieActive(bActive);
+	//	SetAppearArtemis(bActive);
 	//}
 	////////////////////////////
 

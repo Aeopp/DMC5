@@ -93,6 +93,12 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+	AddGameObject<Judgement>();
+	AddGameObject<Change>();
+	AddGameObject<SandGlassEffect>();
+	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(7);
+	_JudgementSwordTrail =  AddGameObject<JudgementSwordTrail>();
+
 
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
@@ -108,12 +114,12 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	//_Camera = AddGameObject<Camera>();
+	// _Camera = AddGameObject<Camera>();
+// 	_Camera = AddGameObject<Camera>();
 	
 	_MainCamera = AddGameObject<MainCamera>();
 	_Player     = AddGameObject<Nero>();
 
-   
 #pragma endregion
 
 	m_fLoadingProgress = 0.2f;
@@ -133,8 +139,8 @@ HRESULT TestScene::LoadScene()
 
 	//LoadMap();
 
-	auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(1);
 
 #pragma endregion
 
@@ -255,12 +261,11 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 {
 	Scene::Update(_fDeltaTime);
 
-	 /*if (auto SpPlayer = _Player.lock();
-	 	SpPlayer)
-	 {
-	 	SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
-	 }*/
-
+	/*if (auto SpPlayer = _Player.lock();
+		SpPlayer)
+	{
+		SpPlayer->GetComponent<Transform>().lock()->SetPosition(Vector3{0.f,0.12f ,0.f});
+	}*/
 
 	if (Input::GetKeyDown(DIK_INSERT))
 	{

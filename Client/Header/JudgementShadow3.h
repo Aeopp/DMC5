@@ -35,12 +35,10 @@ public:
 	void RenderShadowSK(const DrawInfo& _Info);
 	void RenderDebugBone(const DrawInfo& _Info);
 	void RenderDebugSK(const DrawInfo& _Info);
-    void RenderAlphaBlendEffect(const DrawInfo& _Info);
 	void RenderInit();
 private:
     std::shared_ptr<ENGINE::SkeletonMesh> m_pMesh;
     std::weak_ptr<Nero>					  m_pNero;
-    DissolveInfo                          m_DissolveInfo;
 };
 
 

@@ -54,9 +54,6 @@ UINT JudgementShadow3::Update(const float _fDeltaTime)
 	GameObject::Update(_fDeltaTime);
 	m_pMesh->Update(_fDeltaTime);
 
-	m_DissolveInfo.DissolveUpdate(_fDeltaTime, _RenderUpdateInfo.World);
-	m_DissolveInfo.SliceAmount += _fDeltaTime;
-
 	if (m_pMesh->IsAnimationEnd())
 	{
 		SetActive(false);
@@ -123,7 +120,6 @@ void JudgementShadow3::RenderGBufferSK(const DrawInfo& _Info)
 	if (Numsubset > 0)
 	{
 		m_pMesh->BindVTF(_Info.Fx);
-		m_DissolveInfo.DissolveVariableBind(_Info.Fx);
 	};
 	for (uint32 i = 0; i < Numsubset; ++i)
 	{
@@ -183,10 +179,6 @@ void JudgementShadow3::RenderDebugSK(const DrawInfo& _Info)
 	};
 }
 
-void JudgementShadow3::RenderAlphaBlendEffect(const DrawInfo& _Info)
-{
-}
-
 void JudgementShadow3::RenderInit()
 {
 	SetRenderEnable(true);
@@ -195,13 +187,14 @@ void JudgementShadow3::RenderInit()
 	_InitRenderProp.bRender = true;
 	_InitRenderProp.RenderOrders[RenderProperty::Order::GBuffer] =
 	{
-		{DissolveInfo::ShaderSkeletonName,
+		{"gbuffer_dsSK",
 		[this](const DrawInfo& _Info)
 			{
 				RenderGBufferSK(_Info);
 			}
 		},
 	};
+
 	_InitRenderProp.RenderOrders[RenderProperty::Order::Shadow]
 		=
 	{
@@ -240,12 +233,6 @@ void JudgementShadow3::RenderInit()
 		}
 	} };
 	RenderInterface::Initialize(_InitRenderProp);
-
-	const Vector3 BurnColor = Vector3{ 244.f / 255.f, 100.f / 255.f, 100.f / 255.f };
-
-	m_DissolveInfo.Initialize(
-		L"..\\..\\Resource\\Mesh\\Dynamic\\Dante\\ShinMajin\\JudgementShadow.fbx",
-		BurnColor, BurnColor, 0.5f);
 
 	Mesh::InitializeInfo _InitInfo{};
 	_InitInfo.bLocalVertexLocationsStorage = false;

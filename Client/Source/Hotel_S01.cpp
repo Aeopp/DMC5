@@ -24,9 +24,9 @@
 #include "ShockWave.h"
 #include "NeroFSM.h"
 #include "ShopPanel.h"
-
 #include <iostream>
 #include <fstream>
+
 using namespace std;
 
 Hotel_S01::Hotel_S01()
@@ -94,7 +94,7 @@ HRESULT Hotel_S01::LoadScene()
 
 	auto Map = AddGameObject<TempMap>().lock();
 	Map->LoadMap(1);
-
+	 
 #pragma endregion
 
 	m_fLoadingProgress = 0.6f;
