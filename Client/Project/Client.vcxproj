@@ -227,6 +227,7 @@
     <ClInclude Include="..\Header\NeroCoat.h" />
     <ClInclude Include="..\Header\NewWingSword.h" />
     <ClInclude Include="..\Header\NhDoor.h" />
+    <ClInclude Include="..\Header\NoCameraColl.h" />
     <ClInclude Include="..\Header\NuClear.h" />
     <ClInclude Include="..\Header\NuClearLensFlare.h" />
     <ClInclude Include="..\Header\PreLoader.h" />
@@ -368,6 +369,7 @@
     <ClCompile Include="..\Source\NeroCoat.cpp" />
     <ClCompile Include="..\Source\NewWingSword.cpp" />
     <ClCompile Include="..\Source\NhDoor.cpp" />
+    <ClCompile Include="..\Source\NoCameraColl.cpp" />
     <ClCompile Include="..\Source\NuClear.cpp" />
     <ClCompile Include="..\Source\NuclearLensFlare.cpp" />
     <ClCompile Include="..\Source\PreLoader.cpp" />

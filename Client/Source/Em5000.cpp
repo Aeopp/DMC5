@@ -46,7 +46,7 @@ void Em5000::Fight(const float _fDeltaTime)
 			m_bIng = true;
 			m_bHit = true;
 			m_bDead = true;
-			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 0.3f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 0.5f, false);
 		}
 	}
 	else
@@ -57,7 +57,7 @@ void Em5000::Fight(const float _fDeltaTime)
 			m_bIng = true;
 			m_bHit = true;
 			m_bDead = true;
-			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 0.3f, false);
+			SoundSystem::GetInstance()->RandSoundKeyPlay("Em5000Dead", { 1,1 }, 0.6f, false);
 		}
 	}
 

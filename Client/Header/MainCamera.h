@@ -47,6 +47,7 @@ public:
     void SetEye(const Vector3& _Eye) { m_vEye = _Eye; }
     void CalcEm5300NeroAngle();
     void SetFloatingAmount(float _Amount) { m_fFloatingAmount = _Amount; }
+    void SetCollEnable(bool _ActiveOrNot) { m_bCollEnable = _ActiveOrNot; }
 public:
     void DecreaseDistance(float _GoalDis,float _fDeltaTime);
     void IncreaseDistance(float _GoalDis, float _fDeltaTime);
@@ -126,6 +127,8 @@ private:
 
     float   m_fFadeOutDelayTime = 0.f;
     bool    m_bPlayOnce = false;
+
+    bool    m_bCollEnable = true;
 };
 
 

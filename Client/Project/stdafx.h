@@ -116,6 +116,7 @@ enum GAMEOBJECTTAG
 	TAG_JudgementSwordCollider,
 	TAG_Trigger,
 	TAG_NhDoor,
+	TAG_NoCameraColl,
 	Eff_SnatchRush,
 	Eff_Streak,
 	Eff_Streak_End,

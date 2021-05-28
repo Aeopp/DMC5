@@ -13266,6 +13266,7 @@ HRESULT ShinMajinEnter::StateEnter()
 	m_pNero.lock()->SetActive_NeroComponent(Nero::NeroCom_Revelion, false);
 	m_pNero.lock()->PlayEffect(Eff_Change);
 	SoundSystem::GetInstance()->Play("Judgement_8",  0.5f, true);
+	m_pNero.lock()->IncreaseHp(200);
 	return S_OK;
 }
 

@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "NoCameraColl.h"
 using namespace std;
 
 Hotel_S04::Hotel_S04()
@@ -61,6 +62,8 @@ HRESULT Hotel_S04::LoadScene()
 	//		36.596f, 
 	//		});
 	//}
+
+	AddGameObject<NoCameraColl>();
 
 	_Camera = AddGameObject<MainCamera>();
 	_Player = AddGameObject<Nero>();
@@ -173,14 +176,6 @@ HRESULT Hotel_S04::Update(const float _fDeltaTime)
 		{
 			SceneManager::LoadScene(LoadingScene::Create(SCENE_ID::LIBRARY_S05));
 		}
-	}
-	if (Input::GetKeyDown(DIK_NUMPAD1))
-	{
-		_Camera.lock()->Set_At_Transform(
-			FindGameObjectWithTag(
-				GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>(),
-			MainCamera::AT_BOSS1);
-		_Camera.lock()->SetDistance(1.1f);
 	}
 	/* -------------------------- */
 
@@ -436,10 +431,6 @@ void Hotel_S04::LateInit()
 		SpMainCamera->SetAngle({ -5.f,170.f,0.f });
 		SpMainCamera->SetStartPos();
 	}
-
-	/*_Camera.lock()->Set_At_Transform(
-		FindGameObjectWithTag(GAMEOBJECTTAG::Monster5000).lock()->GetComponent<Transform>() ,
-		MainCamera::AT_BOSS1);*/
 	
 	Renderer::GetInstance()->LateSceneInit();
 	

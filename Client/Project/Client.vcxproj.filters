@@ -584,6 +584,7 @@
     </ClInclude>
     <ClInclude Include="..\Header\Revelion.h" />
     <ClInclude Include="..\Header\JudgementSwordCollider.h" />
+    <ClInclude Include="..\Header\NoCameraColl.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -950,6 +951,7 @@
     </ClCompile>
     <ClCompile Include="..\Source\Revelion.cpp" />
     <ClCompile Include="..\Source\JudgementSwordCollider.cpp" />
+    <ClCompile Include="..\Source\NoCameraColl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
@@ -1044,6 +1046,7 @@
     <None Include="..\..\Resource\Shader\Effect\JudgementCutParticle.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\JudgementSwordTrail.hlsl" />
     <None Include="..\..\Resource\Shader\Effect\StoneParticle.hlsl" />
+    <None Include="..\..\Resource\Shader\Effect\JudgementShadowMotionTrail.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Resource\EffectData\ExplosionEnd.txt" />

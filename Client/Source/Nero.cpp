@@ -651,11 +651,13 @@ void Nero::OnCollisionStay(std::weak_ptr<GameObject> _pOther)
 
 void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 {
+	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
+	if(TAG_NoCameraColl == eTag)
+		m_pCamera.lock()->SetCollEnable(false);
 	if (m_Nohit)
 		return;
 	UINT iFsmTag = m_pFSM->GetCurrentIndex();
 
-	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
 	switch (eTag)
 	{
 	case MonsterWeapon:
@@ -686,7 +688,9 @@ void Nero::OnTriggerEnter(std::weak_ptr<GameObject> _pOther)
 
 void Nero::OnTriggerExit(std::weak_ptr<GameObject> _pOther)
 {
-
+	GAMEOBJECTTAG eTag = GAMEOBJECTTAG(_pOther.lock()->m_nTag);
+	if (TAG_NoCameraColl == eTag)
+		m_pCamera.lock()->SetCollEnable(true);
 }
 
 void Nero::RenderGBufferSK(const DrawInfo& _Info)
