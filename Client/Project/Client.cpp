@@ -26,9 +26,9 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 static constexpr bool bWindowed = true;
 static constexpr bool bMultiSample = false;
 // 풀스크린 일때는 기본적으로 작동 true 일시 창모드 일때도 보더리스로 작동 !! 
-static constexpr bool bBorderless = true;
-static constexpr bool bImguiInit = false;
-static constexpr bool bShowCursor = false;
+static constexpr bool bBorderless = false;
+static constexpr bool bImguiInit = true;
+static constexpr bool bShowCursor = true;
 
 static const std::filesystem::path SoundDirectoryPath = "..\\..\\Resource\\Sound\\";
 
@@ -36,8 +36,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpsz
 {
 	srand((unsigned int)time(NULL));
 
-	g_nWndCX = 1280;
-	g_nWndCY = 720;
+	g_nWndCX = 1920;
+	g_nWndCY = 1080;
 
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
