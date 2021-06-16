@@ -173,18 +173,22 @@ void SkeletonMesh::AnimationEditor()&
 						StopAnimation();
 					}
 					ImGui::SameLine();
+
 					if (ImGui::Button("Continue"))
 					{
 						ContinueAnimation();
 					}
+
 					float PlayTime = PlayingTime();
+
 					if (ImGui::SliderFloat("Playing Time", &PlayTime, 0.0, 1.0f))
 					{
 						SetPlayingTime(PlayTime);
 					}
+
 					float PlayOriginTime = PlayingOriginTime();
-					if(ImGui::SliderFloat("PlayingOrigin Time",&PlayOriginTime,0.0f,
-						CurPlayAnimInfo.Duration))
+
+					if(ImGui::SliderFloat("PlayingOrigin Time",&PlayOriginTime,0.0f,CurPlayAnimInfo.Duration))
 					{
 						SetPlayingTime(PlayOriginTime/CurPlayAnimInfo.Duration);
 					}
@@ -394,7 +398,6 @@ void SkeletonMesh::AnimationSave(
 	const std::filesystem::path& FullPath)&
 {
 	if (!AnimInfoTable) return;
-
 	using namespace rapidjson;
 
 	StringBuffer StrBuf{};
@@ -406,7 +409,6 @@ void SkeletonMesh::AnimationSave(
 	{
 		Writer.Key("RootMotion_DeltaFactor");
 		Writer.Double(RootMotionDeltaFactor);
-
 		
 		Writer.Key("Offset Euler Yaw"); 
 		Writer.Double(EulerOffset->y);
@@ -414,7 +416,6 @@ void SkeletonMesh::AnimationSave(
 		Writer.Double(EulerOffset->x);
 		Writer.Key("Offset Euler Roll");
 		Writer.Double(EulerOffset->z);
-		
 
 		if (*bRootMotionScale)
 		{
@@ -456,10 +457,6 @@ void SkeletonMesh::AnimationSave(
 		Writer.EndArray();
 	}
 	Writer.EndObject();
-
-
-
-
 	Writer.EndObject();
 
 	std::filesystem::path AnimPath = FullPath;
@@ -1335,6 +1332,7 @@ Vector3 SkeletonMesh::CalcRootMotionDeltaPos(
 	const float AnimPrevFrameMotionTime,
 	const float AnimMotionTime)&
 {
+	// 에디터에서 설정한 타겟으로 루트모션 진행
 	auto* const RootMotionPosNode = GetNode(*RootMotionTransitionName);
 	if (RootMotionPosNode)
 	{
@@ -1344,13 +1342,15 @@ Vector3 SkeletonMesh::CalcRootMotionDeltaPos(
 		{
 			const auto& RootAnimTrack = iter->second;
 
+			// T가 1.0보다 커진 경우 Delta = T - 1.0 + PrevT - 0.0
 			if (bTimeBeyondAnimation)
 			{
-				const Vector3 EndPos = Node::CurrentAnimationPosition(RootAnimTrack, AnimDuraion);
-				const Vector3 PrevPos = Node::CurrentAnimationPosition(RootAnimTrack, AnimPrevFrameMotionTime);
+				const Vector3 EndPos =   Node::CurrentAnimationPosition(RootAnimTrack, AnimDuraion);
+				const Vector3 PrevPos =  Node::CurrentAnimationPosition(RootAnimTrack, AnimPrevFrameMotionTime);
 				const Vector3 StartPos = Node::CurrentAnimationPosition(RootAnimTrack, 0.0f);
-				const Vector3 CurPos = Node::CurrentAnimationPosition(RootAnimTrack, bTimeBeyondAnimation.value());
-				
+				const Vector3 CurPos =   Node::CurrentAnimationPosition(RootAnimTrack, bTimeBeyondAnimation.value());
+
+				// 모델이 회전까지 한다면 방향까지도 회전시켜준다. 
 				Quaternion Quat = Node::CurrentAnimationQuaternion(RootAnimTrack, AnimMotionTime);
 				Quat = (*tOffset) * Quat;
 				
@@ -1359,20 +1359,22 @@ Vector3 SkeletonMesh::CalcRootMotionDeltaPos(
 				Vector3 DeltaDir = (EndPos - PrevPos) + (CurPos - StartPos);
 				D3DXVec3TransformNormal(&DeltaDir, &DeltaDir, &Rot);
 				return DeltaDir;
-				// 0.9 1.3 일 경우   1.0 - 0.9 0.3 - 0.0.하고 0.3으로 프리 초기화
 			}
 			else
 			{
+				// 현재 프레임  <---- 이전프레임 의 위치 차이를 구하기 위함 . 
 				const Vector3 CurPos = Node::CurrentAnimationPosition(RootAnimTrack, AnimMotionTime);
 				const Vector3 PrevPos = Node::CurrentAnimationPosition(RootAnimTrack, AnimPrevFrameMotionTime);
 
-				Quaternion Quat = Node::CurrentAnimationQuaternion(RootAnimTrack, AnimMotionTime);
-				Quat = (*tOffset) * Quat;
-
-				Matrix Rot = FMath::Inverse(FMath::Rotation(Quat));
-
+				// 메쉬가 현재 애니메이션에서 회전 한다면 . 위치 차이 (벡터) 또한 회전 한만큼 회전 하여야
+				// 가시적으로 올바르게 동기화 할 수 있다. 
+				Quaternion CurAnimQuat= Node::CurrentAnimationQuaternion(RootAnimTrack, AnimMotionTime);
+				CurAnimQuat = (*tOffset) * CurAnimQuat;
+				const Matrix CurAnimRotation= FMath::Inverse(FMath::Rotation(CurAnimQuat));
+				
 				Vector3 DeltaDir = CurPos - PrevPos; 
-				D3DXVec3TransformNormal(&DeltaDir, &DeltaDir, &Rot);
+				// 값을 정규화해서 호출자는 원하는 스케일만큼 곱해서 적절히 사용  . 
+				D3DXVec3TransformNormal(&DeltaDir, &DeltaDir, &CurAnimRotation);
 
 				return DeltaDir;
 			}

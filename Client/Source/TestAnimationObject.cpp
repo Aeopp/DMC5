@@ -73,19 +73,18 @@ void TestAnimationObject::RenderInit()
 	/*움직임이 없는 정적 오브젝트는 그림자맵 캐쉬를 켜고 그렇지않다면 꺼주세요. */
 	_InitRenderProp.bShadowCache = false;
 
-	RenderInterface::Initialize(_InitRenderProp);
-
 	// 스켈레톤 메쉬 로딩 ... 
+	RenderInterface::Initialize(_InitRenderProp);
 	Mesh::InitializeInfo _InitInfo{};
 	// 버텍스 정점 정보가 CPU 에서도 필요 한가 ? 
 	_InitInfo.bLocalVertexLocationsStorage = false;
 	_SkeletonMesh = Resources::Load<ENGINE::SkeletonMesh>
-		(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.fbx", _InitInfo);
+		(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em200\\Em200.fbx", _InitInfo);
 	_SkeletonMesh->LoadAnimationFromDirectory
-	(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Ani");
+	(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em200\\Ani");
 	//  애니메이션을 원하는 만큼 로딩하고 애니메이션 데이터를 제이슨 테이블에 있는 데이터로 덮어 씌운다. 파일이 존재하지 않는다면 덮어씌우지 않는다.
 	//  애니메이션 데이터 로딩이 끝난뒤에 호출해줘야 한다. 
-	_SkeletonMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em100\\Em100.Animation");
+	_SkeletonMesh->AnimationDataLoadFromJsonTable(L"..\\..\\Resource\\Mesh\\Dynamic\\Monster\\Em200\\Em200.Animation");
 	// ToRoot 매트릭스를 클론마다 저장한다 . (1. 디버그 본 렌더링 필요할시 2. 본 위치가 CPU 에서도 필요할시 )
 
 	_SkeletonMesh->EnableToRootMatricies();
@@ -219,7 +218,7 @@ HRESULT TestAnimationObject::Ready()
 
 	// 트랜스폼 초기화하며 Edit 에 정보가 표시되도록 푸시 . 
 	auto InitTransform = GetComponent<ENGINE::Transform>();
-	InitTransform.lock()->SetScale({ 0.0005,0.0005,0.0005 });
+	InitTransform.lock()->SetScale({ 0.001f,0.001f,0.001f });
 	PushEditEntity(InitTransform.lock().get());
 
 	// 에디터의 도움을 받고싶은 오브젝트들 Raw 포인터로 푸시.
@@ -241,6 +240,9 @@ HRESULT TestAnimationObject::Start()
 UINT TestAnimationObject::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
+
+	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
+
 	auto [DeltaScale, DeltaQuat, DeltaPos] = _SkeletonMesh->Update(_fDeltaTime);
 	Vector3 Axis = { 1,0,0 };
 
@@ -249,7 +251,16 @@ UINT TestAnimationObject::Update(const float _fDeltaTime)
 	if (auto SpTransform = GetComponent<ENGINE::Transform>().lock();
 		SpTransform)
 	{
-		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos);
+		D3DXQUATERNION tResult = SpTransform->GetQuaternion() * DeltaQuat;
+		SpTransform->SetQuaternion(tResult);
+
+		D3DXMATRIX matRot;
+		D3DXQUATERNION tQuat = m_pTransform.lock()->GetQuaternion();
+		D3DXMatrixRotationQuaternion(&matRot, &tQuat);
+
+		D3DXVec3TransformNormal(&DeltaPos, &DeltaPos, &matRot);
+
+		SpTransform->SetPosition(SpTransform->GetPosition() + DeltaPos * SpTransform->GetScale().x);
 	}
 
 	return 0;

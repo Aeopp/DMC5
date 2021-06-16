@@ -51,7 +51,7 @@ void Transform::Editor()
 					SetRotation(InputRotation);
 				}
 
-				Vector3 InputPosition = { 0,0,0 };
+				Vector3 InputPosition = CurPosition;
 				if (ImGui::InputFloat3("InputPosition", InputPosition))
 				{
 					SetPosition(InputPosition);

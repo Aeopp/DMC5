@@ -43,6 +43,7 @@ private:
 	uint32 LostIdx = 0u;
 	bool   bLost = false;
 	float  LostT = 0.0f;
+	float  TimeCorr = 1.0f;
 };
 END
 #endif // !__TIME_SYSTEM_H__

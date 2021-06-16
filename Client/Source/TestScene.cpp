@@ -93,6 +93,7 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+	AddGameObject<TestAnimationObject>();
 	AddGameObject<Judgement>();
 	AddGameObject<Change>();
 	AddGameObject<SandGlassEffect>();
@@ -114,7 +115,7 @@ HRESULT TestScene::LoadScene()
 #pragma region Player & Camera
 
 	_Camera = AddGameObject<Camera>();
-	// 	_Camera = AddGameObject<Camera>();
+	// _Camera = AddGameObject<Camera>();
 	
 	// _MainCamera = AddGameObject<MainCamera>();
 	// 	_Player     = AddGameObject<Nero>();
@@ -136,10 +137,9 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	//LoadMap();
-
-	//auto Map = AddGameObject<TempMap>().lock();
-	//Map->LoadMap(1);
+	LoadMap();
+	/*auto Map = AddGameObject<TempMap>().lock();
+	Map->LoadMap(1);*/
 
 #pragma endregion
 
