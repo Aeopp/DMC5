@@ -1350,14 +1350,16 @@ Vector3 SkeletonMesh::CalcRootMotionDeltaPos(
 				const Vector3 StartPos = Node::CurrentAnimationPosition(RootAnimTrack, 0.0f);
 				const Vector3 CurPos =   Node::CurrentAnimationPosition(RootAnimTrack, bTimeBeyondAnimation.value());
 
-				// 모델이 회전까지 한다면 방향까지도 회전시켜준다. 
-				Quaternion Quat = Node::CurrentAnimationQuaternion(RootAnimTrack, AnimMotionTime);
-				Quat = (*tOffset) * Quat;
+				// 메쉬가 현재 애니메이션에서 회전 한다면 . 위치 차이 (벡터) 또한 회전 한만큼 회전 하여야
+					// 가시적으로 올바르게 동기화 할 수 있다. 
+				Quaternion CurAnimQuat = Node::CurrentAnimationQuaternion(RootAnimTrack, AnimMotionTime);
+				CurAnimQuat = (*tOffset) * CurAnimQuat;
 				
-				Matrix Rot = FMath::Inverse(FMath::Rotation(Quat)); 
-				
+				const Matrix CurAnimRotation = FMath::Inverse(FMath::Rotation(CurAnimQuat));
+
 				Vector3 DeltaDir = (EndPos - PrevPos) + (CurPos - StartPos);
-				D3DXVec3TransformNormal(&DeltaDir, &DeltaDir, &Rot);
+				// 값을 정규화해서 호출자는 원하는 스케일만큼 곱해서 적절히 사용  . 
+				D3DXVec3TransformNormal(&DeltaDir, &DeltaDir, &CurAnimRotation);
 				return DeltaDir;
 			}
 			else

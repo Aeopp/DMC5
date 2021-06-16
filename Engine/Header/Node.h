@@ -17,6 +17,13 @@ BEGIN(ENGINE)
 class ENGINE_DLL Node
 {
 public:
+	enum RootMotionFlag : int32
+	{
+		Scale,
+		Rotation,
+		Transition
+	};
+
 	Node* Parent{};
 	std::vector<Node*>    Childrens{};
 	Matrix OriginTransform{ FMath::Identity() };

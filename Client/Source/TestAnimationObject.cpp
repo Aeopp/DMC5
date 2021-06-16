@@ -241,9 +241,8 @@ UINT TestAnimationObject::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
 
-	// 현재 스케일과 회전은 의미가 없음 DeltaPos 로 트랜스폼에서 통제 . 
-
 	auto [DeltaScale, DeltaQuat, DeltaPos] = _SkeletonMesh->Update(_fDeltaTime);
+
 	Vector3 Axis = { 1,0,0 };
 
 	const float Length = FMath::Length(DeltaPos);

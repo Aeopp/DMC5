@@ -217,9 +217,9 @@ Vector3 Node::CurrentAnimationPosition(const AnimationTrack& AnimTrack, const do
 }
 
 void Node::NodeUpdate(const Matrix& ParentToRoot,
-				     const double CurrentAnimationTime,
-				     const std::string& AnimationName, 
-	const std::optional<AnimationBlendInfo>& IsAnimationBlend ,
+	const double CurrentAnimationTime,
+	const std::string& AnimationName,
+	const std::optional<AnimationBlendInfo>& IsAnimationBlend,
 	const Quaternion& QuatOffset)&
 {
 	// 여기서 이전 프레임과 다음 프레임을 보간 한다.
@@ -228,7 +228,7 @@ void Node::NodeUpdate(const Matrix& ParentToRoot,
 
 	if (bCurAnim)
 	{
-		auto [Scale,Quat,Pos] = 
+		auto [Scale, Quat, Pos] =
 			CurrentAnimationTransform(iter->second, CurrentAnimationTime);
 
 		if (IsAnimationBlend.has_value())
@@ -252,26 +252,26 @@ void Node::NodeUpdate(const Matrix& ParentToRoot,
 		}
 
 		// 포지션
-		if (RootMotionFlag.test(2)/*"root_$AssimpFbx$_Transition"*/)
+		if (RootMotionFlag.test(RootMotionFlag::Transition)/*"root_$AssimpFbx$_Transition"*/)
 		{
 			Pos = { 0,0,0 };
 		}
-		 // 로테이션 .. 
-		if (RootMotionFlag.test(1))
+		// 로테이션 .. 
+		if (RootMotionFlag.test(RootMotionFlag::Rotation))
 		{
 			// 오프셋 쿼터니언 켤레 사원수로 . 
 			D3DXQuaternionConjugate(&Quat, &QuatOffset);
 			// Quat = UnitQuat !! 
 		}
-		 // 스케일링
-		if (RootMotionFlag.test(0)/*"root_$AssimpFbx$_Scaling"*/)
+		// 스케일링
+		if (RootMotionFlag.test(RootMotionFlag::Scale)/*"root_$AssimpFbx$_Scaling"*/)
 		{
 			Scale = { 1,1,1 };
 		}
 
 		Transform = FMath::Scale(Scale) *
-					FMath::Rotation(Quat) *
-					FMath::Translation(Pos);
+			FMath::Rotation(Quat) *
+			FMath::Translation(Pos);
 	}
 	else
 	{
@@ -280,81 +280,16 @@ void Node::NodeUpdate(const Matrix& ParentToRoot,
 	if (ClothTransform.has_value())
 		Transform = ClothTransform.value();
 
-	ToRoot =  Transform * ParentToRoot;
+	ToRoot = Transform * ParentToRoot;
 
 	Final = Offset * ToRoot;
 
 	for (auto& ChildrenTarget : Childrens)
 	{
 		ChildrenTarget->NodeUpdate(ToRoot,
-			CurrentAnimationTime, 
+			CurrentAnimationTime,
 			AnimationName,
-			IsAnimationBlend ,
+			IsAnimationBlend,
 			QuatOffset);
 	}
-}
-
-
-//
-//
-//void Engine::Bone::BoneEdit()
-//{
-//	if (ImGui::TreeNode(Name.c_str()))
-//	{
-//		bEditObserver = true;
-//		if (ImGui::CollapsingHeader("Edit"))
-//		{
-//			bEditSelect = true;
-//			ImGui::Button("Attach");
-//			ImGui::Button("Detach");
-//		}
-//		else
-//		{
-//			bEditSelect = false;
-//		}
-//
-//		for (const auto& _Children : Childrens)
-//		{
-//			_Children->BoneEdit();
-//		}
-//		ImGui::TreePop();
-//	}
-//	else
-//	{
-//		bEditObserver = false;
-//	}
-//};
-//
-//void Engine::Bone::DebugRender(
-//	const Matrix& World,
-//	IDirect3DDevice9* Device,
-//	ID3DXMesh* const DebugMesh)&
-//{
-//	IDirect3DTexture9* CurColorTex{ nullptr };
-//	auto& ResourceSys = ResourceSystem::Instance;
-//
-//	if (bEditSelect)
-//	{
-//		CurColorTex = ResourceSys->Get<IDirect3DTexture9>(L"Texture_Red");
-//	}
-//	else if (bEditObserver)
-//	{
-//		CurColorTex = ResourceSys->Get<IDirect3DTexture9>(L"Texture_Blue");
-//	}
-//	else
-//	{
-//		CurColorTex = ResourceSys->Get<IDirect3DTexture9>(L"Texture_Green");
-//	}
-//
-//	const Matrix ToRootWorld = ToRoot * World;
-//	const Matrix Final = FMath::Scale({ 5.f,5.f,5.f }) * ToRootWorld;
-//	Device->SetTransform(D3DTS_WORLD, &Final);
-//	Device->SetTexture(0, CurColorTex);
-//	DebugMesh->DrawSubset(0);
-//
-//	if (CollisionGeometric)
-//	{
-//		Device->SetTransform(D3DTS_WORLD, &ToRootWorld);
-//		CollisionGeometric->Render(Device, true);
-//	}
-//};
+};
