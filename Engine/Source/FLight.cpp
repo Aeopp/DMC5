@@ -749,7 +749,6 @@ void FLight::RenderShadowMap(
 		CallBack(this);
 	}
 	else if (_Type == Point) {
-
 		for (Currentface = 0; Currentface < 6; ++Currentface) 
 		{
 			D3DVIEWPORT9 Viewport;
@@ -757,16 +756,16 @@ void FLight::RenderShadowMap(
 			Viewport.Width = Viewport.Height = ShadowMapSize;
 			Viewport.MinZ = 0;
 			Viewport.MaxZ = 1;
-
-			g_pDevice->StretchRect
-			(CubeCacheshadowmapSurface[Currentface], nullptr,
+			// ¹Ì¸® ÀúÀåÇÑ Á¤Àû¿ÀºêÁ§Æ® ½¦µµ¿ì ·»´õÅ¸°ÙÀ» ÀÏ¹Ý ½¦µµ¿ì ·»´õÅ¸°Ù¿¡ Ä«ÇÇ.
+			_Device->StretchRect
+				(CubeCacheshadowmapSurface[Currentface], nullptr,
 				CubeshadowmapSurface[Currentface], nullptr, D3DTEXF_POINT);
 
 			_Device->SetRenderTarget(0, CubeshadowmapSurface[Currentface]);
 			_Device->SetViewport(&Viewport);
 			_Device->SetDepthStencilSurface(CubeDepthStencil[Currentface]);
-			CallBack(this);
 
+			CallBack(this);
 		}
 	}
 
@@ -779,7 +778,7 @@ void FLight::RenderShadowMap(
 
 void FLight::CacheShadowMapBake(
 	LPDIRECT3DDEVICE9 _Device, 
-	std::function<void(FLight*)> CallBack)
+	std::function<void(FLight*)> RenderShadowmap)
 {
 	if (_Type == Directional) {
 		D3DVIEWPORT9 Viewport;
@@ -793,7 +792,7 @@ void FLight::CacheShadowMapBake(
 		_Device->SetViewport(&Viewport);
 		_Device->SetDepthStencilSurface(CacheDepthStencil);
 
-		CallBack(this);
+		RenderShadowmap(this);
 
 		_Device->SetRenderTarget(0, nullptr);
 	}
@@ -807,13 +806,11 @@ void FLight::CacheShadowMapBake(
 			Viewport.MinZ = 0;
 			Viewport.MaxZ = 1;
 
-			_Device->SetRenderTarget(0, 
-				CubeCacheshadowmapSurface[Currentface]);
+			_Device->SetRenderTarget(0, CubeCacheshadowmapSurface[Currentface]);
 			_Device->SetViewport(&Viewport);
-			_Device->SetDepthStencilSurface(
-				CubeCacheDepthStencil[Currentface]);
+			_Device->SetDepthStencilSurface(CubeCacheDepthStencil[Currentface]);
 
-			CallBack(this);
+			RenderShadowmap(this);
 
 			_Device->SetRenderTarget(0, nullptr);
 		}
