@@ -19,7 +19,6 @@ std::string TestAnimationObject::GetName()
 
 TestAnimationObject* TestAnimationObject::Create()
 {
-	//¿¡º£º£
 	return new TestAnimationObject{};
 };
 
@@ -67,6 +66,15 @@ void TestAnimationObject::RenderInit()
 		[this](const DrawInfo& _Info)
 		{
 			RenderDebugSK(_Info);
+		}
+	} };
+	_InitRenderProp.RenderOrders[RenderProperty::Order::Collider]
+		=
+	{
+		{"Collider" ,
+		[this](const DrawInfo& _Info)
+		{
+			DrawCollider(_Info);
 		}
 	} };
 
@@ -229,6 +237,22 @@ HRESULT TestAnimationObject::Ready()
 
 HRESULT TestAnimationObject::Awake()
 {
+	auto WpCollider = AddComponent<CapsuleCollider>();
+	WpCollider.lock()->ReadyCollider();
+	PushEditEntity(WpCollider.lock().get());
+
+	WpCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+	WpCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+	WpCollider.lock()->SetLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+
+	WpCollider.lock()->SetRigid(true);
+	WpCollider.lock()->SetGravity(true);
+
+	WpCollider.lock()->SetRadius(0.07f);
+	WpCollider.lock()->SetHeight(0.14f);
+	WpCollider.lock()->SetCenter({ 0.f, 0.15f, 0.f });
+
+
 	return S_OK;
 }
 

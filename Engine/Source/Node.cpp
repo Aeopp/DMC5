@@ -251,32 +251,29 @@ void Node::NodeUpdate(const Matrix& ParentToRoot,
 			}
 		}
 
-		// 포지션
-		if (RootMotionFlag.test(RootMotionFlag::Transition)/*"root_$AssimpFbx$_Transition"*/)
+		if (RootMotionFlag.test(RootMotionFlag::Transition))
 		{
 			Pos = { 0,0,0 };
 		}
-		// 로테이션 .. 
 		if (RootMotionFlag.test(RootMotionFlag::Rotation))
 		{
-			// 오프셋 쿼터니언 켤레 사원수로 . 
+			// 오프셋 쿼터니언 켤레 사원수로 변환. 
 			D3DXQuaternionConjugate(&Quat, &QuatOffset);
-			// Quat = UnitQuat !! 
 		}
-		// 스케일링
-		if (RootMotionFlag.test(RootMotionFlag::Scale)/*"root_$AssimpFbx$_Scaling"*/)
+		if (RootMotionFlag.test(RootMotionFlag::Scale))
 		{
 			Scale = { 1,1,1 };
 		}
 
 		Transform = FMath::Scale(Scale) *
-			FMath::Rotation(Quat) *
-			FMath::Translation(Pos);
+					FMath::Rotation(Quat) *
+					FMath::Translation(Pos);
 	}
 	else
 	{
 		Transform = OriginTransform;
 	}
+
 	if (ClothTransform.has_value())
 		Transform = ClothTransform.value();
 
