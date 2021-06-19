@@ -19,11 +19,9 @@ uniform float fogdensity;
 uniform float StarScale;
 uniform float StarFactor;
  
-
 uniform float2 pixelSize;
 uniform float2 texelSize;
 uniform float  exposure;
-
 
 uniform int blurDirection;
 uniform int starDirection;
@@ -267,43 +265,30 @@ void ps_afterimage(
 }
 
 void ps_tonemap(
-	in float2 tex : TEXCOORD0,
-	out float4 color : COLOR0)
+	in float2 Tex : TEXCOORD0,
+	out float4 Color : COLOR0)
 {
-    float4 scene = tex2D(renderedscene, tex);
-    float4 bloom = tex2D(blurtarget1, tex);
-    float4 star = tex2D(blurtarget2, tex);
-    float4 ghost = tex2D(blurtarget3, tex);
-    float4 afterimg = tex2D(blurtarget4, tex);
-  
+    float4 Scene = tex2D(renderedscene, Tex);
+    float4 Bloom = tex2D(blurtarget1, Tex);
+    float4 Star = tex2D(blurtarget2, Tex);
+    float4 Ghost = tex2D(blurtarget3, Tex);
+    float4 AfterImg = tex2D(blurtarget4, Tex);
+    // https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=sorkelf&logNo=221037468105
+    // https://docs.unrealengine.com/4.26/en-US/RenderingAndGraphics/PostProcessEffects/ColorGrading/
     
-    float3 lincolor = FilmicTonemap(scene.rgb * exposure);
-    float3 invlinwhite = 1.0f / FilmicTonemap(float3(W, W, W));
+    // 공식 : Filmic 톤매핑
+    float3 LinearColor = FilmicTonemap(Scene.rgb * exposure);
+    float3 InvLinearWhite = 1.0f / FilmicTonemap(float3(W, W, W));
 
-    color.rgb = lincolor * invlinwhite;
-    color.rgb += bloom.rgb + star.rgb + ghost.rgb + afterimg.rgb;
+    Color.rgb = LinearColor * InvLinearWhite;
+    Color.rgb += Bloom.rgb + Star.rgb + Ghost.rgb + AfterImg.rgb;
 
-    tex -= 0.5f;
-    float vignette = 1 - dot(tex, tex);
+    Tex -= 0.5f;
+    float Vignette = 1 - dot(Tex, Tex);
 
-    color.rgb *= vignette * vignette * vignette;
+    Color.rgb *= Vignette * Vignette * Vignette;
     
-    //// 안개
-    //float4 depthsample = tex2D(depth, tex);
-    //float4 wpos = (tex.x * 2.f - 1.f, 1 - 2 * tex.y, depthsample.r, 1.f);
-    //wpos = mul(wpos, matViewProjInv);
-    //wpos /= wpos.w;
-    
-    //float distance = length(wpos.xyz - eyepos.xyz);
-    //// 선형
-    //float fogfactor = (fogdistance - distance) / (fogdistance - fogstart);
-    
-    ////float factor = distance * fogdensity;
-    ////float fogfactor = pow(1.0 / 2.71828, factor * factor);
-    
-    //color.rgb = fogfactor * color.rgb + (1.0 - fogfactor) * fogcolor;
-    
-    color.a = 1.0f;
+    Color.a = 1.0f;
 }
 
 technique brightpass

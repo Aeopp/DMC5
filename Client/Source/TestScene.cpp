@@ -69,7 +69,8 @@
 #include "Change.h"
 #include "JudgementSword.h"
 #include "LoadingScene.h"
-
+#include "MapAniObject.h"
+#include "CollObject.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -93,12 +94,13 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
-	AddGameObject<TestAnimationObject>();
 	AddGameObject<Judgement>();
+	AddGameObject<JudgementSword>();
 	AddGameObject<Change>();
 	AddGameObject<SandGlassEffect>();
 	AddGameObject<SpriteEffect>().lock()->InitializeFromOption(7);
-	_JudgementSwordTrail =  AddGameObject<JudgementSwordTrail>();
+	_JudgementSwordTrail = AddGameObject<JudgementSwordTrail>();
+
 
 	SoundSystem::GetInstance()->Play("Rain", 0.15f, false, {}, 11000);
 
@@ -114,11 +116,11 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Player & Camera
 
-	_Camera = AddGameObject<Camera>();
 	// _Camera = AddGameObject<Camera>();
-	
+    _Camera = AddGameObject<Camera>();
+
 	// _MainCamera = AddGameObject<MainCamera>();
-	// 	_Player     = AddGameObject<Nero>();
+	_Player = AddGameObject<Nero>();
 
 #pragma endregion
 
@@ -129,7 +131,7 @@ HRESULT TestScene::LoadScene()
 	//AddGameObject<Em0000>();
 	//AddGameObject<Em1000>();
 	//AddGameObject<Em5300>();
-	// AddGameObject<Em200>();
+	//AddGameObject<Em200>();
 
 #pragma endregion
 
@@ -137,9 +139,12 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadMap();
-	/*auto Map = AddGameObject<TempMap>().lock();
-	Map->LoadMap(1);*/
+	LoadObjects("../../Data/Stage1_Map.json");
+	//LoadObjects("../../Data/Stage1_AniObject.json", true);
+	//LoadCollObjects("../../Data/Stage1_Object.json");
+
+	//auto Map = AddGameObject<TempMap>().lock();
+	//Map->LoadMap(1);
 
 #pragma endregion
 
@@ -269,7 +274,7 @@ HRESULT TestScene::Update(const float _fDeltaTime)
 	if (Input::GetKeyDown(DIK_INSERT))
 	{
 		_JudgementSwordTrail.lock()->PlayStart
-			(JudgementSwordTrail::Mode::Judgement);
+		(JudgementSwordTrail::Mode::Judgement);
 	};
 
 	CheckShopAvailable();
@@ -402,7 +407,7 @@ void TestScene::RenderDataSetUp(const bool bTestLight)
 {
 	// 렌더러 씬 맵 특성에 맞춘 세팅
 	auto _Renderer = Renderer::GetInstance();
-	
+
 	if (bTestLight)
 	{
 		_Renderer->LightLoad("..\\..\\Resource\\LightData\\Light.json");
@@ -434,7 +439,7 @@ void TestScene::RenderDataSetUp(const bool bTestLight)
 		_Renderer->StarFactor = 0.9f;
 
 	}
-	
+
 	Renderer::GetInstance()->LateSceneInit();
 }
 
@@ -556,7 +561,7 @@ void TestScene::ApplyShopUpgradeDesc()
 
 void TestScene::CheckShopAvailable()
 {
-	if (Input::GetKeyDown(DIK_P))
+	if (Input::GetKeyDown(DIK_F12))
 	{
 		if (auto SpShopPanel = _ShopPanel.lock(); SpShopPanel)
 		{
@@ -592,6 +597,168 @@ void TestScene::CheckShopAvailable()
 				SpShopPanel->ResetCmd();
 				SpShopPanel->SetActive(false);
 			}
+		}
+	}
+}
+
+void TestScene::LoadObjects(const std::filesystem::path& path, const bool _bAni)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	if (_bAni == false)
+	{
+		for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+		{
+			//
+			sFullPath = iter->FindMember("Mesh")->value.GetString();
+			sFullPath = sBasePath / sFullPath;
+			//
+
+			Resources::Load<StaticMesh>(sFullPath);
+			//
+			auto objectArr = iter->FindMember("List")->value.GetArray();
+			//
+			for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+			{
+				auto pMapObject = AddGameObject<MapObject>();
+
+				D3DXVECTOR3 vScale;
+				auto scale = iterObject->FindMember("Scale")->value.GetArray();
+				vScale.x = scale[0].GetFloat();
+				vScale.y = scale[1].GetFloat();
+				vScale.z = scale[2].GetFloat();
+
+				D3DXVECTOR3 vRotation;
+				auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+				vRotation.x = rotation[0].GetFloat();
+				vRotation.y = rotation[1].GetFloat();
+				vRotation.z = rotation[2].GetFloat();
+
+				D3DXVECTOR3 vPosition;
+				auto position = iterObject->FindMember("Position")->value.GetArray();
+				vPosition.x = position[0].GetFloat();
+				vPosition.y = position[1].GetFloat();
+				vPosition.z = position[2].GetFloat();
+
+				pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+			}
+		}
+	}
+	else
+	{
+		for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+		{
+			//
+			sFullPath = iter->FindMember("Mesh")->value.GetString();
+			sFullPath = sBasePath / sFullPath;
+			//
+			Resources::Load<SkeletonMesh>(sFullPath);
+			//
+			auto objectArr = iter->FindMember("List")->value.GetArray();
+			//
+			for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+			{
+				auto pMapObject = AddGameObject<MapAniObject>();
+
+				D3DXVECTOR3 vScale;
+				auto scale = iterObject->FindMember("Scale")->value.GetArray();
+				vScale.x = scale[0].GetFloat();
+				vScale.y = scale[1].GetFloat();
+				vScale.z = scale[2].GetFloat();
+
+				D3DXVECTOR3 vRotation;
+				auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+				vRotation.x = rotation[0].GetFloat();
+				vRotation.y = rotation[1].GetFloat();
+				vRotation.z = rotation[2].GetFloat();
+
+				D3DXVECTOR3 vPosition;
+				auto position = iterObject->FindMember("Position")->value.GetArray();
+				vPosition.x = position[0].GetFloat();
+				vPosition.y = position[1].GetFloat();
+				vPosition.z = position[2].GetFloat();
+
+				pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
+			}
+		}
+	}
+}
+
+void TestScene::LoadCollObjects(const std::filesystem::path& path)
+{
+	std::ifstream inputStream{ path };
+
+	if (false == inputStream.is_open())
+		return;
+
+	using namespace rapidjson;
+
+	IStreamWrapper inputSW(inputStream);
+	Document docu;
+	docu.ParseStream(inputSW);
+
+	if (docu.HasParseError())
+		return;
+
+	std::filesystem::path sBasePath = TEXT("../../");
+	sBasePath = std::filesystem::canonical(sBasePath);
+
+	const Value& loadData = docu["GameObject"];
+
+	std::filesystem::path sFullPath;
+	for (auto iter = loadData.Begin(); iter != loadData.End(); ++iter)
+	{
+		//
+		sFullPath = iter->FindMember("Mesh")->value.GetString();
+		sFullPath = sBasePath / sFullPath;
+		//
+		Mesh::InitializeInfo _InitInfo{};
+		_InitInfo.bLocalVertexLocationsStorage = true;
+		Resources::Load<StaticMesh>(sFullPath, _InitInfo);
+		//
+		auto objectArr = iter->FindMember("List")->value.GetArray();
+		//
+		for (auto iterObject = objectArr.begin(); iterObject != objectArr.end(); ++iterObject)
+		{
+			auto pMapObject = AddGameObject<CollObject>();
+
+			D3DXVECTOR3 vScale;
+			auto scale = iterObject->FindMember("Scale")->value.GetArray();
+			vScale.x = scale[0].GetFloat();
+			vScale.y = scale[1].GetFloat();
+			vScale.z = scale[2].GetFloat();
+
+			D3DXVECTOR3 vRotation;
+			auto rotation = iterObject->FindMember("Rotation")->value.GetArray();
+			vRotation.x = rotation[0].GetFloat();
+			vRotation.y = rotation[1].GetFloat();
+			vRotation.z = rotation[2].GetFloat();
+
+			D3DXVECTOR3 vPosition;
+			auto position = iterObject->FindMember("Position")->value.GetArray();
+			vPosition.x = position[0].GetFloat();
+			vPosition.y = position[1].GetFloat();
+			vPosition.z = position[2].GetFloat();
+
+			pMapObject.lock()->SetUp(sFullPath, vScale, vRotation, vPosition);
 		}
 	}
 }

@@ -32,6 +32,8 @@ public:
 	virtual HRESULT LateUpdate(const float _fDeltaTime) override;
 private:
 	void LoadMap();
+	void LoadCollObjects(const std::filesystem::path& path);
+	void LoadObjects(const std::filesystem::path& path, const bool _bAni=false);
 	void RenderDataSetUp(const bool bTestLight);
 	void MonsterWaveTriggerSetUp();
 	void TriggerSetUp();

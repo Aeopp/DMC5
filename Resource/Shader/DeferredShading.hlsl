@@ -21,7 +21,7 @@ uniform float  lightIlluminance = 1.5f; // lux
 uniform float  lightRadius = 5.0f; // meter
 uniform float  specularPower = 80.0f;
 
-uniform float4 eyePos;
+uniform float4 EyePosition;
 uniform float2 pixelSize;
 uniform float2 clipPlanes;
 uniform float ao = 0.1f;
@@ -156,7 +156,7 @@ in float roughness,
 in float3 wpos)
 {
     float3 N = normalize(wnorm);
-    float3 V = normalize(eyePos.xyz - wpos);
+    float3 V = normalize(EyePosition.xyz - wpos);
     
     float3 F0 = float3(0.04f, 0.04f, 0.04f);
     F0 = lerp(F0, albedo, metalness);
@@ -166,6 +166,7 @@ in float3 wpos)
     float3 L = normalize(-LightDirection);
     float3 H = normalize(V + L);
    
+  
     float NDF = DistributionGGX(N, H, roughness);
     float G = GeometrySmith(N, V, L, roughness);
     float3 F = fresnelSchlickF3(max(dot(H, V), 0.0), F0);
@@ -220,157 +221,118 @@ in float3 wpos)
 
 
 float3 pbr_point(
-// albm
-in float3 albedo,
-in float metalness,
-// nrmr 
-in float3 wnorm,
-in float roughness,
-// 언팩한 월드 
-in float3 wpos)
+// Albedo + Metal
+in float3 Albedo,
+in float Metalness,
+// Normal + Roughness 
+in float3 WorldNormal,
+in float Roughness,
+// 언팩한 월드 포지션
+in float3 WorldPosition)
 {
-    float3 N = normalize(wnorm);
-    float3 V = normalize(eyePos.xyz - wpos);
+    float3 N = normalize(WorldNormal);
+    float3 V = normalize(EyePosition.xyz - WorldPosition);
     
     float3 F0 = float3(0.04f, 0.04f, 0.04f);
-    F0 = lerp(F0, albedo, metalness);
+    F0 = lerp(F0, Albedo, Metalness);
     
     float3 Lo = float3(0, 0, 0);
     
-    float3 L = normalize(lightPos.xyz - wpos);
+    float3 L = normalize(lightPos.xyz - WorldPosition);
+    // 하프벡터 
     float3 H = normalize(V + L);
     
-    // Origin
-    float distance = length(lightPos.xyz - wpos.xyz);
-    float attenuation = 1.0 / (distance * distance);
-    float radiance = lightColor * attenuation;
-    // 
+    float Distance = length(lightPos.xyz - WorldPosition.xyz);
+    // 감쇠 계수 계산
+    float Attenuation = 1.0 / (Distance * Distance);
+    float Radiance = lightColor * Attenuation;
     
-   
-    float NDF = DistributionGGX(N, H, roughness);
-    float G = GeometrySmith(N, V, L, roughness);
+    // 미세면 분산 함수 Ground Glass Unknown (Kenneth E.Torrance)
+    // 거칠기에 의한 근사치로 강하기 조절 . 
+    float  NDF = DistributionGGX(N, H, Roughness);
+    float  G = GeometrySmith(N, V, L, Roughness);
     float3 F = fresnelSchlickF3(max(dot(H, V), 0.0), F0);
 
     float3 kS = F;
     float3 kD = float3(1.0, 1.0, 1.0) - kS;
-    kD *= 1.0 - metalness;
+    kD *= 1.0 - Metalness;
         
     float3 numerator = NDF * G * F;
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
     float3 specular = numerator / max(denominator, 0.001);
     float NdotL = max(dot(N, L), 0.0);
-    
-    // calculate shadow
-    //float ShadowFactor = 1.0f;
-    //// 깊이가 더 깊다면 투영 했을때 ????? 먼저 닿았음
-    //if (ShadowDepthMapHeight > 0)
-    //{
-    //    float pcfDepth = texCUBE(cubeShadowMap, -L).x;
-    //    // 깊이 포인트 
-    //    float d = (distance - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-    //    if ((pcfDepth + ShadowDepthBias) < d)
-    //    {
-    //        ShadowFactor -= 1.f;
-    //    }
-    //    ShadowFactor = saturate(ShadowFactor +shadowmin);
-    //}
-    // shadow end
-    
-    // 포인트 라인트용 모먼트 
+  
     float ShadowFactor = 1.f;
-    
-    
+
+    // 그림자 적용 부분 검증    
     if (ShadowDepthMapHeight > 0)
     {
-        if (distance < (clipPlanes.y - -clipPlanes.x)) 
+        if (Radiance < (clipPlanes.y - -clipPlanes.x)) 
         {
             float2 moments = texCUBE(cubeShadowMap, -L).xy;
 
-            float z = distance;
-            float d = (z - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
-            float shadow = ShadowVariance(moments, d);
-            ShadowFactor = saturate(shadow + shadowmin);
+            float Z = Radiance;
+            float D = (Z  - clipPlanes.x) / (clipPlanes.y - clipPlanes.x);
+            float Shadow  = ShadowVariance(moments, D);
+            ShadowFactor = saturate(Shadow + shadowmin);
         }
     }
+  
+    float Radius_att = saturate((lightRadius - Distance) / lightRadius);
     
-    // 
-    
-    // 변형 
-    
-    //float dist2 = max(dot(ldir, ldir), 1e-4f);
-    //float illuminance = (lightFlux / (QUAD_PI * dist2)) * saturate(NdotL);
-    //float attenuation = max(0, 1 - sqrt(dist2) / lightRadius);
-    
-    //
-    
-    // Origin 
-    // Lo = (kD * albedo / PI + specular) * radiance * NdotL;
-
-    // 1000 - 300 ;    
-    
-    float radius_att = saturate((lightRadius - distance) / lightRadius);
-    
-    Lo = (kD * albedo / PI + specular) *lightColor * lightFlux * radiance * radius_att* NdotL * ShadowFactor;
+    Lo = (kD * Albedo / PI + specular) * lightColor * lightFlux * Radiance * Radius_att * NdotL * ShadowFactor;
     
     return Lo;
 };
 
 float3 pbr_direction(
 // albm
-in float3 albedo,
-in float metalness,
+in float3 Albedo,
+in float Metalness,
 // nrmr 
 in float3 wnorm,
-in float roughness,
+in float Roughness,
 // 언팩한 월드 
 in float3 wpos)
 {
     // 픽셀 월드 -> 카메라 
-    float3 Lo = normalize(eyePos.xyz - wpos);
-    // 월드 노말
-    float N = normalize(wnorm);
-    
+    float3 Lo = normalize(EyePosition.xyz - wpos);
+    float N = normalize(wnorm);    
     // 표면 법선 나가는 빛 방향 각도
-    float cosLo = max(0.0, dot(N, Lo));
-    
+    float CosLo = max(0.0, dot(N, Lo));
     // 스페큘러 반사벡터 
-    float3 Lr = 2.0 * cosLo * N - Lo;
-    
-    // 수직 입사에서의 프레 넬 반사율 (금속의 경우 알베도 색상 사용).
-    float3 F0 = lerp(Fdielectric, albedo, metalness);
-    
-    // 방향 조명 계산 시작 ...
+    float3 Lr = 2.0 * CosLo * N - Lo;
+   
     float3 Li = -LightDirection;
     
     // Li Lo 하프벡터
     float3 Lh = normalize(Li + Lo);
     
     // 표면 법선과 다양한 빛 벡터사이의 각도를 계산 . 
-    float cosLi = max(0.0, dot(N, Li));
-    float cosLh = max(0.0, dot(N, Lh));
+    float CosLi = max(0.0, dot(N, Li));
+    float CosLh = max(0.0, dot(N, Lh));
+     // 수직 입사에서의 프레 넬 반사율 금속에 가까울 수록 알베도 색상 사용 !!.
+    float3 F0 = lerp(Fdielectric, Albedo, Metalness);
     
-    // 다이렉트 조명에 대한 프레넬 항 계산 .
+    // 방향 조명에 대한 프레넬 항 계산 .
     float3 F = fresnelSchlick(F0, max(0.0, dot(Lh, Lo)));
     
     // 반사 BRDF에 대한 정규 분포를 계산.
-    float D = ndfGGX(cosLh, roughness);
+    float D = ndfGGX(CosLh, Roughness);
 
-    // 반사 BRDF 기하 감쇠 계산 .
-    float G = gaSchlickGGX(cosLi, cosLo, roughness);
+    // 반사 BRDF 기하 감쇠 계산 (Roughness에 의해 조절)
+    float G = gaSchlickGGX(CosLi, CosLo, Roughness);
     
     // 매체에 의해 빛이 여러 번 굴절되어 확산 산란이 발생.
     // 메탈은 에너지를 반사하거나 흡수하므로 확산 기여도는 항상 0.
-    // 에너지를 절약하려면 프레 넬 계수 및 금속성에 따라 확산 BRDF 기여도를 조정해야함.
-    float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), metalness);
-
-    // 램버트 확산 BRDF.
-    // 조명 및 재질 단위를 더 편리하게하기 위해 1 / PI로 확장하지 않습니다. (에픽게임즈가 기본 공식을 변형함 ) 
-	// See: https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
-    float3 diffuseBRDF = kd * albedo;
+    float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), Metalness);
     
-    // 쿡토렌스 specular microfacet BRDF.
-    float3 specularBRDF = (F * D * G) / max(Epsilon, 4.0 * cosLi * cosLo);
+    // 램버트 확산 BRDF. 조명 및 재질 단위를 더 편리하게하기 위해 1 / PI로 확장하지 않습니다.(에픽게임즈의 기본 공식) 
+	// 참조 : https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
+    float3 DiffuseBRDF = kd * Albedo;
     
+    // 쿡토렌스의 specular microfacet BRDF.
+    float3 SpecularBRDF = (F * D * G) / max(Epsilon, 4.0 * CosLi * CosLo);
     
     // 쉐도우 계산 
     float4 LightClipPosition = mul(float4(wpos.xyz, 1.f), lightViewProj);
@@ -406,7 +368,7 @@ in float3 wpos)
     }
     ShadowFactor = saturate(ShadowFactor);
     
-    return ((diffuseBRDF + specularBRDF) * Lradiance * cosLi) * ShadowFactor + ao * lightColor;
+    return ((DiffuseBRDF + SpecularBRDF) * Lradiance * CosLi) * ShadowFactor + ao * lightColor;
 }
 
 
@@ -414,7 +376,7 @@ float3 Luminance_Blinn_Directional(float3 albedo,
 float3 wpos, float3 wnorm)
 {
 	// the sun has an angular diameter between [0.526, 0.545] degrees
-    float3 v = normalize(eyePos.xyz - wpos);
+    float3 v = normalize(EyePosition.xyz - wpos);
     float3 n = normalize(wnorm);
 
 	// closest point to disk (approximation)
@@ -495,7 +457,7 @@ float3 Luminance_Blinn_Point(float3 albedo, float3 wpos, float3 wnorm)
     float3 ldir = lightPos.xyz - wpos;
 
     float3 l = normalize(ldir);
-    float3 v = normalize(eyePos.xyz - wpos);
+    float3 v = normalize(EyePosition.xyz - wpos);
     float3 h = normalize(l + v);
     float3 n = normalize(wnorm);
 
