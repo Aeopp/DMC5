@@ -68,7 +68,7 @@ HRESULT JudgementSwordCollider::Start()
 UINT JudgementSwordCollider::Update(const float _fDeltaTime)
 {
 	GameObject::Update(_fDeltaTime);
-	static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->Set_Coll(true);
+	/*static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->Set_Coll(true);*/
 	return 0;
 }
 

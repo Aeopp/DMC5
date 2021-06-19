@@ -398,7 +398,10 @@ UINT Nero::Update(const float _fDeltaTime)
 		m_pShapeParticle[i].lock()->SetPosition(Get_NeroBoneWorldPos("Waist"));
 	}
 	/* ----------------------------------- */
-
+	if (Input::GetKeyDown(DIK_9))
+	{
+		m_pFSM->ChangeState(NeroFSM::TRANSFORM_SHINMAJIN);
+	}
 	if (Input::GetKeyDown(DIK_4))
 	{
 		BuyUpgradedOverture();
@@ -1544,7 +1547,7 @@ void Nero::KillEm5300()
 	BT_INFO _Info;
 	_Info.eAttackType = Attack_Front;
 	_Info.iAttack = 20000;
-	static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->Hit(_Info);
+	/*static_pointer_cast<Monster>(FindGameObjectWithTag(GAMEOBJECTTAG::Monster5300).lock())->Hit(_Info);*/
 }
 
 float Nero::Get_ExGauge()

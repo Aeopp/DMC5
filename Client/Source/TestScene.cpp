@@ -141,9 +141,11 @@ HRESULT TestScene::LoadScene()
 
 #pragma region Map
 
-	LoadObjects("../../Data/Stage1_Map.json");
-	//LoadObjects("../../Data/Stage1_AniObject.json", true);
-	//LoadCollObjects("../../Data/Stage1_Object.json");
+	// LoadObjects("../../Data/Stage1_Map.json");
+	// LoadObjects("../../Data/Stage1_AniObject.json", true);
+	// LoadCollObjects("../../Data/Stage1_Object.json");
+
+	LoadMap();
 
 	//auto Map = AddGameObject<TempMap>().lock();
 	//Map->LoadMap(1);
@@ -154,7 +156,7 @@ HRESULT TestScene::LoadScene()
 
 #pragma region RenderData & Trigger
 
-	RenderDataSetUp(false);
+	RenderDataSetUp(true);
 	//TriggerSetUp();
 	//MonsterWaveTriggerSetUp();
 
