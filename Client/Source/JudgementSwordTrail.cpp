@@ -351,7 +351,7 @@ void JudgementSwordTrail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxP
 			Vector3 VtxPt{};
 
 			const int32 p0 = std::clamp<int32>((i + 1) - 2, 0, _Desc.NewVtxCnt - 1);
-			const int32 p1 = std::clamp<int32>((i + 1), 0, _Desc.NewVtxCnt - 1);
+			const int32 p1 = std::clamp<int32>((i + 1),  0,    _Desc.NewVtxCnt - 1);
 			const int32 p2 = std::clamp<int32>((i + 1) + 2, 0, _Desc.NewVtxCnt - 1);
 			const int32 p3 = std::clamp<int32>((i + 1) + 4, 0, _Desc.NewVtxCnt - 1);
 
@@ -377,10 +377,9 @@ void JudgementSwordTrail::VertexBufUpdate()
 		Vertex::TrailVertex* VtxPtr{};
 		VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
 		// 최대 버텍스 카운트를 초과한 경우 .
-
 		if (_Desc.NewVtxCnt > _Desc.VtxCnt)
 		{
-			static constexpr uint32 RemoveCount = 2;
+			static constexpr uint32 RemoveCount = 2u;
 			_Desc.NewVtxCnt -= RemoveCount;
 
 			for (uint32 VtxIdx = 0; VtxIdx < _Desc.NewVtxCnt; VtxIdx += 2)
@@ -389,7 +388,6 @@ void JudgementSwordTrail::VertexBufUpdate()
 				VtxPtr[VtxIdx].Location = VtxPtr[RemoveCount + VtxIdx].Location;
 			}
 		}
-
 		
 		if (auto _GameObject = FindGameObjectWithType<JudgementSword>().lock();
 			_GameObject)
@@ -397,18 +395,18 @@ void JudgementSwordTrail::VertexBufUpdate()
 			if (auto _JudgementSword = std::dynamic_pointer_cast<JudgementSword>(_GameObject);
 				_JudgementSword)
 			{
-				const auto _World = _JudgementSword->GetComponent<Transform>().lock()->GetWorldMatrix();
+				const auto JudgementSwordWorld = _JudgementSword->GetComponent<Transform>().lock()->GetWorldMatrix();
 				
 				const Vector3 LowOffset = CurModeLowOffset();
-				auto Low = _JudgementSword->Get_BoneMatrixPtr(BoneLowNames[BoneIdx]);
-				LatelyOffsets[BoneIdx].first =   FMath::Mul(LowOffset, *Low * _World);
+				auto LowBoneMat = _JudgementSword->Get_BoneMatrixPtr(BoneLowNames[BoneIdx]);
+				LatelyOffsets[BoneIdx].first =   FMath::Mul(LowOffset, *LowBoneMat * JudgementSwordWorld);
 				
 				const Vector3  HighOffset= CurModeHighOffset();
-				auto High = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
-				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *High * _World);
+				auto HighBoneMat = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
+				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *HighBoneMat * JudgementSwordWorld);
 
 				PrevBoneWorld = BoneWorld;
-				BoneWorld = *Low * _World;
+				BoneWorld = *LowBoneMat * JudgementSwordWorld;
 
 				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[BoneIdx].first;
 				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[BoneIdx].second;
