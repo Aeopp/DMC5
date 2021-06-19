@@ -71,6 +71,7 @@
 #include "LoadingScene.h"
 #include "MapAniObject.h"
 #include "CollObject.h"
+#include "TestJudgementSword.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -94,6 +95,7 @@ TestScene* TestScene::Create()
 HRESULT TestScene::LoadScene()
 {
 	// Load Start
+	AddGameObject<TestJudgementSword>();
 	AddGameObject<Judgement>();
 	AddGameObject<JudgementSword>();
 	AddGameObject<Change>();

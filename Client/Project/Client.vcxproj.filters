@@ -585,6 +585,7 @@
     <ClInclude Include="..\Header\Revelion.h" />
     <ClInclude Include="..\Header\JudgementSwordCollider.h" />
     <ClInclude Include="..\Header\NoCameraColl.h" />
+    <ClInclude Include="..\Header\TestJudgementSword.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -952,6 +953,7 @@
     <ClCompile Include="..\Source\Revelion.cpp" />
     <ClCompile Include="..\Source\JudgementSwordCollider.cpp" />
     <ClCompile Include="..\Source\NoCameraColl.cpp" />
+    <ClCompile Include="..\Source\TestJudgementSword.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Buster_Arm.cpp">
