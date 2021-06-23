@@ -165,19 +165,19 @@ void JudgementSwordTrail::PlayStart(const Mode _Mode)
 
 				const Vector3 LowOffset = CurModeLowOffset();
 				auto Low = _JudgementSword->Get_BoneMatrixPtr(BoneLowNames[BoneIdx]);
-				LatelyOffsets[BoneIdx].first = FMath::Mul(LowOffset, *Low * _World);
+				LatelyLocations[BoneIdx].first = FMath::Mul(LowOffset, *Low * _World);
 
 				const Vector3  HighOffset = CurModeHighOffset();
 				auto High = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
-				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *High * _World);
+				LatelyLocations[BoneIdx].second = FMath::Mul(HighOffset, *High * _World);
 
 				PrevBoneWorld = BoneWorld;
 				BoneWorld = *Low * _World;
 
 				for (int32 j = 0; j  < _Desc.VtxCnt; j+=2)
 				{
-					VtxPtr[j].Location = LatelyOffsets[BoneIdx].first;
-					VtxPtr[j + 1].Location = LatelyOffsets[BoneIdx].second;
+					VtxPtr[j].Location = LatelyLocations[BoneIdx].first;
+					VtxPtr[j + 1].Location = LatelyLocations[BoneIdx].second;
 				};
 
 				VtxBuffer->Unlock();
@@ -299,13 +299,13 @@ Vector3 JudgementSwordTrail::GetTrailLocation()
 {
 	Vector3 Result{0,0,0};
 
-	for (auto&  [Low,High] : LatelyOffsets)
+	for (auto&  [Low,High] : LatelyLocations)
 	{
 		Result += Low;
 		Result += High;
 	}
 
-	Result /= static_cast<float> (LatelyOffsets.size() * 2.f);
+	Result /= static_cast<float> (LatelyLocations.size() * 2.f);
 
 	return Result;
 }
@@ -348,22 +348,22 @@ void JudgementSwordTrail::VtxSplineInterpolation(Vertex::TrailVertex* const VtxP
 		}
 
 		{
-			Vector3 VtxPt{};
+			Vector3 VertexPoint{};
 
-			const int32 p0 = std::clamp<int32>((i + 1) - 2, 0, _Desc.NewVtxCnt - 1);
-			const int32 p1 = std::clamp<int32>((i + 1),  0,    _Desc.NewVtxCnt - 1);
-			const int32 p2 = std::clamp<int32>((i + 1) + 2, 0, _Desc.NewVtxCnt - 1);
-			const int32 p3 = std::clamp<int32>((i + 1) + 4, 0, _Desc.NewVtxCnt - 1);
+			const int32 p0Index = std::clamp<int32>((i + 1) - 2, 0, _Desc.NewVtxCnt - 1);
+			const int32 p1Index = std::clamp<int32>((i + 1),  0,    _Desc.NewVtxCnt - 1);
+			const int32 p2Index = std::clamp<int32>((i + 1) + 2, 0, _Desc.NewVtxCnt - 1);
+			const int32 p3Index = std::clamp<int32>((i + 1) + 4, 0, _Desc.NewVtxCnt - 1);
 
 			D3DXVec3CatmullRom(
-				&VtxPt,
-				&VtxPtr[p0].Location,
-				&VtxPtr[p1].Location,
-				&VtxPtr[p2].Location,
-				&VtxPtr[p3].Location,
+				&VertexPoint,
+				&VtxPtr[p0Index].Location,
+				&VtxPtr[p1Index].Location,
+				&VtxPtr[p2Index].Location,
+				&VtxPtr[p3Index].Location,
 				CurveT);
 
-			VtxPtr[i + 1].Location = VtxPt;
+			VtxPtr[i + 1].Location = VertexPoint;
 		}
 	}
 };
@@ -395,21 +395,27 @@ void JudgementSwordTrail::VertexBufUpdate()
 			if (auto _JudgementSword = std::dynamic_pointer_cast<JudgementSword>(_GameObject);
 				_JudgementSword)
 			{
-				const auto JudgementSwordWorld = _JudgementSword->GetComponent<Transform>().lock()->GetWorldMatrix();
-				
-				const Vector3 LowOffset = CurModeLowOffset();
-				auto LowBoneMat = _JudgementSword->Get_BoneMatrixPtr(BoneLowNames[BoneIdx]);
-				LatelyOffsets[BoneIdx].first =   FMath::Mul(LowOffset, *LowBoneMat * JudgementSwordWorld);
-				
-				const Vector3  HighOffset= CurModeHighOffset();
-				auto HighBoneMat = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
-				LatelyOffsets[BoneIdx].second = FMath::Mul(HighOffset, *HighBoneMat * JudgementSwordWorld);
+				if (auto SwordTransform = _JudgementSword->GetComponent<Transform>().lock();
+					SwordTransform)
+				{
+					const auto JudgementSwordWorld = SwordTransform->GetWorldMatrix();
 
-				PrevBoneWorld = BoneWorld;
-				BoneWorld = *LowBoneMat * JudgementSwordWorld;
+					// 트레일 삼각형 밑부분 오프셋
+					const Vector3 LowOffset = CurModeLowOffset();
+					// 트레일 삼각형 밑부분으로 무기 메쉬의 본 위치를 이용
+					auto LowBoneMat = _JudgementSword->Get_BoneMatrixPtr(BoneLowNames[BoneIdx]);
+					LatelyLocations[BoneIdx].first = FMath::Mul(LowOffset, *LowBoneMat * JudgementSwordWorld);
 
-				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[BoneIdx].first;
-				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[BoneIdx].second;
+					const Vector3  HighOffset = CurModeHighOffset();
+					auto HighBoneMat = _JudgementSword->Get_BoneMatrixPtr(BoneHighNames[BoneIdx]);
+					LatelyLocations[BoneIdx].second = FMath::Mul(HighOffset, *HighBoneMat * JudgementSwordWorld);
+
+					PrevBoneWorld = BoneWorld;
+					BoneWorld = *LowBoneMat * JudgementSwordWorld;
+
+					VtxPtr[_Desc.NewVtxCnt].Location = LatelyLocations[BoneIdx].first;
+					VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyLocations[BoneIdx].second;
+				}
 			}
 		};
 

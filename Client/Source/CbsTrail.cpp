@@ -158,15 +158,15 @@ void CbsTrail::PlayStart(const Mode _Mode,
 				VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
 
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
-				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
+				LatelyLocations[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
 
 				auto High = Low;
-				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
+				LatelyLocations[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
 
 				for (int32 j = 0; j  < _Desc.VtxCnt; j+=2)
 				{
-					VtxPtr[j + 1].Location = LatelyOffsets[i].second;
-					VtxPtr[j].Location = LatelyOffsets[i].first;
+					VtxPtr[j + 1].Location = LatelyLocations[i].second;
+					VtxPtr[j].Location = LatelyLocations[i].first;
 				};
 				VtxBuffer->Unlock();
 			}
@@ -276,8 +276,8 @@ void CbsTrail::ParticleUpdate(const float DeltaTime)
 				const uint32 BoneIdx = FMath::Random(0u, BoneCnt - 1); 
 				
 				const Vector3 WorldLocation = 
-					FMath::Lerp(LatelyOffsets[BoneIdx].first,
-					LatelyOffsets[BoneIdx].second,
+					FMath::Lerp(LatelyLocations[BoneIdx].first,
+					LatelyLocations[BoneIdx].second,
 					FMath::Random(0.5f,1.f) );
 
 				const Vector3 Scale = SpTransform->GetScale();
@@ -369,13 +369,13 @@ void CbsTrail::VertexBufUpdate()
 
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
 				
-				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * CbsShortWorld);
+				LatelyLocations[i].first = FMath::Mul(Offset[CurMode].first, *Low * CbsShortWorld);
 
 				auto High = Low;
-				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * CbsShortWorld);
+				LatelyLocations[i].second = FMath::Mul(Offset[CurMode].second, *High * CbsShortWorld);
 
-				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[i].second;
-				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[i].first;
+				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyLocations[i].second;
+				VtxPtr[_Desc.NewVtxCnt].Location = LatelyLocations[i].first;
 			}
 		};
 

@@ -82,7 +82,7 @@ private:
 	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _TrailVtxWorldLocations{};
 
 	// Low High
-	std::array<std::pair<Vector3, Vector3>,BoneCnt>  LatelyOffsets{};
+	std::array<std::pair<Vector3, Vector3>,BoneCnt>  LatelyLocations{};
 
 	float ParticleCycle = 0.35f;
 	float CurParticleCycle = 0.0f;

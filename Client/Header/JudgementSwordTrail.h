@@ -96,7 +96,7 @@ private:
 
 	std::array<std::vector<Vertex::Index32>, BoneCnt>     _IdxLog{};
 	std::array<std::vector<Vertex::TrailVertex>, BoneCnt> _TrailVtxWorldLocations{};
-	std::array<std::pair<Vector3, Vector3>, BoneCnt>       LatelyOffsets{};
+	std::array<std::pair<Vector3, Vector3>, BoneCnt>       LatelyLocations{};
 
 	DynamicLight _DynamicLight{};
 	Vector4 LightColorLow

@@ -165,18 +165,18 @@ void CbsMidTrail::PlayStart(const Mode _Mode,
 				VtxBuffer->Lock(0, 0, (void**)&VtxPtr, 0);
 
 				auto Low = _CbsMiddle->Get_BoneMatrixPtr(BoneNames[i]);
-				LatelyOffsets[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
+				LatelyLocations[i].first = FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
 
 				Vector3 IdentityVec{ 0.f,0.f,0.f};
 				BoneWorldLocationMap[i] = FMath::Mul(IdentityVec, (*Low) * _CbsWorld);
 
 				auto High = Low;
-				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
+				LatelyLocations[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
 
 				for (int32 j = 0; j  < _Desc.VtxCnt; j+=2)
 				{
-					VtxPtr[j + 1].Location = LatelyOffsets[i].second;
-					VtxPtr[j].Location = LatelyOffsets[i].first;
+					VtxPtr[j + 1].Location = LatelyLocations[i].second;
+					VtxPtr[j].Location = LatelyLocations[i].first;
 				};
 
 				VtxBuffer->Unlock();
@@ -283,12 +283,12 @@ Vector3 CbsMidTrail::GetTrailLocation()
 {
 	Vector3 Result{0,0,0};
 
-	for (auto&  [Low,High] : LatelyOffsets)
+	for (auto&  [Low,High] : LatelyLocations)
 	{
 		Result += Low;
 		Result += High;
 	}
-	Result /= static_cast<float> (LatelyOffsets.size() * 2.f);
+	Result /= static_cast<float> (LatelyLocations.size() * 2.f);
 	return Result;
 }
 
@@ -326,8 +326,8 @@ void CbsMidTrail::ParticleUpdate(const float DeltaTime)
 				const uint32 BoneIdx = FMath::Random(0u, BoneCnt - 1);
 
 				const Vector3 WorldLocation =
-					FMath::Lerp(LatelyOffsets[BoneIdx].first,
-						LatelyOffsets[BoneIdx].second,
+					FMath::Lerp(LatelyLocations[BoneIdx].first,
+						LatelyLocations[BoneIdx].second,
 						FMath::Random(0.5f, 1.f));
 
 				const Vector3 Scale = SpTransform->GetScale();
@@ -606,15 +606,15 @@ void CbsMidTrail::VertexBufUpdate()
 				const auto _CbsWorld = _CbsShort->GetComponent<Transform>().lock()->GetWorldMatrix();
 				auto Low = _CbsShort->Get_BoneMatrixPtr(BoneNames[i]);
 				
-				LatelyOffsets[i].first =   FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
+				LatelyLocations[i].first =   FMath::Mul(Offset[CurMode].first, *Low * _CbsWorld);
 				Vector3 IdentityVec{ 0.f,0.f,0.f };
 				BoneWorldLocationMap[i] =  FMath::Mul(IdentityVec, (*Low) * _CbsWorld);
 
 				auto High = Low;
-				LatelyOffsets[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
+				LatelyLocations[i].second = FMath::Mul(Offset[CurMode].second, *High * _CbsWorld);
 
-				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyOffsets[i].second;
-				VtxPtr[_Desc.NewVtxCnt].Location = LatelyOffsets[i].first;
+				VtxPtr[_Desc.NewVtxCnt + 1].Location = LatelyLocations[i].second;
+				VtxPtr[_Desc.NewVtxCnt].Location = LatelyLocations[i].first;
 			}
 		};
 
